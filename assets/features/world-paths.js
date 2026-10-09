@@ -1,3 +1,4 @@
+import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-2';
 /* Feature package 'world-paths' — the ground between places.
 
    The basin already had six worn tracks baked into ranch3d.html, and every one of them stops at
@@ -30,7 +31,7 @@ export function install(G){
  const W=G.world, T=G.tables, S=G.save, H=G.horse, toast=G.toast;
  const gh=W.groundH, riverZ=W.riverZ, streamX=W.streamX;
  const villageCourts=[...COTTONWOOD_PUBLIC,...villageCourtZones(G.worldPkg?.LANDMARKS||[])];
- const P={clearance:{},benches:[],signBoardData:[]}; G.worldPaths=P;                                  // this package's live state, for QA
+ const P={clearance:{},benches:[],signBoardData:[],dryStoneCourses:[]}; G.worldPaths=P;                                  // this package's live state, for QA
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
  const sstep=(x,a,b)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  /* One deterministic hash for every scatter decision in the file, so two boots of the same world
@@ -670,6 +671,7 @@ export function install(G){
      put('box',mx,my+0.62,mz,l,0.095,0.068,0,ry,pitch,PALE);
     }
    }else if(kind==='stone'){
+    const firstWallRow=BAT.stone.length;
     /* Two courses and a capstone, every stone turned a different way; a dry stone wall that
        repeats reads as a row of boxes, and this one is only twenty triangles a stone anyway. */
     for(let r=0;r<2;r++)for(let k2=0;k2<2;k2++){
@@ -678,6 +680,7 @@ export function install(G){
       0.56+jx*0.3,0.40,0.62+jz*0.4,hash01(i,r)*0.5,hash01(i,r+9)*3.1,hash01(i,r+4)*0.4,r?STONE2:STONE);
     }
     put('stone',x,y+0.86,z,1.15,0.22,0.72,0,yaw+(jit-0.5)*0.3,0,STONE2);
+    P.dryStoneCourses.push({x,z,tx:s.tx,tz:s.tz,nx:s.nx,nz:s.nz,legacyRows:[firstWallRow,firstWallRow+1,firstWallRow+2,firstWallRow+3,firstWallRow+4]});
    }else{
     /* A hedge that repeats reads as a caterpillar, which is what the first build looked like from
        above. Every bush gets its own width, height and lean, one in nine is missing where the
@@ -996,6 +999,10 @@ export function install(G){
  P.roadsideReady=Promise.resolve().then(async()=>{
   await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,
    W.ranchBuilderArt.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,courseCleanupReady]);
+  try{
+  P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+  }catch(error){P.fieldWallArt={status:'failed',unitCount:0,units:[],error:String(error)};G.errors.push({id:'world-paths:field-walls',error:String(error)});console.error('Field wall finish',error);}
+
   const box=renderedBatches.box,probe=new THREE.Matrix4();
   for(const b of P.benches){box.getMatrixAt(b.legacyRowIndices[0],probe);
    b.visible=box.visible&&Math.abs(probe.determinant())>1e-8;}

@@ -2,6 +2,7 @@
    no imagery or models from the reference game are bundled. */
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {regionalProfile,regionalShoulder} from './regional-landscape.mjs?v=regional-relief-1';
+import {northernFoothillWeight,northernFoothillRelief} from './northern-foothills.mjs?v=northern-skyline-2';
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -41,6 +42,7 @@ export function installBackdrop({ THREE, scene }) {
     ][layer].map(v=>new THREE.Color(v));
     const low = new THREE.Color(), high = new THREE.Color(),rock=new THREE.Color(), snow = new THREE.Color('#c0cbcd');
     const c = new THREE.Color();
+    const forestLow=new THREE.Color(layer===1?'#51685b':'#334d37'),forestHigh=new THREE.Color(layer===1?'#7e8775':'#65745a');
     const crestT = (cfg.crest - cfg.inner) / (cfg.outer - cfg.inner);
     for (let j = 0; j <= rings; j++) {
       const t = j / rings;
@@ -59,7 +61,12 @@ export function installBackdrop({ THREE, scene }) {
         const spurs = Math.pow(Math.abs(Math.sin(a * 34 + warp * 0.12 + t * 3)), 1.4);
         const broken = (erosion - 0.58) * cfg.height * region.erosionScale * Math.sin(Math.PI * t);
         const folds = (spurs - 0.5) * cfg.height * region.foldScale * profile;
-        const y = -15 + profile * cfg.height * silhouette + broken + folds;
+        let y = -15 + profile * cfg.height * silhouette + broken + folds;
+        const foothill=layer>0?northernFoothillWeight(a,layer):0;
+        if(foothill>0){
+          const lowRidge=-15+northernFoothillRelief(a,t,layer)*(.985+erosion*.015);
+          y+=(lowRidge-y)*foothill;
+        }
         vertices.push(x, y, z);
         const variation = terrainNoise(x * 0.04, z * 0.04);
         // Authored regional hues and relief share one compass envelope.
@@ -67,9 +74,13 @@ export function installBackdrop({ THREE, scene }) {
           palettes[k].r*region.north+palettes[k+2].r*region.dry+palettes[k+4].r*region.pastoral,
           palettes[k].g*region.north+palettes[k+2].g*region.dry+palettes[k+4].g*region.pastoral,
           palettes[k].b*region.north+palettes[k+2].b*region.dry+palettes[k+4].b*region.pastoral);
+        // Low wooded northern shoulders are distinct from the higher rocky ranges.
+        // Muted green also enables the existing opaque landscape grove shading.
+        if(foothill>0){const greenery=foothill*(layer===1?.45:1);low.lerp(forestLow,greenery);high.lerp(forestHigh,greenery);}
         rock.copy(high).lerp(low,.24);
         c.copy(low).lerp(high, clamp(profile * 0.56 + variation * 0.22));
         c.multiplyScalar(0.76 + erosion * 0.16 + spurs * 0.08);
+        if(foothill>0)c.multiplyScalar(1-foothill*smooth(.28,.72,warp/26)*.14);
         c.lerp(rock, smooth(0.42, 0.95, profile) * (0.16 + (1 - erosion) * 0.4));
         // The northern massif alone carries snow. Broken patches on the high
         // shoulders preserve a natural rock/snow boundary, without a second cap mesh.

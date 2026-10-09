@@ -261,12 +261,15 @@ export function install(G){
  }
  function clear(routes){
   const t0=performance.now();
+  // Detailed field walls keep legacy proxies for this pass's established clearing rules.
+  const fieldWalls=G.worldPaths?.fieldWallArt;fieldWalls?.beforeCourseClear?.();
   try{gatherInstances();}catch(e){console.error('course-clear gather',e);}
   try{clearColliders();}catch(e){console.error('course-clear colliders',e);}
   /* routes are only bent at install: by boot other packages have measured them (events2-ladder sets each race's time allowed
      from its length), and a route that changed after that would advertise the wrong clock */
   try{if(routes&&W.colliders.some(c=>c&&c.landform)){reroute();build();}}catch(e){console.error('course-clear reroute',e);}
   try{mow();}catch(e){console.error('course-clear mow',e);}
+  fieldWalls?.afterCourseClear?.();
   stats.ms=Math.round(performance.now()-t0);
  }
  clear(true);
