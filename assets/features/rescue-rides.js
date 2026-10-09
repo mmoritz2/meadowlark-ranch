@@ -1,4 +1,4 @@
-import {RESCUE_DEFINITION,sanitizeRescueSave,recordRescueFinish,canAdoptClover,calmAfter,isTravelJump} from './rescue-rules.mjs?v=adventures-1';
+import {RESCUE_DEFINITION,RESCUE_APPROACH,sanitizeRescueSave,recordRescueFinish,canAdoptClover,calmAfter,isTravelJump,rescueInteraction,rescueRetreatCandidates,insideRescueRetreat} from './rescue-rules.mjs?v=rescue-reactions-1';
 export const id='rescue-rides';
 export function install(G){
  const H=G.horse,W=G.world,S=G.save,THREE=G.THREE,player=H.player,definition=RESCUE_DEFINITION;
@@ -26,6 +26,34 @@ export function install(G){
   if(Math.hypot(guess[0]-base[0],guess[1]-base[1])<5&&clear(...guess))return guess;
   for(let r=0;r<=3;r+=.5)for(let k=0;k<16;k++){const a=k*Math.PI/8,x=base[0]+Math.cos(a)*r,z=base[1]+Math.sin(a)*r;if(clear(x,z))return [x,z];}
   return null;
+ }
+ function clearRetreatSegment(a,b){
+  const n=Math.max(1,Math.ceil(dist(a,b)/.4));
+  for(let i=0;i<=n;i++){const f=i/n,p={x:a.x+(b.x-a.x)*f,z:a.z+(b.z-a.z)*f};if(!insideRescueRetreat(p,active.path[3])||!clear(p.x,p.z,1))return false;}
+  return true;
+ }
+ const inputPaused=()=>!!G.input?.blocked?.()||document.hidden||!!G.cam?.isFree?.()||document.body.classList.contains('freecam')||document.body.classList.contains('posing');
+ function interaction(){return active?.stage==='calm'&&horse?rescueInteraction({distance:dist(player.pos,horse.pos),speed:player.speed||0,retreating:!!active.retreat,
+  settling:active.settling,blocked:inputPaused()}):null;}
+ function startRetreat(){
+  const A=active;A.spookArmed=false;A.calm=Math.max(0,A.calm-35);A.settling=RESCUE_APPROACH.settleSeconds;
+  const destination=rescueRetreatCandidates(horse.pos,player.pos,A.path[3]).find(p=>clearRetreatSegment(horse.pos,p));
+  if(destination){A.retreat={...destination,time:0};A.cue='Clover startled and stepped away. Slow down and give her room.';}
+  else A.cue='Clover is nervous. Slow down and give her room to settle.';
+ }
+ function tickRetreat(dt){
+  const A=active,goal=A.retreat;if(!goal)return 0;
+  goal.time+=dt;
+  if(dist(horse.pos,goal)<.8||goal.time>3){A.retreat=null;A.settling=RESCUE_APPROACH.settleSeconds;return 0;}
+  const desired=Math.atan2(goal.x-horse.pos.x,goal.z-horse.pos.z),turn=Math.atan2(Math.sin(desired-horse.heading),Math.cos(desired-horse.heading));
+  // Turn before stepping: the source horse may initially face the pasture fence.
+  if(Math.abs(turn)>.5){horse.heading+=Math.sign(turn)*Math.min(Math.abs(turn),dt*3);return 0;}
+  const before={x:horse.pos.x,z:horse.pos.z};
+  W.steer(horse,goal.x,goal.z,dt,RESCUE_APPROACH.retreatSpeed,{stop:.8,base:2.2,gain:.5,turn:8,pad:1});
+  if(!clearRetreatSegment(before,horse.pos)){
+   horse.pos.x=before.x;horse.pos.z=before.z;A.retreat=null;A.settling=RESCUE_APPROACH.settleSeconds;return 0;
+  }
+  return dist(before,horse.pos)/dt;
  }
  const mapMark={x:0,z:0,glyph:'♡',label:'Clover rescue',kind:'rescue',hidden:()=>!active};
  const miniMark={x:0,z:0,col:'#79dec2',r:4,hidden:()=>!active};
@@ -90,7 +118,8 @@ export function install(G){
   player.heading=Math.atan2(resolved[1][0]-home[0],resolved[1][1]-home[1]);W.pushOut?.(player,.75);
   active={runId:`clover-${Date.now().toString(36)}-${++serial}-${Math.random().toString(36).slice(2,7)}`,stage:'find',clues:0,elapsed:0,calm:0,returnStep:0,
    path:resolved.map((p,i)=>point(p,['Home pasture','Fresh hoofprints','Tracks by the fence','Clover','Pasture bend','Homeward trail','Bring Clover home'][i])),
-   previous:{x:player.pos.x,z:player.pos.z},breadcrumbs:[],cue:'Follow the hoofprints along the pasture.',waiting:false,spooked:false,finished:false};
+   previous:{x:player.pos.x,z:player.pos.z},breadcrumbs:[],cue:'Follow the hoofprints along the pasture.',waiting:false,spooked:false,finished:false,
+   retreat:null,settling:RESCUE_APPROACH.settleSeconds,spookArmed:true};
   lastResult=null;build();updateMarker();G.run('rescueStart',snapshot().active);return true;
  }
  function target(){if(!active)return null;return active.stage==='find'?active.path[active.clues+1]:active.stage==='calm'?{x:horse.pos.x,z:horse.pos.z,label:'Approach Clover gently'}:active.path[4+active.returnStep];}
@@ -104,6 +133,12 @@ export function install(G){
  }
  function cancel(reason='Rescue paused. Clover will be waiting when you try again.'){
   if(!active)return false;const previous=active;active=null;dispose();G.run('rescueCancel',{id:definition.id,runId:previous.runId,reason});return true;
+ }
+ function reassure(){
+  const ready=interaction();if(!ready?.eligible)return false;
+  const A=active;A.calm=100;A.stage='escort';A.spooked=false;A.retreat=null;
+  A.breadcrumbs=[{x:player.pos.x,z:player.pos.z}];A.cue='She trusts you! Lead Clover home at a comfortable trot.';
+  G.sChime?.();updateMarker();return true;
  }
  function finish(){
   if(!active||active.finished||!horse)return;const A=active;A.finished=true;let result=null;
@@ -129,15 +164,23 @@ export function install(G){
   const A=active,step=dist(player.pos,A.previous);A.previous={x:player.pos.x,z:player.pos.z};
   if(isTravelJump(step,rawDt,player.speed)){cancel('Fast travel ends the rescue. Start again to follow Clover’s trail.');return;}
   if(G.course.get()||G.trail?.ride||G.worldPkg?.vehicle?.()||G.roundup?.state?.().active||G.course.drillActive?.()||player.flying){cancel('Rescue ended when you started another activity.');return;}
-  if(G.input?.blocked?.()||document.hidden)return;
-  A.elapsed+=dt;let movement=0;const distance=dist(player.pos,horse.pos),speed=Math.abs(player.speed||0);A.spooked=distance<9&&speed>5;
+  if(inputPaused())return;
+  A.elapsed+=dt;let movement=0;const distance=dist(player.pos,horse.pos),speed=Math.abs(player.speed||0);A.spooked=distance<RESCUE_APPROACH.spookDistance&&speed>RESCUE_APPROACH.spookSpeed;
   if(A.stage==='find'){
    if(dist(player.pos,target())<3.5){A.clues++;G.sCoin?.();A.cue=A.clues<2?'Fresh tracks! Follow them toward the south fence.':'Clover is just ahead. Slow down and approach gently.';
     if(A.clues===2)A.stage='calm';updateMarker();}
   }else if(A.stage==='calm'){
-   A.calm=calmAfter(A.calm,{distance,speed,dt});
-   A.cue=A.spooked?'Too fast — slow down to reassure Clover.':distance>=5.5?'Walk toward Clover and stop beside her.':speed>=1.6?'Come to a gentle stop.':'Stay still — Clover is learning to trust you.';
-   if(A.calm>=100){A.stage='escort';A.breadcrumbs=[{x:player.pos.x,z:player.pos.z}];A.cue='She trusts you! Lead Clover home at a comfortable trot.';G.sChime?.();updateMarker();}
+   if(speed<RESCUE_APPROACH.stopSpeed||distance>12)A.spookArmed=true;
+   if(A.spooked&&A.spookArmed&&!A.retreat)startRetreat();
+   movement=tickRetreat(dt);A.spooked=A.spooked||!!A.retreat;
+   if(A.retreat||distance<RESCUE_APPROACH.spookDistance&&speed>=RESCUE_APPROACH.stopSpeed)A.settling=RESCUE_APPROACH.settleSeconds;
+   else A.settling=Math.max(0,A.settling-dt);
+   A.calm=calmAfter(A.calm,{distance,speed:A.retreat?RESCUE_APPROACH.spookSpeed+1:speed,dt});
+   if(!A.retreat&&distance<RESCUE_APPROACH.reach&&speed<RESCUE_APPROACH.stopSpeed){
+    const desired=Math.atan2(player.pos.x-horse.pos.x,player.pos.z-horse.pos.z),turn=Math.atan2(Math.sin(desired-horse.heading),Math.cos(desired-horse.heading));horse.heading+=turn*Math.min(1,dt*2);
+   }
+   A.cue=interaction().reason;
+   mapMark.x=miniMark.x=horse.pos.x;mapMark.z=miniMark.z=horse.pos.z;
   }else if(A.stage==='escort'){
    A.waiting=distance>28;
    const last=A.breadcrumbs.at(-1);if(!last||dist(last,player.pos)>1.5)A.breadcrumbs.push({x:player.pos.x,z:player.pos.z});
@@ -157,8 +200,8 @@ export function install(G){
  function snapshot(){
   const A=active;return {definition,records:{...records},lastResult,
    active:A?{id:definition.id,name:definition.name,stage:A.stage,clues:A.clues,totalClues:2,target:{...target()},
-    horse:{x:horse.pos.x,z:horse.pos.z,distance:dist(player.pos,horse.pos),calm:A.calm,waiting:A.waiting,spooked:A.spooked},elapsed:Math.round(A.elapsed*100)/100,
+    horse:{x:horse.pos.x,z:horse.pos.z,distance:dist(player.pos,horse.pos),calm:A.calm,waiting:A.waiting,spooked:A.spooked,retreating:!!A.retreat,settling:Math.max(0,A.settling)},interaction:interaction(),elapsed:Math.round(A.elapsed*100)/100,
     returnStep:A.returnStep,totalReturnSteps:3,cue:A.cue}:null};
  }
- G.rescueRide={definition,start,cancel,snapshot,adopt};G.on('state',s=>{s.rescueRide=snapshot();});
+ G.rescueRide={definition,start,cancel,snapshot,reassure,adopt};G.on('state',s=>{s.rescueRide=snapshot();});
 }

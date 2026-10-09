@@ -601,24 +601,26 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
  gaitLabel.onclick=()=>choices.classList.contains('on')?closeGaits(true):openGaits();
  choices.onclick=e=>{const g=e.target.closest('[data-gait]')?.dataset.gait;if(g){G.riding?.selectGait(g);closeGaits(true);}};
  pace.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!choices.classList.contains('on'))return;
   if(e.key==='Escape'&&choices.classList.contains('on')){e.preventDefault();closeGaits(true);}
   else if(choices.classList.contains('on')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)){
    const list=[...choices.children].filter(b=>!b.hidden&&!b.disabled),index=list.indexOf(document.activeElement);let next;
    if(e.key==='Home')next=list[0];else if(e.key==='End')next=list.at(-1);else{const step=['ArrowLeft','ArrowUp'].includes(e.key)?-1:1;next=list[(Math.max(0,index)+step+list.length)%list.length];}
    e.preventDefault();next?.focus({preventScroll:true});
   }
+  else if(e.key!=='Enter'&&e.code!=='Space')return;
   // Keep native Enter/Space button clicks, but never send them to riding/jump.
+  // Other keys still ride even after a pointer click leaves this widget focused.
   e.stopPropagation();
  });
- pace.addEventListener('keyup',e=>e.stopPropagation());
+ // Key releases always reach riding, even if focus moved here mid-press. This
+ // also releases a held jump or sprint; keyup itself never starts either action.
  pace.addEventListener('focusout',()=>queueMicrotask(()=>{if(!pace.contains(document.activeElement))closeGaits();}));
  document.addEventListener('pointerdown',e=>{if(!pace.contains(e.target))closeGaits();},true);
  G.on('escape',()=>{if(choices.classList.contains('on')){closeGaits(true);return true;}return false;});
  const stop=$('seStop');stop.addEventListener('pointerdown',e=>{e.preventDefault();try{stop.setPointerCapture(e.pointerId);}catch(_){}G.riding?.brake(true);});
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])stop.addEventListener(ev,()=>G.riding?.brake(false));
  stop.addEventListener('keydown',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(true);}});
- stop.addEventListener('keyup',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(false);}});stop.addEventListener('blur',()=>G.riding?.brake(false));
+ stop.addEventListener('keyup',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();G.riding?.brake(false);}});stop.addEventListener('blur',()=>G.riding?.brake(false));
  // Less frequent actions remain available in Menu on a short screen.
  for(const [target,label,glyph] of [['tSpr','Sprint','⚡'],['tTrick','Trick','↻'],['seWhistle','Whistle','♪'],['seEmote','Emotes','☺'],['photoBtn','Take photo','▣']]){
   const b=document.createElement('button');b.dataset.seLbl=label;b.textContent=glyph;b.setAttribute('aria-label',label);b.onclick=()=>{closeMenu(false);if(target==='tSpr')G.riding?.selectGait('gallop');$(target)?.click();};tiles.appendChild(b);
