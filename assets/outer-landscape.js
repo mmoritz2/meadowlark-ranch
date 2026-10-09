@@ -1,3 +1,4 @@
+import {selectOuterWoodland,OUTER_GROVES_GLSL} from './outer-woodland.mjs?v=outer-groves-1';
 // Original foothills connect the fixed riding terrain to the distant skyline.
 // The innermost ring copies every terrain edge vertex; nothing inside is altered.
 import {regionalProfileAt,REGIONAL_WEIGHTS_GLSL} from './regional-landscape.mjs?v=regional-relief-1';
@@ -23,20 +24,31 @@ export function patchOuterFog(shader,blend='1.0'){
 // terrain keeps its own local biomes, and the shared seam still has zero extension.
 export function patchOuterRegions(shader){
  const extension=/vec2 compass=normalize\(p\);[\s\S]*?canopy=max\(canopy,extend\*smoothstep\(\.50,\.72,tNoise\(p\*\.011\+81\.0\)\)\*\(1\.0-snow\)\*\(1\.0-arid\)\*\.68\);/;
- if(!extension.test(shader.fragmentShader))return;
- shader.fragmentShader=REGIONAL_WEIGHTS_GLSL+'\n'+shader.fragmentShader.replace(extension,`
+ if(!extension.test(shader.fragmentShader))return false;
+ shader.fragmentShader=REGIONAL_WEIGHTS_GLSL+'\n'+OUTER_GROVES_GLSL+'\n'+shader.fragmentShader.replace(extension,`
+        // OUTER_GROVE_GROUND_V1: low wooded foothills share the tree layout.
         vec4 outerRegion=regionalWeights(atan(p.y,p.x));
         float cold=outerRegion.x,arid=outerRegion.y;
+        float outerNorth=extend*cold;
+        float outerGrove=outerGroveWeight(p);
         canyon=max(canyon,extend*arid*.94);
-        // Weathered mineral interrupts northern turf; snow is a broken accent.
-        scree=max(scree,extend*cold*(.45+.40*smoothstep(.30,.65,stand)));
-        stone=max(stone,extend*cold*smoothstep(.10,.45,grade+rough*.16)*.58);
+        // These are low foothills, not an extension of Hollowpeak's snowfield.
+        // Leave the exact riding seam intact and fade out any inherited powder.
+        snow*=1.0-outerNorth;
+        // Bare mineral belongs on exposed slopes. The former constant northern
+        // scree floor washed even flat meadow and woodland into grey gravel.
+        float outerExposure=smoothstep(.34,.78,grade+rough*.10)*(1.0-outerGrove*.35);
+        scree=max(scree,outerNorth*outerExposure*.52);
+        stone=max(stone,outerNorth*smoothstep(.70,1.12,grade+rough*.08)*.55);
         rocky=max(scree,stone);
-        float outerDrift=smoothstep(.54,.77,stand*.56+macro*.44);
-        snow=max(snow,extend*cold*outerDrift*.18*(1.0-smoothstep(.18,.58,grade)));
         bank*=1.0-extend;wet*=1.0-extend;
         float outerWoodland=(.58*cold+.84*outerRegion.z+.09*arid)*(1.0-outerRegion.w*.60);
-        canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*outerWoodland);`);
+        // Replace the edge-clamped forest mask in every outer sector. Grove cores,
+        // younger fringes and open meadow now follow the same authored shapes.
+        canopy=mix(canopy,outerGrove*clamp(outerWoodland*1.3,0.0,1.0),extend);
+        vec3 outerSward=mix(vec3(.86,1.02,.84),vec3(.76,.90,.76),outerGrove);
+        turf*=mix(vec3(1.0),outerSward,extend*(1.0-arid));`);
+ return true;
 }
 export function outerDistance(x,z){return Math.hypot(Math.max(0,Math.abs(x)-500),Math.max(0,Math.abs(z)-500));}
 export function foothillHeight(x,z,heightAt){
@@ -80,29 +92,12 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  // Match the original edge normals at the shared vertices, including stream cuts.
  const normals=geometry.attributes.normal,sourceNormal=source.attributes.normal;
  for(let i=0;i<=BANDS[0][1];i++){const [x,z]=edgePoint(i,BANDS[0][1]),ix=Math.round((x+500)/1000*segments),iz=Math.round((z+500)/1000*segments),id=iz*(segments+1)+ix;normals.setXYZ(i,sourceNormal.getX(id),sourceNormal.getY(id),sourceNormal.getZ(id));}
- const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterRegions(shader);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-regional-outer-landscape-1';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
+ const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterRegions(shader);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-grove-ground-2';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
  const mesh=old||new T.Mesh();if(old){old.geometry.dispose();old.material.map?.dispose();old.material.dispose();}else scene.add(mesh);
  mesh.geometry=geometry;mesh.material=material;mesh.name='Continuous outer countryside';mesh.position.set(0,0,0);mesh.rotation.set(0,0,0);mesh.scale.set(1,1,1);mesh.castShadow=false;mesh.receiveShadow=true;mesh.matrixAutoUpdate=false;mesh.updateMatrix();
  // Sample the actual mesh triangles so every woodland root touches the new
  // surface. A separate hash stream leaves all in-basin placement unchanged.
- const woodlandSites=[],gp=geometry.attributes.position,gi=geometry.index;
- for(let i=0;i<gi.count;i+=3){const ids=[gi.getX(i),gi.getX(i+1),gi.getX(i+2)],a=ids.map(id=>[gp.getX(id),gp.getY(id),gp.getZ(id)]);
-  const area=Math.abs((a[1][0]-a[0][0])*(a[2][2]-a[0][2])-(a[2][0]-a[0][0])*(a[1][2]-a[0][2]))*.5;
-  const cx=(a[0][0]+a[1][0]+a[2][0])/3,cz=(a[0][2]+a[1][2]+a[2][2])/3,cd=outerDistance(cx,cz);
-  if(cd<40||cd>420)continue;
-  const count=Math.ceil(area/480);
-  for(let j=0;j<count;j++){
-   if(hash(i+1,j+70)>area/(count*480))continue;
-   const u=Math.sqrt(hash(i+17,j+153)),v=hash(i+41,j+371),weights=[1-u,u*(1-v),u*v];
-   const [x,y,z]=[0,1,2].map(k=>a.reduce((sum,p,n)=>sum+p[k]*weights[n],0)),d=outerDistance(x,z);
-   if(d<58||d>400||noise(x*.008+19,z*.008-27)<.5)continue;
-   const region=regionalProfileAt(x,z);
-   if(hash(i,j+7)>region.woodlandDensity)continue;
-   const source=hash(i,j+11)<region.north?'mature-pine':hash(i,j+3)>.48?'canopy-broadleaf':'woodland-broadleaf';
-   const stature=1-region.dry*.30-region.valley*.22;
-   woodlandSites.push({x,y,z,height:(7+hash(i,j+19)*7)*stature,yaw:hash(i,j+71)*Math.PI*2,source});
-  }
- }
+ const woodlandSites=selectOuterWoodland({positions:geometry.attributes.position.array,index:geometry.index.array,regionalProfileAt});
  const stats={woodlandTrees:woodlandSites.length,triangles:indices.length/3,vertices:p.length/3,draws:1,bands:BANDS.length,innerHalfSize:500,outerHalfSize:1700};
  return{mesh,woodlandSites,edgeCount:BANDS[0][1]+1,stats};
 }

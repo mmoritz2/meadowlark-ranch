@@ -23,6 +23,7 @@ import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
 
    Owned by this package: this file only. Nothing runs at import time. */
 import {dressLandscape} from '../landscape-surface.js?v=regional-relief-1';
+import {dressMassifCliffSurface} from '../massif-cliff-surface.mjs?v=massif-cliff-1';
 import {regionalProfileAt} from '../regional-landscape.mjs?v=regional-relief-1';
 import {hornRelief} from '../horn-relief.mjs?v=northern-skyline-1';
 export const id='world-vistas';
@@ -220,6 +221,7 @@ export function install(G){
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
  dressLandscape({THREE,material:rockMat,wooded:true,regional:true,fogScale:.78,fogCap:.96,bumpStrength:.12,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+ dressMassifCliffSurface({material:rockMat,source:W.fallsLandscape?.rock?.material});
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise

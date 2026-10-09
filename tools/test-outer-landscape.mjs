@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createOuterLandscape,foothillHeight,outerDistance} from '../assets/outer-landscape.js';
 import {createTerrainSurface} from '../assets/terrain-realism.js';
+import {regionWeightsAt} from '../assets/regional-landscape.mjs';
 
 function snapshotGeometry(geometry){
  const snapshot={attributes:{},index:null};
@@ -138,8 +139,8 @@ test('every woodland root matches an actual mesh triangle and remains outside ri
 
 
 // Sample the actual geometry in authored compass cores, independently of the
-// regional helper. Distinct silhouette, palette, and grove density should be
-// visible on the emitted surface, not only in profile configuration values.
+// regional helper. Distinct silhouette and palette should be visible on the
+// emitted surface, not only in profile configuration values.
 function directionAt(x,z){
  const a=Math.atan2(z,x);
  return a> -2.3&&a< -.9?'north':a>2.65&&a<2.95?'dry':a>1.5&&a<1.65?'pastoral':a>2.1&&a<2.25?'valley':null;
@@ -171,23 +172,48 @@ test('authored outer directions create lower pastoral hills, a visible open sadd
  for(let z=-500;z<=500;z+=125)for(let x=-500;x<=500;x+=125)assert.equal(foothillHeight(x,z,heightAt),heightAt(x,z),'Regional relief must never alter an in-basin height');
 });
 
+// Authored groves can put a glade in any one narrow compass slice. Measure
+// woodland over the entire outer planting annulus using climate area weights:
+// actual emitted tree counts / actual projected mesh area, not density settings.
+function regionalWoodlandDensity(){
+ const keys=['north','dry','pastoral','valley'];
+ const groups=Object.fromEntries(keys.map(key=>[key,{trees:0,area:0}]));
+ for(const root of art.woodlandSites){
+  const weights=regionWeightsAt(root.x,root.z);
+  for(const key of keys)groups[key].trees+=weights[key];
+ }
+ const geometry=art.mesh.geometry,position=geometry.attributes.position,index=geometry.index;
+ for(let i=0;i<index.count;i+=3){
+  const ids=[index.getX(i),index.getX(i+1),index.getX(i+2)];
+  const x=ids.reduce((sum,id)=>sum+position.getX(id),0)/3,z=ids.reduce((sum,id)=>sum+position.getZ(id),0)/3;
+  const distance=outerDistance(x,z);if(distance<58||distance>400)continue;
+  const [a,b,c]=ids;
+  const area=Math.abs((position.getX(b)-position.getX(a))*(position.getZ(c)-position.getZ(a))-(position.getZ(b)-position.getZ(a))*(position.getX(c)-position.getX(a)))*.5;
+  const weights=regionWeightsAt(x,z);
+  for(const key of keys)groups[key].area+=area*weights[key];
+ }
+ for(const group of Object.values(groups)){assert(group.area>25000);group.density=group.trees/group.area;}
+ return groups;
+}
+
 test('directional woodland leaves dry shoulders and valley gaps open without adding new tree resources',()=>{
- const groups=directionalSurface();
+ const groups=regionalWoodlandDensity();
  assert(groups.pastoral.density>groups.dry.density*2,'Dry shoulders need substantially fewer trees per surface area');
  assert(groups.valley.density<groups.pastoral.density*.65,'Valley gaps need less canopy than pastoral hills');
- const allowed=new Set(['mature-pine','canopy-broadleaf','woodland-broadleaf']);let northern=0,dry=0;
+ const allowed=new Set(['mature-pine','canopy-broadleaf','woodland-broadleaf']);let northern=0,dry=0;const northernSources=new Map();
  for(const root of art.woodlandSites){
   assert(allowed.has(root.source));
   const direction=directionAt(root.x,root.z);
-  if(direction==='north'){northern++;assert.equal(root.source,'mature-pine','Northern groves use existing conifer atlases');}
+  if(direction==='north'){northern++;northernSources.set(root.source,(northernSources.get(root.source)||0)+1);}
   if(direction==='dry'){dry++;assert(root.height<=9.8+1e-9,'Sparse dry trees must have a lower stature');}
  }
- assert(northern>100&&dry>0);
+ assert(northern>100&&dry>0);assert.equal(northernSources.size,3,'Northern groves mix existing conifer and broadleaf atlases');assert(northernSources.get('mature-pine')>northern*.5,'Conifers still lead the northern stands');
 });
 
 test('outer shader composes with the real terrain material while preserving its riding shader and texture resources',()=>{
  const originalDocument=globalThis.document;
- const canvas={getContext:()=>({fillRect(){}})};
+ let maskPixels;const context={createImageData:(w,h)=>({width:w,height:h,data:new Uint8ClampedArray(w*h*4)}),putImageData:p=>{maskPixels=p;},getImageData:()=>maskPixels,fillRect(){},createRadialGradient:()=>({addColorStop(){}}),beginPath(){},lineTo(){},moveTo(){},stroke(){}};
+ const canvas={getContext:()=>context};
  globalThis.document={createElement:()=>canvas};
  try{
   const cpuThree={...T,TextureLoader:class{load(){return new T.Texture();}}};
@@ -200,7 +226,9 @@ test('outer shader composes with the real terrain material while preserving its 
   assert(compiled.fragmentShader.includes('vec4 outerRegion=regionalWeights(atan(p.y,p.x));'),'The outer extension must consume shared directional weights');
   assert(!compiled.fragmentShader.includes('vec2 compass=normalize(p);'),'The old generic compass extension must be replaced');
   assert.equal((compiled.fragmentShader.match(/vec4 regionalWeights\(float angle\)/g)||[]).length,1,'Shared climate functions must be declared only once');
-  assert(compiled.fragmentShader.includes('extend*cold*outerDrift*.18'),'Northern snow stays a restrained broken accent');
+  assert(!compiled.fragmentShader.includes('outerDrift'),'Low northern foothills do not promote snow');
+  assert(compiled.fragmentShader.includes('snow*=1.0-outerNorth;'));
+  assert.equal((compiled.fragmentShader.match(/float outerGroveWeight\(vec2 p\)/g)||[]).length,1,'Ground and trees share one grove field');
   assert(compiled.fragmentShader.includes('float outerFogBlend='),'The original continuous seam fog still composes');
   assert.equal((compiled.fragmentShader.match(/bank\*=1\.0-extend;/g)||[]).length,1,'Outer bank attenuation must be applied once');
   assert.equal((compiled.fragmentShader.match(/wet\*=1\.0-extend;/g)||[]).length,1,'Outer wet attenuation must be applied once');
