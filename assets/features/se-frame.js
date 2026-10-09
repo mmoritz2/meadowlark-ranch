@@ -178,7 +178,7 @@ export function install(G){
  const COVERS={}, FRAMED={
   questPanel:['journey','My Journey'],eventsPanel:['events','Riding Events'],stablePanel:['horses','My Horses'],lbPanel:['podium','Leaderboards'],
   onlinePanel:['club','Riding Club'],profilePanel:['character','Rider Profile'],buildPanel:['build','Build'],summonPanel:['season','Summon'],moneyPanel:['wallet','Wallet'],
-  breedPanel:['foal','Breeding'],catalogPanel:['collection','Collection'],emotePanel:['emotes','Emotes'],inboxPanel:['inbox','Inbox'],pvpPanel:['race','Race Club'],
+  breedPanel:['foal','Breeding'],catalogPanel:['collection','Collection'],emotePanel:['emotes','Horse actions'],inboxPanel:['inbox','Inbox'],pvpPanel:['race','Race Club'],
   riderPanel:['character','Your Rider'],stylePanel:['style','Horse Style'],treePanel:['studio','Bloodlines'],sheetPanel:['collection','Horse Sheet'],resultPanel:['podium','Event Card'],
   ev2CardPanel:['events','Class'],ev2ResultPanel:['podium','Results'],ev2SheetPanel:['events','Score Sheet'],
   /* More care… and Settings opened the old centred cream card with the whole live HUD still round it */
@@ -321,7 +321,7 @@ export function install(G){
    {k:'race',t:'Race club',s:'Challenge other riders',groups:['more'],source:'pvpBtn',go:clickId('pvpBtn')},
    {k:'inbox',t:'Inbox',s:'Letters, news and gifts',groups:['more'],source:'inboxBtn',go:clickId('inboxBtn'),pipOf:'inboxBtn'},
    {k:'chat',t:'Club chat',s:'Talk to your riding club',groups:['more'],source:'chatBtn',need:()=>!!G.net?.SOCIAL,go:clickId('chatBtn')},
-   {k:'emotes',t:'Emotes',s:'Wave, laugh and dance',groups:['more'],source:'emoteBtn',go:clickId('emoteBtn')},
+   {k:'emotes',t:'Horse actions',s:'Horse tricks and rider gestures',groups:['more'],source:'emoteBtn',go:clickId('emoteBtn')},
    {k:'account',icon:'market',t:'Ranch store',s:G.commerce?.isStaticStore?'Tack pictures, gems and VIP · online preview':'Tack sets, gems, VIP and your account',groups:['more'],need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
    {k:'photo',t:'Photo mode',s:'Capture a moment on the trail',groups:['explore'],source:'poseBtn',go:clickId('poseBtn')},
    {k:'graphics',t:'Graphics',s:'Adjust detail and performance',groups:['more'],source:'qualBtn',go:clickId('qualBtn')},

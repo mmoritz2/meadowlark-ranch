@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFile} from 'node:fs/promises';
 import * as THREE from '../assets/vendor/three/build/three.module.js';
+import {receiveNativeAction,syncNativeActionEmote} from '../assets/native-action-runtime.mjs';
 
 // Exercise the real mixer/controller with a tiny skeleton and an isolated clip
 // generator dependency. Visual quality of the full 677-joint clips has its own
@@ -94,4 +95,50 @@ test('reset and dispose clear active and fading actions and restore finite rest 
  assert(root.matrixWorld.elements.every(Number.isFinite));assert.equal(m.startAction('rear'),true);
  m.dispose();m.dispose();assert.equal(bone.position.y,0);assert.equal(m.mixer.stats.actions.inUse,0);
  assert.throws(()=>m.startAction('rear'),/disposed/);
+});
+
+
+test('grounded actions retain their authored get-up and final blend despite travel, reverse and flight input',()=>{
+ for(const trigger of ['travel','reverse','flight']){
+  const {m,rig}=fixture();m.startAction('liedown');m.update(.8);
+  assert.equal(m.blocksTravel,true);assert.equal(m.state.blocksTravel,true);
+  if(trigger==='reverse')rig.nativeReverse=true;if(trigger==='flight')rig.nativeFlying=true;
+  tickNativeHorse(rig,trigger==='travel'?3:0,.1);
+  assert.equal(m.action.type,'liedown');assert(Math.abs(m.action.timeS-.9)<1e-8);
+  assert.equal(startNativeHorseJump(rig),false);
+  tickNativeHorse(rig,0,1.1);assert.equal(m.action,null);assert.equal(m.mode,'stand');
+  assert.equal(m.state.transitioning,true);assert.equal(m.blocksTravel,true,'The last action frame is not yet ready to travel');
+  assert.equal(startNativeHorseJump(rig),false,'Jump waits for the final pose transition');
+  assert.equal(m.startAction('rear'),false,'A new trick cannot interrupt the required final recovery');
+  tickNativeHorse(rig,3,.1);assert.equal(m.mode,'stand');assert.equal(m.blocksTravel,true);
+  tickNativeHorse(rig,3,.11);assert.equal(m.blocksTravel,false);assert.equal(m.state.transitioning,false);
+  rig.nativeFlying=false;rig.nativeReverse=false;tickNativeHorse(rig,1,.05);assert.equal(m.mode,'walk');
+  m.dispose();
+ }
+});
+
+test('action recovery locks belong to one controller and release on reset, dispose and ordinary actions',()=>{
+ const a=fixture(),b=fixture();a.m.startAction('liedown');a.m.update(.8);
+ assert.equal(b.m.blocksTravel,false);assert.equal(b.m.state.blocksTravel,false);
+ a.m.reset();assert.equal(a.m.blocksTravel,false);assert.equal(a.m.state.action,null);
+ a.m.startAction('rear');assert.equal(a.m.blocksTravel,false);a.m.update(.2);a.m.cancelAction();
+ assert.equal(a.m.blocksTravel,false);a.m.update(.21);a.m.startAction('liedown');a.m.dispose();
+ assert.equal(a.m.blocksTravel,false);b.m.dispose();
+});
+
+
+test('newer peer actions and completion packets preserve local lie-down recovery',()=>{
+ const {m,rig}=fixture();
+ assert.equal(receiveNativeAction(rig,{seq:10,type:'liedown',elapsedS:.5},{wild:true}),true);
+ m.update(.3);const time=m.action.timeS;
+ assert.equal(receiveNativeAction(rig,{seq:11,type:'rear',elapsedS:0},{wild:true}),false);
+ assert.equal(m.action.type,'liedown');assert.equal(m.action.timeS,time);assert.equal(rig.receivedNativeActionSeq,10);
+ assert.equal(receiveNativeAction(rig,{seq:10,type:null,elapsedS:0},{wild:true}),true);
+ assert.equal(m.action.type,'liedown','An early completion packet cannot skip the authored get-up');
+ tickNativeHorse(rig,0,1.2);assert.equal(m.action,null);assert.equal(m.blocksTravel,true);
+ assert.equal(receiveNativeAction(rig,{seq:11,type:'rear',elapsedS:.1},{wild:true}),false);
+ tickNativeHorse(rig,0,.21);assert.equal(m.blocksTravel,false);syncNativeActionEmote(rig);assert.equal(rig.emote,null);
+ assert.equal(receiveNativeAction(rig,{seq:11,type:'rear',elapsedS:.3},{wild:true}),true);
+ assert.equal(m.action.type,'rear');assert.equal(m.action.timeS,.3);assert.equal(rig.receivedNativeActionSeq,11);
+ assert.equal(receiveNativeAction(rig,{seq:10,type:null,elapsedS:0},{wild:true}),false);assert.equal(m.action.type,'rear');m.dispose();
 });

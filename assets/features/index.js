@@ -160,7 +160,7 @@ import * as paidTack from './paid-tack.js?v=tack-summon-20261007';
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
 import * as stats from './stats-progression.js?v=leafy-orchard-1';
 import * as roster from './horse-roster.js?v=natural-mane-20261009';
-import * as bond from './bond-personality-emotes.js?v=riding-modes-1';   // versioned: rider emotes reach the character's own bones
+import * as bond from './bond-personality-emotes.js?v=horse-actions-20261009';   // horse action readiness and rider gestures
 import * as mastery from './mastery-style.js?v=natural-mane-20261009';
 import * as tack from './tack-wardrobe.js?v=defined-lashes-20261009';   // versioned: the Character screen, then the character herself (outfits, eyes)
 import * as course from './course-engine.js?v=ranch-rush-1';
@@ -215,7 +215,7 @@ import * as onFoot from './on-foot.js?v=riding-modes-1';   // versioned: she wal
 import * as seMarket from './se-market.js?v=menus-polish-20261008';
 import * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot
 import * as courseClear from './course-clear.js?v=b20261001b';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
-import * as seFrame from './se-frame.js?v=menus-polish-20261008';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
+import * as seFrame from './se-frame.js?v=horse-actions-20261009';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
 import * as seEvents from './se-events.js?v=training-rides-1';
 import * as seJourney from './se-journey.js?v=menus-polish-20261008';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are
 import * as seHorses from './se-horses.js?v=menus-polish-20261008';   // My Horses as portrait cards: favourites, then each breed with its mastery track
