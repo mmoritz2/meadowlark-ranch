@@ -64,7 +64,8 @@ export function patchSeasonalFoliage(shader,atlas=false) {
 
 // Matching albedo/normal views of each source scan. The normal is rotated with
 // the tree, so a distant crown keeps its volume as the sun and camera move.
-export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
+export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalProfile}) {
+  const matchedNormals=normalProfile==='view-facing-material-v1';
   const geo=new THREE.PlaneGeometry(width,height);geo.translate(0,bottom+height*.5,0);
   const mat=new THREE.MeshStandardMaterial({map:albedo,alphaTest:.22,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
   enableOpaqueFoliageCoverage(THREE,mat);
@@ -97,7 +98,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       // their lighting contrast without filtering the crown's colour or shape.
       treeN=mix(vec3(0.0,1.0,0.0),treeN,smoothstep(.2,.85,treeNormalSample.a));
       // A little canopy averaging softens the lighting of individual leaf cards.
-      treeN=mix(treeN,vec3(treeN.x,.8,treeN.z),.30);
+      ${matchedNormals?'// Matched material normal already includes the near-leaf canopy blend.':'treeN=mix(treeN,vec3(treeN.x,.8,treeN.z),.30);'}
       float canopyLength2=dot(treeN,treeN);
       treeN=canopyLength2>1e-6?treeN*inversesqrt(canopyLength2):vec3(0.0,1.0,0.0);
       treeN=vec3(treeN.x*treeHeading.y+treeN.z*treeHeading.x,treeN.y,-treeN.x*treeHeading.x+treeN.z*treeHeading.y);
@@ -120,7 +121,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       #include <opaque_fragment>`);
     patchFoliageCoverage(sh,renderer);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v6';
+  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v7-'+matchedNormals;
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};

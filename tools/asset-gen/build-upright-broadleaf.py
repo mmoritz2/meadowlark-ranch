@@ -113,15 +113,46 @@ wood_p = accessor(stock, [stock_bin], wood['attributes']['POSITION'])
 stock_min = np.minimum(wood_p.min(axis=0), cp.min(axis=0)); stock_max = np.maximum(wood_p.max(axis=0), cp.max(axis=0))
 photo_min = min(a.get('min', [0, 999, 0])[1] for a in photo['accessors'] if a.get('type') == 'VEC3' and 'min' in a)
 photo_max = max(a.get('max', [0, -999, 0])[1] for a in photo['accessors'] if a.get('type') == 'VEC3' and 'max' in a)
-physical_scale = float((stock_max[1] - stock_min[1]) / (photo_max - photo_min)) * 1.2
+physical_scale = float((stock_max[1] - stock_min[1]) / (photo_max - photo_min)) * 1.45
 leaf_min, leaf_max = cp.min(axis=0), cp.max(axis=0)
 positions = []; normals = []; uvs = []; indices = []; vertex_base = 0; patch_usage = {}; uv_exact = True
 max_det_error = 0.; patch_records = []
-# Twelve whole leaf surfaces per occupied card; 20% uniform enlargement, no UV or shape distortion.
+# Original crown composition, not a scaled stock-card envelope. Connected,
+# asymmetric branch-side lobes overlap into one crown with a broken outer edge.
+# Whole source leaf patches remain rigid and uniformly sized; only their poses change.
+CROWN_LOBES = [
+    # center, ellipsoid radii, share of the 900 leafy twig clusters
+    ((-.58, 3.55, .16), (1.40, .82, 1.16), .07),
+    ((.65, 4.50, -.12), (1.72, 1.07, 1.35), .14),
+    ((-.53, 5.40, -.45), (1.98, 1.26, 1.48), .20),
+    ((.12, 6.25, .56), (2.00, 1.25, 1.46), .20),
+    ((-.72, 7.10, .07), (1.71, 1.16, 1.40), .17),
+    ((.64, 7.72, -.27), (1.57, 1.02, 1.26), .14),
+    ((-.31, 8.37, .06), (1.16, .62, 1.06), .08),
+]
+cluster_targets = []; lobe_counts = [0] * len(CROWN_LOBES)
+for card_id in range(len(card_components)):
+    pick = hashed((card_id + 7) * 809 + 31337) / 0xffffffff
+    cumulative = 0.
+    for lobe_id, (lobe_center, radii, share) in enumerate(CROWN_LOBES):
+        cumulative += share
+        if pick <= cumulative or lobe_id == len(CROWN_LOBES) - 1: break
+    lobe_counts[lobe_id] += 1
+    azimuth = hashed((card_id + 1) * 887 + 111) / 0xffffffff * math.tau
+    vertical = hashed((card_id + 1) * 929 + 223) / 0xffffffff * 2. - 1.
+    radial = (hashed((card_id + 1) * 947 + 331) / 0xffffffff) ** (1. / 3.)
+    direction = np.array([math.cos(azimuth) * math.sqrt(1 - vertical * vertical), vertical,
+                          math.sin(azimuth) * math.sqrt(1 - vertical * vertical)])
+    # Low-amplitude correlated roughness makes an irregular canopy edge, rather
+    # than hard ellipsoid skins or independently inflated topiary balls.
+    ripple = 1 + .09 * math.sin(azimuth * 3. + lobe_id * 1.7) * math.cos(vertical * 4. + lobe_id)
+    point = np.array(lobe_center) + direction * np.array(radii) * radial * ripple
+    cluster_targets.append(point)
+# Twelve complete photographed surfaces form each small leafy twig cluster.
 for card_id, (cv, _) in enumerate(card_components):
-    points = cp[cv]; center = points.mean(axis=0); n = unit(cn[cv].mean(axis=0))
+    points = cp[cv]; source_center = points.mean(axis=0); center = cluster_targets[card_id]; n = unit(cn[cv].mean(axis=0))
     e = unit(points[1] - points[0]); e = unit(e - n * np.dot(e, n)); f = unit(np.cross(n, e))
-    half_e = max(abs((points - center) @ e)); half_f = max(abs((points - center) @ f))
+    half_e = max(abs((points - source_center) @ e)) * .82; half_f = max(abs((points - source_center) @ f)) * .82
     for slot in range(12):
         h = hashed((card_id + 1) * 947 + (slot + 1) * 313)
         patch_id, pv, pt = pool[h % len(pool)]
@@ -137,8 +168,11 @@ for card_id, (cv, _) in enumerate(card_components):
         depth = ((hashed(h + 71) / 0xffffffff) - .5) * .18
         target = center + e * ue + f * vf + n * depth
         p = (local - anchor) @ r.T * physical_scale + target
-        # Translation-only fit inside the original upright leaf envelope.
-        shift = np.maximum(leaf_min - p.min(axis=0), 0) - np.maximum(p.max(axis=0) - leaf_max, 0)
+        # Whole-patch vertical translation preserves the reviewed tree's exact
+        # foot and tip; XZ is intentionally permitted to form the fuller crown.
+        # Most patches never touch this guard because the lobe tips sit below it.
+        shift = np.zeros(3)
+        shift[1] = max(float(leaf_min[1] - p[:, 1].min()), 0.) - max(float(p[:, 1].max() - leaf_max[1]), 0.)
         p += shift
         new_normals = pn[pv].astype(np.float64) @ r.T
         new_normals /= np.linalg.norm(new_normals, axis=1)[:, None]
@@ -158,10 +192,11 @@ wood_triangles = len(accessor(stock, [stock_bin], wood['indices'])) // 3
 assert len(li) % 3 == 0 and len(li) // 3 + wood_triangles <= 110000
 assert np.isfinite(lp).all() and np.isfinite(ln).all() and np.isfinite(luv).all()
 assert li.max() < len(lp) and np.max(abs(np.linalg.norm(ln, axis=1) - 1)) < 2e-6
-assert (lp.min(axis=0) >= leaf_min - 2e-6).all() and (lp.max(axis=0) <= leaf_max + 2e-6).all()
+assert lp[:,1].min() >= leaf_min[1] - 2e-6 and lp[:,1].max() <= leaf_max[1] + 2e-6
+assert max(abs(lp[:,0]).max(), abs(lp[:,2]).max()) < 3.1
 assert max_det_error < 1e-12
 
-output = {'asset': {'version': '2.0', 'generator': 'Original upright photographed leaf hybrid V3: tileable bark only'},
+output = {'asset': {'version': '2.0', 'generator': 'Original full-crown upright photographed leaf hybrid V4 candidate'},
     'scene': 0, 'scenes': [{'nodes': [0]}], 'nodes': [{'name': 'Upright photographed leaf hybrid', 'mesh': 0}],
     'meshes': [{'name': 'CommonTree_3 wood + complete tree_small_02 leaf surfaces', 'primitives': []}],
     'accessors': [], 'bufferViews': [], 'buffers': [], 'materials': [], 'images': [], 'textures': [],
@@ -224,9 +259,9 @@ output['buffers'] = [{'byteLength': len(binary)}]
 encoded = json.dumps(output, separators=(',', ':')).encode()
 encoded += b' ' * (-len(encoded) % 4)
 glb = struct.pack('<III', 0x46546c67, 2, 12 + 8 + len(encoded) + 8 + len(binary)) + struct.pack('<II', len(encoded), 0x4e4f534a) + encoded + struct.pack('<II', len(binary), 0x004e4942) + bytes(binary)
-assert sha(glb) == '9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144', 'Final reviewed model hash mismatch'
+assert sha(glb) == '5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538', 'Reviewed full-crown model hash mismatch'
 target = TARGET.resolve(); target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(glb)
-receipt = {'kind': 'upright-broadleaf-offline-build-v1', 'artAccepted': False, 'physicsReady': False,
+receipt = {'kind': 'upright-broadleaf-full-crown-candidate-v1', 'artAccepted': False, 'physicsReady': False,
     'generator': {'file': pathlib.Path(__file__).name, 'sha256': sha(pathlib.Path(__file__).read_bytes())},
     'sourceWood': {'author': 'Quaternius', 'license': 'CC0-1.0', 'archiveSha256': EXPECTED_ARCHIVE,
         'licenseSha256': sha(license_text), 'licenseText': license_text.decode().strip(), 'gltf': 'glTF/CommonTree_3.gltf', 'gltfSha256': sha(stock_json), 'binSha256': sha(stock_bin)},
@@ -236,13 +271,14 @@ receipt = {'kind': 'upright-broadleaf-offline-build-v1', 'artAccepted': False, '
         'sourceHeight': float(stock_max[1] - stock_min[1]), 'bounds': {'min': np.minimum(wood_p.min(axis=0), lp.min(axis=0)).tolist(), 'max': np.maximum(wood_p.max(axis=0), lp.max(axis=0)).tolist()}},
     'patches': {'sourceComponents': len(patches), 'eligibleWholePatchPool': len(pool), 'occupiedSourceCards': len(card_components),
         'copies': len(positions), 'distinctSourcePatches': len(patch_usage), 'copiesPerSourceCard': 12, 'rigidRotationUniformScale': physical_scale,
-        'leafSizeRule': 'A complete source leaf is uniformly 20% larger than on a resident tree_small_02 scaled to the same overall height; UV, shape and topology remain intact.',
+        'leafSizeRule': 'A complete source leaf is uniformly 45% larger than on a resident tree_small_02 scaled to the same overall height; UV, shape and topology remain intact. Patch placement is redistributed among overlapping asymmetrical branch-side lobes.',
         'uvIndexTopologyPreservedPerPatch': True, 'rotationDeterminantMaxError': max_det_error},
+    'crownComposition': {'lobes': [{'center': c, 'radii': r, 'share': w, 'clusters': lobe_counts[i]} for i, (c, r, w) in enumerate(CROWN_LOBES)], 'clusterBounds': {'min': np.min(cluster_targets, axis=0).tolist(), 'max': np.max(cluster_targets, axis=0).tolist()}, 'leafBounds': {'min': lp.min(axis=0).tolist(), 'max': lp.max(axis=0).tolist()}, 'woodBounds': {'min': wood_p.min(axis=0).tolist(), 'max': wood_p.max(axis=0).tolist()}, 'strategy': 'Redistribute same 900 twig clusters / 10800 whole photographed patches into seven overlapping irregular ellipsoidal volumes; denser middle crown, staggered broad lower shoulders and tapered offset top. No stock card geometry or global foliage stretch.'},
     'images': image_receipts, 'tileableBark': {'author': 'Rob Tuytel', 'provider': 'Poly Haven', 'sourcePage': 'https://polyhaven.com/a/bark_brown_02', 'license': 'CC0-1.0', 'textureHashes': BARK_SHA, 'repeat': [3, 3], 'normalScale': .7},
     'checks': {'finitePNAndUV': True, 'validIndices': True, 'unitLeafNormals': True, 'under110000Triangles': True,
-        'originalWoodAttributesAndIndicesReemittedExact': True, 'withinOriginalUprightLeafBounds': True, 'originalSourceHeight': True,
+        'originalWoodAttributesAndIndicesReemittedExact': True, 'originalVerticalBounds': True, 'originalSourceHeight': True, 'intentionallyBroaderFoliageOnly': True,
         'rawLeafAndChosenTileableBarkImagesExact': True, 'noWorldRNGOrRuntimeWrites': True},
-    'limitations': ['Art/native fullness remains unaccepted; stock occupied cards are a spatial guide, not anatomical attachments.',
+    'limitations': ['Native art fullness remains unaccepted. Seven overlapping original lobes replace stock card islands; twig-cluster orientation remains based on source cards.',
         'Stock wood UVs remain exact; local tileable Bark Brown 02 is repeated [3,3], replacing the incompatible trunk atlas.',
         'Use the existing one-pass lower-case leaves preparation/configuration; do not also apply a generic stock-leaf reskin.',
         'No production LOD atlas, source selection, route/contact registration, or FPS certification.',

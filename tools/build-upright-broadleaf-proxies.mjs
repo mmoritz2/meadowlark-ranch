@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 
 export const SOURCE_FILE = 'assets/models/world/realism/upright_broadleaf_01.glb';
-export const SOURCE_SHA = '9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144';
+export const SOURCE_SHA = '5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538';
 const SOURCE_HEIGHT = 9.425189882516861;
 const SOURCE_FOOT = -.24277201294898987;
 const CELL_SIDE = .15, PADDING = .011, ROUND = 1e6;
