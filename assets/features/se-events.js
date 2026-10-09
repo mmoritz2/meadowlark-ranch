@@ -177,7 +177,7 @@ export function install(G){
   out.push({id:'__roundup',special:'roundup',town:'Meadowlark Ranch',name:'The Runaway Roundup',lvl:1,reward:650,
    blurb:'Five loose horses in the pasture and two and a half minutes to pen them. They run from whoever is closest: get on the far side and push.'});
   out.push({id:'__drill',special:'drill',town:'Meadowlark Ranch',name:'Training Drills',lvl:1,reward:0,
-   blurb:'Eight cones in a slalom, in order, against the clock. A clear round trains one of your horse\'s stats, and costs nothing but riding it well.'});
+   blurb:'Train your horse by riding eight numbered circles in the home arena. A three-second countdown gets you ready, then you have 55 seconds. Walk or trot through the turns. Every circle earns training XP and coins; a full round earns extra XP. Free to enter.'});
   return out;
  }
  function towns(){
@@ -373,9 +373,9 @@ export function install(G){
   if(ev.special==='drill'){
    const P=$('eventsPanel'), btns=P?[...P.querySelectorAll('button[data-drill]')]:[];
    main+='<div class="sev-plaque">'+esc(h.name||'Your horse')+' · Lv '+lvl+'</div><div class="sev-blurb">'+esc(ev.blurb)+'</div><div class="sev-stats">'
-    +(T.STAT_KEYS||[]).map(k=>{const b=btns.find(x=>x.dataset.drill===k);const at=(h.stats&&h.stats[k])||0;
-     return b?'<button class="se-cream" data-sev="drill:'+k+'"><span>'+esc(statLbl(k))+'</span><b>'+esc((b.textContent.match(/\d+\/\d+/)||[at])[0])+'</b></button>'
-      :'<button class="se-cream" disabled><span>'+esc(statLbl(k))+'</span><b>maxed</b></button>';}).join('')+'</div></div>';
+    +(T.STAT_KEYS||[]).map(k=>{const b=btns.find(x=>x.dataset.drill===k),at=(h.stats&&h.stats[k])||0,cap=Math.min(G.xp.statCap(h),G.xp.statCeil(h,k)),xp=h.sxp?.[k]||0,need=G.xp.statNeed(at);
+     return b&&at<cap?'<button class="se-cream" data-sev="drill:'+k+'" style="min-height:80px;display:flex;flex-direction:column;align-items:flex-start;gap:7px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+'</b><small>'+Math.min(xp,need)+' / '+need+' XP to '+(at+1)+'</small></button>'
+      :'<button class="se-cream" disabled style="min-height:80px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+' · At ceiling</b></button>';}).join('')+'</div></div>';
   }else if(ev.special==='roundup'){
    const ready=roundupReady();
    main+='<div class="sev-plaque">Home pasture</div><div class="sev-prow"><div class="sev-map">'+snapImg(venueView(ev),'')+'</div></div><div class="sev-blurb">'+esc(ev.blurb)+'</div>'
@@ -509,7 +509,7 @@ export function install(G){
   else if(k==='prepare')prepareHorse(a);
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}
   else if(k==='round'){if(!via('button[data-round="go"]'))G.toast('🐎 The roundup is not ready yet.');}
-  else if(k==='drill'){if(!via('button[data-drill="'+a+'"]'))G.toast('🎯 That stat is already as high as it can go.');}
+  else if(k==='drill'){G.course.startDrill(a);}
  });
  function prepareHorse(tab){
   const ev=evById(st.page);if(!ev||!G.seCare?.open)return;
