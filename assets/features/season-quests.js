@@ -321,20 +321,36 @@ export function install(G){
     has to know a questline exists. dailyEvt fires once a frame for a gallop, though, and it
     already spends two syncSaves getting there — so distance is banked in memory and written
     back in twenty-metre lumps, and anything counted in whole numbers goes straight through. */
+ function applyBookProgress(s,type,value){
+  const q=s.seasonQ,c=q&&book().entries[q.idx||0];
+  if(!c||q.key!==SKEY||c.evt!==type||!Number.isFinite(value)||value<=0)return null;
+  const before=q.prog||0;if(before>=c.goal)return null;
+  const after=Math.min(c.goal,before+value);q.prog=after;
+  return {key:q.key,index:q.idx||0,type,label:c.label,before,after,goal:c.goal,completed:after>=c.goal};
+ }
+ function notifyBookProgress(updates){
+  for(const entry of updates||[])if(entry.completed)toast('🗓️ '+entry.label+' — done. Wick keeps the almanac west of the ranch yard.');
+ }
  function flushQ(){
   if(pend<=0||CUR.done)return false;
-  const n=pend; pend=0; let crossed=null;
-  S.sync(s=>{ const B=book(), c=B.entries[s.seasonQ.idx||0]; if(!c)return;
-   const before=s.seasonQ.prog||0; if(before>=c.goal)return;
-   s.seasonQ.prog=Math.min(c.goal,before+n); if(s.seasonQ.prog>=c.goal)crossed=c; });
-  if(crossed)toast('🗓️ '+crossed.label+' — done. Wick keeps the almanac west of the ranch yard.');
-  return !!crossed;
+  const n=pend;pend=0;let update=null;
+  S.sync(s=>{update=applyBookProgress(s,CUR.evt,n);});
+  notifyBookProgress(update?[update]:[]);return !!update?.completed;
  }
  G.on('dailyEvt',(type,val)=>{
   if(CUR.done||type!==CUR.evt)return;
   const n=typeof val==='number'&&isFinite(val)?val:1;
   pend+=n; if(pend<(CUR.evt==='gallop'?20:1))return;
   flushQ();
+ });
+ G.trainingProgress?.register('season-almanac',(save,events)=>{
+  const updates=[];
+  for(const e of events||[])if(e&&['cleanjump','sxp','drill'].includes(e.type)){const update=applyBookProgress(save,e.type,e.value);if(update)updates.push(update);}
+  return {updates};
+ },summary=>{
+  // Whole-number training events never enter the gallop buffer. Refresh the live
+  // cursor only after its draft has been durably saved, without another write.
+  syncCur();notifyBookProgress(summary?.updates);
  });
  function claimEntry(){
   flushQ();

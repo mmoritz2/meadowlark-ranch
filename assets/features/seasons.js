@@ -125,7 +125,7 @@ export function install(G){
    {id:'em-photo',type:'photo',goal:4,icon:'📷',label:'Take four photographs',r:{tok:8,p:40}},
    {id:'em-emote',type:'emote',goal:6,icon:'🎭',label:'Play six emotes for company',r:{tok:12,p:60}}],
   frost:[
-   {id:'fr-train',type:'train',goal:10,icon:'🎯',label:'Ten training drills',r:{tok:8,p:40}},
+   {id:'fr-train',type:'drill',goal:10,icon:'🎯',label:'Ten training drills',r:{tok:8,p:40}},
    {id:'fr-care',type:'brush',goal:12,icon:'🧽',label:'Brush a horse twelve times',r:{tok:8,p:40}},
    {id:'fr-xc',type:'xc',goal:2,icon:'🌲',label:'Finish two cross-country runs',r:{tok:12,p:60}}],
  };
@@ -139,35 +139,51 @@ export function install(G){
     looks at is rounded down, which also keeps a bar from claiming a goal it has not reached. */
  const chalProg=(s,c)=>Math.min(c.goal,Math.floor((s&&s.sn&&s.sn.prog&&s.sn.prog[c.id])||0));
  const weekDone=s=>chalOf().every(c=>chalDone(s,c));
- /* dailyEvt fires on nearly every action in the game, so the cheap test comes first and the
-    save is only opened when this season actually cares about the thing that happened. */
- G.on('dailyEvt',(type,val)=>{
-  const list=chalOf();
-  if(!list.some(c=>c.type===type))return;
-  let crossed=null, banked=false;
-  S.sync(s=>{
-   const st=s.sn=s.sn||{prog:{},paid:{},store:{},weeks:0,key:'',wk:''};
-   rollState(st); rollWeek(st);
-   for(const c of list){
-    if(c.type!==type||st.paid[c.id])continue;
-    /* Rounded to three places so a fractional emitter cannot drift the save into float noise
-       over a week of galloping; the display floors this again. */
-    st.prog[c.id]=Math.min(c.goal,Math.round(((st.prog[c.id]||0)+(val||1))*1e3)/1e3);
-    if(st.prog[c.id]>=c.goal){ st.paid[c.id]=1; M.payReward(s,c.r); crossed=c; }
-   }
-   const wkTag='week:'+st.wk;
-   if(crossed&&list.every(c=>st.paid[c.id])&&!st.paid[wkTag]){ st.paid[wkTag]=1; st.weeks=(st.weeks||0)+1; M.payReward(s,WEEK_BONUS); banked=true; }
-  });
-  if(!crossed)return;
-  try{M.refreshWallet();}catch(e){}
-  try{G.sChime();}catch(e){}
-  toast(crossed.icon+' Seasonal challenge done: '+crossed.label+' — '+M.rewardLabel(crossed.r));
-  if(banked){
-   try{G.sGem();}catch(e){}
-   setTimeout(()=>{try{toast('🏅 Every challenge this week — the 👑 gold track is open for the rest of '+sn().def.name+', no gems needed. '+M.rewardLabel(WEEK_BONUS));}catch(e){}},900);
+ // Mutate only the supplied save, including automatic challenge/week payouts.
+ // Both normal daily events and durable training receipts share this calculation.
+ function payTrainingChallenge(s,reward){
+  for(const [kind,value] of Object.entries(reward||{})){
+   if(!value)continue;const pay=T.REWARD_KINDS?.[kind]?.pay;
+   if(typeof pay!=='function')throw new Error('Unknown training challenge reward: '+kind);
+   pay(s,value,reward);
   }
-  rerender();
+ }
+ function applyChallengeEvents(s,events,pay=M.payReward){
+  const list=chalOf(),matching=(events||[]).filter(e=>e&&Number.isFinite(e.value)&&e.value>0&&list.some(c=>c.type===e.type));
+  const summary={updates:[],completed:[],banked:false};if(!matching.length)return summary;
+  const st=s.sn=s.sn||{prog:{},paid:{},store:{},weeks:0,key:'',wk:''};
+  rollState(st);rollWeek(st);
+  for(const e of matching)for(const c of list){
+   if(c.type!==e.type||st.paid[c.id])continue;
+   const before=st.prog[c.id]||0,after=Math.min(c.goal,Math.round((before+e.value)*1e3)/1e3);st.prog[c.id]=after;
+   if(after!==before)summary.updates.push({id:c.id,label:c.label,before,after,goal:c.goal});
+   if(after>=c.goal){st.paid[c.id]=1;pay(s,c.r);summary.completed.push({id:c.id,label:c.label,icon:c.icon,reward:{...c.r}});}
+  }
+  const wkTag='week:'+st.wk;
+  if(summary.completed.length&&list.every(c=>st.paid[c.id])&&!st.paid[wkTag]){
+   st.paid[wkTag]=1;st.weeks=(st.weeks||0)+1;pay(s,WEEK_BONUS);
+   summary.banked=true;summary.seasonName=sn().def.name;summary.weekReward={...WEEK_BONUS};
+  }
+  return summary;
+ }
+ function notifyChallengeProgress(summary){
+  if(!summary?.completed?.length)return;
+  try{G.sChime();}catch(e){}
+  for(const c of summary.completed)toast(c.icon+' Seasonal challenge done: '+c.label+' — '+M.rewardLabel(c.reward));
+  if(summary.banked){
+   try{G.sGem();}catch(e){}
+   setTimeout(()=>{try{toast('🏅 Every challenge this week — the 👑 gold track is open for the rest of '+summary.seasonName+', no gems needed. '+M.rewardLabel(summary.weekReward));}catch(e){}},900);
+  }
+ }
+ /* Avoid opening a save when this season does not count the event. */
+ G.on('dailyEvt',(type,val)=>{
+  if(!chalOf().some(c=>c.type===type))return;
+  let summary;S.sync(s=>{summary=applyChallengeEvents(s,[{type,value:val||1}]);});
+  if(!summary?.completed.length)return;
+  try{M.refreshWallet();}catch(e){}
+  notifyChallengeProgress(summary);rerender();
  });
+ G.trainingProgress?.register('season-challenges',(save,events)=>applyChallengeEvents(save,(events||[]).filter(e=>e&&['cleanjump','sxp','drill'].includes(e.type)),payTrainingChallenge),notifyChallengeProgress);
  G.on('weekRoll',s=>{ if(s&&s.sn)rollWeek(s.sn); });
  G.on('seasonRoll',s=>{ if(s&&s.sn)rollState(s.sn); applyPassLayer(); });
 

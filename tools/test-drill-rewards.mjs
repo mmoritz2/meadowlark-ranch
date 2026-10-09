@@ -12,12 +12,24 @@ function section(start,end){
 }
 const completion=section('function endDrill(done){','function tickDrill(dt,t){');
 const grant=section('function grantStatXp(s,h,k,xp,why){','/* Tack as gear.');
+const levelLoop=section('function applyXp(s,h,n){','/* XP for the horse being ridden.');
+const daily=section('function dailyTypeAliases(type){','const _dailyMemo=')+
+ section('function todayDailyRoll(ds){','function dailyEvt(type,val){');
+const levelCap=Function(section('function statCap(h){','function statCeil(h,k){')+'return statCap;')();
+const storyCursor=section('let trainingStorySyncedRunId=null;','function storyText(t){');
+const storyEvent=section('function questEvt(type,val){','function npcShort(def){');
+const dialogueClaim=section(" $('dlgBtn').onclick=()=>{\n  syncPendingTrainingStory();",'\n };\n}\nfunction makeNPC(def){');
+const keys=['speed','stamina','jump','accel','agility'];
 function fixture(options={}){
- const horse={id:'trained',name:'Willow',level:1,stats:{speed:2,jump:2},sxp:{speed:0,jump:0},...options.horse};
- let stored=JSON.stringify({coins:100,stats:{drills:2,earned:0},pass:{pts:5},horses:[horse,{id:'other',name:'Fern',stats:{speed:1},sxp:{speed:0}}]});
- const trace={events:[],toasts:[],writes:0,refresh:0,reload:0,chime:0,coin:0,removed:0,geometry:0,material:0,texture:0,sharedGeometry:0,unrelatedMaterial:0,cleared:0,practice:[],clinicCalls:[]};
+ const horse={id:'trained',name:'Willow',level:1,xp:0,stats:{speed:2,jump:2},sxp:{speed:0,jump:0},...options.horse};
+ const dailyRows=[{type:'cleanjump',label:'Clear practice jumps',goal:100},{type:'sxp',label:'Raise horse stats',goal:100},{type:'drill',label:'Complete training',goal:100}].map(row=>({...row,goal:options.dailyGoals?.[row.type]??row.goal}));
+ let stored=JSON.stringify({coins:100,stats:{drills:2,earned:0},pass:{pts:5},
+  dq:{date:new Date().toDateString(),roll:dailyRows.map(row=>row.type),prog:{},claimed:{}},
+  story:{idx:0,prog:options.storyBefore??0},
+  horses:[horse,{id:'other',name:'Fern',level:1,xp:0,stats:{speed:1},sxp:{speed:0}}]});
+ const trace={reads:0,claims:0,events:[],toasts:[],writes:0,refresh:0,reload:0,chime:0,coin:0,removed:0,geometry:0,material:0,texture:0,sharedGeometry:0,unrelatedMaterial:0,cleared:0,practice:[],clinicCalls:[],multiplied:[],draftApplications:0,confirmations:[]};
  const clinic={misses:2,cleared:8,...options.clinic};
- let failure=options.failure,readsFail=false;
+ let failure=options.failure,readsFail=false,readFailures=0,moduleFailure=options.moduleFailure;
  const cone={isMesh:true,geometry:{dispose(){trace.geometry++;}},material:{dispose(){trace.material++;}}};
  const spriteGeometry={dispose(){trace.sharedGeometry++;}};
  const numberSprite={isSprite:true,geometry:spriteGeometry,material:{map:{dispose(){trace.texture++;}},dispose(){trace.material++;}}};
@@ -30,19 +42,28 @@ function fixture(options={}){
  const localStorage={setItem(key,value){
   if(failure==='write')throw Error('storage full');
   stored=value;trace.writes++;
+  if(failure==='readback')readsFail=true;
   if(failure==='after-write')throw Error('wrapper failed after write');
- },getItem(){if(readsFail)throw Error('read unavailable');return stored;}};
+ },getItem(){trace.reads++;if(readFailures>0){readFailures--;throw Error('read unavailable');}if(readsFail)throw Error('read unavailable');return stored;}};
  const freshSave=()=>{try{return JSON.parse(localStorage.getItem());}catch{return null;}};
- const bindings={setPracticeJumps:on=>trace.practice.push(on),DRILL,DRILL_N:8,DRILL_TIME:55,nameSprites,scene:{remove(){trace.removed++;}},$:()=>hud,course:null,arrow,
+ const bindings={QUEST_TYPES:{},syncSave(fn){try{const draft=JSON.parse(localStorage.getItem());fn(draft);localStorage.setItem('isolated-fixture',JSON.stringify(draft));}catch{}},payReward:()=>trace.claims++,setPracticeJumps:on=>trace.practice.push(on),DRILL,DRILL_N:8,DRILL_TIME:55,nameSprites,scene:{remove(){trace.removed++;}},$:()=>hud,course:null,arrow,
   myHorses:JSON.parse(stored).horses,rideIdx:options.rideIdx??0,STAT_LBL:{speed:'💨 Speed',jump:'⤴️ Jump'},
   VIPON:!!options.vip,VIP_PASS:1.5,freshSave,localStorage,SAVE_KEY:'isolated-fixture',
-  ensureStats:h=>{h.sxp??={};},statCap:()=>options.cap??4,statCeil:()=>options.cap??4,
-  statNeed:v=>20+10*v,mulOf:()=>options.multiplier??1,addSP:(s,n)=>{s.starPoints=(s.starPoints||0)+n;},
+  MAX_LEVEL:50,STAT_KEYS:keys,Math:Object.assign(Object.create(Math),{random:()=>options.random??0}),
+  ensureStats:h=>{h.sxp??={};},statCap:options.dynamicCaps?levelCap:()=>options.cap??4,statCeil:()=>options.breedCap??options.cap??4,
+  DAILYQ:dailyRows,DAILY_N:3,STORY:[{type:options.storyType??'cleanjump',label:'A clean jumping partnership',goal:options.storyGoal??100,npc:'wren'},{type:'photo',goal:1,npc:'wren'}],
+  NPC_DEFS:[{id:'wren',name:'Wren'}],storyIdx:0,storyProg:options.storyBefore??0,_dailyMemo:{key:'cached',list:null},
+  statNeed:v=>20+10*v,mulOf:(type,s,h)=>{trace.multiplied.push({type,horseId:h?.id});return type==='xp'?options.horseMultiplier??1:options.multiplier??1;},addSP:(s,n)=>{s.starPoints=(s.starPoints||0)+n;},
   logEarn:(s,n)=>{s.stats.earned+=n;},refreshWallet:()=>trace.refresh++,reloadHorses:()=>trace.reload++,
   sChime:()=>trace.chime++,sCoin:()=>trace.coin++,toast:m=>trace.toasts.push(m),
-  G:{jumpTraining:{snapshot(){trace.clinicCalls.push('snapshot');return structuredClone(clinic);},stop(){trace.clinicCalls.push('stop');Object.assign(clinic,{misses:0,cleared:0});}},run:(name,result)=>trace.events.push({name,result:structuredClone(result)})}};
- const api=new Function(...Object.keys(bindings),grant+completion+'return {endDrill,retryDrillSave};')(...Object.values(bindings));
- return {api,DRILL,trace,clinic,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},
+  G:{trainingProgress:{apply(s,events){
+   trace.draftApplications++;s.moduleProgress??={};
+   for(const event of events)s.moduleProgress[event.type]=(s.moduleProgress[event.type]||0)+event.value;
+   if(moduleFailure)throw Error('draft progress unavailable');
+   return {fixture:{events:structuredClone(events)}};
+  },confirmed(receipt){trace.confirmations.push(structuredClone(receipt));}},jumpTraining:{snapshot(){trace.clinicCalls.push('snapshot');return structuredClone(clinic);},stop(){trace.clinicCalls.push('stop');Object.assign(clinic,{misses:0,cleared:0});}},run:(name,result)=>trace.events.push({name,result:structuredClone(result)})}};
+ const api=new Function(...Object.keys(bindings),grant+levelLoop+daily+completion+storyCursor+storyEvent+'return {endDrill,retryDrillSave,questEvt,saveStory,missionDone,makeClaimCallback(m,openedIdx,mine,def){'+dialogueClaim+'\n };return $(\'dlgBtn\').onclick;},liveProgress(){return {storyIdx,storyProg,dailyKey:_dailyMemo.key};}};')(...Object.values(bindings));
+ return {api,DRILL,trace,clinic,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},set moduleFailure(v){moduleFailure=v;},failNextReads(n){readFailures=n;},persistStory(story){const s=JSON.parse(stored);s.story=story;stored=JSON.stringify(s);},reorder(){const s=JSON.parse(stored);s.horses.reverse();stored=JSON.stringify(s);},
   removeHorse(){const s=JSON.parse(stored);s.horses=s.horses.filter(h=>h.id!==horse.id);stored=JSON.stringify(s);}};
 }
 
@@ -179,4 +200,156 @@ test('partial and empty jump sessions dispose the clinic and only pay landed jum
  assert.deepEqual(partial.trace.clinicCalls,['snapshot','stop']);
  const empty=fixture({drill:{stat:'jump',idx:0,timeLimit:120,t:110,elapsed:10,grp:null,cones:[]}});empty.api.endDrill(false);empty.api.endDrill(false);
  assert.deepEqual(empty.trace.clinicCalls,['snapshot','stop']);assert.equal(empty.trace.writes,0);assert.equal(empty.DRILL.pending,undefined);assert.equal(empty.trace.events.length,0);
+});
+
+
+test('horse XP and actual clean-jump quest credit commit with rewards in one write',()=>{
+ const f=fixture({dailyGoals:{cleanjump:5,sxp:1,drill:1},storyGoal:5,
+  drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),true);const s=f.save,r=s.lastTraining,h=s.horses[0];
+ assert.equal(f.trace.writes,1);assert.equal(h.xp,24);assert.equal(h.level,1);
+ assert.deepEqual(r.growth.before,{level:1,xp:0});assert.deepEqual(r.growth.after,{level:1,xp:24});
+ assert.equal(r.growth.horseXp,24);assert.equal(r.growth.levels,0);assert.deepEqual(r.growth.statGains,{});
+ assert.equal(r.growth.nextTrainingLevel,null);assert.equal(r.growth.breedCap,4);assert.equal(r.growth.nextLevelXp,100);
+ assert.equal(r.progress.cleanJumps,8);assert.equal(r.progress.statsRaised,1);assert.equal(s.stats.jumps,8);
+ assert.deepEqual(s.dq.prog,{cleanjump:5,sxp:1,drill:1});assert.equal(s.story.prog,5);
+ assert.deepEqual(s.moduleProgress,{cleanjump:8,sxp:1,drill:1});
+ assert.equal(f.trace.draftApplications,1);assert.equal(f.trace.confirmations.length,1);
+ assert.deepEqual(f.api.liveProgress(),{storyIdx:0,storyProg:5,dailyKey:''});
+ assert.equal(r.progress.dailyDone.length,3);assert.equal(r.progress.story.after,5);
+ assert(f.trace.toasts.some(message=>message.includes('Daily quest done')));
+ assert(f.trace.toasts.some(message=>message.includes('Ride back and tell Wren')));
+});
+test('horse XP multipliers apply to the original horse despite selection and persisted reorder',()=>{
+ const f=fixture({rideIdx:1,horseMultiplier:1.5});f.reorder();assert.equal(f.api.endDrill(true),true);
+ const target=f.save.horses.find(h=>h.id==='trained'),other=f.save.horses.find(h=>h.id==='other');
+ assert.equal(target.xp,36);assert.equal(other.xp,0);assert.equal(f.save.lastTraining.growth.horseXp,36);
+ assert(f.trace.multiplied.some(row=>row.type==='xp'&&row.horseId==='trained'));
+ assert.equal(f.trace.multiplied.some(row=>row.horseId==='other'),false);assert.equal(f.trace.writes,1);
+});
+test('pre-write failure persists no horse XP or quest progress and emits no confirmation',()=>{
+ const f=fixture({failure:'write',dailyGoals:{cleanjump:1,sxp:1,drill:1},storyGoal:1,
+  drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}}),before=f.save;
+ assert.equal(f.api.endDrill(true),false);assert.deepEqual(f.save,before);assert.equal(f.trace.writes,0);
+ assert.equal(f.trace.confirmations.length,0);assert.equal(f.api.liveProgress().dailyKey,'cached');
+ assert.equal(f.trace.toasts.some(message=>/Daily quest done|Ride back and tell/.test(message)),false);
+ f.failure=null;assert.equal(f.api.retryDrillSave(),true);const saved=f.save;
+ assert.equal(saved.horses[0].xp,24);assert.equal(saved.stats.jumps,8);assert.equal(saved.story.prog,1);
+ assert.deepEqual(saved.moduleProgress,{cleanjump:8,sxp:1,drill:1});assert.equal(f.trace.confirmations.length,1);assert.equal(f.trace.writes,1);
+ assert.equal(f.api.retryDrillSave(),false);assert.deepEqual(f.save,saved);
+});
+test('post-write failure and repeated acknowledgement never double horse XP or quest credit',()=>{
+ const f=fixture({failure:'after-write',dailyGoals:{cleanjump:1,sxp:1,drill:1},storyGoal:1,
+  drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),false);const saved=f.save;
+ assert.equal(saved.horses[0].xp,24);assert.equal(saved.stats.jumps,8);assert.equal(saved.story.prog,1);
+ assert.equal(f.trace.confirmations.length,0);assert.equal(f.trace.draftApplications,1);assert.equal(f.trace.writes,1);
+ f.failure=null;assert.equal(f.api.retryDrillSave(),true);assert.deepEqual(f.save,saved);
+ assert.equal(f.trace.draftApplications,1);assert.equal(f.trace.confirmations.length,1);assert.equal(f.trace.writes,1);
+ assert.equal(f.api.retryDrillSave(),false);f.api.endDrill(true);assert.deepEqual(f.save,saved);assert.equal(f.trace.confirmations.length,1);
+});
+test('a throwing draft progress reducer aborts the full reward transaction and remains retryable',()=>{
+ const f=fixture({moduleFailure:true,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}}),before=f.save;
+ assert.equal(f.api.endDrill(true),false);assert.deepEqual(f.save,before);assert.equal(f.trace.writes,0);assert.equal(f.trace.confirmations.length,0);
+ assert.match(f.DRILL.pending.reason,/draft progress unavailable/);f.moduleFailure=false;
+ assert.equal(f.api.retryDrillSave(),true);assert.equal(f.trace.writes,1);assert.equal(f.save.horses[0].xp,24);assert.equal(f.save.stats.jumps,8);
+});
+test('capped level-four jump practice earns horse XP and opens the level-five stat cap',()=>{
+ const f=fixture({dynamicCaps:true,breedCap:8,horse:{level:4,xp:249,stats:{speed:4,stamina:4,jump:4,accel:4,agility:4},sxp:{jump:0}},
+  drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),true);const r=f.save.lastTraining,h=f.save.horses[0];
+ assert.deepEqual(r.before,{value:4,xp:0,cap:4});assert.deepEqual(r.after,{value:4,xp:0,cap:5});
+ assert.equal(r.statXp,0);assert.equal(r.statRaised,0);assert.equal(r.growth.horseXp,24);assert.equal(r.growth.levels,1);
+ assert.deepEqual(r.growth.before,{level:4,xp:249});assert.deepEqual(r.growth.after,{level:5,xp:23});
+ assert.equal(h.level,5);assert.equal(h.xp,23);assert(h.stats.jump<r.after.cap,'this horse can now train Jump');
+ assert.deepEqual(r.growth.statGains,{speed:1});assert.equal(r.progress.statsRaised,1);
+ assert.equal(r.growth.nextTrainingLevel,10);assert.equal(r.growth.nextLevelXp,300);assert.equal(f.trace.writes,1);
+});
+test('level bonus stat gains count for progress without inflating drill stat XP or raises',()=>{
+ const f=fixture({horse:{xp:99,stats:{speed:2,stamina:4,jump:4,accel:4,agility:4},sxp:{speed:0}},dailyGoals:{sxp:2}});
+ assert.equal(f.api.endDrill(true),true);const r=f.save.lastTraining;
+ assert.equal(r.statXp,46);assert.equal(r.statRaised,1);assert.equal(r.after.value,4);
+ assert.deepEqual(r.growth.statGains,{speed:1});assert.equal(r.growth.horseXp,24);assert.equal(r.growth.after.level,2);assert.equal(r.growth.after.xp,23);
+ assert.equal(r.progress.statsRaised,2);assert.equal(f.save.dq.prog.sxp,2);assert.equal(f.save.life.sxp,2);
+ assert.equal(r.progress.cleanJumps,0);assert.equal(f.save.stats.jumps,undefined);assert.equal(f.save.story.prog,0);
+});
+test('MAX_LEVEL practice retains zero horse XP and no false leveling or future cap promise',()=>{
+ const f=fixture({dynamicCaps:true,breedCap:10,horse:{level:50,xp:0,stats:{speed:10,stamina:10,jump:10,accel:10,agility:10},sxp:{jump:0}},
+  drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),true);const r=f.save.lastTraining;
+ assert.equal(r.growth.horseXp,0);assert.equal(r.growth.levels,0);assert.deepEqual(r.growth.before,r.growth.after);
+ assert.equal(r.growth.nextTrainingLevel,null);assert.deepEqual(r.growth.statGains,{});assert.equal(r.statXp,0);assert.equal(r.statRaised,0);
+ assert.equal(f.save.horses[0].xp,0);assert.equal(f.save.stats.jumps,8);assert.equal(f.save.coins,164);assert.equal(f.trace.writes,1);
+});
+test('a jump session reaching MAX_LEVEL reports only horse XP retained before its ceiling',()=>{
+ const f=fixture({dynamicCaps:true,breedCap:10,horse:{level:49,xp:2495,stats:{speed:10,stamina:10,jump:10,accel:10,agility:10},sxp:{jump:0}},
+  drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),true);const r=f.save.lastTraining;
+ assert.equal(r.growth.horseXp,5);assert.equal(r.growth.levels,1);assert.deepEqual(r.growth.after,{level:50,xp:0});assert.equal(r.growth.nextTrainingLevel,null);
+});
+test('partial training credits only landed jumps and actual stat gains, never a completed drill',()=>{
+ const f=fixture({drill:{stat:'jump',idx:3,timeLimit:120,t:0,grp:null,cones:[]},storyGoal:20});
+ assert.equal(f.api.endDrill(false),true);const s=f.save,r=s.lastTraining;
+ assert.equal(r.growth.horseXp,9);assert.equal(s.horses[0].xp,9);assert.equal(s.stats.jumps,3);assert.equal(s.story.prog,3);
+ assert.deepEqual(s.moduleProgress,{cleanjump:3});assert.equal(s.life.cleanjump,3);assert.equal(s.life.drill,undefined);
+ assert.equal(s.dq.prog.drill,undefined);assert.equal(s.stats.drills,2);assert.equal(r.progress.statsRaised,0);assert.equal(f.trace.writes,1);
+});
+
+
+test('a persisted clinic receipt reconciles story before later riding after a post-write throw',()=>{
+ const f=fixture({failure:'after-write',storyGoal:20,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),false);assert.equal(f.save.story.prog,8);assert.equal(f.api.liveProgress().storyProg,0);
+ f.failure=null;f.api.questEvt('cleanjump',1);
+ assert.equal(f.save.story.prog,9);assert.equal(f.api.liveProgress().storyProg,9);assert.equal(f.trace.confirmations.length,0);
+ assert.equal(f.trace.claims,0);assert.equal(f.trace.toasts.some(m=>/Daily quest done|Ride back and tell/.test(m)),false);
+ const reads=f.trace.reads;for(let n=0;n<5;n++)f.api.missionDone();assert.equal(f.trace.reads,reads,'a reconciled pending run does not read storage every frame');
+ assert.equal(f.api.retryDrillSave(),true);assert.equal(f.save.story.prog,9);assert.equal(f.save.lastTraining.progress.story.after,8);assert.equal(f.save.horses[0].xp,24);
+});
+
+test('failed initial receipt readback recovers silently when storage becomes readable before questEvt',()=>{
+ const f=fixture({failure:'readback',storyGoal:20,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),false);assert.equal(f.save.story.prog,8);assert.equal(f.api.liveProgress().storyProg,0);
+ f.failure=null;f.readsFail=false;f.api.questEvt('cleanjump',1);
+ assert.equal(f.save.story.prog,9);assert.equal(f.api.liveProgress().storyProg,9);assert.equal(f.trace.confirmations.length,0);
+ assert.equal(f.api.retryDrillSave(),true);assert.equal(f.save.story.prog,9);assert.equal(f.trace.claims,0);
+});
+
+test('recovery between questEvt entry read and save rebases its one new jump onto the durable cursor',()=>{
+ const f=fixture({failure:'after-write',storyGoal:20,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ f.api.endDrill(true);f.failure=null;f.failNextReads(1);f.api.questEvt('cleanjump',1);
+ assert.equal(f.save.story.prog,9);assert.equal(f.api.liveProgress().storyProg,9);assert.equal(f.trace.claims,0);assert.equal(f.trace.confirmations.length,0);
+ f.api.questEvt('cleanjump',1);assert.equal(f.save.story.prog,10,'new riding progress is counted once after reconciliation');
+});
+
+test('direct stale story writes cannot erase durable clinic credit',()=>{
+ const f=fixture({failure:'after-write',storyGoal:20,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ f.api.endDrill(true);f.failure=null;f.api.saveStory();
+ assert.equal(f.save.story.prog,8);assert.equal(f.api.liveProgress().storyProg,8);assert.equal(f.trace.claims,0);assert.equal(f.trace.confirmations.length,0);
+});
+
+test('pending recovery reads an already claimed successor instead of replaying the receipt mission',()=>{
+ const f=fixture({failure:'after-write',storyGoal:5,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ f.api.endDrill(true);f.failure=null;f.persistStory({idx:1,prog:0,clues:['keep']});
+ const oldMission={type:'cleanjump',goal:5,npc:'wren',reward:{c:999}},callback=f.api.makeClaimCallback(oldMission,0,true,{id:'wren'});
+ callback();assert.equal(f.trace.claims,0,'the actual captured dialogue callback cannot pay the old mission');
+ assert.deepEqual(f.save.story,{idx:1,prog:0,clues:['keep']});assert.deepEqual(f.api.liveProgress(),{storyIdx:1,storyProg:0,dailyKey:'cached'});
+ f.api.questEvt('cleanjump',1);assert.equal(f.save.story.prog,0);assert.equal(f.api.retryDrillSave(),true);assert.equal(f.save.story.idx,1);assert.equal(f.save.story.prog,0);
+ assert.equal(f.trace.toasts.some(m=>m.includes('Ride back and tell')),false,'retry must not announce an already claimed receipt mission');
+ f.api.questEvt('photo',1);assert.equal(f.save.story.prog,1,'normal successor progress remains usable');
+});
+
+test('save-time recovery cannot rewind a successor when the entry read was unavailable',()=>{
+ const f=fixture({failure:'after-write',storyGoal:20,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ f.api.endDrill(true);f.failure=null;f.persistStory({idx:1,prog:0});f.failNextReads(1);f.api.questEvt('cleanjump',1);
+ assert.deepEqual(f.save.story,{idx:1,prog:0});assert.equal(f.api.liveProgress().storyIdx,1);assert.equal(f.trace.claims,0);
+ assert.equal(f.trace.toasts.some(m=>m.includes('Ride back and tell')),false);
+});
+
+
+test('an old dialogue cannot claim while all cursor reads fail or recover to a completed successor',()=>{
+ const f=fixture({failure:'after-write',storyBefore:5,storyGoal:5,drill:{stat:'jump',timeLimit:120,t:60,grp:null,cones:[]}});
+ f.api.endDrill(true);f.failure=null;f.persistStory({idx:1,prog:1});
+ const callback=f.api.makeClaimCallback({type:'cleanjump',goal:5,npc:'wren',reward:{c:999}},0,true,{id:'wren'});
+ f.failNextReads(2);callback();assert.equal(f.trace.claims,0);assert.deepEqual(f.save.story,{idx:1,prog:1});
+ callback();assert.equal(f.trace.claims,0);assert.equal(f.api.liveProgress().storyIdx,1);assert.deepEqual(f.save.story,{idx:1,prog:1});
 });

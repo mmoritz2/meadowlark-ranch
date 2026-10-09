@@ -656,15 +656,29 @@ export function install(G){
  function turnInSide(qid){const q=SIDE_BY[qid];if(!q)return;let ok=false;S.sync(s=>{const a=s.side.active[qid];if(!a||a.p<q.goal)return;delete s.side.active[qid];s.side.done[qid]=q.repeat==='weekly'?G.time.weekKey():true;s.side.n=(s.side.n||0)+1;s.stats=s.stats||{};s.stats.side=(s.stats.side||0)+1;M.payReward(s,q.reward);ok=true;});
   if(!ok)return;M.refreshWallet();try{H.refreshTack();}catch(e){}G.sGem();toast('📌 Side quest done! +'+M.rewardLabel(q.reward));$('dlg').style.display='none';Q.dailyEvt('side',1);}   // the dailyEvt bridge also counts it for a 'side' story mission
  const pend={gallop:0,t:0};
- function sideEvt(type,val,x){
-  const s=fresh(); if(!s.side)return; const act=s.side.active; const ids=Object.keys(act); if(!ids.length)return;
-  const upd={}; const doneNow=[];
-  for(const id of ids){const q=SIDE_BY[id];if(!q||q.type!==type)continue;if(q.item&&q.item!==x)continue;if(q.ev&&q.ev!==x)continue;if(q.talk&&q.talk!==x)continue;
-   const a=act[id];const before=a.p||0;if(before>=q.goal)continue;const np=Math.min(q.goal,before+val);if(np===before)continue;upd[id]=np;if(np>=q.goal)doneNow.push(q);}
-  if(!Object.keys(upd).length)return;
-  S.sync(sv=>{for(const id in upd)if(sv.side.active[id])sv.side.active[id].p=upd[id];});
-  for(const q of doneNow)toast('📌 Side quest done: '+q.label+' — tell '+npcShort(q.npc)+'!');
+ // This reducer never opens storage: training includes these counters in its reward save.
+ function applySideProgress(s,type,val,x){
+  const updates=[];
+  if(!s.side?.active||!Number.isFinite(val)||val<=0)return updates;
+  for(const [id,a] of Object.entries(s.side.active)){
+   const q=SIDE_BY[id];if(!q||q.type!==type||q.item&&q.item!==x||q.ev&&q.ev!==x||q.talk&&q.talk!==x)continue;
+   const before=a.p||0;if(before>=q.goal)continue;const after=Math.min(q.goal,before+val);if(after===before)continue;
+   a.p=after;updates.push({id,label:q.label,npc:q.npc,before,after,goal:q.goal,completed:after>=q.goal});
+  }
+  return updates;
  }
+ function notifySideProgress(updates){
+  for(const q of updates||[])if(q.completed)toast('📌 Side quest done: '+q.label+' — tell '+npcShort(q.npc)+'!');
+ }
+ function sideEvt(type,val,x){
+  const s=fresh();if(!applySideProgress(s,type,val,x).length)return;
+  let updates=[];S.sync(sv=>{updates=applySideProgress(sv,type,val,x);});notifySideProgress(updates);
+ }
+ G.trainingProgress?.register('side-quests',(save,events)=>{
+  const updates=[];
+  for(const e of events||[])if(e&&['cleanjump','sxp','drill'].includes(e.type))updates.push(...applySideProgress(save,e.type,e.value));
+  return {updates};
+ },summary=>notifySideProgress(summary?.updates));
  function openSideTab(){try{G.ui.openQuests();}catch(e){}const b=document.querySelector('[data-q="tab:side"]');if(b)b.click();}
  /* a notice board by the arena that opens the side-quest log */
  {const g=new THREE.Group(); const x=5,z=-3; for(const bx of[-0.6,0.6])W.box(0.1,1.9,0.1,'#5a3d22',bx,0.95,0,g); W.box(1.7,1.0,0.08,'#e9dcc0',0,1.6,0,g); W.box(1.9,0.12,0.16,'#8a6745',0,2.15,0,g); const sp=G.nameSprite('📌 Quest board'); sp.position.y=2.6; g.add(sp); g.position.set(x,W.groundH(x,z),z); g.rotation.y=Math.PI*0.15; g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
