@@ -449,7 +449,11 @@ export function install(G){
   const s=S(), i=idxOf(s,st.sel); if(i<0)return; const h=s.horses[i], id=h.id, state=stateOf(h,i,G.horse.rideIdx());
   if(which==='secondary'){ if(state==='ridden')openOverview(id,'feeding'); else if(state==='adult')openOverview(id,'horse'); else openSheet(id); return; }
   if(state==='ridden')openOverview(id,'horse');
-  else if(state==='adult'){ if(!via('[data-st="ride:'+i+'"]')){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(i);sel.onchange();}} setTimeout(()=>G.hidePanels(),0); }   // riding puts you on the horse and closes the menu, like the Overview's RIDE
+  else if(state==='adult'){
+   if(!via('[data-st="ride:'+i+'"]')){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(i);sel.onchange();}}
+   const onBack=K.takeBack('stablePanel');
+   setTimeout(()=>{G.hidePanels();onBack?.();},0);   // Return to preparation when called from there; otherwise go riding.
+  }
   else if(state==='foal')via('[data-st="eq:'+i+'"]');
   else via('[data-fx="breed:warm"]');                            // warms the oldest egg, the game's own rule; it says so when it is too soon
  }

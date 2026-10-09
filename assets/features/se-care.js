@@ -243,9 +243,10 @@ export function install(G){
   const i=G.horse.rideIdx(), h=(fresh()?.horses||[])[i], horseId=h&&h.id, tab=ST.tab, scroll=$('seOvBody').scrollTop;
   const returnOptions={onBack:ST.onBack,label:ST.backLabel};
   const returnOverview=()=>{
-   // Find the same horse by identity: breeding or stable actions can reorder the herd.
+   // Stable is a horse-selection destination; keep the player's choice there.
+   // Other detours return to the same horse, even if the herd was reordered.
    const horses=fresh()?.horses||[], index=horses.findIndex(h=>h.id===horseId);
-   if(index>=0&&index!==G.horse.rideIdx()&&!horses[index].foal){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(index);sel.onchange();}}
+   if(what!=='stable'&&index>=0&&index!==G.horse.rideIdx()&&!horses[index].foal){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(index);sel.onchange();}}
    open(tab,returnOptions); $('seOvBody').scrollTop=scroll;
   };
   close();

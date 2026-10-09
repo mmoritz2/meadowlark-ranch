@@ -708,7 +708,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=jump-clinic-1';
+import {FEATURES} from './assets/features/index.js?v=event-training-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 const HORSE_ARRIVAL=createHorseArrival();
@@ -1424,17 +1424,24 @@ function applyXp(s,h,n){
    breed mastery, VIP, whatever a package adds). trainXp used to skip all of them. */
 function addXp3D(n,opts){
  opts=opts||{};
+ const horseId=myHorses[rideIdx]?.id;if(horseId==null)return;
  let res=null,name='';
  syncSave(s=>{
-  const h=s.horses[rideIdx];
+  const h=s.horses.find(h=>h.id===horseId);
   if(!h)return;
   name=h.name;
   res=applyXp(s,h,Math.round(n*mulOf('xp',s,h)));
   if(res.leveled&&opts.coinsPerLevel){const c=opts.coinsPerLevel*res.levels;s.coins+=c;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+c;logEarn(s,c);}
  });
  if(!res)return;
- const local=myHorses[rideIdx];
- if(local){local.level=res.lvl;local.xp=res.xp;}
+ // Level-ups can raise a base stat. Mirror the saved horse by identity so both
+ // riding performance and training gates see that increase immediately.
+ const persisted=freshSave()?.horses?.find(h=>h.id===horseId);
+ if(!persisted)return;
+ const local=myHorses.find(h=>h.id===horseId);
+ if(local){local.level=persisted.level;local.xp=persisted.xp;local.stats={...persisted.stats};local.sxp={...persisted.sxp};}
+ // syncSave catches storage errors; never announce a level that was not saved.
+ if(persisted.level!==res.lvl||persisted.xp!==res.xp)return;
  if(res.leveled){
   if(opts.coinsPerLevel)refreshWallet();
   sGem();

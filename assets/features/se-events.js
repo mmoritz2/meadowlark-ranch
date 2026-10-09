@@ -21,7 +21,7 @@
    ribbon banner, stub); each arena photograph and course map is the game's own world, pictured
    from above the venue on the frame the screen opens (se-frame's snap). Nothing runs at import
    time. */
-import {eventPreparation} from './event-preparation.js?v=event-preparation-1';
+import {eventPreparation} from './event-preparation.js?v=event-training-1';
 export const id='se-events';
 export function install(G){
  const K=G.seFrame, T=G.tables;
@@ -194,6 +194,13 @@ export function install(G){
   if(ev.special)return {ok:true,missing:[]};
   try{if(G.course&&G.course.eventOk)return G.course.eventOk(ev,ridden());}catch(e){}
   const lvl=ridden().level||1; return {ok:lvl>=(ev.lvl||1),missing:lvl>=(ev.lvl||1)?[]:[['level',ev.lvl,lvl]]};
+ }
+ function preparationFor(ev,di,h=ridden(),s=S()){
+  const DF=DIFFS(),d=DF[clamp(di==null?1:di,0,DF.length-1)],g=gate(ev),lk=townLock(ev.town),lvl=h.level||1;
+  const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
+  const entryLock=G.ladder?.entryLock?.(ev,{...s,evDiff:di},h)||(!g.ok?'Needs '+needText(g.missing):d.lvlAdd&&lvl<ev.lvl+d.lvlAdd?d.label+' opens at Lv '+(ev.lvl+d.lvlAdd):'');
+  const trainingCaps=Object.fromEntries(Object.keys(ev.req||{}).map(k=>[k,{level:G.xp.statCap?.(h),breed:G.xp.statCeil?.(h,k)}]));
+  return eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id),trainingCaps});
  }
  function ribbonsOf(ev,s){
   const D=DIFFS(), by=s.ribbonsBy||{}, best=(s.ribbons||{})[ev.id]||0, gold=!!(s.ribbonGold||{})[ev.id];
@@ -383,7 +390,6 @@ export function install(G){
     +'<button class="se-gold" data-sev="round"'+(ready?'':' disabled')+'>'+(ready?'Start':'Not yet')+'</button></div></div>';
   }else{
    const rb=ribbonsOf(ev,s), DF=DIFFS(), di=clamp(st.diff==null?1:st.diff,0,DF.length-1), d=DF[di];
-   const dLock=d.lvlAdd&&lvl<ev.lvl+d.lvlAdd;
    const mv=mapView(ev), me=K.snap(mv);
    const bits=ev.n?(ev.n+' fences'+(ev.laps>1?' × '+ev.laps+' laps':'')):ev.dressage?(ev.kind==='show'?'turnout and figures':'dressage test'):(routeOf(ev)?routeOf(ev).length+' gates':'');
    main+='<div class="sev-plaque">Lv '+ev.lvl+(bits?' · '+esc(bits):'')+'</div>';
@@ -395,9 +401,7 @@ export function install(G){
    main+='<div class="sev-ribs"><span>'+rb.per[di]+' of 4 ribbons earned</span>'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
    const best=(s.bestTimes||{})[ev.id], bestS=(ev.dressage||ev.kind==='show')?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
-   const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
-   const entryLock=G.ladder?.entryLock?.(ev,{...s,evDiff:di},h)||(!g.ok?'Needs '+needText(g.missing):dLock?d.label+' opens at Lv '+(ev.lvl+d.lvlAdd):'');
-   const prep=eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id)});
+   const prep=preparationFor(ev,di,h,s);
    const req=prep.requirements.map(({key:k,have,need,base,tack,met})=>{
     const label=k==='level'?'Level':statLbl(k).replace(/^\S+\s/,'');
     const detail=k==='level'?'':('<small>'+esc(base)+' trained'+(tack>0?' + '+esc(tack)+' tack':'')+'</small>');
@@ -406,16 +410,20 @@ export function install(G){
    const why=prep.reason;
    const scoring=G.events2?.allowedLine?.(ev,di)||(prep.judged?'Judged on percentage':(tA?tSec(tA)+' allowed':'See full card'));
    const met=prep.requirements.filter(r=>r.met).length;
+   const firstTraining=prep.training.find(plan=>plan.canTrain),chooseHorse=!firstTraining&&met<prep.requirements.length;
    main+='<section class="sev-preparation" aria-label="Event preparation"><h3>'+esc(h.name||'Your horse')+' · '+esc(d.label)+'</h3>'
     +'<p class="pb-lock" role="status">'+esc(why||'Your horse is ready for this event.')+'</p>'
-    +'<details class="sev-requirements"'+(prep.ready?'':' open')+'><summary>Horse readiness <span>'+met+' / '+prep.requirements.length+' requirements met</span></summary><div class="pb-req">'+req+'</div><p class="sev-prep-note">Current / required, including tack. '+esc(prep.prepareHint)+'</p></details>'
+    +'<details class="sev-requirements"'+(prep.ready?'':' open')+'><summary>Horse readiness <span>'+met+' / '+prep.requirements.length+' requirements met</span></summary><div class="pb-req">'+req+'</div><p class="sev-prep-note">Current / required, including tack. '+esc(prep.prepareHint)+'</p>'
+    +(prep.levelHint?'<p class="sev-prep-note">'+esc(prep.levelHint)+'</p>':'')
+    +prep.training.map(plan=>'<div class="sev-prep-step"><p class="sev-prep-note"><strong>'+esc(plan.label)+'</strong> · '+esc(plan.hint)+'</p>'+(plan.canTrain&&plan!==firstTraining?'<button class="se-cream" style="min-height:44px;margin-top:8px" data-sev="train:'+esc(plan.key)+'"'+(G.trainingDrills?.startForEvent?'':' disabled')+'>Train '+esc(plan.label)+'</button>':'')+'</div>').join('')
+    +(prep.training.length?'<div class="sev-stats" aria-label="Other ways to prepare"><button class="se-cream" data-sev="prepare:equipment"'+(G.seCare?.open?'':' disabled')+'>Compare tack</button>'+(!chooseHorse?'<button class="se-cream" data-sev="prepare:myhorses"'+(G.seCare?.open?'':' disabled')+'>Choose horse</button>':'')+'</div>':'')+'</details>'
     +'<div class="sev-entry-facts"><div><span>Entry</span><b>Free</b></div><div><span>Listed purse'+(prep.featured?' · Featured ×1.5':'')+'</span><b>'+fmt(prep.purse)+' coins</b></div>'
     +'<div><span>'+(prep.judged?'Scoring':'Course format')+'</span><b>'+esc(scoring)+'</b></div>'
     +'<div><span>Personal best</span><b>'+(prep.judged?(bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'No score yet'):(best?tBest(best):'No time yet'))+'</b></div></div>'
     +'<details class="sev-scoring"><summary>Rewards & riding tips</summary><p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
    if(disc==='jump'||disc==='xc')main+='<p class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' when the ring turns green.</p>';
    main+='</details></section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(prep.ready?'':' locked')+'">'+(prep.ready?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
-    +'<button class="se-cream" data-sev="prepare:'+prep.prepareTab+'"'+(G.seCare?.open?'':' disabled')+'>Prepare horse</button>'
+    +(firstTraining?'<button class="se-cream" data-sev="train:'+esc(firstTraining.key)+'"'+(G.trainingDrills?.startForEvent?'':' disabled')+'>Train '+esc(firstTraining.label)+'</button>':'<button class="se-cream" data-sev="prepare:'+(chooseHorse?'myhorses':prep.prepareTab)+'"'+(G.seCare?.open?'':' disabled')+'>'+(chooseHorse?'Choose horse':'Prepare horse')+'</button>')
     +'<button class="se-gold" data-sev="ride"'+(!prep.ready?' disabled title="'+esc(why)+'"':'')+'>'+(prep.ready?'Enter event':'Locked')+'</button></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
@@ -507,21 +515,34 @@ export function install(G){
   }
   else if(k==='diff'){st.diff=+a;G.save.sync(s=>{s.evDiff=+a;});paintPage();}
   else if(k==='prepare')prepareHorse(a);
+  else if(k==='train')trainForEvent(a);
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}
   else if(k==='round'){if(!via('button[data-round="go"]'))G.toast('🐎 The roundup is not ready yet.');}
   else if(k==='drill'){G.course.startDrill(a);}
  });
- function prepareHorse(tab){
-  const ev=evById(st.page);if(!ev||!G.seCare?.open)return;
-  const diff=st.diff,scroll=$('sevPage').querySelector('.sev-main')?.scrollTop||0;
-  G.seCare.open(tab,{label:'Back to '+ev.name,onBack:()=>{
-   const button=$('eventsBtn');if(!button)return;
+ function eventReturn(ev,diff,focus='[data-sev^="prepare:"]'){
+  const scroll=$('sevPage').querySelector('.sev-main')?.scrollTop||0;
+  return ()=>{
+   const button=$('eventsBtn');if(!button||!evById(ev.id))return;
    if(!st.on)button.click();
    setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;root.classList.add('page');paintPage();
-    const main=$('sevPage').querySelector('.sev-main');if(main)main.scrollTop=scroll;
-    $('sevPage').querySelector('[data-sev^="prepare:"]')?.focus({preventScroll:true});
+    const page=$('sevPage'),main=page.querySelector('.sev-main');if(main)main.scrollTop=scroll;
+    (page.querySelector(focus)||page.querySelector('[data-sev="ride"]:not(:disabled)')||page.querySelector('[data-sev^="prepare:"]'))?.focus({preventScroll:true});
    },40);
-  }});
+  };
+ }
+ function prepareHorse(tab){
+  const ev=evById(st.page);if(!ev||!G.seCare?.open)return;
+  G.seCare.open(tab,{label:'Back to '+ev.name,onBack:eventReturn(ev,st.diff)});
+ }
+ function trainForEvent(stat){
+  const ev=evById(st.page);if(!ev||ev.special||!G.trainingDrills?.startForEvent)return false;
+  const diff=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1),prep=preparationFor(ev,diff);
+  // Recheck the currently ridden horse: a menu painted before a tack swap or
+  // horse change must not promise training at a cap or train an unrelated stat.
+  const plan=prep.training.find(plan=>plan.key===stat);
+  if(!plan?.canTrain){paintPage();return false;}
+  return G.trainingDrills.startForEvent(stat,{eventId:ev.id,eventName:ev.name,difficulty:diff,onBack:eventReturn(ev,diff,'[data-sev="train:'+stat+'"]')});
  }
  function ride(ev,di){
   const P=$('eventsPanel'), i=T.EVENTS3.indexOf(ev);

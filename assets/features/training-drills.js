@@ -24,6 +24,7 @@ export function install(G){
  const C=G.course,T=G.THREE,$=id=>document.getElementById(id),hud=$('drillHud');
  if(!hud||!C?.drillState)return;
  let receipt=null,elapsed=1,guide=null,guideKey='',lastSignature='',resultTimer=0;
+ let eventTarget=null,launchTarget=null,wasActive=false;
  const style=document.createElement('style');style.textContent=`
  #drillHud{top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(420px,calc(100vw - 450px));max-width:calc(100vw - 28px);padding:12px 15px;border:1px solid #eee4ba40;border-radius:14px;background:#193e34f5;color:#fff8e5;box-shadow:0 7px 28px #102d2c30;font:500 13px/1.4 system-ui,sans-serif;box-sizing:border-box;text-align:left;z-index:7}
  #drillHud *{box-sizing:border-box}.td-hud-head{display:flex;align-items:center;gap:10px}.td-hud-title{min-width:0;flex:1}.td-hud-title strong{display:block;font-size:14px;line-height:1.25}.td-hud-title small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d1dec9;font-size:11px;margin-top:3px}
@@ -57,7 +58,9 @@ export function install(G){
   const jumpNote=v.jumping?`<p class="td-result-note">${r.completed?'All '+fmt(total)+' jumps cleared.':'Every cleared jump counts toward the rewards shown here.'} ${v.misses?fmt(v.misses)+' missed approach'+(v.misses===1?'':'es')+'. Circle back and line up again; a miss does not undo your cleared jumps.':'Keep a steady approach and give your horse room to land.'}</p>`:'';
   const savedBody=`<div class="td-result-grid">${progress}<div class="td-tallies"><div class="td-tally"><strong>+${fmt(v.coins)}</strong><span>coins saved</span></div><div class="td-tally"><strong>${fmt(cleared)} / ${fmt(total)}</strong><span>${v.unit} cleared</span></div></div></div><p class="td-result-note">${progressNote}${v.passPoints?` +${fmt(v.passPoints)} pass points saved.`:''}</p>${jumpNote}`;
   const pendingBody=`<div class="td-pending" role="status"><strong>${fmt(cleared)} / ${fmt(total)} ${v.unit} completed. Your ride is kept in this tab.</strong><p>Retry saving to confirm your stat XP and coins. Keep this tab open until it succeeds.</p>${r.reason?`<small>${esc(r.reason)}</small>`:''}</div>`;
-  return `<section class="td-result" aria-labelledby="trainingResultTitle"><header class="td-result-head"><div><div class="td-eyebrow">${v.jumping?'Jump clinic':'Training · '+esc(v.stat)} · ${v.saved?'saved':'save pending'}</div><h1 id="trainingResultTitle">${title}</h1><p class="td-horse">${esc(v.horse)} · ${fmt(r.elapsed)}s of riding</p></div><button type="button" class="td-close" data-fx="training:close" aria-label="Back to riding">×</button></header>${v.saved?savedBody:pendingBody}<div class="td-actions">${v.saved?`<button type="button" class="td-primary" data-fx="training:again"${canRepeat(r)?'':' disabled title="Choose a horse with room to train this stat."'}>${r.stat==='jump'?'Practice again':selection.atCap?'Stat at current ceiling':'Train again'}</button><button type="button" data-fx="training:choose">Choose another stat</button>`:'<button type="button" class="td-primary" data-fx="training:retry-save">Retry save</button><button type="button" data-fx="training:choose" disabled title="Save this training before starting another session.">Choose another stat</button>'}<button type="button" data-fx="training:close">Back to riding</button></div>${v.saved&&selection.horse?.id!==r.horseId?`<p class="td-next-horse">Next session: ${esc(selection.horse?.name||'your current horse')} · ${esc(v.stat)}</p>`:''}</section>`;
+  const destination=eventTarget?`<p class="td-result-note td-event-target">Training for <strong>${esc(eventTarget.eventName)}</strong>. ${v.saved?"Return to check your horse’s updated readiness.":"Save this training before returning to check readiness."}</p>`:'';
+  const backButton=v.saved&&eventTarget?`<button type="button" class="td-primary" data-fx="training:event">Back to ${esc(eventTarget.eventName)}</button>`:'';
+  return `<section class="td-result" aria-labelledby="trainingResultTitle"><header class="td-result-head"><div><div class="td-eyebrow">${v.jumping?'Jump clinic':'Training · '+esc(v.stat)} · ${v.saved?'saved':'save pending'}</div><h1 id="trainingResultTitle">${title}</h1><p class="td-horse">${esc(v.horse)} · ${fmt(r.elapsed)}s of riding</p></div><button type="button" class="td-close" data-fx="training:close" aria-label="Back to riding">×</button></header>${v.saved?savedBody:pendingBody}${destination}<div class="td-actions">${backButton}${v.saved?`<button type="button" class="${eventTarget?'':'td-primary'}" data-fx="training:again"${canRepeat(r)?'':' disabled title="Choose a horse with room to train this stat."'}>${r.stat==='jump'?'Practice again':selection.atCap?'Stat at current ceiling':'Train again'}</button><button type="button" data-fx="training:choose">Choose another stat</button>`:'<button type="button" class="td-primary" data-fx="training:retry-save">Retry save</button><button type="button" data-fx="training:choose" disabled title="Save this training before starting another session.">Choose another stat</button>'}<button type="button" data-fx="training:close">Back to riding</button></div>${v.saved&&selection.horse?.id!==r.horseId?`<p class="td-next-horse">Next session: ${esc(selection.horse?.name||'your current horse')} · ${esc(v.stat)}</p>`:''}</section>`;
  }
  G.ui.panel({id:'trainingResultPanel',title:'Training result',render:resultMarkup});
  const panel=$('trainingResultPanel');panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-labelledby','trainingResultTitle');
@@ -65,13 +68,33 @@ export function install(G){
  new MutationObserver(()=>G.seFrame?.settle()).observe(panel,{attributes:true,attributeFilter:['style']});
  function closeResult(){clearTimeout(resultTimer);panel.style.display='none';if(panel.contains(document.activeElement))document.activeElement.blur();G.seFrame?.settle();paint();}
  function showResult(r){if(!r)return;receipt=r;clearTimeout(resultTimer);disposeGuide();paint();G.ui.open(panel.id);G.seFrame?.settle();panel.querySelector('.td-primary:not(:disabled),[data-fx="training:choose"]:not(:disabled),.td-close')?.focus({preventScroll:true});}
- function scheduleResult(r){receipt=r;clearTimeout(resultTimer);resultTimer=setTimeout(()=>{if(!getState().active)showResult(r);},0);paint();}
- function choose(){if(getState().pending)return;closeResult();G.ui.openEvents();setTimeout(()=>{G.seEvents?.openPage('__drill');G.seFrame?.settle();},0);}
+ function scheduleResult(r){
+  if(eventTarget){if(r.stat!==eventTarget.stat||r.horseId!==eventTarget.horseId||eventTarget.runId&&eventTarget.runId!==r.runId)eventTarget=null;else eventTarget.runId=r.runId;}
+  receipt=r;clearTimeout(resultTimer);resultTimer=setTimeout(()=>{if(!getState().active)showResult(r);},0);paint();}
+ function choose(){if(getState().pending)return;eventTarget=null;closeResult();G.ui.openEvents();setTimeout(()=>{G.seEvents?.openPage('__drill');G.seFrame?.settle();},0);}
+ // A destination belongs to a successfully started session. It survives repeat
+ // and a pending-save retry, but never leaks into unrelated free practice.
+ function startForEvent(stat,target){
+  if(!LABELS[stat]||!target?.eventId||!target.eventName||typeof target.onBack!=='function'||getState().active||getState().pending)return false;
+  const next={eventId:target.eventId,eventName:String(target.eventName),difficulty:target.difficulty,onBack:target.onBack,stat,horseId:G.horse.ridden?.()?.id,runId:null};
+  launchTarget=next;
+  try{return C.startDrill(stat)===true;}finally{launchTarget=null;}
+ }
+ function returnToEvent(){
+  if(!eventTarget||getState().active||getState().pending||receipt?.saved===false)return false;
+  const target=eventTarget;eventTarget=null;closeResult();target.onBack();return true;
+ }
+ function repeat(){
+  if(!receipt?.saved||!canRepeat(receipt))return;
+  const previous=receipt;launchTarget=eventTarget?{...eventTarget,horseId:G.horse.ridden?.()?.id,runId:null}:null;
+  closeResult();try{if(!C.startDrill(previous.stat))showResult(previous);}finally{launchTarget=null;}paint();
+ }
  G.ui.action('training',([action])=>{
   if(action==='close')closeResult();
   else if(action==='retry-save')C.retryDrillSave();
   else if(action==='choose')choose();
-  else if(action==='again'&&receipt?.saved&&canRepeat(receipt)){const previous=receipt;closeResult();C.startDrill(previous.stat);if(!getState().active)showResult(previous);paint();}
+  else if(action==='event')returnToEvent();
+  else if(action==='again')repeat();
  });
  refs.end.onclick=()=>{C.cancelDrill();paint();};refs.pending.onclick=()=>showResult(pendingReceipt(getState()));
  // Buttons retain native Enter/Space activation without forwarding it to riding.
@@ -115,11 +138,13 @@ export function install(G){
  }
  function paint(){
   const s=getState(),pending=!!s.pending,active=!!s.active;
+  if(wasActive&&!active&&!pending&&!receipt&&eventTarget){const target=eventTarget;setTimeout(()=>{if(eventTarget===target&&!getState().active&&!getState().pending&&!receipt)returnToEvent();},0);}
+  wasActive=active;
   document.body.classList.toggle('training-active',active||pending);hud.style.display=active||pending?'block':'none';paintGuide(s);
   if(!active&&!pending){lastSignature='';return;}
   const r=pendingReceipt(s),stat=LABELS[s.stat||r?.stat]||'Training',jumping=(pending?r?.activity:s.activity)==='jump',unit=jumping?'jumps':'cones';
   hud.setAttribute('data-activity',jumping?'jump':'slalom');
-  text(refs.stat,jumping?'Jump clinic':stat+' training');text(refs.horse,s.horseName||r?.horseName||'Your horse');
+  text(refs.stat,jumping?'Jump clinic':stat+' training');text(refs.horse,(s.horseName||r?.horseName||'Your horse')+(eventTarget?' · Preparing for '+eventTarget.eventName:''));
   refs.end.hidden=!active;refs.pending.hidden=!pending;
   const countdown=Math.max(0,finite(s.countdown)),total=Math.max(1,finite(s.total,8)),cleared=Math.max(0,Math.min(total,finite(s.cleared,r?.cleared||0)));
   text(refs.target,pending?'Your ride is kept':s.paused?'Training paused':countdown>0?'Ready in '+Math.ceil(countdown):jumping?'Fence '+(s.clinic?.obstacle?.number||cleared%4+1)+' · Lap '+(s.clinic?.obstacle?.lap||Math.floor(cleared/4)+1)+'/2':'Cone '+Math.min(total,cleared+1)+' of '+total);
@@ -129,10 +154,10 @@ export function install(G){
   const signature=unit+':'+total+':'+cleared+':'+pending;
   if(signature!==lastSignature){refs.progress.innerHTML=Array.from({length:Math.min(8,total)},(_,i)=>'<i class="'+(i<cleared?'done':i===cleared&&!pending?'next':'')+'"></i>').join('');refs.progress.setAttribute('aria-label',cleared+' of '+total+' '+unit+' cleared');lastSignature=signature;}
  }
- G.on('drillStart',()=>{clearTimeout(resultTimer);receipt=null;paint();});
+ G.on('drillStart',()=>{clearTimeout(resultTimer);receipt=null;eventTarget=launchTarget;paint();});
  G.on('drillFinish',scheduleResult);G.on('drillSavePending',scheduleResult);
  G.on('tick',dt=>{elapsed+=Math.max(0,finite(dt));if(elapsed<.1)return;elapsed=0;paint();});
- G.on('state',s=>{s.trainingUI={resultOpen:isOpen(),receipt:receipt?.runId||null,guideRings:guide?.rings.length||0,guideRadius:3.6};});
- G.trainingDrills={showResult:()=>showResult(pendingReceipt(getState())||getState().lastResult||receipt),choose,refresh:paint};
+ G.on('state',s=>{s.trainingUI={resultOpen:isOpen(),receipt:receipt?.runId||null,guideRings:guide?.rings.length||0,guideRadius:3.6,eventTarget:eventTarget?{eventId:eventTarget.eventId,difficulty:eventTarget.difficulty,stat:eventTarget.stat}:null};});
+ G.trainingDrills={startForEvent,returnToEvent,showResult:()=>showResult(pendingReceipt(getState())||getState().lastResult||receipt),choose,refresh:paint};
  paint();
 }

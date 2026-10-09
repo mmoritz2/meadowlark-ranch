@@ -66,29 +66,54 @@ assert.match(result([{...good,id:'last'},high]),/lad:events/);
 assert.match(result([good,{...good,id:'new',name:'New Loop'}],{evDiff:2,weekly:{gold:{good:true}}}),/lad:again:new/);
 
 const eventsSource=fs.readFileSync(root+'/assets/features/se-events.js','utf8');
-const preflightStart=eventsSource.indexOf("   main+='<section class=\"sev-preparation\"");
+const preflightStart=eventsSource.indexOf('   const met=prep.requirements.filter');
 const preflightEnd=eventsSource.indexOf('   me.fns.push(',preflightStart);
 assert(preflightStart>0&&preflightEnd>preflightStart);
 const renderPreflight=new Function('prep','why','disc','h','d','D','req','scoring','bestS','best','esc','fmt','tBest','document','G',
  'let main="";'+eventsSource.slice(preflightStart,preflightEnd)+'return main;');
-const preflight=(why,disc,touch=true)=>renderPreflight({ready:!why,prepareHint:'Review your horse.',purse:250,prepareTab:'horse'},why,disc,{name:'Willow & Fern'},{label:'Elite'},{t:'Show jumping'},'','1:30 allowed',null,null,esc,String,String,{body:{classList:{contains:name=>{assert.equal(name,'touch');return touch;}}}},{seCare:{open(){}}});
+const preflight=(why,disc,touch=true)=>renderPreflight({ready:!why,prepareHint:'Review your horse.',purse:250,prepareTab:'horse',requirements:[{met:!why}],training:[]},why,disc,{name:'Willow & Fern'},{label:'Elite'},{t:'Show jumping'},'','1:30 allowed',null,null,esc,String,String,{body:{classList:{contains:name=>{assert.equal(name,'touch');return touch;}}}},{seCare:{open(){}}});
 let intro=preflight('Elite opens at Lv 3','jump');
 assert.match(intro,/Follow the trail to each fence\. Tap Jump when the ring turns green\./);
 assert.match(intro,/class="sev-preparation" aria-label="Event preparation"/);
 assert.match(intro,/Willow &amp; Fern/);
-assert.match(intro,/Current \/ required, includes tack/);
-assert.match(intro,/role="status"><b>Before you ride:<\/b> Elite opens at Lv 3/);
-assert.match(intro,/data-sev="prepare:horse"/);
+assert.match(intro,/Current \/ required, including tack/);
+assert.match(intro,/role="status">Elite opens at Lv 3/);
+assert.match(intro,/data-sev="prepare:myhorses">Choose horse/);
 assert.match(intro,/data-sev="ride" disabled/);
 intro=preflight('','race');
 assert(!intro.includes('Before you ride:'));
 assert(!intro.includes('Tap Jump'));
-assert.match(intro,/Entry requirements met/);
+assert.match(intro,/Your horse is ready for this event/);
 assert.match(intro,/data-sev="ride">Enter event/);
 intro=preflight('Finish Wren\'s quest','xc');
 assert.match(intro,/through gates and over fences/);
-assert.match(intro,/Before you ride:<\/b> Finish Wren's quest/);
+assert.match(intro,/role="status">Finish Wren's quest/);
 assert.match(preflight('','jump',false),/Press Space when the ring turns green/);
+const {eventPreparation}=await import(root+'/assets/features/event-preparation.js');
+const trainingPrep=eventPreparation({event:{lvl:3,req:{jump:3},reward:320},horse:{level:3},difficulty:{label:'Open'},stats:{base:{jump:2},tack:{},total:{jump:2}},trainingCaps:{jump:{level:4,breed:8}},gate:{ok:false}});
+function prepHtml(prep){return renderPreflight(prep,prep.reason,'jump',{name:'Willow'},{label:'Open'},{t:'Show jumping'},'','1:30 allowed',null,null,esc,String,String,{body:{classList:{contains:()=>false}}},{seCare:{open(){}},trainingDrills:{startForEvent(){}}});}
+intro=prepHtml(trainingPrep);assert.match(intro,/data-sev="train:jump">Train Jump/);assert.match(intro,/Train base Jump from 2 toward 3/);
+assert.equal((intro.match(/data-sev="train:jump"/g)||[]).length,1,'first training action occurs once');
+assert.match(intro.slice(intro.indexOf('class="sev-pbar sev-entry-actions"')),/data-sev="train:jump">Train Jump/,'first training action is in the sticky footer');
+
+assert.match(intro,/data-sev="prepare:equipment"/);assert.match(intro,/data-sev="prepare:myhorses"/);assert.match(intro,/data-sev="ride" disabled/);
+const capPrep=eventPreparation({event:{lvl:4,req:{jump:5}},horse:{level:4},stats:{base:{jump:4},total:{jump:4}},trainingCaps:{jump:{level:4,breed:8}},gate:{ok:false}});
+intro=prepHtml(capPrep);assert(!intro.includes('data-sev="train:jump"'));assert.match(intro,/training cap is 4/);assert.match(intro,/Choose horse/);assert.match(intro,/Compare tack/);
+assert.equal((intro.match(/data-sev="prepare:myhorses"/g)||[]).length,1,'capped horse selection occurs once');
+assert.match(intro.slice(intro.indexOf('class="sev-pbar sev-entry-actions"')),/data-sev="prepare:myhorses">Choose horse/);
+assert(!intro.slice(intro.indexOf('class="sev-pbar sev-entry-actions"')).includes('prepare:equipment'),'capped footer does not route back to tack');
+const several=eventPreparation({event:{lvl:3,req:{jump:3,agility:3}},horse:{level:3},stats:{base:{jump:2,agility:2},total:{jump:2,agility:2}},trainingCaps:{jump:{level:4,breed:8},agility:{level:4,breed:8}},gate:{ok:false}});
+intro=prepHtml(several);const footerAt=intro.indexOf('class="sev-pbar sev-entry-actions"');
+assert.equal((intro.match(/data-sev="train:jump"/g)||[]).length,1);assert.equal((intro.match(/data-sev="train:agility"/g)||[]).length,1);
+assert(intro.indexOf('data-sev="train:agility"')<footerAt,'secondary training action remains in readiness details');
+assert(intro.indexOf('data-sev="train:jump"')>footerAt,'first training action stays reachable in footer');
+const levelOnly=eventPreparation({event:{lvl:5},horse:{level:3},stats:{},gate:{ok:false}});
+intro=prepHtml(levelOnly);assert.equal((intro.match(/data-sev="prepare:myhorses"/g)||[]).length,1);
+assert.match(intro.slice(intro.indexOf('class="sev-pbar sev-entry-actions"')),/data-sev="prepare:myhorses">Choose horse/);
+assert(!intro.includes('Compare tack'),'equipment is not offered as a solution for a pure level gate');
+intro=preflight('','race');assert.match(intro.slice(intro.indexOf('class="sev-pbar sev-entry-actions"')),/data-sev="prepare:horse">Prepare horse/,'ready events retain their existing preparation route');
+
+
 
 // A final crossing calls finish before the next discipline tick. Exercise the
 // production hooks in that order, including a repeated flush, so the final rail
