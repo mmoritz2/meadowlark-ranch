@@ -1,3 +1,4 @@
+import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=flowering-margins-1';
 
@@ -75,7 +76,7 @@ export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeBoundingBox();g.computeBoundingSphere();return g;
+  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);if(profile==='middle-natural-v1')g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();return g;
 }
 
 // Smooth world-space patches cross cell and LOD boundaries without stripes or
@@ -165,7 +166,7 @@ export function createLupinGeometry(THREE){
 export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high'}){
   const CELL=12,W=18,K=low?48:120;
   const hash=(x,z)=>{let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
-  const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4,segments:2}),medium:createGrassTuftGeometry(THREE,{bladeCount:6,segments:2}),high:createGrassTuftGeometry(THREE,{bladeCount:8,segments:2})};
+  const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4,segments:2,profile:'middle-natural-v1'}),medium:createGrassTuftGeometry(THREE,{bladeCount:6,segments:2,profile:'middle-natural-v1'}),high:createGrassTuftGeometry(THREE,{bladeCount:8,segments:2,profile:'middle-natural-v1'})};
   const geo=geometries[getQuality()]||geometries.high;
   const mat=new THREE.MeshStandardMaterial({name:'Middle distance meadow',vertexColors:true,side:THREE.DoubleSide,roughness:1,envMapIntensity:.7});
   const uniforms={fieldTime:{value:0},fieldRider:{value:new THREE.Vector2()}};
@@ -180,6 +181,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
       #endif`);
   };
   mat.customProgramCacheKey=()=> 'middle-meadow-v2';
+  installPastureLighting(mat);
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();

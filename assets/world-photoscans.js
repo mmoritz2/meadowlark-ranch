@@ -1,3 +1,5 @@
+import {SETTLEMENT_WOODLAND_BELTS,SETTLEMENT_WOODLAND_MAX,terrainAwareWoodEnvelope,settlementWoodlandCandidates,settlementWoodlandPlants} from './settlement-woodland.mjs?v=settlement-woodland-1';
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {selectPastoralWoodland,isOrdinaryTrunkCircle} from './pastoral-woodland.mjs?v=pastoral-woodland-1';
 import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=full-crown-2';
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
@@ -239,7 +241,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const coldStats=state.coldWoodland={trees:0,mature:0,regeneration:0,mixedMargin:0,sourceChanges:0,sourceCounts:{}};
     const add=t=>{
       const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
-      const cleared=!t.authoredOrchard&&((road&&!t.authoredVillage)||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z)));
+      const cleared=!t.authoredOrchard&&((road&&!t.authoredVillage)||(meadow&&!t.allowMeadowMargin)||G.vistas?.clearZones?.some(test=>test(t.x,t.z)));
       if(cleared){
         if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
         clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
@@ -391,6 +393,49 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       t.previousSource=t.source.key;t.source=uprightSource;t.pastoralGrove=grove;
       pastoral.trees.push(t);
     }
+    // Original settlement/field-shoulder belts. Detailed tree geometry shares the
+    // existing near-tree budget; all distances use the same licensed source views.
+    // Only accepted trunks receive geometry, wood contacts, litter and camera roots.
+    const settlement=state.settlementWoodland={version:1,trees:[],skipped:[],belts:[],budget:{maximum:SETTLEMENT_WOODLAND_MAX,additionalDistantTrianglesMax:SETTLEMENT_WOODLAND_MAX*2,detailBudgetChanged:false}};
+    const beltCounts=new Map(SETTLEMENT_WOODLAND_BELTS.map(b=>[b.id,0]));
+    function settlementRiderRadius(site,source,fullRadius){
+      const boxes=source===uprightSource?UPRIGHT_HYBRID_WOOD_BOXES:WOODLAND_WOOD_BOXES;
+      return terrainAwareWoodEnvelope({x:site.x,z:site.z,height:site.height,sourceHeight:source.meta.sourceHeight,
+        sourceBottom:source.bounds.min.y,sourceRadius:fullRadius,boxes,heightAt:W.groundH,terrainStep:W.terrainStep});
+    }
+    function settlementFootRejection(site,source,fullRadius,ride){
+      const x=site.x,z=site.z,r=ride.radius,h=W.groundH(x,z);
+      if(coldWoodlandWeights(x,z).weight>.08||coyoteCoverDryWeight(x,z)>.25)return 'climate';
+      if(inMeadowOpening(x,z)&&!site.allowMeadowMargin)return 'open meadow';
+      if(G.vistas?.clearZones?.some(test=>test(x,z)))return 'landmark vista';
+      if(cottonwoodReserved(x,z,fullRadius+1)||G.villageCourts?.contains(x,z,fullRadius+2))return 'village court/building';
+      if(Math.hypot(x,z)<33||Math.hypot(x-20,z-16)<r+19)return 'ranch/lake';
+      if(fallsContainsWater(x,z,r+1.5)||oasisContainsWater(x,z,r+.7)||W.sceneryArt.containsWaterfall(x,z,r)||G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return 'water/landmark';
+      if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return 'waterway';
+      if(W.pathDist(x,z)<r+4||(G.worldPaths?.trackDist(x,z)??Infinity)<r+4)return 'riding path';
+      if(window.__onCourse?.(x,z,r+2))return 'course';
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return 'race corridor';
+      for(const wall of W.walls||[])if(segmentDistance(x,z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return 'wall';
+      if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return 'interaction';
+      if(W.colliders.some(c=>Math.hypot(x-c.x,z-c.z)<(c.trunk?r:fullRadius)+(c.r||0)+.3))return 'registered prop';
+      if(trees.some(t=>Math.hypot(t.x-x,t.z-z)<5.4))return 'resident tree';
+      // Full wood envelope stays away from existing solid models. Only path,
+      // race and low fence tests use the proven terrain-aware rider interval.
+      const probe=new THREE.Vector3(x,0,z);W.solidWorld.resolve(probe,{bottom:h+.03,top:h+site.height,radius:fullRadius});
+      if(Math.hypot(probe.x-x,probe.z-z)>.001)return 'solid model';
+      return null;
+    }
+
+    for(const site of settlementWoodlandCandidates()){
+      const belt=SETTLEMENT_WOODLAND_BELTS.find(b=>b.id===site.belt);
+      if(beltCounts.get(site.belt)>=belt.cap||settlement.trees.length>=SETTLEMENT_WOODLAND_MAX)continue;
+      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);
+      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);
+      if(rejection){settlement.skipped.push({x:site.x,z:site.z,belt:site.belt,reason:rejection,fullWoodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise});continue;}
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredSettlementWoodland:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);
+      if(trees.includes(t)){edge.trees.push(t);settlement.trees.push(t);beltCounts.set(site.belt,beltCounts.get(site.belt)+1);}
+    }
+    settlement.belts=SETTLEMENT_WOODLAND_BELTS.map(b=>({id:b.id,count:beltCounts.get(b.id),cap:b.cap}));
     state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
@@ -530,11 +575,15 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // Regenerate leaf litter from surviving trunks; cleared meadows must not
     // keep the old brown forest-floor circles or camera obstacles.
     // Existing plant capture consumes these points after wood contacts are ready.
-    const plants=WOODLAND_EDGE_PLANTS.map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
+    const plants=[...WOODLAND_EDGE_PLANTS,...settlementWoodlandPlants(settlement.trees)].map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
       .filter(p=>edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)&&clear(p.x,p.z,.45)
         &&!cottonwoodReserved(p.x,p.z,1)&&!edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<1.25));
     finishEdge({trees:edge.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key,woodRadius:t.woodRadius,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()})),plants,collision:edge.collision,cameraInvalidated:edge.cameraInvalidated,physicsReady:edge.physicsReady,artOnly:false});
     scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+    settlement.trees=settlement.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,belt:t.belt,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,allowMeadowMargin:!!t.allowMeadowMargin,matrix:t.matrix.toArray()}));
+    settlement.woodPartsRegistered=settlement.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
+    settlement.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
+    W.nearGroundCover?.invalidate?.();
   }
   // Complete scanned stones form the village skyline and adjoining river crags.
   // The original circles still reserve space when roads are laid out; gameplay

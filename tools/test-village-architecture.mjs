@@ -64,7 +64,7 @@ test('two-storey village landmarks have open glazing, hipped roof coverage and b
 
 test('coaching inn has covered unequal gables, recessed glazing and three mounted entry bays',()=>{
  const root=art.buildCoachingInn();root.updateMatrixWorld(true);const a=root.userData.architecture;
- assert.equal(a.roofStyle,'unequal-gabled-clay');assert.equal(a.arcadeBays,3);
+ assert.equal(a.roofStyle,'unequal-gabled-slate');assert.equal(a.arcadeBays,3);
  assert(a.arcadeClearWidth>1.8&&a.arcadeSpring>3);
  const world=createSolidWorld({THREE});world.register(root);const rider={bottom:.38,top:2.65,radius:.55};
  for(const rise of[0,.30])for(const x of[-1.6666666667,.4,2.4666666667]){

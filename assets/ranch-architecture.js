@@ -619,7 +619,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       // The low stone course has no slab across the open central gallery.
       for(const s of[-1,1])for(let x=-v.width/2+.24;x<v.width/2;x+=.48)
         b.box(Math.min(.45,v.width/2-x+.24),.34,.14,stone,x,.36,.11,null,face(v.x,s*d/2,s>0?0:Math.PI));
-      roofAssembly(framed(v.x,0,Math.PI/2),d,v.width,v.h,v.ridge,false,clay);
+      roofAssembly(framed(v.x,0,Math.PI/2),d,v.width,v.h,v.ridge,false,slate);
     }
     // A lower hall links the gables. Its rear windows and timber bands remain
     // visible above the meadow; the front retains a two-metre sheltered entry.
@@ -636,7 +636,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       b.box(.18,hallHeight-.30,.18,wood,cx+x,(hallHeight+.30)/2,-d/2-.035);
       b.box(.18,hallHeight,2.0,wall,cx+x,hallHeight/2,(frontZ+recess)/2);
     }
-    roofAssembly(framed(cx,0),centre,d,hallHeight,hallRidge,false,clay);
+    roofAssembly(framed(cx,0),centre,d,hallHeight,hallRidge,false,slate);
     const pier=.20,bay=centre/3,beamY=3.13;
     for(let i=0;i<4;i++){
       const x=cx-centre/2+i*bay;
@@ -660,7 +660,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     b.box(.62,.11,.68,stoneLight,chimneyX,leftRidge+.47,chimneyZ);
     for(const dx of[-.12,.12])b.pipe([chimneyX+dx,leftRidge+.525,chimneyZ],[chimneyX+dx,leftRidge+.76,chimneyZ],.073,clayEdge);
     return b.finish({kind:'townhouse',style:'coaching-inn',exterior:'village',variant:0,width:w,depth:d,
-      wallHeight:leftHeight,ridgeHeight:leftRidge,store:false,storeys:2,roofStyle:'unequal-gabled-clay',windows:windowCount,
+      wallHeight:leftHeight,ridgeHeight:leftRidge,store:false,storeys:2,roofStyle:'unequal-gabled-slate',windows:windowCount,
       arcadeBays:3,arcadeClearWidth:bay-pier,arcadeSpring:beamY, galleryDepth:frontZ-recess,frontZ,doorZ:recess,doorX:0,
       windowBoxes,suggestedLabelY:leftRidge+1.0,roofHeights:[leftRidge,hallRidge,rightRidge]});
   }

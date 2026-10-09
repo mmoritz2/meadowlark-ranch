@@ -670,8 +670,9 @@ import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=horse-arrival-1';
 import {installMixedSward} from './assets/mixed-sward.mjs?v=meadow-families-1';
+import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=flowering-margins-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=thin-leaf-grass-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=flowering-margins-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=countryside-banks-1';
 import {createGeology} from './assets/geology.js?v=countryside-banks-1';
@@ -685,8 +686,9 @@ import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1'
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=regional-relief-1';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=flowering-margins-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=blossom-gables-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=slate-inn-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
+import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=riding-modes-1';
@@ -701,7 +703,7 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=horse-arrival-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=settlement-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
@@ -3058,6 +3060,7 @@ transformed.x+=sin(uTime*1.7+wph)*transformed.y*0.4;
 transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
 #endif`);
  };
+ installPastureLighting(bladeMat,{seed:true});
  const blades=new THREE.InstancedMesh(bladeGeo,bladeMat,9500);
  const m4=new THREE.Matrix4(),e=new THREE.Euler(),q=new THREE.Quaternion(),v=new THREE.Vector3(),sc=new THREE.Vector3();
  const bcol=new THREE.Color(),winterGrassTint=new THREE.Color('#c1b99b');
@@ -3188,7 +3191,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   g.computeVertexNormals();g.computeBoundingBox(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
- nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24);
+ nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24);installPastureLighting(nearMat);
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
  const fernMat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/realism/foliage_branch_rgba.png',1),alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
@@ -13600,7 +13603,12 @@ function tick(stepSeconds){
  }
  const foot=player.onFoot&&Number.isFinite(G.onFoot?.height)?G.onFoot.height:groundH(player.pos.x,player.pos.z)+player.y;
  const bodyBottom=foot+(player.onFoot?.22:.38);
+ // Horizontal wood contacts can raise or lower a grounded body on a slope.
+ if(!player.onFoot&&!player.flying&&!jumpAir&&player.y===0){
+  resolveGroundedContact(solidWorld,player.pos,{heightAt:groundH,previous:solidPrevious});
+ }else{
  solidWorld.resolve(player.pos,{bottom:jumpAir?Math.max(bodyBottom,groundH(player.pos.x,player.pos.z)+1.45):bodyBottom,top:foot+(player.onFoot?1.75:2.65),radius:player.onFoot?.34:.55,previous:solidPrevious});
+ }
  }
  const winged=!!(myHorses[rideIdx]&&myHorses[rideIdx].wings)||!!nativeCap?.canFly;
  if(!winged&&player.flying)player.flying=false;
