@@ -15,7 +15,7 @@ import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=vill
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=clover-approach-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=flowering-margins-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=canopy-lighting-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';

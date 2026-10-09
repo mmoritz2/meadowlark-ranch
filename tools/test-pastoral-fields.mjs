@@ -1,13 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt,cloverApproachRelief} from '../assets/pastoral-fields.mjs';
+import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt,cloverApproachRelief,meadowMarginAt,meadowSwardGrazingAt} from '../assets/pastoral-fields.mjs';
 import {createGrassTuftGeometry,createLupinGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
 import {coyoteCoverDryWeight} from '../assets/biome-weights.mjs';
 import {cottonwoodReserved} from '../assets/cottonwood-layout.js';
 import {readFileSync} from 'node:fs';
-import {LEGACY_FIELDS_SOURCE} from './fixtures/west-meadow-baseline.mjs';
-const legacy=await import('data:text/javascript;base64,'+Buffer.from(LEGACY_FIELDS_SOURCE).toString('base64'));
+import {LEGACY_FIELDS_SOURCE,LEGACY_COVER_SOURCE} from './fixtures/west-meadow-baseline.mjs';
+const legacyURL='data:text/javascript;base64,'+Buffer.from(LEGACY_FIELDS_SOURCE).toString('base64');
+const legacy=await import(legacyURL);
+const legacyCover=await import('data:text/javascript;base64,'+Buffer.from(LEGACY_COVER_SOURCE
+ .replace(/'\.\/biome-weights\.mjs\?[^']*'/,JSON.stringify(new URL('../assets/biome-weights.mjs',import.meta.url).href))
+ .replace(/'\.\/pastoral-fields\.mjs\?[^']*'/,JSON.stringify(legacyURL))).toString('base64'));
 
 
 test('field earthworks preserve all protected building and arena footprints',()=>{
@@ -66,17 +70,21 @@ test('new rises have bounded continuous slopes and no raised edge seams',()=>{
   assert(Math.abs(pastureRise(x+.001,z)-pastureRise(x-.001,z))<.001);
  }
 });
-test('flower colonies fill wild margins, retreat from managed pasture, and remain continuous',()=>{
- // The old fixed point is now grazed pasture; use actual planted colony centers
- // to exercise both flowering margins and maintained field interiors.
- let wild=0,managed=0;
+test('flower colonies fill authored meadow margins while field interiors remain open',()=>{
+ // The authored beds deliberately flower inside otherwise grazed fields.
+ let wild=0,recovered=0;
  for(const [x,z]of FLOWER_DRIFTS){
   const grazing=meadowGrazingAt(x,z),bloom=meadowBloomAt(x,z);
   assert(bloom>0&&bloom<=1,'each authored colony retains some flowering');
   if(grazing<.1){assert(bloom>.9,'wild colony centers retain dense flowers');wild++;}
-  if(grazing>.9){assert(bloom<.15,'grazed colony centers retain sparse flowers');managed++;}
+  if(grazing>.9&&meadowMarginAt(x,z)>.9){assert(bloom>.8,'authored beds recover dense flowers');recovered++;}
  }
- assert(wild>=3&&managed>=3,'fixture exercises wild margins and managed colonies');
+ assert(wild>=3&&recovered>=3,'fixture exercises wild and recovered authored margins');
+ for(const c of MEADOW_OPENINGS){
+  assert.equal(meadowMarginAt(c.x,c.z),0,'no blanket recovery across '+c.id);
+  assert.equal(meadowBloomAt(c.x,c.z),0,'open flower-free field center '+c.id);
+  assert.equal(meadowGrowthAt(c.x,c.z),legacyCover.meadowGrowthAt(c.x,c.z),'field center keeps its old short grass');
+ }
  assert.equal(meadowGrazingAt(-52,44),1);assert(meadowBloomAt(-52,44)<.05);
  assert.equal(meadowBloomAt(0,0),0);
  for(let x=-100;x<300;x+=6)for(let z=-220;z<300;z+=6){
@@ -109,7 +117,7 @@ test('grass patches are stable, bounded and continuous at travelling cell bounda
  for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
   const h=meadowGrowthAt(x,z),grazed=meadowGrazingAt(x,z),arid=coyoteCoverDryWeight(x,z);
   values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
-  if(grazed>.95&&westMeadowSwardAt(x,z)===0){assert(h<.61,'maintained pasture outside the recovered west sward stays low');managed++;}
+  if(grazed>.95&&westMeadowSwardAt(x,z)===0&&meadowMarginAt(x,z)===0){assert(h<.61,'maintained pasture outside authored sward margins stays low');managed++;}
   if(grazed<.001&&arid===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
   if(arid>.95){assert(h<=1.37*.64,'dry basin growth remains below lush pasture height');dry++;}
   assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
@@ -118,4 +126,36 @@ test('grass patches are stable, bounded and continuous at travelling cell bounda
  }
  assert(managed>20&&wild>100&&dry>100,'fixture covers grazed pasture, wild margins and dry ground');
  assert(Math.max(...values)-Math.min(...values)>.6);
+});
+
+// Reviewed patch centers and maximum footprint, independent of the runtime's
+// ellipse/noise expression. These are existing flower beds, not new placements.
+const RECOVERED_BEDS=[[44,-115,9,16],[88,-167,13,7],[140,38,9,20],[204,59,14,8],
+ [33,208,16,6],[80,253,13,6],[215,115,12,6],[262,141,8,12]];
+const inMarginBounds=(x,z)=>RECOVERED_BEDS.some(([cx,cz,rx,rz])=>Math.hypot((x-cx)/rx,(z-cz)/rz)<1.65);
+const outsideWest=(x,z)=>x < -80 || x > -28 || z < 12 || z > 62;
+test('compact meadow margins preserve terrain, layouts and the legacy grazing policy',()=>{
+ assert.deepEqual(FIELD_RISES,legacy.FIELD_RISES);assert.deepEqual(FIELD_ANCHORS,legacy.FIELD_ANCHORS);
+ assert.deepEqual(FLOWER_DRIFTS,legacy.FLOWER_DRIFTS);assert.deepEqual(MEADOW_OPENINGS,legacy.MEADOW_OPENINGS);
+ let recovered=0,untouched=0;
+ for(let x=-480;x<=480;x+=7)for(let z=-480;z<=480;z+=7){
+  const margin=meadowMarginAt(x,z),grazing=meadowGrazingAt(x,z),effective=meadowSwardGrazingAt(x,z);
+  assert.equal(grazing,legacy.meadowGrazingAt(x,z),'legacy cards, ferns and layout keep their mask');
+  assert.equal(pastureRise(x,z),legacy.pastureRise(x,z)+cloverApproachRelief(x,z));
+  assert(margin>=0&&margin<=1&&effective>=0&&effective<=grazing);
+  if(!inMarginBounds(x,z))assert.equal(margin,0,'compact authored footprint');
+  if(outsideWest(x,z)){
+   assert(meadowGrowthAt(x,z)>=legacyCover.meadowGrowthAt(x,z));
+   assert(meadowBloomAt(x,z)>=legacy.meadowBloomAt(x,z));
+   if(margin===0){
+    assert.equal(meadowGrowthAt(x,z),legacyCover.meadowGrowthAt(x,z));
+    assert.equal(meadowBloomAt(x,z),legacy.meadowBloomAt(x,z));untouched++;
+   }
+  }
+  if(margin>.5&&grazing>.5)recovered++;
+ }
+ assert(recovered>10&&untouched>10000,'survey covers actual bed interiors and unchanged world');
+ for(const [x,z] of [[88,-167],[140,38],[215,115],[262,141]]){
+  assert(meadowBloomAt(x,z)>.8);assert(meadowGrowthAt(x,z)>legacyCover.meadowGrowthAt(x,z)*1.8,'visible sward recovery');
+ }
 });

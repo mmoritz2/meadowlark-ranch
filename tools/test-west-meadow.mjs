@@ -31,7 +31,7 @@ const beforeCover=await import(coverURL(LEGACY_COVER_SOURCE+'\n'+REVIEWED_LUPIN+
 const afterCover=await import(pathToFileURL(path.join(ROOT,'assets/meadow-cover.js')).href);
 const T=await import(pathToFileURL(path.join(ROOT,'assets/vendor/three/build/three.module.js')).href);
 const {coyoteCoverDryWeight}=await import(biomeURL);
-const {westMeadowSwardAt,meadowBloomAt,WEST_MEADOW_FLOWER_DRIFT,WEST_MEADOW_SWARD_RECOVERY}=afterFields;
+const {westMeadowSwardAt,meadowMarginAt,meadowBloomAt,WEST_MEADOW_FLOWER_DRIFT,WEST_MEADOW_SWARD_RECOVERY}=afterFields;
 const growthBounds={minX:-79.96,maxX:-28.04,minZ:24.12,maxZ:61.88};
 const flowerBounds={minX:-79.4,maxX:-58.6,minZ:12.6,maxZ:59.4};
 const outside=(x,z,b)=>x<b.minX||x>b.maxX||z<b.minZ||z>b.maxZ;
@@ -85,8 +85,8 @@ test('bounded deterministic fields are bit-exact outside compact support and nev
   const s=westMeadowSwardAt(x,z),oldG=beforeCover.meadowGrowthAt(x,z),newG=afterCover.meadowGrowthAt(x,z),oldB=beforeFields.meadowBloomAt(x,z),newB=meadowBloomAt(x,z);
   assert(Number.isFinite(s)&&s>=0&&s<=1);assert(Number.isFinite(newG)&&newG>=.23*.62&&newG<=1.37);assert(newB>=oldB&&newB>=0&&newB<=1);assert(newG>=oldG-1e-15);
   assert.equal(s,westMeadowSwardAt(x,z));assert.equal(newG,afterCover.meadowGrowthAt(x,z));assert.equal(newB,meadowBloomAt(x,z));
-  if(outside(x,z,growthBounds)){assert.equal(s,0);assert.equal(newG,oldG);}
-  if(outside(x,z,flowerBounds))assert.equal(newB,oldB);
+  if(outside(x,z,growthBounds)){assert.equal(s,0);if(meadowMarginAt(x,z)===0)assert.equal(newG,oldG);}
+  if(outside(x,z,flowerBounds)&&meadowMarginAt(x,z)===0)assert.equal(newB,oldB);
   if(newG>oldG+.02)recovered++;if(newB>oldB+.05)newFlowers++;
   assert.equal(afterFields.meadowGrazingAt(x,z),beforeFields.meadowGrazingAt(x,z));
   beforeCover.meadowBladeColor(a,x,z,.47);afterCover.meadowBladeColor(b,x,z,.47);assert.deepEqual(a.toArray(),b.toArray());
@@ -116,7 +116,7 @@ test('one elongated colony connects to the retained west margin without blanket 
  for(let z=24;z<=54;z+=.25){const x=-69-(z-36)*4/18;assert(westFlowerAt(x,z)>0||beforeFields.meadowBloomAt(x,z)>0);assert(meadowBloomAt(x,z)>.1,'connected support, not a uniform-density promise, at '+JSON.stringify([x,z,meadowBloomAt(x,z)]));}
  assert.equal(meadowBloomAt(-54,43),0);assert.equal(meadowBloomAt(0,0),beforeFields.meadowBloomAt(0,0));
  assert.equal(meadowBloomAt(-73,54),beforeFields.meadowBloomAt(-73,54));
- for(const [x,z]of beforeFields.FLOWER_DRIFTS)if(outside(x,z,flowerBounds))assert.equal(meadowBloomAt(x,z),beforeFields.meadowBloomAt(x,z));
+ for(const [x,z]of beforeFields.FLOWER_DRIFTS)if(outside(x,z,flowerBounds)&&meadowMarginAt(x,z)===0)assert.equal(meadowBloomAt(x,z),beforeFields.meadowBloomAt(x,z));
 });
 
 test('legacy grass LOD geometry and reviewed cup lupins retain finite attributes and bounded budgets',()=>{

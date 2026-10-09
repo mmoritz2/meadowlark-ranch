@@ -497,6 +497,15 @@ footprint, attributes and thin-triangle stability; `tools/qa-riverwest.cjs` chec
 coverage and mounted travel. The combined road mesh contains 75,904 triangles
 and about 2.94 MiB of geometry, with one material and no new texture downloads.
 
+Eight authored flower beds in the Clover, eastern, northern and riverside
+pastures recover taller grass and dense modelled lupins from the grazing mask.
+Near, middle-distance, seeded and static grass share the same compact recovery
+field. Open field centres stay short, and existing road, yard, water and course
+planting exclusions still apply. Terrain, tree layout and collision data are
+unchanged. This uses the existing flower geometry and instance capacity; only
+live flower counts increase. `test-pastoral-fields`, `test-meadow-tufts` and
+`test-west-meadow` cover the shared growth response and preserved field centres.
+
 An original open-basin stone fountain, four beds with 117 periwinkle plants,
 three benches, five lanterns and three budgeted CC0 scan trees furnish the
 square. One orchard tree moves off the existing through-road; its harvesting

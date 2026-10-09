@@ -1,4 +1,4 @@
-import {grazedTuftScale} from '../meadow-tufts.mjs?v=grazed-tufts-1';
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=flowering-margins-1';
 import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpine-range-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
