@@ -1,3 +1,4 @@
+import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
 import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=flowering-margins-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
@@ -127,7 +128,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil';
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE;
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
@@ -593,6 +594,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           normal=normalize(mix(normal,normalize(mat3(viewMatrix)*powderNormal),coldPowder));
         }
       #endif`);
+    patchPastureMesoSurface(sh);
   };
   function setTrees(trees) { treeList = trees || []; redrawMask(); }
   /* For whoever lays out the tracks. Give it the polylines in world metres — the same shape

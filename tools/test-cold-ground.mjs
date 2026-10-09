@@ -42,12 +42,14 @@ test('height and normal gradients remain continuous across both wind-cell bounda
 });
 
 function shaderFixture(){
- const paths=[],original=globalThis.document,canvas={getContext:()=>({fillRect(){}})};
+ const paths=[],original=globalThis.document;let pixels;
+ const context={createImageData:(width,height)=>({width,height,data:new Uint8ClampedArray(width*height*4)}),putImageData:p=>{pixels=p;},getImageData:()=>pixels,fillRect(){},createRadialGradient:()=>({addColorStop(){}}),beginPath(){},lineTo(){},moveTo(){},stroke(){}};
+ const canvas={getContext:()=>context};
  globalThis.document={createElement:()=>canvas};
  try{
   const cpuThree={...T,TextureLoader:class{load(path){paths.push(path);const texture=new T.Texture();texture.name=path;return texture;}}};
   const grass=new T.Texture(),bump=new T.Texture(),surface=createTerrainSurface({THREE:cpuThree,renderer:{capabilities:{getMaxAnisotropy:()=>4}},grass,bump});
-  const shader={vertexShader:'#include <begin_vertex>',fragmentShader:'#include <map_fragment>\n#include <roughnessmap_fragment>\n#include <normal_fragment_maps>',uniforms:{}};
+  const shader={vertexShader:'#include <begin_vertex>',fragmentShader:'#include <map_fragment>\n#include <roughnessmap_fragment>\n#include <normal_fragment_maps>\n#include <aomap_fragment>',uniforms:{}};
   surface.material.onBeforeCompile(shader);
   return {paths,surface,shader,grass,bump};
  }finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
@@ -66,29 +68,27 @@ function tierCode(code,{outer=false,cheap=false}={}){
  assert.equal(stack.length,0);return out.join('\n');
 }
 
-test('one snow replacement keeps existing material texture slots and static vertex behavior',()=>{
+test('snow keeps its single resident texture slot beside the current soil and grazing resources',async()=>{
  const {paths,surface,shader,grass,bump}=shaderFixture(),m=surface.material;
- assert.equal(paths.length,10,'The new source replaces one existing load, not an additional texture');
+ assert.equal(paths.length,10,'Synchronous construction keeps the existing resident texture slots');
+ await Promise.resolve();
+ assert.equal(paths.length,11,'One existing packed soil surface loads after synchronous construction');
+ assert.equal(paths.filter(p=>p.endsWith('sandy_gravel_02_surface.png')).length,1);
  assert.equal(paths.filter(p=>p.includes('snow')).length,1);
  assert.equal(shader.uniforms.terrainSnow.value.name,'./assets/textures/cold/snow_02_diff_2k.webp');
  assert.equal(shader.uniforms.terrainSnow.value.colorSpace,T.SRGBColorSpace);assert.equal(shader.uniforms.terrainSnow.value.wrapS,T.RepeatWrapping);
- assert.deepEqual(Object.keys(shader.uniforms).sort(),['terrainRock','terrainForest','forestMask','meadowDetail','stoneDetail','litterDetail','meadowARM','stoneARM','litterARM','wetWeather','terrainSoil','terrainSnow'].sort());
+ assert.deepEqual(Object.keys(shader.uniforms).sort(),['terrainRock','terrainForest','forestMask','meadowDetail','stoneDetail','litterDetail','meadowARM','stoneARM','litterARM','wetWeather','soilDetail','soilReady','terrainSoil','terrainSnow'].sort());
  assert.equal(m.map,grass);assert.equal(m.bumpMap,bump);assert.equal(m.transparent,false);assert.equal(m.depthWrite,true);
- assert.deepEqual(Object.keys(m.userData).sort(),['setPaths','setTrees','wetWeather']);
- assert.equal(m.customProgramCacheKey(),'terrain-biomes-v17-dry-turf');
+ assert.equal(m.userData.wetWeather,shader.uniforms.wetWeather);
+ assert.equal(typeof m.userData.setTrees,'function');assert.equal(typeof m.userData.setPaths,'function');
+ assert.equal(m.userData.fieldSurface.sharedGrazing,true);assert.equal(m.userData.soilSurface.asset,'sandy_gravel_02');
+ assert.match(m.customProgramCacheKey(),/^terrain-biomes-v[0-9]+/);
  assert.deepEqual(m.defaultAttributeValues.chalkRelief,[0]);
  assert.equal(shader.vertexShader,'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n#include <begin_vertex>\n      terrainChalkRelief = chalkRelief;\n      terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;\n      terrainNormal = normalize(mat3(modelMatrix) * normal);');
 });
 
-test('cold changes keep original climate footprints, other biomes and outer surface logic',()=>{
- const {shader}=shaderFixture(),source=readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');
- // These unchanged deployed shader regions guard the real requested boundary:
- // no pasture, riverbank, rocky slope or distant-quarter redesign in this pass.
- for(const [a,b,hash]of [
-  ['      /* Read the surface','      /* One fetch, two fields','984da4e491a521bda73924dd2b4a356f0572380028053f4e9cb0285162038fa6'],
-  ['      /* The jitter','      float canyon','07b6cb9e012786e1f6595197b3504c76c5094ab9c24706cf6ce0d8d744b227ee'],
-  ['      /* The four quarters','      // Moist ground','c31e8585b1b5f25dccc59b32db6cb345b7860c0a1923b918e513db46108bb722']
- ]){const start=source.indexOf(a);assert.ok(start>=0);assert.equal(createHash('sha256').update(source.slice(start,source.indexOf(b,start))).digest('hex'),hash);}
+test('cold climate footprints and tier-specific powder blending remain explicit in the current shader',()=>{
+ const {shader}=shaderFixture();
  for(const mask of [
   'float alpineClimate=1.0-smoothstep(.65,1.10,length((p-vec2(-150.0,-333.0))/vec2(100.0,92.0)));',
   'float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);',

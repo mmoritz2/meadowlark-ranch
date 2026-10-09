@@ -8,21 +8,27 @@ import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=flow
 export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='legacy'}={}) {
   const P=[],N=[],C=[],U=[],I=[];
   const foldedNear=profile==='near-folded-v1'&&bladeCount===8&&segments===3;
+  const structured=foldedNear||profile==='middle-natural-v1';
   for(let blade=0;blade<bladeCount;blade++) {
-    const a=blade*2.39996,spread=.018+(blade%5)*.029;
+    const a=blade*2.39996,spread=structured?.014+(blade%5)*.017:.018+(blade%5)*.029;
     const ca=Math.cos(a),sa=Math.sin(a),ox=ca*spread,oz=sa*spread;
-    const tall=blade%3!==1,h=tall?.56+(blade%4)*.080:.29+(blade%3)*.045;
-    const bend=tall?.14+(blade%3)*.055:.26+(blade%3)*.05,width=.011+(blade%4)*.0023;
+    const tall=structured?blade===1||blade===5:blade%3!==1;
+    const h=structured?[.34,.63,.29,.47,.38,.71,.26,.51][blade%8]:(tall?.56+(blade%4)*.080:.29+(blade%3)*.045);
+    const bend=structured?[.23,.18,.29,.26,.25,.21,.27,.30][blade%8]:(tall?.14+(blade%3)*.055:.26+(blade%3)*.05);
+    const width=structured?(tall?.014+(blade%3)*.002:.022+(blade%3)*.0024):.011+(blade%4)*.0023;
     const base=P.length/3,twist=(blade%2?1:-1)*(.25+(blade%3)*.12);
+    // The lower leaves bend beyond a real shoulder then fall to the tip.
+    // Reusing each tuft's old vertices avoids broad straight V-shaped blades.
+    const profileHeight=t=>{const r=1-t;return h*(3*r*r*t*(tall?.60:.56)+3*r*t*t*(tall?1.0:.79)+t*t*t*(tall?.83:.38));};
     if(foldedNear) {
       // Reuse seven vertices for a tapered outline and one physical crease.
       // The two coincident crease vertices carry independent facet normals.
-      const t=.57,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
+      const t=.62,lean=bend*t*t;
       const heading=a+twist*t,sideX=-Math.sin(heading),sideZ=Math.cos(heading);
       const half=width*(.52+.78*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.72);
-      const tangent=new THREE.Vector3(ca*2*bend*t,h*(1-3*(tall?.12:.28)*t*t),sa*2*bend*t).normalize();
+      const tangent=new THREE.Vector3(ca*2*bend*t,(profileHeight(t+.001)-profileHeight(t-.001))/.002,sa*2*bend*t).normalize();
       const ridge=new THREE.Vector3(sideX,0,sideZ).cross(tangent).normalize().multiplyScalar(half*.34);
-      const cx=ox+ca*lean,cy=h*(t-drop),cz=oz+sa*lean,rootHalf=width*.52;
+      const cx=ox+ca*lean,cy=profileHeight(t),cz=oz+sa*lean,rootHalf=width*.52;
       const leftHalf=half*(.90+(blade%3)*.035),rightHalf=half*(.99-(blade%3)*.035);
       const points=[
         [ox+Math.sin(a)*rootHalf,0,oz-Math.cos(a)*rootHalf],
@@ -31,29 +37,30 @@ export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='
         [cx+ridge.x,cy+ridge.y,cz+ridge.z],
         [cx-sideX*leftHalf,cy,cz-sideZ*leftHalf],
         [cx+sideX*rightHalf,cy,cz+sideZ*rightHalf],
-        [ox+ca*bend,h*(1-(tall?.12:.28)),oz+sa*bend]
+        [ox+ca*bend,profileHeight(1),oz+sa*bend]
       ];
       for(let j=0;j<7;j++) {
         P.push(...points[j]);N.push(0,0,0);
-        // Preserve the original seven-vertex palette and unused mapless UVs.
-        const t=j===6?1:Math.floor(j/2)/3,side=j===6?0:j%2?1:-1;
-        const shade=.57+.43*Math.sin(t*Math.PI*.5),dry=blade%11===0;
-        C.push(shade*(dry?1.02:.90),shade*(dry?.96:1),shade*(dry?.57:.73));U.push((side+1)/2,t);
+        // Root-to-tip shading follows physical leaf coordinates, including the
+        // duplicated crease, so the root mass is dark and the blade stays lit.
+        const leafT=j<2?0:j===6?1:t,side=j===6?0:j===0||j===4?-1:1;
+        const shade=.27+.67*Math.pow(Math.sin(leafT*Math.PI*.5),.72),dry=blade%11===0;
+        C.push(shade*(dry?.96:.90),shade*(dry?.94:1),shade*(dry?.61:.73));U.push((side+1)/2,leafT);
       }
       for(const k of [0,1,2,0,2,4,1,5,3,4,2,6,3,5,6])I.push(base+k);
       continue;
     }
     for(let j=0;j<=segments;j++) {
-      const t=j/segments,tip=j===segments,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
+      const t=structured&&segments===2&&j===1?.60:j/segments,tip=j===segments,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
       const heading=a+twist*t,sideX=-Math.sin(heading),sideZ=Math.cos(heading);
       const half=width*(.52+.78*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.72);
-      const tangent=new THREE.Vector3(ca*2*bend*t,h*(1-3*(tall?.12:.28)*t*t),sa*2*bend*t).normalize();
+      const tangent=new THREE.Vector3(ca*2*bend*t,h*(1-3*(structured?(tall?.21:.40):(tall?.12:.28))*t*t),sa*2*bend*t).normalize();
       const normal=new THREE.Vector3(sideX,0,sideZ).cross(tangent).normalize();
       if(normal.y<0)normal.negate();normal.lerp(new THREE.Vector3(0,1,0),.68).normalize();
       for(const side of tip?[0]:[-1,1]) {
-        P.push(ox+ca*lean+sideX*half*side,h*(t-drop),oz+sa*lean+sideZ*half*side);
+        P.push(ox+ca*lean+sideX*half*side,structured?profileHeight(t):h*(t-drop),oz+sa*lean+sideZ*half*side);
         N.push(normal.x,normal.y,normal.z);
-        const shade=.57+.43*Math.sin(t*Math.PI*.5),dry=blade%11===0;
+        const shade=structured?.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72):.57+.43*Math.sin(t*Math.PI*.5),dry=blade%11===0;
         C.push(shade*(dry?1.02:.90),shade*(dry?.96:1),shade*(dry?.57:.73));U.push((side+1)/2,t);
       }
       if(j<segments-1){const k=base+j*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}

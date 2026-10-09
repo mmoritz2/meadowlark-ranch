@@ -1,4 +1,4 @@
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=meadow-families-1';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=pasture-structure-2';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
 export const MIXED_SWARD = Object.freeze({high:96,medium:48,low:0,radius:18,partingRadius:1.75,fadeZeroRadius:39.48,retireRadius:40.98,sourceTriangles:40,sourceGeometryBytes:2704,richTriangles:70,maxTriangleRatio:1.20,variantTriangles:Object.freeze([450,649,595,633,626]),variantVertices:Object.freeze([432,716,614,743,710]),assetSha256:'357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902'});
