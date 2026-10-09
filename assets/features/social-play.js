@@ -61,7 +61,7 @@ export function install(G){
    blurb:'An easy morning circuit — the lake, the pasture and home for lunch.',r:{c:300,g:1,p:20}},
   {id:'cottonwood',name:'Cottonwood Post Run',   icon:'🏘️',regions:3,km:0.5,
    stops:[['🏠 Meadowlark Ranch',0,5],['🌲 Hollowpeak Pines',-30,-58],['🏘️ Cottonwood Village',47,-50],['🏠 Meadowlark Ranch',0,5]],
-   blurb:'Carry the post through the pines to the village and back.',r:{c:450,g:2,p:28}},
+   blurb:'Collect Wren’s post, ride through the pines, and bring Ada’s reply home.',r:{c:450,g:2,p:28}},
   {id:'riverside',name:'Riverside Crossing',     icon:'🌉',regions:3,km:0.7,
    stops:[['🏠 Meadowlark Ranch',0,5],['🌊 Loon Lake',20,16],['🌉 River bridge',0,118],['🌉 Riverside Crossing',0,120]],
    blurb:'North along the water to the old bridge at Riverside.',r:{c:550,g:2,k:1,p:34}},
@@ -533,6 +533,7 @@ export function install(G){
  G.on('trailStop',(r,p)=>{ ping({trp:{idx:r.idx},t:''}); });
  /* We own the payout: expeditions pay their own reward, custom rides pay by distance. */
  G.on('trailDone',r=>{
+  if(r.managed==='cottonwood-post')return true; // The courier pays only after a verified handover save.
   const pts=r.pts, stops=pts.length, len=routeLen(pts);
   const ex=r.exped?EXPEDITIONS.find(e=>e.id===r.exped):null;
   const reward=ex?Object.assign({},ex.r):{c:Math.max(40*stops,Math.round(0.6*len)),p:12+6*stops};
@@ -943,7 +944,7 @@ export function install(G){
   else if(k==='exped'){
    const e=EXPEDITIONS.find(e=>e.id===a[1]); if(!e)return;
    rideName=e.name;
-   if(startRide(e.stops.map(p=>p.slice()),{exped:e.id,name:e.name})){G.hidePanels();}
+   if(startRide(e.stops.map(p=>p.slice()),{exped:e.id,name:e.name,soloExpedition:true})){G.hidePanels();}
   }
   else if(k==='showranch'){publishRanch(true);toast('📤 Your ranch is on show to the club — '+ranchPts(s)+' builder points.');}
   else if(k==='tour')startTour(arg);

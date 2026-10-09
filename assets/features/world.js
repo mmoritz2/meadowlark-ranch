@@ -548,7 +548,7 @@ export function install(G){
   W.colliders.push({x:st.x,z:st.z,r:2.2});
  }
  function boardBalloon(st){
-  if(P.veh)return;
+  if(P.veh||G.run('travelGate','balloon'))return;
   if(G.course.get()){toast('🏁 Finish the course first!');return;}
   const s=S.fresh()||{};
   const others=BALLOON_STATIONS.filter(o=>o!==st&&regionUnlocked(regionById(o.region),s));
@@ -584,7 +584,7 @@ export function install(G){
    W.addThing({kind:'ferry',id:d.id,x:d.x,z:d.bz,g:null,reach:9,label:()=>P.veh?'⛵ …':(FERRY.at===FERRY.docks.indexOf(d)?'⛵ Take the ferry (E) — across the river':'⛵ The ferry is at the other dock — wait for it (E)'),use:()=>boardFerry(d)});}
  }
  function boardFerry(d){
-  if(P.veh)return;if(G.course.get()){toast('🏁 Finish the course first!');return;}
+  if(P.veh||G.run('travelGate','ferry'))return;if(G.course.get()){toast('🏁 Finish the course first!');return;}
   const i=FERRY.docks.indexOf(d);
   if(FERRY.at!==i){FERRY.at=i;toast('⛵ The ferryman poles back over for you…');const dk=FERRY.docks[i];FERRY.g.position.set(dk.x,riverLevel(dk.x),dk.z);return;}
   const pts=i===0?FERRY.pts.slice():FERRY.pts.slice().reverse();let len=0;for(let k=1;k<pts.length;k++)len+=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);

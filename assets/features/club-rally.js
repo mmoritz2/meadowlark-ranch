@@ -148,7 +148,7 @@ export function install(G){
    if(!r)return {ok:false,reason:'This trail route is unavailable.'};
    for(const p of r.stops){const locked=G.worldPkg?.lockedRegionsAt?.(p[1],p[2])||[];if(locked.length)return {ok:false,reason:G.worldPkg.lockText?.(locked[0])||'Unlock this trail’s region first.'};}
    // Starting a solo contribution does not post a chat message or summon peers.
-   ok=!!G.trail?.start(r.stops.map(p=>p.slice()),name(),{name:r.name,exped:r.id});
+   ok=!!G.trail?.start(r.stops.map(p=>p.slice()),name(),{name:r.name,exped:r.id,soloExpedition:true});
   }
   if(ok){G.hidePanels?.();G.seFrame?.settle();return {ok:true};}
   return {ok:false,reason:'This activity could not start. Finish any horse action and try again.'};

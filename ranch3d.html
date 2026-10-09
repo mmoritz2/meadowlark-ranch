@@ -300,7 +300,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 
 /* ---------- prompts, hints, toasts ---------- */
 #hint{position:fixed;bottom:calc(74px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;background:var(--dark);color:var(--ink-inv);padding:8px 16px;border-radius:var(--r-full);font-size:13px;font-weight:600;transition:opacity 1s;pointer-events:none;border:1px solid rgba(255,248,234,.15)}
-#ctx{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink-inv);padding:10px 18px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;display:none;border:1px solid rgba(255,248,234,.22);box-shadow:var(--e2);animation:rise .18s ease}
+#ctx{min-height:44px;box-sizing:border-box;position:fixed;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink-inv);padding:10px 18px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;display:none;border:1px solid rgba(255,248,234,.22);box-shadow:var(--e2);animation:rise .18s ease}
 #tameHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);color:var(--ink-inv);padding:8px 16px;border-radius:var(--r-full);font-weight:700;display:none}
 #roundHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#3d5a2a;color:#f2ffe6;padding:8px 18px;border-radius:var(--r-full);font-weight:800;display:none;box-shadow:var(--e2)}
 #drillHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#6b3f18;color:#fff3e0;padding:8px 18px;border-radius:var(--r-full);font-weight:800;display:none;box-shadow:var(--e2)}
@@ -708,7 +708,8 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=horn-broken-ridges-1';
+import {FEATURES} from './assets/features/index.js?v=cottonwood-post-1';
+import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 const HORSE_ARRIVAL=createHorseArrival();
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
@@ -1498,6 +1499,7 @@ function rawH(x,z){
    village out to Barleyfold. Grass and ground cover keep off them, which is what actually
    makes a track look walked rather than painted on. */
 const PATHS=[
+ ...COTTONWOOD_TRACKS,
  [[0,128],[0,138],[18,150],[47,171],[83,184]],                         // river crossing -> north meadow
  [[0,10],[13,-11],[28,-30],[44,-46],[50,-53]],                       // ranch -> Cottonwood
  [[-7,3],[-26,7],[-46,2],[-63,-6],[-71,-10]],                        // ranch -> Home Pasture
@@ -4401,6 +4403,13 @@ for(let i=0;i<44;i++){                                       // stumps: where tr
  do{ const a=Math.random()*Math.PI*2,rr=45+Math.random()*400; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
  while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z)||sceneryArt.containsWaterfall(x,z,1));
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
+}
+// Cull only random plants/rocks from the authored courier corridors after all
+// placement draws. Preserve the random stream and every fixed ranch prop.
+for(const name of ['oak','birch','blossom','pine','snowpine','bush','flowerbush','boulder','stump'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
+ const p=FOLIAGE[name][i],ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z),radius=ci>=0?colliders[ci].r:Math.min(2,p.s||1);
+ if(cottonwoodTrackDistance(p.x,p.z)>3.2+radius)continue;
+ if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 const PROP_SRC={};
 const desertArt=createDesertArt({THREE});
@@ -8904,6 +8913,7 @@ function puffDust(x,y,z,{size=1,opacity=.8}={}){
 /* ================= input ================= */
 let PANEL_IDS=['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'];
 const keys={};
+let postInteractionHeld=false;
 const editingInput=()=>{const el=document.activeElement;return !!el&&(el.matches('input,select,textarea')||el.isContentEditable);};
 function gameInputBlocked(){
  return !!G.tackSummon?.ceremony?.active||document.body.classList.contains('se-screen-open')||
@@ -8943,6 +8953,10 @@ addEventListener('keydown',e=>{
  // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
  if(e.code==='KeyB'&&!player.onFoot&&!freeCam&&!build.type&&!build.remove&&!build.move&&dragonElement(myHorses[rideIdx])){keys.KeyB=true;e.preventDefault();return;}
  if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
+ if(e.code==='KeyE'&&(postInteractionHeld||G.cottonwoodPost?.context()?.inReach)){
+  if(!e.repeat&&!postInteractionHeld){postInteractionHeld=true;G.cottonwoodPost.interact();}
+  e.preventDefault();return;
+ }
  keys[e.code]=true;
  if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
  if(e.code==='KeyE'&&nearNPC)openDlg(); else if(e.code==='KeyE'&&nearThing)useThing();
@@ -8969,7 +8983,7 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyR')startTrick('spin');
  if(e.code==='KeyV')startTrick('flip');
 });
-addEventListener('keyup',e=>{keys[e.code]=false;G.run('keyup',e);});
+addEventListener('keyup',e=>{if(e.code==='KeyE')postInteractionHeld=false;keys[e.code]=false;G.run('keyup',e);});
 // turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
 // what the keyboard and the on-screen buttons set, and what most of the game reads.
 const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,back:false,backA:0,brake:false,analog:false};
@@ -9078,6 +9092,7 @@ addEventListener('pointerup',endDrag);
 addEventListener('pointercancel',endDrag);
 function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();nativeJumpInput.reset();hoofContacts.reset();releaseRidingPointer();endDrag();}
 function resetGameInput(){
+ postInteractionHeld=false;
  releaseAllRidingControls();player.breathHold=false;
  for(const id of ['tGal','tSpr']){const control=$(id);if(control)control.style.opacity='0.6';}
 }
@@ -10100,17 +10115,32 @@ let trailRide=null, trailDraft=[], trailOffer=null;
 function startTrail(pts,by,opts){
  if(G.run('activityGate','trail'))return false;
  if(!pts||pts.length<2)return false;
+ if(trailRide&&!stopTrail())return false;
  trailRide=Object.assign({pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0,roster:{}},opts||{}); trailOffer=null;
- G.run('trailStart',trailRide);
- toast('🥾 '+(trailRide.name?trailRide.name+': ':'Trail ride: ')+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
+ const started=trailRide;G.run('trailStart',started);
+ if(trailRide!==started)return false;
+ if(!trailRide.managed)toast('🥾 '+(trailRide.name?trailRide.name+': ':'Trail ride: ')+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
 }
 function announceTrail(pts,extra){
  if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify(Object.assign({id:net.id,n:myName(),t:'🥾 started a trail ride: '+pts.map(p=>p[0]).join(' → '),tr:pts},extra||{})));}catch(e){}}
 }
+function stopTrail(){
+ const r=trailRide;if(!r)return true;
+ if(G.run('trailCancel',r)===true)return false;
+ if(trailRide===r)trailRide=null;arrow.visible=false;return true;
+}
+function finishManagedTrail(r){
+ if(!r||r!==trailRide||!r.managed||r.finishNotified||r.idx!==r.pts.length||G.run('trailFinishReady',r)!==true)return false;
+ // The mission has already confirmed its reward. Listeners observe the same
+ // current trail for club contributions, once, before the slot is released.
+ r.finishNotified=true;G.run('trailDone',r);
+ if(trailRide===r)trailRide=null;arrow.visible=false;return true;
+}
 /* The trail internals, for the social-play package (named rides, custom pins, expeditions). */
-G.trail={STOPS:TRAIL_STOPS,start:startTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
+G.trail={STOPS:TRAIL_STOPS,start:startTrail,stop:stopTrail,finishManaged:finishManagedTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){if(v===trailRide)return;if(trailRide&&!stopTrail())return;trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
 function tickTrail(dt){
  if(!trailRide||course)return;
+ if(G.run('trailTick',trailRide,dt)===true)return;
  const p=trailRide.pts[trailRide.idx]; trailRide.t+=dt;
  arrow.visible=true; arrow.position.set(p[1],groundH(p[1],p[2])+3.2+Math.sin(trailRide.t*4)*0.18,p[2]);
  if(Math.hypot(player.pos.x-p[1],player.pos.z-p[2])<12){
@@ -11332,7 +11362,7 @@ function openOnline(){
  +'<div class="crow"><button id="netGo" style="flex:1">'+(net.client&&net.client.connected?'🔄 Rejoin':'🟢 Connect')+'</button><button id="netOff">Leave</button></div>'
  +'<button id="netInvite" style="background:#e8f6e0">📨 Invite friends — copy a join link</button>'
  +'<b style="font-size:13px;margin-top:6px">🥾 Trail rides</b>'
- +(trailRide?'<div class="evrow">🥾 <b>Riding: '+trailRide.pts.map(p=>p[0]).join(' → ')+'</b><span>next: '+trailRide.pts[trailRide.idx][0]+'</span><button data-tr="stop">Stop</button></div>':'')
+ +(trailRide?'<div class="evrow">🥾 <b>Riding: '+trailRide.pts.map(p=>p[0]).join(' → ')+'</b><span>'+(trailRide.idx>=trailRide.pts.length?'Route complete · save pending':'next: '+(trailRide.pts[trailRide.idx]?.[0]||'route marker'))+'</span><button data-tr="stop">Stop</button></div>':'')
  +(trailOffer&&!trailRide?'<div class="evrow">🥾 <b>'+trailOffer.by+'\'s ride:</b><span>'+trailOffer.pts.map(p=>p[0]).join(' → ')+'</span><button data-tr="join" class="claimBtn">Join</button></div>':'')
  +'<span style="font-size:11px;color:#8c7a63">Build a route from the stops, then start it — your club sees it and can ride along.</span>'
  +'<div class="crow" style="gap:4px;flex-wrap:wrap">'+TRAIL_STOPS.map((st,i)=>'<button data-tr="add:'+i+'" style="font-size:11px;padding:3px 7px">'+st[0]+'</button>').join('')+'</div>'
@@ -11358,7 +11388,7 @@ function openOnline(){
   else if(a==='clear')trailDraft=[];
   else if(a==='start'){ if(startTrail(trailDraft)){announceTrail(trailDraft);trailDraft=[];} }
   else if(a==='join'){ if(trailOffer)startTrail(trailOffer.pts,trailOffer.by); }
-  else if(a==='stop'){ trailRide=null; arrow.visible=false; }
+  else if(a==='stop'){stopTrail();}
   else if(a==='party'){ startParty(); }
   openOnline(); openOnline(); };});
  $('netGo').onclick=()=>{
@@ -13119,7 +13149,7 @@ function spawnNPC(def){const g=makeNPC(def);g.position.set(def.x,groundH(def.x,d
 const npcList=NPC_DEFS.map(spawnNPC);
 function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);const e=spawnNPC(def);npcList.push(e);return e;}
 const npc=npcList[0].g;
-$('ctx').onclick=()=>{if(nearNPC)openDlg();else if(nearThing)useThing();};
+$('ctx').onclick=()=>{if(gameInputBlocked()||freeCam)return;if(G.cottonwoodPost?.context()?.inReach){G.cottonwoodPost.interact();return;}if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
 const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true,coat:'moonlit',glow:true};
 const WILD_BREEDS=[
@@ -13916,9 +13946,9 @@ function tick(stepSeconds){
  nearNPC=null; let ndb=3.5;
  for(const q of npcList){const nd=Math.hypot(player.pos.x-q.g.position.x,player.pos.z-q.g.position.z);if(nd<ndb){ndb=nd;nearNPC=q;}}
  tickThings(dt); tickTrail(dt); tickParty(dt); tickRunaways(dt,t);
- const rl=runawayLabel();
- $('ctx').style.display=(nearNPC||nearThing||rl)?'block':'none';
- if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
+ const rl=runawayLabel(),postAction=G.cottonwoodPost?.context();
+ $('ctx').style.display=(postAction?.inReach||nearNPC||nearThing||rl)?'block':'none';
+ if(postAction?.inReach)$('ctx').textContent=postAction.label+' (E)';else if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
  const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;
  $('questTrack').textContent=G.run('questPill',m)||(m?
   ('📜 '+(m.ch?m.ch+' · ':'')+m.label+(missionDone()?' ✅ → tell '+giver.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','')+'!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
