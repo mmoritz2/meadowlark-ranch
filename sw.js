@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-horse-art-20261009b';
+const CACHE = 'meadowlark-horse-art-20261009c';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately

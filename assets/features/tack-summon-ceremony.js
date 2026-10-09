@@ -6,7 +6,7 @@ export const TACK_STALL_ARRIVAL=Object.freeze({x:-27.5,z:-8.2,heading:0});
 export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onReturn,getSlot,setSlot,setHorseId,canFit}){
  const T=G.THREE,H=G.horse,W=G.world,stall=G.summon?.state;
  const state={active:false,phase:'idle',t:0,result:null,snapshot:null,reduced:false,shown:false,error:''};
- const sceneryVisibility=new Map(),actorPoint=new T.Vector3();
+ const sceneryVisibility=new Map(),actorPoint=new T.Vector3(),cameraPoint=new T.Vector3();
  let stage=null,ring=null,particles=null,showcase=null,dialog=document.createElement('section');
  dialog.id='tackStallDialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-label','Tack at the Summoning Stall');dialog.setAttribute('aria-modal','true');dialog.hidden=true;document.body.appendChild(dialog);
  const entry=['Summoning Stall',TACK_STALL_ARRIVAL.x,TACK_STALL_ARRIVAL.z,TACK_STALL_ARRIVAL.heading];
@@ -50,12 +50,14 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
   for(const thing of safeList(()=>W.things))if(thing?.id==='tack-summon-stall')mask(thing.g);
   const actors=[...safeList(()=>H.herd?.()),...safeList(()=>G.ranch?.standing?.()),
    ...safeList(()=>G.ranchSys?.barnHorses?.()),...safeList(()=>Object.values(H.remotes||{})),
-   ...safeList(()=>W.visitors)];
-  const center=G.summon?.STALL;
+   ...safeList(()=>W.visitors),...safeList(()=>[G.onFoot?.horse?.()]),
+   ...safeList(()=>[G.pets?.comp?.()]),...safeList(()=>[G.petComp?.()]),...safeList(()=>[G.wild?.get?.()]),
+   ...safeList(()=>G.worldPkg?.herds).flatMap(herd=>safeList(()=>herd?.members))];
+  const center=G.summon?.STALL;G.camera.getWorldPosition(cameraPoint);
   if(Number.isFinite(center?.x)&&Number.isFinite(center?.z))for(const actor of actors){
-   const root=actor?.parts?.group;if(!root?.isObject3D)continue;
+   const root=actor?.parts?.group||actor?.group;if(!root?.isObject3D)continue;
    try{root.getWorldPosition(actorPoint);}catch{continue;}
-   if(Number.isFinite(actorPoint.x)&&Number.isFinite(actorPoint.z)&&Math.hypot(actorPoint.x-center.x,actorPoint.z-center.z)<=14)mask(root);
+   if(Number.isFinite(actorPoint.x)&&Number.isFinite(actorPoint.z)&&(Math.hypot(actorPoint.x-center.x,actorPoint.z-center.z)<=14||Math.hypot(actorPoint.x-cameraPoint.x,actorPoint.z-cameraPoint.z)<=8))mask(root);
   }
   // Herd distance culling writes visible each frame, and newly loaded actors can
   // enter during the reveal. Keep the shot clear without changing their motion.
@@ -77,7 +79,7 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
   const p=player();if(Math.hypot(p.pos.x-G.summon.STALL.x,p.pos.z-G.summon.STALL.z)>6)return notify('Visit the Summoning Stall west of the barn first.');
   G.hidePanels?.();G.seHud?.close?.(false);resetInput();
   state.snapshot=capture();state.active=true;state.phase='choosing';state.t=0;state.result=null;state.shown=false;state.error='';state.reduced=!!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  G.riding?.lock?.('tack-ceremony',true);document.body.classList.add('tack-summoning');hideActors();buildStage();stage.visible=true;ring.visible=false;particles.visible=false;showDialog();dialog.querySelector('[data-tw-slot]')?.focus({preventScroll:true});return {ok:true,code:'opened'};
+  G.riding?.lock?.('tack-ceremony',true);document.body.classList.add('tack-summoning');buildStage();stage.visible=true;ring.visible=false;particles.visible=false;camera(0,0,null,true);showDialog();dialog.querySelector('[data-tw-slot]')?.focus({preventScroll:true});return {ok:true,code:'opened'};
  }
  function visit(){if(state.active)return {ok:false,code:'busy'};const why=gate();if(why)return notify(why);G.hidePanels?.();G.seHud?.close?.(false);if(Math.hypot(player().pos.x-G.summon.STALL.x,player().pos.z-G.summon.STALL.z)>6){if(typeof W.travelTo!=='function'||!W.travelTo(travelIndex()))return {ok:false,code:'travel-blocked'};}return open();}
  function start(){
@@ -111,11 +113,13 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
   if(showcase){showcase.root.visible=t>3.15;const scale=Math.max(.001,Math.min(1,(t-3.15)/.9));showcase.root.scale.setScalar(scale*.76);showcase.root.position.y=2.05+(state.reduced?0:Math.sin(t*1.5)*.045);const angle=state.result.piece.slot==='saddle'?-.75:-.28;showcase.root.rotation.y=angle+(state.reduced?0:Math.sin((t-4.2)*.16)*.20);}
   if(t>4.5&&!state.shown)reveal();
  }
- function camera(dt,_t,camLook){
-  if(!state.active)return false;hideActors();const progress=state.phase==='choosing'?0:Math.min(1,state.t/4.5),portrait=G.camera.aspect<.85;
+ function camera(dt,_t,camLook,snap=false){
+  if(!state.active)return false;const progress=state.phase==='choosing'?0:Math.min(1,state.t/4.5),portrait=G.camera.aspect<.85;
   // A portrait screen needs room for the barn and the control card below it.
   const goal=new T.Vector3(portrait?.5:2.3-progress*.35,portrait?3.3:2.9,portrait?14-progress*2.7:8.6-progress*2.1),look=new T.Vector3(0,portrait?1:2,2.6);stall.grp.localToWorld(goal);stall.grp.localToWorld(look);
-  const k=state.reduced?1:1-Math.exp(-4*Math.min(.1,Math.max(.001,dt||0)));G.camera.position.lerp(goal,k);camLook?.lerp(look,k);G.camera.lookAt(look);G.camera.fov=portrait?52:44;G.camera.updateProjectionMatrix();return true;
+  // Enter directly at the held chooser shot; interpolating from the riding
+  // camera can pass through trees and actors before the first visible frame.
+  const k=snap||state.reduced?1:1-Math.exp(-4*Math.min(.1,Math.max(.001,dt||0)));G.camera.position.lerp(goal,k);camLook?.lerp(look,k);G.camera.lookAt(look);G.camera.fov=portrait?52:44;G.camera.updateProjectionMatrix();hideActors();return true;
  }
  dialog.addEventListener('change',e=>{if('twSlot'in e.target.dataset){setSlot(e.target.value);paint();dialog.querySelector('[data-tw-slot]')?.focus({preventScroll:true});}else if('twHorse'in e.target.dataset){setHorseId(e.target.value);paint();}});
  dialog.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;if('twSummon'in d)start();else if('twSkip'in d)skip();else if('twClose'in d)close();else if('twEquip'in d){const r=equip();state.error=r.ok?'Tack equipped. Your horse will be wearing it when you return.':'Your tack could not be equipped. Please try again.';paint();}});

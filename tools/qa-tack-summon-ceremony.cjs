@@ -113,6 +113,22 @@ function fakeDOM(){
  dynamic.ceremony.close();
  check(entering.parts.group.visible&&!replacement.parts.group.visible&&replaced.visible&&replaced.parent===null,'late/replaced/removed roots restore flags without being moved or reattached');
  console.log('PASS clear ceremony view, precise visibility restoration, child labels, culling writes, late actors and safe optional readers');
+ // These actors live outside H.herd(): the player's parked mount, active
+ // pet, legacy stray and following world-herd member. Their roots can sit just
+ // beyond the stall radius but beside the portrait camera (e.g. broad wings).
+ const extras=fixture({aspect:390/844}),extraProps=addScenery(extras),extraActors=Array.from({length:5},(_,i)=>extraProps.actor(-28+i*.2,-22,i!==4));
+ extras.G.onFoot.horse=()=>({group:extraActors[0].parts.group});
+ extras.G.pets={comp:()=>extraActors[1]};extras.G.petComp=()=>extraActors[1];
+ extras.G.wild={get:()=>extraActors[2]};extras.G.worldPkg.herds=[{members:[extraActors[3],extraActors[4]]},null,{}];
+ check(extraActors.every(a=>a.parts.group.position.distanceTo(new THREE.Vector3(-27.5,1,-4.5))>14),'extra actor fixture is outside the original stall radius');
+ extras.ceremony.open();
+ check(extraActors.every(a=>!a.parts.group.visible),'known parked/pet/wild roots beside ceremony camera are hidden even beyond stall radius');
+ extras.ceremony.close();
+ check(extraActors.slice(0,4).every(a=>a.parts.group.visible)&&!extraActors[4].parts.group.visible,'duplicate pet APIs and extra actor lists restore exact original flags');
+ const unavailable=fixture();unavailable.G.onFoot.horse=()=>{throw Error('parked horse unavailable');};unavailable.G.pets={comp:()=>{throw Error('pet unavailable');}};unavailable.G.wild={get:()=>null};unavailable.G.worldPkg.herds=[{members:null}];
+ assert.doesNotThrow(()=>{unavailable.ceremony.open();unavailable.ceremony.tick(.016);unavailable.ceremony.close();});
+ check(!unavailable.ceremony.active,'missing optional actor APIs cannot strand the ceremony');
+ console.log('PASS separate parked/pet/wild actors, near-camera coverage and exact restoration');
  // Project real world points through a portrait THREE camera. These are scene
  // and screen-space requirements, not assertions about a chosen camera pose/FOV.
  const portrait=fixture({aspect:390/844}),portraitInitial=portrait.snapshot(),portraitProjection=portrait.camera.projectionMatrix.clone();
@@ -121,9 +137,16 @@ function fakeDOM(){
  const framed=p=>Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)&&Math.abs(p.x)<1&&p.z>-1&&p.z<1;
  // Original Summoning Stall front corners: 4.6 m wide, 3.2 m deep.
  const barnSides=[-2.3,2.3].map(x=>portrait.stall.grp.localToWorld(new THREE.Vector3(x,1.7,1.6)));
- portrait.ceremony.open();settlePortrait();
+ portrait.ceremony.open();
+ const openingCamera=portrait.camera.position.clone(),openingQuaternion=portrait.camera.quaternion.clone();
+ portrait.camera.updateMatrixWorld(true);
+ check(barnSides.map(projectWorld).every(framed),'first visible portrait chooser frame already contains both barn sides');
+ settlePortrait();
+ check(portrait.camera.position.distanceTo(openingCamera)<1e-10&&portrait.camera.quaternion.angleTo(openingQuaternion)<1e-7,'chooser enters at its established shot with no travel through intervening scenery');
  check(barnSides.map(projectWorld).every(framed),'portrait chooser keeps both barn sides horizontally within the camera frustum');
- portrait.ceremony.start();for(let i=0;i<55;i++)portrait.ceremony.tick(.1);settlePortrait();
+ portrait.ceremony.start();for(let i=0;i<55;i++)portrait.ceremony.tick(.1);
+ const beforeRevealMove=portrait.camera.position.clone();portrait.ceremony.camera(1/60,5,new THREE.Vector3());const firstRevealMove=portrait.camera.position.distanceTo(beforeRevealMove);settlePortrait();
+ check(firstRevealMove>0&&firstRevealMove<portrait.camera.position.distanceTo(beforeRevealMove)*.2,'charging/reveal camera keeps smooth easing after the one-time entry snap');
  const rewardRoot=portrait.stall.grp.getObjectByName('Summoned '+portrait.ceremony.state.result.piece.name);
  check(portrait.ceremony.state.phase==='revealed'&&rewardRoot?.visible,'portrait camera regression uses the fully revealed actual reward sculpture');
  const rewardPoints=[];rewardRoot.traverse(mesh=>{if(!mesh.isMesh)return;const a=mesh.geometry.getAttribute('position');for(let i=0;i<a.count;i++)rewardPoints.push(new THREE.Vector3().fromBufferAttribute(a,i).applyMatrix4(mesh.matrixWorld));});
