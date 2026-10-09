@@ -23,7 +23,7 @@ export function install(G){
  G.ui.shopTab({id:'native-models',label:'Free models',pos:1,render(save){
   return '<p>Choose a horse or dragon to add to your stable for free. Each has the movements listed below.</p>'+keys.map(key=>{
    const profile=NATIVE_BREED_PROFILES[key],choice=NATIVE_MODEL_CHOICES[key];
-   return '<div class="evrow" data-native-choice="'+key+'"><b>'+esc(profile.name)+'</b><span>'+esc(choice.description)+' <a href="breeds.html?horse='+key+'&amp;v=horse-art-2" target="_blank" rel="noopener">Preview in Breed Studio</a></span><button data-fx="native-horses:add:'+key+'"'+(owned(save,key)?' disabled':'')+'>'+(owned(save,key)?'In your stable':'Add to stable · Free')+'</button></div>';
+   return '<div class="evrow" data-native-choice="'+key+'"><b>'+esc(profile.name)+'</b><span>'+esc(choice.description)+' <a href="breeds.html?horse='+key+'&amp;v=horse-art-20261009b" target="_blank" rel="noopener">Preview in Breed Studio</a></span><button data-fx="native-horses:add:'+key+'"'+(owned(save,key)?' disabled':'')+'>'+(owned(save,key)?'In your stable':'Add to stable · Free')+'</button></div>';
   }).join('')+'<p>After adding a model, open My Horses and choose Ride when you are ready.</p>';
  }});
  G.ui.action('native-horses',args=>{

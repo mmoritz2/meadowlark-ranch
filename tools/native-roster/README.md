@@ -44,8 +44,8 @@ The saddle, bits, stirrups and reins still require a mounted runtime check.
 Source hair cards keep all their original topology and skin influences, with
 whole-card mane/tail length changes. This preserves moving grooming controls.
 This buffer builder supplies no new fetlock feather geometry. The Fjord now
-uses its original skinned cards reshaped into a short rounded upright crest
-and forelock; see the grooming section below. Distinct upper-body shape,
+uses shortened original cards around a small continuous skinned crest and
+forelock; see the grooming section below. Distinct upper-body shape,
 height, coat pattern and grooming do not imply independently authored leg rigs,
 breed-specific gaits, or anatomically unique skeletons.
 
@@ -141,8 +141,12 @@ report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
 silky hair meshes to Shire, Clydesdale and Vanner instances, including aliases
-such as Tempest and Rosebloom. Vanner uses a fuller 72-strand treatment per leg,
-while Shire uses 56 and Clydesdale 62; all follow sampled skin and native joints. Their
+such as Tempest and Rosebloom. Vanner uses 72 overlapping locks per leg with a
+denser undercoat; Shire's 56 and Clydesdale's 62 retain their approved shapes.
+Vanner's alpha-aware front/side collar coverage is 69–81%, with four draw calls.
+Across 328 real gait poses its feathers clear the floor by at least 30.9 mm
+and stirrup treads by 353.9 mm; standing sole clearance is 50.5 mm. All follow
+sampled skin and native joints. Their
 strand roots follow the measured widened lower-leg surface. Percheron, Belgian
 and Suffolk keep clean legs. The groom facade owns their Hair visibility and
 idempotent disposal; these strands do not alter the source skin or animation.
@@ -205,26 +209,36 @@ these numerical tests do not certify visual gait or perfect leather contact.
 
 ## Native Fjord groom and runtime feathers
 
-`groom.py:shape_fjord_groom` reshapes 212 original mane cards and 66 forelock cards
-around their attached source endpoints into a rounded upright crest. Its mane
-rise is about 8–16 source centimetres. The 194 tail cards keep the previous 1.06
+`groom.py:shape_fjord_groom` places 212 shortened original mane cards in coherent
+fringe lanes around a rounded upright crest and trims 66 forelock cards into a
+tidy hanging tuft. Mane rise is about 2–11 source centimetres. The 194 tail
+cards keep the previous 1.06
 length treatment; 76 eyelash islands remain untrimmed. Every card retains source
 UVs, topology, skin weights and inertial hair bones, and its transformed normals
-use the affine inverse transpose. No replacement rig or extra mane mesh is used.
+use the affine inverse transpose. A separate 1,562-vertex, 3,120-triangle crest
+fills the gaps between shortened cards with one continuous rounded surface.
+It reuses the original skeleton and each recorded mane/forelock donor's exact
+skin influences; the five original mesh topologies and animation tracks stay intact.
 
-`groom.uprightCrest.colorCards` records 278 contiguous mane/forelock islands for
-`assets/native-fjord-groom.js`. That private runtime material adds a cream outer
-edge and dark center while retaining the original strand texture/alpha; tail
-and eyelashes are excluded, and saved player mane dyes can override the style.
-The metadata adds no draw calls. `python3 tools/native-roster/qa-groom.py` checks
-the original-source geometry, attachment, card roles and two-tone mask.
+`groom.uprightCrest.colorCards` records 278 contiguous mane/forelock islands;
+`groom.uprightCrest.shell` stores the additive surface and donor indices.
+`assets/native-fjord-groom.js` gives both pale outer hair and a dark center,
+with restrained strand detail. Tail and eyelashes are excluded, and saved
+player mane dyes can override the style. The continuous crest adds one draw
+call and follows the same Hair visibility control as the original cards.
+`python3 tools/native-roster/qa-groom.py` checks original-source geometry,
+attachment, card roles and the packed additive surface. The runtime groom
+validator retains the original five-mesh audit and only accepts a bounded
+Fjord crest whose bones, binds and donor influences match the original hair.
 
 `node tools/test-native-fjord-groom-motion.mjs` advances 1,377 frames and checks
 183 full-skin poses across rest, idle, gaits, jumping and settling. Groom inertia
-leaves the body, eyes, feet and tack identical to the no-inertia comparator.
-Hair stays at least 127 mm above the local ground; maximum additional crest
-excursion is 40.2 mm during return to rest. This bounds motion and contact
-effects; the visible crest shape still requires browser review.
+leaves body, eyes, feet and tack identical to the same-pose no-inertia comparator.
+The new crest's extra inertial excursion is at most 4.4 mm; original crest cards
+move at most 35.8 mm extra, with their span differing by at most 11.3 mm from
+the authored pose. Hair remains at least 127 mm above the local ground. The
+test also rejects malformed added skins, checks Hair visibility, and verifies
+reset, disposal and source immutability. These bounds complement visual review.
 
 Shire, Clydesdale and Vanner feathers remain runtime additions in
 `assets/native-draft-feathers.js`, fitted to sampled lower-leg skin and attached

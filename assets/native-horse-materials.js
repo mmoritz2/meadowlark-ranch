@@ -1,10 +1,10 @@
 /* Surface finish for the approved native equines. Run on private actor materials,
  * before fantasy artwork or saved dyes are applied. Source textures, UVs, rig,
  * geometry and original tack materials remain unchanged. */
-export const NATIVE_HORSE_MATERIAL_VERSION='native-surface-1';
+export const NATIVE_HORSE_MATERIAL_VERSION='native-surface-2';
 export const NATIVE_HORSE_MATERIAL_FINISH=Object.freeze({
  body:Object.freeze({roughness:.58,specularIntensity:.70,envMapIntensity:.70,metalness:0}),
- hair:Object.freeze({roughness:.58,specularIntensity:.52,envMapIntensity:.62,metalness:0,alphaCutoff:.45,darkLift:.40}),
+ hair:Object.freeze({roughness:.58,specularIntensity:.52,envMapIntensity:.62,metalness:0,alphaCutoff:.18,darkLift:.40}),
  eye:Object.freeze({roughness:.19,specularIntensity:.78,envMapIntensity:.60,metalness:0,color:'#68472b'}),
 });
 export function nativeHorseMaterialRole(material){

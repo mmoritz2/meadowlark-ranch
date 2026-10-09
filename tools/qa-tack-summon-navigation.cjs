@@ -11,7 +11,7 @@ function between(source,start,end){const a=source.indexOf(start),b=source.indexO
 (async()=>{
  const market=read('assets/features/se-market.js'),frame=read('assets/features/se-frame.js'),horseMarket=read('assets/features/market-summon-keys-pets.js'),game=read('ranch3d.html');
  const routes=[],visit=()=>routes.push('visit-stall'),G={tackCollection:{catalog:Array(127)},tackSummon:{visit},commerce:{isStaticStore:true},ui:{openShop(){throw Error('Stall navigation must not open a market page');}}};
- const navigation=vm.runInNewContext(between(market,' const GROUPS=['," const TOP=")+'({GROUPS,LBL,INTRO});',{G});
+ const navigation=vm.runInNewContext(between(market,' const GROUPS=[',' let marketReturn=null;')+'({GROUPS,LBL,INTRO});',{G});
  check(navigation.GROUPS.find(g=>g[0]==='tack')[2].join(',')==='tackcollection,tacksummon,tack','Tack department contains boutique, summoning and locker together');
  check(navigation.GROUPS.filter(g=>g[2].includes('tacksummon')).length===1,'summoning has exactly one market department');
  check(navigation.LBL.tacksummon==='Tack Summoning Stall'&&navigation.INTRO.tacksummon.includes('200 earned coins'),'market heading explains destination and earned-coin cost');

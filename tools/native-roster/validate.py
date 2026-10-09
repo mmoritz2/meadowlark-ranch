@@ -56,7 +56,7 @@ NON_DRAFT_SHA = {
 
 # Approved combined head/front-contour revision pins; the focused head gate
 # proves upstream nonfacial shape and contacts are preserved within20um.
-HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a', 'pinto': 'ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e', 'appaloosa': '1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c', 'sunset': '8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575', 'iceland': 'c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400', 'fjord': 'fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe', 'akhal': '2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899', 'percheron': 'cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d', 'shire': '43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575', 'clyde': '1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d'}
+HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a', 'pinto': 'ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e', 'appaloosa': '1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c', 'sunset': '8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575', 'iceland': 'c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400', 'fjord': '5974a7fa1f3e4b4d91cb6c25e759ccbc72913a634d72188eb5b3be390564b826', 'akhal': '2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899', 'percheron': 'cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d', 'shire': '43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575', 'clyde': '1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d'}
 HEAD_DRAFT_BODY_SHA = {'percheron': '98cd1cc826f6940f36f53dce781a00eca0335447c0e718d9b0e8329d9e1ab3ac', 'shire': '87585e7f68d91e80884d626a902ac510960eb8f66e05e6bcd34208753ee25b2d', 'clyde': '6ce61579e46ade8e1a52a8b2bea02d6776e7d6a8364f2ae647acbf6a05194a12'}
 # End head revision pins.
 
@@ -176,6 +176,54 @@ def draft_checks(key, body, positions, normals, outworld, frames, translation):
             'maxAnimatedLowerLegSurfaceOffsetM': max_surface_motion}
 
 
+
+def groom_shell_checks(spec, packed, used, hair, translation):
+    """Decode the added crest and verify real donor weights/binds in place."""
+    assert spec['version']==1 and spec['space']=='native-source-mesh'
+    assert spec['sourceMeshIndex']==2 and spec['originalSourceWeightsCopied']
+    count=spec['vertexCount'];assert 16<=count<=2048
+    arrays={}
+    fields=[('position','<f4',3),('normal','<f4',3),('uv','<f4',2),
+            ('skinIndex','<u2',4),('skinWeight','<f4',4),('outer','<f4',1),
+            ('index','<u2',1),('sourceVertex','<u2',1)]
+    for name,dtype,size in fields:
+        aligned=(used+3)//4*4
+        assert not any(packed[used:aligned]), 'Unexpected shell alignment bytes'
+        d=spec[name]
+        assert d['byteOffset']==aligned and d['itemSize']==size
+        expected=spec['indexCount'] if name=='index' else count*size
+        assert d['count']==expected
+        assert d['componentType']==('float32' if dtype=='<f4' else 'uint16')
+        a=np.frombuffer(packed,dtype=dtype,count=d['count'],offset=d['byteOffset']).reshape(-1,size)
+        assert np.isfinite(a).all()
+        arrays[name]=a;used=aligned+a.nbytes
+    donor=arrays['sourceVertex'].ravel().astype(int)
+    assert donor.min()>=0 and donor.max()<len(hair['position'])
+    assert np.array_equal(arrays['skinIndex'],hair['joints'][donor])
+    assert np.array_equal(arrays['skinWeight'],hair['weights'][donor])
+    assert abs(arrays['skinWeight'].sum(axis=1)-1).max()<.001
+    assert abs(np.linalg.norm(arrays['normal'],axis=1)-1).max()<1e-6
+    assert arrays['uv'].min()>=0 and arrays['uv'].max()<=1
+    assert arrays['outer'].min()>=0 and arrays['outer'].max()<=1
+    indices=arrays['index'].ravel().astype(int)
+    assert len(indices)%3==0 and 0<len(indices)<=15000
+    assert indices.min()>=0 and indices.max()<count
+    world=transform(hair['matrix'][donor],arrays['position'],translation)
+    assert np.isfinite(world).all() and np.max(np.ptp(world,axis=0))<2
+    assert np.max(np.ptp(world,axis=0))>.3 and world[:,1].min()>1
+    assert np.max(abs(world.min(axis=0)-spec['standingBoundsM']['min']))<2e-6
+    assert np.max(abs(world.max(axis=0)-spec['standingBoundsM']['max']))<2e-6
+    assert spec['restReconstructionMaxErrorM']<2e-5
+    t=world[indices.reshape(-1,3)]
+    area=np.linalg.norm(np.cross(t[:,1]-t[:,0],t[:,2]-t[:,0]),axis=1)*.5
+    assert area.min()>1e-12, 'Degenerate crest triangle'
+    return used,{'vertices':count,'triangles':len(indices)//3,
+        'originalHairDonorWeightsBitExact':True,'sourceJointCount':677,
+        'standingBoundsM':spec['standingBoundsM'],
+        'restReconstructionMaxErrorM':spec['restReconstructionMaxErrorM'],
+        'minimumStandingTriangleAreaM2':float(area.min())}
+
+
 def main():
     manifest = json.loads((OUT/'manifest.json').read_text())
     source = (ROOT/'assets'/manifest['sourceFile']).resolve()
@@ -250,6 +298,11 @@ def main():
                     expected = HEAD_DRAFT_BODY_SHA[key] if row.get('headShape') else DRAFT_BODY_SHA[key]
                     assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
                 floor = float(outworld[:, 1].min())
+        shell_report=None
+        shell=row.get('groom',{}).get('uprightCrest',{}).get('shell')
+        if shell:
+            assert key=='fjord'
+            used,shell_report=groom_shell_checks(shell,packed,used,source_meshes[2],translation)
         assert used == len(packed) and normal_error < .002
         coat = (ROOT/'assets'/row['coat']['file']).resolve()
         assert sha(coat) == row['coat']['sha256']
@@ -260,6 +313,7 @@ def main():
                   'protectedBodyPositionsAndNormalsBitExact': key not in DRAFTS,
                   'standingBodyFloorM': floor, 'maxNormalLengthError': normal_error,
                   'actorScale': row['actorScale'], 'withersM': row['withersM'], 'textureSize': [1024, 1024]}
+        if shell_report: report['additiveGroomShell']=shell_report
         if draft:
             report['draftLowerLegValidation'] = draft
         else:

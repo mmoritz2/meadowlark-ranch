@@ -678,8 +678,8 @@
           "meshIndex": 2,
           "vertices": 23514,
           "minCageJacobianDeterminant": 0.8473998478559758,
-          "maxPositionQuantizationErrorM": 1.8276004932073954e-05,
-          "maxAppearanceDeltaM": 0.7287082837893014,
+          "maxPositionQuantizationErrorM": 1.708445082964228e-05,
+          "maxAppearanceDeltaM": 0.6938981149193689,
           "fixedLowerVertices": 0
         },
         {
@@ -700,8 +700,8 @@
         }
       ],
       "groom": {
-        "version": 1,
-        "style": "Short rounded upright native-card crest and forelock",
+        "version": 3,
+        "style": "Smooth rounded skinned roached crest with short native-card fringe and a tidy forelock",
         "sourceTopologyPreserved": true,
         "sourceSkinWeightsPreserved": true,
         "sourceInertialHairBonesPreserved": true,
@@ -711,12 +711,12 @@
           "tail": 194,
           "eyelashes": 76
         },
-        "rootAnchorMaxDriftM": 0.0,
-        "minimumCardTransformDeterminant": 0.1275005774415845,
-        "maximumManeRiseM": 0.15602227381077238,
-        "minimumManeRiseM": 0.07972016240144031,
+        "rootAnchorMaxDriftM": 0.07332684995572221,
+        "minimumCardTransformDeterminant": 0.001488681513659148,
+        "maximumManeRiseM": 0.10978810629053504,
+        "minimumManeRiseM": 0.02337042705038961,
         "minimumHairHeightM": 0.24933159614863998,
-        "colorTreatment": "Original native alpha/detail atlas with pale outer cards and a dark central stripe",
+        "colorTreatment": "Pale brushed crest sides and a raised continuous dark center stripe; short color-matched fringe and dark tidy forelock",
         "colorCards": [
           {
             "start": 11530,
@@ -736,17 +736,17 @@
           {
             "start": 11590,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 11618,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 11646,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 11674,
@@ -761,12 +761,12 @@
           {
             "start": 11722,
             "count": 28,
-            "outer": 0.953517
+            "outer": 0.0
           },
           {
             "start": 11750,
             "count": 28,
-            "outer": 0.85289
+            "outer": 0.0
           },
           {
             "start": 11778,
@@ -776,47 +776,47 @@
           {
             "start": 11806,
             "count": 28,
-            "outer": 0.001926
+            "outer": 0.0
           },
           {
             "start": 11834,
             "count": 20,
-            "outer": 0.868532
+            "outer": 0.0
           },
           {
             "start": 11854,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 11874,
             "count": 28,
-            "outer": 0.948749
+            "outer": 0.0
           },
           {
             "start": 11902,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 11930,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 11966,
             "count": 50,
-            "outer": 0.001708
+            "outer": 1.0
           },
           {
             "start": 12016,
             "count": 50,
-            "outer": 0.650377
+            "outer": 0.0
           },
           {
             "start": 12066,
             "count": 36,
-            "outer": 0.99094
+            "outer": 0.0
           },
           {
             "start": 12102,
@@ -826,17 +826,17 @@
           {
             "start": 12122,
             "count": 20,
-            "outer": 1.6e-05
+            "outer": 1.0
           },
           {
             "start": 12142,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12162,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12182,
@@ -851,7 +851,7 @@
           {
             "start": 12222,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12242,
@@ -861,17 +861,17 @@
           {
             "start": 12262,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12282,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12302,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12322,
@@ -881,12 +881,12 @@
           {
             "start": 12342,
             "count": 20,
-            "outer": 0.208493
+            "outer": 1.0
           },
           {
             "start": 12362,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12382,
@@ -901,12 +901,12 @@
           {
             "start": 12422,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12442,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12462,
@@ -921,22 +921,22 @@
           {
             "start": 12502,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12522,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12542,
             "count": 20,
-            "outer": 0.420495
+            "outer": 0.0
           },
           {
             "start": 12562,
             "count": 20,
-            "outer": 0.782938
+            "outer": 0.0
           },
           {
             "start": 12582,
@@ -951,22 +951,22 @@
           {
             "start": 12622,
             "count": 20,
-            "outer": 0.924763
+            "outer": 0.0
           },
           {
             "start": 12642,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12662,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12682,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12702,
@@ -976,17 +976,17 @@
           {
             "start": 12722,
             "count": 20,
-            "outer": 0.312965
+            "outer": 0.0
           },
           {
             "start": 12742,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12762,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12782,
@@ -1001,12 +1001,12 @@
           {
             "start": 12822,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12842,
             "count": 20,
-            "outer": 0.805493
+            "outer": 1.0
           },
           {
             "start": 12862,
@@ -1021,17 +1021,17 @@
           {
             "start": 12902,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 12922,
             "count": 20,
-            "outer": 0.031571
+            "outer": 0.0
           },
           {
             "start": 12942,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 12962,
@@ -1041,27 +1041,27 @@
           {
             "start": 12982,
             "count": 20,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 13002,
             "count": 28,
-            "outer": 0.190721
+            "outer": 0.0
           },
           {
             "start": 13030,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13058,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13086,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13114,
@@ -1071,47 +1071,47 @@
           {
             "start": 13142,
             "count": 28,
-            "outer": 0.607016
+            "outer": 0.0
           },
           {
             "start": 13170,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13198,
             "count": 28,
-            "outer": 0.514762
+            "outer": 0.0
           },
           {
             "start": 13226,
             "count": 28,
-            "outer": 0.192868
+            "outer": 0.0
           },
           {
             "start": 13254,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13282,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13302,
             "count": 28,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13330,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13350,
             "count": 20,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 13370,
@@ -1126,7 +1126,7 @@
           {
             "start": 13410,
             "count": 28,
-            "outer": 0.8099
+            "outer": 0.0
           },
           {
             "start": 13438,
@@ -1141,12 +1141,12 @@
           {
             "start": 13538,
             "count": 50,
-            "outer": 0.012026
+            "outer": 1.0
           },
           {
             "start": 13588,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 13638,
@@ -1161,7 +1161,7 @@
           {
             "start": 13724,
             "count": 50,
-            "outer": 0.616237
+            "outer": 1.0
           },
           {
             "start": 13774,
@@ -1181,12 +1181,12 @@
           {
             "start": 13924,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 13974,
             "count": 36,
-            "outer": 0.027875
+            "outer": 1.0
           },
           {
             "start": 14010,
@@ -1196,22 +1196,22 @@
           {
             "start": 14060,
             "count": 36,
-            "outer": 0.012473
+            "outer": 0.0
           },
           {
             "start": 14096,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 14132,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 14168,
             "count": 50,
-            "outer": 0.95431
+            "outer": 0.0
           },
           {
             "start": 14218,
@@ -1221,27 +1221,27 @@
           {
             "start": 14268,
             "count": 50,
-            "outer": 0.265001
+            "outer": 1.0
           },
           {
             "start": 14318,
             "count": 50,
-            "outer": 0.532821
+            "outer": 1.0
           },
           {
             "start": 14368,
             "count": 50,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 14418,
             "count": 50,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 14468,
             "count": 36,
-            "outer": 0.281661
+            "outer": 1.0
           },
           {
             "start": 14504,
@@ -1256,12 +1256,12 @@
           {
             "start": 14604,
             "count": 36,
-            "outer": 0.895572
+            "outer": 0.0
           },
           {
             "start": 14640,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 14690,
@@ -1276,12 +1276,12 @@
           {
             "start": 14790,
             "count": 50,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 14840,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 14890,
@@ -1296,37 +1296,37 @@
           {
             "start": 14990,
             "count": 50,
-            "outer": 0.062014
+            "outer": 0.0
           },
           {
             "start": 15040,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15090,
             "count": 36,
-            "outer": 0.719652
+            "outer": 1.0
           },
           {
             "start": 15126,
             "count": 50,
-            "outer": 0.235997
+            "outer": 0.0
           },
           {
             "start": 15176,
             "count": 50,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 15226,
             "count": 50,
-            "outer": 0.835609
+            "outer": 1.0
           },
           {
             "start": 15276,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15312,
@@ -1346,7 +1346,7 @@
           {
             "start": 15448,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15484,
@@ -1356,17 +1356,17 @@
           {
             "start": 15534,
             "count": 36,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 15570,
             "count": 50,
-            "outer": 0.262301
+            "outer": 1.0
           },
           {
             "start": 15620,
             "count": 50,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15670,
@@ -1381,12 +1381,12 @@
           {
             "start": 15742,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15778,
             "count": 36,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 15814,
@@ -1396,12 +1396,12 @@
           {
             "start": 15864,
             "count": 50,
-            "outer": 0.017865
+            "outer": 0.0
           },
           {
             "start": 15914,
             "count": 36,
-            "outer": 0.41008
+            "outer": 1.0
           },
           {
             "start": 15950,
@@ -1431,12 +1431,12 @@
           {
             "start": 16392,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 16422,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 16452,
@@ -1446,12 +1446,12 @@
           {
             "start": 16482,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 16512,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 16542,
@@ -1461,7 +1461,7 @@
           {
             "start": 16572,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 16602,
@@ -1501,27 +1501,27 @@
           {
             "start": 16812,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 16842,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 16872,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 16902,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 16932,
             "count": 30,
-            "outer": 0.313465
+            "outer": 1.0
           },
           {
             "start": 16962,
@@ -1531,12 +1531,12 @@
           {
             "start": 16992,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 17022,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 17052,
@@ -1546,7 +1546,7 @@
           {
             "start": 17082,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 17112,
@@ -1561,7 +1561,7 @@
           {
             "start": 17172,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 17202,
@@ -1581,17 +1581,17 @@
           {
             "start": 17292,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 17322,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 17352,
             "count": 30,
-            "outer": 0.728101
+            "outer": 0.0
           },
           {
             "start": 17382,
@@ -1601,17 +1601,17 @@
           {
             "start": 17412,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 17442,
             "count": 30,
-            "outer": 0.29441
+            "outer": 0.0
           },
           {
             "start": 17472,
             "count": 30,
-            "outer": 0.991004
+            "outer": 0.0
           },
           {
             "start": 17502,
@@ -1621,22 +1621,22 @@
           {
             "start": 17532,
             "count": 42,
-            "outer": 0.960816
+            "outer": 1.0
           },
           {
             "start": 17574,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 17616,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 17658,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 17700,
@@ -1646,7 +1646,7 @@
           {
             "start": 17742,
             "count": 42,
-            "outer": 0.650877
+            "outer": 0.0
           },
           {
             "start": 17784,
@@ -1661,17 +1661,17 @@
           {
             "start": 17856,
             "count": 42,
-            "outer": 0.844308
+            "outer": 0.0
           },
           {
             "start": 17898,
             "count": 42,
-            "outer": 0.814567
+            "outer": 0.0
           },
           {
             "start": 17940,
             "count": 42,
-            "outer": 0.565064
+            "outer": 0.0
           },
           {
             "start": 17982,
@@ -1681,22 +1681,22 @@
           {
             "start": 18024,
             "count": 42,
-            "outer": 0.221211
+            "outer": 0.0
           },
           {
             "start": 18066,
             "count": 30,
-            "outer": 0.951778
+            "outer": 0.0
           },
           {
             "start": 18096,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 18126,
             "count": 42,
-            "outer": 0.854078
+            "outer": 0.0
           },
           {
             "start": 18168,
@@ -1706,22 +1706,22 @@
           {
             "start": 18210,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 18252,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 18282,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 18324,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 18354,
@@ -1731,7 +1731,7 @@
           {
             "start": 18384,
             "count": 42,
-            "outer": 0.856743
+            "outer": 0.0
           },
           {
             "start": 18426,
@@ -1741,12 +1741,12 @@
           {
             "start": 18480,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 18555,
             "count": 75,
-            "outer": 0.094232
+            "outer": 1.0
           },
           {
             "start": 18630,
@@ -1756,17 +1756,17 @@
           {
             "start": 18705,
             "count": 75,
-            "outer": 0.323311
+            "outer": 0.0
           },
           {
             "start": 18780,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 18855,
             "count": 54,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 18909,
@@ -1776,17 +1776,17 @@
           {
             "start": 18984,
             "count": 75,
-            "outer": 0.900582
+            "outer": 0.0
           },
           {
             "start": 19059,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 19134,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 19209,
@@ -1796,17 +1796,17 @@
           {
             "start": 19284,
             "count": 54,
-            "outer": 0.190973
+            "outer": 0.0
           },
           {
             "start": 19338,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 19413,
             "count": 54,
-            "outer": 0.351845
+            "outer": 1.0
           },
           {
             "start": 19467,
@@ -1821,22 +1821,22 @@
           {
             "start": 19575,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 19650,
             "count": 75,
-            "outer": 0.336441
+            "outer": 1.0
           },
           {
             "start": 19725,
             "count": 75,
-            "outer": 0.42126
+            "outer": 0.0
           },
           {
             "start": 19800,
             "count": 75,
-            "outer": 0.982654
+            "outer": 0.0
           },
           {
             "start": 19875,
@@ -1856,17 +1856,17 @@
           {
             "start": 20100,
             "count": 54,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 20154,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 20229,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 20304,
@@ -1881,12 +1881,12 @@
           {
             "start": 20454,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 20529,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 20604,
@@ -1901,17 +1901,17 @@
           {
             "start": 20754,
             "count": 54,
-            "outer": 0.205977
+            "outer": 1.0
           },
           {
             "start": 20808,
             "count": 75,
-            "outer": 0.021064
+            "outer": 1.0
           },
           {
             "start": 20883,
             "count": 75,
-            "outer": 0.834782
+            "outer": 0.0
           },
           {
             "start": 20958,
@@ -1921,22 +1921,22 @@
           {
             "start": 21012,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 21087,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 21162,
             "count": 54,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 21216,
             "count": 75,
-            "outer": 0.157256
+            "outer": 0.0
           },
           {
             "start": 21291,
@@ -1951,7 +1951,7 @@
           {
             "start": 21399,
             "count": 54,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 21453,
@@ -1961,7 +1961,7 @@
           {
             "start": 21528,
             "count": 75,
-            "outer": 0.001737
+            "outer": 1.0
           },
           {
             "start": 21603,
@@ -1976,12 +1976,12 @@
           {
             "start": 21711,
             "count": 54,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 21765,
             "count": 54,
-            "outer": 0.19967
+            "outer": 1.0
           },
           {
             "start": 21819,
@@ -1991,22 +1991,22 @@
           {
             "start": 21894,
             "count": 75,
-            "outer": 0.174703
+            "outer": 0.0
           },
           {
             "start": 21969,
             "count": 54,
-            "outer": 0.177961
+            "outer": 0.0
           },
           {
             "start": 22023,
             "count": 75,
-            "outer": 0.269699
+            "outer": 1.0
           },
           {
             "start": 22458,
             "count": 30,
-            "outer": 0.019098
+            "outer": 1.0
           },
           {
             "start": 22488,
@@ -2016,17 +2016,17 @@
           {
             "start": 22518,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 22548,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 22578,
             "count": 30,
-            "outer": 0.0
+            "outer": 1.0
           },
           {
             "start": 22608,
@@ -2036,17 +2036,17 @@
           {
             "start": 22638,
             "count": 42,
-            "outer": 0.028518
+            "outer": 0.0
           },
           {
             "start": 22680,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 22722,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 22764,
@@ -2056,32 +2056,32 @@
           {
             "start": 22806,
             "count": 42,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 22848,
             "count": 75,
-            "outer": 0.775041
+            "outer": 1.0
           },
           {
             "start": 22923,
             "count": 54,
-            "outer": 0.727108
+            "outer": 1.0
           },
           {
             "start": 22977,
             "count": 75,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 23052,
             "count": 75,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 23127,
             "count": 75,
-            "outer": 0.819671
+            "outer": 1.0
           },
           {
             "start": 23274,
@@ -2091,7 +2091,7 @@
           {
             "start": 23304,
             "count": 30,
-            "outer": 1.0
+            "outer": 0.0
           },
           {
             "start": 23334,
@@ -2106,7 +2106,7 @@
           {
             "start": 23439,
             "count": 75,
-            "outer": 0.0
+            "outer": 1.0
           }
         ],
         "cards": [
@@ -2115,11 +2115,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.06299032926018819,
-              2.1408125130723032,
+              -0.0530903752562839,
+              2.131135257196322,
               1.0231563502008303
             ],
-            "topRiseM": 0.10688377040332231,
+            "topRiseM": 0.047918786610065656,
             "oldDropM": 0.046594896101561645
           },
           {
@@ -2127,11 +2127,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.05094137039780905,
-              2.0590968712126956,
+              0.0007406227278607888,
+              2.030837770533668,
               0.6974111160724732
             ],
-            "topRiseM": 0.14371222142268625,
+            "topRiseM": 0.07768112564098617,
             "oldDropM": 0.11597767699183414
           },
           {
@@ -2139,11 +2139,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.022047319807232443,
-              1.9636904588366741,
+              -0.02349245087512985,
+              1.9618528517813814,
               0.5788485166310968
             ],
-            "topRiseM": 0.12887177086814683,
+            "topRiseM": 0.09285053350529093,
             "oldDropM": 0.18455958027744668
           },
           {
@@ -2151,11 +2151,11 @@
             "role": "mane",
             "vertices": 28,
             "rootM": [
-              -0.0678080968119926,
-              2.1535746890252963,
-              1.0951443325530763
+              -0.044898825765635544,
+              2.1302154821192594,
+              1.0949364437006401
             ],
-            "topRiseM": 0.0810012069870707,
+            "topRiseM": 0.04079832866655231,
             "oldDropM": 0.029174888417206724
           },
           {
@@ -2163,11 +2163,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.04766768083695847,
+              -0.04567410518560596,
               2.1284263400800287,
               1.1265678757001125
             ],
-            "topRiseM": 0.08347530931275937,
+            "topRiseM": 0.0,
             "oldDropM": 0.08196792449838641
           },
           {
@@ -2175,11 +2175,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.06090670783403725,
+              -0.04938103274478802,
               2.1250594897969113,
               1.128423342924354
             ],
-            "topRiseM": 0.08449078906970975,
+            "topRiseM": 0.0,
             "oldDropM": 0.1055724399022342
           },
           {
@@ -2187,11 +2187,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.043243325144288795,
+              -0.044435285591658456,
               2.1420524727834875,
               1.1436512299402073
             ],
-            "topRiseM": 0.08747640701831472,
+            "topRiseM": 0.0,
             "oldDropM": 0.11795585668068487
           },
           {
@@ -2199,11 +2199,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.03460771149435875,
+              -0.042017313769678044,
               2.1294221341604724,
               1.1365003952352961
             ],
-            "topRiseM": 0.0861667911334556,
+            "topRiseM": 0.0,
             "oldDropM": 0.13028652225539084
           },
           {
@@ -2211,11 +2211,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.015597480560098726,
+              -0.03669444910808524,
               2.1288575498034774,
               1.1247596829996678
             ],
-            "topRiseM": 0.08444205186420817,
+            "topRiseM": 0.0,
             "oldDropM": 0.1352530244829897
           },
           {
@@ -2223,11 +2223,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.051269087416672236,
+              -0.04668249902792582,
               2.111416927317147,
               1.1523427977912193
             ],
-            "topRiseM": 0.09055131466224342,
+            "topRiseM": 0.0,
             "oldDropM": 0.1746837479854506
           },
           {
@@ -2235,11 +2235,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.0315027434035111,
+              -0.0411479227042407,
               2.1109378266184398,
               1.158101871482683
             ],
-            "topRiseM": 0.09017874376569157,
+            "topRiseM": 0.0,
             "oldDropM": 0.15247090786498863
           },
           {
@@ -2247,11 +2247,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.047268136030151536,
+              -0.04556223263970002,
               2.121346908419366,
               1.1418782717458702
             ],
-            "topRiseM": 0.08811499322514749,
+            "topRiseM": 0.0,
             "oldDropM": 0.1658468465413605
           },
           {
@@ -2259,11 +2259,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.020778949829287612,
+              -0.03814526050345812,
               2.1225908239349387,
               1.1470642837872471
             ],
-            "topRiseM": 0.08834223973548072,
+            "topRiseM": 0.0,
             "oldDropM": 0.14906765106378828
           },
           {
@@ -2271,11 +2271,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.0031210916802343813,
+              -0.033201060221723214,
               2.1074899315953437,
               1.1589981038756463
             ],
-            "topRiseM": 0.08965725232743527,
+            "topRiseM": 0.0,
             "oldDropM": 0.1680207028751428
           },
           {
@@ -2283,11 +2283,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.014260130442479663,
+              -0.036319991075151895,
               2.0983550144951923,
               1.173995088143659
             ],
-            "topRiseM": 0.09312248175177729,
+            "topRiseM": 0.0,
             "oldDropM": 0.17165676042529632
           },
           {
@@ -2295,11 +2295,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.017681615662069054,
+              -0.03727800693663692,
               2.1006200228802743,
               1.1763391995217565
             ],
-            "topRiseM": 0.09505482354698236,
+            "topRiseM": 0.0,
             "oldDropM": 0.12470805556505327
           },
           {
@@ -2307,11 +2307,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.02832673152602591,
-              1.8414399162274262,
+              -0.03608880881472009,
+              1.8561122930696796,
               0.4255106941890651
             ],
-            "topRiseM": 0.08396981855941221,
+            "topRiseM": 0.02516489117086418,
             "oldDropM": 0.20610768281401426
           },
           {
@@ -2319,11 +2319,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.03629998721447703,
-              1.8435878305171851,
+              -0.020859655058886456,
+              1.861034493210538,
               0.43222249408000685
             ],
-            "topRiseM": 0.08775525897637282,
+            "topRiseM": 0.028480897360582347,
             "oldDropM": 0.25829164538365057
           },
           {
@@ -2331,11 +2331,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02436423413189132,
-              2.112289204662697,
+              -0.030827452247112697,
+              2.1138549010160292,
               0.909150308691898
             ],
-            "topRiseM": 0.1390196018053298,
+            "topRiseM": 0.09785429248052946,
             "oldDropM": 0.30631018726554626
           },
           {
@@ -2343,11 +2343,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.02948455208332908,
-              2.120129890778994,
+              -0.034381280932164464,
+              2.1250232270181573,
               0.9649005047822209
             ],
-            "topRiseM": 0.12563339379703065,
+            "topRiseM": 0.08764445188092873,
             "oldDropM": 0.24360961780976287
           },
           {
@@ -2355,11 +2355,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.032086174024139345,
+              -0.04091753722667362,
               2.1393808019523113,
               1.0889702573266768
             ],
-            "topRiseM": 0.07636264982900043,
+            "topRiseM": 0.0,
             "oldDropM": 0.054219139478000944
           },
           {
@@ -2367,11 +2367,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03914938790703059,
-              2.1474314823752065,
+              -0.03276665284638782,
+              2.131645196571561,
               1.069776061580311
             ],
-            "topRiseM": 0.09482049889682198,
+            "topRiseM": 0.034511063784368634,
             "oldDropM": 0.09500673450664054
           },
           {
@@ -2379,11 +2379,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.09413874617874288,
-              2.142438685775074,
+              -0.03813234147130924,
+              2.130685520879288,
               1.0157102656631618
             ],
-            "topRiseM": 0.10691545042504247,
+            "topRiseM": 0.07472421272913765,
             "oldDropM": 0.07369925158128154
           },
           {
@@ -2391,11 +2391,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.07853498381940048,
-              2.1416058683030688,
+              -0.040059633947076,
+              2.131773932229334,
               1.0396210247892643
             ],
-            "topRiseM": 0.10205886990791768,
+            "topRiseM": 0.06804433068334026,
             "oldDropM": 0.07834448485468615
           },
           {
@@ -2403,11 +2403,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.07303806791734646,
-              2.1380211037151264,
+              -0.053087950925828145,
+              2.1302969828540785,
               1.0103044840389395
             ],
-            "topRiseM": 0.11108043247339827,
+            "topRiseM": 0.050867391079260305,
             "oldDropM": 0.07394721640216595
           },
           {
@@ -2415,11 +2415,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.062439979595900905,
-              2.1320280773731177,
+              -0.017405797728910016,
+              2.126631947318899,
               0.9759505012295753
             ],
-            "topRiseM": 0.1202339016226075,
+            "topRiseM": 0.05866918446014946,
             "oldDropM": 0.07084052600636426
           },
           {
@@ -2427,11 +2427,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.0551606847430843,
-              2.136729936784775,
+              -0.03177385301512183,
+              2.117527768687349,
               0.9249606525325769
             ],
-            "topRiseM": 0.1307838026093311,
+            "topRiseM": 0.09508831061778578,
             "oldDropM": 0.06844110270517278
           },
           {
@@ -2439,11 +2439,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03740114691798052,
-              2.1236142346818556,
+              -0.03415113633343402,
+              2.124495733820543,
               0.9615547593757824
             ],
-            "topRiseM": 0.12402410373290129,
+            "topRiseM": 0.08836985033786515,
             "oldDropM": 0.0859517069639888
           },
           {
@@ -2451,11 +2451,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03580361252361101,
-              2.122669220355934,
+              -0.05239588765689204,
+              2.1186073897606157,
               0.929960916424799
             ],
-            "topRiseM": 0.1304347016385039,
+            "topRiseM": 0.06627217900767501,
             "oldDropM": 0.06355476440782493
           },
           {
@@ -2463,11 +2463,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.028317298495804125,
-              2.119332418531126,
+              -0.009623739240640812,
+              2.113998088182327,
               0.909736689064556
             ],
-            "topRiseM": 0.13327865637655023,
+            "topRiseM": 0.06901271952067844,
             "oldDropM": 0.09314485119926852
           },
           {
@@ -2475,11 +2475,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.056394703762586686,
-              2.114440678917269,
+              -0.02886556021547837,
+              2.1040994284463435,
               0.87327739429449
             ],
-            "topRiseM": 0.1387641772174617,
+            "topRiseM": 0.10289996288300962,
             "oldDropM": 0.08451880516364518
           },
           {
@@ -2487,11 +2487,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03646201106579373,
-              2.1091797400436594,
+              -0.02927855729794663,
+              2.1064319000766956,
               0.8812407580558641
             ],
-            "topRiseM": 0.13800801532812024,
+            "topRiseM": 0.10150757900565788,
             "oldDropM": 0.08875364048183343
           },
           {
@@ -2499,11 +2499,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.045474945163163985,
-              2.103600668132018,
+              -0.05107826026592735,
+              2.097675706838379,
               0.8527978288199809
             ],
-            "topRiseM": 0.14151490568245562,
+            "topRiseM": 0.0754492853113593,
             "oldDropM": 0.0638510532473644
           },
           {
@@ -2511,11 +2511,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03719825814563674,
-              2.101107872572445,
+              -0.004875714658998727,
+              2.098673715366872,
               0.8558571444968402
             ],
-            "topRiseM": 0.14155599411341013,
+            "topRiseM": 0.07460846814870647,
             "oldDropM": 0.1043769358404325
           },
           {
@@ -2523,11 +2523,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03897869607576572,
-              2.099128289005367,
+              -0.027174837168806414,
+              2.092509569404065,
               0.8375657286621071
             ],
-            "topRiseM": 0.14285166833110718,
+            "topRiseM": 0.10655188171216956,
             "oldDropM": 0.10035271294885795
           },
           {
@@ -2535,11 +2535,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.0437681021682339,
-              2.0937144541886776,
+              -0.026709722362147845,
+              2.0885925347165117,
               0.8266062319518289
             ],
-            "topRiseM": 0.14466640034523204,
+            "topRiseM": 0.10685983858832593,
             "oldDropM": 0.07727613537647215
           },
           {
@@ -2547,11 +2547,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.043976554387703946,
-              2.086978405072534,
+              -0.049831697414279105,
+              2.076930080730721,
               0.7963360537064726
             ],
-            "topRiseM": 0.14751439891230422,
+            "topRiseM": 0.07857047983208076,
             "oldDropM": 0.15233665326099244
           },
           {
@@ -2559,11 +2559,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.0347637912188561,
-              2.0939244478530274,
+              -0.0016261990418551114,
+              2.079806313908976,
               0.8035159309910165
             ],
-            "topRiseM": 0.1490625257367446,
+            "topRiseM": 0.07806136379386341,
             "oldDropM": 0.16980175016897725
           },
           {
@@ -2571,11 +2571,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.0340847171651079,
-              2.092244092673801,
+              -0.024967277366556608,
+              2.0693933362601675,
               0.7782580775779014
             ],
-            "topRiseM": 0.15192133625912518,
+            "topRiseM": 0.10927657185729611,
             "oldDropM": 0.1969234686113961
           },
           {
@@ -2583,11 +2583,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.04198542035113532,
-              2.0841817128828954,
+              -0.024596578088977868,
+              2.0638785034383864,
               0.7656181714000598
             ],
-            "topRiseM": 0.14821924998196945,
+            "topRiseM": 0.10957601154235919,
             "oldDropM": 0.1960095777715669
           },
           {
@@ -2595,11 +2595,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03816502080931301,
-              2.065917381391169,
+              -0.04910278262109735,
+              2.06447340377795,
               0.7669601021077738
             ],
-            "topRiseM": 0.14767095103602657,
+            "topRiseM": 0.0788141792650241,
             "oldDropM": 0.10532494028973605
           },
           {
@@ -2607,11 +2607,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.033768996703795726,
-              2.0712093962093543,
+              0.0003852187245835109,
+              2.0545157323365872,
               0.745113283352225
             ],
-            "topRiseM": 0.14603049594953754,
+            "topRiseM": 0.07921922396847192,
             "oldDropM": 0.1004025171587335
           },
           {
@@ -2619,11 +2619,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.047221114535986305,
-              2.062240187238744,
+              -0.023549030545876953,
+              2.042068588571326,
               0.719392430087549
             ],
-            "topRiseM": 0.1454906029746228,
+            "topRiseM": 0.1084525520827575,
             "oldDropM": 0.12702777020593192
           },
           {
@@ -2631,11 +2631,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.04300943181580288,
-              2.052645505827263,
+              -0.023158289196518946,
+              2.0278203680024913,
               0.6916753108326419
             ],
-            "topRiseM": 0.1448284665487316,
+            "topRiseM": 0.10756223905177853,
             "oldDropM": 0.11921755040612991
           },
           {
@@ -2643,11 +2643,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.053021096725382244,
-              2.036480801560616,
+              -0.046105434879758364,
+              2.011236185640528,
               0.6612479112358627
             ],
-            "topRiseM": 0.1406908203685715,
+            "topRiseM": 0.07473360878882751,
             "oldDropM": 0.10267708621850802
           },
           {
@@ -2655,11 +2655,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.04708391840835897,
-              2.0169879219854177,
+              9.128075666178098e-05,
+              2.0082121177616474,
               0.655879208500501
             ],
-            "topRiseM": 0.14145002656102879,
+            "topRiseM": 0.07478163326510678,
             "oldDropM": 0.10828853701347163
           },
           {
@@ -2667,11 +2667,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03749929244904793,
-              2.012853020269824,
+              -0.022915725665712233,
+              2.0012450518080644,
               0.6436970644814634
             ],
-            "topRiseM": 0.13924380275279313,
+            "topRiseM": 0.10269353906132972,
             "oldDropM": 0.11866295253943515
           },
           {
@@ -2679,11 +2679,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.043793233240321035,
-              2.0030236331262445,
+              -0.022968629766894635,
+              1.9908348921894647,
               0.6259396057449291
             ],
-            "topRiseM": 0.1379524064213422,
+            "topRiseM": 0.10069039590028761,
             "oldDropM": 0.11278407013075942
           },
           {
@@ -2691,11 +2691,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.02123682746757155,
-              1.9918437762737662,
+              -0.044890412749581776,
+              1.9888221326311268,
               0.622563058036682
             ],
-            "topRiseM": 0.1362297195947504,
+            "topRiseM": 0.07116923025020894,
             "oldDropM": 0.09809048933081321
           },
           {
@@ -2703,11 +2703,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03030118370922924,
-              1.976109387479259,
+              -0.0022769580780316358,
+              1.9744616637496317,
               0.5989533026782722
             ],
-            "topRiseM": 0.13366403925923587,
+            "topRiseM": 0.06802417554668128,
             "oldDropM": 0.13924935291006868
           },
           {
@@ -2715,11 +2715,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.034846337634620535,
-              1.9592537522041138,
+              -0.02358345568620552,
+              1.9585909534623247,
               0.5737327099550271
             ],
-            "topRiseM": 0.12890332450895037,
+            "topRiseM": 0.09236619605040763,
             "oldDropM": 0.14846323675360096
           },
           {
@@ -2727,11 +2727,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03768470813425721,
-              1.934069847318989,
+              -0.023978304259158298,
+              1.9463669380697461,
               0.554844413994854
             ],
-            "topRiseM": 0.12434290256703773,
+            "topRiseM": 0.08812894730977572,
             "oldDropM": 0.11249184202188056
           },
           {
@@ -2739,11 +2739,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.02084994969724874,
-              1.9468470820734003,
+              -0.04273789929756575,
+              1.948350225522746,
               0.5578799029258343
             ],
-            "topRiseM": 0.1239106551021989,
+            "topRiseM": 0.06202209915087464,
             "oldDropM": 0.10230130298590723
           },
           {
@@ -2751,11 +2751,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03158952057499607,
-              1.925725966795457,
+              -0.008300683692309789,
+              1.9246096632198797,
               0.522206437688439
             ],
-            "topRiseM": 0.11465991098275774,
+            "topRiseM": 0.05454345169194452,
             "oldDropM": 0.11894111766797599
           },
           {
@@ -2763,11 +2763,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.027115753402440913,
-              1.9224270511044508,
+              -0.02473742040099427,
+              1.9277183008868013,
               0.5268000826193431
             ],
-            "topRiseM": 0.11720700106958315,
+            "topRiseM": 0.08228524179540031,
             "oldDropM": 0.13334323695991057
           },
           {
@@ -2775,11 +2775,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03246296267151188,
-              1.9092062928401294,
+              -0.02549709297255328,
+              1.9123746217122184,
               0.5043294302134224
             ],
-            "topRiseM": 0.11095206615803987,
+            "topRiseM": 0.07595093805874287,
             "oldDropM": 0.15290903654046772
           },
           {
@@ -2787,11 +2787,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.019034339002457913,
-              1.9074310306822049,
+              -0.04065164658505986,
+              1.9101256875080315,
               0.5010767890901995
             ],
-            "topRiseM": 0.10902006288195287,
+            "topRiseM": 0.05024695767399434,
             "oldDropM": 0.13266524535536472
           },
           {
@@ -2799,11 +2799,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.020929632547116602,
-              1.8977095805988473,
+              -0.012446496651613704,
+              1.8993944599810582,
               0.4856883711232558
             ],
-            "topRiseM": 0.10454361425228131,
+            "topRiseM": 0.04621911192115724,
             "oldDropM": 0.22666607633555458
           },
           {
@@ -2811,11 +2811,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.03254041895245452,
-              1.8731158139814004,
+              -0.027130461117430088,
+              1.8851457143953065,
               0.46556769304265166
             ],
-            "topRiseM": 0.09859413834220909,
+            "topRiseM": 0.06406980845785148,
             "oldDropM": 0.18172113664155232
           },
           {
@@ -2823,11 +2823,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.030501275778737492,
-              1.8584969589848128,
+              -0.02797797211312731,
+              1.8729275379010948,
               0.4485683257012202
             ],
-            "topRiseM": 0.0922860647372632,
+            "topRiseM": 0.057721574452671565,
             "oldDropM": 0.15367823240978096
           },
           {
@@ -2835,11 +2835,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.030938002575414066,
-              1.8374828155759193,
+              -0.03711334918104274,
+              1.862872465809415,
               0.4347364732053007
             ],
-            "topRiseM": 0.08726531955385552,
+            "topRiseM": 0.029530808501334382,
             "oldDropM": 0.16529705706128173
           },
           {
@@ -2847,11 +2847,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.04907403009622829,
+              -0.04606788297820151,
               2.1421235166095456,
               1.121898486296954
             ],
-            "topRiseM": 0.0831516645036765,
+            "topRiseM": 0.0,
             "oldDropM": 0.07397678987609835
           },
           {
@@ -2859,11 +2859,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.07856130719345057,
+              -0.05432432056542375,
               2.1527962584391283,
               1.1133883113435354
             ],
-            "topRiseM": 0.08647350117702457,
+            "topRiseM": 0.0,
             "oldDropM": 0.03445083661655568
           },
           {
@@ -2871,11 +2871,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.03072368692070033,
+              -0.04092978688905368,
               2.149338771420143,
               1.0984241504998915
             ],
-            "topRiseM": 0.07796525155485234,
+            "topRiseM": 0.0,
             "oldDropM": 0.08342641228277925
           },
           {
@@ -2883,11 +2883,11 @@
             "role": "mane",
             "vertices": 20,
             "rootM": [
-              -0.05551721609118476,
-              2.1446433779555045,
+              -0.05133124903006935,
+              2.130580261625367,
               1.0901732758587275
             ],
-            "topRiseM": 0.0801726162327272,
+            "topRiseM": 0.024825777605812505,
             "oldDropM": 0.03847446164333013
           },
           {
@@ -2895,11 +2895,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.028971334104201753,
+              -0.04043912810043408,
               2.1331106686750836,
               1.111683563727494
             ],
-            "topRiseM": 0.08189605956414692,
+            "topRiseM": 0.0,
             "oldDropM": 0.03991665932826827
           },
           {
@@ -2907,11 +2907,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.0786567056087598,
+              -0.05435103212171034,
               2.1186037164490457,
               1.1303095019997553
             ],
-            "topRiseM": 0.08430960784236063,
+            "topRiseM": 0.0,
             "oldDropM": 0.062010492532064365
           },
           {
@@ -2919,11 +2919,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.0683450201781838,
+              -0.05146376020114905,
               2.1201901274444883,
               1.1403844619696575
             ],
-            "topRiseM": 0.08666705060460789,
+            "topRiseM": 0.0,
             "oldDropM": 0.12116944218246073
           },
           {
@@ -2931,11 +2931,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.07893679947892734,
+              -0.05442945840535725,
               2.137893391483934,
               1.131195859763202
             ],
-            "topRiseM": 0.08566157053578394,
+            "topRiseM": 0.0,
             "oldDropM": 0.03795621672783023
           },
           {
@@ -2943,11 +2943,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.03470315059436254,
+              -0.042044036717679104,
               2.1352069154829705,
               1.1494735341728264
             ],
-            "topRiseM": 0.08859468504445678,
+            "topRiseM": 0.0,
             "oldDropM": 0.08483843529810065
           },
           {
@@ -2955,11 +2955,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.05632170812478455,
+              -0.04809723282619727,
               2.137540409043107,
               1.1370058433815933
             ],
-            "topRiseM": 0.08640953049022038,
+            "topRiseM": 0.0,
             "oldDropM": 0.0715538708377883
           },
           {
@@ -2967,11 +2967,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.06987190777180105,
+              -0.05189128872736189,
               2.148563424395637,
               1.1128486966658193
             ],
-            "topRiseM": 0.08012163855551746,
+            "topRiseM": 0.0,
             "oldDropM": 0.03209622300764581
           },
           {
@@ -2979,11 +2979,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.05039972252834584,
+              -0.04643907685919443,
               2.1331746206117552,
               1.127775129803117
             ],
-            "topRiseM": 0.08453195856712448,
+            "topRiseM": 0.0,
             "oldDropM": 0.13823626432725633
           },
           {
@@ -2991,11 +2991,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.052270363833743894,
+              -0.04696285642470588,
               2.0980188087432174,
               1.1719531718056184
             ],
-            "topRiseM": 0.09159408673262215,
+            "topRiseM": 0.0,
             "oldDropM": 0.21027096858734962
           },
           {
@@ -3003,11 +3003,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.0691945822736698,
+              -0.05170163758788514,
               2.088436917092287,
               1.1817510554447792
             ],
-            "topRiseM": 0.09430954865419316,
+            "topRiseM": 0.0,
             "oldDropM": 0.16967970120209075
           },
           {
@@ -3015,11 +3015,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.07373757466851678,
+              -0.052973675458442296,
               2.1085619879882387,
               1.1590067434063318
             ],
-            "topRiseM": 0.0905133932566331,
+            "topRiseM": 0.0,
             "oldDropM": 0.1522716961914068
           },
           {
@@ -3027,11 +3027,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              0.0025343371713285306,
+              -0.031617540143285605,
               2.0885963768284204,
               1.1857093903130262
             ],
-            "topRiseM": 0.09411038847669362,
+            "topRiseM": 0.0,
             "oldDropM": 0.17350517304969748
           },
           {
@@ -3039,11 +3039,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              0.0072168632388282476,
+              -0.03030643284438568,
               2.1169950095337833,
               1.1355592043184726
             ],
-            "topRiseM": 0.08748544634643807,
+            "topRiseM": 0.0,
             "oldDropM": 0.12366519816330657
           },
           {
@@ -3051,11 +3051,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.0856835500898766,
+              -0.056318548576423044,
               2.093878813164338,
               1.1758035176655977
             ],
-            "topRiseM": 0.09337575825016486,
+            "topRiseM": 0.0,
             "oldDropM": 0.13081607605652223
           },
           {
@@ -3063,11 +3063,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.041629926010924516,
+              -0.043983533834316454,
               2.139065574261219,
               1.116900944879167
             ],
-            "topRiseM": 0.08307272021330059,
+            "topRiseM": 0.0,
             "oldDropM": 0.11623968716972488
           },
           {
@@ -3075,11 +3075,11 @@
             "role": "forelock",
             "vertices": 20,
             "rootM": [
-              -0.03191782967901506,
+              -0.04126414686138181,
               2.1353338354071076,
               1.1025068421452282
             ],
-            "topRiseM": 0.07993258797301417,
+            "topRiseM": 0.0,
             "oldDropM": 0.09584003623033199
           },
           {
@@ -3087,11 +3087,11 @@
             "role": "forelock",
             "vertices": 28,
             "rootM": [
-              -0.01931323156729431,
+              -0.037734859390099997,
               2.135726203355298,
               1.1213118522387029
             ],
-            "topRiseM": 0.08362980364399641,
+            "topRiseM": 0.0,
             "oldDropM": 0.13798384618049964
           },
           {
@@ -3099,11 +3099,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02317643765219528,
-              1.8534836523080065,
+              -0.02851690759577858,
+              1.8656349303465092,
               0.43852313788451175
             ],
-            "topRiseM": 0.08691416387599804,
+            "topRiseM": 0.05278637654686147,
             "oldDropM": 0.21774236069696373
           },
           {
@@ -3111,11 +3111,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.03372763726174912,
-              1.8600269808861243,
+              -0.0280089880628566,
+              1.8724986271095565,
               0.4479755079183379
             ],
-            "topRiseM": 0.09100638690714247,
+            "topRiseM": 0.05763500835259672,
             "oldDropM": 0.22482780519357637
           },
           {
@@ -3123,11 +3123,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.023032052926406484,
-              1.8718493666828815,
+              -0.03891028577173084,
+              1.8827085960737031,
               0.4621590772682629
             ],
-            "topRiseM": 0.09749728888961018,
+            "topRiseM": 0.03937874798332275,
             "oldDropM": 0.27275484710298925
           },
           {
@@ -3135,11 +3135,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.032814125025193895,
-              1.8794531084309938,
+              -0.013745056256055935,
+              1.8924051006587777,
               0.4757765305982818
             ],
-            "topRiseM": 0.10386143186309837,
+            "topRiseM": 0.04380564081101035,
             "oldDropM": 0.30647498689368824
           },
           {
@@ -3147,11 +3147,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.029796675283848457,
-              1.895905305030511,
+              -0.02614858176453015,
+              1.9007844837051875,
               0.48766974060688745
             ],
-            "topRiseM": 0.11022519351803428,
+            "topRiseM": 0.07123505727410495,
             "oldDropM": 0.3609821662205497
           },
           {
@@ -3159,11 +3159,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.035898561009468026,
-              1.8972620504159399,
+              -0.02543461667029119,
+              1.913551872408123,
               0.5060360840605046
             ],
-            "topRiseM": 0.11398785419148849,
+            "topRiseM": 0.07665953714623086,
             "oldDropM": 0.3829622639142154
           },
           {
@@ -3171,11 +3171,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.025951234312634373,
-              1.9128013844765122,
+              -0.04109901266876175,
+              1.9180272155282183,
               0.5125496065397585
             ],
-            "topRiseM": 0.11486848175431574,
+            "topRiseM": 0.052818032195152353,
             "oldDropM": 0.3682148419883746
           },
           {
@@ -3183,11 +3183,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.05165964391101799,
-              1.916531816544966,
+              -0.009078924697984846,
+              1.919494456981494,
               0.5146940955916568
             ],
-            "topRiseM": 0.11315483832270323,
+            "topRiseM": 0.053055005438229275,
             "oldDropM": 0.26567152938860183
           },
           {
@@ -3195,11 +3195,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.028791304801545185,
-              1.9232734129901248,
+              -0.024682269577182052,
+              1.928935926080696,
               0.5286053550481867
             ],
-            "topRiseM": 0.11784449279714648,
+            "topRiseM": 0.08268504930964204,
             "oldDropM": 0.325269096336676
           },
           {
@@ -3207,11 +3207,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02382118776487715,
-              1.9302745017809124,
+              -0.024717806795472558,
+              1.9281493984267404,
               0.5274388460219084
             ],
-            "topRiseM": 0.11730361921476384,
+            "topRiseM": 0.0818871985319305,
             "oldDropM": 0.37338805431185795
           },
           {
@@ -3219,11 +3219,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.033026967818926084,
-              1.9395077564736205,
+              -0.042681096572757427,
+              1.9472805436420164,
               0.5562413724749055
             ],
-            "topRiseM": 0.12461471934371948,
+            "topRiseM": 0.061740152204894816,
             "oldDropM": 0.30693149343624704
           },
           {
@@ -3231,11 +3231,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.025669477886603946,
-              1.9536349712182874,
+              -0.004498153150367851,
+              1.9532102137851872,
               0.5653649900537433
             ],
-            "topRiseM": 0.1279614178905979,
+            "topRiseM": 0.06272502245631895,
             "oldDropM": 0.36960297090358796
           },
           {
@@ -3243,11 +3243,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02225978567235543,
-              1.9578340008839443,
+              -0.023694803369678538,
+              1.9548679465094565,
               0.5679337459239681
             ],
-            "topRiseM": 0.12764949824312422,
+            "topRiseM": 0.09129792187290753,
             "oldDropM": 0.3389195475288562
           },
           {
@@ -3255,11 +3255,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.022900223756732414,
-              1.9696828627883354,
+              -0.02331626627082479,
+              1.9689397733393088,
               0.5900817913484048
             ],
-            "topRiseM": 0.13242299384524325,
+            "topRiseM": 0.0949412225728592,
             "oldDropM": 0.3597511860252729
           },
           {
@@ -3267,11 +3267,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.025094935640774564,
-              1.9699333126602352,
+              -0.0437171451036266,
+              1.9668233417208116,
               0.5867096113034893
             ],
-            "topRiseM": 0.13315391166796386,
+            "topRiseM": 0.06649089008559561,
             "oldDropM": 0.46434387542752953
           },
           {
@@ -3279,11 +3279,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.025718368152351026,
-              1.9772870845305854,
+              -0.0017899530288190274,
+              1.9799594895678982,
               0.6078965643722904
             ],
-            "topRiseM": 0.1370916789586596,
+            "topRiseM": 0.06933061862502754,
             "oldDropM": 0.35726937299326145
           },
           {
@@ -3291,11 +3291,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.01618381894827192,
-              1.9821510876920436,
+              -0.023076746830995136,
+              1.981665951067209,
               0.6106959209794723
             ],
-            "topRiseM": 0.13796570967695598,
+            "topRiseM": 0.09836010884779434,
             "oldDropM": 0.5031580081942648
           },
           {
@@ -3303,11 +3303,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.022398600920644603,
-              1.9898084241659808,
+              -0.02299275495962707,
+              1.9883154881769967,
               0.6217158773018225
             ],
-            "topRiseM": 0.14202779163399293,
+            "topRiseM": 0.10021656122395184,
             "oldDropM": 0.5044217584397963
           },
           {
@@ -3315,11 +3315,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.01972926612902108,
-              1.999698652323561,
+              -0.04547117310111651,
+              1.9995901417916642,
               0.6408397844645479
             ],
-            "topRiseM": 0.13981259838898197,
+            "topRiseM": 0.07289133405457004,
             "oldDropM": 0.4094691466196092
           },
           {
@@ -3327,11 +3327,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.013631166400779937,
-              2.002189752761364,
+              -0.0003510451171960423,
+              1.9998560925949245,
               0.6412980520851811
             ],
-            "topRiseM": 0.14340548483542825,
+            "topRiseM": 0.0734638185435732,
             "oldDropM": 0.3870493377488817
           },
           {
@@ -3339,11 +3339,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.027720865117647837,
-              2.010917128559527,
+              -0.022958611027690715,
+              2.0138218759411255,
               0.6658794597433428
             ],
-            "topRiseM": 0.1462703551349951,
+            "topRiseM": 0.10488236548364416,
             "oldDropM": 0.43823013283772205
           },
           {
@@ -3351,11 +3351,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.021022065320651213,
-              2.0153228418043603,
+              -0.023046456134014036,
+              2.021456741855678,
               0.6797902648639831
             ],
-            "topRiseM": 0.14677307779512416,
+            "topRiseM": 0.10667336523922089,
             "oldDropM": 0.3772888346938501
           },
           {
@@ -3363,11 +3363,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.017275366921929897,
-              2.022554478263279,
+              -0.046437668254630526,
+              2.0172859466659387,
               0.6721462780077795
             ],
-            "topRiseM": 0.14757559547238497,
+            "topRiseM": 0.075627214076607,
             "oldDropM": 0.5531574815358133
           },
           {
@@ -3375,11 +3375,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.026292649469913724,
-              2.029168766790782,
+              0.0007486716661935858,
+              2.031802995084192,
               0.6992602838111097
             ],
-            "topRiseM": 0.1490335227447699,
+            "topRiseM": 0.07772803285114227,
             "oldDropM": 0.5093974709798439
           },
           {
@@ -3387,11 +3387,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02677537016147955,
-              2.0343804938010615,
+              -0.023184868851457305,
+              2.0290831763767128,
               0.6940676309652439
             ],
-            "topRiseM": 0.15078468651667132,
+            "topRiseM": 0.10733384420594527,
             "oldDropM": 0.5424851427804045
           },
           {
@@ -3399,11 +3399,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.026037125030402227,
-              2.042781878763302,
+              -0.023463620890039637,
+              2.03951133471183,
               0.7142938692236486
             ],
-            "topRiseM": 0.14806502847903458,
+            "topRiseM": 0.10852278734101084,
             "oldDropM": 0.5605892610484284
           },
           {
@@ -3411,11 +3411,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02148570808201697,
-              2.046542721717248,
+              -0.04773732786940395,
+              2.040602529801775,
               0.7164623411637536
             ],
-            "topRiseM": 0.15155902849959935,
+            "topRiseM": 0.078397136860902,
             "oldDropM": 0.5560728220813782
           },
           {
@@ -3423,11 +3423,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.010775960127846932,
-              2.0535491061476323,
+              0.0006553169871082974,
+              2.045941319827943,
               0.7272280101190469
             ],
-            "topRiseM": 0.1500853051247426,
+            "topRiseM": 0.07844801878559338,
             "oldDropM": 0.5235162037055592
           },
           {
@@ -3435,11 +3435,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.026699716603355485,
-              2.0635088351266604,
+              -0.024244507248405593,
+              2.0578496274883897,
               0.752288327941548
             ],
-            "topRiseM": 0.14982893226934246,
+            "topRiseM": 0.10973243869704952,
             "oldDropM": 0.5790423322751341
           },
           {
@@ -3447,11 +3447,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.029536783929206965,
-              2.065530856119976,
+              -0.024138301082313324,
+              2.0558354079669514,
               0.7479376460327737
             ],
-            "topRiseM": 0.15552965814508068,
+            "topRiseM": 0.10916034179878054,
             "oldDropM": 0.5244935639333588
           },
           {
@@ -3459,11 +3459,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.03098247488428032,
-              2.0663534110275226,
+              -0.04922684971020824,
+              2.0666085597621735,
               0.7718184432435293
             ],
-            "topRiseM": 0.1515493522176583,
+            "topRiseM": 0.07925456271780007,
             "oldDropM": 0.5342687327614282
           },
           {
@@ -3471,11 +3471,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.014057507764241193,
-              2.0748797434160924,
+              -0.00032161906393913045,
+              2.0666158097572525,
               0.7718350542730346
             ],
-            "topRiseM": 0.1527518658044844,
+            "topRiseM": 0.07867405399177985,
             "oldDropM": 0.3780514560709496
           },
           {
@@ -3483,11 +3483,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02035658531186447,
-              2.0812033547038444,
+              -0.02511082971495269,
+              2.0713481650576164,
               0.7828522267385879
             ],
-            "topRiseM": 0.15086935458267892,
+            "topRiseM": 0.10941681946074366,
             "oldDropM": 0.4873457910809582
           },
           {
@@ -3495,11 +3495,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.02682169688976395,
-              2.081850102676739,
+              -0.02608887743547845,
+              2.0827031103118654,
               0.8109245615226706
             ],
-            "topRiseM": 0.14531518797655973,
+            "topRiseM": 0.10790663375402731,
             "oldDropM": 0.45843124103662025
           },
           {
@@ -3507,11 +3507,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.03143881681429184,
-              2.0859708339262526,
+              -0.050499993122598334,
+              2.088149343785443,
               0.8253945576180832
             ],
-            "topRiseM": 0.14619456138889309,
+            "topRiseM": 0.07715316906514325,
             "oldDropM": 0.5224449647357159
           },
           {
@@ -3519,11 +3519,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.047297987468560704,
-              2.0978941831208395,
+              -0.002374524705537919,
+              2.085299379529566,
               0.8177291976907392
             ],
-            "topRiseM": 0.1460275017671906,
+            "topRiseM": 0.07751722487443757,
             "oldDropM": 0.4875234109834654
           },
           {
@@ -3531,11 +3531,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.026191971583832917,
-              2.093218738878184,
+              -0.026922209143552006,
+              2.090429347567311,
               0.8316878849376578
             ],
-            "topRiseM": 0.14971021927640304,
+            "topRiseM": 0.10661628026631664,
             "oldDropM": 0.4546629974909797
           },
           {
@@ -3543,11 +3543,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.017901815162163305,
-              2.0980322419599857,
+              -0.027491893583265703,
+              2.0949744530007943,
               0.8447134699779634
             ],
-            "topRiseM": 0.1482098949839843,
+            "topRiseM": 0.10585670488428978,
             "oldDropM": 0.4060070441264241
           },
           {
@@ -3555,11 +3555,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.01705687145375133,
-              2.1012109469625115,
+              -0.051186729009138524,
+              2.0994414095119764,
               0.8582388587758285
             ],
-            "topRiseM": 0.1469307353433802,
+            "topRiseM": 0.07444948686071395,
             "oldDropM": 0.4861812426805012
           },
           {
@@ -3567,11 +3567,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.024917377531807894,
-              2.101566485710326,
+              -0.006019256108561539,
+              2.103238912619833,
               0.8704173232981949
             ],
-            "topRiseM": 0.1450672455672497,
+            "topRiseM": 0.0738808349119946,
             "oldDropM": 0.4615105060056659
           },
           {
@@ -3579,11 +3579,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.0270545018843024,
-              2.1044809860105054,
+              -0.03007565013672095,
+              2.1104929807644353,
               0.8959557063220094
             ],
-            "topRiseM": 0.13804017581761974,
+            "topRiseM": 0.09949208436796786,
             "oldDropM": 0.48183370000501924
           },
           {
@@ -3591,11 +3591,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.03479181426047094,
-              2.101955567072392,
+              -0.03089252835593126,
+              2.1141265211978464,
               0.910264514614536
             ],
-            "topRiseM": 0.13857012016744763,
+            "topRiseM": 0.09794466723031459,
             "oldDropM": 0.3764988709832455
           },
           {
@@ -3603,11 +3603,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.019673102292679906,
-              2.1112752398846655,
+              -0.052191430562087075,
+              2.11543164471828,
               0.9157329852102413
             ],
-            "topRiseM": 0.13404526542515738,
+            "topRiseM": 0.06807924993641512,
             "oldDropM": 0.32218937873328324
           },
           {
@@ -3615,11 +3615,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.045583961473787925,
-              2.1172688611319916,
+              -0.010991534088426257,
+              2.1170566990856616,
               0.9228345330633796
             ],
-            "topRiseM": 0.13314710730264956,
+            "topRiseM": 0.06746416324018245,
             "oldDropM": 0.3265551258685562
           },
           {
@@ -3627,11 +3627,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.030398794286926673,
-              2.11813051177936,
+              -0.03201509570434824,
+              2.1183740261285346,
               0.9288643294404698
             ],
-            "topRiseM": 0.13474768816694738,
+            "topRiseM": 0.0945271424391323,
             "oldDropM": 0.22522745796103094
           },
           {
@@ -3639,11 +3639,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.031814824098711565,
-              2.1155518546945578,
+              -0.034473820126876574,
+              2.125228744084279,
               0.9662372013790178
             ],
-            "topRiseM": 0.12462873112692963,
+            "topRiseM": 0.08724181254448293,
             "oldDropM": 0.2673345300918477
           },
           {
@@ -3651,11 +3651,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.04686947377039403,
-              2.1294664718900704,
+              -0.05260553003598768,
+              2.121854254487235,
               0.9462919601763999
             ],
-            "topRiseM": 0.1279838008989942,
+            "topRiseM": 0.06383737161917313,
             "oldDropM": 0.280521647521645
           },
           {
@@ -3663,11 +3663,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.04181844486998736,
-              2.125312723166602,
+              -0.01681096945137042,
+              2.1260056580965987,
               0.9714784097647807
             ],
-            "topRiseM": 0.1233723226935175,
+            "topRiseM": 0.059073947112863845,
             "oldDropM": 0.3158840809014507
           },
           {
@@ -3675,11 +3675,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.05475059444522637,
-              2.1271648814578326,
+              -0.0379878037399721,
+              2.1305586970333086,
               1.0138644283877536
             ],
-            "topRiseM": 0.11115452908269141,
+            "topRiseM": 0.07578807160646228,
             "oldDropM": 0.26062597801927967
           },
           {
@@ -3687,11 +3687,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.03707076472868839,
-              2.130012331849017,
+              -0.03959526869086987,
+              2.1316104758270864,
               1.0339733708800343
             ],
-            "topRiseM": 0.10457541125350067,
+            "topRiseM": 0.06926446349942506,
             "oldDropM": 0.3136521561227066
           },
           {
@@ -3699,11 +3699,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.0451601728456814,
-              2.1324567727038515,
+              -0.05306786154903641,
+              2.1315019773211277,
               1.031024551244601
             ],
-            "topRiseM": 0.10405992913327777,
+            "topRiseM": 0.046353485974716335,
             "oldDropM": 0.3229570931664991
           },
           {
@@ -3711,11 +3711,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.04383308453917798,
-              2.1296513560409043,
+              -0.028905830826636107,
+              2.131920245373843,
               1.049792512005897
             ],
-            "topRiseM": 0.09967742550578373,
+            "topRiseM": 0.040551657071098646,
             "oldDropM": 0.20416072532504836
           },
           {
@@ -3723,11 +3723,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.0574384149935991,
-              2.134381671678119,
+              -0.041029107681286946,
+              2.1319253888929612,
               1.0511993665420458
             ],
-            "topRiseM": 0.10055879159159797,
+            "topRiseM": 0.06400538080758622,
             "oldDropM": 0.20878346183801644
           },
           {
@@ -3735,11 +3735,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.04253415291067804,
-              2.135588087778017,
+              -0.04308378639640411,
+              2.1314538848699125,
               1.0748770249567527
             ],
-            "topRiseM": 0.09016293661993924,
+            "topRiseM": 0.054117890288150505,
             "oldDropM": 0.2363156217119029
           },
           {
@@ -3747,11 +3747,11 @@
             "role": "mane",
             "vertices": 36,
             "rootM": [
-              -0.034451999774555556,
-              2.139425788495562,
+              -0.05177469501629148,
+              2.130914987885467,
               1.0851833096482684
             ],
-            "topRiseM": 0.08352021061485448,
+            "topRiseM": 0.02789254088122428,
             "oldDropM": 0.29843645946858643
           },
           {
@@ -3759,11 +3759,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.01578538598240331,
-              2.1331179302483654,
+              -0.03710514436004232,
+              2.1307003300202614,
               1.08846458753511
             ],
-            "topRiseM": 0.08277037471405846,
+            "topRiseM": 0.026152873992066006,
             "oldDropM": 0.2709178530430416
           },
           {
@@ -3771,11 +3771,11 @@
             "role": "mane",
             "vertices": 50,
             "rootM": [
-              -0.04260411330567089,
-              2.1375297605450814,
+              -0.04216582528530647,
+              2.1317924261647887,
               1.0644350457866762
             ],
-            "topRiseM": 0.0923450899758338,
+            "topRiseM": 0.05863572490488966,
             "oldDropM": 0.08786588836665121
           },
           {
@@ -3783,11 +3783,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.03228191588904216,
+              -0.0409587365380085,
               2.1392219237080536,
               1.0887628956932147
             ],
-            "topRiseM": 0.07691079657073896,
+            "topRiseM": 0.0,
             "oldDropM": 0.06001922140680449
           },
           {
@@ -3795,11 +3795,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.08237026176258146,
-              2.140938887574465,
+              -0.053015815524001156,
+              2.131779116056189,
               1.0398410129057125
             ],
-            "topRiseM": 0.10169346936170731,
+            "topRiseM": 0.04385071032383747,
             "oldDropM": 0.06726314391124033
           },
           {
@@ -3807,11 +3807,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.07900203864595569,
-              2.14420408497088,
+              -0.027255699275990863,
+              2.131794302777386,
               1.0405086070560032
             ],
-            "topRiseM": 0.10464758949179487,
+            "topRiseM": 0.043259444546949855,
             "oldDropM": 0.08084706184009649
           },
           {
@@ -3819,11 +3819,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.08530275512735803,
-              2.144283574088942,
+              -0.03821669090437866,
+              2.130756490125111,
               1.0167838609584579
             ],
-            "topRiseM": 0.10818221668644368,
+            "topRiseM": 0.07498578406078549,
             "oldDropM": 0.0478779229049624
           },
           {
@@ -3831,11 +3831,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.08999945875886066,
-              2.1426108754555098,
+              -0.0367917001076451,
+              2.1292470532826218,
               0.9982753677713179
             ],
-            "topRiseM": 0.11702679447537179,
+            "topRiseM": 0.07940423754563986,
             "oldDropM": 0.0771970140973326
           },
           {
@@ -3843,11 +3843,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.07863600577323922,
-              2.1374893281546075,
+              -0.05279541106453879,
+              2.1248259029629604,
               0.9636350018537994
             ],
-            "topRiseM": 0.12465919491913402,
+            "topRiseM": 0.061011146084458456,
             "oldDropM": 0.0716964691382822
           },
           {
@@ -3855,11 +3855,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.037759736991839765,
-              2.123641900766025,
+              -0.015606507039089616,
+              2.1245950158959555,
               0.9621755331163033
             ],
-            "topRiseM": 0.12755896573455816,
+            "topRiseM": 0.060742263070347136,
             "oldDropM": 0.08528842386305469
           },
           {
@@ -3867,11 +3867,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.05389234651346578,
-              2.126915859763646,
+              -0.031206235655687364,
+              2.115395221599651,
               0.9155776770326347
             ],
-            "topRiseM": 0.1353703338798664,
+            "topRiseM": 0.09700468418881592,
             "oldDropM": 0.06525241278314242
           },
           {
@@ -3879,11 +3879,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03730630116116838,
-              2.10943967880952,
+              -0.029532005456713813,
+              2.1077832692491705,
               0.8860083281469424
             ],
-            "topRiseM": 0.13930114424996676,
+            "topRiseM": 0.10104782683812452,
             "oldDropM": 0.07719950251326058
           },
           {
@@ -3891,11 +3891,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03669684749971493,
-              2.109290143867658,
+              -0.051630343579871604,
+              2.1065853696448182,
               0.881776232232696
             ],
-            "topRiseM": 0.1422069529083987,
+            "topRiseM": 0.07243196959374076,
             "oldDropM": 0.09000358716480017
           },
           {
@@ -3903,11 +3903,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.06717661691108473,
-              2.111316872467877,
+              -0.0037717751575199257,
+              2.0934769040019714,
               0.8403462258579073
             ],
-            "topRiseM": 0.14509405922654484,
+            "topRiseM": 0.07620709305021789,
             "oldDropM": 0.06927329014161021
           },
           {
@@ -3915,11 +3915,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.037457527544705174,
-              2.1011800197693953,
+              -0.02802470389916325,
+              2.098790245513087,
               0.8562170533430484
             ],
-            "topRiseM": 0.14508871087215658,
+            "topRiseM": 0.10439994623560933,
             "oldDropM": 0.10823042208466549
           },
           {
@@ -3927,11 +3927,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.039534949894860914,
-              2.0992953254222817,
+              -0.02720528627601404,
+              2.092753119711782,
               0.8382628797665833
             ],
-            "topRiseM": 0.1473127006567836,
+            "topRiseM": 0.10645737472588479,
             "oldDropM": 0.10501474725720117
           },
           {
@@ -3939,11 +3939,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.06503041801385681,
-              2.100233412238591,
+              -0.05026283816744015,
+              2.084191960528084,
               0.8148068191294042
             ],
-            "topRiseM": 0.1470106246632641,
+            "topRiseM": 0.0773577751588399,
             "oldDropM": 0.08063984921181389
           },
           {
@@ -3951,11 +3951,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.07164533797901763,
-              2.0905676691703694,
+              -0.0007602004779803974,
+              2.0718026963249843,
               0.7839295401530003
             ],
-            "topRiseM": 0.14962987475627232,
+            "topRiseM": 0.07904671044099443,
             "oldDropM": 0.15796523095538473
           },
           {
@@ -3963,11 +3963,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03497912974015335,
-              2.0941304416321516,
+              -0.025828301834958357,
+              2.079961676622587,
               0.8039086217861511
             ],
-            "topRiseM": 0.15095418134404293,
+            "topRiseM": 0.1081401234093482,
             "oldDropM": 0.17263201019614383
           },
           {
@@ -3975,11 +3975,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03429561446117402,
-              2.0926448100993422,
+              -0.02497641568548753,
+              2.069520511917515,
               0.778555066253552
             ],
-            "topRiseM": 0.1528775398339195,
+            "topRiseM": 0.10952046622984657,
             "oldDropM": 0.20129755866875665
           },
           {
@@ -3987,11 +3987,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.04138005213283166,
-              2.0852366815790555,
+              -0.049010957479922866,
+              2.0628893368843273,
               0.76339786260469
             ],
-            "topRiseM": 0.15276157085181863,
+            "topRiseM": 0.07885728618061139,
             "oldDropM": 0.1996187872819506
           },
           {
@@ -3999,11 +3999,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03851346013744469,
-              2.065819734242621,
+              -0.00017939620366502762,
+              2.064669714367551,
               0.7674040275000619
             ],
-            "topRiseM": 0.1493367098728875,
+            "topRiseM": 0.07908069960832931,
             "oldDropM": 0.102706556431158
           },
           {
@@ -4011,11 +4011,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.05844285544563348,
-              2.076289240593021,
+              -0.02384563619242116,
+              2.0496590302902686,
               0.7348875618723663
             ],
-            "topRiseM": 0.14965580958312108,
+            "topRiseM": 0.10924231036959231,
             "oldDropM": 0.10829033838306468
           },
           {
@@ -4023,11 +4023,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.04997762910791322,
-              2.06022486746338,
+              -0.023195931057418823,
+              2.0295888425368673,
               0.6950288604120425
             ],
-            "topRiseM": 0.1465571484798085,
+            "topRiseM": 0.10737733334686261,
             "oldDropM": 0.12105298456012137
           },
           {
@@ -4035,11 +4035,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.0442787729560464,
-              2.05326928460372,
+              -0.04707518348234424,
+              2.0287937806323932,
               0.6935183600224867
             ],
-            "topRiseM": 0.14912374281250873,
+            "topRiseM": 0.0774393314659978,
             "oldDropM": 0.1263821515836352
           },
           {
@@ -4047,11 +4047,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.05062314973735222,
-              2.0373600951502966,
+              0.00014352376254805205,
+              2.0093488143840146,
               0.6578912552263045
             ],
-            "topRiseM": 0.14460881615772792,
+            "topRiseM": 0.0744752926513641,
             "oldDropM": 0.1035978755210114
           },
           {
@@ -4059,11 +4059,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.04623457471961427,
-              2.017425580895092,
+              -0.022920569277776803,
+              2.007106588108904,
               0.6539290902936418
             ],
-            "topRiseM": 0.14438825648117382,
+            "topRiseM": 0.10427903613352685,
             "oldDropM": 0.11428478409445209
           },
           {
@@ -4071,11 +4071,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.061721131803258035,
-              2.0145216635054553,
+              -0.022959256492824313,
+              1.9919594293748466,
               0.6278338118644936
             ],
-            "topRiseM": 0.1398384509373054,
+            "topRiseM": 0.10057505588971627,
             "oldDropM": 0.1212456686852248
           },
           {
@@ -4083,11 +4083,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.042624455542447884,
-              2.0036756848090564,
+              -0.04493705250624876,
+              1.9896903168131106,
               0.6240173453542099
             ],
-            "topRiseM": 0.14042727613155437,
+            "topRiseM": 0.07159075386746383,
             "oldDropM": 0.11905264086218748
           },
           {
@@ -4095,11 +4095,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.021527144788438896,
-              1.9919748378623814,
+              -0.001064538979218009,
+              1.9890957633821786,
               0.6230210642073628
             ],
-            "topRiseM": 0.13942563807019126,
+            "topRiseM": 0.07096783177218713,
             "oldDropM": 0.10124811297247027
           },
           {
@@ -4107,11 +4107,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.02986798061034898,
-              1.9760975472582394,
+              -0.023206201870021488,
+              1.9741406045780154,
               0.5984345077638556
             ],
-            "topRiseM": 0.13720787643264298,
+            "topRiseM": 0.09668205488389958,
             "oldDropM": 0.14544522973786744
           },
           {
@@ -4119,11 +4119,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.021690740453849538,
-              1.9636659676944903,
+              -0.02350288531491357,
+              1.9614673086412533,
               0.5782421035849604
             ],
-            "topRiseM": 0.13272095523831084,
+            "topRiseM": 0.09294300453584992,
             "oldDropM": 0.18891327215234677
           },
           {
@@ -4131,11 +4131,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03538280263182777,
-              1.9591992197142738,
+              -0.0432979426655954,
+              1.9589147924630628,
               0.5742391191479674
             ],
-            "topRiseM": 0.13146182776511717,
+            "topRiseM": 0.06444297228113083,
             "oldDropM": 0.15112800521851044
           },
           {
@@ -4143,11 +4143,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.06157771640861773,
-              1.9382428347611422,
+              -0.007750620940510083,
+              1.9283511008259333,
               0.5277378576584234
             ],
-            "topRiseM": 0.11771154548796536,
+            "topRiseM": 0.056114721985622174,
             "oldDropM": 0.11273445438374408
           },
           {
@@ -4155,11 +4155,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.02130923042676708,
-              1.9468711809685986,
+              -0.023898185386372235,
+              1.948651072281433,
               0.5583413097903925
             ],
-            "topRiseM": 0.12689850103623002,
+            "topRiseM": 0.08891932480041098,
             "oldDropM": 0.10542629706943996
           },
           {
@@ -4167,11 +4167,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.02860455123156194,
-              1.919958916716249,
+              -0.024809112115914488,
+              1.926160102187327,
               0.5244948062728911
             ],
-            "topRiseM": 0.1169840789850296,
+            "topRiseM": 0.08170345109658861,
             "oldDropM": 0.1166966987097211
           },
           {
@@ -4179,11 +4179,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.032875237629562896,
-              1.9093067073708399,
+              -0.040806143896861304,
+              1.912826356117186,
               0.5049839800680691
             ],
-            "topRiseM": 0.11227861257801508,
+            "topRiseM": 0.0507258692576118,
             "oldDropM": 0.15435220862630805
           },
           {
@@ -4191,11 +4191,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.01957135801921405,
-              1.9069310665372232,
+              -0.010605405412757321,
+              1.9100035300016773,
               0.5009003959197486
             ],
-            "topRiseM": 0.1112720373403453,
+            "topRiseM": 0.050357166242932516,
             "oldDropM": 0.12947822584107804
           },
           {
@@ -4203,11 +4203,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.021348109040580383,
-              1.8979465556991149,
+              -0.026206555098578763,
+              1.8998064096287828,
               0.48627521478504926
             ],
-            "topRiseM": 0.10794367971305041,
+            "topRiseM": 0.07064755842495041,
             "oldDropM": 0.22236664148231178
           },
           {
@@ -4215,11 +4215,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.0330937150462659,
-              1.8725490178158664,
+              -0.027120833589924224,
+              1.8852905615925504,
               0.4657705696750729
             ],
-            "topRiseM": 0.0994490332296627,
+            "topRiseM": 0.06440069673048177,
             "oldDropM": 0.1862129384502127
           },
           {
@@ -4227,11 +4227,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.030762441967420777,
-              1.858558846002031,
+              -0.0381654708532634,
+              1.87328493657249,
               0.4490624999672912
             ],
-            "topRiseM": 0.09160207277741184,
+            "topRiseM": 0.035190166822120617,
             "oldDropM": 0.1606472645938355
           },
           {
@@ -4239,11 +4239,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.051176689409410316,
+              -0.04665662758589248,
               2.1409284958564916,
               1.1208161908488024
             ],
-            "topRiseM": 0.0814646569390427,
+            "topRiseM": 0.0,
             "oldDropM": 0.07502923619121704
           },
           {
@@ -4251,11 +4251,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.05239740266230836,
+              -0.046998427296703935,
               2.14456634067605,
               1.1250430985127067
             ],
-            "topRiseM": 0.08621754183234032,
+            "topRiseM": 0.0,
             "oldDropM": 0.021091750279206067
           },
           {
@@ -4263,11 +4263,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.05489842882502584,
-              2.145377704516537,
+              -0.044138244522938984,
+              2.130823509822002,
               1.0866209800232545
             ],
-            "topRiseM": 0.08693063340640084,
+            "topRiseM": 0.047936425013518136,
             "oldDropM": 0.04329777325696771
           },
           {
@@ -4275,11 +4275,11 @@
             "role": "mane",
             "vertices": 42,
             "rootM": [
-              -0.059147427824490645,
-              2.1430164848616675,
+              -0.05095166727238674,
+              2.130375988569224,
               1.0929113605437963
             ],
-            "topRiseM": 0.08315123952760173,
+            "topRiseM": 0.02337042705038961,
             "oldDropM": 0.016334771517706237
           },
           {
@@ -4287,11 +4287,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.04738018482947743,
+              -0.045593606303511273,
               2.12838384875031,
               1.1266863493936976
             ],
-            "topRiseM": 0.0824063137722848,
+            "topRiseM": 0.0,
             "oldDropM": 0.09042099734001718
           },
           {
@@ -4299,11 +4299,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.06062610791228266,
+              -0.04930246476669674,
               2.1250169402873333,
               1.128553029201159
             ],
-            "topRiseM": 0.08358872404565787,
+            "topRiseM": 0.0,
             "oldDropM": 0.1102883386677398
           },
           {
@@ -4311,11 +4311,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.06866988831311037,
+              -0.051554723278928495,
               2.1202427478528114,
               1.1402655560114483
             ],
-            "topRiseM": 0.08521813445816973,
+            "topRiseM": 0.0,
             "oldDropM": 0.12557219321704172
           },
           {
@@ -4323,11 +4323,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.029388479901164614,
+              -0.04055592892358369,
               2.1338576564960006,
               1.1053927248721036
             ],
-            "topRiseM": 0.07906845804832496,
+            "topRiseM": 0.0,
             "oldDropM": 0.08251911446295157
           },
           {
@@ -4335,11 +4335,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.0566371469869437,
+              -0.04818555570760183,
               2.1358208386151287,
               1.137133621873978
             ],
-            "topRiseM": 0.08492074974380692,
+            "topRiseM": 0.0,
             "oldDropM": 0.06726340086195126
           },
           {
@@ -4347,11 +4347,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.042116772076083844,
+              -0.04411985073256107,
               2.138958306182671,
               1.1440691614141838
             ],
-            "topRiseM": 0.08643528434335357,
+            "topRiseM": 0.0,
             "oldDropM": 0.11366730260229962
           },
           {
@@ -4359,11 +4359,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.034200799321389426,
+              -0.04190337836124663,
               2.129484682844459,
               1.136441834497283
             ],
-            "topRiseM": 0.08721848999755899,
+            "topRiseM": 0.0,
             "oldDropM": 0.13191072048139807
           },
           {
@@ -4371,11 +4371,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.015242066054275142,
+              -0.03659493304645463,
               2.1287789791016323,
               1.124591565940707
             ],
-            "topRiseM": 0.08451439015556428,
+            "topRiseM": 0.0,
             "oldDropM": 0.12801331398910154
           },
           {
@@ -4383,11 +4383,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.0499891132328602,
+              -0.04632410625645845,
               2.1332427170600585,
               1.1277920137275745
             ],
-            "topRiseM": 0.08470101145276221,
+            "topRiseM": 0.0,
             "oldDropM": 0.14924867877125947
           },
           {
@@ -4395,11 +4395,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.0508841534280707,
+              -0.046574717511117386,
               2.111316700183465,
               1.1522355546494496
             ],
-            "topRiseM": 0.08802535384293719,
+            "topRiseM": 0.0,
             "oldDropM": 0.16758260083397913
           },
           {
@@ -4407,11 +4407,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.03109747697589289,
+              -0.0410344481045076,
               2.1109372560776154,
               1.1579937415538892
             ],
-            "topRiseM": 0.09048108491457629,
+            "topRiseM": 0.0,
             "oldDropM": 0.15549861220373495
           },
           {
@@ -4419,11 +4419,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.04685416601983891,
+              -0.04544632103681249,
               2.1213130430173615,
               1.1418141921380336
             ],
-            "topRiseM": 0.08675646203166609,
+            "topRiseM": 0.0,
             "oldDropM": 0.1636920343454542
           },
           {
@@ -4431,11 +4431,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.020377770479780833,
+              -0.03803293028559623,
               2.122633155352057,
               1.1469663426144
             ],
-            "topRiseM": 0.0891353708757725,
+            "topRiseM": 0.0,
             "oldDropM": 0.14972740254766204
           },
           {
@@ -4443,11 +4443,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.002787712425456706,
+              -0.03310771403038547,
               2.1074018642806247,
               1.158797322827265
             ],
-            "topRiseM": 0.08720684410993051,
+            "topRiseM": 0.0,
             "oldDropM": 0.175771715277812
           },
           {
@@ -4455,11 +4455,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.013874073125211387,
+              -0.036211895026316776,
               2.0983431468553957,
               1.1738430497562848
             ],
-            "topRiseM": 0.08950657836709297,
+            "topRiseM": 0.0,
             "oldDropM": 0.18219235286516233
           },
           {
@@ -4467,11 +4467,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.05187360310742404,
+              -0.046851763421336325,
               2.0979758305034415,
               1.1718262044356182
             ],
-            "topRiseM": 0.09141817688973397,
+            "topRiseM": 0.0,
             "oldDropM": 0.20730547851514758
           },
           {
@@ -4479,11 +4479,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.06876944852355575,
+              -0.0515826001378532,
               2.0884268076949275,
               1.1817022635031358
             ],
-            "topRiseM": 0.09502770683091244,
+            "topRiseM": 0.0,
             "oldDropM": 0.16240758005585687
           },
           {
@@ -4491,11 +4491,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.07331572866958168,
+              -0.05285555857874046,
               2.108547689200107,
               1.1590482403041604
             ],
-            "topRiseM": 0.08840442228347234,
+            "topRiseM": 0.0,
             "oldDropM": 0.16124096241633046
           },
           {
@@ -4503,11 +4503,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.017858066849253163,
+              -0.037327413269048475,
               2.1008158042453786,
               1.1765940905570944
             ],
-            "topRiseM": 0.09287559331029716,
+            "topRiseM": 0.0,
             "oldDropM": 0.11524495542115054
           },
           {
@@ -4515,11 +4515,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.08526373230288545,
+              -0.05620099959606552,
               2.09389334587007,
               1.1758685080515887
             ],
-            "topRiseM": 0.08991915516401106,
+            "topRiseM": 0.0,
             "oldDropM": 0.13934812299295496
           },
           {
@@ -4527,11 +4527,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.04121396568372074,
+              -0.0438670649426994,
               2.139107628610676,
               1.1168937637814749
             ],
-            "topRiseM": 0.08253847542750936,
+            "topRiseM": 0.0,
             "oldDropM": 0.11832126893374051
           },
           {
@@ -4539,11 +4539,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.019382433410238657,
+              -0.037754235906124416,
               2.1354328784198007,
               1.1210992465224747
             ],
-            "topRiseM": 0.08129921693831621,
+            "topRiseM": 0.0,
             "oldDropM": 0.14430449875596452
           },
           {
@@ -4551,11 +4551,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.02841495788377667,
-              1.841469523019018,
+              -0.029241888620020466,
+              1.8563077449556245,
               0.425776641973158
             ],
-            "topRiseM": 0.08798396882961113,
+            "topRiseM": 0.045447600343216044,
             "oldDropM": 0.2046490117399622
           },
           {
@@ -4563,11 +4563,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.036402625620113906,
-              1.8435994509883875,
+              -0.036913787108955896,
+              1.8612940627693746,
               0.4325772734760901
             ],
-            "topRiseM": 0.09283082220645444,
+            "topRiseM": 0.029009171348485907,
             "oldDropM": 0.26408707970437195
           },
           {
@@ -4575,11 +4575,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.02326392854075677,
-              1.853480208966433,
+              -0.019559989592960764,
+              1.8658051863017011,
               0.43875684260799214
             ],
-            "topRiseM": 0.09565604373750691,
+            "topRiseM": 0.03125521064851777,
             "oldDropM": 0.23119508065496097
           },
           {
@@ -4587,11 +4587,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03370926291252976,
-              1.8599808012257841,
+              -0.028005129301552724,
+              1.8725519246070905,
               0.4480491589115232
             ],
-            "topRiseM": 0.09711123580265779,
+            "topRiseM": 0.05748575271967127,
             "oldDropM": 0.23267846004203818
           },
           {
@@ -4599,11 +4599,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.023190903466642442,
-              1.8717931509636512,
+              -0.02727976372990011,
+              1.8829181611189296,
               0.46245182124025674
             ],
-            "topRiseM": 0.10394986647515525,
+            "topRiseM": 0.06297066821358466,
             "oldDropM": 0.2778315093696322
           },
           {
@@ -4611,11 +4611,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03295801326010609,
-              1.8793643068468178,
+              -0.039589010069010694,
+              1.8926165775283375,
               0.4760752158662634
             ],
-            "topRiseM": 0.10884618026657988,
+            "topRiseM": 0.04361936503131747,
             "oldDropM": 0.30800388852668936
           },
           {
@@ -4623,11 +4623,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.029987014006373314,
-              1.8959989337967278,
+              -0.01214745875998617,
+              1.9010601295068832,
               0.4880630616642389
             ],
-            "topRiseM": 0.11328794102543704,
+            "topRiseM": 0.047052264956501055,
             "oldDropM": 0.3595202923175307
           },
           {
@@ -4635,11 +4635,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03599140281486504,
-              1.897095883751396,
+              -0.025424199585358603,
+              1.9137494343589645,
               0.5063227603021885
             ],
-            "topRiseM": 0.1179905002442323,
+            "topRiseM": 0.07648537781434261,
             "oldDropM": 0.37122574781848483
           },
           {
@@ -4647,11 +4647,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.02618904082563954,
-              1.9127501813427206,
+              -0.02519514678267281,
+              1.9181909693185388,
               0.5127887214283289
             ],
-            "topRiseM": 0.11672172780843115,
+            "topRiseM": 0.07873442381581719,
             "oldDropM": 0.3714632417349655
           },
           {
@@ -4659,11 +4659,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.028660567342501407,
-              1.923783645749743,
+              -0.041727561938313236,
+              1.9294728163509962,
               0.5294024441010357
             ],
-            "topRiseM": 0.12025215818961876,
+            "topRiseM": 0.05603795614485185,
             "oldDropM": 0.3310920373650723
           },
           {
@@ -4671,11 +4671,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.023827432700340167,
-              1.9299466508099048,
+              -0.007754548589975128,
+              1.9283239932926313,
               0.5276976669408233
             ],
-            "topRiseM": 0.1221488900875416,
+            "topRiseM": 0.056276975831704545,
             "oldDropM": 0.3641742417711684
           },
           {
@@ -4683,11 +4683,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.033258114113572386,
-              1.9393410332914742,
+              -0.02394012500226978,
+              1.9474452013198889,
               0.5564933878761478
             ],
-            "topRiseM": 0.12586323453619963,
+            "topRiseM": 0.0884853881542842,
             "oldDropM": 0.3175236770143206
           },
           {
@@ -4695,11 +4695,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.025908976775300168,
-              1.953555896662597,
+              -0.023743122497111933,
+              1.9533292687474204,
               0.5655492038276971
             ],
-            "topRiseM": 0.13003908222421345,
+            "topRiseM": 0.09076207305523942,
             "oldDropM": 0.37787402802965064
           },
           {
@@ -4707,11 +4707,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.02228495900906227,
-              1.95755255366191,
+              -0.043091563027073496,
+              1.9550194558279894,
               0.5681689234714711
             ],
-            "topRiseM": 0.13003874021853723,
+            "topRiseM": 0.0633816924614019,
             "oldDropM": 0.3264344495977787
           },
           {
@@ -4719,11 +4719,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.023108442163111722,
-              1.9696389026244927,
+              -0.002790732910398698,
+              1.9690650026786585,
               0.5902818018930751
             ],
-            "topRiseM": 0.13635169965425664,
+            "topRiseM": 0.06692190128395414,
             "oldDropM": 0.3657058652392404
           },
           {
@@ -4731,11 +4731,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.02513188995757039,
-              1.9695774413941132,
+              -0.02336266068955834,
+              1.966952329947836,
               0.5869146987425493
             ],
-            "topRiseM": 0.13524885654918584,
+            "topRiseM": 0.09466232463023805,
             "oldDropM": 0.4463448812423738
           },
           {
@@ -4743,11 +4743,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.02596867241083077,
-              1.9771579413705964,
+              -0.023100959267381413,
+              1.9800850373179588,
               0.608102131686086
             ],
-            "topRiseM": 0.13914811289205375,
+            "topRiseM": 0.09788092793495506,
             "oldDropM": 0.35109177500419797
           },
           {
@@ -4755,11 +4755,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.022438881554635626,
-              1.9894865285004573,
+              -0.04487244700994617,
+              1.988487554552514,
               0.6220034735071989
             ],
-            "topRiseM": 0.14080881546921709,
+            "topRiseM": 0.07131952023696564,
             "oldDropM": 0.4944059744568896
           },
           {
@@ -4767,11 +4767,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.019992513715477757,
-              1.999711836159891,
+              -0.00036067532258424184,
+              1.9996929871882703,
               0.6410169593708915
             ],
-            "topRiseM": 0.14480822297865825,
+            "topRiseM": 0.0728655054268672,
             "oldDropM": 0.41497178072725527
           },
           {
@@ -4779,11 +4779,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.013831047625467345,
-              2.001907685499664,
+              -0.022917994184075217,
+              1.9999940029747578,
               0.6415358258357354
             ],
-            "topRiseM": 0.14330335811861428,
+            "topRiseM": 0.10289660240101117,
             "oldDropM": 0.386445590358381
           },
           {
@@ -4791,11 +4791,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.027997753702211418,
-              2.010741818703965,
+              -0.022959648637295826,
+              2.013945577988688,
               0.6661020124156054
             ],
-            "topRiseM": 0.14698820029320903,
+            "topRiseM": 0.10491840616859749,
             "oldDropM": 0.439277472758149
           },
           {
@@ -4803,11 +4803,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.021212273400183092,
-              2.015020638587403,
+              -0.04667449591531468,
+              2.0215765727823136,
               0.6800115360482236
             ],
-            "topRiseM": 0.1467958338938451,
+            "topRiseM": 0.07666371924885684,
             "oldDropM": 0.3898196743504363
           },
           {
@@ -4815,11 +4815,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.02657903940876549,
-              2.0290071464016974,
+              0.0007494229305817987,
+              2.031905340139987,
               0.6994567725491474
             ],
-            "topRiseM": 0.1514457238802409,
+            "topRiseM": 0.07739197671001552,
             "oldDropM": 0.5078428250367715
           },
           {
@@ -4827,11 +4827,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.02670258528227251,
-              2.0340423795322464,
+              -0.023187495162564714,
+              2.0292042299626423,
               0.6942975721660452
             ],
-            "topRiseM": 0.14944894736626724,
+            "topRiseM": 0.10752389861912981,
             "oldDropM": 0.5350686529033646
           },
           {
@@ -4839,11 +4839,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.026328602558757474,
-              2.0427190860283666,
+              -0.02346716780081918,
+              2.0396218685510306,
               0.7145130517871505
             ],
-            "topRiseM": 0.15303296801828647,
+            "topRiseM": 0.10854585058729338,
             "oldDropM": 0.5543663926237012
           },
           {
@@ -4851,11 +4851,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.021520874009406086,
-              2.046252155571613,
+              -0.04774304969028467,
+              2.0407039252701176,
               0.7166643722722649
             ],
-            "topRiseM": 0.148896060890658,
+            "topRiseM": 0.07820388215977925,
             "oldDropM": 0.5534014984599527
           },
           {
@@ -4863,11 +4863,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03455996786288305,
-              2.0541399366031348,
+              0.0007015088689051319,
+              2.0434803622351922,
               0.7222325118572108
             ],
-            "topRiseM": 0.14901833922732655,
+            "topRiseM": 0.07867253510867389,
             "oldDropM": 0.5177049925630308
           },
           {
@@ -4875,11 +4875,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.026942661501364557,
-              2.063457960609377,
+              -0.02424959778575555,
+              2.0579436098429853,
               0.7524925324492316
             ],
-            "topRiseM": 0.15602227381077238,
+            "topRiseM": 0.1092361462565572,
             "oldDropM": 0.5634320560279162
           },
           {
@@ -4887,11 +4887,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.01693674484273603,
-              2.0684040464260147,
+              -0.024418301222150142,
+              2.060938506167162,
               0.7590581100555118
             ],
-            "topRiseM": 0.15144170922069788,
+            "topRiseM": 0.10978810629053504,
             "oldDropM": 0.5318671738866156
           },
           {
@@ -4899,11 +4899,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03422129008218708,
-              2.075303574907628,
+              -0.04915036040590623,
+              2.065292901725323,
               0.7688169333726937
             ],
-            "topRiseM": 0.15046418765512248,
+            "topRiseM": 0.07868715334016452,
             "oldDropM": 0.3742431595587268
           },
           {
@@ -4911,11 +4911,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.020819762517850626,
-              2.0813500028068095,
+              -0.0007338369247412019,
+              2.0715186560025614,
               0.7832559087375225
             ],
-            "topRiseM": 0.1469819725865178,
+            "topRiseM": 0.07904222426586971,
             "oldDropM": 0.48626706075490644
           },
           {
@@ -4923,11 +4923,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.027115356391791526,
-              2.081770757507571,
+              -0.02609934708471722,
+              2.0828096279492634,
               0.811200580177329
             ],
-            "topRiseM": 0.15080818417917907,
+            "topRiseM": 0.1078209803034964,
             "oldDropM": 0.4504097164037564
           },
           {
@@ -4935,11 +4935,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.03158272509542187,
-              2.0857476360098106,
+              -0.02666784334999755,
+              2.0882205477998417,
               0.8255888591313613
             ],
-            "topRiseM": 0.1494432100890064,
+            "topRiseM": 0.10733011210562715,
             "oldDropM": 0.5154572971013569
           },
           {
@@ -4947,11 +4947,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.023935306393567904,
-              2.0915179686014516,
+              -0.050738318088556375,
+              2.092097599333336,
               0.8363908594648223
             ],
-            "topRiseM": 0.14958807022397247,
+            "topRiseM": 0.07631164626681253,
             "oldDropM": 0.46962350860304003
           },
           {
@@ -4959,11 +4959,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.026265165175704847,
-              2.092847577412298,
+              -0.0032217886916362515,
+              2.090513038090736,
               0.8319217824346913
             ],
-            "topRiseM": 0.1437544370494983,
+            "topRiseM": 0.07666078648849961,
             "oldDropM": 0.4558023690891897
           },
           {
@@ -4971,11 +4971,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.017198535957324235,
-              2.1009144753994757,
+              -0.028126932046129087,
+              2.099479701676678,
               0.8583583222263362
             ],
-            "topRiseM": 0.1421422072384595,
+            "topRiseM": 0.10447399891042908,
             "oldDropM": 0.48597298836613234
           },
           {
@@ -4983,11 +4983,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.025004865896077238,
-              2.1012656110278805,
+              -0.028730443174896467,
+              2.1032991422447513,
               0.8706162178907209
             ],
-            "topRiseM": 0.14071909806395366,
+            "topRiseM": 0.10283704084119893,
             "oldDropM": 0.4618415242951852
           },
           {
@@ -4995,11 +4995,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.027263711086922972,
-              2.1043970962134506,
+              -0.05187997984113275,
+              2.110547538167525,
               0.8961617955461344
             ],
-            "topRiseM": 0.138677748696316,
+            "topRiseM": 0.0710623007426201,
             "oldDropM": 0.48190372626962397
           },
           {
@@ -5007,11 +5007,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.034913655773985246,
-              2.101720803132343,
+              -0.00970051781451401,
+              2.114182154363124,
               0.9104937050603885
             ],
-            "topRiseM": 0.13491920153537995,
+            "topRiseM": 0.0687152974643852,
             "oldDropM": 0.3750459502021075
           },
           {
@@ -5019,11 +5019,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.019897856348709653,
-              2.1113033385988023,
+              -0.03122857708701611,
+              2.1154830595369383,
               0.9159524922062381
             ],
-            "topRiseM": 0.13932281520371426,
+            "topRiseM": 0.09706488290920401,
             "oldDropM": 0.3222321760045208
           },
           {
@@ -5031,11 +5031,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.024435193974199538,
-              2.1118984860655514,
+              -0.03084047869014009,
+              2.1139095086129043,
               0.9093736806089942
             ],
-            "topRiseM": 0.13621631601930773,
+            "topRiseM": 0.0975313911129021,
             "oldDropM": 0.3091690033571721
           },
           {
@@ -5043,11 +5043,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.024026828040349325,
-              2.112916042263515,
+              -0.05246896642695985,
+              2.1197389638040938,
               0.9354122454192965
             ],
-            "topRiseM": 0.13517034679388873,
+            "topRiseM": 0.0656700468205238,
             "oldDropM": 0.3205706824706904
           },
           {
@@ -5055,11 +5055,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.03200386880323487,
-              2.1153907863122927,
+              -0.016157673858595935,
+              2.1252649858451442,
               0.9664749581500081
             ],
-            "topRiseM": 0.12666372563237527,
+            "topRiseM": 0.06005584235504058,
             "oldDropM": 0.269377128049725
           },
           {
@@ -5067,11 +5067,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.02954338985544514,
-              2.1198272332847483,
+              -0.03438967605123712,
+              2.1250420258686944,
               0.9650219706528775
             ],
-            "topRiseM": 0.12388466434012368,
+            "topRiseM": 0.08759923498876132,
             "oldDropM": 0.2423843961394867
           },
           {
@@ -5079,11 +5079,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.04870326945412685,
-              2.124958205712653,
+              -0.034617373113942675,
+              2.1255402057858936,
               0.9683012129211034
             ],
-            "topRiseM": 0.12251949235078508,
+            "topRiseM": 0.08685613693917471,
             "oldDropM": 0.27126223670719285
           },
           {
@@ -5091,11 +5091,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.05286736960589822,
-              2.1267789805953607,
+              -0.05297187814231439,
+              2.1277425762021744,
               0.9845651062893326
             ],
-            "topRiseM": 0.1176109167010373,
+            "topRiseM": 0.056599870388338136,
             "oldDropM": 0.3157425179449922
           },
           {
@@ -5103,11 +5103,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.06351391136499596,
-              2.1307180689363903,
+              -0.019762741874714017,
+              2.1287011565111427,
               0.9929482486095906
             ],
-            "topRiseM": 0.11730478959750013,
+            "topRiseM": 0.05519622205084351,
             "oldDropM": 0.2706698993848877
           },
           {
@@ -5115,11 +5115,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.037240585653266316,
-              2.1299691302493966,
+              -0.03961283866274786,
+              2.131617764537609,
               1.0341883097705447
             ],
-            "topRiseM": 0.10430038323614976,
+            "topRiseM": 0.06922913492421001,
             "oldDropM": 0.31457059129296727
           },
           {
@@ -5127,11 +5127,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.06622444596542366,
-              2.132728760270503,
+              -0.03848840178315435,
+              2.130970038918812,
               1.0202244423559161
             ],
-            "topRiseM": 0.11386567632112676,
+            "topRiseM": 0.0740095314044833,
             "oldDropM": 0.3118264324973674
           },
           {
@@ -5139,11 +5139,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.04400986788863097,
-              2.1295585743060474,
+              -0.05291127214111961,
+              2.1319213503879615,
               1.0500252190639932
             ],
-            "topRiseM": 0.10043912338630845,
+            "topRiseM": 0.04045520304869488,
             "oldDropM": 0.20348610845106907
           },
           {
@@ -5151,11 +5151,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.08386395913620949,
-              2.1357093066871236,
+              -0.027426233643658468,
+              2.1318150911123546,
               1.0414876154563504
             ],
-            "topRiseM": 0.10732838414195234,
+            "topRiseM": 0.04349391198159225,
             "oldDropM": 0.20620097479953392
           },
           {
@@ -5163,11 +5163,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.04274494982610485,
-              2.1355632655560752,
+              -0.04310651937189014,
+              2.1314429751217587,
               1.0751329715383975
             ],
-            "topRiseM": 0.09090491615409846,
+            "topRiseM": 0.05392277586288774,
             "oldDropM": 0.2305021359064261
           },
           {
@@ -5175,11 +5175,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.03469758612984863,
-              2.1394914026777605,
+              -0.044029345845758634,
+              2.130900204964112,
               1.0854199693558164
             ],
-            "topRiseM": 0.08777035534974553,
+            "topRiseM": 0.048932922961787195,
             "oldDropM": 0.2916043478789059
           },
           {
@@ -5187,11 +5187,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.033843278266108334,
-              2.1329783136283615,
+              -0.05148061214596724,
+              2.1306815043426526,
               1.0887379294460773
             ],
-            "topRiseM": 0.07972016240144031,
+            "topRiseM": 0.025901953872772054,
             "oldDropM": 0.2763473960887044
           },
           {
@@ -5199,11 +5199,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03929633878022494,
-              2.1478364493734157,
+              -0.03280161709214566,
+              2.131639660587655,
               1.0699448399867033
             ],
-            "topRiseM": 0.09407325424200685,
+            "topRiseM": 0.03411765300101344,
             "oldDropM": 0.09605464841222489
           },
           {
@@ -5211,11 +5211,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.028549268058673104,
-              2.1194193400045824,
+              -0.030887465658802862,
+              2.1141054958897567,
               0.9101779845139585
             ],
-            "topRiseM": 0.1373976783209132,
+            "topRiseM": 0.09786103780807087,
             "oldDropM": 0.09540571509801676
           },
           {
@@ -5223,11 +5223,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.07051035559382404,
-              2.06529969564767,
+              -0.023302898499300395,
+              2.0340029162447717,
               0.7035017509121765
             ],
-            "topRiseM": 0.1478967198094563,
+            "topRiseM": 0.10774491238168604,
             "oldDropM": 0.13382971678565103
           },
           {
@@ -5235,11 +5235,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.03072904317120236,
-              1.9271621646924548,
+              -0.04139768034089454,
+              1.9234243452102397,
               0.5204605726853615
             ],
-            "topRiseM": 0.11582333402193834,
+            "topRiseM": 0.05475710292258684,
             "oldDropM": 0.12586384530282957
           },
           {
@@ -5247,11 +5247,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.031101467207004182,
-              1.837276266101798,
+              -0.020267320017364997,
+              1.8631431285502913,
               0.4351070497315744
             ],
-            "topRiseM": 0.08610088860866183,
+            "topRiseM": 0.029602422927937244,
             "oldDropM": 0.16676544894110346
           },
           {
@@ -5259,11 +5259,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.03114319852185787,
+              -0.0410472501373778,
               2.148858221843254,
               1.0980297876191734
             ],
-            "topRiseM": 0.07989839821350264,
+            "topRiseM": 0.0,
             "oldDropM": 0.09185288628541688
           },
           {
@@ -5271,11 +5271,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.02921645692924435,
+              -0.04050776249144601,
               2.1332482850766703,
               1.1117767878364204
             ],
-            "topRiseM": 0.08039320985335685,
+            "topRiseM": 0.0,
             "oldDropM": 0.028567039236009784
           },
           {
@@ -5283,11 +5283,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.07886037041191252,
+              -0.0544080582665931,
               2.1187489692331662,
               1.1301694520405834
             ],
-            "topRiseM": 0.08489963896579189,
+            "topRiseM": 0.0,
             "oldDropM": 0.06144699726033265
           },
           {
@@ -5295,11 +5295,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.060210708498287725,
+              -0.04918615293077815,
               2.1349435621569883,
               1.1165481416279748
             ],
-            "topRiseM": 0.0816803916855453,
+            "topRiseM": 0.0,
             "oldDropM": 0.027599143584283947
           },
           {
@@ -5307,11 +5307,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              -0.04002513427731753,
+              -0.0435341921489065,
               2.146786415463457,
               1.1149030371510318
             ],
-            "topRiseM": 0.0812945675223542,
+            "topRiseM": 0.0,
             "oldDropM": 0.03315695839569743
           },
           {
@@ -5319,11 +5319,11 @@
             "role": "forelock",
             "vertices": 42,
             "rootM": [
-              0.0029254607819051374,
+              -0.03150802553232415,
               2.0886174899007277,
               1.185571550181458
             ],
-            "topRiseM": 0.09083945311276276,
+            "topRiseM": 0.0,
             "oldDropM": 0.17793874374438268
           },
           {
@@ -5331,11 +5331,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.016327307252068102,
-              1.9819154464914959,
+              -0.044513696548847334,
+              1.9817896686630252,
               0.6108993171142545
             ],
-            "topRiseM": 0.14170642789707455,
+            "topRiseM": 0.06953323823076052,
             "oldDropM": 0.49980128001627255
           },
           {
@@ -5343,11 +5343,11 @@
             "role": "mane",
             "vertices": 54,
             "rootM": [
-              -0.017428843148893945,
-              2.0222429526188876,
+              0.00045813404814782493,
+              2.017448292167298,
               0.6724417650178133
             ],
-            "topRiseM": 0.1475335218763143,
+            "topRiseM": 0.07614235835884342,
             "oldDropM": 0.5397476921323339
           },
           {
@@ -5355,11 +5355,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.029436475659352007,
-              2.0651315008107205,
+              -0.024142202964215542,
+              2.055911287825043,
               0.7481006639335833
             ],
-            "topRiseM": 0.14851619010257933,
+            "topRiseM": 0.10916027879995971,
             "oldDropM": 0.5345289123421428
           },
           {
@@ -5367,11 +5367,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.018098872542627875,
-              2.097680146421989,
+              -0.027499111008591884,
+              2.095028786975341,
               0.8448734033165065
             ],
-            "topRiseM": 0.14547543272257668,
+            "topRiseM": 0.10594834494536487,
             "oldDropM": 0.40012035334520757
           },
           {
@@ -5379,11 +5379,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.021063872257989693,
-              2.115590888208208,
+              -0.05248157355304515,
+              2.119934111941066,
               0.9363762521819059
             ],
-            "topRiseM": 0.1311972587363499,
+            "topRiseM": 0.065017848364755,
             "oldDropM": 0.21792292478662767
           },
           {
@@ -5391,11 +5391,11 @@
             "role": "mane",
             "vertices": 30,
             "rootM": [
-              -0.049814562048512236,
-              2.130737091200542,
+              -0.014046233425833887,
+              2.122456836405407,
               0.9495864267739055
             ],
-            "topRiseM": 0.12649172828103605,
+            "topRiseM": 0.06286937103216905,
             "oldDropM": 0.05735924296091044
           },
           {
@@ -5403,11 +5403,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              0.007500963583934044,
+              -0.030226884747756057,
               2.1168814313481414,
               1.1353279361465336
             ],
-            "topRiseM": 0.08474542608438096,
+            "topRiseM": 0.0,
             "oldDropM": 0.12071121241204308
           },
           {
@@ -5415,11 +5415,11 @@
             "role": "forelock",
             "vertices": 30,
             "rootM": [
-              -0.03236529972689697,
+              -0.041389438474788744,
               2.135422472389503,
               1.1025524499534092
             ],
-            "topRiseM": 0.07991423868990788,
+            "topRiseM": 0.0,
             "oldDropM": 0.09707070634217763
           },
           {
@@ -5427,11 +5427,11 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.07316081598939912,
-              1.9207072722006315,
+              -0.04093462658570504,
+              1.9150956383569753,
               0.5082782932414874
             ],
-            "topRiseM": 0.11667462182313049,
+            "topRiseM": 0.051924145517508125,
             "oldDropM": 0.25053749965857786
           },
           {
@@ -5439,14 +5439,83 @@
             "role": "mane",
             "vertices": 75,
             "rootM": [
-              -0.04663382325491629,
-              2.137271940429332,
+              -0.03826582391419835,
+              2.1304216243335774,
               1.092316343871037
             ],
-            "topRiseM": 0.08424829907308862,
+            "topRiseM": 0.023574700211185018,
             "oldDropM": 0.07603674231998925
           }
-        ]
+        ],
+        "shell": {
+          "version": 1,
+          "vertexCount": 1562,
+          "indexCount": 9360,
+          "space": "native-source-mesh",
+          "sourceMeshIndex": 2,
+          "originalSourceWeightsCopied": true,
+          "position": {
+            "byteOffset": 728256,
+            "count": 4686,
+            "itemSize": 3,
+            "componentType": "float32"
+          },
+          "normal": {
+            "byteOffset": 747000,
+            "count": 4686,
+            "itemSize": 3,
+            "componentType": "float32"
+          },
+          "uv": {
+            "byteOffset": 765744,
+            "count": 3124,
+            "itemSize": 2,
+            "componentType": "float32"
+          },
+          "skinIndex": {
+            "byteOffset": 778240,
+            "count": 6248,
+            "itemSize": 4,
+            "componentType": "uint16"
+          },
+          "skinWeight": {
+            "byteOffset": 790736,
+            "count": 6248,
+            "itemSize": 4,
+            "componentType": "float32"
+          },
+          "outer": {
+            "byteOffset": 815728,
+            "count": 1562,
+            "itemSize": 1,
+            "componentType": "float32"
+          },
+          "index": {
+            "byteOffset": 821976,
+            "count": 9360,
+            "itemSize": 1,
+            "componentType": "uint16"
+          },
+          "sourceVertex": {
+            "byteOffset": 840696,
+            "count": 1562,
+            "itemSize": 1,
+            "componentType": "uint16"
+          },
+          "restReconstructionMaxErrorM": 8.322330867033196e-08,
+          "standingBoundsM": {
+            "min": [
+              -0.06213875147343008,
+              1.8538631870375057,
+              0.4209335235948652
+            ],
+            "max": [
+              0.012144635246047388,
+              2.2128832105709133,
+              1.0949364865205689
+            ]
+          }
+        }
       },
       "headShape": {
         "family": "pony",
@@ -5454,8 +5523,8 @@
         "maxAdditionalDisplayedDeltaM": 0.0069251917863384525,
         "sourceSeatUnchangedByHeadPass": true
       },
-      "sha256": "fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe",
-      "byteLength": 728256,
+      "sha256": "5974a7fa1f3e4b4d91cb6c25e759ccbc72913a634d72188eb5b3be390564b826",
+      "byteLength": 843820,
       "actorScale": 0.7761249771443578,
       "withersM": 1.42,
       "sourceWithersM": 1.8296022442476845,

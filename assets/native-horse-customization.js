@@ -117,7 +117,13 @@ export function configureNativeCustomization({THREE,rig,horse,defaults}={}){
  const markCustom=horse.mark!=null&&horse.mark!==(marks.mark||'none');
  const markColorCustom=validColor(horse.markCol)&&!equal(horse.markCol,marks.markCol||'#f2ece0');
  const secondary=MARKS2[horse.mark2]||0,neutral=bodyCustom||markCustom||markColorCustom;
- const maneCustom=aliasAppearance||validColor(horse.colors?.mane)&&!equal(horse.colors.mane,colors.mane),tailCustom=validColor(horse.tailCol);
+ const maneChanged=aliasAppearance||validColor(horse.colors?.mane)&&!equal(horse.colors.mane,colors.mane),tailCustom=validColor(horse.tailCol);
+ // A naturally varied Fjord keeps its authored two-tone crest. The provenance
+ // must match the current saved pigment, so a later/imported dye never loses.
+ const fjordMane=horse.breed==='fjord'&&profile.nativeVariant?.id==='fjord'&&!profile.nativeRosterAlias&&!horse.coat&&!rig.nativeFantasy&&!rig.fantasyAppearance;
+ const maneSource=fjordMane&&equal(horse.maneAppearance?.color,horse.colors?.mane)?horse.maneAppearance?.source:null;
+ const maneCustom=maneSource==='natural'?false:maneChanged||maneSource==='dyed';
+ const tailTint=tailCustom||maneChanged;
  let state=rig.nativeCustomization;
  if(!state){
   state={material:null,base:null,neutral:false,hair:[],dispose(){
@@ -140,13 +146,13 @@ export function configureNativeCustomization({THREE,rig,horse,defaults}={}){
   u.nrSeed.value=Array.from(String(horse.id||1)).reduce((n,c)=>(n*31+c.charCodeAt(0))%97,0);
   rig.skin.material=state.material;
  }else rig.skin.material=authored;
- if((maneCustom||tailCustom)&&!state.hair.length)state.hair=prepareHair(THREE,rig);
+ if((maneCustom||tailTint)&&!state.hair.length)state.hair=prepareHair(THREE,rig);
  for(const entry of state.hair)for(const material of entry.materials){
   const u=material.userData.nativeRosterHair;
   u.nrMane.value.set(validColor(horse.colors?.mane)?horse.colors.mane:colors.mane||'#332214');
   u.nrTail.value.set(tailCustom?horse.tailCol:validColor(horse.colors?.mane)?horse.colors.mane:colors.mane||'#332214');
-  u.nrManeOn.value=maneCustom?1:0;u.nrTailOn.value=tailCustom||maneCustom?1:0;
+  u.nrManeOn.value=maneCustom?1:0;u.nrTailOn.value=tailTint?1:0;
  }
- state.applied={body:!!neutral,mark:neutral?(horse.mark??marks.mark??'none'):'authored',mark2:horse.mark2||null,mane:maneCustom,tail:tailCustom||maneCustom};
+ state.applied={body:!!neutral,mark:neutral?(horse.mark??marks.mark??'none'):'authored',mark2:horse.mark2||null,mane:maneCustom,tail:tailTint};
  return state;
 }

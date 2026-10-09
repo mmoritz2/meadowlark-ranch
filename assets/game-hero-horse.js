@@ -2,10 +2,10 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=horse-art-2';
-export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=horse-art-2';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=horse-art-20261009b';
+export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=horse-art-20261009b';
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-1';
-import {createNativeDraftFeathers} from './native-draft-feathers.js?v=horse-art-2';
+import {createNativeDraftFeathers} from './native-draft-feathers.js?v=horse-art-20261009b';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
@@ -122,7 +122,7 @@ export function gameHeroSeat(rig,mount){
 // The native groom is already skinned and animated in the preserved source.
 export function nativeGroomFacade({THREE,scene,skin,mount,profile}={}){
   let root=scene||skin;if(!scene)while(root?.parent&&root.parent!==mount)root=root.parent;
-  const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount)meshes.push(o);});
+  const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&(o.userData.nativeFjordCrest||profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount))meshes.push(o);});
   const feathers=createNativeDraftFeathers({THREE,scene:root,skin,profile});if(feathers)meshes.push(...feathers.meshes);
   const group={get visible(){return meshes.some(m=>m.visible);},set visible(v){for(const mesh of meshes)mesh.visible=v;}};
   return {mane:group,tail:group,meshes,feathers,setColors(options){feathers?.setColors(options);},update(){},reset(){},dispose(){feathers?.dispose();},stats:{native:true,meshes:meshes.length,feathers:feathers?.inspect()||null}};

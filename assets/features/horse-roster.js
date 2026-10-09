@@ -331,6 +331,7 @@ export function install(G){
  function rollCoat3(breed,rnd){const L=coatsFor(breed);if(!L.length)return null;return L[Math.floor(rnd()*L.length)]||null;}
  function applyVariant(h,v){
   if(!h||!v)return h; h.variant=v[0]; h.colors=h.colors||{}; h.colors.body=v[2]; h.colors.mane=v[3];
+  h.maneAppearance={source:'natural',color:h.colors.mane};
   if(v[4]){h.mark=v[4];if(v[5])h.markCol=v[5];else delete h.markCol;}else{delete h.mark;delete h.markCol;}
   return h;
  }
@@ -347,6 +348,18 @@ export function install(G){
   if(out.mark===undefined){const r=rnd();const dom=['pinto','roan','appaloosa','leopard'];out.mark=r<0.6?(o.mark||'none'):r<0.8?'none':dom[Math.floor(rnd()*dom.length)];if(out.mark!==o.mark&&out.mark!=='none'&&rnd()<0.5)out.markCol=T.DYE_MARK[Math.floor(rnd()*T.DYE_MARK.length)][0];}
   out.mark2=pickW(MARK2_WEIGHTS,rnd);
   return out;
+ }
+ // Old saves used the same field for generated pigment and chosen dye. Recover
+ // only an exact seeded Fjord look, never a nearby color or a known dye swatch.
+ function recoverNaturalMane(h){
+  if(!h||h.breed!=='fjord'||h.maneAppearance!=null||h.coat||h.lineage||h.src==='wild'||!Number.isSafeInteger(h.id)||h.id<1)return;
+  if(!G.mastery?.DYE_NATURAL||!G.mastery?.DYE_BOLD)return; // these register after the roster
+  const color=typeof h.colors?.mane==='string'?h.colors.mane.toLowerCase():'';
+  if(!/^#[\da-f]{6}$/.test(color))return;
+  const dyes=[...(T.DYE_HAIR||[]),...G.mastery.DYE_NATURAL,...G.mastery.DYE_BOLD];
+  if(dyes.some(c=>String(c[0]).toLowerCase()===color))return;
+  const appearance=rollAppearance(h.breed,h.id,{});
+  if(h.variant===appearance.variant&&color===appearance.colors.mane.toLowerCase())h.maneAppearance={source:'natural',color:h.colors.mane};
  }
  function coatKey(h){const c=new THREE.Color((h.colors&&h.colors.body)||'#000');const hsl={};c.getHSL(hsl);return (h.mark||'breed')+'/'+(h.mark2||'none')+'/'+Math.round(hsl.h*24)+'-'+Math.round(hsl.l*8);}
  function noteCoat(s,h){s.roster=s.roster||{};s.roster.coatsSeen=s.roster.coatsSeen||{};const k=h.breed+':'+coatKey(h);const fresh=!s.roster.coatsSeen[k];s.roster.coatsSeen[k]=1;return fresh;}
@@ -395,9 +408,9 @@ export function install(G){
  }
 
  /* ---- 4. save shape -------------------------------------------------------------------- */
- function ensureRosterHorse(h){ if(h.traits==null)h.traits=rollTraits(h); if(h.mark2===undefined)h.mark2=null; if(h.egg&&!h.foal)delete h.egg; }
+ function ensureRosterHorse(h){ recoverNaturalMane(h); if(h.traits==null)h.traits=rollTraits(h); if(h.mark2===undefined)h.mark2=null; if(h.egg&&!h.foal)delete h.egg; }
  G.save.ensure(s=>{ s.roster=s.roster||{}; const r=s.roster; r.coatsSeen=r.coatsSeen||{}; r.variantsFound=r.variantsFound||{}; r.exclusives=r.exclusives||{}; if(r.seasonPity==null)r.seasonPity=0; if(r.calls==null)r.calls=0;
-  if(s.horses)for(const h of s.horses)if(h.traits==null||h.mark2===undefined)ensureRosterHorse(h); });   // the boot migration ran ensureStats before this package existed
+  if(s.horses)for(const h of s.horses){recoverNaturalMane(h);if(h.traits==null||h.mark2===undefined)ensureRosterHorse(h);} });   // the boot migration ran ensureStats before this package existed
  G.save.ensureHorse(ensureRosterHorse);
 
  /* ---- 5. acquisition: every new horse rolls a coat, a look and its traits -------------- */
@@ -406,7 +419,7 @@ export function install(G){
   if(!opts.colors&&!o.hero){
    const A=rollAppearance(h.breed,h.id,{});
    if(A.variant)h.variant=A.variant;
-   h.colors=A.colors; if(A.mark!==undefined){if(A.mark==='none'&&!A.variant)delete h.mark;else h.mark=A.mark;} if(A.markCol)h.markCol=A.markCol;
+   h.colors=A.colors; h.maneAppearance={source:'natural',color:h.colors.mane}; if(A.mark!==undefined){if(A.mark==='none'&&!A.variant)delete h.mark;else h.mark=A.mark;} if(A.markCol)h.markCol=A.markCol;
    h.mark2=A.mark2==='none'?null:A.mark2;
   }else if(!o.hero){const rnd=lcg((h.id||0)+5);h.mark2=pickW(MARK2_WEIGHTS,rnd);if(h.mark2==='none')h.mark2=null;}
   if(Array.isArray(o.traits)){for(const k of o.traits)if(TRAITS[k]&&(h.traits||[]).indexOf(k)<0)h.traits=(h.traits||[]).concat([k]);}
@@ -716,6 +729,7 @@ export function install(G){
  }
  G.on('weekRoll',s=>{ try{const got=weeklyCheck(s,s.wk);if(got.length)setTimeout(()=>{try{G.horse.reloadHorses();for(const h of got)toast('🎁 '+h.name+' the '+G.horse.breedLabel(h.breed)+' — '+(h.exclusive||'an exclusive horse')+'!');}catch(e){}},1200);}catch(e){} });
  G.on('boot',s=>{
+  for(const h of G.horse.myHorses||[])recoverNaturalMane(h); // the initial actor snapshot predates save ensures
   let got=[]; G.save.sync(sv=>{got=weeklyCheck(sv,sv.wkLast);});
   if(got.length){try{G.horse.reloadHorses();}catch(e){}setTimeout(()=>{try{for(const h of got)toast('🎁 '+h.name+' the '+G.horse.breedLabel(h.breed)+' — '+(h.exclusive||'an exclusive horse')+'!');}catch(e){}},1500);}
   refreshCur(); rebuildEggs();

@@ -1905,8 +1905,8 @@
       "id": "fjord",
       "label": "Norwegian Fjord",
       "file": "./models/native-roster/fjord.bin",
-      "sha256": "fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe",
-      "byteLength": 728256,
+      "sha256": "5974a7fa1f3e4b4d91cb6c25e759ccbc72913a634d72188eb5b3be390564b826",
+      "byteLength": 843820,
       "meshes": [
         {
           "meshIndex": 0,
@@ -1945,12 +1945,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0021370501199232607
+            "scale": 0.0019993540647081144
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 5.7535052432978475e-05
+            "scale": 5.977003201282616e-05
           }
         },
         {
@@ -2017,8 +2017,8 @@
         "tailLengthFactor": 1.06,
         "preservedSourceCardTopology": true,
         "uprightCrest": {
-          "version": 1,
-          "style": "Short rounded upright native-card crest and forelock",
+          "version": 3,
+          "style": "Smooth rounded skinned roached crest with short native-card fringe and a tidy forelock",
           "sourceTopologyPreserved": true,
           "sourceSkinWeightsPreserved": true,
           "sourceInertialHairBonesPreserved": true,
@@ -2028,12 +2028,12 @@
             "tail": 194,
             "eyelashes": 76
           },
-          "rootAnchorMaxDriftM": 0.0,
-          "minimumCardTransformDeterminant": 0.1275005774415845,
-          "maximumManeRiseM": 0.15602227381077238,
-          "minimumManeRiseM": 0.07972016240144031,
+          "rootAnchorMaxDriftM": 0.07332684995572221,
+          "minimumCardTransformDeterminant": 0.001488681513659148,
+          "maximumManeRiseM": 0.10978810629053504,
+          "minimumManeRiseM": 0.02337042705038961,
           "minimumHairHeightM": 0.24933159614863998,
-          "colorTreatment": "Original native alpha/detail atlas with pale outer cards and a dark central stripe",
+          "colorTreatment": "Pale brushed crest sides and a raised continuous dark center stripe; short color-matched fringe and dark tidy forelock",
           "colorCards": [
             {
               "start": 11530,
@@ -2053,17 +2053,17 @@
             {
               "start": 11590,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 11618,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 11646,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 11674,
@@ -2078,12 +2078,12 @@
             {
               "start": 11722,
               "count": 28,
-              "outer": 0.953517
+              "outer": 0.0
             },
             {
               "start": 11750,
               "count": 28,
-              "outer": 0.85289
+              "outer": 0.0
             },
             {
               "start": 11778,
@@ -2093,47 +2093,47 @@
             {
               "start": 11806,
               "count": 28,
-              "outer": 0.001926
+              "outer": 0.0
             },
             {
               "start": 11834,
               "count": 20,
-              "outer": 0.868532
+              "outer": 0.0
             },
             {
               "start": 11854,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 11874,
               "count": 28,
-              "outer": 0.948749
+              "outer": 0.0
             },
             {
               "start": 11902,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 11930,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 11966,
               "count": 50,
-              "outer": 0.001708
+              "outer": 1.0
             },
             {
               "start": 12016,
               "count": 50,
-              "outer": 0.650377
+              "outer": 0.0
             },
             {
               "start": 12066,
               "count": 36,
-              "outer": 0.99094
+              "outer": 0.0
             },
             {
               "start": 12102,
@@ -2143,17 +2143,17 @@
             {
               "start": 12122,
               "count": 20,
-              "outer": 1.6e-05
+              "outer": 1.0
             },
             {
               "start": 12142,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12162,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12182,
@@ -2168,7 +2168,7 @@
             {
               "start": 12222,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12242,
@@ -2178,17 +2178,17 @@
             {
               "start": 12262,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12282,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12302,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12322,
@@ -2198,12 +2198,12 @@
             {
               "start": 12342,
               "count": 20,
-              "outer": 0.208493
+              "outer": 1.0
             },
             {
               "start": 12362,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12382,
@@ -2218,12 +2218,12 @@
             {
               "start": 12422,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12442,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12462,
@@ -2238,22 +2238,22 @@
             {
               "start": 12502,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12522,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12542,
               "count": 20,
-              "outer": 0.420495
+              "outer": 0.0
             },
             {
               "start": 12562,
               "count": 20,
-              "outer": 0.782938
+              "outer": 0.0
             },
             {
               "start": 12582,
@@ -2268,22 +2268,22 @@
             {
               "start": 12622,
               "count": 20,
-              "outer": 0.924763
+              "outer": 0.0
             },
             {
               "start": 12642,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12662,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12682,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12702,
@@ -2293,17 +2293,17 @@
             {
               "start": 12722,
               "count": 20,
-              "outer": 0.312965
+              "outer": 0.0
             },
             {
               "start": 12742,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12762,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12782,
@@ -2318,12 +2318,12 @@
             {
               "start": 12822,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12842,
               "count": 20,
-              "outer": 0.805493
+              "outer": 1.0
             },
             {
               "start": 12862,
@@ -2338,17 +2338,17 @@
             {
               "start": 12902,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 12922,
               "count": 20,
-              "outer": 0.031571
+              "outer": 0.0
             },
             {
               "start": 12942,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 12962,
@@ -2358,27 +2358,27 @@
             {
               "start": 12982,
               "count": 20,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 13002,
               "count": 28,
-              "outer": 0.190721
+              "outer": 0.0
             },
             {
               "start": 13030,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13058,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13086,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13114,
@@ -2388,47 +2388,47 @@
             {
               "start": 13142,
               "count": 28,
-              "outer": 0.607016
+              "outer": 0.0
             },
             {
               "start": 13170,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13198,
               "count": 28,
-              "outer": 0.514762
+              "outer": 0.0
             },
             {
               "start": 13226,
               "count": 28,
-              "outer": 0.192868
+              "outer": 0.0
             },
             {
               "start": 13254,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13282,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13302,
               "count": 28,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13330,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13350,
               "count": 20,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 13370,
@@ -2443,7 +2443,7 @@
             {
               "start": 13410,
               "count": 28,
-              "outer": 0.8099
+              "outer": 0.0
             },
             {
               "start": 13438,
@@ -2458,12 +2458,12 @@
             {
               "start": 13538,
               "count": 50,
-              "outer": 0.012026
+              "outer": 1.0
             },
             {
               "start": 13588,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 13638,
@@ -2478,7 +2478,7 @@
             {
               "start": 13724,
               "count": 50,
-              "outer": 0.616237
+              "outer": 1.0
             },
             {
               "start": 13774,
@@ -2498,12 +2498,12 @@
             {
               "start": 13924,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 13974,
               "count": 36,
-              "outer": 0.027875
+              "outer": 1.0
             },
             {
               "start": 14010,
@@ -2513,22 +2513,22 @@
             {
               "start": 14060,
               "count": 36,
-              "outer": 0.012473
+              "outer": 0.0
             },
             {
               "start": 14096,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 14132,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 14168,
               "count": 50,
-              "outer": 0.95431
+              "outer": 0.0
             },
             {
               "start": 14218,
@@ -2538,27 +2538,27 @@
             {
               "start": 14268,
               "count": 50,
-              "outer": 0.265001
+              "outer": 1.0
             },
             {
               "start": 14318,
               "count": 50,
-              "outer": 0.532821
+              "outer": 1.0
             },
             {
               "start": 14368,
               "count": 50,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 14418,
               "count": 50,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 14468,
               "count": 36,
-              "outer": 0.281661
+              "outer": 1.0
             },
             {
               "start": 14504,
@@ -2573,12 +2573,12 @@
             {
               "start": 14604,
               "count": 36,
-              "outer": 0.895572
+              "outer": 0.0
             },
             {
               "start": 14640,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 14690,
@@ -2593,12 +2593,12 @@
             {
               "start": 14790,
               "count": 50,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 14840,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 14890,
@@ -2613,37 +2613,37 @@
             {
               "start": 14990,
               "count": 50,
-              "outer": 0.062014
+              "outer": 0.0
             },
             {
               "start": 15040,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15090,
               "count": 36,
-              "outer": 0.719652
+              "outer": 1.0
             },
             {
               "start": 15126,
               "count": 50,
-              "outer": 0.235997
+              "outer": 0.0
             },
             {
               "start": 15176,
               "count": 50,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 15226,
               "count": 50,
-              "outer": 0.835609
+              "outer": 1.0
             },
             {
               "start": 15276,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15312,
@@ -2663,7 +2663,7 @@
             {
               "start": 15448,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15484,
@@ -2673,17 +2673,17 @@
             {
               "start": 15534,
               "count": 36,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 15570,
               "count": 50,
-              "outer": 0.262301
+              "outer": 1.0
             },
             {
               "start": 15620,
               "count": 50,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15670,
@@ -2698,12 +2698,12 @@
             {
               "start": 15742,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15778,
               "count": 36,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 15814,
@@ -2713,12 +2713,12 @@
             {
               "start": 15864,
               "count": 50,
-              "outer": 0.017865
+              "outer": 0.0
             },
             {
               "start": 15914,
               "count": 36,
-              "outer": 0.41008
+              "outer": 1.0
             },
             {
               "start": 15950,
@@ -2748,12 +2748,12 @@
             {
               "start": 16392,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 16422,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 16452,
@@ -2763,12 +2763,12 @@
             {
               "start": 16482,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 16512,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 16542,
@@ -2778,7 +2778,7 @@
             {
               "start": 16572,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 16602,
@@ -2818,27 +2818,27 @@
             {
               "start": 16812,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 16842,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 16872,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 16902,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 16932,
               "count": 30,
-              "outer": 0.313465
+              "outer": 1.0
             },
             {
               "start": 16962,
@@ -2848,12 +2848,12 @@
             {
               "start": 16992,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 17022,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 17052,
@@ -2863,7 +2863,7 @@
             {
               "start": 17082,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 17112,
@@ -2878,7 +2878,7 @@
             {
               "start": 17172,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 17202,
@@ -2898,17 +2898,17 @@
             {
               "start": 17292,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 17322,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 17352,
               "count": 30,
-              "outer": 0.728101
+              "outer": 0.0
             },
             {
               "start": 17382,
@@ -2918,17 +2918,17 @@
             {
               "start": 17412,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 17442,
               "count": 30,
-              "outer": 0.29441
+              "outer": 0.0
             },
             {
               "start": 17472,
               "count": 30,
-              "outer": 0.991004
+              "outer": 0.0
             },
             {
               "start": 17502,
@@ -2938,22 +2938,22 @@
             {
               "start": 17532,
               "count": 42,
-              "outer": 0.960816
+              "outer": 1.0
             },
             {
               "start": 17574,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 17616,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 17658,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 17700,
@@ -2963,7 +2963,7 @@
             {
               "start": 17742,
               "count": 42,
-              "outer": 0.650877
+              "outer": 0.0
             },
             {
               "start": 17784,
@@ -2978,17 +2978,17 @@
             {
               "start": 17856,
               "count": 42,
-              "outer": 0.844308
+              "outer": 0.0
             },
             {
               "start": 17898,
               "count": 42,
-              "outer": 0.814567
+              "outer": 0.0
             },
             {
               "start": 17940,
               "count": 42,
-              "outer": 0.565064
+              "outer": 0.0
             },
             {
               "start": 17982,
@@ -2998,22 +2998,22 @@
             {
               "start": 18024,
               "count": 42,
-              "outer": 0.221211
+              "outer": 0.0
             },
             {
               "start": 18066,
               "count": 30,
-              "outer": 0.951778
+              "outer": 0.0
             },
             {
               "start": 18096,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 18126,
               "count": 42,
-              "outer": 0.854078
+              "outer": 0.0
             },
             {
               "start": 18168,
@@ -3023,22 +3023,22 @@
             {
               "start": 18210,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 18252,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 18282,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 18324,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 18354,
@@ -3048,7 +3048,7 @@
             {
               "start": 18384,
               "count": 42,
-              "outer": 0.856743
+              "outer": 0.0
             },
             {
               "start": 18426,
@@ -3058,12 +3058,12 @@
             {
               "start": 18480,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 18555,
               "count": 75,
-              "outer": 0.094232
+              "outer": 1.0
             },
             {
               "start": 18630,
@@ -3073,17 +3073,17 @@
             {
               "start": 18705,
               "count": 75,
-              "outer": 0.323311
+              "outer": 0.0
             },
             {
               "start": 18780,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 18855,
               "count": 54,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 18909,
@@ -3093,17 +3093,17 @@
             {
               "start": 18984,
               "count": 75,
-              "outer": 0.900582
+              "outer": 0.0
             },
             {
               "start": 19059,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 19134,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 19209,
@@ -3113,17 +3113,17 @@
             {
               "start": 19284,
               "count": 54,
-              "outer": 0.190973
+              "outer": 0.0
             },
             {
               "start": 19338,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 19413,
               "count": 54,
-              "outer": 0.351845
+              "outer": 1.0
             },
             {
               "start": 19467,
@@ -3138,22 +3138,22 @@
             {
               "start": 19575,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 19650,
               "count": 75,
-              "outer": 0.336441
+              "outer": 1.0
             },
             {
               "start": 19725,
               "count": 75,
-              "outer": 0.42126
+              "outer": 0.0
             },
             {
               "start": 19800,
               "count": 75,
-              "outer": 0.982654
+              "outer": 0.0
             },
             {
               "start": 19875,
@@ -3173,17 +3173,17 @@
             {
               "start": 20100,
               "count": 54,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 20154,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 20229,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 20304,
@@ -3198,12 +3198,12 @@
             {
               "start": 20454,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 20529,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 20604,
@@ -3218,17 +3218,17 @@
             {
               "start": 20754,
               "count": 54,
-              "outer": 0.205977
+              "outer": 1.0
             },
             {
               "start": 20808,
               "count": 75,
-              "outer": 0.021064
+              "outer": 1.0
             },
             {
               "start": 20883,
               "count": 75,
-              "outer": 0.834782
+              "outer": 0.0
             },
             {
               "start": 20958,
@@ -3238,22 +3238,22 @@
             {
               "start": 21012,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 21087,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 21162,
               "count": 54,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 21216,
               "count": 75,
-              "outer": 0.157256
+              "outer": 0.0
             },
             {
               "start": 21291,
@@ -3268,7 +3268,7 @@
             {
               "start": 21399,
               "count": 54,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 21453,
@@ -3278,7 +3278,7 @@
             {
               "start": 21528,
               "count": 75,
-              "outer": 0.001737
+              "outer": 1.0
             },
             {
               "start": 21603,
@@ -3293,12 +3293,12 @@
             {
               "start": 21711,
               "count": 54,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 21765,
               "count": 54,
-              "outer": 0.19967
+              "outer": 1.0
             },
             {
               "start": 21819,
@@ -3308,22 +3308,22 @@
             {
               "start": 21894,
               "count": 75,
-              "outer": 0.174703
+              "outer": 0.0
             },
             {
               "start": 21969,
               "count": 54,
-              "outer": 0.177961
+              "outer": 0.0
             },
             {
               "start": 22023,
               "count": 75,
-              "outer": 0.269699
+              "outer": 1.0
             },
             {
               "start": 22458,
               "count": 30,
-              "outer": 0.019098
+              "outer": 1.0
             },
             {
               "start": 22488,
@@ -3333,17 +3333,17 @@
             {
               "start": 22518,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 22548,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 22578,
               "count": 30,
-              "outer": 0.0
+              "outer": 1.0
             },
             {
               "start": 22608,
@@ -3353,17 +3353,17 @@
             {
               "start": 22638,
               "count": 42,
-              "outer": 0.028518
+              "outer": 0.0
             },
             {
               "start": 22680,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 22722,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 22764,
@@ -3373,32 +3373,32 @@
             {
               "start": 22806,
               "count": 42,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 22848,
               "count": 75,
-              "outer": 0.775041
+              "outer": 1.0
             },
             {
               "start": 22923,
               "count": 54,
-              "outer": 0.727108
+              "outer": 1.0
             },
             {
               "start": 22977,
               "count": 75,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 23052,
               "count": 75,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 23127,
               "count": 75,
-              "outer": 0.819671
+              "outer": 1.0
             },
             {
               "start": 23274,
@@ -3408,7 +3408,7 @@
             {
               "start": 23304,
               "count": 30,
-              "outer": 1.0
+              "outer": 0.0
             },
             {
               "start": 23334,
@@ -3423,9 +3423,78 @@
             {
               "start": 23439,
               "count": 75,
-              "outer": 0.0
+              "outer": 1.0
             }
-          ]
+          ],
+          "shell": {
+            "version": 1,
+            "vertexCount": 1562,
+            "indexCount": 9360,
+            "space": "native-source-mesh",
+            "sourceMeshIndex": 2,
+            "originalSourceWeightsCopied": true,
+            "position": {
+              "byteOffset": 728256,
+              "count": 4686,
+              "itemSize": 3,
+              "componentType": "float32"
+            },
+            "normal": {
+              "byteOffset": 747000,
+              "count": 4686,
+              "itemSize": 3,
+              "componentType": "float32"
+            },
+            "uv": {
+              "byteOffset": 765744,
+              "count": 3124,
+              "itemSize": 2,
+              "componentType": "float32"
+            },
+            "skinIndex": {
+              "byteOffset": 778240,
+              "count": 6248,
+              "itemSize": 4,
+              "componentType": "uint16"
+            },
+            "skinWeight": {
+              "byteOffset": 790736,
+              "count": 6248,
+              "itemSize": 4,
+              "componentType": "float32"
+            },
+            "outer": {
+              "byteOffset": 815728,
+              "count": 1562,
+              "itemSize": 1,
+              "componentType": "float32"
+            },
+            "index": {
+              "byteOffset": 821976,
+              "count": 9360,
+              "itemSize": 1,
+              "componentType": "uint16"
+            },
+            "sourceVertex": {
+              "byteOffset": 840696,
+              "count": 1562,
+              "itemSize": 1,
+              "componentType": "uint16"
+            },
+            "restReconstructionMaxErrorM": 8.322330867033196e-08,
+            "standingBoundsM": {
+              "min": [
+                -0.06213875147343008,
+                1.8538631870375057,
+                0.4209335235948652
+              ],
+              "max": [
+                0.012144635246047388,
+                2.2128832105709133,
+                1.0949364865205689
+              ]
+            }
+          }
         }
       },
       "coat": {
@@ -3450,7 +3519,7 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "limitations": "Source body, eye, tack and original hair topology are preserved. The short continuous crest is an additive mesh attached to copied native hair-root skin weights; native motions remain unchanged.",
       "headShape": {
         "version": 1,
         "family": "pony",

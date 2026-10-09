@@ -273,7 +273,7 @@
     },
     {
       "id": "fjord",
-      "bufferSha256": "fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe",
+      "bufferSha256": "5974a7fa1f3e4b4d91cb6c25e759ccbc72913a634d72188eb5b3be390564b826",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -281,13 +281,33 @@
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 4.5299530029296875e-05,
+      "maxNormalLengthError": 4.792213439941406e-05,
       "actorScale": 0.7761249771443578,
       "withersM": 1.42,
       "textureSize": [
         1024,
         1024
       ],
+      "additiveGroomShell": {
+        "vertices": 1562,
+        "triangles": 3120,
+        "originalHairDonorWeightsBitExact": true,
+        "sourceJointCount": 677,
+        "standingBoundsM": {
+          "min": [
+            -0.06213875147343008,
+            1.8538631870375057,
+            0.4209335235948652
+          ],
+          "max": [
+            0.012144635246047388,
+            2.2128832105709133,
+            1.0949364865205689
+          ]
+        },
+        "restReconstructionMaxErrorM": 8.322330867033196e-08,
+        "minimumStandingTriangleAreaM2": 9.227976580222127e-06
+      },
       "releasedBufferBitExact": false,
       "approvedHeadRevisionPinned": true,
       "headFamily": "pony"

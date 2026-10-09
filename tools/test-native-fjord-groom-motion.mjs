@@ -7,7 +7,9 @@ import {pathToFileURL} from 'node:url';
 import * as THREE from '../assets/vendor/three/build/three.module.js';
 import {loadNativeHorseFixture} from './test-native-horse-actions.mjs';
 import {createNativeHorseMotion} from '../assets/native-horse-motion.js';
-import {applyNativeFjordGroom} from '../assets/native-fjord-groom.js';
+import {prepareNativeFjordCrest,applyNativeFjordGroom} from '../assets/native-fjord-groom.js';
+import {validateNativeGroomRig} from '../assets/native-groom-layer.mjs';
+import {createNativeDraftFeathers} from '../assets/native-draft-feathers.js';
 import {nativeRosterProfiles} from '../assets/native-roster.js';
 import {NATIVE_BREED_PROFILES} from '../assets/native-breed-profiles.js';
 
@@ -20,13 +22,16 @@ const digest=bytes=>createHash('sha256').update(bytes).digest('hex'),point=new T
 const sourceFiles=[source,'assets/'+profile.nativeVariant.file,'assets/'+profile.motionFile],fileHashes=sourceFiles.map(p=>digest(fs.readFileSync(p)));
 function geometryState(meshes){const h=createHash('sha256');for(const m of meshes){for(const [key,a]of Object.entries(m.geometry.attributes)){h.update(key);h.update(Buffer.from(a.array.buffer));}if(m.geometry.index)h.update(Buffer.from(m.geometry.index.array.buffer));h.update(JSON.stringify(m.skeleton.boneInverses.map(b=>b.elements)));}return h.digest('hex');}
 function fixture(){
- const {root,body}=loadNativeHorseFixture(source),meshes=[];root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
+ const {root,body}=loadNativeHorseFixture(source),meshes=[];root.traverse(o=>{if(o.isSkinnedMesh){o.normalizeSkinWeights();meshes.push(o);}}); // Match GLTFLoader's parse-time normalization.
  const scene=new THREE.Group(),normalization=new THREE.Group();normalization.position.fromArray(profile.nativeTranslation);normalization.add(root);scene.add(normalization);scene.scale.setScalar(profile.fitScale);const actor=new THREE.Group();actor.add(scene);actor.updateMatrixWorld(true);
  const hair=meshes.find(m=>m.geometry.attributes.position.count===23514),anchors=groomSpec.colorCards.map(card=>{let highest=-Infinity,index=card.start;for(let i=card.start;i<card.start+card.count;i++){hair.getVertexPosition(i,point);hair.localToWorld(point);if(point.y>highest){highest=point.y;index=i;}}return index;});
  const data=fs.readFileSync('assets/'+profile.nativeVariant.file);
  for(const r of profile.nativeVariant.meshes){const m=meshes.find(m=>m.geometry.attributes.position.count===r.vertexCount),a=m.geometry.attributes.position.array,d=r.positionDelta;for(let i=0;i<d.count;i++)a[i]+=data.readInt16LE(d.byteOffset+2*i)*d.scale;}
- hair.material.name='M_Hair';const rig={profile,scene,materials:meshes.map(m=>m.material)};assert.equal(applyNativeFjordGroom({THREE,rig}).cards,278);
- actor.updateMatrixWorld(true);return {root,body,hair,meshes,scene,actor,anchors};
+ hair.material.name='M_Hair';
+ const crest=prepareNativeFjordCrest({THREE,gltf:{scene:root},spec:profile,binary:data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength)});
+ assert(crest?.userData.nativeFjordCrest);meshes.push(crest);
+ const rig={profile,scene,materials:meshes.map(m=>m.material)},appearance=applyNativeFjordGroom({THREE,rig});assert.equal(appearance.cards,278);assert.equal(appearance.crestVertices,groomSpec.shell.vertexCount);
+ actor.updateMatrixWorld(true);return {root,body,hair,crest,meshes,scene,actor,anchors};
 }
 
 // Use the bundled loader's exact cubic interpolation for native gait tracks.
@@ -49,6 +54,34 @@ const {createNativeHorseMotion:createPlainMotion}=await import('data:text/javasc
 const extra=clipsFrom('assets/'+profile.motionFile),replaced=new Set(extra.map(c=>c.name)),clips=[...clipsFrom(source).filter(c=>!replaced.has(c.name)),...extra];
 const clipHash=digest(JSON.stringify(clips.map(c=>c.toJSON())));
 const live=fixture(),plain=fixture();
+// A supplied tag cannot bypass the strict native skin gate. Test realistic
+// malformed additions independently and restore the live fixture after each.
+const validationRig={nativeRoot:live.root,profile},crestParent=live.crest.parent;live.crest.removeFromParent();assert.equal(validateNativeGroomRig(validationRig).eligible,true,'Original five-skin groom remains eligible');crestParent.add(live.crest);
+assert.equal(validateNativeGroomRig(validationRig).eligible,true,'The packed donor-bound crest retains original hair inertia');
+function reject(label,mutate,restore){try{mutate();assert.equal(validateNativeGroomRig(validationRig).eligible,false,label);}finally{restore();}assert.equal(validateNativeGroomRig(validationRig).eligible,true,label+' restoration');}
+const crestAttrs=live.crest.geometry.attributes,donorAttribute=crestAttrs.nativeFjordSourceVertex,donor=crestAttrs.nativeFjordSourceVertex.getX(0),weight=crestAttrs.skinWeight.getX(0),joint=crestAttrs.skinIndex.getX(0),firstPosition=crestAttrs.position.getX(0),firstIndex=live.crest.geometry.index.getX(0),bind=live.crest.bindMatrix.clone();
+reject('Unknown extra skin fails closed',()=>live.root.add(live.hair.clone()),()=>{live.root.children.at(-1).removeFromParent();});
+const duplicate=live.crest.clone();reject('Second crest fails closed',()=>live.crest.parent.add(duplicate),()=>duplicate.removeFromParent());
+reject('Missing marker fails closed',()=>live.crest.userData.nativeFjordCrest=false,()=>live.crest.userData.nativeFjordCrest=true);
+reject('Non-Fjord cannot admit a tagged crest',()=>validationRig.profile={...profile,nativeVariant:{...profile.nativeVariant,id:'vanner'}},()=>validationRig.profile=profile);
+reject('A missing donor record fails closed',()=>live.crest.geometry.deleteAttribute('nativeFjordSourceVertex'),()=>live.crest.geometry.setAttribute('nativeFjordSourceVertex',donorAttribute));
+reject('Donor outside source hair fails closed',()=>crestAttrs.nativeFjordSourceVertex.setX(0,65535),()=>crestAttrs.nativeFjordSourceVertex.setX(0,donor));
+let tailDonor=0;while(groomSpec.colorCards.some(c=>tailDonor>=c.start&&tailDonor<c.start+c.count))tailDonor++;
+reject('Tail/eyelash donors are not approved crest',()=>crestAttrs.nativeFjordSourceVertex.setX(0,tailDonor),()=>crestAttrs.nativeFjordSourceVertex.setX(0,donor));
+reject('Changed donor weight fails closed',()=>crestAttrs.skinWeight.setX(0,weight+.01),()=>crestAttrs.skinWeight.setX(0,weight));
+reject('Changed donor joint fails closed',()=>crestAttrs.skinIndex.setX(0,(joint+1)%677),()=>crestAttrs.skinIndex.setX(0,joint));
+reject('Nonfinite position fails closed',()=>crestAttrs.position.setX(0,NaN),()=>crestAttrs.position.setX(0,firstPosition));
+reject('Distant added geometry fails closed',()=>crestAttrs.position.setX(0,firstPosition+1000),()=>crestAttrs.position.setX(0,firstPosition));
+reject('Out-of-range triangle fails closed',()=>live.crest.geometry.index.setX(0,groomSpec.shell.vertexCount),()=>live.crest.geometry.index.setX(0,firstIndex));
+reject('Different bind fails closed',()=>live.crest.bindMatrix.elements[12]+=.1,()=>live.crest.bindMatrix.copy(bind));
+reject('Different local transform fails closed',()=>live.crest.position.x+=.1,()=>live.crest.position.copy(live.hair.position));
+const skeleton=live.crest.skeleton,foreign=skeleton.clone();foreign.bones[0]=foreign.bones[0].clone();reject('Unrelated bone objects fail closed',()=>live.crest.skeleton=foreign,()=>live.crest.skeleton=skeleton);
+// The production Hair facade must control the added shell and original cards
+// together without hiding any body, eyes or tack. Extract only its real function.
+const hero=fs.readFileSync('assets/game-hero-horse.js','utf8'),facadeStart=hero.indexOf('export function nativeGroomFacade('),facadeEnd=hero.indexOf('// The approved groom',facadeStart);assert(facadeStart>=0&&facadeEnd>facadeStart);
+const nativeGroomFacade=new Function('createNativeDraftFeathers',hero.slice(facadeStart,facadeEnd).replace('export function','function')+';return nativeGroomFacade;')(createNativeDraftFeathers);
+const facade=nativeGroomFacade({THREE,scene:live.scene,skin:live.body,profile});assert.equal(facade.meshes.length,2);assert(facade.meshes.includes(live.crest)&&facade.meshes.includes(live.hair));
+facade.mane.visible=false;assert(!live.crest.visible&&!live.hair.visible);assert(live.meshes.filter(m=>m!==live.crest&&m!==live.hair).every(m=>m.visible),'Hair toggle preserves body/eye/tack visibility');facade.tail.visible=true;assert(live.crest.visible&&live.hair.visible);facade.dispose();
 const beforeLive=geometryState(live.meshes),beforePlain=geometryState(plain.meshes);
 const sourceLocals=f=>f.body.skeleton.bones.map(b=>({name:b.name,parent:b.parent.name,p:b.position.toArray(),q:b.quaternion.toArray(),s:b.scale.toArray()}));
 const initialLocals=sourceLocals(live);
@@ -60,7 +93,9 @@ assert.equal(crestMask.filter(v=>v>0).length,11300);
 function world(mesh,index,out){mesh.getVertexPosition(index,out);return mesh.localToWorld(out);}
 const cardRadii=groomSpec.colorCards.map((card,n)=>{const a=world(live.hair,live.anchors[n],new THREE.Vector3());let radius=0;for(let i=card.start;i<card.start+card.count;i++)radius=Math.max(radius,world(live.hair,i,point).distanceTo(a));return radius;});
 assert(Math.max(...cardRadii)<.19,'Trim begins as a short native-card crest');
-const protectedCounts=[16159,2028,13895,5092],report={sourceShape:profile.nativeVariant.sha256,frames:0,sampledPoses:0,verticesPerSample:live.meshes.reduce((n,m)=>n+m.geometry.attributes.position.count,0),maxProtectedDeltaM:0,maxCrestInertiaM:0,maxOtherHairInertiaM:0,maxCrestRadiusM:0,maxCrestStretch:0,maxAddedWorldAngleDeg:0,minHairFloorM:Infinity,minCrestFloorM:Infinity,modes:[]};
+const shellRadii=Array.from(live.crest.geometry.attributes.nativeFjordSourceVertex.array,(donor,i)=>world(live.crest,i,new THREE.Vector3()).distanceTo(world(live.hair,donor,new THREE.Vector3())));
+assert(Math.max(...shellRadii)<.30,'Continuous crest begins close to the trimmed mane/forelock donors');
+const protectedCounts=[16159,2028,13895,5092],report={sourceShape:profile.nativeVariant.sha256,frames:0,sampledPoses:0,verticesPerSample:live.meshes.reduce((n,m)=>n+m.geometry.attributes.position.count,0),shellVertices:live.crest.geometry.attributes.position.count,shellTriangles:live.crest.geometry.index.count/3,maxShellInertiaM:0,maxShellDonorDistanceM:0,maxShellStretch:0,maxProtectedDeltaM:0,maxCrestInertiaM:0,maxOtherHairInertiaM:0,maxCrestRadiusM:0,maxCrestRadiusDifferenceM:0,maxCrestStretch:0,maxAddedWorldAngleDeg:0,minHairFloorM:Infinity,minCrestFloorM:Infinity,modes:[]};
 const startFeet=[];let originalFloor=Infinity;
 for(let i=0;i<live.body.geometry.attributes.position.count;i++){world(live.body,i,point);originalFloor=Math.min(originalFloor,point.y);if(point.y<.20)startFeet.push(i);}
 assert(startFeet.length>400);const eyeMask=new Set();for(let i=0;i<crestMask.length;i++)if(!crestMask[i]){world(live.hair,i,point);if(point.z>.8&&point.y>1)eyeMask.add(i);}
@@ -74,15 +109,22 @@ function sample(label){
    world(mesh,i,point);world(peer,i,otherPoint);assert(point.toArray().every(Number.isFinite)&&otherPoint.toArray().every(Number.isFinite),label+' every skinned vertex finite');
    const delta=point.distanceTo(otherPoint);
    if(protectedCounts.includes(count)){report.maxProtectedDeltaM=Math.max(report.maxProtectedDeltaM,delta);assert(delta<1e-10,label+' protected body/eye/tack vertex changed: '+count+'/'+i);}
-   else {const crest=crestMask[i]>0;report[crest?'maxCrestInertiaM':'maxOtherHairInertiaM']=Math.max(report[crest?'maxCrestInertiaM':'maxOtherHairInertiaM'],delta);summary.maxHairDeltaM=Math.max(summary.maxHairDeltaM,delta);point.applyMatrix4(inverseActor);report.minHairFloorM=Math.min(report.minHairFloorM,point.y);summary.minHairY=Math.min(summary.minHairY,point.y);if(crest)report.minCrestFloorM=Math.min(report.minCrestFloorM,point.y);assert(point.y>-.004,label+' hair crosses the local ground: '+point.y);}
+   else {const shell=mesh===live.crest,crest=shell||crestMask[i]>0;if(shell)report.maxShellInertiaM=Math.max(report.maxShellInertiaM,delta);report[crest?'maxCrestInertiaM':'maxOtherHairInertiaM']=Math.max(report[crest?'maxCrestInertiaM':'maxOtherHairInertiaM'],delta);summary.maxHairDeltaM=Math.max(summary.maxHairDeltaM,delta);point.applyMatrix4(inverseActor);report.minHairFloorM=Math.min(report.minHairFloorM,point.y);summary.minHairY=Math.min(summary.minHairY,point.y);if(crest)report.minCrestFloorM=Math.min(report.minCrestFloorM,point.y);assert(point.y>-.004,label+' hair crosses the local ground: '+point.y);}
   }
+ }
+ for(let i=0;i<report.shellVertices;i++){
+  const donor=live.crest.geometry.attributes.nativeFjordSourceVertex.getX(i),distance=world(live.crest,i,point).distanceTo(world(live.hair,donor,otherPoint)),stretch=distance/Math.max(.001,shellRadii[i]);
+  report.maxShellDonorDistanceM=Math.max(report.maxShellDonorDistanceM,distance);report.maxShellStretch=Math.max(report.maxShellStretch,stretch);
+  assert(distance<.40&&stretch<1.8,label+' continuous crest stays attached to its animated donor: '+i+' distance='+distance+' stretch='+stretch);
  }
  for(const i of startFeet){assert(world(live.body,i,point).distanceTo(world(plain.body,i,otherPoint))<1e-10,label+' sole contact unchanged');}
  for(let n=0;n<groomSpec.colorCards.length;n++){
-  const card=groomSpec.colorCards[n],anchor=world(live.hair,live.anchors[n],new THREE.Vector3());let radius=0;
-  for(let i=card.start;i<card.start+card.count;i++)radius=Math.max(radius,world(live.hair,i,point).distanceTo(anchor));
-  report.maxCrestRadiusM=Math.max(report.maxCrestRadiusM,radius);report.maxCrestStretch=Math.max(report.maxCrestStretch,radius/cardRadii[n]);
-  assert(radius<.28&&radius/cardRadii[n]<1.8,label+' unreasonable upright-card deformation: '+n+' radius='+radius+' ratio='+radius/cardRadii[n]);
+  const card=groomSpec.colorCards[n],anchor=world(live.hair,live.anchors[n],new THREE.Vector3()),plainAnchor=world(plain.hair,plain.anchors[n],new THREE.Vector3());let radius=0,plainRadius=0;
+  for(let i=card.start;i<card.start+card.count;i++){radius=Math.max(radius,world(live.hair,i,point).distanceTo(anchor));plainRadius=Math.max(plainRadius,world(plain.hair,i,otherPoint).distanceTo(plainAnchor));}
+  report.maxCrestRadiusM=Math.max(report.maxCrestRadiusM,radius);report.maxCrestStretch=Math.max(report.maxCrestStretch,radius/cardRadii[n]);report.maxCrestRadiusDifferenceM=Math.max(report.maxCrestRadiusDifferenceM,Math.abs(radius-plainRadius));
+  // Tiny newly trimmed cards can double their 2 cm rest span in authored gaits.
+  // Bound the actual silhouette and the incremental groom effect instead.
+  assert(radius<.28&&Math.abs(radius-plainRadius)<.015,label+' unreasonable upright-card deformation: '+n+' radius='+radius+' added span='+Math.abs(radius-plainRadius));
  }
 }
 const stages=[['rest','rest',2,0],['idle','stand',4,0],['walk','walk',3,2],['trot','trot',2,4.2],['canter-left','canter',2,7.5,'left'],['canter-right','canter',2,7.5,'right'],['gallop-left','gallop',2,15,'left'],['gallop-right','gallop',2,15,'right'],['jump','jump',1.95,7.5],['settle','rest',2,0]];
@@ -97,8 +139,8 @@ for(const [label,mode,duration,speed,lead='left']of stages){
   if(frame%8===0||frame===Math.ceil(duration*60)-1)sample(label);
  }
 }
-assert(report.maxProtectedDeltaM<1e-10);assert(report.maxCrestInertiaM>.001&&report.maxCrestInertiaM<.08,'Crest inertia is visible but restrained');assert(report.maxOtherHairInertiaM<.14,'Tail inertia stays bounded');assert(report.maxAddedWorldAngleDeg<=4.00001,'Audited world-angle caps hold');
+assert(report.maxShellInertiaM>.001&&report.maxShellInertiaM<.08,'New crest follows restrained inertial hair controls');assert(report.maxProtectedDeltaM<1e-10);assert(report.maxCrestInertiaM>.001&&report.maxCrestInertiaM<.08,'Crest inertia is visible but restrained');assert(report.maxOtherHairInertiaM<.14,'Tail inertia stays bounded');assert(report.maxAddedWorldAngleDeg<=4.00001,'Audited world-angle caps hold');
 assert.equal(geometryState(live.meshes),beforeLive);assert.equal(geometryState(plain.meshes),beforePlain);assert.deepEqual(live.hair.geometry.attributes.position.array,sourceHair);assert.equal(digest(JSON.stringify(clips.map(c=>c.toJSON()))),clipHash,'All source gait tracks unchanged');
 motion.reset();baseline.reset();live.actor.updateMatrixWorld(true);plain.actor.updateMatrixWorld(true);assert.deepEqual(sourceLocals(live),sourceLocals(plain),'Reset clears every additive groom pose');
 motion.dispose();motion.dispose();baseline.dispose();assert.deepEqual(sourceLocals(live),initialLocals,'Disposal restores exact original bone transforms and hierarchy');assert.equal(geometryState(live.meshes),beforeLive,'Disposal leaves packed-derived geometry and bind matrices unchanged');assert.deepEqual(sourceFiles.map(p=>digest(fs.readFileSync(p))),fileHashes,'No source/model/motion file mutation');
-console.log(JSON.stringify(report,null,2));console.log('Fjord animated groom: full native clips, late-frame inertia, protected contacts, finite full skin, bounded crest/tail, reset/disposal and immutable assets passed.');
+console.log(JSON.stringify(report,null,2));console.log('Fjord animated groom: full native clips, late-frame inertia, protected contacts, finite full skin, bounded original/additive crest and tail, strict extra-skin rejection, Hair visibility, reset/disposal and immutable assets passed.');

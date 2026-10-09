@@ -60,6 +60,59 @@ function fakeDOM(){
   f.click('twClose');restored(f,initial);assert.equal(f.calls.dispose,1);assert.equal(f.calls.return,1);assert.equal(f.read().coins,800);assert.equal(f.ceremony.close(),false,'repeat close is inert');
  }
  console.log('PASS mounted/on-foot snapshot restoration, save-before-animation, one charge, real door/camera state, Escape reveal and complete cleanup');
+ // The portrait shot must clear its physical approach without removing actors,
+ // changing their flags permanently, or hiding unrelated floating labels.
+ function addScenery(f){
+  const scene=new THREE.Group(),groups=[],herd=[];
+  const actor=(x=-27.5,z=-6,visible=true)=>{
+   const group=new THREE.Group();group.position.set(x,1,z);group.visible=visible;
+   const label=new THREE.Sprite();label.name='horse name';group.add(label);scene.add(group);groups.push(group);
+   return {parts:{group},label};
+  };
+  const near=actor(),hidden=actor(-28,-7,false),far=actor(70,70),barn=actor(-30,-13),standing=actor(-29,-10),remote=actor(-25,-8),visitor=actor(-26,-9);
+  herd.push(near,hidden,far,null,{parts:null},{parts:{group:{}}});
+  const bench=new THREE.Group(),benchLabel=new THREE.Sprite();bench.position.set(-27.2,0,-11.55);bench.add(benchLabel);scene.add(bench);
+  const unrelated=new THREE.Sprite();unrelated.position.set(-28,3,-6);scene.add(unrelated);
+  f.G.world.things=[null,{id:'tack-summon-stall',g:bench},{id:'other',g:unrelated}];
+  f.G.horse.herd=()=>herd;f.G.ranch={standing:()=>[standing]};f.G.ranchSys={barnHorses:()=>[barn]};f.G.horse.remotes={peer:remote};f.G.world.visitors=[visitor];
+  const roots=[bench,...groups],before=roots.map(g=>({root:g,visible:g.visible,parent:g.parent,position:g.position.toArray(),quaternion:g.quaternion.toArray(),scale:g.scale.toArray()}));
+  const effective=o=>{for(let p=o;p;p=p.parent)if(!p.visible)return false;return true;};
+  return {scene,actor,herd,near,hidden,far,barn,standing,remote,visitor,bench,benchLabel,unrelated,before,effective};
+ }
+ for(const exit of ['cancel','reveal','failed-save']){
+  const f=fixture({aspect:390/844,persist:exit!=='failed-save'}),props=addScenery(f),beforeSave=f.read();
+  check(f.ceremony.open().ok,'cluttered portrait stall still opens');
+  const masked=[props.near,props.hidden,props.barn,props.standing,props.remote,props.visitor];
+  check(!props.bench.visible&&!props.effective(props.benchLabel),'workbench and its child label leave the shot together');
+  check(masked.every(a=>!a.parts.group.visible&&!props.effective(a.label)),'nearby known horse roots and child nameplates are hidden');
+  check(props.far.parts.group.visible&&props.unrelated.visible&&f.stall.grp.visible,'far horse, unrelated sprite and source stall remain visible');
+  assert.deepEqual(f.read(),beforeSave,'clearing scenery never changes the save');
+  props.near.parts.group.visible=true;props.bench.visible=true; // normal culling can write again
+  f.ceremony.camera(.016,0,new THREE.Vector3());
+  check(!props.near.parts.group.visible&&!props.bench.visible,'final camera pass reapplies mask after ordinary visibility writers');
+  if(exit!=='cancel'){
+   const result=f.ceremony.start();check(result.ok===(exit==='reveal'),'visibility does not alter successful or failed charging');
+   if(exit==='reveal'){f.ceremony.skip();f.ceremony.tick(.016);check(!props.near.parts.group.visible&&f.ceremony.state.phase==='revealed','reward phase retains clear view');}
+  }
+  f.ceremony.close();
+  for(const item of props.before){assert.equal(item.root.visible,item.visible);assert.equal(item.root.parent,item.parent);assert.deepEqual(item.root.position.toArray(),item.position);assert.deepEqual(item.root.quaternion.toArray(),item.quaternion);assert.deepEqual(item.root.scale.toArray(),item.scale);}
+  check(props.hidden.parts.group.visible===false&&props.near.parts.group.visible===true,'exit restores exact prior visible and hidden flags');
+  check(props.benchLabel.visible&&props.near.label.visible&&props.unrelated.visible,'child and unrelated sprite flags are never mutated');
+  assert.deepEqual(f.read().horses,beforeSave.horses,'cinematic mask never changes owned horses');
+  props.near.parts.group.visible=false;f.ceremony.open();f.ceremony.close();
+  check(!props.near.parts.group.visible,'new ceremony captures fresh flags after prior mask was cleared');
+ }
+ const dynamic=fixture(),props=addScenery(dynamic);dynamic.ceremony.open();
+ const entering=props.actor(60,60);props.herd.push(entering);dynamic.ceremony.tick(.016);check(entering.parts.group.visible,'late distant horse is left alone');
+ entering.parts.group.position.set(-27.5,1,-7);dynamic.ceremony.tick(.016);check(!entering.parts.group.visible,'horse entering reveal area is masked on the next active tick');
+ const replaced=props.near.parts.group;replaced.removeFromParent();props.herd.splice(props.herd.indexOf(props.near),1);
+ const replacement=props.actor(-27, -7,false);props.herd.push(replacement);dynamic.ceremony.camera(.016,0,new THREE.Vector3());
+ check(!replacement.parts.group.visible,'rebuilt actor is tracked independently without showing an originally hidden horse');
+ dynamic.G.ranch.standing=()=>{throw Error('optional actor list unavailable');};dynamic.G.ranchSys.barnHorses=()=>null;dynamic.G.world.visitors={};dynamic.G.horse.remotes=null;
+ assert.doesNotThrow(()=>dynamic.ceremony.tick(.016),'optional invalid actor readers cannot strand the ceremony');
+ dynamic.ceremony.close();
+ check(entering.parts.group.visible&&!replacement.parts.group.visible&&replaced.visible&&replaced.parent===null,'late/replaced/removed roots restore flags without being moved or reattached');
+ console.log('PASS clear ceremony view, precise visibility restoration, child labels, culling writes, late actors and safe optional readers');
  // Project real world points through a portrait THREE camera. These are scene
  // and screen-space requirements, not assertions about a chosen camera pose/FOV.
  const portrait=fixture({aspect:390/844}),portraitInitial=portrait.snapshot(),portraitProjection=portrait.camera.projectionMatrix.clone();

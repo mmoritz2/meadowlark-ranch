@@ -23,7 +23,7 @@
 export const id='uikit';
 export function install(G){
  const S=G.save, T=G.tables||{};
- const DIR='assets/breed-thumbnails/', VER='?v=horse-art-2';
+ const DIR='assets/breed-thumbnails/', VER='?v=horse-art-20261009b';
  const EMOJI_FALLBACK='🐴';
 
  /* ================= 0. baseline css =================

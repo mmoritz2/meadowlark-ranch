@@ -2,8 +2,8 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-1';
-import {applyNativeFjordGroom} from './native-fjord-groom.js?v=fjord-native-card-color-1';
+import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-2';
+import {applyNativeFjordGroom,prepareNativeFjordCrest} from './native-fjord-groom.js?v=fjord-brushed-crest-4';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
 import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=club-horses-1';
@@ -76,7 +76,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
         if(!variantFiles.has(vu.href))variantFiles.set(vu.href,fetch(vu).then(r=>{if(!r.ok)throw Error('Horse shape HTTP '+r.status);return r.arrayBuffer();}).catch(e=>{variantFiles.delete(vu.href);throw e;}));
         const cu=new URL(v.coat.file,import.meta.url);cu.searchParams.set('build',v.coat.sha256||v.sha256);
         if(!coatFiles.has(cu.href))coatFiles.set(cu.href,new THREE.TextureLoader(manager).loadAsync(cu.href).then(t=>{t.colorSpace=THREE.SRGBColorSpace;t.flipY=false;return t;}).catch(e=>{coatFiles.delete(cu.href);throw e;}));
-        const [binary,coat]=await Promise.all([variantFiles.get(vu.href),coatFiles.get(cu.href)]);applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});
+        const [binary,coat]=await Promise.all([variantFiles.get(vu.href),coatFiles.get(cu.href)]);applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});
       }
       if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(!files.has(mu.href))files.set(mu.href,loader.loadAsync(mu.href).catch(e=>{files.delete(mu.href);throw e;}));const extra=await files.get(mu.href),replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec)}).catch(e=>{pending.delete(key);throw e;}));}
     return pending.get(key);

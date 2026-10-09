@@ -6,6 +6,7 @@ export const TACK_STALL_ARRIVAL=Object.freeze({x:-27.5,z:-8.2,heading:0});
 export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onReturn,getSlot,setSlot,setHorseId,canFit}){
  const T=G.THREE,H=G.horse,W=G.world,stall=G.summon?.state;
  const state={active:false,phase:'idle',t:0,result:null,snapshot:null,reduced:false,shown:false,error:''};
+ const sceneryVisibility=new Map(),actorPoint=new T.Vector3();
  let stage=null,ring=null,particles=null,showcase=null,dialog=document.createElement('section');
  dialog.id='tackStallDialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-label','Tack at the Summoning Stall');dialog.setAttribute('aria-modal','true');dialog.hidden=true;document.body.appendChild(dialog);
  const entry=['Summoning Stall',TACK_STALL_ARRIVAL.x,TACK_STALL_ARRIVAL.z,TACK_STALL_ARRIVAL.heading];
@@ -36,7 +37,31 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
  function capture(){
   const p=player(),walker=G.onFoot?.walker?.();return {position:p.pos.clone(),heading:p.heading,y:p.y,vy:p.vy,mesh:p.mesh,meshVisible:p.mesh?.visible,walker,walkerVisible:walker?.visible,camera:G.camera.position.clone(),quaternion:G.camera.quaternion.clone(),fov:G.camera.fov,doors:[stall.doorL.rotation.y,stall.doorR.rotation.y],glowOpacity:stall.glow?.material.opacity,glowColor:stall.glow?.material.color.clone(),lightIntensity:stall.light?.intensity,lightColor:stall.light?.color.clone(),focus:document.activeElement};
  }
- function hideActors(){const s=state.snapshot;if(s.mesh)s.mesh.visible=false;if(s.walker)s.walker.visible=false;}
+ // Clear only known nearby actor roots and the tack workbench. Child horse
+ // nameplates follow their parent; unrelated world signage stays untouched.
+ const safeList=read=>{try{const list=read();return Array.isArray(list)?list:[];}catch{return [];}};
+ function maskScenery(){
+  const snapshot=state.snapshot;if(!snapshot)return;
+  const mask=root=>{
+   if(!root?.isObject3D||root===snapshot.mesh||root===snapshot.walker||root===stall.grp||root===stage)return;
+   if(!sceneryVisibility.has(root))sceneryVisibility.set(root,root.visible);
+   root.visible=false;
+  };
+  for(const thing of safeList(()=>W.things))if(thing?.id==='tack-summon-stall')mask(thing.g);
+  const actors=[...safeList(()=>H.herd?.()),...safeList(()=>G.ranch?.standing?.()),
+   ...safeList(()=>G.ranchSys?.barnHorses?.()),...safeList(()=>Object.values(H.remotes||{})),
+   ...safeList(()=>W.visitors)];
+  const center=G.summon?.STALL;
+  if(Number.isFinite(center?.x)&&Number.isFinite(center?.z))for(const actor of actors){
+   const root=actor?.parts?.group;if(!root?.isObject3D)continue;
+   try{root.getWorldPosition(actorPoint);}catch{continue;}
+   if(Number.isFinite(actorPoint.x)&&Number.isFinite(actorPoint.z)&&Math.hypot(actorPoint.x-center.x,actorPoint.z-center.z)<=14)mask(root);
+  }
+  // Herd distance culling writes visible each frame, and newly loaded actors can
+  // enter during the reveal. Keep the shot clear without changing their motion.
+  for(const root of sceneryVisibility.keys())root.visible=false;
+ }
+ function hideActors(){const s=state.snapshot;if(s.mesh)s.mesh.visible=false;if(s.walker)s.walker.visible=false;maskScenery();}
  function showDialog(){dialog.hidden=false;paint();}
  function paint(){
   const s=readSave()||{horses:[],tack:[],coins:0},slot=getSlot(),pool=getTackSummonPool(s,slot),h=horseOf(s);
@@ -69,6 +94,7 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
   if(stage)stage.visible=false;if(showcase){showcase.root.removeFromParent();showcase.dispose();showcase=null;}
   const p=player();p.pos.copy(s.position);p.heading=s.heading;p.y=s.y;p.vy=s.vy;p.speed=0;
   if(s.mesh)s.mesh.visible=s.meshVisible;if(s.walker)s.walker.visible=s.walkerVisible;
+  for(const [root,visible]of sceneryVisibility)root.visible=visible;sceneryVisibility.clear();
   stall.doorL.rotation.y=s.doors[0];stall.doorR.rotation.y=s.doors[1];
   if(stall.glow){stall.glow.material.opacity=s.glowOpacity;stall.glow.material.color.copy(s.glowColor);}if(stall.light){stall.light.intensity=s.lightIntensity;stall.light.color.copy(s.lightColor);}
   G.camera.position.copy(s.camera);G.camera.quaternion.copy(s.quaternion);G.camera.fov=s.fov;G.camera.updateProjectionMatrix();

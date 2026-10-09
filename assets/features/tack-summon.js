@@ -1,4 +1,4 @@
-import {installTackSummonCeremony} from './tack-summon-ceremony.js?v=menus-polish-20261008';
+import {installTackSummonCeremony} from './tack-summon-ceremony.js?v=clear-stall-20261009';
 import {TACK_SUMMON_COST,TACK_SUMMON_POOL,getTackSummonPool,summonTackPiece} from '../tack-summon.mjs?v=tack-ceremony-20261007';
 import {TACK_SLOTS,TACK_SLOT_LABELS,getTackPiece,ownedTackPiece} from '../tack-collection.mjs?v=tack-ceremony-20261007';
 import {tackPieceSVG} from '../tack-collection-art.mjs?v=lookbook-1';

@@ -651,14 +651,14 @@ import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-2';
-import {configureNativeCustomization} from './assets/native-horse-customization.js?v=native-roster-1';
+import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-20261009b';
+import {configureNativeCustomization} from './assets/native-horse-customization.js?v=natural-mane-20261009';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=club-horses-1';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-art-2';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-art-20261009b';
 import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -705,7 +705,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-lashes-20261008';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=horse-art-landscape-20261009';
+import {FEATURES} from './assets/features/index.js?v=horse-art-20261009b';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -5315,8 +5315,9 @@ function dressWithRig(ent,parts,colors,opts){
   if(parts.crest)parts.crest.visible=false;
   ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,collectionDefaultTack:!!(opts.mine||opts.saddle),restQ:inst.bones.map(b=>b.quaternion.clone())};
   if(inst.profile.nativeKind==='horse')applyNativeRemoteMode(ent,{bareback:!!opts.bareback,wild:!!opts.wild||!opts.mine&&!opts.saddle});
-  rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);configureArtistCustomization(ent.rig,{...opts,breed,colors});worldRigCount++;
-  const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed);syncCollectionTack(ent.rig,parts.group,owner||{bareback:!!opts.bareback});
+  const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed&&h.breed===breed);
+  rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);configureArtistCustomization(ent.rig,owner||{...opts,breed,colors});worldRigCount++;
+  syncCollectionTack(ent.rig,parts.group,owner||{bareback:!!opts.bareback});
   return;
  }
  if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.45*(opts.foal?.65:1));
@@ -10507,7 +10508,7 @@ function dyeHorse(what,val){
   sv.coins-=DYE_COST;
   h.colors=h.colors||{};
   if(what==='body')h.colors.body=val;
-  else if(what==='mane')h.colors.mane=val;
+  else if(what==='mane'){h.colors.mane=val;h.maneAppearance={source:'dyed',color:val};}
   else if(what==='tail')h.tailCol=(val==='match')?null:val;
   else if(what==='mark')h.markCol=val;
   ok=true; msg=h.name+' looks lovely.';
@@ -11158,7 +11159,7 @@ function remoteUpdate(m){
     if(parts.crest)parts.crest.visible=false;
     const seat=gameHeroSeat(rrig,parts.group);rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);
     parts.group.scale.setScalar(1);
-    configureArtistCustomization(rrig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});
+    configureArtistCustomization(rrig,{breed,colors:m.c,maneAppearance:m.ma,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});
    }else{
    if(rrig.profile.artistBreed&&m.ct&&m.ct!==rrig.fantasyAppearance?.theme){rrig.fantasyMaterial=createEquineFantasyCoat(THREE,rrig.baseMat,m.ct,!!rrig.fantasyAppearance?.dragon);rrig.skin.material=rrig.fantasyMaterial;}
    if(rrig.fantasyAppearance?.dragon)rrig.drg=buildDragonBody(rrig.skin,rrig.bones,parts.group,DRAGON_TINT[m.ct||rrig.fantasyAppearance.theme]||DRAGON_TINT._);
@@ -11193,7 +11194,7 @@ function remoteUpdate(m){
  r.wings=!!m.wg;r.landRequested=m.ld===1;
  if(m.ct)r.coat=m.ct;
  if(m.hl)r.horseLv=m.hl;
- if(r.rig?.profile.artistBreed||r.rig?.profile.nativeRoster||r.rig?.profile.nativeDragon){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct,m.wg,m.hrn,m.dg]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});}}
+ if(r.rig?.profile.artistBreed||r.rig?.profile.nativeRoster||r.rig?.profile.nativeDragon){const look=JSON.stringify([m.c,m.ma,m.tailCol,m.mark,m.markCol,m.ct,m.wg,m.hrn,m.dg]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,maneAppearance:m.ma,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});}}
  G.run('remote',m,r);
  if(r.rig){r.rig.collectionWild=!!m.wm;syncCollectionTack(r.rig,r.parts.group,{bareback:!!m.bb},m.tc&&typeof m.tc==='object'&&!Array.isArray(m.tc)?m.tc:{});}
 }
@@ -11207,7 +11208,7 @@ function netTick(dt,t){
    const payload={
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
     h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),rev:player.speed<-.02&&!player.flying?1:0,ld:player.flying&&(player.landing||player.flyAlt<=.001)?1:0,
-    c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
+    c:h?h.colors:null,ma:h?.maneAppearance||null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
     s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),hrn:h?.horn,dg:h?.dragon,ct:h?(h.coat||null):null,
    };

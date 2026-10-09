@@ -9,8 +9,10 @@ const check=(value,message)=>{assert(value,message);checks++;};
  const root=path.resolve(__dirname,'..');
  const asset=name=>pathToFileURL(path.join(root,'assets',name)).href;
  const text=await fs.readFile(path.join(root,'assets/tack-studio.js'),'utf8');
- const helpers=text.slice(0,text.indexOf('const $=id=>')).replace(/^import .*;\n/gm,'');
- const S=await import('data:text/javascript,'+encodeURIComponent(helpers));
+ const helperSource=text.slice(0,text.indexOf('const $=id=>'));
+ const helperImports=helperSource.split('\n').filter(line=>/^import /.test(line)&&/register\w+Previews|EXPANSION_HORSE_BREEDS|registerExpansionHorseCoats/.test(line)).map(line=>line.replace(/from '([^']+)'/,(_,relative)=>'from '+JSON.stringify(new URL(relative,asset('tack-studio.js')).href))).join('\n');
+ const helpers=helperSource.replace(/^import .*;\n/gm,'');
+ const S=await import('data:text/javascript,'+encodeURIComponent(helperImports+'\n'+helpers));
  const {createBreedLibrary}=await import(asset('breed-models.js'));
  const {registerNewBreedPreviews}=await import(asset('features/new-breeds.js'));
  const {registerRosterPreviews}=await import(asset('features/horse-roster.js'));
@@ -27,8 +29,8 @@ const check=(value,message)=>{assert(value,message);checks++;};
   await library.manifestReady;
  }finally{global.fetch=originalFetch;}
  check(fetches.length===2,'reads shared artist identity and native variant manifests');
- const rows=[registerRosterPreviews,registerNewBreedPreviews,registerClubHorsePreviews,registerMarketHorsePreviews].flatMap(register=>register(library)),options=S.studioHorseOptions(library.manifest),keys=new Set(options.map(x=>x.key));
- check(options.length===73,'all 43 manifest equines and 30 live feature aliases available');
+ const previewRows=S.registerStudioHorsePreviews(library),rows=[...previewRows.values()],options=S.studioHorseOptions(library.manifest),keys=new Set(options.map(x=>x.key));
+ check(options.length===79,'all 43 manifest equines and 36 live feature aliases available');
  check(options[0].key==='bay-sporthorse-native','detailed Bay Sporthorse is first/default');
  check(keys.has('white-western')&&keys.has('bay-western'),'both Western originals are explicit options');
  check(options.slice(0,3).every(x=>x.group==='Original horses'),'originals are grouped together');
@@ -68,6 +70,31 @@ const check=(value,message)=>{assert(value,message);checks++;};
  }
  check(clubRows[0][7].description.includes('glowing forehead crest')&&clubRows[0][7].family==='fantasy','updated Ember Friesian appearance metadata retained');
  clubRows[1][7].coat='tampered';check(registerClubHorsePreviews(library)[1][7].coat==='moonveil','preview row copies cannot mutate shared club rewards');
+
+ // Exercise the actual studio registration and appearance forwarding, including
+ // both new coat shaders; a correct ID with an unregistered coat is insufficient.
+ const {EXPANSION_HORSE_BREEDS}=await import(asset('expansion-horses.js')+'?v=horses-expansion-1');
+ const {fantasyThemes,EQUINE_FANTASY_APPEARANCE}=await import(asset('equine-fantasy.js')+'?v=artist-breeds-1');
+ const expansionExpected=[
+  ['dutchwarmblood','thoro','#71432e','#241a16','points','Ranch breeds'],
+  ['tennesseewalker','morgan','#614737','#e7d4b0','none','Ranch breeds'],
+  ['dales','iceland','#292d32','#13171c','none','Ranch breeds'],
+  ['belgian','percheron','#ba753d','#f3dfb2','none','Ranch breeds'],
+  ['seaglass','palomino','#3c9895','#dff3df','none','Fantasy horses'],
+  ['starweave','lipiz','#30233f','#f0c2ad','none','Fantasy horses'],
+ ];
+ const appearanceStart=text.indexOf('const row=previewRows.get(key);'),appearanceEnd=text.indexOf('state.horse=key;',appearanceStart);check(appearanceStart>=0&&appearanceEnd>appearanceStart,'actual selected-horse appearance source available');
+ const appearanceSource=text.slice(appearanceStart,appearanceEnd);
+ for(const [key,foundation,body,mane,mark,group] of expansionExpected){
+  const p=library.profile(key),row=previewRows.get(key),flags=p.nativeRosterAppearance;
+  check(keys.has(key)&&library.resolve(key)===key&&p.nativeVariant.id===library.profile(foundation).nativeVariant.id,'expansion resolves exact ID and correct live foundation: '+key);
+  check(options.find(o=>o.key===key).group===group&&p.nativeRosterColors.body===body&&p.nativeRosterColors.mane===mane&&flags.maneCol===mane&&flags.mark===mark,'expansion catalog appearance retained: '+key);
+  const initial=S.studioInitialHorse(key,'rainbow',options);check(initial.key===key&&!initial.unavailable,'direct fitting URL stays on expansion horse: '+key);
+  let look;const rig={fixture:key};require('node:vm').runInNewContext(appearanceSource,{previewRows,key,state:{rig},THREE:{},configureNativeCustomization:args=>look=args});
+  check(look.rig===rig&&look.defaults===row&&look.horse.breed===key&&look.horse.colors.body===body&&look.horse.colors.mane===mane&&look.horse.mark===mark&&look.horse.markCol===row[7].markCol&&look.horse.coat===row[7].coat,'actual fitting path forwards complete default appearance: '+key);
+  if(group==='Fantasy horses')check(fantasyThemes().includes(key)&&EQUINE_FANTASY_APPEARANCE[key]?.theme===key&&EQUINE_FANTASY_APPEARANCE[key].mane===mane&&!!EQUINE_FANTASY_APPEARANCE[key].horn===(key==='starweave')&&flags.coat===key&&flags.glow,'fantasy coat provider and exact horn/glow identity registered: '+key);
+ }
+ previewRows.get('dutchwarmblood')[7].body='tampered';check(EXPANSION_HORSE_BREEDS.find(row=>row[0]==='dutchwarmblood')[7].body==='thoro'&&S.registerStudioHorsePreviews(library).get('dutchwarmblood')[7].body==='thoro','studio preview row changes cannot mutate shared expansion definitions');
 
  const {nativeHorseSpeedLimits}=await import(asset('native-horse-motion.js'));
  for(const key of ['bay-sporthorse-native','white-western','bay-western','fjord','opaline']){

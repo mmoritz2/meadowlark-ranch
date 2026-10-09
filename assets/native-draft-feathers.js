@@ -11,14 +11,16 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function random(seed){let n=seed>>>0;return()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296;};}
 function once(resource){const dispose=resource.dispose.bind(resource);let disposed=false;resource.dispose=()=>{if(disposed)return;disposed=true;dispose();};return resource;}
 
-function strandTexture(THREE){
+function strandTexture(THREE,dense=false){
  const width=64,height=256,data=new Uint8Array(width*height*4);
  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
   const u=(x+.5)/width,v=y/(height-1),edge=Math.pow(Math.sin(Math.PI*u),.45);
   const fiber=.5+.5*Math.sin(u*Math.PI*16+.20*Math.sin(v*9+u*7));
   const split=clamp((1-v)*8+.35*Math.sin(u*29),0,1),i=(y*width+x)*4;
   const shade=Math.round(220+35*fiber);data[i]=shade;data[i+1]=shade;data[i+2]=shade;
-  data[i+3]=Math.round(255*edge*(.27+.73*fiber)*split);
+  // Vanner locks need a continuous undercoat; the fiber shading and split
+  // tips still read as fine hair without cutting each card into tassels.
+  data[i+3]=Math.round(255*edge*(dense?.60+.40*fiber:.27+.73*fiber)*split);
  }
  const texture=once(new THREE.DataTexture(data,width,height));
  texture.name='Native draft feather fibers';texture.colorSpace=THREE.SRGBColorSpace;
@@ -47,7 +49,7 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
    a.minX=Math.min(a.minX,point.x);a.maxX=Math.max(a.maxX,point.x);a.minZ=Math.min(a.minZ,point.z);a.maxZ=Math.max(a.maxZ,point.z);a.samples++;
   }
  }
- const texture=strandTexture(THREE),fantasy=profile.family==='fantasy',vanner=foundation==='vanner';
+ const fantasy=profile.family==='fantasy',vanner=foundation==='vanner',texture=strandTexture(THREE,vanner);
  const color=new THREE.Color(vanner?'#f1ede4':'#e6e0d4');
  if(fantasy){const mane=profile.nativeRosterAppearance?.mane||profile.nativeRosterColors?.mane;if(mane)color.set(mane).lerp(new THREE.Color('#e6e0d4'),.42);}
  const material=once(new THREE.MeshStandardMaterial({name:'Native draft silky feather',map:texture,color,
@@ -64,17 +66,21 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
    const front=strand>=strandsPerLeg-(vanner?14:10);
    // Most hair grows behind and beside the cannon. The front has only short,
    // scattered wisps so the joints and hoof breakover remain visible.
-   const angle=front?Math.PI+(rnd()-.5)*1.15:(rnd()-.5)*Math.PI*1.58;
-   // Vanners have a fuller, longer fringe below the lower cannon, still
-   // clear of the soles and the front of each hoof. Draft shapes stay intact.
-   const radialX=Math.sin(angle),radialZ=-Math.cos(angle),rootUp=front?.01+rnd()*.06:vanner?.03+rnd()*.12:.025+rnd()*.105;
+   const angle=vanner
+    ?front?Math.PI+((strand-58+rnd())/14-.5)*1.15:((strand%29+rnd())/29-.5)*Math.PI*1.68
+    :front?Math.PI+(rnd()-.5)*1.15:(rnd()-.5)*Math.PI*1.58;
+   // Vanner's two overlapping layers form a full collar below the cannon.
+   // Staggered roots and broad locks avoid sparse, isolated tassels while
+   // short front wisps leave the hoof breakover clear. Draft shapes stay intact.
+   const upperLayer=vanner&&!front&&strand>=29;
+   const radialX=Math.sin(angle),radialZ=-Math.cos(angle),rootUp=front?.01+rnd()*.06:vanner?(upperLayer?.085+rnd()*.065:.03+rnd()*.06):.025+rnd()*.105;
    const length=front?(vanner?.06+rnd()*.04:.045+rnd()*.035):(vanner?.14+rnd()*.075:.10+rnd()*.07);
-   const width=front?.003+rnd()*.003:.004+rnd()*(vanner?.011:.009);
-   const flare=front?.006+rnd()*.009:vanner?.022+rnd()*.04:.020+rnd()*.033,bend=(rnd()-.5)*.025;
+   const width=vanner?front?.006+rnd()*.005:.013+rnd()*.011:front?.003+rnd()*.003:.004+rnd()*.009;
+   const flare=front?.006+rnd()*.009:vanner?(upperLayer?.018+rnd()*.025:.026+rnd()*.031):.020+rnd()*.033,bend=(rnd()-.5)*(vanner?.016:.025);
    const rootY=a.pivot.y+rootUp,drop=Math.min(length,Math.max(.03,rootY-(a.toe.y-.035)));
    const shade=.82+rnd()*.18,base=positions.length/3;
    for(let step=0;step<=segments;step++){
-    const t=step/segments,taper=Math.pow(1-t,.72)*.96+.04,spread=flare*Math.sin(t*Math.PI*.5);
+    const t=step/segments,taper=Math.pow(1-t,vanner?.42:.72)*.96+.04,spread=flare*Math.sin(t*Math.PI*.5);
     center.set(cx+axis.x*rootUp+radialX*(rx*.94+spread)+bend*t*t,
      rootY-drop*t,cz+axis.z*rootUp+radialZ*(rz*.94+spread)-.012*Math.sin(t*Math.PI));
     for(const side of [-1,1]){

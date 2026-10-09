@@ -1,20 +1,28 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './breed-models.js?v=horse-art-2';
-import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=horse-art-2';
+import {createBreedLibrary} from './breed-models.js?v=horse-art-20261009b';
+import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=horse-art-20261009b';
 import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';
 import {premiumTackSet} from './premium-tack.mjs';
-import {registerRosterPreviews} from './features/horse-roster.js?v=native-tack-fit-1';
+import {registerRosterPreviews} from './features/horse-roster.js?v=natural-mane-20261009';
 import {registerClubHorsePreviews} from './features/clubs-boards.js?v=native-tack-fit-1';
 import {registerMarketHorsePreviews} from './features/market-summon-keys-pets.js?v=native-tack-fit-1';
 import {registerNewBreedPreviews} from './features/new-breeds.js?v=native-tack-fit-1';
-import {configureNativeCustomization} from './native-horse-customization.js?v=native-roster-1';
+import {configureNativeCustomization} from './native-horse-customization.js?v=natural-mane-20261009';
+import {EXPANSION_HORSE_BREEDS} from './expansion-horses.js?v=horses-expansion-1';
+import {registerExpansionHorseCoats} from './expansion-horse-coats.js?v=horses-expansion-1';
 
 // Use exact public game profiles: the loader's permissive fallback is not a fitting-room option.
 export const studioIsStaticHost=hostname=>hostname==='github.io'||hostname.endsWith('.github.io');
 export const DEFAULT_STUDIO_HORSE='bay-sporthorse-native';
+export function registerStudioHorsePreviews(library){
+ registerExpansionHorseCoats();
+ const rows=[registerRosterPreviews,registerNewBreedPreviews,registerClubHorsePreviews,registerMarketHorsePreviews].flatMap(register=>register(library));
+ for(const source of EXPANSION_HORSE_BREEDS){const row=[...source.slice(0,7),{...source[7]}];library.alias(row[0],row[7].body,row);rows.push(row);}
+ return new Map(rows.map(row=>[row[0],row]));
+}
 const ORIGINAL_HORSES=[DEFAULT_STUDIO_HORSE,'white-western','bay-western'];
 const COLLECTION_HORSES={rainbow:'bay-sporthorse-native',starlight:'black',dragonfire:'bay-western',blossom:'grey',glacier:'white-western',forestguardian:'pinto'};
 export function studioHorseOptions(manifest){
@@ -218,7 +226,7 @@ baseBounds.set(new THREE.Vector3(-.5,0,-1.5),new THREE.Vector3(.5,2,1.5));
 const initialItem=getTackPiece(query.get('item')),initialCollection=TACK_COLLECTIONS.find(c=>c.id===query.get('collection'));
 if(initialItem){state.equipped={[initialItem.slot]:initialItem};paintInfo();}else if(initialCollection)selectCollection(initialCollection.id);else paintInfo();
 try{
- const manifest=await library.manifestReady;previewRows=new Map([registerRosterPreviews,registerNewBreedPreviews,registerClubHorsePreviews,registerMarketHorsePreviews].flatMap(register=>register(library)).map(row=>[row[0],row]));horseOptions=studioHorseOptions(manifest);
+ const manifest=await library.manifestReady;previewRows=registerStudioHorsePreviews(library);horseOptions=studioHorseOptions(manifest);
  for(const label of ['Original horses','Ranch breeds','Fantasy horses']){
   const group=document.createElement('optgroup');group.label=label;
   for(const horse of horseOptions.filter(h=>h.group===label))group.append(new Option(horse.label,horse.key));

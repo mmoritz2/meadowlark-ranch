@@ -27,6 +27,31 @@ function geometryHash(meshes){const h=createHash('sha256');for(const m of meshes
 function sourceState(f){return JSON.stringify({geometry:geometryHash(f.meshes),materials:f.meshes.map(m=>m.material.uuid),binds:f.meshes.map(m=>[m.bindMatrix.elements,m.skeleton.boneInverses.map(b=>b.elements)]),bones:f.body.skeleton.bones.map(b=>[b.name,b.parent.name,b.position.toArray(),b.quaternion.toArray(),b.scale.toArray()])});}
 function bounds(meshes){const b=new THREE.Box3();for(const m of meshes){const p=m.geometry.attributes.position;for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);if(m.isSkinnedMesh)m.applyBoneTransform(i,v);m.localToWorld(v);assert(v.toArray().every(Number.isFinite));b.expandByPoint(v);}}return b;}
 function add(f){return createNativeDraftFeathers({THREE,scene:f.scene,skin:f.body,profile:f.profile});}
+// Software rays include the real alpha mask, so broad transparent cards cannot
+// pass this visual-density check merely by having a larger bounding box.
+function collarCoverage(f,kit){
+ f.scene.updateMatrixWorld(true);const coverage=[];
+ for(let leg=0;leg<kit.meshes.length;leg++){
+  const mesh=kit.meshes[leg],pivot=kit.anchors[leg].pivot.clone();f.scene.localToWorld(pivot);
+  const image=mesh.material.map.image,ray=new THREE.Raycaster(),origin=new THREE.Vector3(),direction=new THREE.Vector3();
+  for(const view of ['side','front']){
+   let covered=0;const rows=24,columns=48;
+   for(let row=0;row<rows;row++)for(let column=0;column<columns;column++){
+    // A fixed 14 x 11 cm patch spans the fetlock collar, including its edges.
+    const across=(column+.5)/columns*.14-.07,y=pivot.y-.035+(row+.5)/rows*.11;
+    if(view==='side'){origin.set(pivot.x+1,y,pivot.z+across);direction.set(-1,0,0);}
+    else{origin.set(pivot.x+across,y,pivot.z+1);direction.set(0,0,-1);}
+    ray.set(origin,direction);
+    if(ray.intersectObject(mesh,false).some(hit=>{
+     const x=Math.min(image.width-1,Math.max(0,Math.floor(hit.uv.x*image.width))),y=Math.min(image.height-1,Math.max(0,Math.floor(hit.uv.y*image.height)));
+     return image.data[(y*image.width+x)*4+3]/255>=mesh.material.alphaTest;
+    }))covered++;
+   }
+   coverage.push({leg:kit.anchors[leg].id,view,fraction:covered/(rows*columns)});
+  }
+ }
+ return coverage;
+}
 // Use the bundled loader's exact cubic interpolation for native gait tracks.
 const loader=fs.readFileSync('assets/vendor/three/examples/jsm/loaders/GLTFLoader.js','utf8');
 const cubicStart=loader.indexOf('class GLTFCubicSplineInterpolant'),cubicEnd=loader.indexOf('/*********************************/',cubicStart);
@@ -46,6 +71,7 @@ const f=fixture('vanner'),before=sourceState(f),kit=add(f),stats=kit.inspect();
 assert.equal(kit.strands,288);assert.equal(stats.drawCalls,4);assert.equal(stats.triangles,3456);assert(stats.skinSamples.every(n=>n>50),'Fits real lower-leg skin, not fallback radii');
 assert.equal(add(f),kit,'Repeat initialization does not duplicate geometry');assert.equal(sourceState(f),before,'Installation preserves source mesh, material, transforms and binds');
 const rest=bounds(kit.meshes),floor=bounds([f.body]).min.y;
+const coverage=collarCoverage(f,kit);for(const view of coverage)assert(view.fraction>.65,view.leg+' '+view.view+' has full feather coverage rather than separated tassels: '+view.fraction);
 assert(rest.min.y-floor>.035,'Feather tips clear the standing soles by at least 35 mm');assert(rest.max.y<.32,'Feathers stay below the lower cannon, away from rider/tack');
 assert.equal(kit.meshes[0].material.color.getHexString(),'f1ede4','Natural Vanner has soft white feather, independent of its dark mane');
 kit.setColors({maneColor:'#000000'});assert.equal(kit.meshes[0].material.color.getHexString(),'f1ede4','Natural white stockings are not recolored by mane paint');
@@ -81,5 +107,5 @@ assert.equal(other.foundation,'vanner');assert.equal(geometryHash(other.meshes),
 const expected=new THREE.Color(rose[6]).lerp(new THREE.Color('#e6e0d4'),.42);assert(other.meshes[0].material.color.equals(expected),'Rosebloom feathers follow approved plum mane shading');other.setColors({maneColor:'#548b80'});assert(other.meshes[0].material.color.equals(new THREE.Color('#548b80').lerp(new THREE.Color('#e6e0d4'),.42)));assert.equal(naturalMaterial.color.getHexString(),'f1ede4','Paint does not leak between actors');
 const resources=[...kit.meshes.map(m=>m.geometry),naturalMaterial,naturalMaterial.map],counts=resources.map(()=>0);resources.forEach((r,i)=>r.addEventListener('dispose',()=>counts[i]++));
 kit.dispose();kit.dispose();resources.forEach(r=>r.dispose());assert.deepEqual(counts,resources.map(()=>1),'Every private resource disposes exactly once');assert(kit.meshes.every(m=>!m.parent));assert.equal(sourceState(f),before,'Disposal preserves all source geometry/binds/contact transforms');assert.equal(kit.inspect().drawCalls,0);assert.equal(other.disposed,false,'Disposal does not affect another horse');other.dispose();const replacement=add(f);assert.notEqual(replacement,kit,'A disposed actor can be initialized again');replacement.dispose();
-console.log(JSON.stringify({poses,clips:wanted.length,standingSoleClearanceM:rest.min.y-floor,minimumRelativeFloorM:minimumRelativeFloor,minimumTreadClearanceM:minimumTreadClearance,strands:stats.strands,triangles:stats.triangles,drawCalls:stats.drawCalls},null,2));
+console.log(JSON.stringify({poses,clips:wanted.length,minimumCollarCoverage:Math.min(...coverage.map(view=>view.fraction)),standingSoleClearanceM:rest.min.y-floor,minimumRelativeFloorM:minimumRelativeFloor,minimumTreadClearanceM:minimumTreadClearance,strands:stats.strands,triangles:stats.triangles,drawCalls:stats.drawCalls},null,2));
 console.log('Native feathers: Vanner and Rosebloom fit, real gait/hoof/tack clearance, approved draft shapes, exclusions, immutable inputs, actor isolation and disposal passed.');

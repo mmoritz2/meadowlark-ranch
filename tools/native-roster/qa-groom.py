@@ -57,9 +57,9 @@ def main():
     check(result.shape == source.shape and corrected.shape == source.shape, 'Exact vertex count and attributes retained')
     check(np.isfinite(result).all() and np.isfinite(corrected).all(), 'All transformed positions and normals are finite')
     check(report['components'] == dict(mane=212, forelock=66, tail=194, eyelashes=76), 'Every native hair island has the intended role')
-    check(report['rootAnchorMaxDriftM'] == 0., 'Every original high attachment endpoint is fixed exactly')
-    check(report['minimumCardTransformDeterminant'] > .1, 'All card transforms retain positive orientation and finite area')
-    check(.075 < report['minimumManeRiseM'] < .09 and .15 < report['maximumManeRiseM'] < .17, 'A clearly upright, short rounded crest replaces hanging mane')
+    check(report['rootAnchorMaxDriftM'] < .08, 'Source card roots move only within the narrow neck crest region')
+    check(report['minimumCardTransformDeterminant'] > .001, 'All shortened fringe cards retain positive orientation and finite area')
+    check(.02 < report['minimumManeRiseM'] < .03 and .10 < report['maximumManeRiseM'] < .12, 'Fine fringe follows the rounded crest envelope instead of isolated spikes')
     check(report['minimumHairHeightM'] > .035, 'No new hair touches or crosses the floor')
     tone = np.zeros(len(source))
     for card in report['colorCards']:
@@ -67,8 +67,22 @@ def main():
         check(not tone[a:z].any() and 0 <= card['outer'] <= 1, 'Color card ranges are disjoint and bounded')
         tone[a:z] = 1+card['outer']
     check(np.count_nonzero(tone) == 11300, 'Only the 212 mane and 66 forelock cards receive pigment')
-    check((tone == 1).sum() > 1500 and (tone == 2).sum() > 1500, 'A visible dark center and pale outer layers both exist')
+    check((tone==1).sum()>4000 and (tone==2).sum()>3000, 'Short fringe includes dark center and pale outer lanes')
 
+    shell=report['crestShell'];sp=np.asarray(shell['positions']);sn=np.asarray(shell['normals']);tri=np.asarray(shell['indices']).reshape(-1,3)
+    check(len(sp)<2048 and len(tri)<4000, 'Continuous crest has one tightly bounded small mesh')
+    check(np.isfinite(sp).all() and np.isfinite(sn).all() and np.allclose(np.linalg.norm(sn,axis=1),1), 'Crest coordinates and normals are finite and normalized')
+    check(tri.min()>=0 and tri.max()<len(sp), 'Every crest triangle addresses valid vertices')
+    areas=np.linalg.norm(np.cross(sp[tri[:,1]]-sp[tri[:,0]],sp[tri[:,2]]-sp[tri[:,0]]),axis=1)
+    check(areas.min()>1e-7, 'Closed surface has no degenerate triangles')
+    from collections import Counter
+    edges=Counter(tuple(sorted(pair)) for row in tri for pair in [(row[0],row[1]),(row[1],row[2]),(row[2],row[0])])
+    check(all(count==2 for count in edges.values()), 'Continuous crest is closed and manifold, with no gaps between cards')
+    check(np.asarray(shell['sourceVertex']).min()>=0 and np.asarray(shell['sourceVertex']).max()<23514, 'Crest skin donors are all original hair vertices')
+    check(np.asarray(shell['outer']).min()==0 and np.asarray(shell['outer']).max()==1, 'Surface spans continuous dark center and pale outer sides')
+    tones=np.asarray(shell['outer'])[:-2].reshape(-1,24)
+    check(np.allclose(tones,tones[:1]), 'Stripe stays continuous down the neck rather than alternating by card')
+    check(sp[:,1].min()>1.80 and sp[:,1].max()<2.30, 'Crest remains at the top of the neck, clear of body floor and eyes')
     for ids in groups:
         p = source[ids]
         if np.median(p[:, 2]) < -.60:

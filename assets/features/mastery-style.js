@@ -373,7 +373,7 @@ export function install(G){
  G.on('netPos',(p,s,h)=>{ if(!h)return; if(h.hair&&(h.hair.mane!=='natural'||h.hair.tail!=='natural'))p.hs=h.hair; if(h.fx&&Object.keys(h.fx).length)p.fx=h.fx; if(h.acc&&Object.keys(h.acc).length)p.ac=h.acc; if(h.bareback)p.bb=1; if(wild)p.wm=1; });
 
  /* ===== 6. Actions ==================================================================== */
- function mirror(){ const fs=fresh(); const hh=fs&&fs.horses[rideIdx()], mh=G.horse.myHorses[rideIdx()]; if(hh&&mh){mh.hair=hh.hair;mh.acc=hh.acc;mh.fx=hh.fx;mh.colors=hh.colors;mh.tailCol=hh.tailCol;mh.bareback=hh.bareback;mh.hairCol=hh.hairCol;} }
+ function mirror(){ const fs=fresh(); const hh=fs&&fs.horses[rideIdx()], mh=G.horse.myHorses[rideIdx()]; if(hh&&mh){mh.hair=hh.hair;mh.acc=hh.acc;mh.fx=hh.fx;mh.colors=hh.colors;mh.maneAppearance=hh.maneAppearance;mh.tailCol=hh.tailCol;mh.bareback=hh.bareback;mh.hairCol=hh.hairCol;} }
  function refreshLook(){ mirror(); try{G.horse.applyCoat();}catch(e){} try{G.horse.hairColour();}catch(e){} applyPlayerLook(true); }
  function setHair(part,styleId){
   let msg=null; sync(s=>{ const h=s.horses[rideIdx()]; if(!h)return; const d=styleDef(part,styleId); const M=masteryOf(s,h.breed); const need=d.t===2?NEED.styleT2(h.breed):d.t===1?NEED.styleT1(h.breed):0;
@@ -385,7 +385,7 @@ export function install(G){
    const bold=DYE_BOLD.some(c=>c[0]===hex), nat=DYE_NATURAL.some(c=>c[0]===hex)||hex==='none';
    if(!bold&&!nat){msg='Not a mastery dye.';return;}
    const need=bold?NEED.dye2(h.breed):NEED.dye1(h.breed); if(M<need){msg='🔒 '+(bold?'Bold':'Natural')+' dyes need '+breedLabel(h.breed)+' mastery '+need+'.';return;}
-   h.colors=h.colors||{}; if(part==='mane')h.colors.mane=hex==='none'?(breedRow(h.breed)||[])[6]||h.colors.mane:hex; else h.tailCol=hex==='none'?null:hex; ok=true; msg='🎨 '+h.name+' looks lovely.'; });
+   h.colors=h.colors||{}; if(part==='mane'){h.colors.mane=hex==='none'?(breedRow(h.breed)||[])[6]||h.colors.mane:hex;h.maneAppearance={source:hex==='none'?'natural':'dyed',color:h.colors.mane};} else h.tailCol=hex==='none'?null:hex; ok=true; msg='🎨 '+h.name+' looks lovely.'; });
   if(ok){refreshLook();G.sChime();} if(msg)toast(msg); return ok;
  }
  function setRibbon(hex){ sync(s=>{const h=s.horses[rideIdx()];if(h){h.hairCol=h.hairCol||{};h.hairCol.ribbon=hex;}}); refreshLook(); }

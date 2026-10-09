@@ -1,5 +1,5 @@
 import {createNativeHorseIdle} from './native-horse-idle.mjs?v=horse-polish-20261008';
-import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-roster-1';
+import {createNativeGroomLayer} from './native-groom-layer.mjs?v=fjord-crest-20261009';
 import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
 import {createNativeHorseActionClips} from './native-horse-actions.mjs?v=horse-actions-1';
 // The Ranch finishes these after all actor travel and terrain transforms.

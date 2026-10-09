@@ -31,6 +31,58 @@ def smooth(a, b, x):
     return t*t*(3-2*t)
 def write_json(path, value): path.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
 
+
+def pack_groom_shell(shell, hair, packed):
+    """Attach an additive crest to exact native hair-root weights, without rig edits.
+
+    The helper authors in shaped standing metres. Each vertex copies one source
+    hair root's four influences; the inverse weighted operator converts it into
+    the unchanged source skeleton's mesh space. Original mesh buffers stay first.
+    """
+    target=np.asarray(shell['positions'],dtype=float)
+    normals=np.asarray(shell['normals'],dtype=float)
+    donor=np.asarray(shell['sourceVertex'],dtype=np.int64)
+    indices=np.asarray(shell['indices'],dtype=np.int64).reshape(-1)
+    uv=np.asarray(shell['uv'],dtype=float)
+    outer=np.asarray(shell['outer'],dtype=float).reshape(-1)
+    count=len(target)
+    assert 16<=count<=2048 and target.shape==normals.shape==(count,3)
+    assert donor.shape==(count,) and donor.min()>=0 and donor.max()<len(hair['raw'])
+    assert uv.shape==(count,2) and outer.shape==(count,)
+    assert len(indices)>0 and len(indices)%3==0 and len(indices)<=15000
+    assert indices.min()>=0 and indices.max()<count
+    assert all(np.isfinite(a).all() for a in [target,normals,uv,outer])
+    assert np.min(outer)>=0 and np.max(outer)<=1
+    assert np.min(uv)>=0 and np.max(uv)<=1
+    linear=hair['linear'][donor]
+    raw=hair['raw'][donor]+np.linalg.solve(linear,(target-hair['actual'][donor])[...,None])[...,0]
+    raw_normal=np.linalg.solve(linear,normals[...,None])[...,0]
+    raw_normal/=np.maximum(np.linalg.norm(raw_normal,axis=1,keepdims=True),1e-12)
+    weights=hair['weights'][donor]
+    joints=hair['joints'][donor]
+    assert joints.min()>=0 and joints.max()<677 and abs(weights.sum(axis=1)-1).max()<.001
+    cast=raw.astype('<f4')
+    recovered=hair['actual'][donor]+np.einsum('nij,nj->ni',linear,cast-hair['raw'][donor])
+    error=np.linalg.norm(recovered-target,axis=1)
+    assert np.isfinite(raw).all() and np.isfinite(raw_normal).all() and error.max()<2e-5
+    result={'version':1,'vertexCount':count,'indexCount':len(indices),
+            'space':'native-source-mesh','sourceMeshIndex':2,'originalSourceWeightsCopied':True}
+    # Aligned descriptors are self-contained; one existing variant fetch loads
+    # both the five original delta blocks and this small additive skin.
+    fields=[('position',raw,'<f4',3),('normal',raw_normal,'<f4',3),
+            ('uv',uv,'<f4',2),('skinIndex',joints,'<u2',4),
+            ('skinWeight',weights,'<f4',4),('outer',outer,'<f4',1),
+            ('index',indices,'<u2',1),('sourceVertex',donor,'<u2',1)]
+    for name,array,dtype,size in fields:
+        packed.extend(bytes((-len(packed))%4))
+        data=np.asarray(array,dtype=dtype)
+        result[name]={'byteOffset':len(packed),'count':int(data.size),'itemSize':size,
+                      'componentType':'float32' if dtype=='<f4' else 'uint16'}
+        packed.extend(data.tobytes())
+    result['restReconstructionMaxErrorM']=float(error.max())
+    result['standingBoundsM']={'min':recovered.min(axis=0).tolist(),'max':recovered.max(axis=0).tolist()}
+    return result
+
 # Reuse the existing roster's art palette without importing its Blender script.
 palette_ast = ast.parse((ROOT/'tools/asset-gen/build-artist-breeds.py').read_text())
 PALETTES = {n.targets[0].id: ast.literal_eval(n.value) for n in palette_ast.body
@@ -414,7 +466,7 @@ def main():
         ji=glb.accessor(doc,binary,a['JOINTS_0']);wt=glb.accessor(doc,binary,a['WEIGHTS_0'])
         weighted=np.einsum('nw,nwij->nij',wt,operators[ji]);linear=weighted[:,:3,:3]
         actual=np.einsum('nij,nj->ni',weighted,np.c_[p,np.ones(len(p))])[:,:3]+TRANSLATION
-        meshes.append(dict(index=mi,name=mesh['name'],raw=p,normal=n,linear=linear,actual=actual,
+        meshes.append(dict(index=mi,name=mesh['name'],raw=p,normal=n,linear=linear,actual=actual,joints=ji,weights=wt,
                            indices=glb.accessor(doc,binary,prim['indices']).astype(int),uv=glb.accessor(doc,binary,a['TEXCOORD_0'])))
     OUT.mkdir(parents=True,exist_ok=True)
     view=doc['bufferViews'][doc['images'][0]['bufferView']];offset=view.get('byteOffset',0)
@@ -531,6 +583,8 @@ def main():
             report['meshes'].append({'meshIndex':m['index'],'vertices':len(p),'minCageJacobianDeterminant':float(det.min()),
                                      'maxPositionQuantizationErrorM':float(actual_error.max()),'maxAppearanceDeltaM':float(np.linalg.norm(q-p,axis=1).max()),
                                      'fixedLowerVertices':int(fixed.sum()) if m['index']!=2 else 0})
+        if groom_report and groom_report.get('crestShell'):
+            groom_report['shell']=pack_groom_shell(groom_report.pop('crestShell'),meshes[2],packed)
         file=OUT/(key+'.bin');pending.append((file,packed))
         if not args.geometry_only: paint_coat(key,atlas,covered,original)
         coatfile=OUT/(key+'-coat.webp')
@@ -550,6 +604,8 @@ def main():
             row['groom'].pop('maneLengthFactor',None)
             row['groom']['uprightCrest']={k:v for k,v in groom_report.items() if k!='cards'}
             report['groom']=groom_report
+            if groom_report.get('shell'):
+                row['limitations']='Source body, eye, tack and original hair topology are preserved. The short continuous crest is an additive mesh attached to copied native hair-root skin weights; native motions remain unchanged.'
         if head_shape(key):
             row['headShape']={'version':1, 'family':HEAD_PROFILE_FAMILIES[key],
                 'parameters':head_shape(key), 'sourceOriginM':HEAD_ORIGIN.tolist(),

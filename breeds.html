@@ -16,16 +16,16 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-2';
+import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-20261009b';
 import {CLUB_HORSE_BREEDS} from './assets/club-horses.js?v=club-horses-1';
 import {EXPANSION_HORSE_BREEDS} from './assets/expansion-horses.js?v=horses-expansion-1';
 import {ROWS as NEW_HORSE_BREEDS} from './assets/features/new-breeds.js?v=draft-front-3';
-import {NEW_BREEDS as ROSTER_BREEDS} from './assets/features/horse-roster.js?v=draft-front-3';
+import {NEW_BREEDS as ROSTER_BREEDS} from './assets/features/horse-roster.js?v=natural-mane-20261009';
 import {registerExpansionHorseCoats} from './assets/expansion-horse-coats.js?v=horses-expansion-1';
-import {configureNativeCustomization} from './assets/native-horse-customization.js?v=horses-expansion-1';
-import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-art-2';
-import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-art-2';
-import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=horse-art-2';
+import {configureNativeCustomization} from './assets/native-horse-customization.js?v=natural-mane-20261009';
+import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-art-20261009b';
+import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-art-20261009b';
+import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=horse-art-20261009b';
 import {createArtistMotion} from './assets/artist-horse-motion.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {applyEquineFantasyAppearance,createEquineWingLibrary} from './assets/equine-fantasy.js?v=artist-breeds-1';
@@ -86,7 +86,7 @@ function createAccessories(inst,key){
 }
 const thumbnailKeys=new Set();
 fetch('./assets/breed-thumbnails/index.json',{cache:'no-store'}).then(r=>r.json()).then(keys=>{for(const key of keys)thumbnailKeys.add(key);for(const img of document.querySelectorAll('.breed-thumb'))setThumbnail(img);}).catch(()=>{});
-function setThumbnail(img){const exists=thumbnailKeys.has(img.dataset.key);img.hidden=!exists;if(exists)img.src='./assets/breed-thumbnails/'+img.dataset.key+'.webp?v=horse-art-2';}
+function setThumbnail(img){const exists=thumbnailKeys.has(img.dataset.key);img.hidden=!exists;if(exists)img.src='./assets/breed-thumbnails/'+img.dataset.key+'.webp?v=horse-art-20261009b';}
 let horse=null,groom=null,body=null,ticket=0,selectedKey=null,withers=1.68,instance=null,framing=1,headView=false,motion=null,paused=false,loading=false,assetInfo=null,accessories=null;
 let originals=new Map(),ownedMaterials=[],heroHead=new THREE.Vector3(),horseHeight=2.3;
 const clayMaterial=new THREE.MeshStandardMaterial({color:0xb9ae93,roughness:.65}),wireMaterial=new THREE.MeshStandardMaterial({color:0xd8c9a9,roughness:.85,wireframe:true});
