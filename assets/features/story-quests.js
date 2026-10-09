@@ -676,7 +676,7 @@ export function install(G){
  }
  G.trainingProgress?.register('side-quests',(save,events)=>{
   const updates=[];
-  for(const e of events||[])if(e&&['cleanjump','sxp','drill'].includes(e.type))updates.push(...applySideProgress(save,e.type,e.value));
+  for(const e of events||[])if(e&&['cleanjump','sxp','drill','tame'].includes(e.type))updates.push(...applySideProgress(save,e.type,e.value));
   return {updates};
  },summary=>notifySideProgress(summary?.updates));
  function openSideTab(){try{G.ui.openQuests();}catch(e){}const b=document.querySelector('[data-q="tab:side"]');if(b)b.click();}

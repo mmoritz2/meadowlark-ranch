@@ -12,16 +12,17 @@ body.dialogue-open #dlg button{min-height:44px;max-width:100%;white-space:normal
 body.dialogue-open #dlg input{min-height:44px;max-width:100%;box-sizing:border-box}
 body.dialogue-open #dlg :focus-visible{outline:3px solid #47725d;outline-offset:3px}
 body.dialogue-open #dlg:focus{outline:none}
-body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,#questTrack,#ctx,#touch,#stickZone,#stamWrap,#toasts,#courseHud,#hint,#dock,#statusCard,#chatFeed){visibility:hidden!important;pointer-events:none!important}
+body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,#questTrack,#ctx,#touch,#stickZone,#stamWrap,#toasts,#courseHud,#hint,#dock,#statusCard,#chatFeed,#rushQuick,#seWay){visibility:hidden!important;pointer-events:none!important}
 @media(max-width:600px){body.dialogue-open #dlg{bottom:calc(12px + env(safe-area-inset-bottom))!important;width:calc(100vw - 24px)!important;padding:16px 18px;max-height:76dvh!important}}
 @media(max-height:500px){body.dialogue-open #dlg{bottom:calc(12px + env(safe-area-inset-bottom))!important;max-height:76dvh!important;padding:12px 20px}body.dialogue-open #dlg p{font-size:14px;line-height:1.4;margin:6px 0 10px}body.dialogue-open #dlg>b{font-size:17px;margin-bottom:6px}}
 `;document.head.append(style);
- let active=false,previousFocus=null,speaker=null;
+ let active=false,previousFocus=null,speaker=null,horseFrame=null;
  const heldKeys=new Set(),blockedUntilRelease=new Set();
  const visible=()=>dlg.style.display!=='none'&&getComputedStyle(dlg).display!=='none';
  const controls=()=>[...dlg.querySelectorAll('button,input,select,textarea,a[href],[tabindex]')].filter(el=>!el.disabled&&el.tabIndex>=0&&el.getClientRects().length);
  function sync(){
   const open=visible();
+  if(horseFrame&&(!open||!horseFrame.group.parent||horseFrame.owner!==dlg.firstElementChild))horseFrame=null;
   if(open!==active){
    active=open;document.body.classList.toggle('dialogue-open',open);shade.hidden=!open;
    if(open)previousFocus=document.activeElement;
@@ -47,7 +48,45 @@ body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,
  }
  const observer=new MutationObserver(sync);observer.observe(dlg,{attributes:true,attributeFilter:['style'],childList:true});
  // Read visibility directly as well: opening and the next key event can share a task.
- G.dialogue={get active(){return visible();},get speaker(){return visible()?speaker:null;},setSpeaker(q){speaker=q||null;}};
+ G.dialogue={get active(){return visible();},get speaker(){return visible()?speaker:null;},setSpeaker(q){speaker=q||null;},frameHorse};
+ // A subject belongs to this exact choice, not every later conversation using #dlg.
+ // Approximate the horse's body; its floating nameplate must not enlarge the shot.
+ function frameHorse(group,heading){
+  if(!visible()||!dlg.firstElementChild||!group?.parent||!G.THREE||!G.camera||!Number.isFinite(heading)){horseFrame=null;return false;}
+  const V=G.THREE.Vector3;
+  horseFrame={group,heading,owner:dlg.firstElementChild,side:null,eye:null,at:new V(),desired:new V(),alternate:new V(),scale:new V()};
+  return true;
+ }
+ G.on('camera',c=>{
+  const shot=horseFrame;
+  if(!shot)return false;
+  if(!visible()||shot.owner!==dlg.firstElementChild||!shot.group.parent){horseFrame=null;return false;}
+  const cam=G.camera,W=G.world,width=innerWidth,height=innerHeight,rect=dlg.getBoundingClientRect();
+  const top=18,bottom=Math.min(height-18,rect.top-18),gap=bottom-top;
+  if(gap<60||width<=0||height<=0)return false;
+  shot.group.getWorldPosition(shot.at);shot.group.getWorldScale(shot.scale);
+  const scale=Math.max(.5,Math.min(2.5,Math.max(shot.scale.x,shot.scale.y,shot.scale.z)));
+  if(![shot.at.x,shot.at.y,shot.at.z,scale].every(Number.isFinite)){horseFrame=null;return false;}
+  shot.at.y+=1.25*scale;
+  const vf=cam.fov*Math.PI/180,tanV=Math.tan(vf/2),tanH=tanV*(cam.aspect||width/height);
+  const distance=Math.max(3.8*scale/(2*.82*tanH),2.7*scale/(2*.80*(gap/height)*tanV))+scale;
+  const forwardX=Math.sin(shot.heading),forwardZ=Math.cos(shot.heading);
+  const place=(side,out)=>{
+   out.set(shot.at.x+(-Math.cos(shot.heading)*side+forwardX*.22)*distance,shot.at.y+distance*.12,
+    shot.at.z+(Math.sin(shot.heading)*side+forwardZ*.22)*distance);
+   W?.followCamera?.resolve(shot.at,out,out);return out.distanceTo(shot.at);
+  };
+  if(shot.side===null){const right=place(1,shot.desired),left=place(-1,shot.alternate);shot.side=right>=left*.95?1:-1;}
+  place(shot.side,shot.desired);
+  // Other camera hooks run first. Smooth our own position so they cannot tug
+  // this shot back toward the rider, and never change the player's orbit/FOV.
+  if(!shot.eye)shot.eye=shot.desired.clone();
+  else shot.eye.lerp(shot.desired,1-Math.exp(-6*Math.min(.1,Math.max(0,c.dt||0))));
+  W?.followCamera?.resolve(shot.at,shot.eye,shot.eye);
+  cam.position.copy(shot.eye);cam.lookAt(shot.at);
+  cam.rotateX(Math.atan(((top+bottom)/height-1)*tanV));
+  return true;
+ });
  G.on('ride',ride=>{if(visible()){G.riding?.lock('dialogue',true);ride.target=0;ride.noJump=true;}});
  document.addEventListener('keydown',e=>{
   heldKeys.add(e.code);

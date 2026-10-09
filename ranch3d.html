@@ -708,7 +708,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=training-growth-1';
+import {FEATURES} from './assets/features/index.js?v=wild-bond-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 const HORSE_ARRIVAL=createHorseArrival();
@@ -755,7 +755,7 @@ G.trainingProgress={
   TRAINING_PROGRESS.set(id,{reduce,confirmed});
  },
  apply(s,events,receipt){const out={};for(const [id,handler] of TRAINING_PROGRESS)out[id]=handler.reduce(s,events,receipt);return out;},
- confirmed(receipt){for(const [id,handler] of TRAINING_PROGRESS){const summary=receipt.progress?.modules?.[id];if(summary==null||!handler.confirmed)continue;try{handler.confirmed(summary,receipt);}catch(e){console.error('training progress notification '+id,e);}}}
+ confirmed(receipt,verifiedSave){for(const [id,handler] of TRAINING_PROGRESS){const summary=receipt.progress?.modules?.[id];if(summary==null||!handler.confirmed)continue;try{handler.confirmed(summary,receipt,verifiedSave);}catch(e){console.error('training progress notification '+id,e);}}}
 };
 const MULS={};
 function addMul(name,fn){(MULS[name]=MULS[name]||[]).push(fn);return fn;}
@@ -9793,13 +9793,34 @@ function creditTrainingProgress(s,receipt){
  progress.modules=G.trainingProgress?.apply(s,events,receipt)||{};
  return progress;
 }
-function confirmTrainingProgress(receipt){
- const s=freshSave();if(s?.story){storyIdx=s.story.idx||0;storyProg=s.story.prog||0;}
+// Called only inside the wild encounter's reward draft. Its receipt ledger owns
+// deduplication; no live quest events or nested writes run before confirmation.
+function creditTamingProgress(s,receipt){
+ if(!s||!receipt||typeof receipt.runId!=='string'||!receipt.runId.trim()||!['home','sanctuary','helper'].includes(receipt.choice))throw Error('Invalid wild-horse progress receipt.');
+ const events=[{type:'tame',value:1}],progress={tamed:1,dailyDone:[],story:null,modules:{}};
+ const idx=s.story?.idx||0,m=STORY[idx],before=Math.max(0,Number(s.story?.prog)||0);
+ if(receipt.choice!=='helper'&&m?.type==='tame'&&before<m.goal){
+  s.story={...s.story,idx,prog:Math.min(m.goal,before+1)};
+  progress.story={idx,label:m.label,before,after:s.story.prog,goal:m.goal,npc:m.npc||'wren'};
+ }
+ progress.dailyDone=applyDailyProgress(s,'tame',1);
+ progress.modules=G.trainingProgress.apply(s,events,receipt);
+ return progress;
+}
+const confirmedTamingProgress=new Set();
+function confirmTamingProgress(receipt,verifiedSave){
+ if(receipt?.saved!==true||typeof receipt.runId!=='string'||confirmedTamingProgress.has(receipt.runId))return false;
+ confirmedTamingProgress.add(receipt.runId);
+ confirmTrainingProgress(receipt,verifiedSave);
+ return true;
+}
+function confirmTrainingProgress(receipt,verifiedSave){
+ const s=verifiedSave||freshSave();if(s?.story){storyIdx=s.story.idx||0;storyProg=s.story.prog||0;}
  _dailyMemo.key='';
  for(const q of receipt.progress?.dailyDone||[])toast('📋 Daily quest done: '+q.label+' — claim it in 📜 Quests!');
  const story=receipt.progress?.story;
  if(story&&story.before<story.goal&&story.after>=story.goal&&s?.story?.idx===story.idx&&(s.story.prog||0)>=story.goal){const giver=NPC_DEFS.find(n=>n.id===story.npc)||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+giver.name);}
- G.trainingProgress?.confirmed(receipt);
+ G.trainingProgress?.confirmed(receipt,s);
 }
 function retryDrillSave(){
  const pending=DRILL.pending;if(!pending)return false;
@@ -11621,7 +11642,8 @@ function todayTheme(){
  for(const ch of ds)h=(h*31+ch.charCodeAt(0))|0;
  return PHOTO_THEMES[Math.abs(h)%PHOTO_THEMES.length];
 }
-function passAdd(n){if(VIPON)n=Math.round(n*VIP_PASS);syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
+function passAmount(n,s){return (s?isVIP(s):VIPON)?Math.round(n*VIP_PASS):n;}
+function passAdd(n){n=passAmount(n);syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
 function buyVIP(i){
  const pl=VIP_PLANS[i]; if(!pl)return false; let ok=false;
  syncSave(s=>{ if((s.gems||0)<pl.g)return; s.gems-=pl.g;
@@ -12898,22 +12920,35 @@ const STORY=[
 let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
 let trainingStorySyncedRunId=null;
+const tamingStorySyncedRunIds=new Set();
+function pendingTamingStoryRuns(){
+ const list=G.worldPkg?.pendingTaming?.();
+ return Array.isArray(list)?list.filter(p=>p&&typeof p.runId==='string'&&['home','sanctuary','helper'].includes(p.lockedChoice||p.choice)&&!tamingStorySyncedRunIds.has(p.runId)):[];
+}
+function pendingStorySync(){return !!(DRILL.pending?.runId&&trainingStorySyncedRunId!==DRILL.pending.runId)||pendingTamingStoryRuns().length>0;}
 function syncPendingTrainingStory(s){
- const runId=DRILL.pending?.runId;if(!runId||trainingStorySyncedRunId===runId)return false;
- s=s||freshSave();
- if(s?.lastTraining?.runId!==runId||s.lastTraining.saved!==true||!s.story)return false;
- // Read the current cursor, never replay the receipt: its mission may already
- // have been claimed. This acknowledges story state only, without paying or notifying.
- storyIdx=s.story.idx||0;storyProg=s.story.prog||0;trainingStorySyncedRunId=runId;
+ const runId=DRILL.pending?.runId,training=runId&&trainingStorySyncedRunId!==runId,wild=pendingTamingStoryRuns();
+ if(!training&&!wild.length)return false;
+ s=s||freshSave();if(!s?.story)return false;
+ let recovered=false;
+ if(training&&s.lastTraining?.runId===runId&&s.lastTraining.saved===true){trainingStorySyncedRunId=runId;recovered=true;}
+ for(const p of wild){
+  const records=s.wildTaming?.receipts,r=records&&Object.hasOwn(records,p.runId)?records[p.runId]:null;
+  if(r?.runId===p.runId&&r.saved===true&&r.choice===(p.lockedChoice||p.choice)){tamingStorySyncedRunIds.add(p.runId);recovered=true;}
+ }
+ if(!recovered)return false;
+ // Read the current cursor, never replay a receipt: its mission may already
+ // have been claimed. Acknowledgements survive retries and later pending runs.
+ storyIdx=s.story.idx||0;storyProg=s.story.prog||0;
  return true;
 }
 function saveStory(change){syncSave(s=>{
  if(syncPendingTrainingStory(s)){
-  // Storage can recover after questEvt's entry read. Preserve its one new jump
+  // Storage can recover after questEvt's entry read. Preserve its new counter
   // on the recovered cursor, but never rewind a successor or replay a stale claim.
   if(!change||change.idx!==storyIdx)return;
   const m=STORY[storyIdx];
-  storyProg=m?.type==='cleanjump'?Math.min(m.goal,storyProg+Math.max(0,change.after-change.before)):Math.max(storyProg,change.after);
+  storyProg=m&&['cleanjump','tame'].includes(m.type)?Math.min(m.goal,storyProg+Math.max(0,change.after-change.before)):Math.max(storyProg,change.after);
  }
  s.story=Object.assign(s.story||{},{idx:storyIdx,prog:storyProg});
 });}   // keeps era, name, clues and v beside the cursor
@@ -12986,7 +13021,7 @@ function openDlg(){
  {const rb=$('dlgRole');if(rb)rb.onclick=()=>{d.style.display='none';openShop(def.role.open);};}
  $('dlgBtn').onclick=()=>{
   syncPendingTrainingStory();
-  if(m&&mine&&DRILL.pending&&trainingStorySyncedRunId!==DRILL.pending.runId){
+  if(m&&mine&&pendingStorySync()){
    // An unreadable pending save cannot authorize a claim from this old dialog.
    // Keep it available for a later click once storage can establish its cursor.
    const s=freshSave();if(!s)return;syncPendingTrainingStory(s);
@@ -14820,9 +14855,9 @@ function installFeatures(){
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
    flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
   money:{addCoins,addGems,addKeys,grantGems,payReward,rewardLabel,rewardKind,refreshWallet,statBump,logEarn,isVIP},
-  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,masteryBreed,statCeil,statCap,statNeed,effStats,statBreakdown,ensureStats,trainXp,MAX_LEVEL},
+  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,passAmount,masteryOf,masteryBreed,statCeil,statCap,statNeed,effStats,statBreakdown,ensureStats,trainXp,MAX_LEVEL},
   mul:mulOf,addMul,
-  quest:{questEvt,dailyEvt,story:{append:storyAppend,insertBefore:storyInsertBefore,list:()=>STORY},types:QUEST_TYPES,addDaily,addAch,
+  quest:{questEvt,dailyEvt,creditTamingProgress,confirmTamingProgress,story:{append:storyAppend,insertBefore:storyInsertBefore,list:()=>STORY},types:QUEST_TYPES,addDaily,addAch,
    STORY,DAILYQ,ACHS,NPC_DEFS,storyIdx:()=>storyIdx,storyProg:()=>storyProg,todayDaily,claimDaily,claimAch,saveStory,missionDone},
   tables:{EVENTS3,RACE_ROUTES,RACE_ITEMS,BREEDS3,TIER_BASE,FOODS3,FEED_TIER_LBL,SUPPS,PERS,PERS_KEYS,SEASONS,PASS_FREE,PASS_GOLD,VIP_PLANS,WAGE_TIERS,WEEK_TIERS,CALENDAR,
    DECOR_CAT,RANCH_LEVELS,RANCH_PERKS,TACK_SETS,RARITIES,GEAR_SLOTS,GEAR_NOUN,GEAR_ADJ,RAR_SELL,RAR_W,RAR_COL,SUMMON_TIERS,SUMMON_POOL,PETS3,BOARDS,MILES,NEIGHBOURS,WILD_BREEDS,

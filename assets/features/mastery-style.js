@@ -170,10 +170,10 @@ export function install(G){
 
  /* ===== 3. Mastery-up toasts and save fields ========================================== */
  G.save.ensure(s=>{ s.accInv=s.accInv||{}; if(s.wildMode==null)s.wildMode=false; s.masteryLv=s.masteryLv||{}; });
- function masteryBump(s,h){ if(!s||!h||!h.breed)return; const keys=[h.breed]; const base=BREED_FAMILY_BASE(h.breed); if(base&&base!==h.breed)keys.push(base);
-  for(const b of keys){ const M=masteryOf(s,b); const prev=s.masteryLv[b]||0; if(M>prev){ s.masteryLv[b]=M; const L=ladderOf(b)[M]; if(L)toast('🎖️ '+breedLabel(b)+' mastery '+M+'/'+maxOf(b)+' — '+L.label+'!'); } } }
+ function masteryBump(s,h,announce=true){ if(!s||!h||!h.breed)return; const keys=[h.breed]; const base=BREED_FAMILY_BASE(h.breed); if(base&&base!==h.breed)keys.push(base);
+  for(const b of keys){ const M=masteryOf(s,b); const prev=s.masteryLv[b]||0; if(M>prev){ s.masteryLv[b]=M; const L=ladderOf(b)[M]; if(L&&announce)toast('🎖️ '+breedLabel(b)+' mastery '+M+'/'+maxOf(b)+' — '+L.label+'!'); } } }
  function BREED_FAMILY_BASE(b){ return (G.xp.masteryBreed?G.xp.masteryBreed(b):b); }
- G.on('grantHorse',(s,h)=>masteryBump(s,h)); G.on('foal',(s,f)=>masteryBump(s,f));
+ G.on('grantHorse',(s,h,opts)=>masteryBump(s,h,!opts?.silent)); G.on('foal',(s,f)=>masteryBump(s,f));
 
  /* ===== 4. Looks: styles, dyes, accessories, fantasy effects ============================ */
  const MANE=[{id:'natural',lbl:'Natural',t:0,len:1},{id:'flowing',lbl:'Flowing',t:1,len:1.25},{id:'roached',lbl:'Roached',t:1,len:.35},{id:'trim',lbl:'Show trim',t:1,len:.7},

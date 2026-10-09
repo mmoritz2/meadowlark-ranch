@@ -1,3 +1,4 @@
+import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
 import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
    Regions with metadata and gating, living towns, named landmarks and per-town arenas, four
@@ -717,7 +718,7 @@ export function install(G){
   {id:'coyote',region:'coyote',x:-246,z:150,r:26,n:4,exclusive:true,coop:true,label:'Canyon herd'},
   {id:'hollowpeak',region:'hollowpeak',x:-128,z:-222,r:22,n:3,exclusive:true,coop:true,label:'Snowfield herd'},
  ];
- P.WILD_HERDS=WILD_HERDS;P.herds=[];
+ P.WILD_HERDS=WILD_HERDS;P.herds=[];let wildSerial=0,wildFeedSerial=0;
  const NAMES=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo','Sage','Juniper','Ember','Sorrel','Dune','Frost','Reed'];
  function pickWb(herd){const pool=T.WILD_BREEDS.filter(w=>!w.region||w.region===herd.region);const ex=pool.filter(w=>w.region===herd.region);const src=(herd.exclusive&&ex.length&&Math.random()<0.6)?ex:pool;return src[Math.floor(Math.random()*src.length)];}
  function spawnMember(herd,i){
@@ -726,71 +727,153 @@ export function install(G){
   const parts=H.makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9),breed:wb.breed});
   const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
   parts.group.position.set(x,groundH(x,z),z);scene.add(parts.group);
-  const m={herd,i,wb,parts,tag,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,4),phase:Math.random()*6,flee:0,trust:0,follow:false,remote:{},walked:0,name:NAMES[Math.floor(Math.random()*NAMES.length)],lastPub:0,coop:!!herd.coop,shown:false};
-  m.thing=W.addThing({kind:'wild',id:herd.id+':'+i,x,z,g:null,reach:3.2,member:m,
-   label:()=>m.flee>0?'':(m.follow?'🐎 '+m.name+' is following you · trust '+Math.round(effTrust(m))+'%':'🥕 Offer '+m.name+' a carrot (E) · trust '+Math.round(effTrust(m))+'%'),
-   use:()=>offerCarrot(m),tick:(dt,t)=>{t.x=m.pos.x;t.z=m.pos.z;}});
+  const m={runId:`wild-${Date.now().toString(36)}-${++wildSerial}-${Math.random().toString(36).slice(2,8)}`,herd,i,wb,parts,tag,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,4),phase:Math.random()*6,flee:0,trust:0,follow:false,remote:{},walked:0,name:NAMES[Math.floor(Math.random()*NAMES.length)],lastPub:0,coop:!!herd.coop,shown:false};
+  m.thing=W.addThing({kind:'wild',id:herd.id+':'+i,x,z,g:null,reach:5.5,member:m,
+   label:()=>m.flee>0?'':m.taming?(m.pending?'Retry saving '+m.name+'’s choice (E)':'Befriend '+m.name+' (E)'):(m.follow?m.name+' is following · trust '+Math.round(effTrust(m))+'%':'Offer '+m.name+' a carrot (E) · trust '+Math.round(effTrust(m))+'%'),
+   use:()=>useWildMember(m),tick:(dt,t)=>{t.x=m.pos.x;t.z=m.pos.z;}});
   return m;
  }
  for(const herd of WILD_HERDS){const list=[];for(let i=0;i<herd.n;i++)list.push(spawnMember(herd,i));P.herds.push({def:herd,members:list,respawn:[]});}
- function offerCarrot(m){
-  if(m.flee>0){toast('🐎 She is spooked — wait for her to settle.');return;}
-  if(Math.abs(player.speed)>0.8){toast('🐎 Halt first, then hold the carrot out.');return;}
-  let ok=false;S.sync(s=>{s.items=s.items||{};if((s.items.carrot||0)<1)return;s.items.carrot--;ok=true;});
-  if(!ok){toast('🥕 You have no carrots — the general store sells them.');return;}
-  m.trust=Math.min(100,m.trust+25);m.rest=3;m.fedT=1.2;G.sChime();
-  toast('🥕 '+m.name+' takes the carrot. Trust '+Math.round(effTrust(m))+'%');
-  Q.dailyEvt('feed',1);checkTame(m);
+ function wildBlocked(){return !!G.input?.blocked?.()||document.hidden||!!G.cam?.isFree?.()||document.body.classList.contains('posing')||!!G.course.get()||!!G.course.drillActive?.()||!!G.trail?.ride||!!G.rescueRide?.snapshot?.().active||!!G.roundup?.state?.().active||!!P.veh||!!player.flying||(player.y||0)>.2;}
+ function wildInteraction(m){return wildTamingInteraction({trust:m?.taming?100:effTrust(m),distance:hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z),speed:player.speed,blocked:wildBlocked(),flee:m.flee>0});}
+ function useWildMember(m){
+  if(!P.herds.some(h=>h.members.includes(m)))return false;
+  checkTame(m);
+  if(m.taming)return tameMember(m,true);
+  return offerCarrot(m);
  }
- /* Local trust, plus what club mates standing with the horse have built up, each capped at
-    60 for a shy herd so it really does take two. */
+ function offerCarrot(m){
+  if(m.taming)return tameMember(m,true);
+  if(wildBlocked()||hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z)>5.5)return false;
+  if(m.flee>0){toast('She is spooked. Give her room to settle.');return false;}
+  if(Math.abs(player.speed)>.8){toast('Halt first, then hold the carrot out.');return false;}
+  const feed=m.pendingCarrot||(m.pendingCarrot={id:m.runId+'-feed-'+(++wildFeedSerial)});let hadCarrot=false;
+  S.sync(s=>{
+   if(s.wildTaming?.feeds?.[feed.id]){hadCarrot=true;return;}
+   s.items=s.items||{};if((s.items.carrot||0)<1)return;
+   hadCarrot=true;s.items.carrot--;
+   s.wildTaming=s.wildTaming||{version:1};s.wildTaming.feeds={...s.wildTaming.feeds,[feed.id]:true};
+  });
+  let saved;try{saved=S.fresh();}catch{}
+  if(!saved?.wildTaming?.feeds?.[feed.id]){toast(hadCarrot||!saved?'The carrot could not be saved. Try offering it again.':'You have no carrots. You can still earn trust by standing quietly nearby.');return false;}
+  m.pendingCarrot=null;
+  m.trust=Math.min(100,m.trust+25);m.rest=3;m.fedT=1.2;G.sChime();
+  toast(m.name+' takes the carrot. Trust '+Math.round(effTrust(m))+'%.');
+  Q.dailyEvt('feed',1);checkTame(m);return true;
+ }
+ /* Shy herds retain their two-rider rule. Reaching full trust latches the earned
+    encounter; a helper leaving cannot revoke the choice before it is saved. */
  function effTrust(m){
+  if(!m)return 0;if(m.taming)return 100;
   const now=performance.now();let tot=m.coop?Math.min(60,m.trust):m.trust;
   for(const id in m.remote){const r=m.remote[id];if(now-r.at>4000){delete m.remote[id];continue;}tot+=Math.min(60,r.tr);}
   return Math.min(100,tot);
  }
  function helpers(m){const now=performance.now();return Object.values(m.remote).filter(r=>now-r.at<=4000).map(r=>r.n);}
- function checkTame(m){if(effTrust(m)>=100&&!m.taming){m.taming=true;tameMember(m,true);}}
+ function checkTame(m){
+  if(!m||m.taming||m.flee>0||effTrust(m)<100)return false;
+  m.taming=true;m.trust=100;m.follow=true;m.helperNames=helpers(m);m.flee=0;
+  toast(m.name+' trusts you. Stop nearby to choose a home.');return true;
+ }
  function removeMember(m){try{scene.remove(m.parts.group);}catch(e){}const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
  function nearestSanctuary(x,z){let best=null,bd=1e9;for(const sc of SANCTUARIES){const d=hyp(x,z,sc.x,sc.z);if(d<bd){bd=d;best=sc;}}return best;}
- /* Tamed. Bring her home, or release her to the nearest sanctuary — both pay, and the herd
-    fills the gap again in a few minutes. Helpers are told, and paid, over the club channel. */
- function tameMember(m,finisher){
-  const hn=helpers(m);
-  removeMember(m);G.sChime();G.sGem();
-  if(finisher&&hn.length)N.sendChat('',{wildDone:{h:m.herd.id,i:m.i,by:String(N.myName()).slice(0,14)}});
-  const sc=nearestSanctuary(m.pos.x,m.pos.z);
-  const d=$('dlg');
-  d.innerHTML='<b>🎉 '+m.name+' trusts you!</b><p>The '+(m.wb.variant||m.wb.breed)+' stands quiet at your side'+(hn.length?' — with '+hn.join(', ')+' helping':'')+'.</p>'
-   +'<button id="wTameHome" style="margin-right:6px">🏡 Bring her home</button><button id="wTameSanct">🏕️ Release to '+sc.label.slice(sc.label.indexOf(' ')+1)+' (+150🪙 +1💎)</button>';
+ const tameEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const pendingWild=new Set();
+ P.pendingTaming=()=>[...pendingWild].map(m=>m.pending).filter(Boolean);
+ function tamePass(s){return G.xp.passAmount(40,s);}
+ function payTaming(s,pay){for(const [kind,value] of Object.entries(pay)){if(!value)continue;const handler=T.REWARD_KINDS[kind];if(!handler?.pay)throw Error('Missing wild-horse reward '+kind);handler.pay(s,value,pay);}}
+ function tameReceipt(m,result){
+  const d=$('dlg'),home=result.choice==='home',helper=result.choice==='helper';
+  d.innerHTML='<b>'+tameEsc(home?m.name+' has joined your ranch':helper?'A horse brought home together':m.name+' has a sanctuary home')+'</b>'
+   +'<p>'+tameEsc(home?'Your patience earned a new partner. '+H.breedLabel(m.wb.breed)+' · '+m.herd.label+'.':helper?'Your help counted toward this horse’s trust.':m.name+' is now part of '+result.sanctuaryLabel+'.')+'</p>'
+   +'<p class="wt-saved">Saved · '+(result.pay.c?result.pay.c+' coins · ':'')+result.pay.g+' gem'+(result.pay.g===1?'':'s')+' · '+result.pay.p+' pass points</p>'
+   +'<div class="wt-actions">'+(home?'<button id="wTameMeet">Meet '+tameEsc(m.name)+' in My Horses</button>':!helper?'<button id="wTameVisit">View sanctuary</button>':'')+'<button id="wTameClose">Keep exploring</button></div>';
   d.style.display='block';
-  const done=(how)=>{d.style.display='none';
-   S.sync(s=>{s.stats=s.stats||{};s.stats.tamedWild=(s.stats.tamedWild||0)+1;if(hn.length)s.stats.coopTames=(s.stats.coopTames||0)+1;s.wildSeen=s.wildSeen||{};s.wildSeen[m.herd.id]=(s.wildSeen[m.herd.id]||0)+1;
-    if(how==='home'){const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),ri=(a,b)=>Math.floor(a+Math.random()*(b-a+1)),base=m.wb.base;
-     H.grantHorse(s,m.wb.breed,{name:m.name,colors:{body:m.wb.body,mane:m.wb.mane},bond:20,src:'wild',stats:{speed:cl(base+ri(-1,1),1,10),stamina:cl(base+ri(-1,1),1,10),jump:cl(base+ri(-1,1),1,10),accel:cl(base+ri(-1,1),1,10),agility:cl(base+ri(-1,1),1,10)},needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{wild:m.wb.breed,variant:m.wb.variant||null}});
-     G.money.grantGems(s,1);}
-    else{s.sanctuary=s.sanctuary||{};(s.sanctuary[sc.id]=s.sanctuary[sc.id]||[]).push({breed:m.wb.breed,variant:m.wb.variant||null,body:m.wb.body,mane:m.wb.mane,name:m.name,from:'wild',at:Date.now()});s.stats.released=(s.stats.released||0)+1;M.payReward(s,{c:150,g:1});}
-   });
-   M.refreshWallet();G.xp.passAdd(40);Q.questEvt('tame',1);Q.dailyEvt('tame',1);
-   if(how==='home'){try{H.reloadHorses();}catch(e){}toast('🎉 '+m.name+' joins your ranch! +1💎');}
-   else{refreshSanctuary(sc);toast('🏕️ '+m.name+' runs free at the '+sc.label.slice(sc.label.indexOf(' ')+1)+'. +150🪙 +1💎');}
-  };
-  $('wTameHome').onclick=()=>done('home');$('wTameSanct').onclick=()=>done('sanct');
+  $('wTameClose').onclick=()=>{d.style.display='none';};
+  if(home)$('wTameMeet').onclick=()=>{d.style.display='none';G.seHorses?.open?G.seHorses.open():UI.openStable();G.seHorses?.select(result.horseId);};
+  else if(!helper)$('wTameVisit').onclick=()=>openSanctuary(SANCTUARIES.find(sc=>sc.id===result.sanctuaryId));
+ }
+ function chooseWild(m,choice){
+  if(!P.herds.some(h=>h.members.includes(m))||!m.taming)return false;
+  if(!m.pending){
+   if(!['home','sanctuary','helper'].includes(choice))return false;
+   const sc=nearestSanctuary(m.pos.x,m.pos.z),base=m.wb.base;
+   m.pending={runId:choice==='helper'?(m.helperRunId||m.runId):m.runId,choice,stats:Object.fromEntries(['speed','stamina','jump','accel','agility'].map(k=>[k,Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1))])),sanctuaryId:sc.id,sanctuaryLabel:sc.label.slice(sc.label.indexOf(' ')+1)};
+   pendingWild.add(m);
+  }
+  const outcome=saveWildTaming(S,m.pending,(s,pending)=>{
+   const helper=pending.choice==='helper',home=pending.choice==='home';
+   const before={c:s.coins||0,g:s.gems||0,p:s.pass?.pts||0};let horseId=null;
+   if(home){
+    const h=H.grantHorse(s,m.wb.breed,{name:m.name,noName:true,silent:true,preserveWildAppearance:true,colors:{body:m.wb.body,mane:m.wb.mane},bond:20,src:'wild',stats:{...pending.stats},needs:{hunger:90,thirst:90,clean:90,happy:90},extra:{wild:{breed:m.wb.breed,since:Date.now(),coat:null},variant:m.wb.variant||null,mark2:null,wildEncounter:pending.runId}});
+    if(!h)throw Error('Your new horse could not be added.');horseId=h.id;
+   }else if(!helper){
+    s.sanctuary=s.sanctuary||{};(s.sanctuary[pending.sanctuaryId]=s.sanctuary[pending.sanctuaryId]||[]).push({breed:m.wb.breed,variant:m.wb.variant||null,body:m.wb.body,mane:m.wb.mane,name:m.name,from:'wild',at:Date.now(),wildEncounter:pending.runId});
+   }
+   s.stats=s.stats||{};
+   if(!helper){s.stats.tamedWild=(s.stats.tamedWild||0)+1;s.wildSeen=s.wildSeen||{};s.wildSeen[m.herd.id]=(s.wildSeen[m.herd.id]||0)+1;if(!home)s.stats.released=(s.stats.released||0)+1;}
+   if(helper||m.helperNames?.length)s.stats.coopTames=(s.stats.coopTames||0)+1;
+   payTaming(s,{c:home?0:helper?300:150,g:helper?2:1,p:tamePass(s)});
+   const result={runId:pending.runId,choice:pending.choice,horseId,name:m.name,breed:m.wb.breed,herdId:m.herd.id,sanctuaryId:pending.sanctuaryId,sanctuaryLabel:pending.sanctuaryLabel,
+    pay:{c:(s.coins||0)-before.c,g:(s.gems||0)-before.g,p:(s.pass?.pts||0)-before.p}};
+   result.progress=Q.creditTamingProgress(s,result);return result;
+  });
+  if(!outcome.ok){if(m.pending.choice==='helper')toast('Your help is waiting to be saved. Stop beside '+m.name+' to retry.');else showWildChoice(m,true);return false;}
+  const result=outcome.result;
+  // These effects announce only the persisted choice. No successful-looking
+  // toast, despawn, or helper broadcast can happen before this read-back.
+  removeMember(m);Q.confirmTamingProgress(result,outcome.saved);pendingWild.delete(m);m.pending=null;
+  if(result.choice==='home')H.reloadHorses();
+  else if(result.choice==='sanctuary')refreshSanctuary(SANCTUARIES.find(sc=>sc.id===result.sanctuaryId));
+  M.refreshWallet();G.sChime();G.sGem();
+  if(result.choice!=='helper'&&m.helperNames?.length)N.sendChat('',{wildDone:{h:m.herd.id,i:m.i,by:String(N.myName()).slice(0,14),runId:result.runId}});
+  if(result.choice==='helper'){const d=$('dlg');if(d.dataset.wildTaming===m.runId&&d.querySelector('#wTameHome,#wTameRetry'))d.style.display='none';toast('Your help brought '+m.name+' home. Saved: '+result.pay.c+' coins, '+result.pay.g+' gems and '+result.pay.p+' pass points.');}
+  else tameReceipt(m,result);return true;
+ }
+ function showWildChoice(m,failed=false){
+  const d=$('dlg'),sc=nearestSanctuary(m.pos.x,m.pos.z),pending=m.pending;
+  d.dataset.wildTaming=m.runId;
+  G.riding?.releaseAll();
+  d.innerHTML='<b>'+tameEsc(m.name)+' trusts you</b><p>'+tameEsc(H.breedLabel(m.wb.breed)+' · '+m.herd.label)+'. '+(pending?'Your choice is waiting to be saved.':'You stayed close and let this horse set the pace. Choose where your new friend goes next.')+'</p>'
+   +(pending?'<p role="status" class="wt-pending">'+tameEsc(failed?'The save did not finish. '+m.name+' is still here. Keep this tab open and retry.':'Retry saving your chosen home before making another choice.')+'</p><div class="wt-actions"><button id="wTameRetry">Retry save</button><button id="wTameLater">Keep walking together</button></div>':
+    '<div class="wt-actions"><button id="wTameHome"><strong>Welcome to my ranch</strong><small>Keep '+tameEsc(m.name)+' · 1 gem · '+tamePass(S.fresh())+' pass points</small></button><button id="wTameSanct"><strong>Release to '+tameEsc(sc.label.slice(sc.label.indexOf(' ')+1))+'</strong><small>150 coins · 1 gem · '+tamePass(S.fresh())+' pass points</small></button><button id="wTameLater">Keep walking together</button></div>');
+  d.style.display='block';
+  G.dialogue?.frameHorse?.(m.parts.group,m.heading);
+  $('wTameLater').onclick=()=>{d.style.display='none';};
+  if(pending)$('wTameRetry').onclick=()=>chooseWild(m,pending.choice);
+  else{$('wTameHome').onclick=()=>chooseWild(m,'home');$('wTameSanct').onclick=()=>chooseWild(m,'sanctuary');}
+ }
+ function tameMember(m,finisher){
+  const ready=wildInteraction(m);if(!m.taming||!ready.eligible){if(ready.reason)toast(ready.reason);return false;}
+  showWildChoice(m);return true;
  }
  /* Club mates: every second, while you are working on a shy horse, say so; a helper's trust
     reaches you the same way. The finisher's wildDone pays everyone who helped. */
  G.on('chat',(m,nm)=>{
   if(m.wild&&typeof m.wild==='object'){const hd=P.herds.find(h=>h.def.id===String(m.wild.h).slice(0,14));const mem=hd&&hd.members.find(x=>x.i===+m.wild.i);if(mem){mem.remote[String(m.id).slice(0,24)]={n:String(nm||'?').slice(0,14),tr:Math.max(0,Math.min(100,+m.wild.tr||0)),at:performance.now()};if(!mem.taming)checkTame(mem);}return true;}
-  if(m.wildDone&&typeof m.wildDone==='object'){const hd=P.herds.find(h=>h.def.id===String(m.wildDone.h).slice(0,14));const mem=hd&&hd.members.find(x=>x.i===+m.wildDone.i);if(mem&&mem.trust>0&&!mem.taming){mem.taming=true;removeMember(mem);S.sync(s=>{M.payReward(s,{c:300,g:2});s.stats=s.stats||{};s.stats.coopTames=(s.stats.coopTames||0)+1;});M.refreshWallet();G.xp.passAdd(40);Q.dailyEvt('tame',1);toast('👥 '+String(m.wildDone.by||nm).slice(0,14)+' tamed '+mem.name+' with your help! +300🪙 +2💎');}return true;}
+  if(m.wildDone&&typeof m.wildDone==='object'){
+   const hd=P.herds.find(h=>h.def.id===String(m.wildDone.h).slice(0,14)),mem=hd&&hd.members.find(x=>x.i===+m.wildDone.i);
+   const remoteRun=typeof m.wildDone.runId==='string'&&/^wild-[a-z0-9-]{1,100}$/.test(m.wildDone.runId)?m.wildDone.runId:null;
+   const helperRun=remoteRun?'helper-'+remoteRun:null;
+   if(helperRun&&S.fresh()?.wildTaming?.receipts?.[helperRun]?.saved)return true;
+   if(mem&&mem.trust>0&&!mem.pending){
+    mem.taming=true;mem.trust=100;mem.follow=true;mem.helperNames=[String(m.wildDone.by||nm).slice(0,14)];
+    // A saved finisher settles helpers who already reached full trust, too.
+    // Preserve a destination that this rider has already chosen and is saving.
+    if(helperRun)mem.helperRunId=helperRun;
+    chooseWild(mem,'helper');
+   }
+   return true;
+  }
  });
  /* The herd loop. Idle herds cost nothing: a herd more than 260 m off is skipped whole. */
  function tickHerds(dt,t){
-  const sp=Math.abs(player.speed),now=performance.now();
+  const sp=Math.abs(player.speed),now=performance.now(),paused=wildBlocked();
   P.trustFocus=null;let focusScore=-1e9;   // the horse you are working on wins over a stranger that wandered closer
   for(const hd of P.herds){
    const far=hyp(player.pos.x,player.pos.z,hd.def.x,hd.def.z);
    if(hd.respawn.length&&hd.respawn[0].at<now){const r=hd.respawn.shift();hd.members.push(spawnMember(hd.def,r.i));}
-   if(far>260){for(const m of hd.members)m.parts.group.visible=false;continue;}
+   if(far>260&&!hd.members.some(m=>m.follow||m.pending)){for(const m of hd.members)m.parts.group.visible=false;continue;}
    if(!hd.seen&&far<hd.def.r+40){hd.seen=true;S.sync(s=>{s.wildSeen=s.wildSeen||{};s.wildSeen[hd.def.id]=s.wildSeen[hd.def.id]||0;});toast('✨ Wild horses — the '+hd.def.label+'. Walk up slowly, no galloping.');}
    for(const m of hd.members){
     const previousX=m.pos.x,previousZ=m.pos.z;
@@ -798,21 +881,25 @@ export function install(G){
     const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);
     if(m.fedT>0)m.fedT-=dt;
     const tolerant=m.follow?9:4.5;
-    if(wd<14&&sp>tolerant&&!P.veh)m.flee=2.5;
+    if(!paused&&!m.taming&&wd<14&&sp>tolerant&&!P.veh)m.flee=2.5;
     let gait='walk',amp=0.4,mv=0;
-    if(m.flee>0){
+    if((m.follow||m.taming)&&paused){m.phase+=dt*1.2;amp=.05;
+    }else if(m.flee>0){
      m.flee-=dt;m.follow=false;
      m.heading=Math.atan2(m.pos.x-player.pos.x,m.pos.z-player.pos.z);m.heading=avoid(m,m.heading,3);
      m.pos.x+=Math.sin(m.heading)*7*dt;m.pos.z+=Math.cos(m.heading)*7*dt;pushOut(m,0.5);
      const fd=hyp(m.pos.x,m.pos.z,m.herd.x,m.herd.z);if(fd>m.herd.r*2.2){m.pos.x=m.herd.x+(m.pos.x-m.herd.x)*m.herd.r*2.2/fd;m.pos.z=m.herd.z+(m.pos.z-m.herd.z)*m.herd.r*2.2/fd;}
      m.trust=Math.max(0,m.trust-dt*12);m.phase+=dt*9;gait='gallop';amp=0.9;mv=9;
     }else if(m.follow){
-     const bx=player.pos.x-Math.sin(player.heading)*4,bz=player.pos.z-Math.cos(player.heading)*4;
+     // Settle within the handover reach, slightly beside the rider. The old
+     // four-metre offset plus a1.6m stop radius stranded full trust outside5.5m.
+     const side=m.i%2?-2.7:2.7;
+     const bx=player.pos.x-Math.sin(player.heading)*3+Math.cos(player.heading)*side,bz=player.pos.z-Math.cos(player.heading)*3-Math.sin(player.heading)*side;
      const px=m.pos.x,pz=m.pos.z;
-     mv=steer(m,bx,bz,dt,6.5,{stop:1.6,base:1.2,gain:0.8,turn:3.5});
+     mv=steer(m,bx,bz,dt,6.5,{stop:1,base:1.2,gain:0.8,turn:3.5});
      if(mv>0){m.walked+=hyp(m.pos.x,m.pos.z,px,pz);if(m.walked>=5){Q.dailyEvt('walkwild',Math.floor(m.walked));m.walked-=Math.floor(m.walked);}}
-     if(wd<9&&sp<6.5)m.trust=Math.min(100,m.trust+dt*6);
-     if(wd>40){m.follow=false;m.trust=Math.max(0,m.trust-20);toast('🐎 '+m.name+' lost sight of you and turned back.');}
+     if(!paused&&wd<9&&sp<6.5)m.trust=Math.min(100,m.trust+dt*6);
+     if(wd>40){m.follow=false;if(!m.taming)m.trust=Math.max(0,m.trust-20);toast(m.name+' lost sight of you. Return to continue your encounter.');}
      m.phase+=dt*(mv>3.5?6:3);gait=mv>3.5?'gallop':'walk';amp=mv>3.5?0.72:mv>0.2?0.42:0.05;
     }else{
      m.phase+=dt*(m.rest>0?1.2:4);
@@ -821,11 +908,12 @@ export function install(G){
       if(dd<0.6){m.rest=2+Math.random()*4;const a2=Math.random()*Math.PI*2,rr=Math.random()*m.herd.r;m.tx=m.herd.x+Math.cos(a2)*rr;m.tz=m.herd.z+Math.sin(a2)*rr;if(!fallsAllowsHorse(m.tx,m.tz)){const target=findClear(m.tx,m.tz,1.2,m.herd.r,fallsAllowsHorse);m.tx=target[0];m.tz=target[1];}}
       else mv=steer(m,m.tx,m.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2});}
      amp=m.rest>0?0.05:0.4;
-     if(wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));m.rest=Math.max(m.rest,0.6);   // she stands for you while you are calm beside her
-      if(m.trust>=50&&!m.follow&&!m.coop){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow — walk her home, slowly.');}
-      if(m.trust>=50&&m.coop&&!m.follow&&effTrust(m)>=50){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow — walk her home, slowly.');}
+     if(!paused&&wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));m.rest=Math.max(m.rest,0.6);   // she stands for you while you are calm beside her
+      if(m.trust>=50&&!m.follow&&!m.coop){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow. Walk together at a gentle pace.');}
+      if(m.trust>=50&&m.coop&&!m.follow&&effTrust(m)>=50){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow. Walk together at a gentle pace.');}
       checkTame(m);}
     }
+    if(!paused&&m.flee<=0)checkTame(m);
     // Steering whiskers anticipate the mountain; this final movement guard
     // also catches flightless horses fleeing or following across its waterline.
     if(!fallsAllowsHorse(m.pos.x,m.pos.z)){m.pos.x=previousX;m.pos.z=previousZ;m.tx=m.herd.x;m.tz=m.herd.z;m.heading+=.6;mv=0;}
@@ -843,23 +931,42 @@ export function install(G){
  /* One HUD for every wild horse — the herds and the Silver Kestrel alike: a bar, what she is
     doing, and who is helping. Shown whenever one is within twenty metres. */
  const hud=$('tameHud');
- if(hud)hud.innerHTML='<span id="tameTxt"></span><small id="tameSub"></small><div class="cbar"><div id="tameFill" class="cfill" style="width:0%"></div></div>';
+ {const st=document.createElement('style');st.textContent=`
+ #tameHud{width:min(390px,calc(100vw - 440px));box-sizing:border-box;border:1px solid #a8c5ad55;border-radius:14px;padding:12px 16px;background:#183e32f2;line-height:1.4;box-shadow:0 5px 25px #17382725}
+ #tameHud .cbar{width:100%;height:6px;margin-top:8px}#tameHud small{line-height:1.4;margin-top:4px}
+ #wildTameAction{width:100%;min-height:44px;border:1px solid #e7d497;border-radius:8px;margin-top:10px;padding:9px 12px;background:#eee1b4;color:#173f30;font:750 14px/1.3 inherit;cursor:pointer}
+ #wildTameAction:disabled{background:#ffffff10;color:#d8e4d1;border-color:#ffffff40;cursor:default}#wildTameAction[hidden]{display:none}
+ body.dialogue-open #tameHud,body.se-screen-open #tameHud{display:none!important}
+ .wt-actions{display:flex;flex-wrap:wrap;gap:8px}.wt-actions button{flex:1;min-width:170px;padding:12px 16px;text-align:left}.wt-actions small{display:block;font-size:12px;font-weight:500;line-height:1.4;margin-top:5px}.wt-saved{color:#356645;font-weight:700}.wt-pending{padding:10px 12px;border:1px solid #d6b874;border-radius:9px;background:#f4e9ca}
+ @media(max-width:800px){#tameHud{top:120px;width:calc(100vw - 28px);max-width:390px}.wt-actions button{min-width:145px}}
+ @media(max-width:500px){.wt-actions{flex-direction:column}.wt-actions button{width:100%}}
+ @media(max-height:500px) and (min-width:601px){#tameHud{top:12px;width:calc(100vw - 415px);max-width:340px;padding:9px 12px;font-size:12px}#tameHud small{font-size:10px}#wildTameAction{margin-top:6px}}
+ `;document.head.appendChild(st);}
+ function ensureTrustHud(){
+  if(!hud||$('wildTameAction'))return;
+  hud.innerHTML='<span id="tameTxt"></span><small id="tameSub"></small><div class="cbar"><div id="tameFill" class="cfill" style="width:0%"></div></div><button id="wildTameAction" type="button" hidden></button>';
+  $('wildTameAction').onclick=()=>{if(P.trustFocus)useWildMember(P.trustFocus);};
+ }
+ ensureTrustHud();
  function tickTrustHud(){
-  if(!hud)return;
-  if(!$('tameTxt'))hud.innerHTML='<span id="tameTxt"></span><small id="tameSub"></small><div class="cbar"><div id="tameFill" class="cfill" style="width:0%"></div></div>';   // the Kestrel loop writes textContent
-  const sp=Math.abs(player.speed);
+  if(!hud)return;ensureTrustHud();
+  const sp=Math.abs(player.speed),button=$('wildTameAction');button.hidden=true;
   let tr=null,txt='',sub='',bad=false;
   const k=G.wild&&G.wild.get&&G.wild.get();
-  if(k){const wd=hyp(player.pos.x,player.pos.z,k.pos.x,k.pos.z);if(wd<20){tr=G.wild.trust();bad=k.flee>0;txt=bad?'🐎 Spooked — slow down!':wd<5.5&&sp<2?'🤝 Earning her trust… '+Math.round(tr)+'%':'🐎 Walk closer, gently · trust '+Math.round(tr)+'%';sub=k.wb&&k.wb.kestrel?'the Silver Kestrel':'a wild horse';}}
+  if(k){const wd=hyp(player.pos.x,player.pos.z,k.pos.x,k.pos.z);if(wd<20){tr=G.wild.trust();bad=k.flee>0;txt=bad?'Spooked — slow down!':wd<5.5&&sp<2?'Earning her trust… '+Math.round(tr)+'%':'Walk closer, gently · trust '+Math.round(tr)+'%';sub=k.wb&&k.wb.kestrel?'the Silver Kestrel':'a wild horse';}}
   const m=P.trustFocus;
-  if(tr==null&&m){const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);tr=effTrust(m);bad=m.flee>0;const hn=helpers(m);
-   txt=bad?'🐎 Spooked — slow down!':m.follow?'🐎 '+m.name+' is following you — walk her home · '+Math.round(tr)+'%':wd<5.5&&sp<2?'🤝 Earning '+m.name+'\'s trust… '+Math.round(tr)+'%':'🐎 Walk closer, gently · trust '+Math.round(tr)+'%';
-   sub=(m.wb.variant||m.wb.breed)+' · '+m.herd.label+(m.coop?' · shy: '+(hn.length?'👥 '+hn.join(', ')+' helping':'needs two riders (each up to 60%)'):'')+(m.trust<50&&!m.follow?' · E with a carrot for +25':'');}
+  if(tr==null&&m){const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);tr=effTrust(m);bad=m.flee>0;const hn=helpers(m),ready=wildInteraction(m);
+   txt=m.taming?m.name+' trusts you · 100%':bad?'Spooked — slow down!':m.follow?m.name+' is following · '+Math.round(tr)+'%':wd<5.5&&sp<2?'Earning '+m.name+'’s trust… '+Math.round(tr)+'%':'Walk closer, gently · trust '+Math.round(tr)+'%';
+   sub=m.taming?(m.pending?'Your choice is waiting to be saved. ':ready.eligible?'Choose a home, or keep walking together. ':ready.reason+' '):'Stand quietly nearby. Carrots are optional. ';
+   if(!m.taming&&m.follow)sub='Keep a gentle pace and stay close to build trust. ';
+   sub+=(m.wb.variant||H.breedLabel(m.wb.breed))+' · '+m.herd.label+(m.coop&&!m.taming?' · shy: '+(hn.length?hn.join(', ')+' helping':'needs two riders; local trust up to 60%'):'');
+   if(m.taming){button.hidden=false;button.disabled=!ready.eligible;button.textContent=m.pending?'Retry save':ready.eligible?'Befriend '+m.name:ready.status==='far'?'Walk closer to befriend':'Stop to befriend';}
+  }
   if(tr==null){hud.style.display='none';return;}
   hud.style.display='block';hud.classList.toggle('bad',bad);
   $('tameTxt').textContent=txt;$('tameSub').textContent=sub;$('tameFill').style.width=Math.round(tr)+'%';
  }
- P.effTrust=effTrust;P.helpers=helpers;
+ P.effTrust=effTrust;P.helpers=helpers;P.wildInteraction=wildInteraction;
  if(G.wild)G.wild.strays=false;   // the herds replace the single stray; the Kestrel still comes for the story
 
  /* ================= 8. sanctuaries ================= */

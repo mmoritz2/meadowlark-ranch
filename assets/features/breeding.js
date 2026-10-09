@@ -340,8 +340,8 @@ export function install(G){
  G.on('grantHorse',(s,h,opts)=>{
   opts=opts||{}; if(opts.src!=='wild'||h.breed==='kestrel')return;
   h.wild=Object.assign({since:Date.now(),breed:h.breed,coat:null},typeof h.wild==='object'?h.wild:{});
-  if(Math.random()<WILD_COAT_CHANCE){const wc=WILD_COATS[h.breed]||WILD_COATS._any;h.colors={body:wc.body,mane:wc.mane};h.mark=wc.mark;if(wc.markCol)h.markCol=wc.markCol;else delete h.markCol;h.variant=null;h.wild.coat=wc.label;h.genes=deriveGenes(h);
-   setTimeout(()=>{try{toast('🌿 '+h.name+' wears a rare wild coat: '+wc.label+' — breed within 3 days to pass it on!');}catch(e){}},1200);}
+  if(!opts.preserveWildAppearance&&Math.random()<WILD_COAT_CHANCE){const wc=WILD_COATS[h.breed]||WILD_COATS._any;h.colors={body:wc.body,mane:wc.mane};h.mark=wc.mark;if(wc.markCol)h.markCol=wc.markCol;else delete h.markCol;h.variant=null;h.wild.coat=wc.label;h.genes=deriveGenes(h);
+   if(!opts.silent)setTimeout(()=>{try{toast('🌿 '+h.name+' wears a rare wild coat: '+wc.label+' — breed within 3 days to pass it on!');}catch(e){}},1200);}
  });
 
  /* ---- 8. tokens: sources and the wallet ---------------------------------------------- */

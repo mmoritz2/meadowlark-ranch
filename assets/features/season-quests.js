@@ -345,12 +345,12 @@ export function install(G){
  });
  G.trainingProgress?.register('season-almanac',(save,events)=>{
   const updates=[];
-  for(const e of events||[])if(e&&['cleanjump','sxp','drill'].includes(e.type)){const update=applyBookProgress(save,e.type,e.value);if(update)updates.push(update);}
+  for(const e of events||[])if(e&&['cleanjump','sxp','drill','tame'].includes(e.type)){const update=applyBookProgress(save,e.type,e.value);if(update)updates.push(update);}
   return {updates};
- },summary=>{
+ },(summary,receipt,verifiedSave)=>{
   // Whole-number training events never enter the gallop buffer. Refresh the live
   // cursor only after its draft has been durably saved, without another write.
-  syncCur();notifyBookProgress(summary?.updates);
+  syncCur(verifiedSave);notifyBookProgress(summary?.updates);
  });
  function claimEntry(){
   flushQ();

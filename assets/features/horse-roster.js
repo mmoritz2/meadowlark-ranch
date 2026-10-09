@@ -421,7 +421,7 @@ export function install(G){
    if(A.variant)h.variant=A.variant;
    h.colors=A.colors; h.maneAppearance={source:'natural',color:h.colors.mane}; if(A.mark!==undefined){if(A.mark==='none'&&!A.variant)delete h.mark;else h.mark=A.mark;} if(A.markCol)h.markCol=A.markCol;
    h.mark2=A.mark2==='none'?null:A.mark2;
-  }else if(!o.hero){const rnd=lcg((h.id||0)+5);h.mark2=pickW(MARK2_WEIGHTS,rnd);if(h.mark2==='none')h.mark2=null;}
+  }else if(!o.hero&&!opts.preserveWildAppearance){const rnd=lcg((h.id||0)+5);h.mark2=pickW(MARK2_WEIGHTS,rnd);if(h.mark2==='none')h.mark2=null;}
   if(Array.isArray(o.traits)){for(const k of o.traits)if(TRAITS[k]&&(h.traits||[]).indexOf(k)<0)h.traits=(h.traits||[]).concat([k]);}
   if(o.egg&&h.foal)h.egg=true;
   h.stars=starsN(h);
