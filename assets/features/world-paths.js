@@ -20,6 +20,7 @@
 import {createRoadsideBenchGeometry,fitRoadsideBenchGeometry} from '../roadside-prop-geometry.mjs?v=roadside-props-1';
 import {createFingerpostBoardData} from '../fingerpost-geometry.mjs?v=roadside-props-1';
 import {buildRoadRibbon} from '../road-ribbon.mjs?v=bounded-bevel-1';
+import {drapeRoadSurface} from '../road-terrain-drape.mjs?v=terrain-drape-1';
 import {repairRouteClearance} from '../route-clearance.mjs?v=swept-river-road-1';
 import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=coaching-inn-1';
 import {COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from '../cottonwood-layout.js?v=village-gardens-1';
@@ -340,22 +341,11 @@ export function install(G){
     straight over Sparrow Creek and the creek simply disappeared under it. */
  const creekNear=(x,z)=>z>163?0:1-sstep(Math.abs(x-streamX(z)),1.7,4.2);
  const riverNear=(x,z)=>1-sstep(Math.abs(z-riverZ(x)),5.0,9.5);
- /* Nine columns across the ribbon rather than two, because a road crossing a slope has to drape
-    over it — sample the ground at every vertex and the track lies on the hillside instead of
-    hovering off one edge of it. */
+ /* Five coverage columns retain a compacted centre and soft verges. The
+    terrain-cell cuts below supply exact height fitting between these columns. */
  {
-  const COLS=9, REPEAT=3.0, pos=[],uv=[],col=[],idx=[],strokeMask=[];
-  let base=0;P.surfaceRanges={};P.ribbonDiagnostics={};
-  for(const tr of TRACKS){
-   const indexStart=idx.length,vertexStart=base;
-   if(tr.id==='riverwest'){
-    // Bounded bevels form a single non-overlapping stroke of the surveyed line.
-    // The canyon bridleway is four metres wide, with draped soil at every cut/join.
-    const ribbon=buildRoadRibbon({points:tr.pts,run:tr.run,halfWidth:s=>tr.w*(1+.04*Math.sin(s*.12)+.02*Math.sin(s*.047)),columns:COLS,uvRepeat:REPEAT,maxSegmentLength:STEP,minHalfWidth:1});
-    for(let i=0;i<ribbon.positions.length/2;i++){
-     const x=ribbon.positions[i*2],z=ribbon.positions[i*2+1],u=ribbon.uv[i*2],v=ribbon.uv[i*2+1],c=tintAt(x,z);
-     // An inherited strip edge can lie inside the joined stroke. Coverage must
-     // follow the nearest segment of the whole trail, not that strip's old UV.
+  const COLS=5, REPEAT=3.0, pos=[],uv=[],col=[],idx=[],strokeMask=[];
+  function coverageAt(tr,x,z){
      let nearest=Infinity,distance=0;
      for(let k=1;k<tr.pts.length;k++){
       const a=tr.pts[k-1],b=tr.pts[k],dx=b[0]-a[0],dz=b[1]-a[1],length2=dx*dx+dz*dz;
@@ -366,40 +356,44 @@ export function install(G){
      const halfWidth=tr.w*(1+.04*Math.sin(distance*.12)+.02*Math.sin(distance*.047));
      const verge=1-sstep(Math.sqrt(nearest)/halfWidth,.56,.99);
      const ends=Math.min(sstep(distance,0,2.2),1-sstep(distance,tr.len-3.5,tr.len));
-     const alpha=verge*ends*(1-.80*Math.max(creekNear(x,z),riverNear(x,z)));
+     return verge*ends*(1-.80*Math.max(creekNear(x,z),riverNear(x,z)));
+  }
+  let base=0;P.surfaceRanges={};P.ribbonDiagnostics={};
+  for(const tr of TRACKS){
+   const indexStart=idx.length,vertexStart=base;
+   {
+    // Bounded bevels form a single non-overlapping stroke of the surveyed line.
+    // Every trail keeps its surveyed width, with soil sampled at every cut/join.
+    const ribbon=buildRoadRibbon({points:tr.pts,run:tr.run,halfWidth:s=>tr.w*(1+.04*Math.sin(s*.12)+.02*Math.sin(s*.047)),columns:COLS,uvRepeat:REPEAT,maxSegmentLength:STEP,minHalfWidth:1});
+    for(let i=0;i<ribbon.positions.length/2;i++){
+     const x=ribbon.positions[i*2],z=ribbon.positions[i*2+1],u=ribbon.uv[i*2],v=ribbon.uv[i*2+1],c=tintAt(x,z);
+     // An inherited strip edge can lie inside the joined stroke. Coverage must
+     // follow the nearest segment of the whole trail, not that strip's old UV.
+     const alpha=coverageAt(tr,x,z);
      pos.push(x,gh(x,z)+.055,z);uv.push(u,v);col.push(c[0],c[1],c[2],alpha);strokeMask.push(1);
     }
     for(const i of ribbon.indices)idx.push(base+i);
     base=pos.length/3;P.surfaceRanges[tr.id]={vertexStart,vertexCount:base-vertexStart,indexStart,indexCount:idx.length-indexStart};
-    P.ribbonDiagnostics[tr.id]=ribbon.diagnostics;continue;
+    P.ribbonDiagnostics[tr.id]=ribbon.diagnostics;
    }
-   const N=tr.pts.length;
-   for(let i=0;i<N;i++){
-    const p=tr.pts[i], a=tr.pts[Math.max(0,i-1)], b=tr.pts[Math.min(N-1,i+1)];
-    let tx=b[0]-a[0],tz=b[1]-a[1];const tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
-    const nx=-tz,nz=tx;
-    // Slow width variation avoids a fresh angular notch at every 2.6 m sample.
-    const w=tr.w*(1+0.04*Math.sin(tr.run[i]*0.12)+0.02*Math.sin(tr.run[i]*0.047));
-    const c=tintAt(p[0],p[1]);
-    const ends=Math.min(sstep(tr.run[i],0,2.2),1-sstep(tr.run[i],tr.len-3.5,tr.len));
-    for(let j=0;j<COLS;j++){
-     const f=j/(COLS-1)*2-1, x=p[0]+nx*w*f, z=p[1]+nz*w*f;
-     const a4=ends*(1-0.80*Math.max(creekNear(x,z),riverNear(x,z)));
-     pos.push(x,gh(x,z)+0.055,z); uv.push(tr.run[i]/REPEAT,j/(COLS-1)); col.push(c[0],c[1],c[2],a4);strokeMask.push(0);
-    }
-   }
-   for(let i=0;i<N-1;i++)for(let j=0;j<COLS-1;j++){
-    const a=base+i*COLS+j,b2=a+1,c2=a+COLS,d2=c2+1;
-    idx.push(a,b2,c2, b2,d2,c2);                               // wound so the face looks up
-   }
-   base+=N*COLS;P.surfaceRanges[tr.id]={vertexStart,vertexCount:base-vertexStart,indexStart,indexCount:idx.length-indexStart};
+  }
+  // Match the terrain's triangle boundaries as well as its corner heights.
+  // This closes road/ground intersections without moving a route or collider.
+  const draped=drapeRoadSurface({positions:pos,uv,colors:col,strokeMask,indices:idx,
+   ranges:P.surfaceRanges,terrainStep:W.terrainStep,heightAt:gh});
+  P.surfaceRanges=draped.ranges;P.drapeDiagnostics=draped.diagnostics;
+  // Coverage belongs to a position on the complete route. Interpolating old
+  // triangle alpha across a bevel would make holes in the compacted centre.
+  for(const tr of TRACKS){const range=draped.ranges[tr.id];
+   for(let v=range.vertexStart;v<range.vertexStart+range.vertexCount;v++)
+    draped.colors[v*4+3]=Math.fround(coverageAt(tr,draped.positions[v*3],draped.positions[v*3+2]));
   }
   const geo=new THREE.BufferGeometry();
-  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
-  geo.setAttribute('color',new THREE.Float32BufferAttribute(col,4));
-  geo.setAttribute('roadStrokeMask',new THREE.Float32BufferAttribute(strokeMask,1));
-  geo.setIndex(idx); geo.computeVertexNormals(); geo.computeBoundingSphere();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(draped.positions,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(draped.uv,2));
+  geo.setAttribute('color',new THREE.Float32BufferAttribute(draped.colors,4));
+  geo.setAttribute('roadStrokeMask',new THREE.Float32BufferAttribute(draped.strokeMask,1));
+  geo.setIndex(draped.indices); geo.computeVertexNormals(); geo.computeBoundingSphere();
   const mat=new THREE.MeshStandardMaterial({map:roadTexture('albedo',true),color:0xb29878,
    normalMap:roadTexture('normal'),normalScale:new THREE.Vector2(.28,.28),roughnessMap:roadTexture('roughness'),
    vertexColors:true,transparent:true,roughness:1,
@@ -423,7 +417,7 @@ export function install(G){
   mesh.receiveShadow=true; mesh.castShadow=false; mesh.frustumCulled=true; mesh.renderOrder=-2;
   mesh.name='worldPathsSurface';
   scene.add(mesh);
-  P.surface=mesh; P.tris=idx.length/3;
+  P.surface=mesh; P.tris=draped.indices.length/3;
  }
 
  /* ================= 3. one batch for every stick and stone =================

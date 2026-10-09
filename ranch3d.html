@@ -659,7 +659,7 @@ import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equ
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
 import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-art-2';
-import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=draft-front-3';
+import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=grouped-clouds-1';
@@ -668,10 +668,10 @@ import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} fro
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=clover-woodland-edge-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=mixed-sward-3';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=meadow-families-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=clover-approach-1';
-import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=clover-approach-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=flowering-margins-1';
+import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=flowering-margins-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=countryside-banks-1';
 import {createGeology} from './assets/geology.js?v=countryside-banks-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
@@ -683,7 +683,7 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=regional-relief-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=dry-turf-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=flowering-margins-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=blossom-gables-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
@@ -700,12 +700,12 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=clover-woodland-edge-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=clover-woodland-edge-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=flowering-margins-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-lashes-20261008';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=horse-art-2';
+import {FEATURES} from './assets/features/index.js?v=horse-art-landscape-20261009';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -2934,7 +2934,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
 
-const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:bumpTexture});
+const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:bumpTexture,managedAt:managedGrass});
 /* ================= terrain ================= */
 {
  const geo=new THREE.PlaneGeometry(1000,1000,TERRAIN_SEGMENTS,TERRAIN_SEGMENTS);
@@ -14524,10 +14524,14 @@ function tick(stepSeconds){
  renderer.info.reset();
  // Sample groom inertia once after every horse has its final actor transforms.
  finishNativeHorseGrooms();
- waterReflections.update();
- if(renderer.xr.isPresenting)renderer.render(scene,camera);
- else if(useBloom)composer.render();
- else renderer.render(scene,camera);
+ // The opaque Character screen owns its own renderer; the ranch still ticks.
+ const characterCovered=!renderer.xr.isPresenting&&document.body.classList.contains('se-char-open');
+ if(!characterCovered){
+  waterReflections.update();
+  if(renderer.xr.isPresenting)renderer.render(scene,camera);
+  else if(useBloom)composer.render();
+  else renderer.render(scene,camera);
+ }
  hintT+=dt;
  if(!hintStarted&&hintT>1.2){hintStarted=true;startHints();}   // after the touch class is settled
  if(hintSeq&&hintT>hintNext){

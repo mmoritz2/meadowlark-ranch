@@ -74,6 +74,30 @@ export function westMeadowSwardAt(x,z){
   const west=Math.hypot((x+54)/22,(z-43)/16)+Math.sin(x*.18+z*.11)*.06;
   return 1-smooth(.55,1.12,west);
 }
+// Recover compact, authored flower-bed margins inside the open pastures.
+// The terrain/tree/fern grazing mask stays independent: these are taller sward
+// and blossom patches, not a new landscape layout or a continuous field ring.
+export const MEADOW_MARGIN_RECOVERY=.85;
+export const MEADOW_MARGIN_DRIFTS=Object.freeze(FLOWER_DRIFTS.slice(2,10).map(d=>Object.freeze([...d])));
+export function meadowMarginAt(x,z){
+  let mask=0;
+  for(const [cx,cz,rx,rz] of MEADOW_MARGIN_DRIFTS){
+    const dx=(x-cx)/(rx*1.25),dz=(z-cz)/(rz*1.25);
+    // The irregularity below is bounded by .18, so this is exact support.
+    if(Math.abs(dx)>=1.30||Math.abs(dz)>=1.30)continue;
+    const d=Math.hypot(dx,dz);
+    if(d>=1.30)continue;
+    const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
+    mask=Math.max(mask,1-smooth(.50,1.12,edge));
+  }
+  return mask;
+}
+export function meadowSwardGrazingAt(x,z){
+  const grazing=meadowGrazingAt(x,z);
+  if(grazing===0)return 0;
+  const recovery=Math.max(WEST_MEADOW_SWARD_RECOVERY*westMeadowSwardAt(x,z),MEADOW_MARGIN_RECOVERY*meadowMarginAt(x,z));
+  return grazing*(1-recovery);
+}
 export function meadowBloomAt(x,z){
   let mask=0;
   for(const [cx,cz,rx,rz] of FLOWER_DRIFTS){
@@ -81,15 +105,15 @@ export function meadowBloomAt(x,z){
     const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
     mask=Math.max(mask,1-smooth(.50,1.12,edge));
   }
-  const grazing=meadowGrazingAt(x,z),legacy=mask*(1-.96*grazing);
-  // One modelled lupin margin joins the old west colony. Legacy colonies keep
-  // their original grazing response; only this new contribution recovers.
+  const grazing=meadowGrazingAt(x,z),marginGrazing=grazing*(1-MEADOW_MARGIN_RECOVERY*meadowMarginAt(x,z)),legacy=mask*(1-.96*marginGrazing);
+  // The west colony keeps its established recovery. Other authored beds use
+  // the compact meadow margins above, leaving the original layout intact.
   const [cx,cz,rx,rz]=WEST_MEADOW_FLOWER_DRIFT;
   const d=Math.hypot((x-cx)/rx,(z-cz)/rz);
   const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
   const colony=1-smooth(.50,1.12,edge);
   if(colony===0)return legacy;
-  const recovered=grazing*(1-WEST_MEADOW_SWARD_RECOVERY*westMeadowSwardAt(x,z));
+  const recovered=meadowSwardGrazingAt(x,z);
   return Math.max(legacy,colony*(1-.96*recovered));
 }
 

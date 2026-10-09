@@ -1,3 +1,4 @@
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=flowering-margins-1';
 import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpine-range-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
@@ -951,6 +952,38 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   b.n=kept;winterAfter[name]=kept;
  }
  F.winterCover={before:winterBefore,after:winterAfter,removed:winterRemoved,shortened:winterShortened,tinted:winterTinted};
+
+ /* ---- 6m. the shared grazed field interiors -------------------------------------------------
+    The static tussocks keep their seeded roots and population. Their height now
+    follows the same field interiors as near/middle grass. Work after dry/winter
+    policies, and preserve every byte of every ineligible or unchanged matrix. */
+ const grazedTufts={examined:BANK.tuft.n,eligible:0,changed:0,climateProtected:0,waterProtected:0,
+  minScale:1,maxHeightBefore:0,maxHeightAfter:0,maxLowestPointAfter:null};
+ const tuftBank=BANK.tuft,tuftPositions=tuftBank.im.geometry.attributes.position;
+ for(let i=0;i<tuftBank.n;i++){
+  tuftBank.im.getMatrixAt(i,_m);const a=_m.elements,x=a[12],z=a[14];
+  if(biomeAt(x,z)!=='meadow'||coyoteCoverDryWeight(x,z)>0||coldCoverProfile(x,z,'tuft')){grazedTufts.climateProtected++;continue;}
+  if(onWater(x,z,9)){grazedTufts.waterProtected++;continue;}
+  grazedTufts.eligible++;
+  // Twelve source vertices give exact vertical bounds through card/instance lean.
+  let low=Infinity,high=-Infinity;
+  for(let j=0;j<tuftPositions.count;j++){
+   const y=a[1]*tuftPositions.getX(j)+a[5]*tuftPositions.getY(j)+a[9]*tuftPositions.getZ(j);
+   low=Math.min(low,y);high=Math.max(high,y);
+  }
+  const height=high-low,scale=grazedTuftScale(x,z,height);
+  if(scale===1)continue;
+  const ground=groundH(x,z),lowestAfter=(a[13]+low-ground)*scale;
+  for(const column of [0,4,8])for(let axis=0;axis<3;axis++)a[column+axis]*=scale;
+  // Scale the existing buried base around the same ground, never lift it above it.
+  a[13]=ground+(a[13]-ground)*scale;
+  tuftBank.im.setMatrixAt(i,_m);grazedTufts.changed++;
+  grazedTufts.minScale=Math.min(grazedTufts.minScale,scale);
+  grazedTufts.maxHeightBefore=Math.max(grazedTufts.maxHeightBefore,height);
+  grazedTufts.maxHeightAfter=Math.max(grazedTufts.maxHeightAfter,height*scale);
+  grazedTufts.maxLowestPointAfter=grazedTufts.maxLowestPointAfter===null?lowestAfter:Math.max(grazedTufts.maxLowestPointAfter,lowestAfter);
+ }
+ F.grazedTufts=grazedTufts;
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

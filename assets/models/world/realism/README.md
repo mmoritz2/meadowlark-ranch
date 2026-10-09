@@ -220,6 +220,22 @@ exposed rock surfaces instead of planting shrubs and loose stones on their faces
 
 ## Clover woodland edge contacts
 
-The authored eight-tree edge reuses Tree Small 02's resident young/mature foliage, materials and view atlases. Its compact contact table in `assets/woodland-edge-wood-proxies.mjs` is an original derivative of the same CC0 asset by Rico Cilliers. It includes opaque trunk and branch geometry at every height; leaves remain soft. `node tools/build-woodland-wood-proxies.mjs` regenerates 929 source-local boxes from the pinned source GLB. The generator clips triangles to 0.15-unit cells, pads bounds by 0.007, and rounds outward. These conservative contacts can extend slightly beyond individual twigs; they do not enclose a whole crown in one obstacle.
+The authored eight-tree edge mixes five resident young/mature Tree Small 02 models with three upright broadleaf derivatives. Compact contact tables cover the trunk and branches at every height; leaves remain soft. The original Tree Small table has 929 source-local boxes, and the upright model has 1,060, for 7,825 registered parts across the edge. Both generators clip source triangles to 0.15-unit cells and round outward. The original table pads by 0.007 source units; the taller upright source uses 0.011 so even thin branch fragments stay above the collision solver's minimum world thickness at all three placed heights. These conservative contacts can extend slightly beyond individual twigs; they do not enclose a whole crown in one obstacle.
 
-The added trees share the existing visual detail budget. The connected lower edge uses the existing shrub/fern sources and undergrowth detail budgets, with authored heights preserved through the one-time capture. No additional texture or model download is needed.
+The trees share the existing visual detail budget. The connected lower edge uses the existing shrub/fern sources and undergrowth budgets, with authored heights preserved through the one-time capture.
+
+## Upright broadleaf model
+
+`upright_broadleaf_01.glb` combines CommonTree_3 wood from [Quaternius's Stylized Nature MegaKit Standard](https://quaternius.com/packs/stylizednaturemegakit.html), whole photographed leaf surfaces from [Tree Small 02 by Rico Cilliers](https://polyhaven.com/a/tree_small_02), and the local tileable [Bark Brown 02 maps by Rob Tuytel](https://polyhaven.com/a/bark_brown_02). All three sources are CC0. The pack's original license is retained beside the model; existing bark download/conversion records are in `assets/textures/landmarks/manifest.json`.
+
+The original derivative retains the stock wood geometry and distributes 10,800 complete photographed leaf surfaces within its upright crown. Leaf UVs and topology remain intact; their uniform size is 20% above resident-equivalent scale. The model has 98,314 triangles and two material primitives. Matching eight-angle albedo/normal atlases provide distant views, and the usual shared canopy lighting and foliage coverage apply at runtime.
+
+Rebuild from the repository root (Python requires NumPy and Pillow). Obtain the free Standard archive from the creator; the build validates its pinned SHA-256 before reading it.
+
+```sh
+python3 tools/asset-gen/build-upright-broadleaf.py --source-archive /path/to/standard.zip
+node tools/build-upright-broadleaf-proxies.mjs
+node tools/asset-gen/bake-world-tree.cjs upright_broadleaf_01
+```
+
+The committed model SHA-256 is `9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144`. The generators validate source geometry, indices, normals, leaf bounds and output reproducibility. The upright tree replaces three existing Clover edge positions; route layouts and terrain remain unchanged.

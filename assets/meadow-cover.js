@@ -1,5 +1,5 @@
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY} from './pastoral-fields.mjs?v=clover-approach-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=flowering-margins-1';
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
 // The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
@@ -89,8 +89,7 @@ function fieldPatch(x,z){
 }
 export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
-  const grazing=meadowGrazingAt(x,z),sward=westMeadowSwardAt(x,z);
-  const grazed=sward===0?grazing:grazing*(1-WEST_MEADOW_SWARD_RECOVERY*sward);
+  const grazed=meadowSwardGrazingAt(x,z);
   return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38);
 }
 

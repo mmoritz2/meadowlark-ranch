@@ -488,6 +488,34 @@ are recorded in `assets/textures/village-paving/manifest.json`. Dirt ribbons
 clip out under the pavement. Building plots, roads and planting use the same
 layout reservations, and hedges/collision lines stop at the town edges.
 
+The seven country trails use bounded road strokes and terrain-cell subdivision,
+so their paint follows the same triangles as hoof contact instead of cutting
+through hills. Final vertices resample route coverage to keep compacted centres
+solid and verges feathered through bends. Route coordinates and collision data
+are retained. `tools/test-road-terrain-drape.mjs` checks terrain clearance,
+footprint, attributes and thin-triangle stability; `tools/qa-riverwest.cjs` checks
+coverage and mounted travel. The combined road mesh contains 75,904 triangles
+and about 2.94 MiB of geometry, with one material and no new texture downloads.
+
+Eight authored flower beds in the Clover, eastern, northern and riverside
+pastures recover taller grass and dense modelled lupins from the grazing mask.
+Near, middle-distance, seeded and static grass share the same compact recovery
+field. Open field centres stay short, and existing road, yard, water and course
+planting exclusions still apply. Terrain, tree layout and collision data are
+unchanged. This uses the existing flower geometry and instance capacity; only
+live flower counts increase. `test-pastoral-fields`, `test-meadow-tufts` and
+`test-west-meadow` cover the shared growth response and preserved field centres.
+
+Close pasture grass uses three original modeled forms: arched fescue, low bowed
+leaves and taller seed-bearing tufts. Stable patches mix them at existing grass
+roots while retaining wind, shadows, path clearance and the current triangle
+budget. High and Medium use two extra instance draws; Low and VR draw the
+original cover. The three forms reserve roughly 6.8 MiB more instance buffers
+than the previous single form at every graphics tier. Only active family rows upload during repacking. No textures or
+materials are added. `tools/test-grass-families.mjs` and
+`tools/test-mixed-sward-production.mjs` cover geometry, source preservation,
+quality changes, upload ownership and disposal. Mobile frame rate is unverified.
+
 An original open-basin stone fountain, four beds with 117 periwinkle plants,
 three benches, five lanterns and three budgeted CC0 scan trees furnish the
 square. One orchard tree moves off the existing through-road; its harvesting

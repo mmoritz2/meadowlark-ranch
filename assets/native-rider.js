@@ -109,7 +109,7 @@ function ribbon(THREE, group, material, name, width, count=42){
   return {mesh,widthM:width,update,get centerline(){return centerline;}};
 }
 
-export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPoint,seatFollower,tackModes}) {
+export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPoint,seatFollower,tackModes,mount}) {
   const originalGeometry=tackModes?.sourceGeometry||tack.geometry,originalRestingReinIndices=tack.userData.nativeRestingReinIndices;
   const {index,byVertex,vertices}=separateComponents(originalGeometry);
   const hidden=new Set(DISPLAY_REIN_COMPONENTS);
@@ -141,6 +141,9 @@ export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPo
   function update(){
     tack.updateWorldMatrix(true,false);tack.updateMatrixWorld(true);rider.R.fitG.updateMatrixWorld(true);
     const seat=seatFollower.getWorldPosition(new THREE.Vector3());
+    // Knot offsets are authored in the mount frame, while sampled contacts are world-space.
+    const frame=(mount||tack).getWorldQuaternion(new THREE.Quaternion());
+    const offset=(x,y,z)=>new THREE.Vector3(x,y,z).applyQuaternion(frame);
     for(const side of ['left','right']){
       const sign=side==='left'?-1:1,r=reins[side];
       const bit=contactPoint(anchors.contacts[`${side}BitRing`].vertexIds,tack).point;
@@ -149,14 +152,14 @@ export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPo
       // outside of the neck. Its geometry remains skinned but is not rendered.
       const id=side==='left'?72:141;
       const g24=pointPair(id,24),g15=pointPair(id,15),g6=pointPair(id,6),g0=pointPair(id,0);
-      const lift=g0.clone().add(new THREE.Vector3(sign*.018,.225,-.16));
-      const approach=hand.clone().add(new THREE.Vector3(sign*.08,-.075,.13));
+      const lift=g0.clone().add(offset(sign*.018,.225,-.16));
+      const approach=hand.clone().add(offset(sign*.08,-.075,.13));
       r.main.update([bit,g24,g15,g6,g0,lift,approach,hand]);
       // Western split reins continue behind the rider's hands and hang beside
       // the thigh. Each branch follows both the rider and the moving saddle.
-      const looseMid=hand.clone().add(new THREE.Vector3(sign*.12,-.19,-.14));
-      const tip=seat.clone().add(new THREE.Vector3(sign*.32,-.48,.12));
-      r.loose.update([hand,hand.clone().add(new THREE.Vector3(sign*.025,-.035,-.035)),looseMid,tip]);
+      const looseMid=hand.clone().add(offset(sign*.12,-.19,-.14));
+      const tip=seat.clone().add(offset(sign*.32,-.48,.12));
+      r.loose.update([hand,hand.clone().add(offset(sign*.025,-.035,-.035)),looseMid,tip]);
       r.bit=bit;r.hand=hand;r.guide=[g24,g15,g6,g0];
     }
   }
@@ -268,7 +271,7 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   // metadata before collection creation; later riding updates never replace its groups.
   function prepareReins(){
     assertLive();if(!rider?.sk)return false;
-    if(!reins){reins=createNativeRiderReins({THREE,scene,tack,anchors,rider:{R:rider},contactPoint,seatFollower,tackModes});reins.group.visible=false;reins.setColor(reinColor);}
+    if(!reins){reins=createNativeRiderReins({THREE,scene,tack,anchors,rider:{R:rider},contactPoint,seatFollower,tackModes,mount});reins.group.visible=false;reins.setColor(reinColor);}
     return true;
   }
   function updateReins(){
