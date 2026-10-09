@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {grazedTuftScale} from '../assets/meadow-tufts.mjs';
+import {FIELD_SWARD_BANDS,fieldSwardAt} from '../assets/field-sward-bands.mjs';
 import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY,meadowMarginAt} from '../assets/pastoral-fields.mjs';
 
 test('fully grazed fields cap tall tussocks without enlarging already short grass',()=>{
@@ -35,7 +36,10 @@ test('field transitions remain continuous, bounded and deterministic at riding s
       const scale=grazedTuftScale(x,z,1.3),grazing=meadowGrazingAt(x,z);
       assert.ok(Number.isFinite(scale)&&scale>0&&scale<=1);
       assert.equal(scale,grazedTuftScale(x,z,1.3));
-      assert.ok(Math.abs(scale-previous)<.09,'no height step across a quarter-metre stride');
+      // Short uncut shoulder margins intentionally change height more quickly
+      // than the broad original field openings; outside them keep the old cap.
+      const inBand=fieldSwardAt(x,z).cover>0||fieldSwardAt(x-.25,z).cover>0;
+      assert.ok(Math.abs(scale-previous)<(inBand?.16:.09),'bounded height change across a quarter-metre stride at '+[x,z]);
       if(grazing>0&&grazing<1){transitions++;assert.ok(scale>.26/1.3);}
       previous=scale;
     }
@@ -71,4 +75,26 @@ test('cultivated land, open interiors and the prior west recovery retain reviewe
   assert.equal(meadowMarginAt(x,z),0);
   assert(Math.abs(grazedTuftScale(x,z,1.2)-expected)<1e-14,'unchanged height at '+[x,z]);
  }
+});
+
+
+test('uncut ribbon height response converges continuously at centimetre and millimetre steps',()=>{
+ // This slope bound checks actual composed production output rather than a
+ // duplicated smoothstep expression. A height jump would not shrink with h.
+ // The quarter-metre guard above remains .09 everywhere outside the ribbons.
+ const points=[[98.03,-153.43],[96.75,-157],[75,-162],[78,-157]];
+ for(const band of FIELD_SWARD_BANDS){
+  const b=band.bounds;
+  for(let x=b.minX;x<=b.maxX;x+=1)for(let z=b.minZ;z<=b.maxZ;z+=1)points.push([x,z]);
+ }
+ let checks=0,active=0;
+ for(const [x,z] of points){
+  if(fieldSwardAt(x,z).cover>0)active++;
+  const original=grazedTuftScale(x,z,1.3);
+  for(const h of [.01,.001])for(const [dx,dz] of [[h,0],[0,h]]){
+   const next=grazedTuftScale(x+dx,z+dz,1.3);
+   assert.ok(Math.abs(next-original)<.65*h,'bounded small-step response at '+[x,z,dx,dz]);checks++;
+  }
+ }
+ assert(checks>50000&&active>4000,'survey includes real band interiors and both axes at multiple spatial scales');
 });

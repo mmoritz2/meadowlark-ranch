@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from '../assets/field-sward-bands.mjs';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt,cloverApproachRelief,meadowMarginAt,meadowSwardGrazingAt} from '../assets/pastoral-fields.mjs';
@@ -117,8 +118,8 @@ test('grass patches are stable, bounded and continuous at travelling cell bounda
  const color=new T.Color(),values=[];let managed=0,wild=0,dry=0;
  for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
   const h=meadowGrowthAt(x,z),grazed=meadowGrazingAt(x,z),arid=coyoteCoverDryWeight(x,z);
-  values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
-  if(grazed>.95&&westMeadowSwardAt(x,z)===0&&meadowMarginAt(x,z)===0){assert(h<.61,'maintained pasture outside authored sward margins stays low');managed++;}
+  values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37*(1+FIELD_SWARD_HEIGHT_BOOST));assert.equal(h,meadowGrowthAt(x,z));
+  if(grazed>.95&&westMeadowSwardAt(x,z)===0&&meadowMarginAt(x,z)===0&&fieldSwardAt(x,z).cover===0){assert(h<.61,'maintained pasture outside authored sward margins stays low');managed++;}
   if(grazed<.001&&arid===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
   if(arid>.95){assert(h<=1.37*.64,'dry basin growth remains below lush pasture height');dry++;}
   assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
@@ -149,7 +150,7 @@ test('compact meadow margins preserve terrain, layouts and the legacy grazing po
    assert(meadowGrowthAt(x,z)>=legacyCover.meadowGrowthAt(x,z));
    assert(meadowBloomAt(x,z)>=legacy.meadowBloomAt(x,z));
    if(margin===0){
-    assert.equal(meadowGrowthAt(x,z),legacyCover.meadowGrowthAt(x,z));
+    if(fieldSwardAt(x,z).cover===0)assert.equal(meadowGrowthAt(x,z),legacyCover.meadowGrowthAt(x,z));
     assert.equal(meadowBloomAt(x,z),legacy.meadowBloomAt(x,z));untouched++;
    }
   }

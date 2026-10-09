@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {coyoteDryWeight,coyoteCoverDryWeight} from '../assets/biome-weights.mjs';
 import {meadowCoverWeight,hasMeadowCover,hasSeedMeadowCover} from '../assets/meadow-biomes.js';
 import {meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
-import {meadowGrazingAt,westMeadowSwardAt} from '../assets/pastoral-fields.mjs';
+import {meadowGrazingAt,westMeadowSwardAt,meadowMarginAt} from '../assets/pastoral-fields.mjs';
+import {fieldSwardAt} from '../assets/field-sward-bands.mjs';
 
 const close=(actual,expected,why)=>assert.ok(Math.abs(actual-expected)<1e-12,`${why}: ${actual} != ${expected}`);
 const riverAt=x=>120+Math.sin(x*.012)*45;
@@ -115,13 +116,13 @@ test('seed meadow acceptance exactly retains the legacy generator contract',()=>
  withRelief(()=>2,()=>{for(const [x,z]of[[-220,130],[-130,180],[-320,80],[-160,-210],[0,0]])assert.equal(hasSeedMeadowCover(x,z),oldAcceptance(x,z),'raised turf cannot shift RNG consumption');});
 });
 
-test('outside dry and west masks growth stays unchanged, and the green palette remains unchanged',()=>{
+test('outside dry and authored sward masks growth and the green palette remain unchanged',()=>{
  let checked=0;
  withRelief(undefined,()=>{
   for(let x=-450.11;x<=450;x+=13.27)for(let z=-450.29;z<=450;z+=17.13){
    if(coyoteDryWeight(x,z)!==0)continue;
-   if(westMeadowSwardAt(x,z)===0)close(meadowGrowthAt(x,z),oldGrowth(x,z),'outside-mask growth');
-   for(const variation of[0,.25,.5,1]){
+   if(westMeadowSwardAt(x,z)===0&&meadowMarginAt(x,z)===0&&fieldSwardAt(x,z).cover===0)close(meadowGrowthAt(x,z),oldGrowth(x,z),'outside-mask growth');
+   if(fieldSwardAt(x,z).cover===0)for(const variation of[0,.25,.5,1]){
     const actual=paletteAt(x,z,variation),expected=oldPalette(x,z,variation);
     actual.forEach((v,i)=>close(v,expected[i],'outside-mask palette'));
    }
