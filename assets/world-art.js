@@ -3,6 +3,7 @@
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {regionalProfile,regionalShoulder} from './regional-landscape.mjs?v=regional-relief-1';
 import {northernFoothillWeight,northernFoothillRelief} from './northern-foothills.mjs?v=northern-skyline-2';
+import {farNorthernWeight,farNorthernRelief} from './far-northern-ridges.mjs?v=far-northern-ridges-1';
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -34,14 +35,14 @@ export function installBackdrop({ THREE, scene }) {
   ];
   for (const [layer,cfg] of configs.entries()) {
     const segments = 512, rings = 48;
-    const vertices = [], colors = [], indices = [];
+    const vertices = [], colors = [], indices = [], farSnow = [];
     const palettes=[
       ['#657983','#99a6aa','#80735f','#b1a28a','#627365','#889383'],
       ['#566b73','#879599','#776650','#a7987c','#53684e','#7c8c70'],
       ['#4f626a','#7e8a8c','#6c5c46','#a59476','#485e40','#788864'],
     ][layer].map(v=>new THREE.Color(v));
     const low = new THREE.Color(), high = new THREE.Color(),rock=new THREE.Color(), snow = new THREE.Color('#c0cbcd');
-    const c = new THREE.Color();
+    const c = new THREE.Color(), farRock = new THREE.Color();
     const forestLow=new THREE.Color(layer===1?'#51685b':'#334d37'),forestHigh=new THREE.Color(layer===1?'#7e8775':'#65745a');
     const crestT = (cfg.crest - cfg.inner) / (cfg.outer - cfg.inner);
     for (let j = 0; j <= rings; j++) {
@@ -67,6 +68,11 @@ export function installBackdrop({ THREE, scene }) {
           const lowRidge=-15+northernFoothillRelief(a,t,layer)*(.985+erosion*.015);
           y+=(lowRidge-y)*foothill;
         }
+        const farRange=layer===0?farNorthernWeight(a):0;
+        if(farRange>0){
+          const authored=-15+farNorthernRelief(a,t)*(.985+erosion*.015);
+          y+=(authored-y)*farRange;
+        }
         vertices.push(x, y, z);
         const variation = terrainNoise(x * 0.04, z * 0.04);
         // Authored regional hues and relief share one compass envelope.
@@ -90,6 +96,15 @@ export function installBackdrop({ THREE, scene }) {
           c.lerp(rock, profile * 0.16);
           c.lerp(snow, northern * patch * 0.8);
         }
+        // The rewritten far ranges use their final height, not the old alpine
+        // profile, for mineral colour and isolated snow accents. The latter are
+        // slope-limited after normals have been derived from the final mesh.
+        if(farRange>0){
+          farRock.copy(low).lerp(high,smooth(12,170,y)*.62+variation*.15);
+          farRock.multiplyScalar(.80+erosion*.15);
+          c.lerp(farRock,farRange);
+        }
+        farSnow.push(farRange*region.north*smooth(158,186,y)*(.35+variation*.25));
         colors.push(c.r, c.g, c.b);
       }
     }
@@ -117,6 +132,7 @@ export function installBackdrop({ THREE, scene }) {
       c.fromBufferAttribute(colorAttribute, i);
       // Keep local mineral colour on exposed faces; do not paint every region grey.
       c.multiplyScalar(1-smooth(0.3,0.7,steep)*.14);
+      if(farSnow[i]>0)c.lerp(snow,farSnow[i]*(1-smooth(.20,.52,steep)));
       colorAttribute.setXYZ(i, c.r, c.g, c.b);
     }
     geometry.computeBoundingSphere();

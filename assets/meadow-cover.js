@@ -103,8 +103,8 @@ export function meadowBladeColor(color,x,z,variation=.5){
   return color.setHSL(.225+patch*.029-dry*.075-arid*.105,.55+variation*.08-dry*.08-arid*.11,.15+variation*.035+dry*.055+arid*.07);
 }
 
-// Fully modelled lupin: palmate foliage and a spiral of cupped pea flowers.
-// 146 triangles per stalk; no alpha cards or flower-coloured green stems.
+// Fully modelled lupin: palmate foliage, asymmetric pea flowers and green buds.
+// 238 triangles per stalk; no alpha cards or flower-coloured green stems.
 export function createLupinGeometry(THREE){
   const P=[],C=[],I=[];
   const color=new THREE.Color();
@@ -124,39 +124,58 @@ export function createLupinGeometry(THREE){
     face([[0,y,0],[c*len*.60-s*w,y+.03,s*len*.60+c*w],[c*len,y+.10,s*len],
       [c*len*.60+s*w,y+.05,s*len*.60-c*w]],leaf%2?'#648e3e':'#83a852');
   }
-  const flowerStart=P.length/3,cupNormals=[],pitch=.28,cp=Math.cos(pitch),sp=Math.sin(pitch);
-  const rim=[[0,-1],[Math.sqrt(3)/2,-.5],[Math.sqrt(3)/2,.5],[0,1],[-Math.sqrt(3)/2,.5],[-Math.sqrt(3)/2,-.5]];
-  const purple=['#a967d1','#9252c3','#d6a3ec','#e1b8f1'].map(hex=>{color.set(hex);return [color.r,color.g,color.b];});
-  for(let ring=0;ring<9;ring++)for(let flower=0;flower<3;flower++){
-    const t=ring/9,a=flower*Math.PI*2/3+ring*1.23,y=.33+t*.44,scale=1-t*.72;
-    const c=Math.cos(a),s=Math.sin(a),width=.053*scale,height=.042*scale,depth=.008*scale,radial=.045*scale;
-    // The rear lip touches the actual tapered pentagonal stalk. A linear
-    // reach term tilts the shallow bowl without another pedicel triangle.
+  // Each pea floret has a folded upright banner, two unequal wings and a
+  // projecting keel. The petals share one root on the real pentagonal stalk.
+  const petal=(points,hex,outward)=>{
+    const [a,b,c]=points,u=b.map((n,k)=>n-a[k]),v=c.map((n,k)=>n-a[k]);
+    const dot=(u[1]*v[2]-u[2]*v[1])*outward[0]+(u[2]*v[0]-u[0]*v[2])*outward[1]+(u[0]*v[1]-u[1]*v[0])*outward[2];
+    face(dot<0?[...points].reverse():points,hex);
+  };
+  for(let ring=0;ring<8;ring++)for(let flower=0;flower<3;flower++){
+    const phase=ring*2.07+flower*2.39996,variation=Math.sin(phase*1.71+2.1);
+    const a=flower*Math.PI*2/3+ring*1.87+variation*.19,y=.335+ring*.055+Math.sin(phase)*.004;
+    const scale=1.25*(1-ring*.065)*(1+variation*.075),c=Math.cos(a),s=Math.sin(a);
     const sector=Math.PI*2/5,delta=((a%sector)+sector)%sector-sector/2;
-    const stemShape=Math.cos(Math.PI/5)/Math.cos(delta),taper=.008/.78;
-    const reach=(radial-height*sp+depth*cp-.012*stemShape
-      +stemShape*taper*(y+height*cp+depth*sp))/(cp+stemShape*taper*sp);
-    const attachY=y+height*cp+(depth-reach)*sp,bx=.028*attachY/.78;
-    const side=[s,0,-c],vertical=[-c*sp,cp,-s*sp],outward=[c*cp,sp,s*cp];
-    const base=P.length/3,baseColor=purple[ring%2];
-    for(const [ru,rv] of [[0,0],...rim]){
-      const u=ru*width,v=rv*height;
-      const d=depth*(ru*ru+rv*rv)-reach*rv;
-      P.push(bx+c*radial+side[0]*u+vertical[0]*v+outward[0]*d,
-        y+vertical[1]*v+outward[1]*d,
-        s*radial+side[2]*u+vertical[2]*v+outward[2]*d);
-      // Derivatives of the same bowl/reach surface give smooth normals.
-      const du=2*depth*u/(width*width),dv=2*depth*v/(height*height)-reach/height;
-      const nx=outward[0]-side[0]*du-vertical[0]*dv,ny=outward[1]-vertical[1]*dv,nz=outward[2]-side[2]*du-vertical[2]*dv;
-      const inv=1/Math.hypot(nx,ny,nz);cupNormals.push(nx*inv,ny*inv,nz*inv);
-      const lip=(1-rv)*.38,highlight=purple[ru<0?2:3];
-      C.push(...baseColor.map((v,k)=>v+(highlight[k]-v)*lip));
-    }
-    for(let k=0;k<6;k++)I.push(base,base+1+k,base+1+(k+1)%6);
+    const radius=(.012-y*.008/.78)*Math.cos(Math.PI/5)/Math.cos(delta);
+    const root=[.028*y/.78+c*radius,y,s*radius],outward=[c,0,s];
+    const point=([u,v,d])=>[root[0]+s*u*scale+c*d*scale,root[1]+v*scale,root[2]-c*u*scale+s*d*scale];
+    const emit=(points,hex)=>petal(points.map(point),hex,outward);
+    const hood=ring%3===0?'#a875c2':'#9763b5',wing=ring%2?'#8b60ad':'#8055a2';
+    // Two shallow banner folds rise above the wings; unequal shoulders avoid
+    // the former repeated bowl silhouettes. All dimensions are metres.
+    const base=[0,0,0],left=[-.007,.001,.003],right=[.006,.002,.003];
+    const upperLeft=[-.023,.024,.011],crest=[-.001,.029,.013],upperRight=[.021,.023,.012];
+    emit([base,left,upperLeft,crest],hood);
+    emit([base,crest,upperRight,right],hood);
+    emit([base,[-.022,-.009,.022],[-.002,-.012,.027]],wing);
+    emit([base,[.004,-.012,.027],[.020,-.008,.023]],wing);
+    emit([base,[-.007,-.011,.023],[-.003,-.014,.027],[.007,-.012,.026]],'#835ba6');
+  }
+  // A small closed terminal bud meets the existing stalk before tapering out.
+  // Four triangular sides per half keep the whole plant at 238 triangles.
+  const lower=[.028*.754/.78,.754,0],upper=[.028,.791,0],bud=[];
+  for(let i=0;i<4;i++){const a=i*Math.PI/2;bud.push([.028+Math.cos(a)*.007,.779,Math.sin(a)*.007]);}
+  for(let i=0;i<4;i++){
+    const j=(i+1)%4;
+    petal([lower,bud[j],bud[i]],i%2?'#638547':'#719150',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
+    petal([upper,bud[i],bud[j]],i%2?'#719150':'#86a364',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeVertexNormals();
-  g.attributes.normal.array.set(cupNormals,flowerStart*3);
+  // Join only the two banner panels for soft petal shading. Their normals
+  // derive from these Float32 triangles; stem, leaves, wings and keel stay exact.
+  const positions=g.attributes.position.array,normals=g.attributes.normal.array,indices=g.index.array;
+  for(let flower=0;flower<24;flower++){
+    const start=76+flower*18,sums=new Map(),key=id=>positions.slice(id*3,id*3+3).join(',');
+    for(let triangle=38+flower*8;triangle<42+flower*8;triangle++){
+      const ids=Array.from(indices.slice(triangle*3,triangle*3+3)),[a,b,c]=ids.map(id=>id*3);
+      const ux=positions[b]-positions[a],uy=positions[b+1]-positions[a+1],uz=positions[b+2]-positions[a+2];
+      const vx=positions[c]-positions[a],vy=positions[c+1]-positions[a+1],vz=positions[c+2]-positions[a+2];
+      const n=[uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx];
+      for(const id of ids){const k=key(id),sum=sums.get(k)||[0,0,0];for(let axis=0;axis<3;axis++)sum[axis]+=n[axis];sums.set(k,sum);}
+    }
+    for(let id=start;id<start+8;id++){const n=sums.get(key(id)),length=Math.hypot(...n);for(let axis=0;axis<3;axis++)normals[id*3+axis]=n[axis]/length;}
+  }
   g.computeBoundingBox();g.computeBoundingSphere();return g;
 }
 
