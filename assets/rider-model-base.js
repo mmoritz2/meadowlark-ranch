@@ -46,7 +46,7 @@ import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=character-polish-20261009';
 import {refineRiderProportions} from './rider-proportions.js?v=character-polish-20261009';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=character-polish-20261009';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=fuller-lashes-20261009';
 import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=character-polish-20261009';
 import {prepareRiderHead as prepareLiveHead} from './rider-live-heads.js?v=character-polish-20261009';
 import {accessoryFit,buildAccessories} from './rider-accessories.js?v=character-polish-20261009';
@@ -252,7 +252,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    }
    for(const side of [1,-1]){
     const sd=side>0?'l':'r',upper='upperarm_'+sd,lower='lowerarm_'+sd,hand='hand_'+sd;
-    aim(upper,lower,V((F?(side>0?.18:.23):.20)*side,-1,-.015));
+    aim(upper,lower,V((F?(side>0?.18:.23):.32)*side,-1,-.015));
     aim(lower,hand,V((F?(side>0?.045:.075):.06)*side,-1,F?(side>0?.10:.15):.14));
     // Turn the forearm as a whole: thumb forward, palm toward the thigh.
     // This avoids twisting only the wrist against a fixed forearm.

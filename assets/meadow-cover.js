@@ -1,6 +1,7 @@
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=flowering-margins-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=field-sward-bands-3';
+import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
 // The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
@@ -98,7 +99,8 @@ function fieldPatch(x,z){
 export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
   const grazed=meadowSwardGrazingAt(x,z);
-  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38);
+  const band=fieldSwardAt(x,z).cover;
+  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38)*(1+FIELD_SWARD_HEIGHT_BOOST*band);
 }
 
 // One palette for the near leaves, distant sward and old seed layer. Separate
@@ -107,7 +109,14 @@ export function meadowBladeColor(color,x,z,variation=.5){
   const patch=fieldPatch(x/18+8.7,z/18-3.1);
   const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.42)*3.5))*(1-meadowGrazingAt(x,z)*.85);
   const arid=coyoteCoverDryWeight(x,z);
-  return color.setHSL(.225+patch*.029-dry*.075-arid*.105,.55+variation*.08-dry*.08-arid*.11,.15+variation*.035+dry*.055+arid*.07);
+  const h=.225+patch*.029-dry*.075-arid*.105,s=.55+variation*.08-dry*.08-arid*.11,l=.15+variation*.035+dry*.055+arid*.07;
+  const band=fieldSwardAt(x,z);
+  if(band.cover===0)return color.setHSL(h,s,l);
+  // Seed ripeness belongs to the same connected ribbon as its taller growth.
+  // Leave a leafy green edge and let the uncut heart carry the warm canopy;
+  // the existing mesh root gradient and physical lighting still shade it.
+  const ripe=band.seed/band.cover,w=band.cover;
+  return color.setHSL(h+(.208-ripe*.082-h)*w,s+(.57+variation*.045-ripe*.025-s)*w,l+(.202+ripe*.034+variation*.025-l)*w);
 }
 
 // Fully modelled lupin: palmate foliage, asymmetric pea flowers and green buds.

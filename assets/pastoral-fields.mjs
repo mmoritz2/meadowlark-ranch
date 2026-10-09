@@ -1,3 +1,5 @@
+import {fieldSwardAt,FIELD_SWARD_RECOVERY} from './field-sward-bands.mjs?v=field-sward-bands-3';
+
 // Original field composition, shared by visible terrain and rideable ground.
 // Compact C2-continuous rises keep distant regions, buildings and arenas intact.
 export const FIELD_RISES = [
@@ -92,11 +94,16 @@ export function meadowMarginAt(x,z){
   }
   return mask;
 }
-export function meadowSwardGrazingAt(x,z){
+function flowerMarginGrazingAt(x,z){
   const grazing=meadowGrazingAt(x,z);
   if(grazing===0)return 0;
   const recovery=Math.max(WEST_MEADOW_SWARD_RECOVERY*westMeadowSwardAt(x,z),MEADOW_MARGIN_RECOVERY*meadowMarginAt(x,z));
   return grazing*(1-recovery);
+}
+// Grass alone recovers along the uncut seed-bearing ribbons. The original
+// grazing policy still owns terrain, trees, ferns and every flower colony.
+export function meadowSwardGrazingAt(x,z){
+  return flowerMarginGrazingAt(x,z)*(1-FIELD_SWARD_RECOVERY*fieldSwardAt(x,z).cover);
 }
 export function meadowBloomAt(x,z){
   let mask=0;
@@ -113,7 +120,7 @@ export function meadowBloomAt(x,z){
   const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
   const colony=1-smooth(.50,1.12,edge);
   if(colony===0)return legacy;
-  const recovered=meadowSwardGrazingAt(x,z);
+  const recovered=flowerMarginGrazingAt(x,z);
   return Math.max(legacy,colony*(1-.96*recovered));
 }
 
