@@ -47,6 +47,7 @@ export function installUndergrowth(G,{flowerShrubs=[],staticShrubs=[]}={}){
  }
  state.ready=(async()=>{
   try{
+   await G.horse.arrivalReady;
    const [models,catalog]=await Promise.all([loadUndergrowthModels(T),fetch(new URL('./models/world/undergrowth/views.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Plant view catalogue unavailable');return r.json()})]);
    const loader=new T.TextureLoader(),meta=models.map(model=>{const row=catalog.plants.find(p=>p.id===model.id);if(!row)throw Error('Missing plant views: '+model.id);return row;});
    const cards=await Promise.all(meta.map(async row=>{const [albedo,normals]=await Promise.all(['albedo','normals'].map(key=>loader.loadAsync(new URL('./models/world/undergrowth/'+row.files[key].file,import.meta.url).href)));albedo.colorSpace=T.SRGBColorSpace;return treeImpostor({THREE:T,albedo,normals,width:row.width,height:row.height,bottom:row.bottom});}));

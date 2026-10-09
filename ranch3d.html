@@ -651,7 +651,8 @@ import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-20261009b';
+import {createBreedLibrary} from './assets/breed-models.js?v=horse-arrival-1';
+import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=natural-mane-20261009';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=club-horses-1';
 import {createBreedGroom} from './assets/horse-groom.js';
@@ -667,7 +668,7 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
-import {installUndergrowth} from './assets/undergrowth.js?v=clover-woodland-edge-1';
+import {installUndergrowth} from './assets/undergrowth.js?v=horse-arrival-1';
 import {installMixedSward} from './assets/mixed-sward.mjs?v=meadow-families-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
 import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=flowering-margins-1';
@@ -699,14 +700,15 @@ import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
 import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=clover-woodland-edge-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=pastoral-woodland-2';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=horse-arrival-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=horse-art-20261009c';
+import {FEATURES} from './assets/features/index.js?v=arrival-save-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
+const HORSE_ARRIVAL=createHorseArrival();
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
 
@@ -4450,17 +4452,12 @@ function placeFoliage(name){
   if(typeof rebuildDecor==='function')rebuildDecor();   // decor made of this prop can appear now
  },undefined,e=>console.warn(name+' load failed',e));
 }
-/* Deferred on purpose: these used to be fetched at boot, so several MB of shrubs competed
-   for bandwidth with the horse the loading screen is waiting on. Start them once the mount
-   is attached — with a 20-second fallback — and let them pop in behind you. */
-{
- let foliageStarted=false;
- const startFoliage=()=>{ if(foliageStarted)return; foliageStarted=true;
-  ranchBuilderArt.startLoading();
-  ['bush','flowerbush','cactus','cactus2','haybale','trough','barrel','boulder','stump'].forEach(placeFoliage); };
- const pollRig=setInterval(()=>{ if(RIG.ready&&RIG.attachedTo===player.mesh){clearInterval(pollRig);startFoliage();} },200);
- setTimeout(()=>{clearInterval(pollRig);startFoliage();},20000);
-}
+// Optional catalogue/prop loads begin after the selected horse is installed.
+// An actual horse failure also settles this gate; Retry starts a fresh arrival.
+HORSE_ARRIVAL.ready.then(()=>{
+ ranchBuilderArt.startLoading();
+ ['bush','flowerbush','cactus','cactus2','haybale','trough','barrel','boulder','stump'].forEach(placeFoliage);
+});
 for(const name of ['bush','flowerbush','boulder','stump'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
  const p=FOLIAGE[name][i];if(!cottonwoodReserved(p.x,p.z,2))continue;
  const ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
@@ -5983,11 +5980,10 @@ function riderSeat(){const bareback=RIG.profile?.nativeKind==='horse'&&(myHorses
  if(TACK.saddle&&TACK.saddle.userData.style==='western'){o.y-=WESTERN_SEAT.dy/scale;o.z+=WESTERN_SEAT.dz/scale;}   // tack-wardrobe: a Western seat sits deeper and a touch further back
  return o;}
 async function requestPlayerBreed(breed){
- const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
+ const ticket=++breedRequest;HORSE_ARRIVAL.begin(ticket);RIG.requestedBreed=breed;RIG.loadingBreed=true;
  window.GameLoading?.stage('Loading your horse…');
- let asset;
- try{asset=await BREED_MODELS.load(breed);}
- catch(e){if(ticket!==breedRequest)return;console.error('Approved horse model unavailable',breed,e);RIG.loadingBreed=false;RIG.requestedBreed=null;window.GameLoading?.fail('Your horse could not finish loading.');return;}
+ try{
+ const asset=await BREED_MODELS.load(breed);
  if(ticket!==breedRequest)return;
  const inst=instantiateArtistBreed(asset);
  disposeCollectionTack(RIG);
@@ -5995,13 +5991,22 @@ async function requestPlayerBreed(breed){
  if(RIG.scene?.parent)RIG.scene.parent.remove(RIG.scene);
  disposeMountedRig(RIG);
  if(RIG.coatMat)RIG.coatMat.dispose();
- Object.assign(RIG,inst,{modelKey:asset.key,ready:true,loadingBreed:false,attachedTo:null,
+ Object.assign(RIG,inst,{modelKey:asset.key,ready:true,loadingBreed:true,attachedTo:null,
   hairBuilt:false,hairMane:null,hairTail:null,groom:null,coatMat:null,headBone:null,headIdx:6,drg:null,emote:null,_hideFor:null,heroMotion:null,heroMaterial:null,fantasyMaterial:null,heroJumpAge:null,heroJumpExtra:0,nativeRider:null,collectionTack:null,collectionHorse:null,collectionPieces:null,_collectionKey:null,_collectionMount:null,_collectionBase:null,_nativeCollectionMeshes:null,_nativeTackScene:null,_nativeTackRider:null});
  RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());rigCalibrate();
  initGameHero(THREE,RIG);
  if(player.mesh){player.mesh.scale.setScalar(horseScale(myHorses[rideIdx]));attachRig();applyCoat();attachTack();}
+ RIG.loadingBreed=false;
+ HORSE_ARRIVAL.mounted(ticket,()=>ticket===breedRequest&&RIG.requestedBreed===(myHorses[rideIdx]?.breed||'bay')&&RIG.modelKey===BREED_MODELS.resolve(myHorses[rideIdx]?.breed||'bay')&&RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh);
  window.__setLoad?.(1,'ready!');
  if(!requestPlayerBreed.preloaded){requestPlayerBreed.preloaded=true;setTimeout(preloadBreeds,400);}
+ }catch(e){
+  if(ticket!==breedRequest)return;
+  console.error('Approved horse model unavailable',breed,e);
+  if(!HORSE_ARRIVAL.settled)RIG.ready=false;
+  RIG.loadingBreed=false;RIG.requestedBreed=null;HORSE_ARRIVAL.failed(ticket);
+  window.GameLoading?.fail('Your horse could not finish loading.');
+ }
 }
 /* Straight after the ridden horse, the bodies the player will see next, one at a time: the horse taken along, the grey
    filly of the story while it is young, then the pasture's own breeds. */
@@ -10453,6 +10458,8 @@ function sellHorse3(idx){
  let msg='',ok=false,got=0;
  syncSave(sv=>{
   const h=sv.horses[idx]; if(!h){msg='No such horse.';return;}
+  const rescueHorse=G.rescueRide?.pendingHorseId?.();
+  if(rescueHorse!=null&&h.id===rescueHorse){msg='Retry saving Clover’s completed rescue before selling this horse.';return;}
   if(sv.horses.length<=1){msg='You cannot sell your only horse.';return;}
   if(idx===rideIdx){msg='Get off first — you are riding '+h.name+'.';return;}
   if(h.foal){msg=h.name+' is still a foal.';return;}
@@ -10561,9 +10568,9 @@ function openShop(tab){
   html+='<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">💰 Sell a horse · the market keeps '+Math.round((1-MARKET_CUT)*100)+'%</div>';
   const sellable=s.horses.map((h,i)=>({h,i})).filter(x=>!x.h.foal&&x.i!==rideIdx);
   html+=sellable.length?sellable.map(({h,i})=>{
-   const br=BREEDS3.find(b=>b[0]===h.breed);
+   const br=BREEDS3.find(b=>b[0]===h.breed),rescueHorse=G.rescueRide?.pendingHorseId?.(),savePending=rescueHorse!=null&&h.id===rescueHorse;
    return '<div class="evrow">🐴 <b>'+h.name+'</b><span>'+(br?br[1]:h.breed)+' · Lv '+(h.level||1)+' · worth '+horseValue(h)+'🪙</span>'
-    +'<button data-mktsell="'+i+'">Sell · '+marketOffer(h)+'🪙</button></div>';
+    +'<button data-mktsell="'+i+'"'+(savePending?' disabled title="Save your completed rescue before selling this horse."':'')+'>'+(savePending?'Retry rescue save':'Sell · '+marketOffer(h)+'🪙')+'</button></div>';
   }).join('')
   :'<div style="font-size:11px;color:#b8a888">Nothing to sell — you cannot sell a foal, or the horse you are sitting on.</div>';
   html+='<div style="font-size:11px;color:#8c7a63;margin-top:8px">A horse is worth more the better its stats, the higher its level and the more it has bonded with you.</div>';
@@ -14543,7 +14550,7 @@ function tick(stepSeconds){
  const ld=$('load');
  if(ld){
   // A slow connection keeps the approved horse loading; the curtain offers a retry.
-  if(!USE_GEN_HORSE||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
+  if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh))ld.remove();
  }
 }
 let manualStepping=false;
@@ -14619,7 +14626,7 @@ function installFeatures(){
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
    TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS,TIER_STARS,MARKS2,FANTASY_CFG,FANTASY_FX,FANTASY_COAT,COAT_BASE,DRAGON_TINT,WING_TINT,ELEM_OF},
   tackCollectionModels:{refresh:refreshCollectionTack,pieces:collectionPieces,sync:syncCollectionTack,update:updateCollectionTack},
-  horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
+  horse:{arrivalReady:HORSE_ARRIVAL.ready,myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
    registerBreed(row){if(!Array.isArray(row)||typeof row[0]!=='string'||row.length<8)throw Error('Invalid breed row');const found=BREEDS3.find(b=>b[0]===row[0]);if(found)return found;BREEDS3.push(row);BREED_MODELS.register(row);return row;},
    nativeRiderInspect(){return nativeRiderBridge?.inspect()||null;},
    setNativeRidingMode,applyNativeRemoteMode,

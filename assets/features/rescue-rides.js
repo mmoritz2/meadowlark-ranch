@@ -1,11 +1,11 @@
-import {RESCUE_DEFINITION,RESCUE_APPROACH,sanitizeRescueSave,recordRescueFinish,canAdoptClover,calmAfter,isTravelJump,rescueInteraction,rescueRetreatCandidates,insideRescueRetreat} from './rescue-rules.mjs?v=rescue-reactions-1';
+import {RESCUE_DEFINITION,RESCUE_APPROACH,sanitizeRescueSave,canAdoptClover,pendingRescueFinish,saveRescueFinish,saveCloverAdoption,mirrorRescueHorseXp,calmAfter,isTravelJump,rescueInteraction,rescueRetreatCandidates,insideRescueRetreat} from './rescue-rules.mjs?v=rescue-save-confirmed-1';
 export const id='rescue-rides';
 export function install(G){
  const H=G.horse,W=G.world,S=G.save,THREE=G.THREE,player=H.player,definition=RESCUE_DEFINITION;
  const colors={body:'#e9ddcb',mane:'#39291f'};
- let active=null,lastResult=null,serial=0,records,worldGroup=null,marker=null,prints=[],horse=null;
+ let active=null,lastResult=null,serial=0,records,worldGroup=null,marker=null,prints=[],horse=null,adoptionPending=null;
  S.ensure(s=>{s.rescueRides=sanitizeRescueSave(s.rescueRides);});
- function refresh(){const s=sanitizeRescueSave(S.fresh()?.rescueRides);records={...s,canAdopt:canAdoptClover(s)};}
+ function refresh(saved=S.fresh()){if(!saved&&records)return;const s=sanitizeRescueSave(saved?.rescueRides);records={...s,canAdopt:canAdoptClover(s)};}
  refresh();
  const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
  const point=([x,z],label)=>({x,z,label});
@@ -122,7 +122,7 @@ export function install(G){
    retreat:null,settling:RESCUE_APPROACH.settleSeconds,spookArmed:true};
   lastResult=null;build();updateMarker();G.run('rescueStart',snapshot().active);return true;
  }
- function target(){if(!active)return null;return active.stage==='find'?active.path[active.clues+1]:active.stage==='calm'?{x:horse.pos.x,z:horse.pos.z,label:'Approach Clover gently'}:active.path[4+active.returnStep];}
+ function target(){if(!active)return null;return active.stage==='find'?active.path[active.clues+1]:active.stage==='calm'?{x:horse.pos.x,z:horse.pos.z,label:'Approach Clover gently'}:active.path[Math.min(6,4+active.returnStep)];}
  function updateMarker(){
   const at=target();if(!at||!marker)return;
   marker.position.set(at.x,W.groundH(at.x,at.z),at.z);mapMark.x=miniMark.x=at.x;mapMark.z=miniMark.z=at.z;
@@ -132,6 +132,7 @@ export function install(G){
   for(const p of prints)p.visible=active.stage==='find'&&p.userData.leg===active.clues+1;
  }
  function cancel(reason='Rescue paused. Clover will be waiting when you try again.'){
+  if(active?.finished){G.toast('Clover is home, but this rescue has not been saved. Keep this tab open and retry saving.');return false;}
   if(!active)return false;const previous=active;active=null;dispose();G.run('rescueCancel',{id:definition.id,runId:previous.runId,reason});return true;
  }
  function reassure(){
@@ -141,26 +142,46 @@ export function install(G){
   G.sChime?.();updateMarker();return true;
  }
  function finish(){
-  if(!active||active.finished||!horse)return;const A=active;A.finished=true;let result=null;
-  S.sync(s=>{const r=recordRescueFinish(s.rescueRides,A);if(!r.recorded)return;s.rescueRides=r.save;G.money.payReward(s,definition.reward);result=r.result;});
-  active=null;dispose();refresh();if(!result)return;
-  // payReward applies XP within the same transaction; mirror the ridden horse's numbers.
-  const ridden=H.ridden?.(),saved=S.fresh()?.horses?.find(h=>h.id===ridden?.id);
-  if(ridden&&saved){ridden.level=saved.level;ridden.xp=saved.xp;ridden.stats={...saved.stats};}
-  G.money.refreshWallet();G.sChime?.();lastResult=Object.freeze(result);G.run('rescueFinish',result);
+  if(!active||active.finished||!horse)return;
+  active.completion=pendingRescueFinish(active,H.ridden?.()?.id);if(!active.completion)return;
+  active.finished=true;active.waiting=false;updateMarker();retrySave();
+ }
+ function retrySave(){
+  if(!active?.finished||!active.completion||inputPaused())return false;
+  const outcome=saveRescueFinish(S,active.completion,(s,reward,horseId)=>{
+   G.money.payReward(s,{c:reward.c});
+   // A retry may follow a stable visit. XP belongs to the horse that brought Clover home.
+   G.xp.applyXp(s,s.horses.find(h=>h.id===horseId),reward.xp);
+  });
+  if(!outcome.ok){active.cue='Clover is safely home, but your reward could not be saved. Keep this tab open and retry saving.';return false;}
+  const result=outcome.result;
+  mirrorRescueHorseXp(H.myHorses,outcome.saved,active.completion.horseId);
+  active=null;dispose();refresh(outcome.saved);
+  G.money.refreshWallet();G.sChime?.();lastResult=Object.freeze(result);G.run('rescueFinish',result);return true;
  }
  function adopt(){
-  let adopted=null;
-  S.sync(s=>{s.rescueRides=sanitizeRescueSave(s.rescueRides);if(!canAdoptClover(s.rescueRides))return;
-   const existing=s.horses?.find(h=>h.rescueClover===true);
-   if(existing){s.rescueRides.adopted=true;s.rescueRides.adoptedHorseId=existing.id;return;}
-   adopted=H.grantHorse(s,'pinto',{name:'Clover',colors:{...colors},bond:35,src:'rescue',stats:{speed:4,stamina:5,jump:4,accel:4,agility:5},extra:{rescueClover:true,sex:'f'}});
-   s.rescueRides.adopted=true;s.rescueRides.adoptedHorseId=adopted.id;
+  const pending=adoptionPending||(adoptionPending={horseId:null,notices:[]});
+  const outcome=saveCloverAdoption(S,pending,s=>{
+   // Acquisition hooks still populate the real horse. Clover already has a name;
+   // defer synchronous mastery notices until storage confirms the acquisition.
+   // This scoped replacement is restored before any event-loop task can run.
+   const toast=G.toast;pending.notices=[];G.toast=(...args)=>pending.notices.push(args);
+   try{return H.grantHorse(s,'pinto',{name:'Clover',noName:true,colors:{...colors},bond:35,src:'rescue',stats:{speed:4,stamina:5,jump:4,accel:4,agility:5},extra:{rescueClover:true,sex:'f'}});}
+   finally{G.toast=toast;}
   });
-  refresh();if(!adopted)return false;H.reloadHorses();G.sChime?.();G.toast('Clover has joined your stable.');G.run('rescueAdopt',{id:adopted.id,name:'Clover'});return true;
+  if(!outcome.ok){if(outcome.attempted)G.toast('Clover’s adoption could not be saved. Keep this tab open and try welcoming her again.');else{adoptionPending=null;refresh();}return false;}
+  adoptionPending=null;refresh(outcome.saved);H.reloadHorses();for(const args of pending.notices)G.toast(...args);G.sChime?.();G.toast('Clover has joined your stable.');G.run('rescueAdopt',{id:outcome.horse.id,name:outcome.horse.name});return true;
+ }
+ function animate(movement,dt,t){
+  horse.phase+=dt*(movement>5?6:movement>.2?3:1.2);
+  const gait=movement>8?'canter':movement>3.5?'trot':'walk',amp=movement>.2?.6:.04,calm=movement>.2?0:1;
+  G.anim?.animateHorse(horse.parts,horse.phase,amp,G.anim.GAITS[gait]||G.anim.GAITS.walk,true,t,calm,dt);
+  H.dressWithRig(horse,horse.parts,colors,{breed:'pinto'});G.anim?.tickRig(horse,movement,dt,t,calm);
+  horse.parts.group.position.set(horse.pos.x,W.groundH(horse.pos.x,horse.pos.z),horse.pos.z);horse.parts.group.rotation.y=horse.heading;
  }
  G.on('tick',(rawDt,t)=>{
   if(!active||!horse)return;const dt=Math.min(.1,Math.max(0,rawDt||0));if(!dt)return;
+  if(active.finished){if(!inputPaused())animate(0,dt,t);return;}
   const A=active,step=dist(player.pos,A.previous);A.previous={x:player.pos.x,z:player.pos.z};
   if(isTravelJump(step,rawDt,player.speed)){cancel('Fast travel ends the rescue. Start again to follow Clover’s trail.');return;}
   if(G.course.get()||G.trail?.ride||G.worldPkg?.vehicle?.()||G.roundup?.state?.().active||G.course.drillActive?.()||player.flying){cancel('Rescue ended when you started another activity.');return;}
@@ -191,17 +212,13 @@ export function install(G){
    A.cue=A.waiting?'Clover is waiting. Ride back toward her.':distance>13?'Ease up — give Clover time to catch you.':'Stay together and follow the homeward trail.';
    const at=target();if(dist(player.pos,at)<6&&dist(horse.pos,at)<7&&distance<10){A.returnStep++;G.sCoin?.();if(A.returnStep===3){finish();return;}updateMarker();}
   }
-  if(!horse)return;horse.phase+=dt*(movement>5?6:movement>.2?3:1.2);
-  const gait=movement>8?'canter':movement>3.5?'trot':'walk',amp=movement>.2?.6:.04,calm=movement>.2?0:1;
-  G.anim?.animateHorse(horse.parts,horse.phase,amp,G.anim.GAITS[gait]||G.anim.GAITS.walk,true,t,calm,dt);
-  H.dressWithRig(horse,horse.parts,colors,{breed:'pinto'});G.anim?.tickRig(horse,movement,dt,t,calm);
-  horse.parts.group.position.set(horse.pos.x,W.groundH(horse.pos.x,horse.pos.z),horse.pos.z);horse.parts.group.rotation.y=horse.heading;
+  if(horse)animate(movement,dt,t);
  });
  function snapshot(){
   const A=active;return {definition,records:{...records},lastResult,
-   active:A?{id:definition.id,name:definition.name,stage:A.stage,clues:A.clues,totalClues:2,target:{...target()},
+   active:A?{id:definition.id,runId:A.runId,name:definition.name,stage:A.stage,savePending:!!A.finished,clues:A.clues,totalClues:2,target:{...target()},
     horse:{x:horse.pos.x,z:horse.pos.z,distance:dist(player.pos,horse.pos),calm:A.calm,waiting:A.waiting,spooked:A.spooked,retreating:!!A.retreat,settling:Math.max(0,A.settling)},interaction:interaction(),elapsed:Math.round(A.elapsed*100)/100,
     returnStep:A.returnStep,totalReturnSteps:3,cue:A.cue}:null};
  }
- G.rescueRide={definition,start,cancel,snapshot,reassure,adopt};G.on('state',s=>{s.rescueRide=snapshot();});
+ G.rescueRide={definition,start,cancel,snapshot,reassure,retrySave,adopt,pendingHorseId:()=>active?.finished?active.completion?.horseId??null:null};G.on('state',s=>{s.rescueRide=snapshot();});
 }

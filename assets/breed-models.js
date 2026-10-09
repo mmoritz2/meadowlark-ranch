@@ -65,20 +65,35 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     scene.traverse(o=>{if(o.isSkinnedMesh&&o!==skin&&(o.name===spec.hairMesh||o.parent?.name===spec.hairMesh||/strand|groom/i.test(o.name))){fillOutTail(THREE,o);fillOutMane(THREE,o,skin);}});
     const asset={key,scene,skin,profile:authored,fitScale,fitY,baseMat:skin.material,animations:gltf.animations||[]};ready.set(key,asset);return asset;
   }
+  function gltfFile(url){
+    if(!files.has(url.href))files.set(url.href,loader.loadAsync(url.href).catch(e=>{files.delete(url.href);throw e;}));
+    return files.get(url.href);
+  }
+  function rosterFiles(spec){
+    if(!spec.nativeRoster)return Promise.resolve(null);
+    const v=spec.nativeVariant,vu=new URL(v.file,import.meta.url);vu.searchParams.set('build',v.sha256);
+    if(!variantFiles.has(vu.href))variantFiles.set(vu.href,fetch(vu).then(r=>{if(!r.ok)throw Error('Horse shape HTTP '+r.status);return r.arrayBuffer();}).catch(e=>{variantFiles.delete(vu.href);throw e;}));
+    const cu=new URL(v.coat.file,import.meta.url);cu.searchParams.set('build',v.coat.sha256||v.sha256);
+    if(!coatFiles.has(cu.href))coatFiles.set(cu.href,new THREE.TextureLoader(manager).loadAsync(cu.href).then(t=>{t.colorSpace=THREE.SRGBColorSpace;t.flipY=false;return t;}).catch(e=>{coatFiles.delete(cu.href);throw e;}));
+    return Promise.all([variantFiles.get(vu.href),coatFiles.get(cu.href)]);
+  }
   async function load(requested='bay'){
     await manifestReady;const key=resolve(requested);if(ready.has(key))return ready.get(key);
-    if(!pending.has(key)){const spec=manifest.breeds[key];if(!spec)throw new Error(`Missing authored breed: ${requested}`);const url=new URL(spec.file,spec.nativeBreed?import.meta.url:base);url.searchParams.set('build',spec.sha256||revision);if(!files.has(url.href))files.set(url.href,loader.loadAsync(url.href).catch(e=>{files.delete(url.href);throw e;}));pending.set(key,files.get(url.href).then(async source=>{
-      // Preparing one variant must never reparent or recolor another cached breed.
-      let g={...source,scene:clone(source.scene)};
-      if(spec.nativeRoster){
-        g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;
-        const v=spec.nativeVariant,vu=new URL(v.file,import.meta.url);vu.searchParams.set('build',v.sha256);
-        if(!variantFiles.has(vu.href))variantFiles.set(vu.href,fetch(vu).then(r=>{if(!r.ok)throw Error('Horse shape HTTP '+r.status);return r.arrayBuffer();}).catch(e=>{variantFiles.delete(vu.href);throw e;}));
-        const cu=new URL(v.coat.file,import.meta.url);cu.searchParams.set('build',v.coat.sha256||v.sha256);
-        if(!coatFiles.has(cu.href))coatFiles.set(cu.href,new THREE.TextureLoader(manager).loadAsync(cu.href).then(t=>{t.colorSpace=THREE.SRGBColorSpace;t.flipY=false;return t;}).catch(e=>{coatFiles.delete(cu.href);throw e;}));
-        const [binary,coat]=await Promise.all([variantFiles.get(vu.href),coatFiles.get(cu.href)]);applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});
-      }
-      if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(!files.has(mu.href))files.set(mu.href,loader.loadAsync(mu.href).catch(e=>{files.delete(mu.href);throw e;}));const extra=await files.get(mu.href),replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec)}).catch(e=>{pending.delete(key);throw e;}));}
+    if(!pending.has(key)){
+      const spec=manifest.breeds[key];if(!spec)throw new Error(`Missing authored breed: ${requested}`);
+      const url=new URL(spec.file,spec.nativeBreed?import.meta.url:base);url.searchParams.set('build',spec.sha256||revision);
+      const source=gltfFile(url),roster=rosterFiles(spec);
+      let motion=Promise.resolve(null);
+      if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);motion=gltfFile(mu);}
+      // Independent files start together. Preparation still uses a private clone
+      // and the same shape, coat, then motion ordering as every approved breed.
+      pending.set(key,Promise.all([source,roster,motion]).then(([source,roster,extra])=>{
+        let g={...source,scene:clone(source.scene)};
+        if(roster){g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;const [binary,coat]=roster;applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});}
+        if(extra){const replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}
+        return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec);
+      }).catch(e=>{pending.delete(key);throw e;}));
+    }
     return pending.get(key);
   }
   function instantiate(asset,{materialPolish=true}={}){

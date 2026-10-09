@@ -820,7 +820,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     state.distantTrees=trees.length-selected.length;
   }
   state.ready=(async()=>{
-    for(let i=0;i<120&&!H.RIG()?.ready;i++)await new Promise(ok=>setTimeout(ok,250));
+    await H.arrivalReady;
     for(const install of [installRocks,installTrees,installWillows,installOak,installDeadwood,installForestFloor,installRockFaces]){
       try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
       finally{if(install===installTrees&&!edge.settled)finishEdge({trees:[],plants:[],failed:true,error:state.errors.at(-1)||'tree setup incomplete',physicsReady:false,artOnly:true});}

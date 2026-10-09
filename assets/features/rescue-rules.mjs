@@ -21,6 +21,50 @@ export function recordRescueFinish(value,run){
   time,pay:{...RESCUE_DEFINITION.reward},newBest,firstCompletion,canAdopt:!save.adopted}};
 }
 export function canAdoptClover(value){const s=sanitizeRescueSave(value);return s.completions>0&&!s.adopted;}
+// The physical finish survives a failed write in memory. Retry this same proof;
+// never create a new run or let time/waypoint progress change while saving.
+export function pendingRescueFinish(run,horseId){
+ const proof={runId:run?.runId,stage:run?.stage,clues:run?.clues,returnStep:run?.returnStep,elapsed:run?.elapsed};
+ if(!recordRescueFinish(null,proof).recorded||horseId==null)return null;
+ return {run:Object.freeze(proof),horseId,result:null};
+}
+export function saveRescueFinish(storage,pending,pay){
+ if(!pending)return {ok:false};
+ try{storage.sync(s=>{
+  if(!s||!Array.isArray(s.horses)||!s.horses.some(h=>h.id===pending.horseId))return;
+  const r=recordRescueFinish(s.rescueRides,pending.run);
+  if(!r.recorded)return; // A previous write may have succeeded before its read-back failed.
+  pending.result=r.result;
+  s.rescueRides=r.save;pay(s,r.result.pay,pending.horseId);
+ });}catch(_){} // Some hosts expose write failures; the current game catches them internally.
+ let saved;try{saved=storage.fresh();}catch(_){}
+ const record=sanitizeRescueSave(saved?.rescueRides);
+ return pending.result&&record.completions>0&&record.lastRunId===pending.run.runId?
+  {ok:true,result:pending.result,saved}:{ok:false};
+}
+export function saveCloverAdoption(storage,pending,grant){
+ if(!pending)return {ok:false,attempted:false};
+ let attempted=false;
+ try{storage.sync(s=>{
+  if(!s||!Array.isArray(s.horses))return;
+  s.rescueRides=sanitizeRescueSave(s.rescueRides);
+  if(s.rescueRides.adopted)return;
+  if(!canAdoptClover(s.rescueRides))return;
+  attempted=true;
+  const horse=s.horses.find(h=>h.rescueClover===true)||grant(s);
+  if(!horse)return;
+  pending.horseId=horse.id;s.rescueRides.adopted=true;s.rescueRides.adoptedHorseId=horse.id;
+ });}catch(_){}
+ let saved;try{saved=storage.fresh();}catch(_){}
+ const record=sanitizeRescueSave(saved?.rescueRides),horse=Array.isArray(saved?.horses)?saved.horses.find(h=>h.id===pending.horseId&&h.rescueClover===true):null;
+ return record.completions>0&&record.adopted&&pending.horseId!=null&&record.adoptedHorseId===pending.horseId&&horse?
+  {ok:true,horse,saved}:{ok:false,attempted:attempted||pending.horseId!=null};
+}
+export function mirrorRescueHorseXp(liveHorses,saved,horseId){
+ const live=liveHorses?.find(h=>h.id===horseId),horse=saved?.horses?.find(h=>h.id===horseId);
+ if(!live||!horse)return false;
+ live.level=horse.level;live.xp=horse.xp;live.stats={...horse.stats};return true;
+}
 export const RESCUE_APPROACH=Object.freeze({reach:5.5,stopSpeed:1.2,spookDistance:9,spookSpeed:5,settleSeconds:.65,retreatRadius:14,retreatSpeed:4.6});
 export function rescueInteraction({distance,speed,retreating=false,settling=0,blocked=false}={}){
  const cooldown=Number.isFinite(settling)?Math.max(0,settling):RESCUE_APPROACH.settleSeconds;

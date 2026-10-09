@@ -34,7 +34,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
   }
   state.ready=(async()=>{
     // Yield until the mounted horse has loaded, avoiding competition on arrival.
-    for(let i=0;i<120&&!H.RIG()?.ready;i++)await new Promise(ok=>setTimeout(ok,250));
+    await H.arrivalReady;
     for(const [name,radius,points] of placements) {
       const safe=points.filter(([x,z])=>available(x,z,radius));
       state.skipped.push(...points.filter(p=>!safe.includes(p)).map(p=>({asset:name,x:p[0],z:p[1]})));
