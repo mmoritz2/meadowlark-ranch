@@ -345,7 +345,7 @@ export function install(G){
  });
  G.trainingProgress?.register('season-almanac',(save,events)=>{
   const updates=[];
-  for(const e of events||[])if(e&&['cleanjump','sxp','drill','tame'].includes(e.type)){const update=applyBookProgress(save,e.type,e.value);if(update)updates.push(update);}
+  for(const e of events||[])if(e&&['cleanjump','sxp','drill','tame','roundup'].includes(e.type)){const update=applyBookProgress(save,e.type,e.value);if(update)updates.push(update);}
   return {updates};
  },(summary,receipt,verifiedSave)=>{
   // Whole-number training events never enter the gallop buffer. Refresh the live
