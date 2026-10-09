@@ -6,7 +6,7 @@ import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
-import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
+import {patchOuterFog} from './outer-landscape.js?v=outer-countryside-2';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
 import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';

@@ -94,13 +94,15 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
    const look=clamp(npcAngle(desired-r.turn),-.7,.7);
    axis.set(0,1,0);turnWorld(rig.bones.neck_01,look*.25);turnWorld(rig.bones.Head,look*.5);
   }
-  rig.root.updateMatrixWorld(true);groundSoles(r);
+  rig.root.updateMatrixWorld(true);groundSoles(r);rig.updateHairMass?.();
  }
  async function build(r){
   pending=r;
   try{
    const kit=await riderLibrary.kit(r.fit.body);
-   await riderLibrary.outfitFor(kit,r.fit.outfit);
+   // Connected wardrobe factories construct the chosen outfit in build().
+   // Native kits still require their asynchronous imported outfit source.
+   if(!kit.connectedWardrobe)await riderLibrary.outfitFor(kit,r.fit.outfit);
    if(disposed||r.distance>keepRadius)return;
    const rig=riderLibrary.build(kit,r.fit);r.rig=rig;
    rig.root.name='npc-character-'+r.entry.def.id;rig.root.scale.setScalar(r.fit.scale);
@@ -111,7 +113,7 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
    await Promise.resolve();
    if(disposed){release(r);return;}
    r.entry.g.add(rig.root);pose(r,.001,false,null);
-   r.soles=soleSamples(rig);groundSoles(r);
+   r.soles=soleSamples(rig);groundSoles(r);rig.updateHairMass?.();
    r.shadowMeshes=[];rig.root.traverse(mesh=>{if(mesh.isMesh)r.shadowMeshes.push({mesh,castShadow:mesh.castShadow});});updateShadows(r);
    for(const child of r.fallback)child.visible=false;
    if(r.distant)r.distant.root.visible=false;

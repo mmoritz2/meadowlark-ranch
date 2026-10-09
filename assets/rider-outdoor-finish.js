@@ -1,0 +1,48 @@
+import {fitLowerLayer} from './rider-garment-layer-fit.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+
+// Detail surfaces inherit the actual draped shirt's triangle weights. The
+// collar shares the literal neck edge; tape and stitching sit on that surface.
+export function outdoorFinish(T,kit,garment,data,{color='#426776',trim='#263e4b',thread='#71858c',recipe={id:'sweatshirt'}}={}){
+ const V=(x=0,y=0,z=0)=>new T.Vector3(x,y,z),get=['getX','getY','getZ','getW'];
+ const rain=recipe.id==='raincoat',fleece=recipe.id==='summit',ribWidth=rain?.019:.041,hemWidth=rain?.018:.034;
+ const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);},ga=garment.geometry.attributes;
+ const neckIds=new Set(data.boundaryLoops.find(l=>l.label==='neck').ids),baseHem=Math.max(...data.boundaryLoops.find(l=>l.label==='hem').ids.map(i=>ga.position.getY(i)));
+ for(let i=0;i<ga.position.count;i++){const p=V().fromBufferAttribute(ga.position,i),n=V().fromBufferAttribute(ga.normal,i),arm=smooth((Math.abs(p.x)-.18)/.17),fade=neckIds.has(i)?0:smooth((kit.zones.neckY-p.y+.004)/.075),ease=(rain?.0055:.008)*(fade*(1-arm)+arm);p.addScaledVector(n,ease);p.y-=(rain?.030:.006)*(1-arm)*(1-smooth((p.y-baseHem)/.13));ga.position.setXYZ(i,p.x,p.y,p.z);}garment.geometry.computeVertexNormals();garment.geometry.computeBoundingSphere();
+ const lowerFit=fitLowerLayer(T,kit,garment);
+ const parent=garment.geometry.clone();if(!parent.attributes.uv)parent.setAttribute('uv',new T.Float32BufferAttribute(new Float32Array(parent.attributes.position.count*2),2));parent.computeVertexNormals();
+ const attr=parent.attributes,point=id=>({p:V().fromBufferAttribute(attr.position,id),joints:get.map(k=>attr.skinIndex[k](id)),weights:get.map(k=>attr.skinWeight[k](id))});
+ const geo=(vertices,indices)=>{const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(vertices.flatMap(v=>v.p.toArray()),3));g.setAttribute('skinIndex',new T.Uint16BufferAttribute(vertices.flatMap(v=>v.joints),4));g.setAttribute('skinWeight',new T.Float32BufferAttribute(vertices.flatMap(v=>v.weights),4));g.setAttribute('uv',new T.Float32BufferAttribute(vertices.flatMap(v=>[v.p.x*4,v.p.y*4]),2));g.setIndex(indices);g.computeVertexNormals();g.computeBoundingSphere();return g;};
+ const fabric=(c,rib=false)=>{const m=new T.MeshStandardMaterial({color:c,roughness:rain?.66:fleece?.98:.92,metalness:0,side:T.DoubleSide});m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vClothDetail;').replace('#include <begin_vertex>','#include <begin_vertex>\nvClothDetail=position;');sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vClothDetail;').replace('#include <map_fragment>',`#include <map_fragment>
+ float warp=vClothDetail.x*${rib?'1550.0':fleece?'1000.0':'2800.0'},weft=vClothDetail.y*2800.0;
+ float resolved=1.0-smoothstep(.8,3.0,max(fwidth(warp),fwidth(weft)));
+ float weave=sin(warp)*${rib?'1.0':'sin(weft)'};
+ diffuseColor.rgb*=1.0+weave*resolved*${rib?'.038':'.022'};`);};m.customProgramCacheKey=()=> 'outdoor-layer1-'+recipe.id+'-'+(rib?'rib':'weave');return m;};
+ const pieces=[],push=(name,geometry,material)=>{pieces.push({name,geometry,material,skeleton:garment.skeleton,bindMatrix:garment.bindMatrix});return pieces.at(-1);};
+ const neck=data.boundaryLoops.find(l=>l.label==='neck').ids,neckPoints=neck.map(point),center=neckPoints.reduce((p,v)=>p.add(v.p),V()).divideScalar(neck.length),height=kit.body==='f'?.020:.023;
+ const collarVertices=[],collarIndices=[],profile=[[0,0],[.20,.0005],[.85,-.001],[1,-.0015],[1,-.003],[.72,-.0032]];
+ for(const [rise,ease]of profile)for(const v of neckPoints){const radial=V(v.p.x-center.x,0,v.p.z-center.z).normalize(),p=v.p.clone().addScaledVector(radial,ease);p.y+=height*rise;collarVertices.push({...v,p});}
+ for(let row=0;row<profile.length-1;row++)for(let i=0;i<neck.length;i++){const a=row*neck.length+i,b=row*neck.length+(i+1)%neck.length,c=a+neck.length,d=b+neck.length;collarIndices.push(a,b,c,b,d,c);}
+ const collar=push('Technical_Stand_Collar',geo(collarVertices,collarIndices),fabric(color));
+ const hem=data.boundaryLoops.find(l=>l.label==='hem').ids,hemY=Math.max(...hem.map(i=>attr.position.getY(i))),cuffX=Math.max(...data.boundaryLoops.filter(l=>l.label.startsWith('cuff')).flatMap(l=>l.ids.map(i=>Math.abs(attr.position.getX(i)))));
+ const band=trimGarment(T,parent,[(x,y)=>Math.max(hemY+hemWidth-y,Math.abs(x)-(cuffX-ribWidth))]);
+ for(let i=0;i<band.attributes.position.count;i++){const p=V().fromBufferAttribute(band.attributes.position,i),n=V().fromBufferAttribute(band.attributes.normal,i);p.addScaledVector(n,.0007);band.attributes.position.setXYZ(i,p.x,p.y,p.z);}band.computeBoundingSphere();push('Technical_Ribbed_Edges',band,fabric(trim,true));
+ const sampler=surfaceSampler(T,[{...garment,geometry:parent},collar]);
+ const fit=(x,y,offset=.001)=>{const h=sampler.cast(V(x,y,.6),V(0,0,-1));if(!h)return null;return{p:h.point.clone().addScaledVector(h.normal,offset),joints:h.joints,weights:h.weights};};
+ const ribbon=(path,width,offset=.001)=>{const vertices=[],indices=[];let previous=null;for(const [x,y]of path){const a=fit(x-width*.5,y,offset),b=fit(x+width*.5,y,offset);if(!a||!b){previous=null;continue;}const i=vertices.length;vertices.push(a,b);if(previous!==null)indices.push(previous,previous+1,i,previous+1,i+1,i);previous=i;}return geo(vertices,indices);};
+ const front=neckPoints.filter(v=>v.p.z>center.z).sort((a,b)=>Math.abs(a.p.x)-Math.abs(b.p.x))[0].p,top=front.y+height-.003,bottom=rain?hemY+.010:front.y-.185,path=Array.from({length:82},(_,i)=>[0,bottom+(top-bottom)*i/81]);
+ push(rain?'Raincoat_Full_Zip_Tape':'Fleece_Quarter_Zip_Tape',ribbon(path,.0075,.0011),fabric(trim));
+ const metalVertices=[],metalIndices=[],addQuad=(x0,y0,x1,y1,offset)=>{const v=[fit(x0,y0,offset),fit(x1,y0,offset),fit(x0,y1,offset),fit(x1,y1,offset)];if(v.some(p=>!p))return;const k=metalVertices.length;metalVertices.push(...v);metalIndices.push(k,k+1,k+2,k+1,k+3,k+2);};
+ for(let y=bottom+.003;y<top-.009;y+=.0032){addQuad(-.0022,y,-.00025,y+.0018,.0016);addQuad(.00025,y+.0008,.0022,y+.0026,.0016);}
+ addQuad(-.0023,top-.014,.0023,top-.003,.0020);addQuad(-.0030,top-.017,.0030,top-.012,.0021);
+ push('Technical_Zipper',geo(metalVertices,metalIndices),new T.MeshStandardMaterial({color:'#a79f93',roughness:.43,metalness:.65,side:T.DoubleSide}));
+ for(const side of[-1,1]){const pocketPath=Array.from({length:34},(_,i)=>[side*(.052+.042*i/33),hemY+.078+.025*i/33]);push('Outdoor_Zipped_Pocket_'+side,ribbon(pocketPath,.005,.0015),fabric(trim));}
+ const seamVertices=[],seamIndices=[];
+ const append=g=>{const offset=seamVertices.length;for(let i=0;i<g.attributes.position.count;i++)seamVertices.push({p:V().fromBufferAttribute(g.attributes.position,i),joints:get.map(k=>g.attributes.skinIndex[k](i)),weights:get.map(k=>g.attributes.skinWeight[k](i))});for(const i of g.index.array)seamIndices.push(offset+i);g.dispose();};
+ for(const side of [-1,1]){
+  const panel=Array.from({length:75},(_,i)=>{const t=i/74,y=hemY+.015+(front.y-.035-hemY-.015)*t,x=side*(.073+.090*t-.009*Math.sin(t*Math.PI));return[x,y];});append(ribbon(panel,.00095,.00085));
+  for(let y=bottom+.005;y<top-.012;y+=.0062)append(ribbon([[side*.0049,y],[side*.0049,y+.0028]],.00055,.0014));
+ }
+ push('Technical_Topstitch',geo(seamVertices,seamIndices),new T.MeshStandardMaterial({color:thread,roughness:.94,side:T.DoubleSide}));
+ sampler.dispose();parent.dispose();return {material:fabric(color),pieces,evidence:{lowerFit,style:rain?'weather shell with full zip':fleece?'soft trail fleece':'relaxed quarter-zip sweatshirt',relaxedEaseM:rain?.0055:.008,fullZip:rain,neckRoots:neck.length,neckRootOffsetM:0,collarHeightM:height,cuffRibWidthM:ribWidth,hemRibWidthM:hemWidth,quarterZipLengthM:top-bottom,detailVertices:pieces.reduce((n,p)=>n+p.geometry.attributes.position.count,0),detailTriangles:pieces.reduce((n,p)=>n+p.geometry.index.count/3,0)}};
+}

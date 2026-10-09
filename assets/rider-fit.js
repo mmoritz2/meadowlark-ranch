@@ -1,6 +1,6 @@
 /* Fit attachments to immutable bind-space surfaces with exact triangle hits.
    The BVH skips unrelated triangles; accepted hits keep their original joints. */
-import {createTriangleSurface} from './rider-head-surface.js?v=couture-riders-20261007';
+import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 export function surfaceSampler(THREE,meshes){
  const unique=new Map(),probes=meshes.map(source=>{let surface=unique.get(source.geometry);if(!surface){surface=createTriangleSurface(THREE,source.geometry);unique.set(source.geometry,surface);}return {source,surface};});
  const bary=new THREE.Vector3(),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();let disposed=false;

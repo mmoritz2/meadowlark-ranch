@@ -1,4 +1,4 @@
-import {createHeadSurface} from './rider-head-surface.js?v=couture-riders-20261007';
+import {createHeadSurface,createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 /* New styles are fitted in the Head bone's space, using the same scalp, strand
    materials and helmet deformation as the original character. */
 const smooth=(a,b,value)=>{const t=Math.max(0,Math.min(1,(value-a)/(b-a)));return t*t*(3-2*t);};
@@ -70,38 +70,291 @@ function hairFallPoint(THREE,kit,style,theta,t){
  const H=kit.head,sine=Math.sin(theta),cosine=Math.cos(theta),hang=smooth(.17,.98,t),end=style==='beachbob'?-.105:style==='mermaidwaves'?-.505:-.340,
   yEnd=end+.020*Math.abs(sine)+.010*Math.sin(theta*5.2+.7),y=H.cy+.055+(yEnd-H.cy-.055)*t,
   phase=hang*(style==='beachbob'?7.7:10.1)-theta*1.35,wave=(style==='beachbob'?.014:.022)*Math.sin(phase)*smooth(0,.25,hang),
-  radius=(H.rx+.012+.010*Math.sin(Math.PI*hang))*(1-.19*hang*hang*hang),clearance=style==='mermaidwaves'?smooth(H.cy+.018,H.chin.y-.100,y):smooth(0,.52,hang),back=(style==='beachbob'?.033:.105)*clearance*Math.abs(cosine)+(style==='beachbob'?.019:.083)*clearance*Math.pow(Math.abs(sine),.65),
+  radius=(H.rx+.012+.010*Math.sin(Math.PI*hang))*(1-.19*hang*hang*hang),clearance=style==='mermaidwaves'?smooth(H.cy+.018,H.chin.y-.100,y):smooth(0,.52,hang),back=(style==='beachbob'?.008:.020)*clearance*Math.abs(cosine)+.008*clearance*Math.pow(Math.abs(sine),.65),
   p=new THREE.Vector3(H.cx+sine*(radius+wave),y,H.cz+cosine*(H.rz+.007)-back+cosine*wave*.65);
+ // Every rear column leaves its own fitted occiput/behind-ear point. The
+ // shoulder endpoint is anticipated above the jaw, avoiding a late turn from
+ // a side-neck lock onto a global posterior plane.
+ if(!kit.hairReleasePoints)kit.hairReleasePoints=new Map();const key=theta.toFixed(6);
+ if(!kit.hairReleasePoints.has(key))kit.hairReleasePoints.set(key,scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,H.cy+.024,H.cz+cosine*H.rz),.006));
+ const release=kit.hairReleasePoints.get(key),backZ=hairBodyZ(THREE,kit,p.x,Math.min(y,H.chin.y-.140),false),drop=smooth(H.cy+.024,H.chin.y-.120,y);
+ if(backZ!==null)p.z=THREE.MathUtils.lerp(release.z,backZ-(kit.hairGarmentEnvelope?.010:.022)+cosine*wave*.14,drop);
  // A mounted male torso projects farther behind the neck than the neutral pose.
- // Clear only the lower center fall; the fitted crown and side roots stay fixed.
+ // Preserve its separate lower-center clearance after shaping the rest path.
  if(kit.body==='m'&&style!=='beachbob')p.z-=.018*smooth(H.chin.y-.065,H.chin.y-.195,y)*smooth(-.30,-.70,cosine);
- if(t<.34){const fitted=scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,y,H.cz+cosine*H.rz),.006);p.lerp(fitted,1-smooth(.13,.34,t));}
+ if(y>H.chin.y+.052){const fitted=scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,y,H.cz+cosine*H.rz),.006);p.lerp(fitted,smooth(H.chin.y+.052,H.cy+.047,y));}
  return p;
+}
+
+/* The lower locks rest against the torso instead of a fixed forward/backward
+   shelf. This bind-space proxy is shared by styles and does not move scalp roots. */
+function hairBodyZ(THREE,kit,x,y,front){
+ const H=kit.head;if(y>H.chin.y-.008)return null;
+ if(!kit.hairBodySurface){
+  const source=kit.skin||kit.garmentSkin,inverse=kit.headAsset?.inverse||source.skeleton.boneInverses[source.skeleton.bones.findIndex(b=>b.name==='Head')],body=source.geometry.clone().applyMatrix4(inverse),positions=[],indices=[];let offset=0;
+  // Use the visible sculpted neck, not the removed source head retained by
+  // garment templates. Both surfaces are copied in the same Head bind space.
+  for(const part of [body,kit.headAsset?.local].filter(Boolean)){const a=part.attributes.position;for(let i=0;i<a.count;i++)positions.push(a.getX(i),a.getY(i),a.getZ(i));if(part.index)for(const i of part.index.array)indices.push(offset+i);else for(let i=0;i<a.count;i++)indices.push(offset+i);offset+=a.count;}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setIndex(indices);kit.hairBodySurface=createTriangleSurface(THREE,geometry);geometry.dispose();body.dispose();
+ }
+ if(kit.hairGarmentEnvelope&&!kit.hairClothSurface){const geometry=kit.hairGarmentEnvelope.geometry.clone().applyMatrix4(kit.headAsset.inverse);kit.hairClothSurface=createTriangleSurface(THREE,geometry);geometry.dispose();}
+ const origin=new THREE.Vector3(x,y,H.cz+(front?.65:-.65)),direction=new THREE.Vector3(0,0,front?-1:1),accept=p=>Math.abs(p.point.x)<.23&&Math.abs(p.point.z-H.cz)<.32;let hit=kit.hairBodySurface.cast(origin,direction,accept);
+ // A side lock outside the neck has no positional collision. Extending the
+ // central neck depth here would pull it sharply behind an unrelated surface.
+ const cloth=kit.hairClothSurface?.cast(new THREE.Vector3(x,y,H.cz+(front?.65:-.65)),direction,accept);if(cloth)return hit?(front?Math.max(hit.point.z,cloth.point.z):Math.min(hit.point.z,cloth.point.z)):cloth.point.z;
+ return hit?.point.z??null;
+}
+function restHairPoint(THREE,kit,p,front,padding=.014){
+ const z=hairBodyZ(THREE,kit,p.x,p.y,front);if(z===null)return p;
+ const male=kit.body==='m'&&!front?.018*smooth(kit.head.chin.y-.065,kit.head.chin.y-.195,p.y):0,clearance=kit.hairGarmentEnvelope?Math.min(padding,.010+male):padding;
+ if(front)p.z=Math.max(p.z,z+clearance);else p.z=Math.min(p.z,z-clearance);
+ return p;
+}
+
+
+/* Roots keep the exact Head attachment; lower waves inherit the neck/torso
+   surface's barycentric skin influences, so they rest through body animation. */
+function flexibleHair(THREE,kit,geometry){
+ const bones=kit.skin?.skeleton?.bones;if(!bones)return geometry;
+ const H=kit.head,headIndex=bones.findIndex(b=>b.name==='Head'),fallback=bones.findIndex(b=>b.name==='spine_03');
+ if(headIndex<0||fallback<0)throw Error('Flexible hair requires Head and upper-spine joints');
+ if(!kit.hairWeightSurface){
+  const inverse=kit.headAsset?.inverse||kit.skin.skeleton.boneInverses[headIndex],positions=[],joints=[],weights=[],indices=[];let offset=0;
+  const component=(a,i,k)=>a[['getX','getY','getZ','getW'][k]](i),canonical=new Map();
+  bones.forEach((b,i)=>{if(!canonical.has(b.name)||kit.bones?.[b.name]===b)canonical.set(b.name,i);});
+  const allowed=new Set(bones.map((b,i)=>/^(Head|neck_\d+|spine_\d+|clavicle_[lr]|pelvis)$/.test(b.name)?canonical.get(b.name):-1).filter(i=>i>=0));
+  for(const mesh of [kit.skin,kit.headAsset?.mesh,kit.hairGarmentEnvelope].filter(Boolean)){
+   const g=mesh.geometry,a=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;if(!si||!sw)continue;
+   for(let i=0;i<a.count;i++){const p=new THREE.Vector3().fromBufferAttribute(a,i).applyMatrix4(inverse);positions.push(...p.toArray());for(let k=0;k<4;k++){joints.push(canonical.get(bones[component(si,i,k)]?.name)??headIndex);weights.push(component(sw,i,k));}}
+   if(g.index)for(const i of g.index.array)indices.push(offset+i);else for(let i=0;i<a.count;i++)indices.push(offset+i);offset+=a.count;
+  }
+  const proxy=new THREE.BufferGeometry();proxy.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));proxy.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(joints,4));proxy.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));proxy.setIndex(indices);
+  const p=proxy.attributes.position,si=proxy.attributes.skinIndex,sw=proxy.attributes.skinWeight,surface=createTriangleSurface(THREE,proxy);proxy.dispose();
+  kit.hairWeightSurface={p,si,sw,surface,allowed,component,headIndex:canonical.get('Head'),fallback:canonical.get('spine_03')};
+ }
+ const fit=kit.hairWeightSurface,position=geometry.attributes.position,joints=[],weights=[],a=new THREE.Vector3(),b=a.clone(),c=a.clone(),bary=a.clone(),point=a.clone(),origin=a.clone(),direction=new THREE.Vector3(0,0,1);
+ const start=H.chin.y-.020,end=H.chin.y-.170;
+ const sample=hit=>{
+  const f=hit.face;a.fromBufferAttribute(fit.p,f.a);b.fromBufferAttribute(fit.p,f.b);c.fromBufferAttribute(fit.p,f.c);THREE.Triangle.getBarycoord(hit.point,a,b,c,bary);const result=new Map();
+  for(const [i,t]of [[f.a,Math.max(0,bary.x)],[f.b,Math.max(0,bary.y)],[f.c,Math.max(0,bary.z)]])for(let k=0;k<4;k++){const joint=fit.component(fit.si,i,k),weight=fit.component(fit.sw,i,k)*t;if(fit.allowed.has(joint)&&Number.isFinite(weight)&&weight>0)result.set(joint,(result.get(joint)||0)+weight);}
+  const total=[...result.values()].reduce((s,w)=>s+w,0);if(total>1e-6)for(const [j,w]of result)result.set(j,w/total);return total>1e-6?result:null;
+ };
+ if(!fit.fields){
+  fit.fields={};for(const front of [false,true]){
+   const step=.005,xStep=.008,xMin=-.20,columns=51,count=Math.ceil((start+.56)/step)+1,fallbacks=[],hits=[];let rows=[];
+   for(let row=0;row<count;row++){
+    const y=start-row*step,values=[];let missing=0;
+    for(let col=0;col<columns;col++){
+     const x=xMin+col*xStep;origin.set(x,y,H.cz+(front?.65:-.65));direction.set(0,0,front?-1:1);
+     const hit=fit.surface.cast(origin,direction,h=>Math.abs(h.point.z-H.cz)<.32&&!!sample(h));values.push(hit?sample(hit):null);
+     if(hit)hits.push({x,y,faceIndex:hit.faceIndex});else missing++;
+    }
+    // Side locks extend beyond the narrow neck. Continue the nearest accepted
+    // same-height ownership outwards; the fill is a field, not a vertex switch.
+    const valid=values.map((v,i)=>v?i:-1).filter(i=>i>=0);
+    if(valid.length)for(let col=0;col<columns;col++)if(!values[col]){
+     let nearest=valid[0];for(const candidate of valid)if(Math.abs(candidate-col)<Math.abs(nearest-col))nearest=candidate;
+     values[col]=new Map(values[nearest]);
+    }
+    rows.push(values);if(missing)fallbacks.push({y,count:missing,reason:valid.length?'Nearest accepted same-height surface weights':'No accepted surface at this height',validColumns:valid.length});
+   }
+   // A whole missing row borrows the nearest measured row before smoothing.
+   // Only a wholly absent proxy uses the deterministic upper-spine fallback.
+   const validRows=rows.map((r,i)=>r.some(Boolean)?i:-1).filter(i=>i>=0);
+   for(let row=0;row<rows.length;row++)if(!rows[row].some(Boolean)){
+    let nearest=validRows[0];for(const candidate of validRows)if(Math.abs(candidate-row)<Math.abs(nearest-row))nearest=candidate;
+    rows[row]=Array.from({length:columns},(_,col)=>nearest===undefined?new Map([[fit.fallback,1]]):new Map(rows[nearest][col]));
+    const report=fallbacks.find(f=>Math.abs(f.y-(start-row*step))<1e-8);report.reason=nearest===undefined?'No measured surface; upper-spine fallback':'Nearest accepted longitudinal row';if(nearest!==undefined)report.sourceY=start-nearest*step;
+   }
+   // A continuous shoulder field retains left/right clavicle ownership while
+   // removing source-triangle and silhouette discontinuities. Interpolation is
+   // shared by every lock; scalp roots retain their separate Head100% domain.
+   const kernel=[1,4,6,4,1];
+   for(let pass=0;pass<2;pass++)for(const axis of ['x','y'])rows=rows.map((r,row)=>r.map((_,col)=>{
+    const mixed=new Map();for(let k=-2;k<=2;k++){
+     const values=axis==='x'?rows[row][Math.max(0,Math.min(columns-1,col+k))]:rows[Math.max(0,Math.min(rows.length-1,row+k))][col];
+     for(const [j,w]of values)mixed.set(j,(mixed.get(j)||0)+w*kernel[k+2]/16);
+    }return mixed;
+   }));
+   fit.fields[front?'front':'back']={rows,start,step,xMin,xStep,columns,hits,fallbacks};
+  }
+ }
+ const fieldStats=Object.fromEntries(Object.entries(fit.fields).map(([name,f])=>[name,{samples:f.rows.length*f.columns,rows:f.rows.length,columns:f.columns,xMin:f.xMin,xMax:f.xMin+(f.columns-1)*f.xStep,step:f.step,xStep:f.xStep,hits:f.hits.length,noHitFallbacks:f.fallbacks.reduce((n,r)=>n+r.count,0),fallbacks:f.fallbacks}])),stats={sampling:'Shared smooth X/Y neck, spine and clavicle fields, one per front/rear lock family',dressedEnvelope:!!kit.hairGarmentEnvelope,envelopeRepresentatives:kit.hairGarmentEnvelope?.representatives||[],headIndex:fit.headIndex,fallbackIndex:fit.fallback,blendStart:start,blendEnd:end,headOnly:0,sampled:0,fields:fieldStats,allowedJoints:[...fit.allowed].map(i=>({index:i,name:bones[i].name}))};
+ for(let i=0;i<position.count;i++){
+  point.fromBufferAttribute(position,i);const follow=1-smooth(end,start,point.y);let influences=new Map([[fit.headIndex,1]]);
+  if(follow>0){
+   stats.sampled++;const field=fit.fields[point.z>H.cz+.025?'front':'back'],fy=Math.max(0,Math.min(field.rows.length-1,(field.start-point.y)/field.step)),fx=Math.max(0,Math.min(field.columns-1,(point.x-field.xMin)/field.xStep)),y0=Math.floor(fy),y1=Math.min(field.rows.length-1,y0+1),x0=Math.floor(fx),x1=Math.min(field.columns-1,x0+1),ty=fy-y0,tx=fx-x0,torso=new Map();
+   for(const [row,col,factor]of [[y0,x0,(1-ty)*(1-tx)],[y0,x1,(1-ty)*tx],[y1,x0,ty*(1-tx)],[y1,x1,ty*tx]])for(const [j,w]of field.rows[row][col])torso.set(j,(torso.get(j)||0)+w*factor);
+   influences=new Map([...torso].map(([j,w])=>[j,w*follow]));influences.set(fit.headIndex,(influences.get(fit.headIndex)||0)+1-follow);
+  }else stats.headOnly++;
+  const ranked=[...influences].filter(([j,w])=>fit.allowed.has(j)&&Number.isFinite(w)&&w>0).sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,4),total=ranked.reduce((s,p)=>s+p[1],0);if(!(total>0))throw Error('Invalid flexible hair weights');while(ranked.length<4)ranked.push([fit.headIndex,0]);joints.push(...ranked.map(p=>p[0]));weights.push(...ranked.map(p=>p[1]/total));
+ }
+ geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(joints,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));geometry.userData.flexibleHair=true;geometry.userData.hairSkinning=stats;return geometry;
 }
 
 /* A rounded ribbon, with width running across the lock and a shallow lenticular
    section. Independent S-curves and staggered tips create layers rather than a sheet. */
-function waveLeaf(THREE,points,width,thickness,outward,kit){
+function waveLeaf(THREE,points,width,thickness,outward,kit,profile={}){
  const path=new THREE.CatmullRomCurve3(points),P=[],UV=[],I=[],segments=54,sides=10;
  for(let i=0;i<=segments;i++){
-  const t=i/segments,center=path.getPointAt(t),tangent=path.getTangentAt(t).normalize(),out=outward.clone().addScaledVector(tangent,-outward.dot(tangent)).normalize(),side=out.clone().cross(tangent).normalize(),
-   root=smooth(0,.13,t),tip=1-smooth(.68,1,t),breadth=width*(.18+.82*root)*(.12+.88*tip)*(1+.08*Math.sin(t*9.0)),depth=thickness*(.30+.70*root)*(.14+.86*tip);
+  const t=i/segments,center=path.getPointAt(t),tangent=path.getTangentAt(t).normalize(),scalpBlend=kit&&profile.contact!=='back'?smooth(kit.head.chin.y+.013,kit.head.chin.y+.062,center.y):0;
+  let sectionOut=outward.clone();
+  const sampleScalp=target=>{if(!kit.hairFrontArchSurface)kit.hairFrontArchSurface=createTriangleSurface(THREE,kit.headAsset.local);const skull=new THREE.Vector3(kit.head.cx,kit.head.cy,kit.head.cz),direction=target.clone().sub(skull).normalize(),hit=kit.hairFrontArchSurface.cast(skull,direction);if(!hit)return null;const g=kit.headAsset.local,p=g.attributes.position,n=g.attributes.normal,bary=new THREE.Vector3();THREE.Triangle.getBarycoord(hit.point,new THREE.Vector3().fromBufferAttribute(p,hit.face.a),new THREE.Vector3().fromBufferAttribute(p,hit.face.b),new THREE.Vector3().fromBufferAttribute(p,hit.face.c),bary);const normal=new THREE.Vector3().fromBufferAttribute(n,hit.face.a).multiplyScalar(bary.x).addScaledVector(new THREE.Vector3().fromBufferAttribute(n,hit.face.b),bary.y).addScaledVector(new THREE.Vector3().fromBufferAttribute(n,hit.face.c),bary.z).normalize();if(normal.dot(direction)<0)normal.negate();return{point:hit.point,normal};};
+  if(scalpBlend>0){const fit=sampleScalp(center);if(fit)sectionOut.lerp(fit.normal,scalpBlend);}
+  const out=sectionOut.addScaledVector(tangent,-sectionOut.dot(tangent)).normalize(),side=out.clone().cross(tangent).normalize(),
+   root=smooth(0,.13,t),tip=profile.rounded?Math.sqrt(Math.max(0,1-smooth(profile.taper??.78,1,t)**2)):1-smooth(profile.taper??.62,1,t),base=profile.root??.18,tipWidth=profile.tip??.035,breadth=width*(base+(1-base)*root)*(tipWidth+(1-tipWidth)*tip)*(1+.08*Math.sin(t*9.0)),depth=thickness*(.30+.70*root)*(.07+.93*tip);
+  const ring=[];
   for(let j=0;j<=sides;j++){
-   const angle=j/sides*Math.PI*2,across=Math.cos(angle),bulge=Math.sin(angle),point=center.clone().addScaledVector(side,across*breadth).addScaledVector(out,bulge*depth*(1-.15*Math.abs(across)));
-   if(kit){const fitted=scalpPoint(THREE,kit,point,.0052+.0018*(1-Math.abs(across)));point.lerp(fitted,smooth(kit.head.chin.y+.013,kit.head.chin.y+.062,point.y));}
-   P.push(...point.toArray());UV.push(j/sides*1.8,t*3);
-   if(i<segments&&j<sides){const k=i*(sides+1)+j,n=sides+1;I.push(k,k+1,k+n,k+1,k+n+1,k+n);}
+   const angle=j/sides*Math.PI*2,across=Math.cos(angle),point=center.clone().addScaledVector(side,across*breadth).addScaledVector(out,Math.sin(angle)*depth*(1-.15*Math.abs(across)));
+   if(scalpBlend>0){
+    // The scalp-facing side stays buried beneath the crown while the exterior
+    // arches gently above it. Each cross-section follows the actual curved
+    // head; moving an entire straight ring outward made unsupported ridges.
+    const query=center.clone().addScaledVector(side,across*breadth),fit=sampleScalp(query);
+    if(fit){const outer=(1+Math.sin(angle))*.5,arch=depth*outer*(1-.15*Math.abs(across))*smooth(0,.15,t);point.lerp(fit.point.clone().addScaledVector(fit.normal,.0048+arch),scalpBlend);}
+   }ring.push(point);
   }
+  // Fit the full lenticular section as one ring, preserving its roundness.
+  // Vertex-by-vertex projection flattens inner faces and makes blunt shelf tips.
+  if(kit){const front=profile.contact!=='back',male=!front&&kit.body==='m'?.018*smooth(kit.head.chin.y-.065,kit.head.chin.y-.195,center.y):0,margin=(profile.padding??.009)+male,clearance=kit.hairGarmentEnvelope?Math.min(margin,.010+male):margin;let shift=0;
+   for(const point of [...ring,center]){const z=hairBodyZ(THREE,kit,point.x,point.y,front);if(z!==null)shift=front?Math.max(shift,z+clearance-point.z):Math.min(shift,z-clearance-point.z);}
+   for(const point of ring)point.z+=shift;
+  }
+  for(let j=0;j<=sides;j++){P.push(...ring[j].toArray());UV.push(j/sides*1.8,t*3);if(i<segments&&j<sides){const k=i*(sides+1)+j,n=sides+1;I.push(k,k+1,k+n,k+1,k+n+1,k+n);}}
+
  }
  // Seal both tapered ends; these small rounded tips remain visible from behind.
- for(const ring of [0,segments]){const c=path.getPointAt(ring/segments),id=P.length/3;P.push(...c.toArray());UV.push(.9,ring/segments*3+(ring ? .015 : -.015));for(let j=0;j<sides;j++){const k=ring*(sides+1)+j;ring?I.push(id,k,k+1):I.push(id,k+1,k);}}
+ for(const ring of [0,segments]){const c=new THREE.Vector3();for(let j=0;j<sides;j++)c.add(new THREE.Vector3().fromArray(P,(ring*(sides+1)+j)*3));c.multiplyScalar(1/sides);const id=P.length/3;P.push(...c.toArray());UV.push(.9,ring/segments*3+(ring ? .015 : -.015));for(let j=0;j<sides;j++){const k=ring*(sides+1)+j;ring?I.push(id,k,k+1):I.push(id,k+1,k);}}
  const geo=new THREE.BufferGeometry();geo.setIndex(I);geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));geo.computeVertexNormals();return geo;
 }
+/* One continuous exterior joins the crown and rear core. The seam is cut from
+   existing crown triangles; the lower core and every separate lock stay exact. */
+function joinedRearShell(THREE,kit,cap,fall,A,B,theta0,span){
+ const H=kit.head,N=96,M=26,P=Array.from(cap.attributes.position.array),UV=Array.from(cap.attributes.uv.array),originalP=cap.attributes.position,originalUV=cap.attributes.uv,
+  first=79,last=17,edgeTheta=31*Math.PI/48,wrap=theta=>theta<0?theta+Math.PI*2:theta,vertexTheta=[],cut=[],seam=[],cache=new Map(),indices=[];
+ for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){
+  const theta=(i/N-.5)*Math.PI*2,a=Math.abs(theta),lower=originalP.getY(M*(N+1)+i),amount=smooth(edgeTheta,edgeTheta+.16,a),height=THREE.MathUtils.lerp(lower,Math.max(lower,H.cy+.031),amount);
+  vertexTheta.push(wrap(theta));cut.push(originalP.getY(j*(N+1)+i)-height);
+ }
+ vertexTheta.push(Math.PI);cut.push(1);
+ const interpolate=(a,b)=>{if(Math.abs(cut[a])<1e-9)return a;if(Math.abs(cut[b])<1e-9)return b;const key=a<b?a+':'+b:b+':'+a;if(cache.has(key))return cache.get(key);const t=cut[a]/(cut[a]-cut[b]),id=P.length/3;
+  for(let k=0;k<3;k++)P.push(P[a*3+k]+(P[b*3+k]-P[a*3+k])*t);for(let k=0;k<2;k++)UV.push(UV[a*2+k]+(UV[b*2+k]-UV[a*2+k])*t);
+  vertexTheta.push(vertexTheta[a]+(vertexTheta[b]-vertexTheta[a])*t);cut.push(0);cache.set(key,id);return id;
+ };
+ for(let i=0;i<cap.index.count;i+=3){const ids=[cap.index.getX(i),cap.index.getX(i+1),cap.index.getX(i+2)],rear=ids.every(id=>id!==M*(N+1)+N+1&&((id%(N+1))>=first||(id%(N+1))<=last));
+  if(!rear){indices.push(...ids);continue;}const polygon=[];
+  for(let k=0;k<3;k++){const a=ids[k],b=ids[(k+1)%3],inside=cut[a]>=-1e-9,next=cut[b]>=-1e-9;if(inside)polygon.push(a);if(inside!==next)polygon.push(interpolate(a,b));}
+  const unique=polygon.filter((id,k)=>id!==polygon[(k+polygon.length-1)%polygon.length]);for(let k=1;k<unique.length-1;k++)indices.push(unique[0],unique[k],unique[k+1]);
+ }
+ cap.setAttribute('position',new THREE.Float32BufferAttribute(P,3));cap.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));cap.setIndex(indices);cap.deleteAttribute('normal');cap.computeVertexNormals();
+ // Boundary edges on the measured cut form a single rear arc. Duplicated UV
+ // seam positions remain exact, while geometry below the arc is omitted.
+ const edges=new Map();for(let i=0;i<indices.length;i+=3)for(let k=0;k<3;k++){const a=indices[i+k],b=indices[i+(k+1)%3],key=a<b?a+':'+b:b+':'+a;edges.set(key,(edges.get(key)||0)+1);}
+ const ids=new Set();for(const [key,count]of edges)if(count===1){const [a,b]=key.split(':').map(Number);if(Math.abs(cut[a])<1e-7&&Math.abs(cut[b])<1e-7&&vertexTheta[a]>=edgeTheta-1e-6&&vertexTheta[b]>=edgeTheta-1e-6&&vertexTheta[a]<=Math.PI*2-edgeTheta+1e-6&&vertexTheta[b]<=Math.PI*2-edgeTheta+1e-6){ids.add(a);ids.add(b);}}
+ const cp=cap.attributes.position,cu=cap.attributes.uv,cn=cap.attributes.normal;
+ for(const id of [...ids].sort((a,b)=>vertexTheta[a]-vertexTheta[b]||a-b)){
+  const p=new THREE.Vector3().fromBufferAttribute(cp,id);if(seam.length&&p.distanceTo(seam.at(-1).p)<1e-7)continue;seam.push({id,theta:vertexTheta[id],p,uv:new THREE.Vector2(cu.getX(id)+(vertexTheta[id]>=Math.PI&&cu.getX(id)<2.5?5:0),cu.getY(id)),normal:new THREE.Vector3().fromBufferAttribute(cn,id)});
+ }
+ if(seam.length<20)throw Error('Incomplete crown/fall seam');
+ const fp=fall.attributes.position,fu=fall.attributes.uv,total=(A+1)*(B+1),
+  // Use the first whole pre-existing row below the bounded join domain.
+  joinRow=(()=>{for(let row=1;row<B-1;row++){let above=false;for(let col=0;col<=A;col++)if(fp.getY(row*(A+1)+col)>H.cy-.018)above=true;if(!above)return row;}return B-2;})();
+ const kept=[];for(let i=0;i<fall.index.count;i+=3){const ids=[fall.index.getX(i),fall.index.getX(i+1),fall.index.getX(i+2)];if(ids.every(id=>Math.floor((id%total)/(A+1))>=joinRow))kept.push(...ids);}fall.setIndex(kept);fall.computeVertexNormals();
+ const positions=[],uvs=[],I=[],topIds=[],ringIds=[[],[]],rows=7,seamSample=theta=>{let i=0;while(i<seam.length-2&&seam[i+1].theta<theta)i++;const a=seam[i],b=seam[i+1],t=THREE.MathUtils.clamp((theta-a.theta)/Math.max(1e-8,b.theta-a.theta),0,1);return {p:a.p.clone().lerp(b.p,t),uv:a.uv.clone().lerp(b.uv,t),normal:a.normal.clone().lerp(b.normal,t).normalize()};},push=(p,uv)=>{const id=positions.length/3;positions.push(...p.toArray());uvs.push(uv.x,uv.y);return id;};
+ for(const s of seam)topIds.push(push(s.p,s.uv));
+ for(let side=0;side<2;side++)for(let row=1;row<=rows;row++){
+  const ring=[];for(let col=0;col<=A;col++){
+   const theta=theta0+span*col/A,top=seamSample(theta),id=side*total+joinRow*(A+1)+col,end=new THREE.Vector3().fromBufferAttribute(fp,id),next=new THREE.Vector3().fromBufferAttribute(fp,id+(A+1)),dy=end.y-top.p.y,
+    tangent0=new THREE.Vector3(0,-1,0).addScaledVector(top.normal,top.normal.y).normalize().multiplyScalar(Math.abs(dy)),tangent1=next.sub(end);tangent1.multiplyScalar(dy/Math.min(-1e-5,tangent1.y));
+   const t=row/rows,t2=t*t,t3=t2*t,point=top.p.clone().multiplyScalar(2*t3-3*t2+1).addScaledVector(tangent0,t3-2*t2+t).addScaledVector(end,-2*t3+3*t2).addScaledVector(tangent1,t3-t2);
+   if(side&&row<rows)point.addScaledVector(top.normal,-.004*(1-t));
+   if(row<rows){const center=new THREE.Vector3(H.cx,H.cy,H.cz),fitted=scalpPoint(THREE,kit,point,side?-.0032:.0008),rawRadius=point.distanceTo(center),minimum=fitted.distanceTo(center);if(rawRadius<minimum)point.lerp(fitted,smooth(1,.25,t));}
+   if(!point.toArray().every(Number.isFinite))throw Error('Join nonfinite '+JSON.stringify({side,row,col,theta,t,top:top.p.toArray(),normal:top.normal.toArray(),end:end.toArray(),tangent0:tangent0.toArray(),tangent1:tangent1.toArray(),joinRow,dy}));
+   const uv=new THREE.Vector2(top.uv.x,top.uv.y+(top.p.y-point.y)*6);ring.push(push(point,uv));
+  }ringIds[side].push(ring);
+ }
+ const topSides=[topIds];// A single angular chart follows the same columns down the joined shell.
+ // The original core chart stretched across height, rotating the fine fibers.
+ for(let side=0;side<2;side++)for(let row=joinRow;row<=B;row++)for(let col=0;col<=A;col++){const top=seamSample(theta0+span*col/A),id=side*total+row*(A+1)+col;fu.setXY(id,top.uv.x,top.uv.y+(top.p.y-fp.getY(id))*6);}
+ const triangle=(side,a,b,c)=>side?I.push(a,c,b):I.push(a,b,c),angles=Array.from({length:A+1},(_,col)=>theta0+span*col/A);
+ for(let side=0;side<2;side++){
+  const top=side?seam.map(s=>push(s.p.clone().addScaledVector(s.normal,-.004),s.uv)):topIds,bottom=ringIds[side][0];topSides[side]=top;let a=0,b=0;
+  while(a<top.length-1||b<bottom.length-1){if(b===bottom.length-1||(a<top.length-1&&seam[a+1].theta<=angles[b+1])){triangle(side,top[a],bottom[b],top[a+1]);a++;}else{triangle(side,top[a],bottom[b],bottom[b+1]);b++;}}
+  for(let row=0;row<rows-1;row++)for(let col=0;col<A;col++){const a=ringIds[side][row][col],b=ringIds[side][row+1][col],c=ringIds[side][row][col+1],d=ringIds[side][row+1][col+1];triangle(side,a,b,c);triangle(side,c,b,d);}
+ }
+ for(const col of [0,A]){const topCol=col===0?0:seam.length-1,a=topSides[0][topCol],b=ringIds[0][0][col],c=topSides[1][topCol],d=ringIds[1][0][col];col===0?I.push(a,c,b,b,c,d):I.push(a,b,c,b,d,c);}
+ for(let row=0;row<rows-1;row++)for(const col of [0,A]){const a=ringIds[0][row][col],b=ringIds[0][row+1][col],c=ringIds[1][row][col],d=ringIds[1][row+1][col];col===0?I.push(a,c,b,b,c,d):I.push(a,b,c,b,d,c);}
+ const bridge=new THREE.BufferGeometry();bridge.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));bridge.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));bridge.setIndex(I);bridge.computeVertexNormals();
+ bridge.userData.crownFallJoin={seamCount:seam.length,joinRow,seamCapIndices:seam.map(s=>s.id),seamBridgeIndices:topIds,bottomBridgeIndices:ringIds[0].at(-1),bottomFallIndices:Array.from({length:A+1},(_,col)=>joinRow*(A+1)+col),capCount:cp.count,fallCount:fp.count,bridgeCount:positions.length/3,domain:{topY:Math.max(...seam.map(s=>s.p.y)),bottomY:Math.min(...ringIds[0].at(-1).map(id=>positions[id*3+1]))}};
+ return bridge;
+}
+
+function joinedLooseShell(THREE,kit,cap,fall,A,B,theta0,span){
+ const H=kit.head,N=96,M=26,P=Array.from(cap.attributes.position.array),UV=Array.from(cap.attributes.uv.array),originalP=cap.attributes.position,originalUV=cap.attributes.uv,
+  first=79,last=17,edgeTheta=31*Math.PI/48,wrap=theta=>theta<0?theta+Math.PI*2:theta,vertexTheta=[],cut=[],seam=[],cache=new Map(),indices=[];
+ for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){
+  const theta=(i/N-.5)*Math.PI*2,a=Math.abs(theta),lower=originalP.getY(M*(N+1)+i),amount=smooth(edgeTheta,edgeTheta+.16,a),height=THREE.MathUtils.lerp(lower,Math.max(lower,H.cy+.031),amount);
+  vertexTheta.push(wrap(theta));cut.push(originalP.getY(j*(N+1)+i)-height);
+ }
+ vertexTheta.push(Math.PI);cut.push(1);
+ const interpolate=(a,b)=>{if(Math.abs(cut[a])<1e-9)return a;if(Math.abs(cut[b])<1e-9)return b;const key=a<b?a+':'+b:b+':'+a;if(cache.has(key))return cache.get(key);const t=cut[a]/(cut[a]-cut[b]),id=P.length/3;
+  for(let k=0;k<3;k++)P.push(P[a*3+k]+(P[b*3+k]-P[a*3+k])*t);for(let k=0;k<2;k++)UV.push(UV[a*2+k]+(UV[b*2+k]-UV[a*2+k])*t);
+  vertexTheta.push(vertexTheta[a]+(vertexTheta[b]-vertexTheta[a])*t);cut.push(0);cache.set(key,id);return id;
+ };
+ for(let i=0;i<cap.index.count;i+=3){const ids=[cap.index.getX(i),cap.index.getX(i+1),cap.index.getX(i+2)],rear=ids.every(id=>id!==M*(N+1)+N+1&&((id%(N+1))>=first||(id%(N+1))<=last));
+  if(!rear){indices.push(...ids);continue;}const polygon=[];
+  for(let k=0;k<3;k++){const a=ids[k],b=ids[(k+1)%3],inside=cut[a]>=-1e-9,next=cut[b]>=-1e-9;if(inside)polygon.push(a);if(inside!==next)polygon.push(interpolate(a,b));}
+  const unique=polygon.filter((id,k)=>id!==polygon[(k+polygon.length-1)%polygon.length]);for(let k=1;k<unique.length-1;k++)indices.push(unique[0],unique[k],unique[k+1]);
+ }
+ cap.setAttribute('position',new THREE.Float32BufferAttribute(P,3));cap.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));cap.setIndex(indices);cap.deleteAttribute('normal');cap.computeVertexNormals();
+ // Boundary edges on the measured cut form a single rear arc. Duplicated UV
+ // seam positions remain exact, while geometry below the arc is omitted.
+ const edges=new Map();for(let i=0;i<indices.length;i+=3)for(let k=0;k<3;k++){const a=indices[i+k],b=indices[i+(k+1)%3],key=a<b?a+':'+b:b+':'+a;edges.set(key,(edges.get(key)||0)+1);}
+ const ids=new Set();for(const [key,count]of edges)if(count===1){const [a,b]=key.split(':').map(Number);if(Math.abs(cut[a])<1e-7&&Math.abs(cut[b])<1e-7&&vertexTheta[a]>=edgeTheta-1e-6&&vertexTheta[b]>=edgeTheta-1e-6&&vertexTheta[a]<=Math.PI*2-edgeTheta+1e-6&&vertexTheta[b]<=Math.PI*2-edgeTheta+1e-6){ids.add(a);ids.add(b);}}
+ const cp=cap.attributes.position,cu=cap.attributes.uv,cn=cap.attributes.normal;
+ for(const id of [...ids].sort((a,b)=>vertexTheta[a]-vertexTheta[b]||a-b)){
+  const p=new THREE.Vector3().fromBufferAttribute(cp,id);if(seam.length&&p.distanceTo(seam.at(-1).p)<1e-7)continue;seam.push({id,theta:vertexTheta[id],p,uv:new THREE.Vector2(cu.getX(id)+(vertexTheta[id]>=Math.PI&&cu.getX(id)<2.5?5:0),cu.getY(id)),normal:new THREE.Vector3().fromBufferAttribute(cn,id)});
+ }
+ if(seam.length<20)throw Error('Incomplete crown/fall seam');
+ const fp=fall.attributes.position,fu=fall.attributes.uv,total=(A+1)*(B+1),
+  // Use the first whole pre-existing row below the bounded join domain.
+  joinRow=(()=>{for(let row=1;row<B-1;row++){let above=false;for(let col=0;col<=A;col++)if(fp.getY(row*(A+1)+col)>H.chin.y+.012)above=true;if(!above)return row;}return B-2;})();
+ const kept=[];for(let i=0;i<fall.index.count;i+=3){const ids=[fall.index.getX(i),fall.index.getX(i+1),fall.index.getX(i+2)];if(ids.every(id=>Math.floor((id%total)/(A+1))>=joinRow))kept.push(...ids);}fall.setIndex(kept);fall.computeVertexNormals();
+ const positions=[],uvs=[],I=[],topIds=[],ringIds=[[],[]],rows=7,seamSample=theta=>{let i=0;while(i<seam.length-2&&seam[i+1].theta<theta)i++;const a=seam[i],b=seam[i+1],t=THREE.MathUtils.clamp((theta-a.theta)/Math.max(1e-8,b.theta-a.theta),0,1);return {p:a.p.clone().lerp(b.p,t),uv:a.uv.clone().lerp(b.uv,t),normal:a.normal.clone().lerp(b.normal,t).normalize()};},push=(p,uv)=>{const id=positions.length/3;positions.push(...p.toArray());uvs.push(uv.x,uv.y);return id;};
+ for(const s of seam)topIds.push(push(s.p,s.uv));
+ for(let side=0;side<2;side++)for(let row=1;row<=rows;row++){
+  const ring=[];for(let col=0;col<=A;col++){
+   const theta=theta0+span*col/A,top=seamSample(edgeTheta+(Math.PI*2-2*edgeTheta)*col/A),id=side*total+joinRow*(A+1)+col,end=new THREE.Vector3().fromBufferAttribute(fp,id),next=new THREE.Vector3().fromBufferAttribute(fp,id+(A+1)),dy=end.y-top.p.y,
+    tangent0=new THREE.Vector3(0,-1,0).addScaledVector(top.normal,top.normal.y).normalize().multiplyScalar(Math.abs(dy)),tangent1=next.sub(end);tangent1.multiplyScalar(dy/Math.min(-1e-5,tangent1.y));
+   const t=row/rows,t2=t*t,t3=t2*t,point=top.p.clone().multiplyScalar(2*t3-3*t2+1).addScaledVector(tangent0,t3-2*t2+t).addScaledVector(end,-2*t3+3*t2).addScaledVector(tangent1,t3-t2);
+   if(side&&row<rows)point.addScaledVector(top.normal,-.004*(1-t));
+   if(row<rows){const center=new THREE.Vector3(H.cx,H.cy,H.cz),fitted=scalpPoint(THREE,kit,point,side?-.0032:.0008),rawRadius=point.distanceTo(center),minimum=fitted.distanceTo(center);if(rawRadius<minimum)point.lerp(fitted,smooth(1,.25,t));}
+   if(!point.toArray().every(Number.isFinite))throw Error('Join nonfinite '+JSON.stringify({side,row,col,theta,t,top:top.p.toArray(),normal:top.normal.toArray(),end:end.toArray(),tangent0:tangent0.toArray(),tangent1:tangent1.toArray(),joinRow,dy}));
+   const uv=new THREE.Vector2(top.uv.x,top.uv.y+(top.p.y-point.y)*6);ring.push(push(point,uv));
+  }ringIds[side].push(ring);
+ }
+ const topSides=[topIds];// A single angular chart follows the same columns down the joined shell.
+ // The original core chart stretched across height, rotating the fine fibers.
+ for(let side=0;side<2;side++)for(let row=joinRow;row<=B;row++)for(let col=0;col<=A;col++){const top=seamSample(edgeTheta+(Math.PI*2-2*edgeTheta)*col/A),id=side*total+row*(A+1)+col;fu.setXY(id,top.uv.x,top.uv.y+(top.p.y-fp.getY(id))*6);}
+ const triangle=(side,a,b,c)=>side?I.push(a,c,b):I.push(a,b,c),angles=Array.from({length:A+1},(_,col)=>edgeTheta+(Math.PI*2-2*edgeTheta)*col/A);
+ for(let side=0;side<2;side++){
+  const top=side?seam.map(s=>push(s.p.clone().addScaledVector(s.normal,-.004),s.uv)):topIds,bottom=ringIds[side][0];topSides[side]=top;let a=0,b=0;
+  while(a<top.length-1||b<bottom.length-1){if(b===bottom.length-1||(a<top.length-1&&seam[a+1].theta<=angles[b+1])){triangle(side,top[a],bottom[b],top[a+1]);a++;}else{triangle(side,top[a],bottom[b],bottom[b+1]);b++;}}
+  for(let row=0;row<rows-1;row++)for(let col=0;col<A;col++){const a=ringIds[side][row][col],b=ringIds[side][row+1][col],c=ringIds[side][row][col+1],d=ringIds[side][row+1][col+1];triangle(side,a,b,c);triangle(side,c,b,d);}
+ }
+ for(const col of [0,A]){const topCol=col===0?0:seam.length-1,a=topSides[0][topCol],b=ringIds[0][0][col],c=topSides[1][topCol],d=ringIds[1][0][col];col===0?I.push(a,c,b,b,c,d):I.push(a,b,c,b,d,c);}
+ for(let row=0;row<rows-1;row++)for(const col of [0,A]){const a=ringIds[0][row][col],b=ringIds[0][row+1][col],c=ringIds[1][row][col],d=ringIds[1][row+1][col];col===0?I.push(a,c,b,b,c,d):I.push(a,b,c,b,d,c);}
+ const bridge=new THREE.BufferGeometry();bridge.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));bridge.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));bridge.setIndex(I);bridge.computeVertexNormals();
+ bridge.userData.crownFallJoin={seamCount:seam.length,joinRow,seamCapIndices:seam.map(s=>s.id),seamBridgeIndices:topIds,bottomBridgeIndices:ringIds[0].at(-1),bottomFallIndices:Array.from({length:A+1},(_,col)=>joinRow*(A+1)+col),capCount:cp.count,fallCount:fp.count,bridgeCount:positions.length/3,method:'joined behind-ear cap arc to unchanged first whole row below chin+12mm;unified strand UV chart',domain:{topY:Math.max(...seam.map(s=>s.p.y)),bottomY:Math.min(...ringIds[0].at(-1).map(id=>positions[id*3+1]))}};
+ return bridge;
+}
+
 function sculptedHairShape(THREE,kit,style){
- const H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z),pieces=[],P=[],U=[],I=[],N=96,M=26,short=style==='pixie',fallOnly=style==='curlyFall',layered=['waves','mermaidwaves','beachbob'].includes(style);
+ let joinMeta=null;const forelockMeta=[];const H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z),pieces=[],P=[],U=[],I=[],N=96,M=26,short=style==='pixie',fallOnly=style==='curlyFall',layered=['waves','mermaidwaves','beachbob'].includes(style),joinedLoose=['long','lob','bob'].includes(style);
  const line=theta=>{const a=Math.abs(theta),part=.0035*Math.exp(-1*((theta+.13)/.11)**2);
   if(layered){const front=H.browTop+.032+.010*Math.sin(Math.min(1,a/.90)*Math.PI*.5)**2-part,side=H.browTop+.042-.022*smooth(.90,1.85,a),back=H.browTop+.020-.088*smooth(1.85,Math.PI,a);return a<.90?front:a<1.85?side:back;}
-  return a<.90?H.browTop+.032+.010*Math.sin(a/.90*Math.PI*.5)**2-part:a<1.55?H.browTop+.042-(a-.90)*.090:H.browTop-.0165-(a-1.55)*.045;};
+  const original=a<.90?H.browTop+.032+.010*Math.sin(a/.90*Math.PI*.5)**2-part:a<1.55?H.browTop+.042-(a-.90)*.090:H.browTop-.0165-(a-1.55)*.045;
+  return original+(joinedLoose?.012*smooth(.90,1.50,a)*(1-smooth(2.00,2.40,a)):0);};
  // The fitted crown is a single smooth shell with shallow directional clumps.
  for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){
   const v=j/M,theta=(i/N-.5)*Math.PI*2,y=H.top-.003+(line(theta)-H.top+.003)*Math.pow(v,.72),section=Math.sqrt(Math.max(.00001,1-((y-H.cy)/Math.max(.01,H.ry))**2)),target=V(H.cx+Math.sin(theta)*H.rx*section,y,H.cz+Math.cos(theta)*H.rz*section),p=scalpPoint(THREE,kit,target,layered?.0006+.0039*(1-smooth(.73,1,v)):.0045),normal=p.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),clump=.0017*Math.sin(theta*17+v*3)*Math.sin(v*Math.PI);
@@ -128,46 +381,71 @@ function sculptedHairShape(THREE,kit,style){
   // A closed draped fall provides a continuous silhouette. Low ridges separate
   // the clumps; the tips form an irregular soft U instead of a blunt curtain.
   for(let side=0;side<2;side++)for(let j=0;j<=B;j++)for(let i=0;i<=A;i++){
-   const u=i/A,t=j/B,theta=theta0+span*u,sine=Math.sin(theta),cosine=Math.cos(theta),point=hairFallPoint(THREE,kit,style,theta,t);
-   const normal=V(sine,0,cosine).normalize();point.addScaledVector(normal,side?-.005:.003);positions.push(...point.toArray());uvs.push(u*8,t*3);
+   const u=i/A,theta=theta0+span*u,t=j/B*(layered?(style==='beachbob'?.77:.68)+.022*Math.sin(theta*7.0+.7):1),sine=Math.sin(theta),cosine=Math.cos(theta),point=hairFallPoint(THREE,kit,style,theta,t);
+   const normal=V(sine,0,cosine).normalize(),cover=layered?-.002+.006*smooth(.015,.10,t)-.007*smooth(.35,.65,t):.003;point.addScaledVector(normal,side?(layered?cover-.004:-.005):cover);positions.push(...point.toArray());uvs.push(u*8,t*3);
    if(j<B&&i<A){const k=side*(A+1)*(B+1)+j*(A+1)+i,n=A+1;if(side)indices.push(k,k+1,k+n,k+1,k+n+1,k+n);else indices.push(k,k+n,k+1,k+1,k+n,k+n+1);}
   }
   const total=(A+1)*(B+1);for(let j=0;j<B;j++)for(const i of [0,A]){const k=j*(A+1)+i,n=k+A+1;indices.push(k,n,k+total,n,n+total,k+total);}for(let i=0;i<A;i++){const k=B*(A+1)+i;indices.push(k,k+total,k+1,k+1,k+total,k+1+total);}
-  const fall=new THREE.BufferGeometry();fall.setIndex(indices);fall.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));fall.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));fall.computeVertexNormals();pieces.push(fall);
+  const fall=new THREE.BufferGeometry();fall.setIndex(indices);fall.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));fall.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));fall.computeVertexNormals();if(layered||joinedLoose){const bridge=(joinedLoose?joinedLooseShell:joinedRearShell)(THREE,kit,cap,fall,A,B,theta0,span);joinMeta=bridge.userData.crownFallJoin;pieces.push(fall,bridge);}else pieces.push(fall);
  }
  // Overlapping back layers begin inside the fitted crown and follow the same
  // gravity-led fall. Their varied length and shallow S-bends break its outer contour.
  if(layered){
-  const count=17,theta0=2.02,span=Math.PI*2-2*theta0;
+  const count=style==='mermaidwaves'?11:9,theta0=2.02,span=Math.PI*2-2*theta0;
   for(let j=0;j<count;j++){
-   const theta=theta0+span*j/(count-1),normal=V(Math.sin(theta),0,Math.cos(theta)),length=.85+.15*(.5+.5*Math.sin(j*2.17+.6)),pts=[];
-   for(let k=0;k<=18;k++){
-    const t=k/18,start=.065+.025*(.5+.5*Math.sin(j*2.1)),along=start+(length-start)*t,p=hairFallPoint(THREE,kit,style,theta,along),hang=smooth(.10,.87,t),drift=.0045*Math.sin(t*8+j*.65)*Math.sin(Math.PI*t);
-    p.addScaledVector(normal,.0025+.0018*Math.sin(Math.PI*t));p.x+=drift;pts.push(p);
+   const theta=theta0+span*j/(count-1),normal=V(Math.sin(theta),0,Math.cos(theta)),length=1-.11*Math.abs(normal.x)-.055*(.5+.5*Math.sin(j*2.7+.8)),phase=j*1.73,pts=[];
+   for(let k=0;k<=22;k++){
+    const t=k/22,start=.045+.020*(.5+.5*Math.sin(j*2.1)),along=start+(length-start)*t,p=hairFallPoint(THREE,kit,style,theta,along),free=smooth(.10,.42,t),swing=(style==='beachbob'?.0025:.0045)*Math.sin(t*(style==='beachbob'?5.7:8.6)+phase)*free,
+     depth=(style==='beachbob'?.0018:.0030)*Math.sin(t*7.3+phase+.6)*free;
+    p.addScaledVector(normal,-.004*(1-smooth(.06,.24,t))+.0055*smooth(.14,.42,t)+depth);p.x+=swing;
+    restHairPoint(THREE,kit,p,false,.017+(kit.body==='m'?.018*smooth(H.chin.y-.065,H.chin.y-.195,p.y):0));pts.push(p);
    }
-   pieces.push(waveLeaf(THREE,pts,H.rx*(.17+.025*Math.sin(j*1.7)),.0030,normal));
+   pieces.push(waveLeaf(THREE,pts,H.rx*(.23+.024*Math.sin(j*1.7)),.0058,normal,kit,{root:.22,tip:.10,taper:.84+(j%3)*.012,rounded:true,contact:'back',padding:.009}));
   }
   // Fitted framing stays on the temple and cheek. The shallow wave begins below
   // the jaw; two overlapping layers share a fall rather than forming an airy loop.
   for(const sd of [-1,1])for(let j=0;j<(style==='beachbob'?1:2);j++){
-   const length=style==='beachbob'?.105:style==='mermaidwaves'?.265:.175,tipY=-length+j*(style==='beachbob'?.012:.037),
+   const length=style==='beachbob'?.105:style==='mermaidwaves'?.245:.165,tipY=-length+j*(style==='beachbob'?.012:.037)+(sd>0?(style==='beachbob'?.010:.022):0),
     root=scalpPoint(THREE,kit,V(H.cx+.007+sd*(.009+j*.010),H.top-.014,H.cz+.024-j*.006),.006),
     brow=scalpPoint(THREE,kit,V(sd*H.rx*.82,H.browTop+.036-j*.006,H.cz+.058-j*.003),.007),
     temple=scalpPoint(THREE,kit,V(sd*H.rx*.98,H.cy+.002,H.cz+.047-j*.004),.008),
     jaw=scalpPoint(THREE,kit,V(sd*H.rx*.98,H.chin.y+.035,H.cz+.050-j*.004),.009),
-    released=V(sd*(H.rx*.97+j*.004),H.chin.y-.026,H.cz+.093-j*.002),
-    bend=V(sd*(H.rx+(style==='beachbob'?.007:.017)+j*.003),-length*.46,H.cz+(style==='beachbob'?.105:.127)-j*.003),
-    inside=V(sd*(H.rx-(style==='beachbob'?0:.007)+j*.003),-length*.74,H.cz+(style==='beachbob'?.111:.138)-j*.004),
-    tip=V(sd*(H.rx+.002+j*.003),tipY,H.cz+(style==='beachbob'?.115:.145)-j*.004);
-   pieces.push(waveLeaf(THREE,[root,scalpPoint(THREE,kit,root.clone().lerp(brow,.52),.008),brow,temple,jaw,released,bend,inside,tip],H.rx*(.190-j*.043),.0026-j*.00035,V(sd*.25,0,1).normalize(),kit));
+    released=restHairPoint(THREE,kit,V(sd*(H.rx*.96+j*.004),H.chin.y-.026,H.cz+.046-j*.002),true,.019),
+    bend=restHairPoint(THREE,kit,V(sd*(H.rx*1.06+j*.003),H.chin.y-.026+(tipY-H.chin.y+.026)*.40,H.cz+.052-j*.002),true,j?.019:.025),
+    inside=restHairPoint(THREE,kit,V(sd*(H.rx*.91+j*.004),H.chin.y-.026+(tipY-H.chin.y+.026)*.73,H.cz+.057-j*.002),true,j?.019:.021),
+    tip=restHairPoint(THREE,kit,V(sd*(H.rx*1.06+j*.004),tipY,H.cz+.060-j*.002),true,j?.019:.021);
+   pieces.push(waveLeaf(THREE,[root,scalpPoint(THREE,kit,root.clone().lerp(brow,.52),.008),brow,temple,jaw,released,bend,inside,tip],H.rx*(.220-j*.050)*(sd>0?.89:1),.0058-j*.0009,V(sd*.50,0,1).normalize(),kit,{taper:.83,tip:.085,rounded:true,contact:'front',padding:.018}));
   }
  }
+
+ // Long framing clumps follow the actual cheek/jaw before releasing onto the
+ // torso. Preserve the source part roots and style-specific tip heights.
+ const faceFollowingForelock=(sd,j,root,rootMid,temple,tipY,width)=>{
+  const V=(x,y,z)=>new THREE.Vector3(x,y,z),below=H.chin.y-.024;
+  const tip=restHairPoint(THREE,kit,V(sd*(H.rx*1.08+j*.007),tipY,H.cz+.076-j*.006),true,.013);
+  const cheek=scalpPoint(THREE,kit,V(sd*H.rx*.97,H.cy-.026,H.cz+.056-j*.005),.008);
+  const jaw=scalpPoint(THREE,kit,V(sd*H.rx*.95,H.chin.y+.024,H.cz+.047-j*.005),.009);
+  const released=restHairPoint(THREE,kit,V(sd*(H.rx*.97+j*.004),below,H.cz+.047-j*.005),true,.013);
+  const bend=restHairPoint(THREE,kit,V(sd*(H.rx*1.075+j*.007),below+(tipY-below)*.54,H.cz+.068-j*.006),true,.015);
+  const points=[root,rootMid,temple,...[cheek,jaw,released,bend].filter(v=>v.y<temple.y-.002&&v.y>tipY+.005).sort((a,b)=>b.y-a.y),tip];
+  const path=new THREE.CatmullRomCurve3(points),P=[],U=[],I=[],segments=64,sides=12,centers=[],widths=[],depths=[];
+  for(let i=0;i<=segments;i++){
+   const t=i/segments,c=path.getPointAt(t),tangent=path.getTangentAt(t).normalize(),out=V(sd*.58,0,1);out.addScaledVector(tangent,-out.dot(tangent)).normalize();const across=out.clone().cross(tangent).normalize();
+   const rootGrow=.25+.75*smooth(0,.16,t),fallTaper=1-.58*smooth(.32,.86,t),end=smooth(.86,1,t),roundEnd=Math.sqrt(Math.max(.0001,1-end*end)),w=width*rootGrow*fallTaper*roundEnd,depth=width*.45*(.55+.45*smooth(0,.16,t))*fallTaper*roundEnd;
+   centers.push(c.toArray());widths.push(w);depths.push(depth);
+   for(let k=0;k<=sides;k++){const a=k/sides*Math.PI*2,q=c.clone().addScaledVector(across,Math.cos(a)*w).addScaledVector(out,Math.sin(a)*depth);P.push(...q.toArray());U.push(k/sides*2,t*3);if(i<segments&&k<sides){const n=sides+1,v=i*n+k;I.push(v,v+1,v+n,v+1,v+n+1,v+n);}}
+  }
+  for(const i of [0,segments]){const id=P.length/3;P.push(...centers[i]);U.push(1,i/segments*3);for(let k=0;k<sides;k++){const v=i*(sides+1)+k;i?I.push(id,v+1,v):I.push(id,v,v+1);}}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));geometry.setIndex(I);geometry.computeVertexNormals();pieces.push(geometry);forelockMeta.push({side:sd,layer:j,sourceRoot:root.toArray(),tipY,tip:tip.toArray(),centerArcLength:path.getLength(),centers,widths,depths});
+ };
  // Swept framing leaves blend the part into the temple and break the outline.
  if(!fallOnly&&!layered)for(const sd of [-1,1])for(let j=0;j<(short?5:2);j++){
   const root=scalpPoint(THREE,kit,V(sd*(.018+j*.012),H.top-.007,H.cz+.032),.005),temple=scalpPoint(THREE,kit,V(sd*H.rx*.91,H.browTop+.031-j*.010,H.cz+.083),.006),tipEnd=style==='bob'?-.050:style==='beachbob'?-.078:style==='lob'?-.118:style==='mermaidwaves'?-.185:style==='waves'?-.132:-.152,tip=short?scalpPoint(THREE,kit,V(sd*H.rx,H.browTop-.010-j*.009,H.cz+.038),.004):V(sd*(H.rx*1.10+j*.007),tipEnd+j*.027,H.cz+.126+j*.004),mid=short?temple.clone().lerp(tip,.52):V(sd*(H.rx*.97+.007*Math.sin(j*1.7)),(temple.y+tip.y)*.45,H.cz+.142+.007*Math.cos(j*1.6));
-  lock([root,scalpPoint(THREE,kit,root.clone().lerp(temple,.54),.008),temple,mid,tip],short?.011-j*.0012:.019-j*.0035,.26);
+  const rootMid=scalpPoint(THREE,kit,root.clone().lerp(temple,.54),.008);
+  if(short)lock([root,rootMid,temple,mid,tip],.011-j*.0012,.26);
+  else faceFollowingForelock(sd,j,root,rootMid,temple,tipEnd+j*.027,.0175-j*.0034);
  }
- return mergeHairGeometry(THREE,pieces);
+ const geometry=mergeHairGeometry(THREE,pieces);if(joinMeta)geometry.userData.crownFallJoin=joinMeta;if(forelockMeta.length)geometry.userData.forelockCorrection={version:1,method:'source-root-preserving cheek/jaw/torso curve, rounded lenticular clumps, continuous lower taper; same style tip heights',clumps:forelockMeta};return layered?flexibleHair(THREE,kit,geometry):geometry;
 }
 
 /* The measured skull narrows sharply at the nape. A bounding-box radius leaves
@@ -186,7 +464,7 @@ export function scalpPoint(THREE,kit,target,lift=.002){
 export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
  const H=kit.head,hair=[],ties=[],ribbon=[],V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const anchor=p=>scalpPoint(THREE,kit,p,-.003);
- const ring=(p,r=0.016,dir=V(0,-1,0))=>{const g=new THREE.TorusGeometry(r,0.0022,7,24);g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0,0,1),dir.clone().normalize()));g.translate(p.x,p.y,p.z);ties.push(g);};
+ const ring=(p,r=0.016,dir=V(0,-1,0))=>{const g=new THREE.TorusGeometry(r,0.0022,7,24);g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0,0,1),dir.clone().normalize()));g.translate(p.x,p.y,p.z);ties.push(g);return g;};
  const curve=(points,radii,segs=30,rad=8)=>tube(points,radii,segs,rad);
  // Broad, shallow cross sections overlap into a continuous mass of hair.
  const lock=(points,radii,segs=36,width=1.25,depth=.72)=>{
@@ -213,7 +491,7 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
   hair.push(merge(pieces));
   const band=axis.getPoint(.085),direction=axis.getTangent(.085);ring(band,.016,direction);ring(band.clone().addScaledVector(direction,.0032),.016,direction);
  };
- const braid=(points,radius=0.017,turns=7,rooted=true)=>{
+ const wrappedBraid=(points,radius=0.017,turns=7,rooted=true)=>{
   if(rooted)points[0]=anchor(points[0]);
   turns*=.62;radius*=.91;const axis=new THREE.CatmullRomCurve3(points),pieces=[],samples=Math.max(64,Math.ceil(turns*28));
   for(let strand=0;strand<3;strand++){
@@ -234,6 +512,53 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
    }
   }
   hair.push(merge(pieces));
+ };
+ const braid=(points,radius=.017,turns=7,rooted=true)=>{
+  // Crown/bun weaves retain their existing scalp paths in this bounded change.
+  if(!rooted)return wrappedBraid(points,radius,turns,false);
+  points=points.map(p=>p.clone());points[0]=anchor(points[0]);
+  radius*=.91;turns*=.44;
+  const axis=new THREE.CatmullRomCurve3(points),samples=Math.max(144,Math.ceil(turns*48)),sides=12,pieces=[],frames=[];
+  const binding={assembly:hair.length,axis:points.map(p=>p.toArray()),front:style==='sidebraid',radius};let previousTangent=null,previousSide=null;
+  for(let k=0;k<=samples;k++){
+   const t=k/samples,center=axis.getPoint(t*.90),tangent=axis.getTangent(t*.90).normalize();
+   const side=previousSide?previousSide.clone().applyQuaternion(new THREE.Quaternion().setFromUnitVectors(previousTangent,tangent)):V(1,0,0);
+   side.addScaledVector(tangent,-side.dot(tangent)).normalize();
+   frames.push({center,tangent,side,cross:tangent.clone().cross(side)});
+   previousTangent=tangent;previousSide=side;
+  }
+  for(let strand=0;strand<3;strand++){
+   const centers=frames.map((f,k)=>{
+    const t=k/samples,phase=t*turns*Math.PI*2+strand*Math.PI*2/3,r=radius*(1-.62*t),gather=(.25+.75*smooth(0,.10,t))*(1-smooth(.85,1,t));
+    return f.center.clone().addScaledVector(f.side,Math.sin(phase)*r*.64*gather).addScaledVector(f.cross,Math.sin(2*phase)*r*.34*gather);
+   });
+   const P=[],UV=[],I=[];
+   for(let k=0;k<=samples;k++){
+    const t=k/samples,center=centers[k],tangent=centers[Math.min(samples,k+1)].clone().sub(centers[Math.max(0,k-1)]).normalize();
+    const side=frames[k].side.clone().addScaledVector(tangent,-frames[k].side.dot(tangent)).normalize(),cross=tangent.clone().cross(side),width=radius*.60*(1-.62*t),depth=width*.62;
+    for(let j=0;j<=sides;j++){
+     const angle=j/sides*Math.PI*2,point=center.clone().addScaledVector(side,Math.cos(angle)*width).addScaledVector(cross,Math.sin(angle)*depth);
+     P.push(...point.toArray());UV.push(j/sides*2,t*3);
+     if(k<samples&&j<sides){const v=k*(sides+1)+j,w=v+sides+1;I.push(v,w,v+1,w,w+1,v+1);}
+    }
+   }
+   // Closed ends meet at the tie, so neither a tapered gap nor an open rim shows.
+   for(const k of [0,samples]){
+    const centerIndex=P.length/3;P.push(...centers[k].toArray());UV.push(1,k/samples*3);
+    for(let j=0;j<sides;j++){const v=k*(sides+1)+j;if(k===0)I.push(centerIndex,v,v+1);else I.push(centerIndex,v+1,v);}
+   }
+   // The lateral/cross frame uses tangent cross side; reverse the ring winding
+   // so side walls and both caps face outward.
+   for(let i=0;i<I.length;i+=3)[I[i+1],I[i+2]]=[I[i+2],I[i+1]];
+   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));geometry.setIndex(I);geometry.computeVertexNormals();geometry.computeBoundingSphere();geometry.userData.braidBinding={...binding,part:'weave',along:Array.from({length:(samples+1)*(sides+1)},(_,i)=>Math.floor(i/(sides+1))/samples*.90).concat([0,.90])};pieces.push(geometry);
+  }
+  const end=axis.getPoint(.90),direction=axis.getTangent(.90);const tie=ring(end,radius*.35,direction);tie.userData.braidBinding={...binding,part:'tie',along:Array(tie.attributes.position.count).fill(.90)};
+  for(let j=0;j<5;j++){
+   const phase=j/5*Math.PI*2,spread=frames[samples].side.clone().multiplyScalar(Math.cos(phase)).addScaledVector(frames[samples].cross,Math.sin(phase));
+   const start=end.clone().addScaledVector(direction,-.002).addScaledVector(spread,radius*.10),middle=axis.getPoint(.97).addScaledVector(spread,radius*.24),tip=axis.getPoint(1).addScaledVector(direction,.008+.003*Math.sin(j));
+   const tail=lock([start,middle,tip],[radius*.24,radius*.19,.0004],18,1.2,.7);tail.userData.braidBinding={...binding,part:'tail',along:Array.from({length:tail.attributes.position.count},(_,i)=>.90+.10*Math.floor(i/13)/18)};pieces.push(tail);
+  }
+  const geometry=merge(pieces);geometry.userData.braidWeave={version:3,root:points[0].toArray(),tie:end.toArray(),tip:axis.getPoint(1).toArray(),strands:3,closedEnds:true,transport:'parallel along shared axis',rooted:true};hair.push(geometry);
  };
  const bun=(messy=false,anchor=null)=>{
   const root=anchor||tiePoint(kit,helmet||!messy?'nape':'crown'),at=root.clone();at.z-=0.014;
