@@ -503,7 +503,8 @@ export function install(G){
      leaves six metres behind A and a test must not be handed five for want of a step size. */
   const BACKS=opt.backs||[0,2,4,6,8,10,12,-1,-2,-3,-4,-5,-6];
   const SIDES=opt.sides||[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6], R=opt.ring||null, near=opt.fenceRails?rotY:null;
-  const usable=(px,pz)=>!(minT>0&&Math.hypot(px-tx,pz-tz)<minT)&&inRing(R,px,pz);
+  const usable=(px,pz)=>!(minT>0&&Math.hypot(px-tx,pz-tz)+1e-6<minT)&&inRing(R,px,pz)
+   &&(!opt.rearFootprint||inRing(R,px-bx*opt.rearFootprint,pz-bz*opt.rearFootprint));
   for(const side of SIDES)for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
    if(!usable(px,pz))continue;
@@ -527,7 +528,7 @@ export function install(G){
  function aboard(){ try{ return !!(player.veh||(G.worldPkg&&G.worldPkg.veh)); }catch(e){ return !!player.veh; } }
  /* A silent teleport is a glitch; the same teleport with a line of text is a feature. Say where
     she has been taken and what is in front of her, and only when she has actually been moved. */
- function lineUp(c,x,z,rotY,ahead,small,tgt,front){
+ function lineUp(c,x,z,rotY,ahead,small,tgt,front,force=false){
   /* Being near the line is not the same as being ON it: 'already lined up' has to mean pointing
      down the approach as well as standing beside it. Distance alone is what let the seasonal
      trial begin with the rider sitting in the ranch yard — five metres off the approach, turned
@@ -544,7 +545,7 @@ export function install(G){
      is put back on the line. */
   let short=false;
   if(tgt){ const al=(player.pos.x-tgt[0])*Math.sin(rotY)+(player.pos.z-tgt[1])*Math.cos(rotY); short=al>-(front||0); }
-  const moved=(Math.hypot(player.pos.x-x,player.pos.z-z)>12||askew||short)&&!player.flying&&!aboard();
+  const moved=(force||Math.hypot(player.pos.x-x,player.pos.z-z)>12||askew||short)&&!player.flying&&!aboard();
   if(moved){
    player.pos.set(x,0,z); player.y=0; player.vy=0; player.speed=0; player.heading=rotY;
    try{ if(W.pushOut)W.pushOut(player,0.7); }catch(e){}    // world.js's own push-out, for anything the search missed
@@ -568,23 +569,33 @@ export function install(G){
     square and centred inside the rail beats eight metres through it); then a little to one side
     with the full run; then anywhere with six and a half, then five; and only then the old search. */
  const RING_BACKS=[0,-0.5,-1,-1.5,-2,-2.5,-3,-3.5,-4,-4.5,-5,-5.5];
- function marshal(c){
-  const j=c.jumps&&c.jumps[0]; if(!j)return null;
+ function marshal(c,index=0,resuming=false){
+  const j=c.jumps&&c.jumps[index]; if(!j)return resuming?false:null;
   const R=ringOf(c), run=j.kind==='gate'?6:8, T=[j.x,j.z];
+  const fit=resuming?{rearFootprint:1.4}:{};
   const x0=j.x-Math.sin(j.rotY)*10, z0=j.z-Math.cos(j.rotY)*10;
-  const at=findSpot(c,x0,z0,j.rotY,j,T,run,{ring:R,sides:[0],strict:true})
-   ||(R&&run>6?findSpot(c,x0,z0,j.rotY,j,T,4.5,{ring:R,sides:[0],backs:RING_BACKS,fenceRails:true,strict:true}):null)
-   ||findSpot(c,x0,z0,j.rotY,j,T,run,{ring:R,sides:[-0.75,0.75,-1.5,1.5,-3,3,-4.5,4.5,-6,6],strict:true})
-   ||findSpot(c,x0,z0,j.rotY,j,T,6.5,{ring:R,strict:true})
-   ||findSpot(c,x0,z0,j.rotY,j,T,5,{ring:R,strict:true})
-   ||findSpot(c,x0,z0,j.rotY,j,T,4,{ring:R});
+  const at=findSpot(c,x0,z0,j.rotY,j,T,run,{...fit,ring:R,sides:[0],strict:true})
+   ||(R&&run>6?findSpot(c,x0,z0,j.rotY,j,T,4.5,{...fit,ring:R,sides:[0],backs:RING_BACKS,fenceRails:true,strict:true}):null)
+   ||findSpot(c,x0,z0,j.rotY,j,T,run,{...fit,ring:R,sides:[-0.75,0.75,-1.5,1.5,-3,3,-4.5,4.5,-6,6],strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,6.5,{...fit,ring:R,strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,5,{...fit,ring:R,strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,resuming&&j.kind==='gate'?4.8:4,{...fit,ring:R,strict:resuming});
+  if(!at||!at.every(Number.isFinite))return resuming?false:null;
   /* Six metres to ride is the rule, but never more than the line itself leaves: the ring tiers
      put some start lines five metres from fence one (Hollowpeak's twelve-fence round is one), and
      asking for six there moved her off the very spot she was standing on at every restart, with
      her speed zeroed and the same 'Lined up' line again. Half a metre inside the spot's own run, and
      for a gate never inside the 4.6 m it rings at. */
   const alS=-((at[0]-T[0])*Math.sin(j.rotY)+(at[1]-T[1])*Math.cos(j.rotY));
-  return lineUp(c,at[0],at[1],j.rotY,AHEAD[discOf(c.ev).k]||AHEAD.jump,!!R,T,Math.max(j.kind==='gate'?4.7:0,Math.min(6,alS-0.5)));
+  if(resuming&&(alS+1e-6<4||!clearRun(c,at[0],at[1],...T,j)))return false;
+  const box=lineUp(c,at[0],at[1],j.rotY,resuming?'resume at '+(j.kind==='gate'?'gate ':'obstacle ')+(index+1)+'.':AHEAD[discOf(c.ev).k]||AHEAD.jump,!!R,T,Math.max(j.kind==='gate'?4.7:0,Math.min(6,alS-0.5)),resuming);
+  if(resuming){
+   const gap=Math.hypot(player.pos.x-j.x,player.pos.z-j.z);
+   const approach=(player.pos.x-j.x)*Math.sin(j.rotY)+(player.pos.z-j.z)*Math.cos(j.rotY);
+   return Number.isFinite(gap)&&gap+1e-6>=(j.kind==='gate'?4.8:4)&&approach<=-4+1e-6&&inRing(R,player.pos.x,player.pos.z)
+    &&inRing(R,player.pos.x-Math.sin(j.rotY)*1.4,player.pos.z-Math.cos(j.rotY)*1.4)&&clearRun(c,player.pos.x,player.pos.z,...T,j);
+  }
+  return box;
  }
  /* A test has no first obstacle to line up behind — it has a letter. Every test in the game opens
     'enter at A', the judge sits at C, and the centre line between them is the direction the horse
@@ -676,8 +687,11 @@ export function install(G){
  }
  function buildGhosts(c){
   GH.list=[]; GH.on=false;
+  const recovery=G.ladder?.resumeContext?.(c),savedGhosts=recovery?.discipline?.ghosts;
+  if(recovery?.pvp)return; // A disconnected club race cannot recreate its live opponents.
+  if(recovery?.version===2&&Array.isArray(savedGhosts)&&!savedGhosts.length)return;
   if(!G.horse.makeHorse||c.pvp||c.friendly||c.ev?.rush)return;
-  try{ if(Object.keys(G.horse.remotes||{}).length)return; }catch(e){}   // a real field is already out there
+  try{ if(!savedGhosts?.length&&Object.keys(G.horse.remotes||{}).length)return; }catch(e){}   // a real field is already out there
   let pts=(T.RACE_ROUTES[c.ev.route]||[]).map(p=>p.slice()); if(pts.length<3)return;
   if(c.ev.rev)pts=pts.reverse();
   GH.cum=[0]; GH.len=0;
@@ -693,10 +707,11 @@ export function install(G){
      these same horses rather than building a second field of its own, so it is the ladder's size
      (three, four on Elite) whenever the ladder is installed. */
   const FN=G.ladder&&G.ladder.FIELD_N, dk=(c.ce&&c.ce.diff&&c.ce.diff.k)||'open';
-  const n=Math.min(pool.length,(FN&&FN[dk])||2+Math.floor(hash('gn'+c.ev.id+wk)*3));
+  const n=Math.min(pool.length,savedGhosts?.length||((FN&&FN[dk])||2+Math.floor(hash('gn'+c.ev.id+wk)*3)));
   const lanes=startLanes(c,n); GH.run=lanes.length?-lanes[0].s0:10;
   for(let k=0;k<n;k++){
-   const pick=Math.floor(hash('gp'+c.ev.id+wk+k)*pool.length)%pool.length;
+   const savedPick=savedGhosts?.[k]?pool.findIndex(row=>row[0]===savedGhosts[k].nm):-1;
+   const pick=savedPick>=0?savedPick:Math.floor(hash('gp'+c.ev.id+wk+k)*pool.length)%pool.length;
    const row=pool.splice(pick,1)[0]; if(!row)break;
    const nm=row[0], str=row[1]||1, col=GHOST_COATS[Math.floor(hash('gc'+nm)*GHOST_COATS.length)%GHOST_COATS.length];
    let parts=null; try{parts=G.horse.makeHorse({colors:{body:col[0],mane:col[1]},seed:Math.floor(hash('gd'+nm)*9)});}catch(e){parts=null;}
@@ -861,6 +876,63 @@ export function install(G){
   CUR.c=c||null; CUR.disc=c?discOf(c.ev).k:null; CUR.fx=[]; CUR.fenceFaults=0; CUR.refuseAt={}; CUR.lastRef=0; CUR.lastGrades=0;
   CUR.elim=false; CUR.xcTime=0; CUR.xcJump=0; CUR.gateSum=0; CUR.gateN=0; CUR.watch=null; CUR.hazHits=0; CUR.raceAcc=null;
   CUR.lastIdx=0; CUR.place=null; CUR.gold=false; CUR.rib=0; CUR.show=null; CUR.fig=-1; CUR.figQ=null; CUR.handling=0; CUR.turnout0=0; CUR.camT=0; CUR.hud=''; CUR.demoted=false; CUR.lifted=0; CUR.start=null;
+ }
+ const RESUME_JUDGING=['fenceFaults','lastRef','xcTime','xcJump','gateSum','gateN','hazHits'];
+ const resumeNumber=(n,fallback=0)=>Number.isFinite(n)?Math.max(0,n):fallback;
+ function snapshotResume(c){
+  if(!c||CUR.c!==c||c.dressage)return null;
+  const judging=Object.fromEntries(RESUME_JUDGING.map(k=>[k,CUR[k]||0]));
+  judging.refuseAt={...CUR.refuseAt};judging.elim=!!CUR.elim;
+  judging.watch=CUR.watch?{idx:c.jumps.indexOf(CUR.watch.j),min:CUR.watch.min}:null;
+  return {judging,ghosts:GH.on?GH.list.map(g=>({nm:g.nm,s:g.s,v:g.v,lat:g.lat,rt:g.rt,
+   slowT:g.slowT,done:!!g.done,ft:g.ft,cool:g.cool})):[]};
+ }
+ // Restore the scorekeeper separately from courseStart: rebuilding its furniture
+ // or replaying old crossing hooks would price old grades a second time.
+ function resumeCourse(c,saved){
+  if(!c||CUR.c!==c||!c.ce||c.dressage||!c.jumps?.[c.idx])return false;
+  if(!marshal(c,c.idx,true))return false;
+  const S=c.ce,J=saved?.judging;
+  if(J){
+   for(const k of RESUME_JUDGING)CUR[k]=resumeNumber(J[k]);
+   CUR.refuseAt=Object.fromEntries(Object.entries(J.refuseAt||{}).filter(([k,n])=>/^\d+:\d+$/.test(k)&&Number.isFinite(n)).map(([k,n])=>[k,Math.max(0,Math.floor(n))]));
+   CUR.elim=!!J.elim;
+   // The recovery line is ahead of an unfinished gate watch. Retain its measured
+   // closest approach, rather than letting a teleport improve that old mark.
+   if(J.watch&&Number.isInteger(J.watch.idx)&&c.jumps[J.watch.idx]?.kind==='gate'){
+    CUR.gateSum+=Math.min(4.6,resumeNumber(J.watch.min,4.6));CUR.gateN++;
+   }
+  }else{
+   // Old checkpoints kept grades but not per-obstacle judging or gate accuracy.
+   // Recover the known faults; never replay all old refusals at the current fence.
+   CUR.fenceFaults=(S.grades||[]).filter(g=>g==='fault').length*4+(S.refusals||0)*4;
+   CUR.xcJump=(S.grades||[]).filter(g=>g==='fault').length*11+(S.refusals||0)*20;
+  }
+  CUR.lastGrades=S.grades.length;CUR.lastIdx=c.idx;CUR.watch=null;
+  CUR.start={...CUR.start,idx:c.idx,resumed:true};
+  S.legIdx=-1;S.lineWarned=false;S.lastGrade=S.grades.at(-1)||null;
+  if(S.lineMesh)S.lineMesh.count=0;
+  c.jumps.forEach((j,i)=>{j.prevSide=0;j.approached=false;j.refuseCd=0;if(j.ring)j.ring.material.color.set(i<c.idx?0x69db7c:0xffd166);});
+  const ghosts=Array.isArray(saved?.ghosts)?saved.ghosts:[];
+  for(const g of GH.list){
+   const old=ghosts.find(r=>r.nm===g.nm);
+   if(old&&Number.isFinite(old.s)){
+    g.s=clamp(old.s,-GH.run-30,GH.fin);g.v=clamp(resumeNumber(old.v,g.v),.1,100);
+    g.lat=Number.isFinite(old.lat)?clamp(old.lat,-30,30):g.lat;
+    g.rt=resumeNumber(old.rt);g.slowT=resumeNumber(old.slowT);g.done=!!old.done;
+    g.ft=Number.isFinite(old.ft)?old.ft:null;g.cool=resumeNumber(old.cool);
+   }else{
+    // Legacy saves have no rival positions. Recover their elapsed-time pace,
+    // instead of leaving a whole field on the original start line behind us.
+    g.rt=Math.max(0,c.t||0);g.s=clamp(-GH.run+g.v*Math.max(0,g.rt-.5),-GH.run,GH.fin);
+    g.done=g.s>=GH.fin;g.ft=g.done?(GH.fin+GH.run)/Math.max(.1,g.v)+.5:null;
+   }
+   placeGhost(g,0,0,0);
+  }
+  player.speed=0;player.y=0;player.vy=0;
+  if(player.mesh){player.mesh.position.set(player.pos.x,W.groundH(player.pos.x,player.pos.z),player.pos.z);player.mesh.rotation.y=player.heading;}
+  G.riding?.releaseAll();G.followCam?.reset();caption(c);
+  return true;
  }
  function addFx(g){ if(g)CUR.fx.push(g); }
  function clearFx(){ for(const g of CUR.fx)disposeGroup(g); CUR.fx=[]; }
@@ -1683,7 +1755,7 @@ export function install(G){
  G.events2={DISCS,discOf,discDetail,obstacleCount,FENCE_TYPES,XC_TYPES,GAUNTLET_SEASONS,gauntletDef,applyGauntletSeason,
   routeLen,fixPars,rewardLine,allowedLine,SCORE_BANDS,reqLine,openCard(id){cardFor=evById(id);if(cardFor)G.ui.open('ev2CardPanel');},
   openSheet(){G.ui.open('ev2SheetPanel');},setFilter(k){FILTER=k;applyFilter();},filter:()=>FILTER,fixRows,applyFilter,
-  state:CUR,shiftArena,homeArena,ARENA_HOME,tidyHazards,marshal,marshalTest,findSpot,standable,wet,onWall,
+  state:CUR,shiftArena,homeArena,ARENA_HOME,tidyHazards,marshal,marshalTest,findSpot,standable,wet,onWall,snapshotResume,resumeCourse,
   startBox:()=>SBOX,hideBox,ghosts:GH,ghostPlace,playerArc,startLanes,
   /* the last finish's sheet, for the ladder's one result card; the town layout and the ring test
      for anything that wants to know where a class or a start line is allowed to stand */

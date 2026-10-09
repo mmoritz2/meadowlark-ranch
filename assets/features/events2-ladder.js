@@ -225,7 +225,9 @@ export function install(G){
   }else{
    /* Deterministic per event, per week, per difficulty: the same four ranches turn up for the same
       race all week, which is what makes beating one of them mean anything. */
-   const pool=T.NEIGHBOURS.slice().sort((a,b)=>hash('fld'+ev.id+wk+a[0])-hash('fld'+ev.id+wk+b[0])).slice(0,n);
+   const recovered=resumeContext(c)?.field||[],ranked=T.NEIGHBOURS.slice().sort((a,b)=>hash('fld'+ev.id+wk+a[0])-hash('fld'+ev.id+wk+b[0]));
+   const savedPool=recovered.map(r=>T.NEIGHBOURS.find(row=>row[0]===r.n)).filter(Boolean);
+   const pool=[...savedPool,...ranked.filter(row=>!savedPool.some(s=>s[0]===row[0]))].slice(0,n);
    let lanes=[]; try{ lanes=G.events2&&G.events2.startLanes?G.events2.startLanes(c,pool.length):[]; }catch(e){}
    const rivals=pool.map(([nm,str],i)=>{
     const h=hash('pace'+ev.id+wk+dk+nm);
@@ -319,17 +321,20 @@ export function install(G){
  G.on('courseStart',c=>{
   if(!c)return;
   try{
+   const restored=resumeContext(c);
+   c.ladRunId=restored?.runId||newRunId();
+   if(restored){c.tixSpent=!!restored.tix;c.ladRematch=!!restored.rematch;c.resumedStarted=true;}
    /* tixSpent is what the crash-saver reads to decide whether a round the game never tidied up
       owes the player a ticket back, and events-pvp only ever sets it on a challenge. The rematch
       is the one other place a ticket leaves the book, so it has to say so — otherwise the single
       ticket a solo rider can lose to a reload is the only one the refund does not cover. */
-   if(pendingRematch&&c.ev&&pendingRematch.ev===c.ev.id&&Date.now()-pendingRematch.at<8000){c.ladRematch=true;c.tixSpent=true;pendingRematch=null;}
+   if(!restored&&pendingRematch&&c.ev&&pendingRematch.ev===c.ev.id&&Date.now()-pendingRematch.at<8000){c.ladRematch=true;c.tixSpent=true;pendingRematch=null;}
    else pendingRematch=null;
    clearField();
    if(c.ev&&c.ev.rush){if(cardT)clearTimeout(cardT);cardT=null;return;}
    /* A gauntlet is a trial against a hard limit and a dressage test is judged alone; neither wants
       a field. A challenge or friendly race already has one, and it is made of real people. */
-   if(!c.race||c.dressage||c.pvp||c.friendly||c.ev.friendly||c.ev.gauntlet)return;
+   if(!c.race||c.dressage||c.pvp||c.friendly||c.ev.friendly||c.ev.gauntlet||restored?.pvp)return;
    if(!c.jumps||c.jumps.length<3)return;
    spawnField(c);
    const n=FIELD?FIELD.rivals.length:0;
@@ -390,34 +395,117 @@ export function install(G){
  /* 'let course=null' is module-local in ranch3d and never reaches the save, so a reload in the
     middle of a twelve-gate race threw the round, the ribbon and — because the refund only runs on
     a frame that a reload never gets to — the ticket as well. SE's own reviews are full of this. */
- let runWrite=0;
+ let runWrite=0,runSerial=0,resumeEntry=null;
+ const newRunId=()=>Date.now().toString(36)+'-'+(++runSerial).toString(36)+'-'+Math.random().toString(36).slice(2,8);
+ const runKey=r=>r?.runId||('legacy:'+r?.ev+':'+r?.at);
+ const sameRun=(r,expected)=>!!r&&runKey(r)===(typeof expected==='string'?expected:runKey(expected));
+ const resumeContext=c=>resumeEntry&&c?.ev?.id===resumeEntry.ev?resumeEntry:null;
+ const courseLayout=ev=>JSON.stringify([ev.route||null,!!ev.rev,ev.at||null,ev.n||null,ev.laps||1,T.RACE_ROUTES?.[ev.route]||null]);
+ function checkpoint(c){
+  if(!c||c.dressage||c.done||c.finished||c.ev?.rush||(!c.started&&!c.resumedStarted))return false;
+  const S=c.ce||{},field=FIELD?.c===c?FIELD.rivals.map(r=>({n:r.n,target:r.target,pen:r.pen,prog:r.prog,
+   slowT:r.slowT,done:!!r.done,i:r.i})):[];
+  const r={version:2,runId:c.ladRunId||(c.ladRunId=newRunId()),seq:(c.ladWrite||0)+1,
+   ev:c.ev.id,di:S.di==null?1:S.di,rev:G.course.routeRev?.(c.ev)||'',layout:courseLayout(c.ev),t:c.t||0,idx:c.idx|0,
+   lap:S.lap||1,laps:S.laps||1,faults:c.faults||0,grades:(S.grades||[]).slice(0,256),lineOff:S.lineOff||0,
+   refusals:S.refusals||0,insp:S.insp||0,off:S.off||0,tix:!!c.tixSpent,rematch:!!c.ladRematch,pvp:!!(c.pvp||c.recoveredClub),at:Date.now(),
+   riding:{stam:clamp(Number.isFinite(player.stam)?player.stam:1,0,1),blown:!!player.blown,
+    ...Object.fromEntries(['boostT','shieldT','slipT'].map(k=>[k,clamp(Number.isFinite(player[k])?player[k]:0,0,120)]))},
+   discipline:G.events2?.snapshotResume?.(c)||null,field,
+   items:(c.items||[]).map(it=>({x:it.x,z:it.z,type:it.type,visible:it.m?.visible!==false,cd:it.cd||0})),
+   hazards:(c.hazards||[]).map(h=>({x:h.x,z:h.z,cd:h.cd||0,seen:!!h._ev2}))};
+  try{G.save.sync(s=>{s.runSaved=r;});const stored=G.save.fresh()?.runSaved;
+   if(sameRun(stored,r)&&stored.seq===r.seq){c.ladWrite=r.seq;return true;}
+  }catch(e){}
+  return false;
+ }
  G.on('courseTick',(c,dt,t)=>{
-  if(!c||!c.started||c.dressage||c.done||c.ev?.rush)return;
+  if(!c||G.course.get()!==c||!c.started||c.dressage||c.done||c.finished||c.ev?.rush)return;
   if(t-runWrite<2)return; runWrite=t;
-  const S=c.ce||{};
-  try{ G.save.sync(s=>{ s.runSaved={ev:c.ev.id,di:S.di==null?1:S.di,t:+(c.t||0).toFixed(1),idx:c.idx|0,
-    lap:S.lap||1,laps:S.laps||1,faults:c.faults||0,grades:(S.grades||[]).slice(0,40),lineOff:+(S.lineOff||0).toFixed(2),
-    refusals:S.refusals||0,insp:S.insp||0,tix:!!c.tixSpent,at:Date.now()}; }); }catch(e){}
+  checkpoint(c);
  });
- const clearRun=()=>{try{G.save.sync(s=>{s.runSaved=null;});}catch(e){}};
+ function clearRun(expected){
+  if(!expected)return false;
+  try{G.save.sync(s=>{if(sameRun(s.runSaved,expected))s.runSaved=null;});const stored=G.save.fresh();return !!stored&&!sameRun(stored.runSaved,expected);}catch(e){return false;}
+ }
+ function resumeBusy(){
+  if(G.course.get())return 'Finish or leave your current round before picking up the saved one.';
+  if(G.photoPause||G.cam?.isFree?.()||G.social?.spectate||G.social?.tour)return 'Return to riding before picking up the round.';
+  const rig=G.horse.RIG?.(),parked=G.onFoot?.state?.().horse,target=player.onFoot?G.onFoot?.horseActionTarget?.():rig;
+  if(player.flying||player.y>.15||rig?.heroJumpAge!=null||G.worldPkg?.vehicle?.())return 'Land and finish your journey before picking up the round.';
+  if(rig&&(!rig.ready||rig.loadingBreed)||target?.heroMotion?.state?.action||target?.emote||parked?.pending||parked?.departure||parked&&target?.heroMotion?.state?.transitioning)return 'Let your horse finish getting ready before picking up the round.';
+  return '';
+ }
+ function restoreField(c,r){
+  if(!FIELD||FIELD.c!==c)return;
+  for(const rider of FIELD.rivals){
+   const saved=(r.field||[]).find(s=>s.n===rider.n);
+   if(saved){for(const k of ['target','pen','prog','slowT','i'])if(Number.isFinite(saved[k]))rider[k]=Math.max(0,saved[k]);rider.prog=clamp(rider.prog,0,1);rider.done=!!saved.done;}
+   else if(!rider.gh){rider.prog=clamp((c.t||0)/Math.max(1,rider.target+rider.pen),0,1);rider.done=rider.prog>=1;rider.i=Math.floor(rider.prog*FIELD.total);}
+   if(!rider.gh&&rider.g){
+    const run=rider.lane?rider.run:0,d=rider.prog*(FIELD.loop.len*FIELD.laps+run)-run,j=c.jumps[0];
+    const p=d<0&&rider.lane?{x:j.x+(rider.lane.x-j.x)*(-d/run),z:j.z+(rider.lane.z-j.z)*(-d/run),h:Math.atan2(j.x-rider.lane.x,j.z-rider.lane.z)}:atDist(FIELD.loop,Math.max(0,d));
+    rider.g.position.set(p.x,W.groundH(p.x,p.z),p.z);rider.g.rotation.y=p.h;rider.g.visible=!rider.done;
+   }
+  }
+ }
  function resumeRun(){
   const s=G.save.fresh()||{}, r=s.runSaved;
-  if(!r){toast('🏁 Nothing to pick up.');return;}
-  const ev=evById(r.ev); if(!ev){clearRun();return;}
-  clearRun(); G.hidePanels();
-  G.course.startCourse(ev,r.di);
-  const c=G.course.get();
-  if(!c){toast('🏁 That round cannot be picked up from here — ride it again from 🏆 Events.');return;}
-  c.t=r.t; c.idx=clamp(r.idx,0,Math.max(0,c.jumps.length-1)); c.faults=r.faults||0;
-  if(c.ce)Object.assign(c.ce,{lap:clamp(r.lap,1,c.ce.laps||1),grades:(r.grades||[]).slice(),lineOff:r.lineOff||0,refusals:r.refusals||0,insp:r.insp||0});
-  toast('⏪ Picked up where you left off — gate '+(c.idx+1)+' of '+c.jumps.length+' at '+s1(c.t)+'s.');
+  if(!r){toast('🏁 Nothing to pick up.');return false;}
+  const ev=evById(r.ev),busy=resumeBusy();
+  if(busy){toast('🏁 '+busy);return false;}
+  if(!ev||ev.dressage||ev.rush||!Number.isFinite(r.t)||r.t<0||!Number.isInteger(r.idx)||r.idx<0||r.rev!=null&&r.rev!==(G.course.routeRev?.(ev)||'')||r.layout!=null&&r.layout!==courseLayout(ev)){
+   toast('That saved course is unavailable. Your checkpoint is kept; let it go from Events to recover its ticket.');return false;
+  }
+  const before=G.course.get(),position={x:player.pos.x,z:player.pos.z,heading:player.heading};
+  let c=null;
+  resumeEntry={...r,runId:runKey(r)};
+  try{
+   G.course.startCourse(ev,r.di);c=G.course.get();
+   if(!c||c===before||c.ev?.id!==ev.id)return false;
+   if(!c.ce||!c.jumps?.[r.idx])throw Error('That saved obstacle is unavailable.');
+   if(G.onFoot?.on){G.onFoot.mount({here:true});if(G.onFoot.on||player.onFoot)throw Error('Your horse is not ready to mount.');}
+   c.ladRunId=resumeEntry.runId;c.ladWrite=r.seq||0;c.tixSpent=!!r.tix;c.ladRematch=!!r.rematch;c.resumedStarted=true;c.recoveredClub=!!r.pvp;
+   c.t=r.t;c.idx=r.idx;c.faults=Math.max(0,r.faults||0);
+   Object.assign(c.ce,{lap:clamp(r.lap||1,1,c.ce.laps||1),grades:(r.grades||[]).filter(g=>G.course.GRADE?.[g]).slice(0,256),
+    lineOff:Math.max(0,r.lineOff||0),refusals:Math.max(0,r.refusals||0),insp:Math.max(0,r.insp||0),off:Math.max(0,r.off||0)});
+   if(!G.events2?.resumeCourse?.(c,r.discipline))throw Error('There is no clear recovery line at that obstacle.');
+   restoreField(c,r);
+   (c.items||[]).forEach((it,i)=>{const v=r.items?.[i];if(v&&v.x===it.x&&v.z===it.z&&v.type===it.type){if(it.m)it.m.visible=v.visible!==false;it.cd=Math.max(0,v.cd||0);}});
+   (c.hazards||[]).forEach((h,i)=>{const v=r.hazards?.[i];if(v&&v.x===h.x&&v.z===h.z){h.cd=Math.max(0,v.cd||0);h._ev2=v.seen?1:0;}});
+   if(r.riding){
+    if(Number.isFinite(r.riding.stam))player.stam=clamp(r.riding.stam,0,1);
+    player.blown=!!r.riding.blown;
+    for(const k of ['boostT','shieldT','slipT'])if(Number.isFinite(r.riding[k]))player[k]=clamp(r.riding[k],0,120);
+    c.resumeCondition=Object.fromEntries(['stam','blown','boostT','shieldT','slipT'].map(k=>[k,player[k]]));
+   }
+   lastC=c;runWrite=0; // An old course reference must not erase this recovery next frame.
+   G.hidePanels();
+   // Keep the original proof through the countdown. The first running snapshot
+   // replaces it, so a second reload cannot lose or reset this recovery.
+   toast('⏪ '+(r.version===2?'Round recovered':'Older checkpoint recovered')+' — '+(c.jumps[c.idx].kind==='gate'?'gate ':'obstacle ')+(c.idx+1)+' of '+c.jumps.length+' at '+s1(c.t)+'s.'+(r.version===2?'':' Earlier field positions and detailed judging were not saved; the field is recovered from elapsed time.')+(r.pvp?' This recovery is solo; the live club field has ended.':''));
+   return true;
+  }catch(e){
+   if(c&&c!==before&&G.course.get()===c){c.ladKeepCheckpoint=true;G.course.cancelCourse();}
+   player.pos.set(position.x,0,position.z);player.heading=position.heading;player.speed=0;
+   if(player.mesh){player.mesh.position.set(position.x,W.groundH(position.x,position.z),position.z);player.mesh.rotation.y=position.heading;}
+   G.followCam?.reset();toast((e?.message||'The round could not be recovered.')+' Your saved checkpoint is kept.');return false;
+  }finally{resumeEntry=null;}
  }
  function dropRun(refund){
   const s=G.save.fresh()||{}, r=s.runSaved;
-  if(r&&r.tix&&E().spendTicket){try{G.save.sync(x=>{x.tix=x.tix||{n:0};x.tix.n=Math.min(E().TIX_MAX||12,(x.tix.n||0)+1);});G.money.refreshWallet();toast('🎟️ That race never finished — your ticket is back.');}catch(e){}}
-  clearRun(); G.ui.rerender('ladderPanel');
+  if(!r)return false;
+  if(G.course.get()){toast('Leave the current round before letting the saved one go.');return false;}
+  const giveTicket=!!(r.tix&&E().spendTicket);let matched=false,expectedTickets=null;
+  try{G.save.sync(x=>{if(!sameRun(x.runSaved,r))return;matched=true;if(giveTicket){x.tix=x.tix||{n:0};x.tix.n=Math.min(E().TIX_MAX||12,(x.tix.n||0)+1);expectedTickets=x.tix.n;}x.runSaved=null;});
+   const stored=G.save.fresh();
+   if(!matched||!stored||stored.runSaved||giveTicket&&stored.tix?.n!==expectedTickets){toast('The checkpoint could not be cleared. Please try again.');return false;}
+  }catch(e){toast('The checkpoint could not be cleared. Please try again.');return false;}
+  if(giveTicket){G.money.refreshWallet();toast('🎟️ That race never finished — your ticket is back.');}
+  G.ui.rerender('ladderPanel');
   try{G.ui.renderLB();}catch(e){}
   if(!refund)toast('🏁 Round let go.');
+  return true;
  }
 
  /* ================================================================= weekly boards ========= */
@@ -564,7 +652,7 @@ export function install(G){
  G.on('courseFinish',payload=>{
   const {c,ev,stars,RB,pay,dressage,pct}=payload||{};
   if(!c||!ev)return;
-  if(ev.rush){clearRun();return;}
+  if(ev.rush){clearRun(c.ladRunId);return;}
   try{
    const gold=goldOf(ev,RB);
    const S=(c&&c.ce)||{}, d=diffOf(S.diff&&S.diff.k||(c.rb&&c.rb.diff)||'open');
@@ -641,7 +729,7 @@ export function install(G){
     traitMatch:(c.traitMatch||[]).slice(),traitMul:+(c.traitMul||1).toFixed(3),
     champ,ribTotal,coins0:before.coins||0,gems0:before.gems||0,pts0:before.pts||0,
     notes:[],at:Date.now()};
-   clearRun();
+   clearRun(c.ladRunId);
    G.save.sync(s=>{ s.lastRun={ev:LAST.ev.id,name:LAST.ev.name,t:LAST.t,rib:LAST.rib,gold:LAST.gold,
     place:LAST.place,field:LAST.field,acc:+LAST.acc.toFixed(3),pay:LAST.pay,at:LAST.at}; });
    if(cardT)clearTimeout(cardT);
@@ -1045,14 +1133,20 @@ export function install(G){
  /* ================================================================= tidy up =============== */
  G.on('tick',(dt,t)=>{
   const c=G.course.get();
+  if(c?.resumeCondition){
+   // Riding updates precede this hook, and the course countdown follows it.
+   // Recovery must neither heal fatigue nor spend effects before control returns.
+   if(c.resumedStarted&&!c.started)Object.assign(player,c.resumeCondition);
+   else delete c.resumeCondition;
+  }
   if(lastC&&lastC!==c){
-   clearField();
-   try{const P=E().PVP; if(P&&P.rivals)for(const k in P.rivals)if(P.rivals[k]&&P.rivals[k].ai)delete P.rivals[k];}catch(e){}
+   if(FIELD&&FIELD.c===lastC)clearField();
+   try{const P=E().PVP; if((!FIELD||FIELD.c!==c)&&P&&P.rivals)for(const k in P.rivals)if(P.rivals[k]&&P.rivals[k].ai)delete P.rivals[k];}catch(e){}
    runWrite=0;
    /* A quit is a decision, not a crash. The saved round exists only for the case where no frame
       ever ran again — so any frame that sees the course gone throws it away, and what survives a
       reload is exactly what the game never got to tidy up. */
-   try{if(G.save.fresh().runSaved)clearRun();}catch(e){}
+   if(!lastC.ladKeepCheckpoint)clearRun(lastC.ladRunId);
   }
   lastC=c;
  });
@@ -1101,5 +1195,5 @@ export function install(G){
  /* handles for QA and sister packages */
  G.ladder={FIELD:()=>FIELD,fieldRows,judgedOfWeek,judgedRows,placeIn,weekLeft,routeLen,goldOf,
   writeWeekly,tallyRibbons,RIB_TIERS,claimRibTier,ribTierReady,finalStandings,champPath,nextVenueHint,
-  resumeRun,dropRun,openCard,last:()=>LAST,FIELD_N,featuredNow,entryLock};
+  resumeRun,dropRun,checkpoint,resumeContext,openCard,last:()=>LAST,FIELD_N,featuredNow,entryLock};
 }

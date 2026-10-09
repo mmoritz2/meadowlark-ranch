@@ -637,7 +637,7 @@ export function install(G){
   const c=G.course.get();
   if(lastCourse&&lastCourse!==c){
    clearHazards(lastCourse);
-   if(lastCourse.tixSpent&&!lastCourse.finished&&!lastCourse.started){refundTicket();toast('🎟️ Ticket returned — that race never started.');}
+   if(lastCourse.tixSpent&&!lastCourse.finished&&!lastCourse.started&&!lastCourse.resumedStarted){refundTicket();toast('🎟️ Ticket returned — that race never started.');}
    pvpHud.classList.remove('on');
   }
   lastCourse=c;
