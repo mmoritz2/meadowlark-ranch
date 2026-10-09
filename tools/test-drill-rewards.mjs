@@ -13,9 +13,10 @@ function section(start,end){
 const completion=section('function endDrill(done){','function tickDrill(dt,t){');
 const grant=section('function grantStatXp(s,h,k,xp,why){','/* Tack as gear.');
 function fixture(options={}){
- const horse={id:'trained',name:'Willow',level:1,stats:{speed:2},sxp:{speed:0},...options.horse};
+ const horse={id:'trained',name:'Willow',level:1,stats:{speed:2,jump:2},sxp:{speed:0,jump:0},...options.horse};
  let stored=JSON.stringify({coins:100,stats:{drills:2,earned:0},pass:{pts:5},horses:[horse,{id:'other',name:'Fern',stats:{speed:1},sxp:{speed:0}}]});
- const trace={events:[],toasts:[],writes:0,refresh:0,reload:0,chime:0,coin:0,removed:0,geometry:0,material:0,texture:0,sharedGeometry:0,unrelatedMaterial:0,cleared:0,practice:[]};
+ const trace={events:[],toasts:[],writes:0,refresh:0,reload:0,chime:0,coin:0,removed:0,geometry:0,material:0,texture:0,sharedGeometry:0,unrelatedMaterial:0,cleared:0,practice:[],clinicCalls:[]};
+ const clinic={misses:2,cleared:8,...options.clinic};
  let failure=options.failure,readsFail=false;
  const cone={isMesh:true,geometry:{dispose(){trace.geometry++;}},material:{dispose(){trace.material++;}}};
  const spriteGeometry={dispose(){trace.sharedGeometry++;}};
@@ -33,15 +34,15 @@ function fixture(options={}){
  },getItem(){if(readsFail)throw Error('read unavailable');return stored;}};
  const freshSave=()=>{try{return JSON.parse(localStorage.getItem());}catch{return null;}};
  const bindings={setPracticeJumps:on=>trace.practice.push(on),DRILL,DRILL_N:8,DRILL_TIME:55,nameSprites,scene:{remove(){trace.removed++;}},$:()=>hud,course:null,arrow,
-  myHorses:JSON.parse(stored).horses,rideIdx:options.rideIdx??0,STAT_LBL:{speed:'💨 Speed'},
+  myHorses:JSON.parse(stored).horses,rideIdx:options.rideIdx??0,STAT_LBL:{speed:'💨 Speed',jump:'⤴️ Jump'},
   VIPON:!!options.vip,VIP_PASS:1.5,freshSave,localStorage,SAVE_KEY:'isolated-fixture',
   ensureStats:h=>{h.sxp??={};},statCap:()=>options.cap??4,statCeil:()=>options.cap??4,
   statNeed:v=>20+10*v,mulOf:()=>options.multiplier??1,addSP:(s,n)=>{s.starPoints=(s.starPoints||0)+n;},
   logEarn:(s,n)=>{s.stats.earned+=n;},refreshWallet:()=>trace.refresh++,reloadHorses:()=>trace.reload++,
   sChime:()=>trace.chime++,sCoin:()=>trace.coin++,toast:m=>trace.toasts.push(m),
-  G:{run:(name,result)=>trace.events.push({name,result:structuredClone(result)})}};
+  G:{jumpTraining:{snapshot(){trace.clinicCalls.push('snapshot');return structuredClone(clinic);},stop(){trace.clinicCalls.push('stop');Object.assign(clinic,{misses:0,cleared:0});}},run:(name,result)=>trace.events.push({name,result:structuredClone(result)})}};
  const api=new Function(...Object.keys(bindings),grant+completion+'return {endDrill,retryDrillSave};')(...Object.values(bindings));
- return {api,DRILL,trace,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},
+ return {api,DRILL,trace,clinic,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},
   removeHorse(){const s=JSON.parse(stored);s.horses=s.horses.filter(h=>h.id!==horse.id);stored=JSON.stringify(s);}};
 }
 
@@ -129,4 +130,53 @@ test('zero-cone cancellation and repeated completion cannot claim rewards',()=>{
  assert.equal(cancelled.trace.writes,0);assert.equal(cancelled.DRILL.pending,undefined);assert.equal(cancelled.trace.events.length,0);
  const completed=fixture({vip:true});completed.api.endDrill(true);completed.api.endDrill(true);
  assert.equal(completed.trace.writes,1);assert.equal(completed.save.pass.pts,23);assert.equal(completed.trace.events.length,1);
+});
+
+test('the 120-second clinic keeps the 55-second slalom XP budget at equal remaining fractions',()=>{
+ for(const [fraction,xp]of [[0,42],[.5,54],[1,65]]){
+  const slalom=fixture({cap:9,drill:{timeLimit:55,t:55*fraction,elapsed:55*(1-fraction)}});
+  const jump=fixture({cap:9,drill:{stat:'jump',timeLimit:120,t:120*fraction,elapsed:120*(1-fraction),grp:null,cones:[]}});
+  assert.equal(slalom.api.endDrill(true),true);assert.equal(jump.api.endDrill(true),true);
+  assert.equal(jump.save.lastTraining.baseXp,xp);assert.equal(slalom.save.lastTraining.baseXp,xp);
+  assert.equal(jump.save.lastTraining.statXp,xp);assert.equal(jump.save.coins,164);assert.equal(jump.save.pass.pts,17);
+  assert.equal(jump.save.lastTraining.activity,'jump');assert.equal(jump.save.lastTraining.unit,'jumps');
+  assert.deepEqual(jump.trace.clinicCalls,['snapshot','stop']);assert.equal(jump.trace.removed,0);
+ }
+ const nearEnd=fixture({drill:{stat:'jump',timeLimit:120,t:10,elapsed:110,grp:null,cones:[]}});nearEnd.api.endDrill(true);
+ assert.equal(nearEnd.save.lastTraining.baseXp,44,'ten seconds left on the longer clock is not worth ten seconds of slalom time');
+});
+
+test('jump receipt and miss count survive failed-save cleanup and retry without paying twice',()=>{
+ const f=fixture({failure:'write',clinic:{misses:3},drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),false);assert.deepEqual(f.trace.clinicCalls,['snapshot','stop']);
+ const proof=f.DRILL.pending;assert.equal(proof.activity,'jump');assert.equal(proof.unit,'jumps');
+ assert.equal(proof.cleared,8);assert.equal(proof.total,8);assert.equal(proof.timeRemaining,60);assert.equal(proof.elapsed,60);
+ assert.equal(proof.baseXp,54);assert.deepEqual(proof.clinic,{misses:3,clean:8});
+ assert.equal(f.clinic.misses,0,'runtime is disposed before retry');assert.equal(f.save.coins,100);assert.equal(f.save.horses[0].sxp.jump,0);
+ f.failure=null;assert.equal(f.api.retryDrillSave(),true);
+ const r=f.save.lastTraining;assert.equal(r.saved,true);assert.equal(r.activity,'jump');assert.equal(r.unit,'jumps');
+ assert.deepEqual(r.clinic,{misses:3,clean:8});assert.equal(r.statXp,54);assert.equal(r.statRaised,1);
+ assert.equal(f.save.horses[0].stats.jump,3);assert.equal(f.save.horses[0].sxp.jump,14);
+ assert.equal(f.save.coins,164);assert.equal(f.save.pass.pts,17);assert.equal(f.save.stats.drills,3);
+ assert.equal(f.api.retryDrillSave(),false);assert.equal(f.trace.writes,1);assert.deepEqual(f.trace.clinicCalls,['snapshot','stop']);
+ assert.deepEqual(f.trace.events.map(e=>e.name),['drillSavePending','drillFinish']);
+});
+
+test('capped jump practice honestly pays zero stat XP while retaining its earned riding reward',()=>{
+ const f=fixture({horse:{stats:{speed:2,jump:4},sxp:{speed:0,jump:0}},drill:{stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]}});
+ assert.equal(f.api.endDrill(true),true);const r=f.save.lastTraining;
+ assert.deepEqual(r.before,{value:4,xp:0,cap:4});assert.deepEqual(r.after,r.before);
+ assert.equal(r.statXp,0);assert.equal(r.statRaised,0);assert.equal(r.activity,'jump');
+ assert.equal(f.save.coins,164);assert.equal(f.save.pass.pts,17);assert.equal(f.trace.chime,0);
+ assert.match(f.trace.toasts[0],/\+0 Jump XP/);assert(!f.trace.toasts[0].includes('→'));
+});
+
+test('partial and empty jump sessions dispose the clinic and only pay landed jumps',()=>{
+ const partial=fixture({clinic:{misses:4},drill:{stat:'jump',idx:3,timeLimit:120,t:0,elapsed:120,grp:null,cones:[]}});
+ assert.equal(partial.api.endDrill(false),true);const r=partial.save.lastTraining;
+ assert.equal(r.completed,false);assert.equal(r.cleared,3);assert.equal(r.baseXp,9);assert.equal(r.statXp,9);
+ assert.deepEqual(r.clinic,{misses:4,clean:3});assert.equal(partial.save.coins,124);assert.equal(partial.save.pass.pts,9);assert.equal(partial.save.stats.drills,2);
+ assert.deepEqual(partial.trace.clinicCalls,['snapshot','stop']);
+ const empty=fixture({drill:{stat:'jump',idx:0,timeLimit:120,t:110,elapsed:10,grp:null,cones:[]}});empty.api.endDrill(false);empty.api.endDrill(false);
+ assert.deepEqual(empty.trace.clinicCalls,['snapshot','stop']);assert.equal(empty.trace.writes,0);assert.equal(empty.DRILL.pending,undefined);assert.equal(empty.trace.events.length,0);
 });

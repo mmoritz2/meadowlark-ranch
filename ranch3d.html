@@ -708,7 +708,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=defined-lashes-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=cottonwood-post-1';
+import {FEATURES} from './assets/features/index.js?v=jump-clinic-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 const HORSE_ARRIVAL=createHorseArrival();
@@ -9657,12 +9657,17 @@ function tickRoundup(dt,t){
    time, which is the point — there should be a way to train a horse that does not go
    through the shop.
 
-   The cones have to be taken IN ORDER, so it is steering, not speed. */
+   The cones have to be taken IN ORDER, so it is steering, not speed.
+   Jump uses the coached low-rail clinic instead; it owns crossing/landing proof
+   and feeds the same durable partial/full reward path. */
 const DRILL_N=8, DRILL_TIME=55, DRILL_R=3.6;
 const DRILL={on:false,t:0,idx:0,stat:null,cones:[],grp:null,best:0,countdown:0,elapsed:0,horseId:null,horseName:'',runId:null,pending:null,lastResult:null};
 let drillSerial=0;
 function drillPaused(){return !!(G.input?.blocked()||G.photoPause||freeCam||document.hidden);}
-function drillState(){return {active:DRILL.on,countdown:DRILL.countdown,elapsed:DRILL.elapsed,timeRemaining:Math.max(0,DRILL.t),cleared:DRILL.idx,total:DRILL_N,stat:DRILL.stat,horseId:DRILL.horseId,horseName:DRILL.horseName,paused:DRILL.on&&drillPaused(),next:DRILL.cones[DRILL.idx]?{x:DRILL.cones[DRILL.idx].x,z:DRILL.cones[DRILL.idx].z}:null,points:DRILL.cones.map((c,i)=>({x:c.x,z:c.z,cleared:i<DRILL.idx})),pending:DRILL.pending,lastResult:DRILL.lastResult};}
+function drillState(){
+ const clinic=DRILL.stat==='jump'&&DRILL.on?G.jumpTraining?.snapshot():null;
+ return {active:DRILL.on,activity:DRILL.stat==='jump'?'jump':'slalom',unit:DRILL.stat==='jump'?'jumps':'cones',countdown:DRILL.countdown,elapsed:DRILL.elapsed,timeRemaining:Math.max(0,DRILL.t),cleared:DRILL.idx,total:DRILL_N,stat:DRILL.stat,horseId:DRILL.horseId,horseName:DRILL.horseName,paused:DRILL.on&&drillPaused(),next:clinic?.guide||(DRILL.cones[DRILL.idx]?{x:DRILL.cones[DRILL.idx].x,z:DRILL.cones[DRILL.idx].z}:null),points:DRILL.cones.map((c,i)=>({x:c.x,z:c.z,cleared:i<DRILL.idx})),clinic,pending:DRILL.pending,lastResult:DRILL.lastResult};
+}
 function cancelDrill(){if(!DRILL.on)return false;G.riding?.lock('training-countdown',false);endDrill(false);return true;}
 function trainingHorseId(){return DRILL.pending?.horseId??(DRILL.on?DRILL.horseId:null);}
 function trainingGate(){if(!DRILL.on&&!DRILL.pending)return;toast(DRILL.pending?'Retry saving your completed training first.':'Finish or end your training before starting another activity.');return true;}
@@ -9682,32 +9687,37 @@ function startDrill(stat){
  if(!h){toast('No horse to train.');return false;}
  ensureStats(h);
  const cap=Math.min(statCap(h),statCeil(h,stat));
- if(h.stats[stat]>=cap){toast(h.name+"'s "+STAT_LBL[stat].slice(STAT_LBL[stat].indexOf(' ')+1)+' is already at its ceiling for Lv '+(h.level||1)+'.');return false;}
+ if(stat!=='jump'&&h.stats[stat]>=cap){toast(h.name+"'s "+STAT_LBL[stat].slice(STAT_LBL[stat].indexOf(' ')+1)+' is already at its ceiling for Lv '+(h.level||1)+'.');return false;}
  const actionTarget=player.onFoot?G.onFoot?.horseActionTarget?.():RIG,parked=G.onFoot?.state?.().horse;
+ const clinic=stat==='jump'?G.jumpTraining:null;
+ if(stat==='jump'&&(!clinic||!clinic.canStart())){toast('Choose a horse with a ground jump for the jumping clinic.');return false;}
  if(!RIG.ready||RIG.loadingBreed||actionTarget?.heroMotion?.state?.action||actionTarget?.emote||parked?.pending||parked?.departure||parked&&actionTarget?.heroMotion?.state?.transitioning){toast('Let your horse finish its action and get ready before training.');return false;}
  if(G.onFoot?.on){G.onFoot.mount({here:true});if(G.onFoot.on||player.onFoot)return false;}
  G.events2?.homeArena();setPracticeJumps(false);
  releaseAllRidingControls();selectRidingGait('trot');
- player.pos.set(-9.5,0,-12);player.y=0;player.vy=0;player.speed=0;player.heading=0;player.turnSm=0;
- player.mesh.position.set(player.pos.x,groundH(player.pos.x,player.pos.z),player.pos.z);player.mesh.rotation.y=0;
- camYaw=0;camPitch=.32;camLook.set(player.pos.x,groundH(player.pos.x,player.pos.z)+1.35,player.pos.z);
- const g=new THREE.Group();g.name='Training slalom';DRILL.cones=[];
- drillPoints().forEach((pt,i)=>{
+ const start=clinic?.definition.start||{x:-9.5,z:-12,heading:0};
+ player.pos.set(start.x,0,start.z);player.y=0;player.vy=0;player.speed=0;player.heading=start.heading;player.turnSm=0;
+ player.mesh.position.set(player.pos.x,groundH(player.pos.x,player.pos.z),player.pos.z);player.mesh.rotation.y=start.heading;
+ camYaw=start.heading;camPitch=.32;camLook.set(player.pos.x,groundH(player.pos.x,player.pos.z)+1.35,player.pos.z);
+ const g=clinic?null:new THREE.Group();if(g)g.name='Training slalom';DRILL.cones=[];
+ (clinic?[]:drillPoints()).forEach((pt,i)=>{
   const cone=new THREE.Mesh(new THREE.ConeGeometry(0.42,1.1,10),new THREE.MeshStandardMaterial({color:0xe8863c,emissive:0xe8863c,emissiveIntensity:0.25,roughness:0.5}));
   cone.position.set(pt[0],groundH(pt[0],pt[1])+0.55,pt[1]);cone.castShadow=true;g.add(cone);
   const num=nameSprite(String(i+1));num.position.set(pt[0],groundH(pt[0],pt[1])+1.9,pt[1]);num.scale.set(0.85,0.3,1);g.add(num);
   DRILL.cones.push({x:pt[0],z:pt[1],m:cone,num});
  });
- scene.add(g);
- Object.assign(DRILL,{grp:g,on:true,t:DRILL_TIME,idx:0,stat,countdown:3,elapsed:0,horseId:h.id,horseName:h.name,runId:Date.now().toString(36)+'-'+(++drillSerial).toString(36),lastResult:null});
+ if(g)scene.add(g);if(clinic)clinic.start();
+ Object.assign(DRILL,{grp:g,on:true,timeLimit:clinic?.definition.timeLimit||DRILL_TIME,t:clinic?.definition.timeLimit||DRILL_TIME,idx:0,stat,countdown:3,elapsed:0,horseId:h.id,horseName:h.name,runId:Date.now().toString(36)+'-'+(++drillSerial).toString(36),lastResult:null});
  G.riding?.lock('training-countdown',true);hidePanels();G.seFrame?.settle();
- $('drillHud').style.display='block';arrow.visible=true;sChime();
- toast('Lined up in the home arena. Trot through the numbered circles; use a walk for tighter turns.');
+ $('drillHud').style.display='block';arrow.visible=true;
+ const guide=clinic?.snapshot()?.guide;if(guide)arrow.position.set(guide.x,groundH(guide.x,guide.z)+2.9,guide.z);sChime();
+ toast(clinic?'Jump clinic: follow the gold approach markers, ask for a jump in the takeoff band, then land. Circle back to retry a missed rail.':'Lined up in the home arena. Trot through the numbered circles; use a walk for tighter turns.');
  G.run('drillStart',drillState());return true;
 }
 function endDrill(done){
  if(!DRILL.on)return;
- const cleared=DRILL.idx, left=Math.max(0,DRILL.t);
+ const cleared=DRILL.idx, left=Math.max(0,DRILL.t),clinic=DRILL.stat==='jump'?G.jumpTraining?.snapshot():null;
+ if(DRILL.stat==='jump')G.jumpTraining?.stop();
  if(DRILL.grp){try{
   scene.remove(DRILL.grp);
   DRILL.grp.traverse(o=>{
@@ -9726,9 +9736,10 @@ function endDrill(done){
  const h=myHorses.find(h=>h.id===DRILL.horseId)||myHorses[rideIdx];
  DRILL.pending={runId:DRILL.runId||('drill-'+Date.now()+'-'+Math.random().toString(36).slice(2)),
   horseId:DRILL.horseId??h?.id,horseName:DRILL.horseName||h?.name||'Your horse',stat:DRILL.stat,
-  completed:!!done,cleared,total:DRILL_N,timeRemaining:left,
+  completed:!!done,cleared,total:DRILL_N,timeRemaining:left,activity:DRILL.stat==='jump'?'jump':'slalom',unit:DRILL.stat==='jump'?'jumps':'cones',
+  ...(clinic?{clinic:{misses:clinic.misses,clean:cleared}}:{}),
   elapsed:Number((Number.isFinite(DRILL.elapsed)?DRILL.elapsed:DRILL_TIME-left).toFixed(2)),
-  baseXp:Math.round(cleared*3+(done?18+left*.42:0)),coins:cleared*8,
+  baseXp:Math.round(cleared*3+(done?18+left*DRILL_TIME/(DRILL.timeLimit||DRILL_TIME)*.42:0)),coins:cleared*8,
   passPoints:VIPON?Math.round((done?12:4)*VIP_PASS):(done?12:4),
   statXp:0,before:null,after:null,statRaised:0,saved:false};
  return retryDrillSave();
@@ -9785,11 +9796,16 @@ function retryDrillSave(){
 function tickDrill(dt,t){
  if(!DRILL.on)return;
  if(course||myHorses[rideIdx]?.id!==DRILL.horseId||player.flying||player.onFoot||G.worldPkg?.vehicle?.()){cancelDrill();return;}
- if(drillPaused())return;
+ if(drillPaused()){if(DRILL.stat==='jump')G.jumpTraining?.tick(0,true);return;}
  const c=DRILL.cones[DRILL.idx];
  if(c){arrow.visible=true;arrow.position.set(c.x,groundH(c.x,c.z)+2.9+Math.sin(t*4)*.16,c.z);c.m.material.emissiveIntensity=.35+.35*Math.sin(t*6);}
  if(DRILL.countdown>0){DRILL.countdown=Math.max(0,DRILL.countdown-dt);player.speed=0;if(!DRILL.countdown){G.riding?.lock('training-countdown',false);sChime();}return;}
  const step=Math.max(0,Math.min(dt,DRILL.t));DRILL.t-=step;DRILL.elapsed+=step;
+ if(DRILL.stat==='jump'){
+  const result=G.jumpTraining?.tick(step,false);
+  if(result){DRILL.idx=result.cleared;if(result.credited)sCoin();const guide=result.guide;if(guide){arrow.visible=true;arrow.position.set(guide.x,groundH(guide.x,guide.z)+2.9+Math.sin(t*4)*.16,guide.z);}}
+  if(DRILL.idx>=DRILL_N){endDrill(true);return;}
+ }
  if(c&&Math.hypot(player.pos.x-c.x,player.pos.z-c.z)<DRILL_R){
   DRILL.idx++;sCoin();c.m.material.color.set(0x7fbf5a);c.m.material.emissive.set(0x7fbf5a);
   if(DRILL.idx>=DRILL_N){endDrill(true);return;}
@@ -9820,11 +9836,11 @@ function openEvents(){
    +'</div>';}
  {const h=myHorses[rideIdx];
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎯 Training drills</b>'
-   +'<span style="width:100%;font-size:11px;color:#8c7a63">Eight cones in a slalom, in order, against the clock. A clear round is worth about what a 300🪙 supplement is — but it costs nothing except riding it well. Pick what to train'+(h?' on '+h.name:'')+':</span>'
+   +'<span style="width:100%;font-size:11px;color:#8c7a63">Jump trains over eight low fences with takeoff coaching. Other stats use the eight-cone slalom. Every cleared target earns XP and coins; free to enter. Pick what to train'+(h?' on '+h.name:'')+':</span>'
    +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+STAT_KEYS.map(k=>{
      const at=h&&h.stats?h.stats[k]:0, cap=h?Math.min(statCap(h),statCeil(h,k)):10, maxed=at>=cap;
-     return maxed?'<span style="font-size:11px;color:#b8a98a">'+STAT_LBL[k]+' maxed</span>'
-      :'<button data-drill="'+k+'" style="font-size:11px;padding:3px 8px">'+STAT_LBL[k]+' '+at+'/'+cap+'</button>';
+     return maxed&&k!=='jump'?'<span style="font-size:11px;color:#b8a98a">'+STAT_LBL[k]+' maxed</span>'
+      :'<button data-drill="'+k+'" style="font-size:11px;padding:3px 8px">'+STAT_LBL[k]+' '+at+'/'+cap+(maxed?' · Practice':'')+'</button>';
     }).join('')+'</span></div>';}
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],gate=G.run('eventGate',ev,myHorses[rideIdx])||{ok:lvl>=ev.lvl,html:''},ok=gate.ok, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0, gold=!!(sw.ribbonGold&&sw.ribbonGold[ev.id]);
@@ -13547,6 +13563,9 @@ function tick(stepSeconds){
  player.speed+=(target-player.speed)*(1-Math.exp(-dt*accel));
  if(nativeCap?.native)player.speed=THREE.MathUtils.clamp(player.speed,player.flying?-3:-1.3,player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
+ // Training menus pause the ride immediately; braking inertia must not carry a
+ // valid jump past its landing proof while the training clock is stopped.
+ if(DRILL.on&&drillPaused())player.speed=0;
  /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
     is still all-or-nothing. Either way the input is ramped rather than applied raw, because
     yaw is the axis that turns stomachs and a stick that snaps to full lock feels wild.
@@ -14103,6 +14122,7 @@ function tick(stepSeconds){
   }
  }
  for(const j of (course?[]:jumps)){
+  if(j.g?.visible===false){j.prevSide=0;continue;}
   const lx=player.pos.x-j.x,lz=player.pos.z-j.z;
   const along=lx*Math.cos(j.rotY)-lz*Math.sin(j.rotY);
   const across=lx*Math.sin(j.rotY)+lz*Math.cos(j.rotY);

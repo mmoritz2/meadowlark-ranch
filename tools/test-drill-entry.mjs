@@ -14,10 +14,10 @@ const entry=section('const DRILL_N=8,','function endDrill(done){');
 const tick=section('function tickDrill(dt,t){','function openEvents(){');
 const vec=(x=0,y=0,z=0)=>({x,y,z,set(x,y,z){Object.assign(this,{x,y,z});return this;}});
 function fixture(options={}){
- const trace={events:[],toasts:[],home:0,mount:0,added:[],release:0,gaits:[],hidden:0,chime:0,coin:0,end:[],practice:[]};
- const state={blocked:false,hidden:false,vehicle:false,activityRefused:false};
+ const trace={events:[],toasts:[],home:0,mount:0,added:[],release:0,gaits:[],hidden:0,chime:0,coin:0,end:[],practice:[],clinicStarts:0,clinicStops:0,clinicChecks:0,clinicSnapshots:0,clinicTicks:[]};
+ const state={blocked:false,hidden:false,vehicle:false,activityRefused:false,clinicCanStart:true,clinicResult:{cleared:0,credited:false,misses:0,guide:{x:6,z:0}}};
  const locks=new Set(),hooks={};
- const horse={id:'willow',name:'Willow',level:2,stats:{speed:2,stamina:2},sxp:{speed:0},...options.horse};
+ const horse={id:'willow',name:'Willow',level:2,stats:{speed:2,stamina:2,jump:2},sxp:{speed:0,jump:0},...options.horse};
  const player={pos:vec(88,0,76),mesh:{position:vec(88,0,76),rotation:{y:1}},heading:1,speed:4,y:0,onFoot:false,flying:false};
  const rig={ready:true,loadingBreed:false,heroMotion:{state:{action:null,transitioning:false}}};
  const parkedRig={heroMotion:{state:{action:null,transitioning:false}}};
@@ -28,6 +28,10 @@ function fixture(options={}){
  class Material{constructor(props){Object.assign(this,props);this.color={set(){}};this.emissive={set(){}};}}
  class Mesh{constructor(geometry,material){Object.assign(this,{geometry,material,position:vec()});}}
  const G={input:{blocked:()=>state.blocked},photoPause:false,onFoot,social:{},trail:{},
+  jumpTraining:{definition:{start:{x:6,z:-14,heading:Math.PI},timeLimit:120},
+   canStart(){trace.clinicChecks++;return state.clinicCanStart;},start(){trace.clinicStarts++;},stop(){trace.clinicStops++;},
+   snapshot(){trace.clinicSnapshots++;return structuredClone(state.clinicResult);},
+   tick(dt,paused){trace.clinicTicks.push({dt,paused});return structuredClone(state.clinicResult);}},
   worldPkg:{vehicle:()=>state.vehicle},events2:{homeArena:()=>trace.home++},
   riding:{lock(name,on){on?locks.add(name):locks.delete(name);}},seFrame:{settle(){}},
   on(name,fn){(hooks[name]??=[]).push(fn);},
@@ -35,7 +39,7 @@ function fixture(options={}){
  };
  const hud={style:{display:'none'}},arrow={visible:false,position:vec()};
  const bindings={setPracticeJumps:on=>trace.practice.push(on),G,player,RIG:rig,myHorses:[horse],rideIdx:0,course:null,freeCam:false,
-  document:{get hidden(){return state.hidden;}},STAT_LBL:{speed:'💨 Speed',stamina:'🔋 Stamina'},
+  document:{get hidden(){return state.hidden;}},STAT_LBL:{speed:'💨 Speed',stamina:'🔋 Stamina',jump:'⤴️ Jump'},
   ensureStats(){},statCap:()=>options.cap??9,statCeil:(_h,stat)=>options.ceil?.[stat]??9,
   toast:message=>trace.toasts.push(message),releaseAllRidingControls:()=>trace.release++,
   selectRidingGait:gait=>trace.gaits.push(gait),groundH:()=>0,camYaw:1,camPitch:1,camLook:vec(),
@@ -135,4 +139,57 @@ test('an expired clock clamps elapsed time and cannot pay a full-clear result',(
  f.api.DRILL.t=.1;f.api.DRILL.elapsed=54.9;f.api.tickDrill(.5,1);
  assert.equal(f.api.DRILL.t,0);assert.equal(f.api.DRILL.elapsed,55);
  assert.equal(f.api.DRILL.idx,0);assert.deepEqual(f.trace.end,[false]);
+});
+
+test('jump entry permits capped practice and stages the clinic without slalom cones',()=>{
+ const f=fixture({horse:{stats:{speed:4,jump:4}},cap:4});
+ assert.equal(f.api.startDrill('speed'),false);untouched(f);
+ assert.equal(f.api.startDrill('jump'),true);
+ assert.deepEqual([f.player.pos.x,f.player.pos.z,f.player.heading],[6,-14,Math.PI]);
+ assert.deepEqual([f.player.mesh.position.x,f.player.mesh.position.z,f.player.mesh.rotation.y],[6,-14,Math.PI]);
+ assert.equal(f.trace.clinicChecks,1);assert.equal(f.trace.clinicStarts,1);
+ assert.equal(f.api.DRILL.timeLimit,120);assert.equal(f.api.DRILL.t,120);assert.equal(f.api.DRILL.countdown,3);
+ assert.deepEqual(f.api.DRILL.cones,[]);assert.equal(f.api.DRILL.grp,null);assert.equal(f.trace.added.length,0);
+ const s=f.api.drillState();assert.equal(s.activity,'jump');assert.equal(s.unit,'jumps');
+ assert.deepEqual(s.next,{x:6,z:0});assert.deepEqual(s.points,[]);assert.equal(s.clinic.cleared,0);
+ assert.equal(s.horseId,'willow');assert.equal(f.trace.practice.at(-1),false);
+});
+
+test('an unsupported or flying mount cannot enter jump training or relocate the player',()=>{
+ for(const setup of [f=>{f.state.clinicCanStart=false;},f=>{delete f.G.jumpTraining;},f=>{f.player.flying=true;}]){
+  const f=fixture();setup(f);assert.equal(f.api.startDrill('jump'),false);untouched(f);
+  assert.equal(f.trace.clinicStarts,0);assert.equal(f.trace.clinicTicks.length,0);
+ }
+});
+
+test('jump countdown and menu pauses never tick a running clinic or grant a jump',()=>{
+ const f=fixture();f.api.startDrill('jump');f.api.tickDrill(1,0);
+ assert.equal(f.api.DRILL.countdown,2);assert.equal(f.trace.clinicTicks.length,0);assert.equal(f.api.DRILL.t,120);
+ f.state.blocked=true;f.api.tickDrill(10,1);
+ assert.deepEqual(f.trace.clinicTicks,[{dt:0,paused:true}]);assert.equal(f.api.DRILL.countdown,2);
+ f.state.blocked=false;f.api.tickDrill(2,3);assert(!f.locks.has('training-countdown'));
+ assert.equal(f.api.DRILL.t,120);assert.equal(f.api.DRILL.idx,0);
+ f.state.hidden=true;f.state.clinicResult.cleared=2;f.api.tickDrill(10,4);
+ assert.deepEqual(f.trace.clinicTicks.at(-1),{dt:0,paused:true});assert.equal(f.api.DRILL.idx,0);assert.equal(f.api.DRILL.elapsed,0);
+});
+
+test('jump progress comes only from runtime landing credit, never guide or old-cone proximity',()=>{
+ const f=fixture();f.api.startDrill('jump');f.api.tickDrill(3,0);
+ for(const [x,z]of [[6,0],[-9.5,-3.6],[-6.4,5.6]]){
+  f.player.pos.set(x,0,z);f.api.tickDrill(.1,1);
+  assert.equal(f.api.DRILL.idx,0);assert.equal(f.trace.coin,0);assert.equal(f.trace.end.length,0);
+ }
+ f.state.clinicResult={cleared:1,credited:true,misses:2,guide:{x:8,z:9}};f.api.tickDrill(.1,2);
+ assert.equal(f.api.DRILL.idx,1);assert.equal(f.trace.coin,1);assert.deepEqual([f.arrow.position.x,f.arrow.position.z],[8,9]);
+ f.state.clinicResult.credited=false;f.api.tickDrill(.1,3);assert.equal(f.api.DRILL.idx,1);assert.equal(f.trace.coin,1);
+ f.state.clinicResult={cleared:8,credited:true,misses:2,guide:null};f.api.tickDrill(.1,4);
+ assert.equal(f.api.DRILL.idx,8);assert.deepEqual(f.trace.end,[true]);assert.equal(f.api.DRILL.on,false);
+});
+
+test('jump expiration sends only remaining time to the runtime and keeps landed partial credit',()=>{
+ const f=fixture();f.api.startDrill('jump');f.api.tickDrill(3,0);
+ f.api.DRILL.t=.05;f.api.DRILL.elapsed=119.95;f.state.clinicResult={cleared:3,credited:false,misses:1};
+ f.api.tickDrill(.25,1);
+ assert.deepEqual(f.trace.clinicTicks,[{dt:.05,paused:false}]);assert.equal(f.api.DRILL.t,0);
+ assert.equal(f.api.DRILL.elapsed,120);assert.equal(f.api.DRILL.idx,3);assert.deepEqual(f.trace.end,[false]);
 });

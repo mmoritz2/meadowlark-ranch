@@ -177,7 +177,7 @@ export function install(G){
   out.push({id:'__roundup',special:'roundup',town:'Meadowlark Ranch',name:'The Runaway Roundup',lvl:1,reward:650,
    blurb:'Five loose horses in the pasture and two and a half minutes to pen them. They run from whoever is closest: get on the far side and push.'});
   out.push({id:'__drill',special:'drill',town:'Meadowlark Ranch',name:'Training Drills',lvl:1,reward:0,
-   blurb:'Train your horse by riding eight numbered circles in the home arena. A three-second countdown gets you ready, then you have 55 seconds. Walk or trot through the turns. Every circle earns training XP and coins; a full round earns extra XP. Free to enter.'});
+   blurb:'Jump clinic: eight low fences in two minutes, with takeoff cues and retry coaching. Other stats: eight numbered circles in 55 seconds. Every cleared target earns XP and coins; a full round earns extra XP. Free to enter. Jump practice stays open at your current stat ceiling.'});
   return out;
  }
  function towns(){
@@ -374,7 +374,7 @@ export function install(G){
    const P=$('eventsPanel'), btns=P?[...P.querySelectorAll('button[data-drill]')]:[];
    main+='<div class="sev-plaque">'+esc(h.name||'Your horse')+' · Lv '+lvl+'</div><div class="sev-blurb">'+esc(ev.blurb)+'</div><div class="sev-stats">'
     +(T.STAT_KEYS||[]).map(k=>{const b=btns.find(x=>x.dataset.drill===k),at=(h.stats&&h.stats[k])||0,cap=Math.min(G.xp.statCap(h),G.xp.statCeil(h,k)),xp=h.sxp?.[k]||0,need=G.xp.statNeed(at);
-     return b&&at<cap?'<button class="se-cream" data-sev="drill:'+k+'" style="min-height:80px;display:flex;flex-direction:column;align-items:flex-start;gap:7px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+'</b><small>'+Math.min(xp,need)+' / '+need+' XP to '+(at+1)+'</small></button>'
+     return b&&(at<cap||k==='jump')?'<button class="se-cream" data-sev="drill:'+k+'" style="min-height:80px;display:flex;flex-direction:column;align-items:flex-start;gap:7px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+'</b><small>'+(at>=cap?'Practice · current XP ceiling':Math.min(xp,need)+' / '+need+' XP to '+(at+1))+'</small>'+(k==='jump'?'<small>Low fences · takeoff coaching · 2 min</small>':'')+'</button>'
       :'<button class="se-cream" disabled style="min-height:80px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+' · At ceiling</b></button>';}).join('')+'</div></div>';
   }else if(ev.special==='roundup'){
    const ready=roundupReady();
