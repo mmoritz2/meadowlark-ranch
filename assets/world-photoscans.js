@@ -1,4 +1,5 @@
-import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=upright-broadleaf-1';
+import {selectPastoralWoodland,isOrdinaryTrunkCircle} from './pastoral-woodland.mjs?v=pastoral-woodland-1';
+import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=full-crown-2';
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
@@ -16,7 +17,7 @@ import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-ran
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=flowering-margins-1';
-import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=canopy-lighting-1';
+import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -111,7 +112,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   }
   async function load(id){
     if(loaded.has(id))return loaded.get(id);
-    const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb');
+    const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb'+(id==='upright_broadleaf_01'?'?v=full-crown-2':''));
     asset.scene.updateMatrixWorld(true);
     const canopyStarted=performance.now(),canopyShade=prepareCanopyShade(THREE,asset.scene);
     if(canopyShade)(state.canopyShading??={})[id]={...canopyShade,prepareMs:performance.now()-canopyStarted};
@@ -153,7 +154,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=upright-broadleaf-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=full-crown-2').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -368,6 +369,28 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const t={...site,kind:'oak',authoredWoodlandEdge:true,woodRadius};add(t);
       if(trees.includes(t))edge.trees.push(t);
     }
+    // Upright stands break up repeated forked crowns around the inhabited fields.
+    // Root, yaw and post-legacy height stay fixed; replace wood contact with the model.
+    const pastoral=state.pastoralWoodland={trees:[],skipped:[],collision:null};
+    const canReplace=t=>{
+      const r=edgeWoodRadius(uprightSource,t.height);
+      if(cottonwoodReserved(t.x,t.z,r+1)||W.pathDist(t.x,t.z)<r+3||(G.worldPaths?.trackDist(t.x,t.z)??Infinity)<r+3)return false;
+      if(window.__onCourse?.(t.x,t.z,r+2))return false;
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(t.x,t.z,route[i],route[(i+1)%route.length])<r+5)return false;
+      for(const wall of W.walls||[])if(segmentDistance(t.x,t.z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return false;
+      // Only known ordinary trunk circles can be replaced. Never remove a landmark or solid owner.
+      const own=W.colliders.filter(c=>Math.hypot(c.x-t.x,c.z-t.z)<.15);
+      if(!own.length||own.some(c=>!isOrdinaryTrunkCircle(c)))return false;
+      const h=W.groundH(t.x,t.z),probe=new THREE.Vector3(t.x,0,t.z);
+      W.solidWorld.resolve(probe,{bottom:h+.38,top:h+2.65,radius:.55});
+      if(Math.hypot(probe.x-t.x,probe.z-t.z)>.001)return false;
+      t.pastoralLegacyCircles=own;
+      return true;
+    };
+    for(const {tree:t,grove} of selectPastoralWoodland(trees,{coldAt:(x,z)=>coldWoodlandWeights(x,z).weight,canReplace})){
+      t.previousSource=t.source.key;t.source=uprightSource;t.pastoralGrove=grove;
+      pastoral.trees.push(t);
+    }
     state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
@@ -377,7 +400,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const m=source.meta;
       const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v='+m.views.sha256),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file+'?v='+m.normals.sha256)]);
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
-      source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
+      source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom,normalProfile:m.normalProfile};
       source.card=treeImpostor(source.impostor);
     }
     // The same lit, eight-angle source atlases continue woodland beyond the
@@ -457,6 +480,31 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       leavesExcluded:true,allWoodHeights:true,renderChildren:0};
     G.followCam.invalidateTrees();edge.cameraInvalidated=true;
     }
+    if(pastoral.trees.length){
+      const owner=new THREE.Group();owner.name='Pastoral woodland wood';group.add(owner);
+      owner.userData.solidParts=[];owner.updateWorldMatrix(true,false);
+      if(!owner.matrixWorld.equals(identity))throw Error('Unexpected pastoral wood owner frame');
+      for(const t of pastoral.trees){
+        const matrix=t.matrix.toArray(),scale=t.height/uprightSource.meta.sourceHeight;
+        let lowRadius=0;
+        for(const box of UPRIGHT_HYBRID_WOOD_BOXES){
+          owner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+          const lo=(box.min[1]-uprightSource.bounds.min.y)*scale-.07,hi=(box.max[1]-uprightSource.bounds.min.y)*scale-.07;
+          if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
+        }
+        t.lowWoodRadius=lowRadius;
+      }
+      const parts=owner.userData.solidParts.length,registered=W.solidWorld.register(owner);
+      if(registered!==parts){W.solidWorld.unregister(owner);owner.removeFromParent();throw Error('Incomplete pastoral wood contacts');}
+      for(const t of pastoral.trees){
+        // Keep exact existing records/order and tree-camera/litter points. The
+        // registered wood now owns contact instead of the old circular envelope.
+        for(const circle of t.pastoralLegacyCircles)Object.assign(circle,{r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,pastoralGrove:t.pastoralGrove});
+      }
+      pastoral.collision={owners:1,parts,registeredParts:registered,sourceHash:UPRIGHT_HYBRID_WOOD_SOURCE_SHA,leavesExcluded:true};
+      G.followCam.invalidateTrees();
+    }
+    pastoral.trees=pastoral.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,grove:t.pastoralGrove,previousSource:t.previousSource,source:t.source.key,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()}));
     edge.physicsReady=true;edge.artOnly=false;
     for(const t of trees){if(t.root)t.root.visible=false;else if(t.stem){
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;

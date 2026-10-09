@@ -1,5 +1,5 @@
 {
-  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game.",
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage.",
   "trees": [
     {
       "id": "fir_sapling_medium",
@@ -312,28 +312,29 @@
     {
       "id": "upright_broadleaf_01",
       "variant": -1,
-      "width": 4.319080226198001,
+      "width": 6.485731554031372,
       "height": 9.990701275467874,
       "bottom": -0.5255277094244957,
       "sourceHeight": 9.425189882516861,
       "viewCount": 8,
+      "normalProfile": "view-facing-material-v1",
       "canopyShading": {
         "triangles": 96609,
-        "area": 65.96605712979058,
-        "cell": 0.14584104581312698,
-        "occupied": 9883,
-        "min": 0.37617725133895874,
+        "area": 96.31502124446105,
+        "cell": 0.1501386653293263,
+        "occupied": 21618,
+        "min": 0.41470521688461304,
         "max": 1
       },
       "views": {
         "file": "upright_broadleaf_01_views.webp",
-        "bytes": 2563426,
-        "sha256": "085a703857deae089fc2621725ee74778103de92a9571b1633233a33bfdf069d"
+        "bytes": 2725472,
+        "sha256": "e903696c4c948758c459026ba84a3a8ec0504b83f32931ffa4956144c05007cb"
       },
       "normals": {
         "file": "upright_broadleaf_01_normals.webp",
-        "bytes": 1594424,
-        "sha256": "436d9ee72e428afa3500e6914e6c6039e3976d534edaf0105774cf18b485362b"
+        "bytes": 1956770,
+        "sha256": "61778bb9022cfaa0d00d7ce507f096c65df1549f079ec7a2d1a3a84ceed456ba"
       },
       "source": "upright_broadleaf_01.glb",
       "sourcePage": "https://quaternius.com/packs/stylizednaturemegakit.html",

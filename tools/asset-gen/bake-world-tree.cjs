@@ -5,6 +5,7 @@ const QA=require('../qa-platform.cjs');
 const dest='assets/models/world/realism',scratch='output/tree-bake';fs.mkdirSync(scratch,{recursive:true});
 fs.writeFileSync(scratch+'/index.html',`<!doctype html><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><script type="module">
 import * as T from 'three';
+import {createMatchedTreeNormalMaterial} from '/tools/asset-gen/tree-normal-material.mjs';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {createForageArt} from '/assets/forage-art.js?v=leafy-orchard-1';
 import {createOrchardFruit} from '/assets/orchard-art.js?v=leafy-orchard-1';
@@ -47,13 +48,13 @@ window.bakeTree=async(id,variant=-1)=>{
  const width=treeViewHalfWidth(root)*2*1.10,height=size.y*1.06,bottom=bounds.min.y-size.y*.03;
  const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,100);
  const meshes=[];root.traverse(o=>{if(o.isMesh){if(id==='pine_tree_01'&&/twig/.test(o.material.name))o.material.color.setRGB(1.7,2.1,1.5);meshes.push([o,o.material]);}});
- const results={width,height,bottom,sourceHeight:size.y,viewCount:8,...(orchardFruit?{orchardFruit}:{}),...(canopyShading?{canopyShading}:{})};
+ const results={width,height,bottom,sourceHeight:size.y,viewCount:8,...(id==='upright_broadleaf_01'?{normalProfile:'view-facing-material-v1'}:{}),...(orchardFruit?{orchardFruit}:{}),...(canopyShading?{canopyShading}:{})};
  for(const normal of [false,true]){
   const tile=normal?512:variant<0?768:512;renderer.setSize(tile,tile);
   const atlas=document.createElement('canvas');atlas.width=tile*4;atlas.height=tile*2;const ctx=atlas.getContext('2d');
   for(const [o,old]of meshes){
    if(!normal){o.material=new T.MeshBasicMaterial({map:old.map,color:old.color,vertexColors:old.vertexColors,alphaTest:old.alphaTest,side:T.DoubleSide});if(o.geometry.attributes.canopyShade){o.material.onBeforeCompile=patchCanopyShade;o.material.customProgramCacheKey=()=> 'canopy-shade-bake-v1';}}
-   else o.material=new T.ShaderMaterial({uniforms:{albedo:{value:old.map},cutoff:{value:old.alphaTest||0},hasMap:{value:!!old.map}},side:T.DoubleSide,
+   else o.material=id==='upright_broadleaf_01'?createMatchedTreeNormalMaterial(T,old):new T.ShaderMaterial({uniforms:{albedo:{value:old.map},cutoff:{value:old.alphaTest||0},hasMap:{value:!!old.map}},side:T.DoubleSide,
     vertexShader:'varying vec2 vUv;varying vec3 vN;void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
     fragmentShader:'uniform sampler2D albedo;uniform float cutoff;uniform bool hasMap;varying vec2 vUv;varying vec3 vN;void main(){float a=hasMap?texture2D(albedo,vUv).a:1.;if(a<cutoff)discard;vec3 n=normalize(vN);if(n.y<0.)n=-n;gl_FragColor=vec4(n*.5+.5,a);}'
    });
@@ -85,6 +86,6 @@ window.bakeTree=async(id,variant=-1)=>{
   }
   const prior=JSON.parse(fs.readFileSync(dest+'/tree-impostors.json','utf8'));
   const merged=[...prior.trees.filter(t=>!entries.some(e=>e.id===t.id&&e.variant===t.variant)),...entries];
-  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game.',trees:merged},null,2)+'\n');
+  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage.',trees:merged},null,2)+'\n');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

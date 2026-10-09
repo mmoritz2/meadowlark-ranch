@@ -228,7 +228,7 @@ The trees share the existing visual detail budget. The connected lower edge uses
 
 `upright_broadleaf_01.glb` combines CommonTree_3 wood from [Quaternius's Stylized Nature MegaKit Standard](https://quaternius.com/packs/stylizednaturemegakit.html), whole photographed leaf surfaces from [Tree Small 02 by Rico Cilliers](https://polyhaven.com/a/tree_small_02), and the local tileable [Bark Brown 02 maps by Rob Tuytel](https://polyhaven.com/a/bark_brown_02). All three sources are CC0. The pack's original license is retained beside the model; existing bark download/conversion records are in `assets/textures/landmarks/manifest.json`.
 
-The original derivative retains the stock wood geometry and distributes 10,800 complete photographed leaf surfaces within its upright crown. Leaf UVs and topology remain intact; their uniform size is 20% above resident-equivalent scale. The model has 98,314 triangles and two material primitives. Matching eight-angle albedo/normal atlases provide distant views, and the usual shared canopy lighting and foliage coverage apply at runtime.
+The derivative retains the stock wood geometry and redistributes 10,800 complete photographed leaf surfaces into seven overlapping, asymmetric crown lobes. Leaf UVs and topology remain intact; their uniform size is 45% above resident-equivalent scale. The fuller middle crown replaces the earlier separated leaf clumps. The model has 98,314 triangles and two material primitives. Matching eight-angle albedo/normal atlases provide distant views, and the usual shared canopy lighting and foliage coverage apply at runtime.
 
 Rebuild from the repository root (Python requires NumPy and Pillow). Obtain the free Standard archive from the creator; the build validates its pinned SHA-256 before reading it.
 
@@ -238,4 +238,8 @@ node tools/build-upright-broadleaf-proxies.mjs
 node tools/asset-gen/bake-world-tree.cjs upright_broadleaf_01
 ```
 
-The committed model SHA-256 is `9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144`. The generators validate source geometry, indices, normals, leaf bounds and output reproducibility. The upright tree replaces three existing Clover edge positions; route layouts and terrain remain unchanged.
+The committed model SHA-256 is `5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538`. The generators validate source geometry, indices, normals, leaf bounds and output reproducibility. The upright tree remains at the three Clover edge positions and replaces a bounded selection of existing warm-climate tree sites. The seven grove caps total 54; the verified seeded world selects 46 trees in six groves after route and ownership checks. Spreading trees remain at grove edges. Positions, heights, terrain, routes, and forest-camera points stay fixed; each replaced tree gains 1,060 wood contact boxes and updates its existing trunk circle in place. Detail triangle budgets stay unchanged. This adds contact-storage and draw overhead; mobile FPS has not been certified.
+
+The upright normal atlas uses `view-facing-material-v1`: the same sided leaf normal map and canopy blend as the detailed model. Accepted normal samples are opaque before MSAA resolution, preventing canvas unpremultiplication from corrupting partial-alpha normal directions. Only flagged atlases bypass the legacy second canopy blend. Existing foliage coverage and finite-normal guards remain in place. Dynamic self-shadows and silhouette filtering still differ between detailed geometry and distant cards.
+
+CPU checks: `node --test tools/test-pastoral-woodland.mjs tools/test-woodland-wood-proxies.mjs tools/test-tree-normal-bake.mjs`.

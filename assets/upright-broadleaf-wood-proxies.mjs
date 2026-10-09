@@ -3,13 +3,13 @@
 // Original photographed leaf geometry: Tree Small 02, Rico Cilliers / Poly Haven, CC0-1.0.
 // Tileable Bark Brown 02: Rob Tuytel / Poly Haven, CC0-1.0.
 // Model rebuild: python3 tools/asset-gen/build-upright-broadleaf.py --source-archive /path/to/standard.zip
-// Source: assets/models/world/realism/upright_broadleaf_01.glb, SHA-256 9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144.
+// Source: assets/models/world/realism/upright_broadleaf_01.glb, SHA-256 5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538.
 // Rebuild table: node tools/build-upright-broadleaf-proxies.mjs
 // All 1,705 wood-role triangles, all heights; leaf material excluded by role, not alphaMode.
 // .15-source-unit XYZ clipped fragments, 0.011 padding, rounded OUTWARD to six decimals.
 // Padding keeps every fragment above the solid registry .02 m world-height minimum at authored scales.
 // Pass COMPLETE union-foot-normalized tree matrix to a persistent solidParts owner.
-export const UPRIGHT_HYBRID_WOOD_SOURCE_SHA="9c8be844b85721a3b8495268d444161b71a55e2ef632033df6ab326a9aa6f144";
+export const UPRIGHT_HYBRID_WOOD_SOURCE_SHA="5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538";
 export const UPRIGHT_HYBRID_WOOD_SOURCE_HEIGHT=9.425189882516861;
 export const UPRIGHT_HYBRID_WOOD_SOURCE_FOOT=-0.24277201294898987;
 export const UPRIGHT_HYBRID_WOOD_CELL_SIDE=0.15;
