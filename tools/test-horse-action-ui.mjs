@@ -8,12 +8,12 @@ const html=await readFile(new URL('../breeds.html',import.meta.url),'utf8');
 const source=await readFile(new URL('../assets/features/bond-personality-emotes.js',import.meta.url),'utf8');
 const studioCode=html.split('// Studio action controls keep')[1].split('// End Studio action controls.')[0];
 const studioBody=studioCode.slice(studioCode.indexOf('\n')+1);
-function element(id){return {id,value:'',textContent:'',hidden:false,disabled:false,title:'',attrs:{},listeners:{},options:[],setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,v){this.listeners[k]=v;},focus(){this.focused=true;}};}
+function element(id){return {id,value:'',textContent:'',hidden:false,disabled:false,title:'',attrs:{},listeners:{},options:[],setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k];},addEventListener(k,v){this.listeners[k]=v;},focus(){this.focused=true;}};}
 function studio(){
- const ids=['action','action-controls','replay-action','stop-action','action-state','action-status','action-time','action-progress','motion','pause','lead','view-toggle','view-options'];
+ const ids=['action','action-controls','replay-action','stop-action','action-state','action-status','action-time','action-progress','motion','pause','lead','view-toggle','view-options','action-description','repeat-action'];
  const elements=Object.fromEntries(ids.map(id=>[id,element(id)])),calls=[];
  elements.motion.options=['stand','walk','canter'].map(value=>({value,textContent:value==='stand'?'Idle':value}));elements.motion.value='stand';elements.lead.value='left';elements['view-options'].hidden=true;
- const motion={mode:'stand',action:null,blocksTravel:false,state:{blocksTravel:false},supportsAction:type=>['rear','graze','liedown'].includes(type),actionDescriptor:type=>({label:{rear:'Rear',graze:'Graze',liedown:'Lie down'}[type]}),
+ const motion={supportedActions:['rear','graze','liedown'],mode:'stand',action:null,blocksTravel:false,state:{blocksTravel:false},supportsAction:type=>['rear','graze','liedown'].includes(type),actionDescriptor:type=>({label:{rear:'Rear',graze:'Graze',liedown:'Lie down'}[type]}),
   cancelAction(){calls.push('cancel');this.action=null;},set(mode){calls.push(mode);this.mode=mode;},startAction(type){calls.push(type);if(this.blocksTravel)return false;this.action={type,timeS:0,durationS:4,progress:0};this.mode='action';if(type==='liedown')this.blocksTravel=true;return true;}};
  const context=vm.createContext({$:id=>elements[id],motion,paused:false,loading:false,headView:false,fitBodyCamera:()=>calls.push('frame'),camera:{position:{clone:()=>({sub:()=>({})})}},controls:{target:{}}});
  vm.runInContext(studioBody,context);
@@ -47,6 +47,32 @@ test('Studio markup keeps unique action IDs, compact View contents and measured 
  for(const id of ['action','motion','replay-action','stop-action','view-options','action-status','action-progress'])assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  const view=html.indexOf('id="view-options"');assert(view<html.indexOf('id="surface"'));assert(view<html.indexOf('id="side"'));assert(view<html.indexOf('Drag to orbit'));assert.match(html,/observe\(document\.querySelector\('\.controls'\)\)/);assert.match(html,/min-height:44px/);
  assert(!html.includes("$('action').value=action?.type||''"),'animation ticks do not overwrite the selected option');
+});
+test('Repeat waits for complete action, recovery, transition and an unpaused idle beat',()=>{
+ const f=studio(),e=f.elements;e.action.value='liedown';e.action.onchange();e['repeat-action'].onclick();
+ assert.equal(e['repeat-action'].getAttribute('aria-pressed'),'true');const count=()=>f.calls.filter(c=>c==='liedown').length;
+ f.run('tickStudioRepeat(3)');assert.equal(count(),1);f.motion.action=null;f.run('tickStudioRepeat(3)');assert.equal(count(),1,'get-up blend still blocks repeat');
+ f.motion.blocksTravel=false;f.motion.state.transitioning=true;f.run('tickStudioRepeat(3)');assert.equal(count(),1);
+ f.motion.state.transitioning=false;f.context.paused=true;f.run('tickStudioRepeat(3)');assert.equal(count(),1);
+ f.context.paused=false;f.run('tickStudioRepeat(.5)');assert.equal(count(),1);f.run('tickStudioRepeat(.41)');assert.equal(count(),2);
+});
+test('Stop and movement cancel scheduled repeat without clearing the user preference',()=>{
+ const f=studio(),e=f.elements;e.action.value='rear';e.action.onchange();e['repeat-action'].onclick();e['stop-action'].onclick();const calls=f.calls.length;f.run('tickStudioRepeat(10)');assert.equal(f.calls.length,calls);assert.equal(e['repeat-action'].getAttribute('aria-pressed'),'true');
+ e.action.onchange();e.motion.value='walk';e.motion.onchange();const moved=f.calls.length;f.run('tickStudioRepeat(10)');assert.equal(f.calls.length,moved);
+});
+test('Enabling Repeat after completion starts a new full preview, rather than staying armed forever',()=>{
+ const f=studio(),e=f.elements;e.action.value='rear';e.action.onchange();f.motion.action=null;f.motion.mode='stand';f.run('updateStudioActionUI()');e['repeat-action'].onclick();f.run('tickStudioRepeat(.91)');assert.equal(f.motion.action.type,'rear');assert.equal(f.calls.filter(c=>c==='rear').length,2);
+});
+test('Hidden tabs freeze preview/repeat time without changing the manual pause choice',()=>{
+ const line=html.match(/let last=performance.now\(\);document.addEventListener\('visibilitychange'[\s\S]*?renderer.setAnimationLoop\(now=>\{[\s\S]*?\}\);/)[0];
+ let frame,visibility,simulated=0,draws=0,now=100;const document={hidden:false,addEventListener(name,fn){assert.equal(name,'visibilitychange');visibility=fn;}};
+ const ctx=vm.createContext({performance:{now:()=>now},document,renderer:{setAnimationLoop(fn){frame=fn;}},paused:false,simulate(dt){simulated+=dt;},draw(){draws++;}});vm.runInContext(line,ctx);
+ frame(116);assert.equal(simulated,.016);document.hidden=true;now=120;visibility();frame(5000);assert.equal(simulated,.016);assert.equal(draws,1);assert.equal(ctx.paused,false);
+ document.hidden=false;now=6000;visibility();frame(6016);assert.equal(simulated,.032,'no hidden elapsed-time catch-up');ctx.paused=true;frame(6032);assert.equal(simulated,.032);assert.equal(ctx.paused,true);
+ assert.match(html,/loading=true;studioRepeatArmed=false;studioRepeatClock=0;updateStudioActionUI/,'horse selection immediately clears repeat intent, including failed loads');
+});
+test('Selected-action help comes from the actual descriptor',()=>{
+ const f=studio(),e=f.elements;f.motion.actionDescriptor=()=>({label:'Rear',description:'A measured lift, then a soft landing.'});e.action.value='rear';f.run('updateStudioActionUI()');assert.equal(e['action-description'].hidden,false);assert.equal(e['action-description'].textContent,'A measured lift, then a soft landing.');e.action.value='';f.run('updateStudioActionUI()');assert.equal(e['action-description'].hidden,true);
 });
 function ranch(){
  const rig={ready:true,profile:{nativeBreed:true},heroMotion:{supportedActions:['rear','liedown'],state:{action:null},actionDescriptor:type=>({label:type==='rear'?'Rear':'Lie down'})}};

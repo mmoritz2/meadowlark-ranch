@@ -659,7 +659,7 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-actions-20261009';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-life-20261009';
 import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -703,7 +703,7 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=outer-countryside-2';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=summer-canopy-surfaces-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=character-polish-20261009';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
@@ -5444,6 +5444,8 @@ const EMOTES={
  nuzzle:{dur:1.8,fa:0,fk:0,ha:0,hk:0,neck:-0.55,pitch:0.04,lift:-0.05,lean:0.15,label:'💕 Nuzzle'},
  toss:{dur:1.1,fa:0,fk:0,ha:0,hk:0,neck:0,osc:0.38,pitch:0,lift:0,lean:0,label:'🌀 Head toss'},
  graze:{dur:6,fa:0,fk:0,ha:0,hk:0,neck:-.55,pitch:0,lift:0,lean:.06,label:'🌿 Graze'},
+ paw:{dur:4.6,nativeOnly:true,label:'Paw ground'},
+ look:{dur:5.4,nativeOnly:true,label:'Look around'},
 };
 let nativeActionSequence=0;
 function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
@@ -5468,6 +5470,7 @@ function horseEmote(type,opts){
   if(!target.heroMotion.startAction(type))return false;
   started(target);return true;
  }
+ if(E.nativeOnly){toast('This mount does not have that action.');return false;}
  if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
  if(!opts.force&&G.run('emoteGate',type,myHorses[rideIdx]))return false;   // bond-personality-emotes: locked tricks toast their unlock
  if(!opts.force&&(Math.abs(player.speed)>0.6||player.y>0||player.flying)){toast('Come to a halt first.');return false;}
@@ -10499,7 +10502,10 @@ function renderCare(){
  +'<button data-care="close">✖</button></div>'
  +(()=>{const P=PERS[h.pers]||PERS.relaxed; const M=masteryOf(s,h.breed); const nextU=Object.keys(MASTERY_UNLOCKS).map(Number).find(k=>k>M);
    let x='<div style="font-size:12px;margin-top:6px">'+P.emoji+' <b>'+P.label+'</b> — '+P.desc+'</div>';
-   x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+Object.keys(EMOTES).map(k=>'<button data-care="em:'+k+'"'+(EMOTES[k].locked&&EMOTES[k].locked(h)?' title="'+(EMOTES[k].lockHint||'Locked')+'"':'')+'>'+(EMOTES[k].locked&&EMOTES[k].locked(h)?'🔒 ':'')+EMOTES[k].label+'</button>').join('')+'</div>';
+   const actionRig=(player.onFoot||G.onFoot?.on)?G.onFoot?.horseActionTarget?.():RIG;
+   const careCapabilityRig=actionRig||RIG;
+   const careActions=careCapabilityRig?.profile?.nativeBreed?(careCapabilityRig.heroMotion?.supportedActions||[]):Object.keys(EMOTES).filter(k=>!EMOTES[k].nativeOnly&&k!=='graze');
+   x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+careActions.filter(k=>EMOTES[k]).map(k=>'<button data-care="em:'+k+'"'+(EMOTES[k].locked&&EMOTES[k].locked(h)?' title="'+(EMOTES[k].lockHint||'Locked')+'"':'')+'>'+(EMOTES[k].locked&&EMOTES[k].locked(h)?'🔒 ':'')+EMOTES[k].label+'</button>').join('')+'</div>';
    const mx=G.run('careMastery',s,h); if(mx)return x+mx;   // the mastery-style package draws the ladder, perks and looks rows
    x+='<div style="font-size:12px;margin-top:6px">🎖️ <b>'+breedLabel(h.breed)+' mastery '+M+'/10</b>'+(nextU?' · next at '+nextU+': '+MASTERY_UNLOCKS[nextU]:' · complete')+' <span style="color:#8c7a63">(own more '+breedLabel(h.breed)+'s to raise it)</span></div>';
    if(M>=2)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Tail</span>'+TAIL_COLS.map(c=>'<button data-care="tail:'+c[0]+'" title="'+c[1]+'" style="'+(h.tailCol===c[0]?'outline:2px solid #4a3526;':'')+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span></button>').join('')+'<button data-care="tail:none">natural</button></div>';
@@ -10514,7 +10520,7 @@ function renderCare(){
 }
 function careAct(k){
  if(k==='close'){$('carePanel').style.display='none';return;}
- if(k.startsWith('em:')){$('carePanel').style.display='none';horseEmote(k.slice(3));return;}
+ if(k.startsWith('em:')){if(horseEmote(k.slice(3)))$('carePanel').style.display='none';return;}
  if(k.startsWith('bare:')&&G.mastery?.setBareback){G.mastery.setBareback(k.split(':')[1]==='on');renderCare();return;}
  if(k.startsWith('tail:')||k.startsWith('stud:')||k.startsWith('trail:')||k.startsWith('bare:')){
   const [what,val]=k.split(':');

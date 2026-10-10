@@ -17,7 +17,7 @@ export const id='bond-personality-emotes';
 export function horseActionReadiness(G){
  const H=G.horse||{},player=H.player||{},mounted=H.RIG?.(),onFoot=!!(player.onFoot||G.onFoot?.on),parked=onFoot?G.onFoot?.state?.().horse:null;
  const target=onFoot?G.onFoot?.horseActionTarget?.():mounted,native=!!(target?.profile?.nativeBreed||mounted?.profile?.nativeBreed),motion=target?.heroMotion;
- const supported=native?[...(motion?.supportedActions||(onFoot&&!target?mounted?.heroMotion?.supportedActions:[])||[])]:Object.keys(G.tables?.EMOTES||{}).filter(k=>k!=='graze');
+ const supported=native?[...(motion?.supportedActions||(onFoot&&!target?mounted?.heroMotion?.supportedActions:[])||[])]:Object.keys(G.tables?.EMOTES||{}).filter(k=>k!=='graze'&&!G.tables.EMOTES[k].nativeOnly);
  const action=motion?.state?.action||motion?.action||target?.emote||null;
  const label=type=>motion?.actionDescriptor?.(type)?.label||G.tables?.EMOTES?.[type]?.label||type;
  let status='Choose an action. Your horse returns to idle when it finishes.',blocked=false;
@@ -157,7 +157,7 @@ export function install(G){
  G.on('netPos',(payload)=>{const RIG=G.horse.RIG();payload.em=RIG.emote?RIG.emote.type:null;payload.horseAction=nativeActionPacket(RIG);payload.rem=player.riderEmote?player.riderEmote.type:null;});
  G.on('remote',(m,r)=>{
   if(r.rig?.profile?.nativeBreed)receiveNativeAction(r.rig,m.horseAction,{wild:m.wm===1});
-  else if(m.em&&EMOTES[m.em]&&r.rig&&!(r.rig.emote&&r.rig.emote.type===m.em)&&r._lastEm!==m.em){r.rig.emote={type:m.em,t:0,dur:EMOTES[m.em].dur};}
+  else if(m.em&&EMOTES[m.em]&&!EMOTES[m.em].nativeOnly&&r.rig&&!(r.rig.emote&&r.rig.emote.type===m.em)&&r._lastEm!==m.em){r.rig.emote={type:m.em,t:0,dur:EMOTES[m.em].dur};}
   r._lastEm=m.em||null;
   if(m.rem&&RIDER_EMOTES[m.rem]&&!(r.riderEmote&&r.riderEmote.type===m.rem)&&r._lastRem!==m.rem){r.riderEmote={type:m.rem,t:0,dur:RIDER_EMOTES[m.rem].dur};}
   r._lastRem=m.rem||null;

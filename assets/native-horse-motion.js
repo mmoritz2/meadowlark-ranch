@@ -1,7 +1,8 @@
+import {createNativeHorseExpression} from './native-horse-expression.mjs?v=horse-expression-1';
 import {createNativeHorseIdle} from './native-horse-idle.mjs?v=horse-polish-20261008';
 import {createNativeGroomLayer} from './native-groom-layer.mjs?v=fjord-crest-20261009';
 import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
-import {createNativeHorseActionClips} from './native-horse-actions.mjs?v=horse-actions-20261009';
+import {createNativeHorseActionClips} from './native-horse-actions.mjs?v=horse-life-20261009';
 // The Ranch finishes these after all actor travel and terrain transforms.
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}
@@ -47,6 +48,8 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   add('action:'+type,record.clip,record.durationS);
  }
  const supportedActions=Object.freeze(Object.keys(actionRecords));
+ const expression=createNativeHorseExpression({THREE,root,profile});
+ const actionByClip=new Map(Object.values(actionRecords).map(record=>[record.clip,record]));
  // Use the original default values through the same bindings as the source
  // clips. This is a static rest target, not a fabricated creator idle clip.
  const restTracks=[],bindings=new Set();
@@ -71,7 +74,7 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  actions.rest.setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);root.updateMatrixWorld(true);groomInertia?.beforePose();groomInertia?.afterPose(0);
  function assertLive(){if(disposed)throw new Error('Native motion disposed');}
  function stopAction(action){action.stop();active.delete(action);if(transientActions.delete(action))mixer.uncacheAction(action.getClip(),root);}
- function restore(){pendingGroomDt=null;hoofFlex?.reset();groomInertia?.reset();mixer.stopAllAction();for(const action of transientActions)mixer.uncacheAction(action.getClip(),root);transientActions.clear();active.clear();transition=null;actionType=null;recoveringAction=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
+ function restore(){pendingGroomDt=null;expression?.reset();hoofFlex?.reset();groomInertia?.reset();mixer.stopAllAction();for(const action of transientActions)mixer.uncacheAction(action.getClip(),root);transientActions.clear();active.clear();transition=null;actionType=null;recoveringAction=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
  function phaseOf(action){const duration=action?.getClip().duration;return action?.loop===THREE.LoopOnce?Math.min(1,action.time/duration):duration?((action.time/duration)%1+1)%1:0;}
  function alignedPhase(previous,next){
   const phase=phaseOf(actions[previous]);
@@ -131,16 +134,24 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
    for(const[action,start]of transition.start){const weight=start+(action===transition.target?1-start:-start)*s;action.setEffectiveWeight(weight);active.set(action,weight);}
   }
   // Mixer time is wall time. Each gait's own time scale controls its playback.
-  finishGroomPose();groomInertia?.beforePose();hoofFlex?.beforePose();mixer.update(dt);root.updateMatrixWorld(true);hoofFlex?.afterPose(active);
+  finishGroomPose();groomInertia?.beforePose();expression?.beforePose();hoofFlex?.beforePose();mixer.update(dt);root.updateMatrixWorld(true);hoofFlex?.afterPose(active);
+  if(expression){
+   const standWeight=active.get(actions.stand)||0;let actionWeight=0,groundedWeight=0;
+   for(const [action,weight]of active){const record=actionByClip.get(action.getClip().name);if(record){actionWeight+=weight;if(record.dismountedOnly)groundedWeight+=weight;}}
+   const expressive=mode==='rest'?0:Math.min(1,standWeight+actionWeight);
+   // Creator/Bay idle already owns its ears; the Bay idle also owns breathing.
+   // The lie-down body's floor fit is left exact. Blinks touch only eyelid skin.
+   expression.afterPose(dt,{blink:mode==='rest'?0:1-expression.authoredBlinkWeight(active),ears:Math.max(0,expressive-((profile.nativeIdleClip||ambientIdle)?standWeight:0)),breathing:Math.max(0,expressive-(ambientIdle?standWeight:0)-groundedWeight)});
+  }
   if(groomInertia&&deferGroom&&dt<=.25)pendingGroomDt=dt;else groomInertia?.afterPose(dt);
   if(transition&&transition.elapsed>=transition.duration){for(const action of active.keys())if(action!==target)stopAction(action);target.setEffectiveWeight(1);active.set(target,1);transition=null;}
   if(key==='jump'&&actions.jump.time>=jumpRecord.durationS-1e-6)set(jumpReturn,{lead,speedMps});
   if(actionType&&actions[key].time>=actionRecords[actionType].durationS-1e-6)set('stand',{speedMps:0});
   if(recoveringAction&&!actionType&&!transition)recoveringAction=null;
  }
- function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,hasAmbientIdle:!!ambientIdle,action:actionSnapshot(),blocksTravel:!!recoveringAction,lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
+ function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,hasAmbientIdle:!!ambientIdle,action:actionSnapshot(),blocksTravel:!!recoveringAction,lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,expression:expression?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
- return {set,update,reset,snapshot,hasAmbientIdle:!!ambientIdle,gaits,availableModes,supportedModes:availableModes,supportedActions,supportsAction,actionDescriptor,startAction,cancelAction,mixer,groomInertia,hoofFlex,finishGroomPose,get action(){return actionSnapshot();},get blocksTravel(){return !!recoveringAction;},get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
+ return {set,update,reset,snapshot,hasAmbientIdle:!!ambientIdle,gaits,availableModes,supportedModes:availableModes,supportedActions,supportsAction,actionDescriptor,startAction,cancelAction,mixer,groomInertia,expression,hoofFlex,finishGroomPose,get action(){return actionSnapshot();},get blocksTravel(){return !!recoveringAction;},get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);expression?.dispose();hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
 
 }
 

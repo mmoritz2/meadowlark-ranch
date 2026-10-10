@@ -6,6 +6,8 @@ const cache=new WeakMap();
 const D=Math.PI/180,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const smooth=v=>{v=clamp(v);return v*v*v*(10+v*(-15+6*v));};
 const envelope=(p,start=.12,end=.80)=>smooth(p/start)*(1-smooth((p-end)/(1-end)));
+// C2-eased authored checkpoints give each gesture its own approach and release.
+function curve(p,keys){for(let i=1;i<keys.length;i++){const [t,v]=keys[i];if(p<=t){const [a,b]=keys[i-1];return b+(v-b)*smooth((p-a)/(t-a));}}return keys.at(-1)[1];}
 const NAMED={
  FL:['clavicle_l_0203','upperarm_l_0204','lowerarm_l_0205','hand_l_0206','fingers_01_l_0187','fingers_02_l_0208'],
  FR:['clavicle_r_0269','upperarm_r_0270','lowerarm_r_0271','hand_r_0272','fingers_01_r_0273','fingers_02_r_0274'],
@@ -14,8 +16,9 @@ const NAMED={
 };
 const NECK=['neckOff_01_013','neck_01_014','neck_02_015','neck_03_016','neck_04_017','neck_05_018'];
 const BODY=['pelvis_08','spine_01_09','spine_02_010','spine_03_011','spine_04_012'];
-const LABELS={nuzzle:'Nuzzle',toss:'Head toss',graze:'Graze',rear:'Rear',bow:'Bow',kick:'Kick',liedown:'Lie down'};
-const DURATIONS={nuzzle:3.2,toss:2.4,graze:7.2,rear:3.8,bow:4.4,kick:2.9,liedown:8.4};
+const LABELS={nuzzle:'Nuzzle',toss:'Head toss',graze:'Graze',rear:'Rear',bow:'Bow',kick:'Kick',liedown:'Lie down',paw:'Paw ground',look:'Look around'};
+const DURATIONS={nuzzle:3.2,toss:2.4,graze:7.2,rear:3.8,bow:4.4,kick:2.9,liedown:8.4,paw:4.6,look:5.4};
+const DESCRIPTIONS={nuzzle:'A soft reach and an affectionate rub, then a relaxed return.',toss:'A quick lift and toss of the head.',graze:'Lower the muzzle to graze, chew, then lift back to rest.',rear:'Rock back, lift the forelegs, then settle onto all four feet.',bow:'Fold one foreleg into a quiet bow.',kick:'Glance back, tuck one hind leg, and give a single backward kick.',liedown:'Kneel, rest with quiet breathing, then rise forelegs first.',paw:'Two curious scrapes, then settle back onto all four feet.',look:'An unhurried glance to either side.'};
 
 export function createNativeHorseActionClips({THREE,root,profile}={}){
  const empty={clips:[],actions:{}};
@@ -58,6 +61,9 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
   const samples=new Set();for(const axis of [X,Y,Z])for(const sign of [-1,1])samples.add(candidates.reduce((a,b)=>a.p.dot(axis)*sign>b.p.dot(axis)*sign?a:b).i);
   for(const axis of [X,Z])for(const sign of [-1,1])samples.add(sole.reduce((a,b)=>a.p.dot(axis)*sign>b.p.dot(axis)*sign?a:b).i);
   const soleSamples=[...samples].filter(i=>standing[i].y<bottom+.012*size);if(soleSamples.length<2)soleSamples.push(...sole.slice(0,3).map(s=>s.i));
+  // Solve and target the same sampled sole centroid. A different all-vertex
+  // centroid would introduce a small forward slide even in a standing pose.
+  center.copy(soleSamples.reduce((p,i)=>p.add(standing[i]),V()).multiplyScalar(1/soleSamples.length));
   feet[name]={name,ids,solve:ids.slice(0,-2),terminal:ids.at(-2),marker:ids.at(-1),samples:[...samples].map(i=>all[i]),sole:soleSamples.map(i=>all[i]),center,bottom,front:name[0]==='F'};
  }
  const changed=[...new Set(required.map(n=>byName.get(n)))];
@@ -79,17 +85,24 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
  }
  function pose(type,p){
   reset();const e=envelope(p,.24,.68),eFast=envelope(p,.22,.65),goals=Object.fromEntries(Object.entries(feet).map(([k,f])=>[k,{y:f.bottom,z:f.center.z,pitch:0,bias:Array(f.solve.length).fill(0),support:true}]));
-  let pitch=0,drop=0,shift=0,neck=0,head=0,yaw=0,tail=0,foldFront=0,foldHind=0,bodyBreath=0;
+  let pitch=0,drop=0,shift=0,neck=0,head=0,yaw=0,headYaw=0,tail=0,foldFront=0,foldHind=0,bodyBreath=0;
   // Small, eased living motion during held poses; feet are solved afterward.
   // The windows leave the approach, recovery and exact rest endpoints intact.
   const held=smooth((p-.24)/.08)*(1-smooth((p-.60)/.08));
   const breath=held*Math.sin((p-.24)*Math.PI*2/.70);
-  if(type==='nuzzle'){neck=20*D*e;head=26*D*e;yaw=11*D*e*Math.sin(Math.PI*clamp((p-.10)/.80));}
+  if(type==='nuzzle'){
+   const reach=curve(p,[[0,0],[.28,1],[.57,.94],[.72,.74],[1,0]]),rub=envelope(p,.39,.57)*Math.sin(Math.PI*2*clamp((p-.26)/.49));
+   neck=20*D*reach;head=26*D*curve(p,[[0,0],[.34,1],[.61,.97],[.79,.66],[1,0]])+1.6*D*rub;
+   yaw=10*D*reach+2.4*D*rub;headYaw=3*D*rub;
+  }
   if(type==='toss'){const wave=Math.sin(2*Math.PI*clamp((p-.16)/.63));neck=-8*D*eFast*wave;head=-16*D*eFast*wave;yaw=7*D*eFast*Math.sin(3*Math.PI*p);}
   if(type==='graze'){neck=106*D*e;head=40*D*e;}
   if(type==='rear'){
-   pitch=-37*D*e+.35*D*breath;drop=-.055*size*e+.003*size*breath;shift=-.13*size*e+.002*size*breath;neck=pitch-10*D*e+.5*D*breath;head=pitch+3*D*e+.8*D*breath;tail=-18*D*e;
+   const gather=curve(p,[[0,0],[.10,1],[.27,0],[1,0]]),land=curve(p,[[0,0],[.73,0],[.88,1],[1,0]]);
+   pitch=-37*D*e+.35*D*breath;drop=-.055*size*e-.010*size*gather-.007*size*land+.003*size*breath;shift=-.13*size*e-.014*size*gather+.002*size*breath;neck=pitch-10*D*e+.5*D*breath;head=pitch+3*D*e+.8*D*breath+1.5*D*gather;tail=-18*D*e;
    for(const k of ['FL','FR']){const g=goals[k];g.y+=.88*size*e;g.z-=.24*size*e;g.pitch=78*D*e;g.bias=[-.10,-.38,-.58,1.75].map(v=>v*e);g.support=false;}
+   // Slightly different foreleg carriage avoids a mirrored suspended pose.
+   goals.FL.y+=.024*size*held;goals.FR.z+=.018*size*held;goals.FL.pitch+=3*D*held;
   }
   if(type==='bow'){
    pitch=4*D*e+.20*D*breath;drop=-.08*size*e+.002*size*breath;shift=-.04*size*e;neck=58*D*e+.45*D*breath;head=50*D*e+.65*D*breath;
@@ -98,8 +111,25 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
   }
   if(type==='kick'){
    const tuck=smooth(p/.30)*(1-smooth((p-.55)/.25)),extend=smooth((p-.30)/.16)*(1-smooth((p-.61)/.19));
-   pitch=3*D*e;drop=.025*size*e;shift=.035*size*e;neck=-6*D*e;head=-3*D*e;tail=-18*D*e;
+   const check=envelope(p,.20,.52);
+   pitch=3*D*e;drop=.025*size*e;shift=.035*size*e;neck=-6*D*e;head=-3*D*e;yaw=-8*D*check;headYaw=-3*D*check;tail=-18*D*e;
    goals.HR.y+=size*(.48*tuck+.13*extend);goals.HR.z-=size*(.12*tuck+.53*extend);goals.HR.pitch=-12*D*tuck;goals.HR.bias=[-.3,.65,-.8].map(v=>v*tuck);goals.HR.support=false;
+  }
+  if(type==='paw'){
+   // Lift, reach, set down lightly and draw back twice. The other three soles
+   // stay at their standing contacts throughout; the actor never moves.
+   const work=envelope(p,.16,.83),lift=curve(p,[[0,0],[.10,0],[.20,.18],[.29,.012],[.39,.008],[.46,.10],[.51,.11],[.59,.18],[.68,.012],[.78,.008],[.87,.10],[1,0]]);
+   const reach=curve(p,[[0,0],[.10,0],[.22,.25],[.29,.26],[.39,-.065],[.48,0],[.61,.25],[.68,.26],[.78,-.065],[.89,0],[1,0]]);
+   pitch=-.6*D*work;drop=-.014*size*work;shift=-.018*size*work;
+   neck=12*D*work;head=18*D*work;headYaw=2*D*work;
+   goals.FL.y+=size*lift;goals.FL.z+=size*reach;
+   goals.FL.pitch=D*curve(p,[[0,0],[.10,0],[.20,18],[.29,0],[.39,0],[.48,12],[.59,18],[.68,0],[.78,0],[.87,10],[1,0]]);
+   goals.FL.bias=[-.02,-.12,-.12,.42].map(v=>v*work);goals.FL.support=false;
+  }
+  if(type==='look'){
+   const glance=curve(p,[[0,0],[.25,1],[.36,1],[.61,-.85],[.74,-.85],[1,0]]),engage=envelope(p,.22,.77);
+   yaw=19*D*glance;headYaw=7*D*glance;
+   neck=-2*D*engage;head=-4*D*engage+.8*D*engage*Math.sin(p*Math.PI*2);
   }
   if(type==='liedown'){
    const kneel=smooth(p/.25),settle=smooth((p-.19)/.19);
@@ -122,7 +152,7 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
   // over the existing chain instead of compounding one large local bend.
   function poseNeck(factor=1){
    NECK.forEach((name,i)=>absolute(byName.get(name),pitch+(neck-pitch)*factor*(type==='graze'?(i===0?.68:i===1?.92:1):(i+1)/NECK.length),yaw*(i+1)/NECK.length));
-   absolute(headIndex,head,yaw);
+   absolute(headIndex,head,yaw+headYaw);
   }
   poseNeck();if(tail)relative(byName.get('tail_01_0367'),tail);if(type==='liedown'){relative(byName.get('tail_02_0368'),-5*D*foldHind);relative(byName.get('tail_03_0369'),-3*D*foldHind);}
   let grazeNeckReductionDeg=0,minMuzzleY=null;
@@ -152,13 +182,13 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
  }
  const clips=[],actions={},diagnostics={source:'Original WildMesh677 one-shot authoring',floorY:floor,clips:{}};
  for(const [type,durationS]of Object.entries(DURATIONS)){
-  poseSeeds={};useSeed=type==='bow';const frames=Math.ceil(durationS*20),times=Array.from({length:frames+1},(_,i)=>i/frames*durationS),quaternions=new Map(changed.map(i=>[i,[]])),positions=[];let maxContactErrorM=0,minSoleY=Infinity,maxGroundCorrectionM=0,maxGrazeNeckReductionDeg=0,minMuzzleY=Infinity;const feetReport={};
+  poseSeeds={};useSeed=type==='bow'||type==='paw';const frames=Math.ceil(durationS*20),times=Array.from({length:frames+1},(_,i)=>i/frames*durationS),quaternions=new Map(changed.map(i=>[i,[]])),positions=[];let maxContactErrorM=0,minSoleY=Infinity,maxGroundCorrectionM=0,maxGrazeNeckReductionDeg=0,minMuzzleY=Infinity;const feetReport={};
   for(let k=0;k<=frames;k++){
    if(k===0||k===frames)reset();else {const r=pose(type,k/frames);maxContactErrorM=Math.max(maxContactErrorM,r.maxError);minSoleY=Math.min(minSoleY,r.minSole);maxGroundCorrectionM=Math.max(maxGroundCorrectionM,r.groundCorrection);maxGrazeNeckReductionDeg=Math.max(maxGrazeNeckReductionDeg,r.grazeNeckReductionDeg);if(r.minMuzzleY!==null)minMuzzleY=Math.min(minMuzzleY,r.minMuzzleY);for(const [name,rr]of Object.entries(r.footReport)){if(!feetReport[name]||rr.error>feetReport[name].error)feetReport[name]={...rr,phase:k/frames};}}
    for(const i of changed){const values=quaternions.get(i),q=localQ[i].clone();if(values.length&&q.dot(new THREE.Quaternion().fromArray(values,values.length-4))<0)q.set(-q.x,-q.y,-q.z,-q.w);values.push(...q.toArray());}positions.push(...localP[pelvis].toArray());
   }
   const name='Native Horse Action | '+LABELS[type],tracks=changed.map(i=>new THREE.QuaternionKeyframeTrack(objects[i].name+'.quaternion',times,quaternions.get(i)));
-  tracks.push(new THREE.VectorKeyframeTrack('pelvis_08.position',times,positions));clips.push(new THREE.AnimationClip(name,durationS,tracks));actions[type]={clip:name,durationS,label:LABELS[type],...(type==='liedown'?{dismountedOnly:true}:{})};diagnostics.clips[type]={maxContactErrorM:type==='liedown'?null:maxContactErrorM,contactBasis:type==='liedown'?'Body and low tack clearance; folded hooves are not support contacts':'Skinned sole support targets',minSoleY,frames:frames+1,maxGroundCorrectionM,...(type==='graze'?{maxGrazeNeckReductionDeg,minMuzzleY}:{}),feet:feetReport};
+  tracks.push(new THREE.VectorKeyframeTrack('pelvis_08.position',times,positions));clips.push(new THREE.AnimationClip(name,durationS,tracks));actions[type]={clip:name,durationS,label:LABELS[type],description:DESCRIPTIONS[type],...(type==='liedown'?{dismountedOnly:true}:{})};diagnostics.clips[type]={maxContactErrorM:type==='liedown'?null:maxContactErrorM,contactBasis:type==='liedown'?'Body and low tack clearance; folded hooves are not support contacts':'Skinned sole support targets',minSoleY,frames:frames+1,maxGroundCorrectionM,...(type==='graze'?{maxGrazeNeckReductionDeg,minMuzzleY}:{}),feet:feetReport};
  }
  reset();const result={clips,actions,diagnostics};if(!cached){cached=new Map();cache.set(body.geometry,cached);}cached.set(key,result);return result;
 }

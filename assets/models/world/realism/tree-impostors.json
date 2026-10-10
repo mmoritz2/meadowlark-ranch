@@ -1,5 +1,5 @@
 {
-  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage.",
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage. Detailed broadleaf meshes use a 0.22 runtime mip-coverage cutoff, including their shadow-depth materials; source view baking retains the authored cutout threshold. All six summer broadleaf albedo entries bind their shared pigment helper.",
   "trees": [
     {
       "id": "fir_sapling_medium",
@@ -90,34 +90,79 @@
       "license": "CC0-1.0"
     },
     {
-      "id": "island_tree_01",
+      "id": "tree_small_02",
       "variant": -1,
-      "width": 5.304972910881043,
-      "height": 5.328658712878823,
-      "bottom": -0.17113899525254964,
-      "sourceHeight": 5.0270365215837955,
+      "width": 6.309424352645874,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
       "viewCount": 8,
       "canopyShading": {
-        "triangles": 88336,
-        "area": 49.52911602365722,
-        "cell": 0.10960687832398848,
-        "occupied": 15949,
-        "min": 0.4015902578830719,
+        "triangles": 110000,
+        "area": 13.47856586399261,
+        "cell": 0.0961660688573664,
+        "occupied": 9620,
+        "min": 0.5026921033859253,
         "max": 1
       },
       "views": {
-        "file": "island_tree_01_views.webp",
-        "bytes": 3019146,
-        "sha256": "e864d35658f25365751c9c378078a289ec0ae4cddddefc973dc50d14762ca69f"
+        "file": "tree_small_02_views.webp",
+        "bytes": 1260234,
+        "sha256": "2809ea95e78581b2c1426ab2fb773bf99b1243d2dfe103aabd0560fe0342508b"
       },
       "normals": {
-        "file": "island_tree_01_normals.webp",
-        "bytes": 1895182,
-        "sha256": "271c07aea1471c9512fcd9422494a5926efad9e9fbdd024b6ff928ddd88445ad"
+        "file": "tree_small_02_normals.webp",
+        "bytes": 894002,
+        "sha256": "460fbdd768334ba52bd92d79027940d5b75d5a91087f1c48370444316f22420f"
       },
-      "source": "island_tree_01.glb",
-      "sourcePage": "https://polyhaven.com/a/island_tree_01",
-      "license": "CC0-1.0"
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0",
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
+    },
+    {
+      "id": "tree_small_02_mature_leaves",
+      "variant": -1,
+      "width": 6.383538627624512,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 110000,
+        "area": 40.698067617987135,
+        "cell": 0.09845345399596474,
+        "occupied": 11103,
+        "min": 0.3741728365421295,
+        "max": 1
+      },
+      "views": {
+        "file": "tree_small_02_mature_leaves_views.webp",
+        "bytes": 1459724,
+        "sha256": "0db1490c3d6389a2b81dcb4129e081f9116333eb09409d444b274aeaf735ed68"
+      },
+      "normals": {
+        "file": "tree_small_02_mature_leaves_normals.webp",
+        "bytes": 1023118,
+        "sha256": "49fd352873b27c38fdce87d312cb3a1869c0016b846b337f010f93dcb56ef413"
+      },
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0",
+      "originalAddition": "Mature-only factor-2 XZ leaf surface patches around retained nearest-wood anchors, authored in mature-leaf-patches.mjs; wood, Y, UV and topology preserved. Shared by runtime and view bake.",
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
     },
     {
       "id": "jacaranda_tree",
@@ -137,8 +182,8 @@
       },
       "views": {
         "file": "jacaranda_tree_views.webp",
-        "bytes": 2179244,
-        "sha256": "d17ead9efbf071f9db9c26407f7af4649ef4c8e66131fc256957a4899e683309"
+        "bytes": 1895512,
+        "sha256": "a1ec2c4ec7fd17dea2b8d06283acd7b93bfa380c25ed15b64c43e528c5ab9b77"
       },
       "normals": {
         "file": "jacaranda_tree_normals.webp",
@@ -147,12 +192,119 @@
       },
       "source": "jacaranda_tree.glb",
       "sourcePage": "https://polyhaven.com/a/jacaranda_tree",
-      "license": "CC0-1.0"
+      "license": "CC0-1.0",
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
+    },
+    {
+      "id": "upright_broadleaf_01",
+      "variant": -1,
+      "width": 6.485731554031372,
+      "height": 9.990701275467874,
+      "bottom": -0.5255277094244957,
+      "sourceHeight": 9.425189882516861,
+      "viewCount": 8,
+      "normalProfile": "view-facing-material-v1",
+      "canopyShading": {
+        "triangles": 96609,
+        "area": 96.31502124446105,
+        "cell": 0.1501386653293263,
+        "occupied": 21618,
+        "min": 0.41470521688461304,
+        "max": 1
+      },
+      "views": {
+        "file": "upright_broadleaf_01_views.webp",
+        "bytes": 2402358,
+        "sha256": "51002274a90a9683dfe70c09a0819892dad79d21c56c7bdf549a5e88dc08d341"
+      },
+      "normals": {
+        "file": "upright_broadleaf_01_normals.webp",
+        "bytes": 1956770,
+        "sha256": "61778bb9022cfaa0d00d7ce507f096c65df1549f079ec7a2d1a3a84ceed456ba"
+      },
+      "source": "upright_broadleaf_01.glb",
+      "sourcePage": "https://quaternius.com/packs/stylizednaturemegakit.html",
+      "license": "CC0-1.0",
+      "sourcePages": [
+        "https://quaternius.com/packs/stylizednaturemegakit.html",
+        "https://polyhaven.com/a/tree_small_02",
+        "https://polyhaven.com/a/bark_brown_02"
+      ],
+      "originalAddition": "Deterministic upright tree with Quaternius CommonTree_3 wood, whole Tree Small 02 photographed leaf surfaces and tileable Bark Brown 02. Runtime and view bake share the generated GLB.",
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
+    },
+    {
+      "id": "island_tree_01",
+      "variant": -1,
+      "width": 5.976401657669513,
+      "height": 5.328658712878823,
+      "bottom": -0.17113899525254964,
+      "sourceHeight": 5.0270365215837955,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 88336,
+        "area": 77.38306358449803,
+        "cell": 0.10960687832398848,
+        "occupied": 16104,
+        "min": 0.37225621938705444,
+        "max": 1
+      },
+      "views": {
+        "file": "island_tree_01_views.webp",
+        "bytes": 2489702,
+        "sha256": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec"
+      },
+      "normals": {
+        "file": "island_tree_01_normals.webp",
+        "bytes": 1838042,
+        "sha256": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d"
+      },
+      "source": "island_tree_01.glb",
+      "sourcePage": "https://polyhaven.com/a/island_tree_01",
+      "license": "CC0-1.0",
+      "leafSurfaces": {
+        "profile": "island-leaf-surfaces-1",
+        "helper": "assets/island-leaf-surfaces.mjs",
+        "helperSha256": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+        "operation": "Shared runtime/baker island leaf quad surface growth; original centers, UVs, topology, wood and source/view extrema retained. Both atlas channels and canopy shade rebuilt.",
+        "stats": {
+          "profile": "island-leaf-surfaces-1",
+          "factor": 1.25,
+          "quads": 44168,
+          "vertices": 176672,
+          "triangles": 88336,
+          "fullFactorQuads": 44157,
+          "limitedQuads": 11,
+          "heldQuads": 8,
+          "maxDisplacement": 0.012720527591643218,
+          "maxCenterError": 1.7881393432617188e-07,
+          "positionFnv": "e75e6e86"
+        }
+      },
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
     },
     {
       "id": "orchard_apple",
       "variant": -1,
-      "width": 5.304972910881043,
+      "width": 5.976401657669513,
       "height": 5.328658712878823,
       "bottom": -0.17113899525254964,
       "sourceHeight": 5.0270365215837955,
@@ -227,124 +379,52 @@
       },
       "canopyShading": {
         "triangles": 88336,
-        "area": 49.52911602365722,
+        "area": 77.38306358449803,
         "cell": 0.10960687832398848,
-        "occupied": 15949,
-        "min": 0.4015902578830719,
+        "occupied": 16104,
+        "min": 0.37225621938705444,
         "max": 1
       },
       "views": {
         "file": "orchard_apple_views.webp",
-        "bytes": 3043146,
-        "sha256": "38fcea5c755f1b562841a0e30207498fc38c8c5dbf0791119c7284b8f506c619"
+        "bytes": 2494570,
+        "sha256": "bbfd6ab8ef3464c2bb71f64fb7ea7c0d1932c9dcd0a1638b035dad7ef1a1df39"
       },
       "normals": {
         "file": "orchard_apple_normals.webp",
-        "bytes": 1907318,
-        "sha256": "7688bdada2dba9df4624908d67d96c0204ae880265262b80bbea2fd8abc75b01"
+        "bytes": 1847030,
+        "sha256": "fc969164c3132f2e0ce27ebe9e61c519d10c9745cd3318b16de91e79d65e9ebf"
       },
       "source": "island_tree_01.glb",
       "sourcePage": "https://polyhaven.com/a/island_tree_01",
       "license": "CC0-1.0",
-      "originalAddition": "Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake."
-    },
-    {
-      "id": "tree_small_02",
-      "variant": -1,
-      "width": 6.309424352645874,
-      "height": 4.823275546617806,
-      "bottom": -0.16053979707881808,
-      "sourceHeight": 4.55025994963944,
-      "viewCount": 8,
-      "canopyShading": {
-        "triangles": 110000,
-        "area": 13.47856586399261,
-        "cell": 0.0961660688573664,
-        "occupied": 9620,
-        "min": 0.5026921033859253,
-        "max": 1
+      "originalAddition": "Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake.",
+      "leafSurfaces": {
+        "profile": "island-leaf-surfaces-1",
+        "helper": "assets/island-leaf-surfaces.mjs",
+        "helperSha256": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+        "operation": "Shared runtime/baker island leaf quad surface growth; original centers, UVs, topology, wood and source/view extrema retained. Both atlas channels and canopy shade rebuilt.",
+        "stats": {
+          "profile": "island-leaf-surfaces-1",
+          "factor": 1.25,
+          "quads": 44168,
+          "vertices": 176672,
+          "triangles": 88336,
+          "fullFactorQuads": 44157,
+          "limitedQuads": 11,
+          "heldQuads": 8,
+          "maxDisplacement": 0.012720527591643218,
+          "maxCenterError": 1.7881393432617188e-07,
+          "positionFnv": "e75e6e86"
+        }
       },
-      "views": {
-        "file": "tree_small_02_views.webp",
-        "bytes": 1392076,
-        "sha256": "6ad9cc4503cae7595f8671f8887142169380c139552251dab4ba80fce81b9b56"
-      },
-      "normals": {
-        "file": "tree_small_02_normals.webp",
-        "bytes": 894002,
-        "sha256": "460fbdd768334ba52bd92d79027940d5b75d5a91087f1c48370444316f22420f"
-      },
-      "source": "tree_small_02.glb",
-      "sourcePage": "https://polyhaven.com/a/tree_small_02",
-      "license": "CC0-1.0"
-    },
-    {
-      "id": "tree_small_02_mature_leaves",
-      "variant": -1,
-      "width": 6.383538627624512,
-      "height": 4.823275546617806,
-      "bottom": -0.16053979707881808,
-      "sourceHeight": 4.55025994963944,
-      "viewCount": 8,
-      "canopyShading": {
-        "triangles": 110000,
-        "area": 40.698067617987135,
-        "cell": 0.09845345399596474,
-        "occupied": 11103,
-        "min": 0.3741728365421295,
-        "max": 1
-      },
-      "views": {
-        "file": "tree_small_02_mature_leaves_views.webp",
-        "bytes": 1642390,
-        "sha256": "f9ce62f3b1eb6e1260174b3661efda244036f17de43a557bf63a0ed51477b549"
-      },
-      "normals": {
-        "file": "tree_small_02_mature_leaves_normals.webp",
-        "bytes": 1023118,
-        "sha256": "49fd352873b27c38fdce87d312cb3a1869c0016b846b337f010f93dcb56ef413"
-      },
-      "source": "tree_small_02.glb",
-      "sourcePage": "https://polyhaven.com/a/tree_small_02",
-      "license": "CC0-1.0",
-      "originalAddition": "Mature-only factor-2 XZ leaf surface patches around retained nearest-wood anchors, authored in mature-leaf-patches.mjs; wood, Y, UV and topology preserved. Shared by runtime and view bake."
-    },
-    {
-      "id": "upright_broadleaf_01",
-      "variant": -1,
-      "width": 6.485731554031372,
-      "height": 9.990701275467874,
-      "bottom": -0.5255277094244957,
-      "sourceHeight": 9.425189882516861,
-      "viewCount": 8,
-      "normalProfile": "view-facing-material-v1",
-      "canopyShading": {
-        "triangles": 96609,
-        "area": 96.31502124446105,
-        "cell": 0.1501386653293263,
-        "occupied": 21618,
-        "min": 0.41470521688461304,
-        "max": 1
-      },
-      "views": {
-        "file": "upright_broadleaf_01_views.webp",
-        "bytes": 2725472,
-        "sha256": "e903696c4c948758c459026ba84a3a8ec0504b83f32931ffa4956144c05007cb"
-      },
-      "normals": {
-        "file": "upright_broadleaf_01_normals.webp",
-        "bytes": 1956770,
-        "sha256": "61778bb9022cfaa0d00d7ce507f096c65df1549f079ec7a2d1a3a84ceed456ba"
-      },
-      "source": "upright_broadleaf_01.glb",
-      "sourcePage": "https://quaternius.com/packs/stylizednaturemegakit.html",
-      "license": "CC0-1.0",
-      "sourcePages": [
-        "https://quaternius.com/packs/stylizednaturemegakit.html",
-        "https://polyhaven.com/a/tree_small_02",
-        "https://polyhaven.com/a/bark_brown_02"
-      ],
-      "originalAddition": "Deterministic upright tree with Quaternius CommonTree_3 wood, whole Tree Small 02 photographed leaf surfaces and tileable Bark Brown 02. Runtime and view bake share the generated GLB."
+      "pigment": {
+        "profile": "summer-leaf-pigment-1",
+        "helper": "assets/summer-leaf-pigment.mjs",
+        "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+        "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
+        "sourceLicenseUnchanged": true
+      }
     }
   ]
 }
