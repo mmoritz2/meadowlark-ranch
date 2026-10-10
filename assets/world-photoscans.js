@@ -1,3 +1,4 @@
+import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
 import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
 import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
 import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
@@ -897,6 +898,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     try{installOuterRockClusters(G,outerRockParts,mergeGeometries);}catch(e){state.errors.push(e.message);console.warn('Scenic rock setup unavailable:',e);}
     installYoungOuterWoodland(G,youngOuterSources);
     try{installOuterCanopyShade(G);}catch(e){state.errors.push(e.message);console.warn('Outer woodland shelter unavailable:',e);}
+    installOuterSunShadows(G);
     return state.assets;
   })();
   let timer=0;

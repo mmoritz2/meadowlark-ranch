@@ -1,3 +1,4 @@
+import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {fieldSwardAt,FIELD_SWARD_RECOVERY} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
 // Original field composition, shared by visible terrain and rideable ground.
@@ -103,7 +104,9 @@ function flowerMarginGrazingAt(x,z){
 // Grass alone recovers along the uncut seed-bearing ribbons. The original
 // grazing policy still owns terrain, trees, ferns and every flower colony.
 export function meadowSwardGrazingAt(x,z){
-  return flowerMarginGrazingAt(x,z)*(1-FIELD_SWARD_RECOVERY*fieldSwardAt(x,z).cover);
+  const original=flowerMarginGrazingAt(x,z)*(1-FIELD_SWARD_RECOVERY*fieldSwardAt(x,z).cover);
+  const pasture=northPastureAt(x,z);
+  return Math.max(original*(1-pasture.uncut*.85),pasture.cut);
 }
 export function meadowBloomAt(x,z){
   let mask=0;

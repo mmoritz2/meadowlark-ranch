@@ -1,3 +1,4 @@
+import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
 import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=flowering-margins-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
@@ -77,6 +78,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
     const extended=extendWoodlandMask(woodedPixels.data,MASK,treeList,(x,z)=>
       cottonwoodReserved(x,z,0)?1:managedAt(x,z));
     fieldSurface.skirtTexels=extended.texelsRaised;
+    fieldSurface.northPastureTexels=applyNorthPastureGrazingPixels(woodedPixels.data,MASK);
+    fieldSurface.northPastureProfile=NORTH_PASTURE_PROFILE;
     ctx.putImageData(woodedPixels,0,0);
     ctx.lineCap='round'; ctx.lineJoin='round';
     for(const {pts,width,strength} of pathList){
@@ -128,7 +131,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE;
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE;
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;

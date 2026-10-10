@@ -1,6 +1,7 @@
+import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=field-sward-bands-3';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=north-pasture-2';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
@@ -100,7 +101,7 @@ export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
   const grazed=meadowSwardGrazingAt(x,z);
   const band=fieldSwardAt(x,z).cover;
-  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38)*(1+FIELD_SWARD_HEIGHT_BOOST*band);
+  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38)*(1+FIELD_SWARD_HEIGHT_BOOST*band)*(1+northPastureAt(x,z).uncut*.20);
 }
 
 // One palette for the near leaves, distant sward and old seed layer. Separate
@@ -111,12 +112,22 @@ export function meadowBladeColor(color,x,z,variation=.5){
   const arid=coyoteCoverDryWeight(x,z);
   const h=.225+patch*.029-dry*.075-arid*.105,s=.55+variation*.08-dry*.08-arid*.11,l=.15+variation*.035+dry*.055+arid*.07;
   const band=fieldSwardAt(x,z);
-  if(band.cover===0)return color.setHSL(h,s,l);
-  // Seed ripeness belongs to the same connected ribbon as its taller growth.
-  // Leave a leafy green edge and let the uncut heart carry the warm canopy;
-  // the existing mesh root gradient and physical lighting still shade it.
-  const ripe=band.seed/band.cover,w=band.cover;
-  return color.setHSL(h+(.208-ripe*.082-h)*w,s+(.57+variation*.045-ripe*.025-s)*w,l+(.202+ripe*.034+variation*.025-l)*w);
+  let hh=h,ss=s,ll=l;
+  if(band.cover>0){
+    // Preserve the original margin arithmetic and floating-point operation order.
+    const ripe=band.seed/band.cover,w=band.cover;
+    hh=h+(.208-ripe*.082-h)*w;
+    ss=s+(.57+variation*.045-ripe*.025-s)*w;
+    ll=l+(.202+ripe*.034+variation*.025-l)*w;
+  }
+  const pasture=northPastureAt(x,z);
+  // Most recycled grass rows are outside this authored field. No per-row
+  // closure or temporary HSL object is allocated on their unchanged path.
+  if(pasture.cut===0&&pasture.uncut===0)return color.setHSL(hh,ss,ll);
+  const cut=pasture.cut,uncut=pasture.uncut;
+  hh+=(.247-hh)*cut;ss+=(.61-ss)*cut;ll+=(.151+variation*.025-ll)*cut;
+  hh+=(.207-hh)*uncut;ss+=(.59-ss)*uncut;ll+=(.185+variation*.028-ll)*uncut;
+  return color.setHSL(hh,ss,ll);
 }
 
 // Fully modelled lupin: palmate foliage, asymmetric pea flowers and green buds.

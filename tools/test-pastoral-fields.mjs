@@ -1,3 +1,4 @@
+import {northPastureAt} from '../assets/north-pasture.mjs';
 import assert from 'node:assert/strict';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from '../assets/field-sward-bands.mjs';
 import test from 'node:test';
@@ -118,9 +119,9 @@ test('grass patches are stable, bounded and continuous at travelling cell bounda
  const color=new T.Color(),values=[];let managed=0,wild=0,dry=0;
  for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
   const h=meadowGrowthAt(x,z),grazed=meadowGrazingAt(x,z),arid=coyoteCoverDryWeight(x,z);
-  values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37*(1+FIELD_SWARD_HEIGHT_BOOST));assert.equal(h,meadowGrowthAt(x,z));
+  values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37*(1+FIELD_SWARD_HEIGHT_BOOST)*(1+.20*northPastureAt(x,z).uncut));assert.equal(h,meadowGrowthAt(x,z));
   if(grazed>.95&&westMeadowSwardAt(x,z)===0&&meadowMarginAt(x,z)===0&&fieldSwardAt(x,z).cover===0){assert(h<.61,'maintained pasture outside authored sward margins stays low');managed++;}
-  if(grazed<.001&&arid===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
+  if(grazed<.001&&arid===0&&northPastureAt(x,z).cut===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
   if(arid>.95){assert(h<=1.37*.64,'dry basin growth remains below lush pasture height');dry++;}
   assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
   assert(Math.abs(meadowGrowthAt(x,z+.001)-meadowGrowthAt(x,z-.001))<.001);
@@ -144,13 +145,13 @@ test('compact meadow margins preserve terrain, layouts and the legacy grazing po
   const margin=meadowMarginAt(x,z),grazing=meadowGrazingAt(x,z),effective=meadowSwardGrazingAt(x,z);
   assert.equal(grazing,legacy.meadowGrazingAt(x,z),'legacy cards, ferns and layout keep their mask');
   assert.equal(pastureRise(x,z),legacy.pastureRise(x,z)+cloverApproachRelief(x,z));
-  assert(margin>=0&&margin<=1&&effective>=0&&effective<=grazing);
+  assert(margin>=0&&margin<=1&&effective>=0&&effective<=Math.max(grazing,northPastureAt(x,z).cut));
   if(!inMarginBounds(x,z))assert.equal(margin,0,'compact authored footprint');
   if(outsideWest(x,z)){
-   assert(meadowGrowthAt(x,z)>=legacyCover.meadowGrowthAt(x,z));
+   if(northPastureAt(x,z).cut===0)assert(meadowGrowthAt(x,z)>=legacyCover.meadowGrowthAt(x,z));
    assert(meadowBloomAt(x,z)>=legacy.meadowBloomAt(x,z));
    if(margin===0){
-    if(fieldSwardAt(x,z).cover===0)assert.equal(meadowGrowthAt(x,z),legacyCover.meadowGrowthAt(x,z));
+    if(fieldSwardAt(x,z).cover===0&&northPastureAt(x,z).cut===0&&northPastureAt(x,z).uncut===0)assert.equal(meadowGrowthAt(x,z),legacyCover.meadowGrowthAt(x,z));
     assert.equal(meadowBloomAt(x,z),legacy.meadowBloomAt(x,z));untouched++;
    }
   }
