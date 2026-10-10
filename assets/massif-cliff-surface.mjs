@@ -3,7 +3,11 @@
 // Signed right-handed projection frames match the independently tested crag
 // shader; surface gradients preserve the underlying normal on sloping faces.
 import {CRAG_PLANES} from './crag-mineral-surface.mjs';
-export const MASSIF_CLIFF_CACHE='massif-cliff-surface-1';
+export const MASSIF_CLIFF_CACHE='massif-cliff-surface-2';
+// Resident images may queue behind the world's other scans on a cold/mobile
+// load. Keep the complete existing material while this bounded window remains
+// open; a slow successful download must not permanently lose its cliff detail.
+export const MASSIF_CLIFF_LOAD_TIMEOUT_MS=120000;
 const vec=v=>`vec3(${v.map(x=>x.toFixed(1)).join(',')})`;
 const frames=CRAG_PLANES.map((p,i)=>{
   const s=`cliffSigns.${p.axis}`;
@@ -24,7 +28,7 @@ const readyImage=texture=>{
   return !!image&&(image.naturalWidth??image.width)>0&&(image.naturalHeight??image.height)>0;
 };
 
-export function dressMassifCliffSurface({material,source,metres=36,strength=1.05,timeoutMs=12000}={}){
+export function dressMassifCliffSurface({material,source,metres=36,strength=1.05,timeoutMs=MASSIF_CLIFF_LOAD_TIMEOUT_MS}={}){
   if(!material||typeof material.onBeforeCompile!=='function')throw new Error('Massif cliff requires a dressed landscape material');
   if(!(metres>0&&Number.isFinite(metres)&&strength>=0&&Number.isFinite(strength)))throw new Error('Invalid massif cliff scale or strength');
   const previous=material.onBeforeCompile,previousKey=material.customProgramCacheKey;

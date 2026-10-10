@@ -1,4 +1,4 @@
-import {createCoatHemTransport} from './rider-coat-transport.js?v=tailored-coats69-20261010';
+import {createCoatHemTransport} from './rider-coat-transport.js?v=rider-fit74-20261010';
 import {createOverallsUnderlapTransport} from './rider-overalls-underlap.js?v=character-polish-20261009';
 // Shared posed-clothing endpoint. It runs before all beauty/shadow passes and
 // never owns/disposes the rig's skeleton, garment materials, or cache geometry.

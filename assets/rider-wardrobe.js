@@ -1,20 +1,20 @@
 import {coatHemDisplacement} from './rider-coat-cutaway.js?v=tailored-coats69-20261010';
-import {installClothingPose39} from './rider-clothing-pose.js?v=tailored-coats69-20261010';
+import {installClothingPose39} from './rider-clothing-pose.js?v=rider-fit74-20261010';
 import {createTextilePanels} from './rider-textile-surface.js?v=character-polish-20261009';
 import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-20261010';
 // TMP integration candidate. Keeps the normal rider API and all existing outfit IDs.
 // Construction families still marked approximate below must receive dedicated art
 // before this becomes a complete catalog release.
-import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=tailored-coats69-20261010';
-export * from './rider-model-base.js?v=tailored-coats69-20261010';
+import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=rider-fit74-20261010';
+export * from './rider-model-base.js?v=rider-fit74-20261010';
 import {CLOTH_GLSL} from './rider-clothes.js?v=tailored-coats69-20261010';
-import {finishRidingBoots} from './rider-boot-finish.js?v=character-polish-20261009';
+import {finishRidingBoots} from './rider-boot-finish.js?v=rider-fit74-20261010';
 import {technicalFinish} from './rider-technical-finish.js?v=tailored-coats69-20261010';
 import {poloFinish} from './rider-polo-finish.js?v=tailored-coats69-20261010';
 import {crewneckFinish} from './rider-crewneck-finish.js?v=tailored-coats69-20261010';
 import {cardiganFinish,overallsFinish} from './rider-layered-finish.js?v=tailored-coats69-20261010';
 import {outdoorFinish} from './rider-outdoor-finish.js?v=tailored-coats69-20261010';
-import {longCoatFinish} from './rider-long-coat-finish.js?v=outward-lapels70-20261010';
+import {longCoatFinish} from './rider-long-coat-finish.js?v=rider-fit74-20261010';
 import {overshirtFinish} from './rider-overshirt-finish.js?v=tailored-coats69-20261010';
 import {vestFinish} from './rider-vest-finish.js?v=tailored-coats69-20261010';
 import {shirtFinish} from './rider-shirt-finish.js?v=tailored-coats69-20261010';

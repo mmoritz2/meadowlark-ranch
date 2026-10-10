@@ -1,3 +1,4 @@
+import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 /* Original ranch architecture. Metre-scaled materials, real wall openings and
    batched static details. Collision part bounds are retained before batching;
@@ -26,15 +27,12 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     }
     return materials.get(name);
   };
-  /* The siding photo is white-painted weathered board, and untinted it made every barn in the
-     valley a cold grey — the single biggest difference between the ranch you spawn into and the
-     warm timber of the riding game this is modelled on, whose cabins, pavilions and stalls are all
-     natural wood. Multiplying the photo by a honey-oak tint keeps every board line and scuff and
-     turns the paint into stain; the joinery stays white, which is the classic ranch pairing. */
+  // Original vertical board construction; the resident CC0 scan is sampled
+  // inside each photographed plank so its horizontal joints cannot cross the battens.
   const siding = material('Ranch | weathered timber siding', {
-    color: '#b39578', map: map('siding_albedo.jpg', true),
-    normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.48,.48),
-    roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
+    color: '#b39578', map: map('../builder/weathered_brown_planks_diff.webp', true),
+    normalMap: map('../builder/weathered_brown_planks_nor_gl.webp'), normalScale: new THREE.Vector2(.48,.48),
+    roughnessMap: map('../builder/weathered_brown_planks_arm.webp'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
   const cottageWalls=['#f7e9cc','#e5ead7','#f0d7c3'].map((color,i)=>material('Village | limewashed plaster '+i,{
     color:new THREE.Color(color).multiplyScalar(1.7),map:map('../village/painted_plaster_wall_diff.webp',true),roughness:1,
@@ -74,7 +72,8 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.20,.20),
     roughnessMap:map('../builder/coated_pine_arm.webp')});
   const wood = material('Ranch | oiled oak doors', {color:'#69513d',roughness:.8,
-    map:map('siding_albedo.jpg',true)},2.4);
+    map:map('../builder/weathered_brown_planks_diff.webp',true)},2.4);
+  applyTimberGrain(siding,THREE);applyTimberGrain(wood,THREE);
   const metal = material('Ranch | dark ironwork', {color:'#333a38',roughness:.66,metalness:.58});
   const stone = material('Ranch | foundation stone', {color:'#949084',roughness:1,
     map:map('rock_albedo.jpg',true),normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.42,.42)},1.6);
@@ -118,6 +117,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
         uv.setXY(i,((ny>.5&&turnUV)||nx>.5?p.getZ(i)+z:p.getX(i)+x)/patch,
           (ny>.5?(turnUV?p.getX(i)+x:p.getZ(i)+z):p.getY(i)+y)/patch);
       }
+      if(m===siding||m===wood)setTimberBoxUV(g,{width:w,height:h,depth:d,x,y,z,siding:m===siding,lengthMetres:patch});
       if(m.userData.clapboard)for(let i=0;i<uv.count;i++){const a=uv.getX(i),b=uv.getY(i);uv.setXY(i,-b,a);}
       const q=rotation instanceof THREE.Quaternion?rotation:new THREE.Quaternion().setFromEuler(rotation||new THREE.Euler());
       const transform=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),q,new THREE.Vector3(1,1,1));
@@ -276,6 +276,9 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     }else{
       g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
       g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();
+    }
+    if(wall===siding){const pos=g.attributes.position,uv=g.attributes.uv;
+      for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getY(i)/patch,pos.getX(i)/.30);
     }
     b.geometry(g,wall,f);
     if(!vent)return;

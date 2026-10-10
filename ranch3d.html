@@ -669,11 +669,11 @@ import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} fro
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=horse-arrival-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=north-pasture-2';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=north-valley-1';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=north-pasture-2';
-import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=north-pasture-2';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-coverage-2';
+import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=north-valley-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=countryside-banks-1';
 import {createGeology} from './assets/geology.js?v=countryside-banks-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
@@ -685,15 +685,15 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=north-pasture-2';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=slate-inn-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=north-valley-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=timber-cladding-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=nursery-snow-1';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=timber-cladding-1';
 import {createWorldFinish} from './assets/world-rendering.js?v=character-polish-20261009';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
@@ -703,9 +703,9 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=outer-sun-shadow-4';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=north-valley-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
-import {createRiderLibrary} from './assets/rider-model.js?v=outward-lapels70-20261010';
+import {createRiderLibrary} from './assets/rider-model.js?v=rider-fit74-20261010';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
 import {FEATURES} from './assets/features/index.js?v=rush-recovery-1';
@@ -3145,21 +3145,27 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
   g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setIndex(I);return g;};
  const nearU={uTime:{value:0},uPlayer:{value:new THREE.Vector3()}};
- const windy=(mat,sway)=>{mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,nearU);
+ const windy=(mat,sway,grassAreaFade=false)=>{mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,nearU);
   sh.vertexShader='uniform float uTime; uniform vec3 uPlayer;\n'+sh.vertexShader.replace('#include <begin_vertex>',
 `#include <begin_vertex>
 #ifdef USE_INSTANCING
  vec3 ip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);
  float wph=ip.x*.19+ip.z*.13;
  float fade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(ip.xz,uPlayer.xz));
- transformed*=fade;
+ ${grassAreaFade?'transformed.xz*=sqrt(fade);transformed.y*=fade;':'transformed*=fade;'}
  transformed.x+=(sin(uTime*1.7+wph)*${sway}+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;
  transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;
  vec2 away=ip.xz-uPlayer.xz;
  float parting=1.0-smoothstep(.35,1.35,length(away));
  transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;
  transformed.y*=1.0-parting*.30;
-#endif`);};};
+#endif`);
+ if(grassAreaFade)sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
+#ifdef USE_INSTANCING
+ float nearNormalFade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(instanceMatrix[3].xz,uPlayer.xz));
+ objectNormal.xz*=max(sqrt(nearNormalFade),.0001);
+#endif`);
+ };if(grassAreaFade)mat.customProgramCacheKey=()=> 'near-meadow-cover-2';};
  /* ===== ground cover =====
     Grass alone is a lawn. What makes ground read as country is the litter on it: ferns and
     scrub in the meadow, dry brush and spinifex in the canyon, snow-crusted tufts up at
@@ -3216,7 +3222,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   g.computeVertexNormals();g.computeBoundingBox(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
- nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24);installPastureLighting(nearMat);
+ nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24,true);installPastureLighting(nearMat);
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
  const fernMat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/realism/foliage_branch_rgba.png',1),alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});

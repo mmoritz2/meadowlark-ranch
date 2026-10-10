@@ -10,13 +10,23 @@ export function finishCoatHem(T, garment, data, color) {
     }
   }
   const V=()=>new T.Vector3(),get=['getX','getY','getZ','getW'];
-  const roots=ids.map(i=>{
+  const originalRoots=ids.map(i=>{
     const p=V().fromBufferAttribute(a.position,i),n=V().fromBufferAttribute(a.normal,i).normalize(),inward=V();
     for(const j of neighbors.get(i))inward.add(V().fromBufferAttribute(a.position,j).sub(p));
     inward.addScaledVector(n,-inward.dot(n));
     if(inward.lengthSq()<1e-12)inward.set(0,1,0);else inward.normalize();
     return {i,p,n,inward};
   });
+  // Sample each span against the literal shell so curved, posed hem edges do
+  // not bridge across a neighboring face. Every new point retains its face/bary
+  // attachment and interpolated native skin weights.
+  const roots=[];
+  for(let c=0;c<originalRoots.length;c++){
+    const a=originalRoots[c],b=originalRoots[(c+1)%originalRoots.length];
+    for(let step=0;step<4;step++){
+      const t=step/4;roots.push({i:a.i,p:a.p.clone().lerp(b.p,t),n:a.n.clone().lerp(b.n,t).normalize(),inward:a.inward.clone().lerp(b.inward,t).normalize(),faces:[...faces.get(a.i),...faces.get(b.i)]});
+    }
+  }
   // Some authored front cutaway roots belong to a folded inward-facing strip.
   // Sample their visible front support instead of lifting inward from that fold.
   const frontFaces=[];
@@ -29,7 +39,7 @@ export function finishCoatHem(T, garment, data, color) {
   const sample=(root,rise)=>{
     const wanted=root.p.clone().addScaledVector(root.inward,Math.max(0,rise));let best=null;
     const exteriorFront=root.p.z>0&&root.n.z<0;
-    for(const face of exteriorFront?frontFaces:faces.get(root.i)){
+    for(const face of exteriorFront?frontFaces:root.faces){
       const triangle=face.triangle||new T.Triangle(...face.ids.map(i=>V().fromBufferAttribute(a.position,i))),point=triangle.closestPointToPoint(wanted,V()),distance=point.distanceToSquared(wanted);
       if(best&&distance>=best.distance)continue;
       best={...face,point,distance,bary:triangle.getBarycoord(point,V()).toArray()};
@@ -55,7 +65,7 @@ export function finishCoatHem(T, garment, data, color) {
   }
   const geometry=new T.BufferGeometry();
   geometry.setAttribute('position',new T.Float32BufferAttribute(position,3));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geometry.setIndex(index);
-  geometry.computeVertexNormals();geometry.computeBoundingSphere();geometry.userData.sourceHemVertex=profile.flatMap(()=>ids);geometry.userData.coatSurfaceBindings=bindings;
+  geometry.computeVertexNormals();geometry.computeBoundingSphere();geometry.userData.hemSpanSubdivisions=4;geometry.userData.coatSurfaceBindings=bindings;
   const material=new T.MeshStandardMaterial({color:new T.Color(color).multiplyScalar(.95),roughness:.84,side:T.DoubleSide});
   return {name:'Coat_Turned_Hem',geometry,material,skeleton:garment.skeleton,bindMatrix:garment.bindMatrix};
 }

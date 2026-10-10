@@ -64,3 +64,34 @@ test('neutral triplanar samples retain all sloped normals and signed samples sta
   const detail=gradient(n,[[.3,-.7,.1],[-.2,.5,0],[.2,.7,.4]]);assert.ok(detail.every(Number.isFinite));assert.ok(Math.abs(Math.hypot(...detail)-1)<1e-12);
  }
 });
+
+// Advance readiness timers deterministically: no wall-clock wait and no mocked
+// texture ownership or material compile path. Each scheduled inspection still
+// runs the production function against the actual changing resident images.
+function readinessClock(run){
+ const now=Date.now,timer=globalThis.setTimeout;let clock=0,sequence=0;const queued=[];
+ Date.now=()=>clock;globalThis.setTimeout=(callback,delay=0)=>{const item={callback,time:clock+delay,id:++sequence};queued.push(item);return item.id;};
+ const advance=target=>{let count=0;for(;;){queued.sort((a,b)=>a.time-b.time||a.id-b.id);if(!queued.length||queued[0].time>target)break;assert(++count<=4000,'readiness loop must remain bounded');const item=queued.shift();clock=item.time;item.callback();}clock=target;};
+ try{return run({advance,pending:()=>queued.length});}finally{Date.now=now;globalThis.setTimeout=timer;}
+}
+test('default window upgrades a slow successful resident load after the old twelve-second deadline',async()=>{
+ const {material,source}=fixture(false),before=compile(material),key=material.customProgramCacheKey(),version=material.version;
+ let state;
+ readinessClock(({advance,pending})=>{
+  noRandom(()=>dressMassifCliffSurface({material,source}));state=material.userData.cliffSurface;
+  advance(12500);assert.equal(state.failed,false);assert.equal(state.status,'loading');assert.deepEqual(compile(material),before);assert.equal(material.customProgramCacheKey(),key);
+  source.map.image={width:1024,height:1024};source.normalMap.image={width:1024,height:1024};advance(45000);assert.equal(state.loaded,2);assert.equal(state.failed,false);assert.deepEqual(compile(material),before);
+  source.roughnessMap.image={width:1024,height:1024};advance(90000);assert.equal(state.loaded,3);assert.equal(state.status,'ready');assert.equal(state.failed,false);assert.equal(material.version,version+1);assert.equal(pending(),0);
+  assert.equal(material.customProgramCacheKey(),key+'-'+MASSIF_CLIFF_CACHE);const shader=compile(material);assert.equal(shader.uniforms.cliffAlbedo.value,source.map);assert.equal(shader.uniforms.cliffNormal.value,source.normalMap);assert.equal(shader.uniforms.cliffArm.value,source.roughnessMap);
+ });
+ assert.equal(await state.ready,state);
+});
+test('default unavailable-image deadline remains bounded at two minutes with exact fallback',async()=>{
+ const {material,source}=fixture(false),before=compile(material),key=material.customProgramCacheKey(),version=material.version;let state;
+ readinessClock(({advance,pending})=>{
+  dressMassifCliffSurface({material,source});state=material.userData.cliffSurface;
+  advance(119960);assert.equal(state.status,'loading');assert.equal(state.failed,false);assert.equal(pending(),1);
+  advance(120000);assert.equal(state.status,'fallback');assert.equal(state.failed,true);assert.equal(state.errors.length,1);assert.equal(pending(),0);assert.equal(material.version,version);assert.equal(material.customProgramCacheKey(),key);assert.deepEqual(compile(material),before);
+ });
+ assert.equal(await state.ready,state);
+});

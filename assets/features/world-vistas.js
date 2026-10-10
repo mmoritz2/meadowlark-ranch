@@ -23,7 +23,7 @@ import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
 
    Owned by this package: this file only. Nothing runs at import time. */
 import {dressLandscape} from '../landscape-surface.js?v=regional-relief-1';
-import {dressMassifCliffSurface} from '../massif-cliff-surface.mjs?v=massif-cliff-1';
+import {dressMassifCliffSurface} from '../massif-cliff-surface.mjs?v=massif-cliff-2';
 import {regionalProfileAt} from '../regional-landscape.mjs?v=regional-relief-1';
 import {hornRelief} from '../horn-relief.mjs?v=northern-skyline-1';
 export const id='world-vistas';
