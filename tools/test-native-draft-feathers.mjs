@@ -62,9 +62,25 @@ function clipsFrom(file){
  function array(i){const a=d.accessors[i],view=d.bufferViews[a.bufferView],size={SCALAR:1,VEC3:3,VEC4:4}[a.type],out=new Float32Array(a.count*size);assert.equal(a.componentType,5126);for(let n=0;n<a.count;n++)for(let k=0;k<size;k++)out[n*size+k]=bin.readFloatLE((view.byteOffset||0)+(a.byteOffset||0)+n*(view.byteStride||size*4)+k*4);return out;}
  return d.animations.map(a=>new THREE.AnimationClip(a.name,-1,a.channels.map(c=>{const s=a.samplers[c.sampler],kind=c.target.path,name=d.nodes[c.target.node].name,Track=kind==='rotation'?THREE.QuaternionKeyframeTrack:THREE.VectorKeyframeTrack;assert(['LINEAR','STEP','CUBICSPLINE',undefined].includes(s.interpolation));const track=new Track(name+'.'+({rotation:'quaternion',translation:'position',scale:'scale'}[kind]),array(s.input),array(s.output),s.interpolation==='STEP'?THREE.InterpolateDiscrete:THREE.InterpolateLinear);if(s.interpolation==='CUBICSPLINE'){track.createInterpolant=function(result){return new cubic[kind==='rotation'?1:0](this.times,this.values,this.getValueSize()/3,result);};track.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline=true;}return track;})));}
 
-// Fingerprints captured from the approved helper before the Vanner extension.
-const approved={shire:'2c430ceb016f7f3431018894b4d54d9b0b9f982657f39d549576a5803c938f86',clyde:'d323ec957d85e7b618ad8411b95a67aba62cb4860e2d0d7b4f80e0a454649fb4'};
-for(const id of ['shire','clyde','tempest']){const f=fixture(id),before=sourceState(f),kit=add(f);assert.equal(geometryHash(kit.meshes),approved[f.profile.nativeVariant.id],id+' approved shape preserved exactly');kit.dispose();assert.equal(sourceState(f),before);}
+// The unchanged helper fits its roots to the corrected draft leg surface.
+const approved={shire:'e05e3ab5fb92930fb981ff3a917297da9903c0ebcdd3caaab7f8b0c70f875cf7',clyde:'f2fd87adc9e99191eab69adfdd223bc3ad16c3964b12c0797cba2ad7bccf6cde'};
+for(const id of ['shire','clyde','tempest']){
+ const f=fixture(id),before=sourceState(f),kit=add(f);
+ assert.equal(geometryHash(kit.meshes),approved[f.profile.nativeVariant.id],id+' reviewed feather fit preserved exactly');
+ // A leg-surface correction changes the sampled feather roots. Check the
+ // resulting hairs on actual gait poses, not just a newly recorded hash.
+ const extra=clipsFrom('assets/'+f.profile.motionFile),clip=extra.find(c=>c.name===f.profile.nativeGaits.trot.clip);
+ assert(clip,id+' uses its production Trot clip');
+ const mixer=new THREE.AnimationMixer(f.root),action=mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);
+ action.clampWhenFinished=true;action.play();let lowest=Infinity;
+ for(let step=0;step<=40;step++){
+  mixer.setTime(clip.duration*step/40);f.scene.updateMatrixWorld(true);
+  lowest=Math.min(lowest,bounds(kit.meshes).min.y);
+ }
+ assert(lowest>.005,id+' fitted feathers stay above the floor during Trot: '+lowest);
+ action.stop();mixer.uncacheRoot(f.root);f.scene.updateMatrixWorld(true);
+ kit.dispose();assert.equal(sourceState(f),before);
+}
 for(const [id,p] of Object.entries(profiles))if(!['shire','clyde','vanner'].includes(p.nativeVariant.id)){assert.equal(createNativeDraftFeathers({THREE,scene:new THREE.Group(),skin:{},profile:p}),null,id+' remains unfeathered');}
 assert.equal(createNativeDraftFeathers({THREE,scene:new THREE.Group(),skin:{},profile:{nativeRoster:false,nativeVariant:{id:'vanner'}}}),null,'No feathers on unrelated rigs');
 const f=fixture('vanner'),before=sourceState(f),kit=add(f),stats=kit.inspect();

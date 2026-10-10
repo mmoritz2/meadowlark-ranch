@@ -61,6 +61,19 @@ HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d
 HEAD_DRAFT_BODY_SHA = {'percheron': '98cd1cc826f6940f36f53dce781a00eca0335447c0e718d9b0e8329d9e1ab3ac', 'shire': '87585e7f68d91e80884d626a902ac510960eb8f66e05e6bcd34208753ee25b2d', 'clyde': '6ce61579e46ade8e1a52a8b2bea02d6776e7d6a8364f2ae647acbf6a05194a12'}
 # End head revision pins.
 
+# Reviewed leg-contour revision keeps the prior head/upper-body and all four
+# non-body meshes exact. Its broad hooves preserve source toe/heel depth.
+DRAFT_LEG_BUFFER_SHA = {
+    'percheron': 'aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647',
+    'shire': '8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2',
+    'clyde': '11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c',
+}
+DRAFT_LEG_BODY_SHA = {
+    'percheron': 'f67e6d6b96a8f0c5c2d2f0e71a7522a480aa293c54f82c8b1ff9ac98e345aad3',
+    'shire': '211fd2bdfef0ef85139ad88dab2a62289c52fb7f5aba41bec323aeef08877d37',
+    'clyde': '39b1d2af6ce233750cd4ad438efb648cfc98787ba668b28f84f898e5c8bcf315',
+}
+
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -155,7 +168,8 @@ def draft_checks(key, body, positions, normals, outworld, frames, translation):
             center_drift = float(np.linalg.norm(b.mean(0) - a.mean(0)))
             gain = np.ptp(b[:, [0, 2]], axis=0) / np.ptp(a[:, [0, 2]], axis=0)
             assert center_drift < QUANTIZATION_TOLERANCE_M, (key, end, side, 'hoof moved', center_drift)
-            assert np.all(gain >= 1.25) and np.all(gain < 1.65), (key, end, side, 'hoof thickness', gain)
+            assert 1.25 <= gain[0] < 1.65, (key, end, side, 'hoof lateral width', gain)
+            assert abs(gain[1]-1) < .001, (key, end, side, 'source toe/heel depth preserved', gain)
             hooves.append({'leg': end+'-'+side, 'vertices': int(mask.sum()), 'centerDriftM': center_drift, 'widthGainXZ': gain.tolist()})
             masks.append(mask[lower])
     assert np.count_nonzero(abs(outworld[lower]-source[lower]) > 1e-4) > 1500, (key, 'draft limbs were not widened')
@@ -264,9 +278,12 @@ def main():
         assert sha(path) == row['sha256'], (key, 'buffer checksum')
         packed = path.read_bytes()
         if row.get('headShape'):
+            approved = DRAFT_LEG_BUFFER_SHA[key] if key in DRAFTS else HEAD_BUFFER_SHA[key]
             approved_bytes=packed[:728256] if row.get('tackAttachment') else packed
             assert not row.get('tackAttachment') or key in DRAFTS
-            assert row['headShape']['version'] == 1 and hashlib.sha256(approved_bytes).hexdigest() == HEAD_BUFFER_SHA[key], (key, 'approved head/base morph revision changed')
+            assert row['headShape']['version'] == 1 and hashlib.sha256(approved_bytes).hexdigest() == approved, (key, 'approved appearance revision changed')
+            if key in DRAFTS:
+                assert row['draftShape']['version'] == 4 and row['draftShape']['legContour']['version'] == 1
         elif key not in DRAFTS:
             assert sha(path) == NON_DRAFT_SHA[key], (key, 'non-draft buffer changed')
         assert len(packed) == row['byteLength'] and len(row['meshes']) == 5
@@ -300,14 +317,16 @@ def main():
                     assert np.array_equal(outn[protected], n[protected]), (key, 'protected normals changed')
                 bodyhash = hashlib.sha256(outp.tobytes()).hexdigest()
                 if key in DRAFTS:
-                    expected = HEAD_DRAFT_BODY_SHA[key] if row.get('headShape') else DRAFT_BODY_SHA[key]
+                    expected = DRAFT_LEG_BODY_SHA[key]
                     assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
                 floor = float(outworld[:, 1].min())
         collar_report=None
         if row.get('tackAttachment'):
             assert key in DRAFTS
             used,collar_report=check_collar_attachment(row['tackAttachment'],packed,used,source_meshes[3],decoded_tack,ops,translation,row['actorScale'])
-            assert collar_report['baseMorphSha256']==HEAD_BUFFER_SHA[key]
+            assert collar_report['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
+            assert row['tackAttachment']['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
+            assert row['tackAttachment']['authoringBaseMorphSha256']==HEAD_BUFFER_SHA[key]
         shell_report=None
         shell=row.get('groom',{}).get('uprightCrest',{}).get('shell')
         if shell:
@@ -343,6 +362,8 @@ def main():
               'draftLowerLegThicknessUpdated': sorted(DRAFTS),
               'reviewedDraftBodyPositionsBitExact': sorted(DRAFTS-set(HEAD_DRAFT_BODY_SHA)),
               'approvedHeadRevisionProfiles': sorted(HEAD_BUFFER_SHA),
+              'approvedDraftLegContourProfiles': sorted(DRAFT_LEG_BODY_SHA),
+              'draftLegDeformationValidation': 'Run node tools/test-native-draft-leg-deformation.mjs for 81 production Trot poses, source-relative triangle collapse and actual hoof-floor clearance.',
               'headShapeValidation': 'Run qa-head-shapes.py for compact facial field, matching eyes/bridle, preserved seat/stirrups and 84 native head motion samples.',
               'limitsM': {'standingFloor': 1e-8, 'lowerLegYAndHoofCenterDrift': QUANTIZATION_TOLERANCE_M,
                           'animatedHoofCenterDrift': .002, 'animatedLowerLegSurfaceOffset': .10},
