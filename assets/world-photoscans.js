@@ -1,3 +1,4 @@
+import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
 import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
 import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
 import {patchSummerLeafPigment,isSummerLeafMaterial} from './summer-leaf-pigment.mjs?v=summer-leaf-pigment-1';
@@ -9,7 +10,7 @@ import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
-import {patchOuterFog} from './outer-landscape.js?v=outer-rock-clusters-3';
+import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
 import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
@@ -462,8 +463,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // The same lit, eight-angle source atlases continue woodland beyond the
     // riding terrain. These static groves never consume the nearby model budget.
     const outer=W.outerLandscape;
-    if(outer){const groves=new Map(),cards=new Map();
+    if(outer){const groves=new Map(),cards=new Map();outer.canopyFootprints=[];
       for(const site of outer.woodlandSites){const source=variants.find(v=>v.key===site.source),scale=site.height/source.meta.sourceHeight;
+        const crownSpan=Math.max(source.bounds.max.x-source.bounds.min.x,source.bounds.max.z-source.bounds.min.z);
+        outer.canopyFootprints.push({x:site.x,z:site.z,radius:Math.max(1.8,crownSpan*scale*.43),source:site.source});
         q.setFromAxisAngle(UP,site.yaw);s.setScalar(scale);v.set(site.x,site.y-source.bounds.min.y*scale-.035,site.z);
         const key=source.key+':'+(site.x<0?0:1)+':'+(site.z<0?0:1);
         if(!groves.has(key))groves.set(key,{source,matrices:[]});groves.get(key).matrices.push(new THREE.Matrix4().compose(v,q,s));
@@ -888,6 +891,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     state.willows?.update();state.thunderOak?.update();updateTrees();
     try{installOuterRockClusters(G,outerRockParts,mergeGeometries);}catch(e){state.errors.push(e.message);console.warn('Scenic rock setup unavailable:',e);}
+    try{installOuterCanopyShade(G);}catch(e){state.errors.push(e.message);console.warn('Outer woodland shelter unavailable:',e);}
     return state.assets;
   })();
   let timer=0;

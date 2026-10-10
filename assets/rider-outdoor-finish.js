@@ -1,3 +1,4 @@
+import {fittedZip} from './rider-fitted-zip.js?v=character-finish68-20261010';
 import {fitLowerLayer} from './rider-garment-layer-fit.js?v=character-polish-20261009';
 import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
 
@@ -28,14 +29,12 @@ export function outdoorFinish(T,kit,garment,data,{color='#426776',trim='#263e4b'
  const band=trimGarment(T,parent,[(x,y)=>Math.max(hemY+hemWidth-y,Math.abs(x)-(cuffX-ribWidth))]);
  for(let i=0;i<band.attributes.position.count;i++){const p=V().fromBufferAttribute(band.attributes.position,i),n=V().fromBufferAttribute(band.attributes.normal,i);p.addScaledVector(n,.0007);band.attributes.position.setXYZ(i,p.x,p.y,p.z);}band.computeBoundingSphere();push('Technical_Ribbed_Edges',band,fabric(trim,true));
  const sampler=surfaceSampler(T,[{...garment,geometry:parent},collar]);
- const fit=(x,y,offset=.001)=>{const h=sampler.cast(V(x,y,.6),V(0,0,-1));if(!h)return null;return{p:h.point.clone().addScaledVector(h.normal,offset),joints:h.joints,weights:h.weights};};
+ // Two-sided folded collar faces can point inward; front attachments need outward relief.
+ const fit=(x,y,offset=.001)=>{const h=sampler.cast(V(x,y,.6),V(0,0,-1));if(!h)return null;const normal=h.normal.clone();if(normal.z<0)normal.negate();return{p:h.point.clone().addScaledVector(normal,offset),joints:h.joints,weights:h.weights};};
  const ribbon=(path,width,offset=.001)=>{const vertices=[],indices=[];let previous=null;for(const [x,y]of path){const a=fit(x-width*.5,y,offset),b=fit(x+width*.5,y,offset);if(!a||!b){previous=null;continue;}const i=vertices.length;vertices.push(a,b);if(previous!==null)indices.push(previous,previous+1,i,previous+1,i+1,i);previous=i;}return geo(vertices,indices);};
  const front=neckPoints.filter(v=>v.p.z>center.z).sort((a,b)=>Math.abs(a.p.x)-Math.abs(b.p.x))[0].p,top=front.y+height-.003,bottom=rain?hemY+.010:front.y-.185,path=Array.from({length:82},(_,i)=>[0,bottom+(top-bottom)*i/81]);
- push(rain?'Raincoat_Full_Zip_Tape':'Fleece_Quarter_Zip_Tape',ribbon(path,.0075,.0011),fabric(trim));
- const metalVertices=[],metalIndices=[],addQuad=(x0,y0,x1,y1,offset)=>{const v=[fit(x0,y0,offset),fit(x1,y0,offset),fit(x0,y1,offset),fit(x1,y1,offset)];if(v.some(p=>!p))return;const k=metalVertices.length;metalVertices.push(...v);metalIndices.push(k,k+1,k+2,k+1,k+3,k+2);};
- for(let y=bottom+.003;y<top-.009;y+=.0032){addQuad(-.0022,y,-.00025,y+.0018,.0016);addQuad(.00025,y+.0008,.0022,y+.0026,.0016);}
- addQuad(-.0023,top-.014,.0023,top-.003,.0020);addQuad(-.0030,top-.017,.0030,top-.012,.0021);
- push('Technical_Zipper',geo(metalVertices,metalIndices),new T.MeshStandardMaterial({color:'#a79f93',roughness:.43,metalness:.65,side:T.DoubleSide}));
+ push(rain?'Raincoat_Full_Zip_Tape':'Fleece_Quarter_Zip_Tape',ribbon(path,.0055,.0011),fabric(trim));
+ for(const p of fittedZip(T,{fit,geo,path,trim}))push(p.name,p.geometry,p.material);
  for(const side of[-1,1]){const pocketPath=Array.from({length:34},(_,i)=>[side*(.052+.042*i/33),hemY+.078+.025*i/33]);push('Outdoor_Zipped_Pocket_'+side,ribbon(pocketPath,.005,.0015),fabric(trim));}
  const seamVertices=[],seamIndices=[];
  const append=g=>{const offset=seamVertices.length;for(let i=0;i<g.attributes.position.count;i++)seamVertices.push({p:V().fromBufferAttribute(g.attributes.position,i),joints:get.map(k=>g.attributes.skinIndex[k](i)),weights:get.map(k=>g.attributes.skinWeight[k](i))});for(const i of g.index.array)seamIndices.push(offset+i);g.dispose();};
@@ -43,6 +42,6 @@ export function outdoorFinish(T,kit,garment,data,{color='#426776',trim='#263e4b'
   const panel=Array.from({length:75},(_,i)=>{const t=i/74,y=hemY+.015+(front.y-.035-hemY-.015)*t,x=side*(.073+.090*t-.009*Math.sin(t*Math.PI));return[x,y];});append(ribbon(panel,.00095,.00085));
   for(let y=bottom+.005;y<top-.012;y+=.0062)append(ribbon([[side*.0049,y],[side*.0049,y+.0028]],.00055,.0014));
  }
- push('Technical_Topstitch',geo(seamVertices,seamIndices),new T.MeshStandardMaterial({color:thread,roughness:.94,side:T.DoubleSide}));
+ push('Technical_Topstitch',geo(seamVertices,seamIndices),new T.MeshStandardMaterial({color:new T.Color(color).lerp(new T.Color(thread),.22),roughness:.94,side:T.DoubleSide}));
  sampler.dispose();parent.dispose();return {material:fabric(color),pieces,evidence:{lowerFit,style:rain?'weather shell with full zip':fleece?'soft trail fleece':'relaxed quarter-zip sweatshirt',relaxedEaseM:rain?.0055:.008,fullZip:rain,neckRoots:neck.length,neckRootOffsetM:0,collarHeightM:height,cuffRibWidthM:ribWidth,hemRibWidthM:hemWidth,quarterZipLengthM:top-bottom,detailVertices:pieces.reduce((n,p)=>n+p.geometry.attributes.position.count,0),detailTriangles:pieces.reduce((n,p)=>n+p.geometry.index.count/3,0)}};
 }

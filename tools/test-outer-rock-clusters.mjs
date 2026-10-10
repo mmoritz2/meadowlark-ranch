@@ -7,8 +7,6 @@ import * as T from '../assets/vendor/three/build/three.module.js';
 import {createOuterLandscape as candidate} from '../assets/outer-landscape.js';
 import {createOuterRockData,retainRockClearWoodland,installOuterRockClusters,createOuterRockGroundSampler} from '../assets/outer-rock-clusters.mjs';
 import {OUTER_ROCK_SOURCE} from '../assets/outer-rock-source.mjs';
-import {selectOuterWoodland} from '../assets/outer-woodland.mjs';
-import {regionalProfileAt} from '../assets/regional-landscape.mjs';
 const ROOT=fileURLToPath(new URL('../',import.meta.url)),sha=a=>crypto.createHash('sha256').update(a).digest('hex');
 const utility=fs.readFileSync(new URL('../assets/vendor/three/examples/jsm/utils/BufferGeometryUtils.js',import.meta.url),'utf8').replace("from 'three'",`from '${new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href}'`);
 const {mergeGeometries}=await import('data:text/javascript;base64,'+Buffer.from(utility).toString('base64'));
@@ -18,11 +16,18 @@ function fixture(){const g=new T.PlaneGeometry(1000,1000,512,512);g.rotateX(-Mat
 const args=fixture(),next=candidate(args),savedRandom=Math.random;
 const groundBefore=Object.fromEntries(Object.entries(next.mesh.geometry.attributes).map(([k,a])=>[k,sha(a.array)]));
 const data=next.rockClusterData,ground=createOuterRockGroundSampler(next.mesh.geometry.attributes.position.array,next.mesh.geometry.index.array);
-const originalSites=selectOuterWoodland({positions:next.mesh.geometry.attributes.position.array,index:next.mesh.geometry.index.array,regionalProfileAt});
-const oldByKey=new Map(originalSites.map(r=>[r.x+':'+r.z,r]));
+// Woodland identities are now anchored to the original sampling topology and
+// reseated onto the refined terrain. Test rock filtering independently of that
+// selection owner, which has its own watershed identity/grounding contracts.
+const originalSites=[...next.woodlandSites,...next.rockClusters.excludedRoots];
+assert.equal(new Set(originalSites.map(r=>r.x+':'+r.z)).size,4200);
+const probes=[...data.records.map(r=>({x:r.x,z:r.z})),{x:1500,z:1500}];
+const probeResult=retainRockClearWoodland(probes,data);
+assert.deepEqual(probeResult.kept,[probes.at(-1)]);
+assert.equal(probeResult.excluded.length,data.records.length);
 assert.equal(next.woodlandSites.length+next.rockClusters.excludedRoots.length,4200);assert(next.rockClusters.excludedRoots.length>0&&next.rockClusters.excludedRoots.length<100);
-for(const r of next.woodlandSites){assert.deepEqual(r,oldByKey.get(r.x+':'+r.z));assert.equal(data.intersectsRoot(r),false);assert(Math.abs(r.y-ground(r.x,r.z).height)<1e-8);}
-for(const r of next.rockClusters.excludedRoots){assert.deepEqual(r,oldByKey.get(r.x+':'+r.z));assert.equal(data.intersectsRoot(r),true);}
+for(const r of next.woodlandSites){assert.equal(data.intersectsRoot(r),false);assert(Math.abs(r.y-ground(r.x,r.z).height)<1e-8);}
+for(const r of next.rockClusters.excludedRoots){assert.equal(data.intersectsRoot(r),true);}
 Math.random=()=>{throw Error('Unexpected RNG in pure placement');};try{const again=createOuterRockData({positions:next.mesh.geometry.attributes.position.array,index:next.mesh.geometry.index.array});assert.deepEqual(again.records,data.records);assert.deepEqual(retainRockClearWoodland(originalSites,again).kept,next.woodlandSites);}finally{Math.random=savedRandom;}
 // Decode the real resident GLB so the emitted mesh contract uses full scan arrays.
 const raw=fs.readFileSync(ROOT+'/assets/models/world/realism/rock_moss_set_01.glb');assert.equal(sha(raw),OUTER_ROCK_SOURCE.sha256);const len=raw.readUInt32LE(12),gltf=JSON.parse(raw.subarray(20,20+len).toString()),bin=raw.subarray(28+len);
