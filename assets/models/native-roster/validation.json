@@ -479,11 +479,11 @@
     },
     {
       "id": "percheron",
-      "bufferSha256": "814bd6ae5a3112b2c9d69447185b79064278ee48f88faf95ae734714173be09d",
+      "bufferSha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "f67e6d6b96a8f0c5c2d2f0e71a7522a480aa293c54f82c8b1ff9ac98e345aad3",
+      "bodyGeometrySha256": "9937f8314d9dc3940e9f1e150f0631a23e73a618fa1a3a233d368f17256b437f",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -500,7 +500,7 @@
         "restNormalMaxDirectionError": 4.016423729313308e-08,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
+        "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
         "protectedTackOutsideSparseIdsPreserved": true
       },
       "draftLowerLegValidation": {
@@ -556,16 +556,23 @@
         "maxAnimatedHoofCenterDriftM": 5.921907010738262e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03149319840366591
       },
+      "draftUpperProtectedSurface": {
+        "vertices": 13929,
+        "positionsAndNormalsBitExactToV4": true,
+        "sourceYAtOrBelowM": 0.72,
+        "sourceYAtOrAboveM": 1.65,
+        "sourceZAtOrAboveM": -0.15
+      },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"
     },
     {
       "id": "shire",
-      "bufferSha256": "4228c42ab2f3e32cc5131892cfe4f839e0702156f204bf567f4d104a89b69ca9",
+      "bufferSha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "211fd2bdfef0ef85139ad88dab2a62289c52fb7f5aba41bec323aeef08877d37",
+      "bodyGeometrySha256": "b6b79ee349f47a7f2ee15d9f6fcd15781437781fbee1a46a168a54a17803c5f0",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -582,7 +589,7 @@
         "restNormalMaxDirectionError": 4.32506391670575e-08,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
+        "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
         "protectedTackOutsideSparseIdsPreserved": true
       },
       "draftLowerLegValidation": {
@@ -638,16 +645,23 @@
         "maxAnimatedHoofCenterDriftM": 4.751425789241398e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03748872811658668
       },
+      "draftUpperProtectedSurface": {
+        "vertices": 13929,
+        "positionsAndNormalsBitExactToV4": true,
+        "sourceYAtOrBelowM": 0.72,
+        "sourceYAtOrAboveM": 1.65,
+        "sourceZAtOrAboveM": -0.15
+      },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"
     },
     {
       "id": "clyde",
-      "bufferSha256": "9359251e9f00267becbfa3c271786f262b21c8bb18e7aeb1e1b3b4513e986c37",
+      "bufferSha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "39b1d2af6ce233750cd4ad438efb648cfc98787ba668b28f84f898e5c8bcf315",
+      "bodyGeometrySha256": "b086aeb1e5df0713ce0e5e7041af5341f92885a2b795ab6e57294d701ab9dfc6",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -664,7 +678,7 @@
         "restNormalMaxDirectionError": 4.051083427787368e-08,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
+        "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
         "protectedTackOutsideSparseIdsPreserved": true
       },
       "draftLowerLegValidation": {
@@ -719,6 +733,13 @@
         "sampledLowerLegPositionsFinite": true,
         "maxAnimatedHoofCenterDriftM": 5.708851321369127e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03449137152698355
+      },
+      "draftUpperProtectedSurface": {
+        "vertices": 13929,
+        "positionsAndNormalsBitExactToV4": true,
+        "sourceYAtOrBelowM": 0.72,
+        "sourceYAtOrAboveM": 1.65,
+        "sourceZAtOrAboveM": -0.15
       },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"

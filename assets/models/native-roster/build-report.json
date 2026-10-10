@@ -6160,7 +6160,7 @@
       },
       "tackAttachment": {
         "vertices": 514,
-        "baseMorphSha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
+        "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
@@ -6174,11 +6174,11 @@
         "barrel": {
           "sourceM": 0.6444136780588463,
           "previousM": 0.7797405504512039,
-          "newM": 0.9675185040061768,
-          "gainOverPreviousPercent": 24.0821069837029,
+          "newM": 0.9663144064025804,
+          "gainOverPreviousPercent": 23.927684130755257,
           "previousDisplayedM": 0.738431779889891,
-          "newDisplayedM": 0.8822912570902299,
-          "displayedGainPercent": 19.481755947961798
+          "newDisplayedM": 0.881193226629895,
+          "displayedGainPercent": 19.333058330898425
         },
         "chest": {
           "sourceM": 0.520620693945136,
@@ -6192,11 +6192,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.7964672420134489,
-          "newM": 0.940298902051257,
-          "gainOverPreviousPercent": 18.058703792287222,
+          "newM": 0.8993445956751134,
+          "gainOverPreviousPercent": 12.916708715049374,
           "previousDisplayedM": 0.7542723317437485,
-          "newDisplayedM": 0.8574693888501279,
-          "displayedGainPercent": 13.68167076575717
+          "newDisplayedM": 0.8201226856023361,
+          "displayedGainPercent": 8.730315442746361
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -6233,50 +6233,50 @@
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6664003842139764,
-            "newDisplayedWidthM": 0.6043370512229982,
-            "previousDisplayedMeanYM": 0.7022854268415548,
-            "newDisplayedMeanYM": 0.7237939557867198
+            "previousDisplayedWidthM": 0.6052730953970699,
+            "newDisplayedWidthM": 0.5688717699640092,
+            "previousDisplayedMeanYM": 0.7086669245877762,
+            "newDisplayedMeanYM": 0.7246005252624674
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.8443120466746181,
-            "newDisplayedWidthM": 0.6821461314771763,
-            "previousDisplayedMeanYM": 0.7892523843955858,
-            "newDisplayedMeanYM": 0.8607839410775606
+            "previousDisplayedWidthM": 0.6761861193106293,
+            "newDisplayedWidthM": 0.6113208890298902,
+            "previousDisplayedMeanYM": 0.8405736385430066,
+            "newDisplayedMeanYM": 0.8694661106325939
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.9283911914245316,
-            "newDisplayedWidthM": 0.824222293086117,
-            "previousDisplayedMeanYM": 0.8940411614658792,
-            "newDisplayedMeanYM": 0.9609604238074827
+            "previousDisplayedWidthM": 0.7338139739485975,
+            "newDisplayedWidthM": 0.686139079639834,
+            "previousDisplayedMeanYM": 0.9530100660281188,
+            "newDisplayedMeanYM": 0.9797777812135577
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.9110987311907537,
-            "newDisplayedWidthM": 0.8336507901105396,
-            "previousDisplayedMeanYM": 1.0630723520124514,
-            "newDisplayedMeanYM": 1.0934530032198977
+            "previousDisplayedWidthM": 0.7221125816077256,
+            "newDisplayedWidthM": 0.687531248076684,
+            "previousDisplayedMeanYM": 1.101572672534078,
+            "newDisplayedMeanYM": 1.1145024174634255
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.8606905991339496,
-            "newDisplayedWidthM": 0.8574693888501279,
-            "previousDisplayedMeanYM": 1.259435582091274,
-            "newDisplayedMeanYM": 1.2619273898020507
+            "previousDisplayedWidthM": 0.8034072663743466,
+            "newDisplayedWidthM": 0.8025617898570677,
+            "previousDisplayedMeanYM": 1.267682452825463,
+            "newDisplayedMeanYM": 1.2693604271204213
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.8502232176937613,
-            "newDisplayedWidthM": 0.8502265794735763,
-            "previousDisplayedMeanYM": 1.4037636735752779,
-            "newDisplayedMeanYM": 1.4037650160318838
+            "previousDisplayedWidthM": 0.820124115654522,
+            "newDisplayedWidthM": 0.8201226856023361,
+            "previousDisplayedMeanYM": 1.4040484654530876,
+            "newDisplayedMeanYM": 1.4040496877746815
           }
         ]
       },
@@ -6406,7 +6406,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9193277107930626e-06,
-      "sha256": "814bd6ae5a3112b2c9d69447185b79064278ee48f88faf95ae734714173be09d",
+      "sha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
       "byteLength": 753956,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
@@ -6621,7 +6621,7 @@
       },
       "tackAttachment": {
         "vertices": 514,
-        "baseMorphSha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
+        "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
@@ -6635,11 +6635,11 @@
         "barrel": {
           "sourceM": 0.6444136780588463,
           "previousM": 0.7926288240123809,
-          "newM": 0.9795092568883503,
-          "gainOverPreviousPercent": 23.577294594203458,
+          "newM": 0.9791944244573249,
+          "gainOverPreviousPercent": 23.537574561132768,
           "previousDisplayedM": 0.7856134355841596,
-          "newDisplayedM": 0.9354253265485198,
-          "displayedGainPercent": 19.06941559024693
+          "newDisplayedM": 0.9351246635098308,
+          "displayedGainPercent": 19.03114447304468
         },
         "chest": {
           "sourceM": 0.520620693945136,
@@ -6653,11 +6653,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.814651807680818,
-          "newM": 0.935395569016399,
-          "gainOverPreviousPercent": 14.821517634548552,
+          "newM": 0.8952077011313359,
+          "gainOverPreviousPercent": 9.888383318002747,
           "previousDisplayedM": 0.807441498527912,
-          "newDisplayedM": 0.8932970254705207,
-          "displayedGainPercent": 10.633033736702458
+          "newDisplayedM": 0.8549178583770963,
+          "displayedGainPercent": 5.879851349694176
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -6694,50 +6694,50 @@
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.7043971892834464,
-            "newDisplayedWidthM": 0.6423012310428053,
-            "previousDisplayedMeanYM": 0.7334055342927307,
-            "newDisplayedMeanYM": 0.7577323364614398
+            "previousDisplayedWidthM": 0.637735454468528,
+            "newDisplayedWidthM": 0.6014849431159515,
+            "previousDisplayedMeanYM": 0.7406231583828098,
+            "newDisplayedMeanYM": 0.7586446783746932
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.879236004750267,
-            "newDisplayedWidthM": 0.7160209929632675,
-            "previousDisplayedMeanYM": 0.8193280493988809,
-            "newDisplayedMeanYM": 0.9002316919183511
+            "previousDisplayedWidthM": 0.7061459705009372,
+            "newDisplayedWidthM": 0.6408599367296971,
+            "previousDisplayedMeanYM": 0.877373595287672,
+            "newDisplayedMeanYM": 0.9100515197853543
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.9612570578449429,
-            "newDisplayedWidthM": 0.8603458301790767,
-            "previousDisplayedMeanYM": 0.9280452554520096,
-            "newDisplayedMeanYM": 1.0037326021929898
+            "previousDisplayedWidthM": 0.7640842649566211,
+            "newDisplayedWidthM": 0.7166001982638248,
+            "previousDisplayedMeanYM": 0.9947404738881559,
+            "newDisplayedMeanYM": 1.0250154238363298
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.946655787325756,
-            "newDisplayedWidthM": 0.8699642800278475,
-            "previousDisplayedMeanYM": 1.1076270339022452,
-            "newDisplayedMeanYM": 1.1419880031077994
+            "previousDisplayedWidthM": 0.7532142832293833,
+            "newDisplayedWidthM": 0.7188293017762966,
+            "previousDisplayedMeanYM": 1.1511718022189321,
+            "newDisplayedMeanYM": 1.1657956594462255
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.8949111481752978,
-            "newDisplayedWidthM": 0.8932970254705207,
-            "previousDisplayedMeanYM": 1.3165574931948054,
-            "newDisplayedMeanYM": 1.319375529805252
+            "previousDisplayedWidthM": 0.8375441633855716,
+            "newDisplayedWidthM": 0.8366697051105059,
+            "previousDisplayedMeanYM": 1.3258848980213758,
+            "newDisplayedMeanYM": 1.3277831233051451
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.8859815916835874,
-            "newDisplayedWidthM": 0.8859786191834215,
-            "previousDisplayedMeanYM": 1.4701225696628746,
-            "newDisplayedMeanYM": 1.4701240985744528
+            "previousDisplayedWidthM": 0.8549194886655017,
+            "newDisplayedWidthM": 0.8549178583770963,
+            "previousDisplayedMeanYM": 1.4704446759770475,
+            "newDisplayedMeanYM": 1.470445982307476
           }
         ]
       },
@@ -6867,7 +6867,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.4855925278298727e-06,
-      "sha256": "4228c42ab2f3e32cc5131892cfe4f839e0702156f204bf567f4d104a89b69ca9",
+      "sha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
       "byteLength": 753956,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
@@ -7082,7 +7082,7 @@
       },
       "tackAttachment": {
         "vertices": 514,
-        "baseMorphSha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
+        "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
@@ -7096,11 +7096,11 @@
         "barrel": {
           "sourceM": 0.6444136780588463,
           "previousM": 0.7410757297676731,
-          "newM": 0.9215146601311686,
-          "gainOverPreviousPercent": 24.34824446619821,
+          "newM": 0.9212490938135076,
+          "gainOverPreviousPercent": 24.312409219273555,
           "previousDisplayedM": 0.7232253077890238,
-          "newDisplayedM": 0.8685299561321739,
-          "displayedGainPercent": 20.09120073347015
+          "newDisplayedM": 0.8682796591893174,
+          "displayedGainPercent": 20.056592300916563
         },
         "chest": {
           "sourceM": 0.520620693945136,
@@ -7114,11 +7114,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.7617120679848741,
-          "newM": 0.8870119427651671,
-          "gainOverPreviousPercent": 16.44976888862699,
+          "newM": 0.8519465737911078,
+          "gainOverPreviousPercent": 11.846274937582525,
           "previousDisplayedM": 0.7433645748831608,
-          "newDisplayedM": 0.8360110555689766,
-          "displayedGainPercent": 12.463128297494897
+          "newDisplayedM": 0.8029618544065521,
+          "displayedGainPercent": 8.017234280064889
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -7155,50 +7155,50 @@
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6785297717986838,
-            "newDisplayedWidthM": 0.6257682405158369,
-            "previousDisplayedMeanYM": 0.7278761149682477,
-            "newDisplayedMeanYM": 0.7483277351607064
+            "previousDisplayedWidthM": 0.6195940977120052,
+            "newDisplayedWidthM": 0.5887605458329606,
+            "previousDisplayedMeanYM": 0.7339440413767042,
+            "newDisplayedMeanYM": 0.7490948647946959
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.830310348008624,
-            "newDisplayedWidthM": 0.692021765944183,
-            "previousDisplayedMeanYM": 0.8228461833788304,
-            "newDisplayedMeanYM": 0.8908626729999342
+            "previousDisplayedWidthM": 0.681939500477491,
+            "newDisplayedWidthM": 0.6266206137204291,
+            "previousDisplayedMeanYM": 0.8716456354417332,
+            "newDisplayedMeanYM": 0.8991184848666307
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.9018811250425226,
-            "newDisplayedWidthM": 0.8125055226756953,
-            "previousDisplayedMeanYM": 0.9321590586985636,
-            "newDisplayedMeanYM": 0.9957899713422845
+            "previousDisplayedWidthM": 0.735368987127742,
+            "newDisplayedWidthM": 0.6942997328840678,
+            "previousDisplayedMeanYM": 0.988230374164098,
+            "newDisplayedMeanYM": 1.013682834149032
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.886827567892048,
-            "newDisplayedWidthM": 0.8203389801928433,
-            "previousDisplayedMeanYM": 1.1043292597143017,
-            "newDisplayedMeanYM": 1.1332169102698948
+            "previousDisplayedWidthM": 0.7242556714533716,
+            "newDisplayedWidthM": 0.6940374259247171,
+            "previousDisplayedMeanYM": 1.1409377677664367,
+            "newDisplayedMeanYM": 1.1532323327164848
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.8381021977043998,
-            "newDisplayedWidthM": 0.8360110555689766,
-            "previousDisplayedMeanYM": 1.3040325054167192,
-            "newDisplayedMeanYM": 1.3064017225683624
+            "previousDisplayedWidthM": 0.7893241516169232,
+            "newDisplayedWidthM": 0.7885956757121821,
+            "previousDisplayedMeanYM": 1.3118741449040545,
+            "newDisplayedMeanYM": 1.3134698616223461
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.8289625592462565,
-            "newDisplayedWidthM": 0.8289624476326277,
-            "previousDisplayedMeanYM": 1.4508155273899317,
-            "newDisplayedMeanYM": 1.4508167300786383
+            "previousDisplayedWidthM": 0.8029597336585744,
+            "newDisplayedWidthM": 0.8029618544065521,
+            "previousDisplayedMeanYM": 1.4510863252848774,
+            "newDisplayedMeanYM": 1.451087470104192
           }
         ]
       },
@@ -7328,7 +7328,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.8951334106741555e-06,
-      "sha256": "9359251e9f00267becbfa3c271786f262b21c8bb18e7aeb1e1b3b4513e986c37",
+      "sha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
       "byteLength": 753956,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,
