@@ -1,8 +1,8 @@
-import {trimRegions} from './rider-garment-regions.js?v=character-polish-20261009';
-import {crewneckFinish} from './rider-crewneck-finish.js?v=character-polish-20261009';
-import {knitFinish} from './rider-knit-finish.js?v=character-polish-20261009';
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
-import {fitLowerLayer} from './rider-garment-inner-fit.js?v=character-polish-20261009';
+import {trimRegions} from './rider-garment-regions.js?v=tailored-coats69-20261010';
+import {crewneckFinish} from './rider-crewneck-finish.js?v=tailored-coats69-20261010';
+import {knitFinish} from './rider-knit-finish.js?v=tailored-coats69-20261010';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
+import {fitLowerLayer} from './rider-garment-inner-fit.js?v=tailored-coats69-20261010';
 
 const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
 function outerShell(T,kit,garment,data,ease,extension,clearance=.004){

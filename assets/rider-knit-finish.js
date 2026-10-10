@@ -1,4 +1,4 @@
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // A separate pullover construction: soft turned neckband, broad cuffs and hem,
 // and yarn relief in the garment's rest coordinates, all on its own skin field.

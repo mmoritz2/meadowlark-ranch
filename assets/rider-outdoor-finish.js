@@ -1,6 +1,6 @@
 import {fittedZip} from './rider-fitted-zip.js?v=character-finish68-20261010';
-import {fitLowerLayer} from './rider-garment-layer-fit.js?v=character-polish-20261009';
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-20261010';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Detail surfaces inherit the actual draped shirt's triangle weights. The
 // collar shares the literal neck edge; tape and stitching sit on that surface.

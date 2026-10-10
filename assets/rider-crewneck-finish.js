@@ -1,4 +1,4 @@
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Cotton tee construction: a narrow turned crewneck, sewn sleeve and hem edges.
 // Every edge inherits the same source surface and skeleton as the shirt.

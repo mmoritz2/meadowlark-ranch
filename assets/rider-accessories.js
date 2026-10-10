@@ -1,7 +1,7 @@
 /* Small, independently selectable pieces, fitted to the shared rider skeleton.
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
 import {scalpPoint} from './rider-hairstyles.js?v=rider-details-20261009';
-import {surfaceSampler} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler} from './rider-fit.js?v=tailored-coats69-20261010';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={
  eyewear:[item('none','No glasses','#b8b1a5'),item('round','Round gold','#c9aa65'),item('square','Black frames','#262b34'),item('cateye','Rose cat-eye','#ae596e'),item('tortoise','Tortoiseshell','#815438'),item('aviator','Aviator shades','#b9c4c7'),item('sport','Sport sunglasses','#355f69')],

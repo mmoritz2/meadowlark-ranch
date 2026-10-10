@@ -1,5 +1,5 @@
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
-import {poloFinish} from './rider-polo-finish.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
+import {poloFinish} from './rider-polo-finish.js?v=tailored-coats69-20261010';
 
 // Full-button cotton shirt: folded collar, sewn front, buttoned cuffs and two
 // curved chest pockets. Every fitted point inherits the actual shirt's skin field.
