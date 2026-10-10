@@ -1,7 +1,7 @@
 import {coatHemDisplacement} from './rider-coat-cutaway.js?v=tailored-coats69-20261010';
 import {finishCoatHem} from './rider-coat-hem.js?v=tailored-coats69-20261010';
 import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-20261010';
-import {showJacketFinish} from './rider-show-jacket-finish.js?v=tailored-coats69-20261010';
+import {showJacketFinish} from './rider-show-jacket-finish.js?v=outward-lapels70-20261010';
 
 // Curve the connected lower coat while retaining its inherited skin weights.
 // Rear ease gives coarse shell edges clearance over the men's trouser ridge.
