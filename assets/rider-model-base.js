@@ -1,3 +1,4 @@
+import { createGroundSupport } from './rider-ground-support.js?v=rider-fit74-20261010';
 import {buildHelmetHarness} from './rider-helmet-harness.js?v=character-polish-20261009';
 import {naturalHandPose,relaxedOnFootFingerPose} from './rider-natural-hand-pose.js?v=character-finish68-20261010';
 import {shapeHair as shapeWaveHair} from './rider-hairstyles-shape.js?v=character-polish-20261009';
@@ -1073,22 +1074,18 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
      o.swimMove how much of that is a stroke rather than treading water, and o.climb (0..1) with
      o.climbPh, a climbing motion laid over the rest (the library has no climb). The clip weights
      always sum to one, or the mixer lets the T-pose show through the gap. */
-  const soleSamples=new WeakMap(),floorInverse=new THREE.Matrix4(),floorMesh=new THREE.Matrix4(),floorPoint=new THREE.Vector3();
+  const groundSupport=createGroundSupport(THREE),floorInverse=new THREE.Matrix4(),floorMesh=new THREE.Matrix4();
   const lowestSole=()=>{
-   const feet=[];rig.root.traverseVisible(m=>{if(m.isSkinnedMesh&&/Feet/.test(m.name))feet.push(m);});
+   const feet=[];rig.root.traverseVisible(m=>{if(m.isSkinnedMesh&&(m.userData.riderSurfaceRole==='footwear'||/Feet/.test(m.name)))feet.push(m);});
    if(!feet.length)feet.push(rig.body);
-   rig.root.updateWorldMatrix(true,true);floorInverse.copy(rig.root.matrixWorld).invert();let lowest=Infinity;
-   for(const mesh of feet){
-    const geo=mesh.geometry,p=geo.attributes.position;let ids=soleSamples.get(geo);
-    if(!ids){const used=geo.index?new Set(geo.index.array):new Set(Array.from({length:p.count},(_,i)=>i)),unique=new Set();let bottom=Infinity;for(const i of used)bottom=Math.min(bottom,p.getY(i));ids=[];
-     for(const i of used)if(p.getY(i)<=bottom+.025){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(!unique.has(key)){unique.add(key);ids.push(i);}}
-     soleSamples.set(geo,ids);
-    }
-    mesh.skeleton.update();floorMesh.multiplyMatrices(floorInverse,mesh.matrixWorld);
-    for(const i of ids){mesh.getVertexPosition(i,floorPoint).applyMatrix4(floorMesh);lowest=Math.min(lowest,floorPoint.y);}
-   }
+   // Attached skinned meshes refresh bindMatrixInverse in updateMatrixWorld.
+   rig.root.updateWorldMatrix(true,false);rig.root.updateMatrixWorld(true);
+   floorInverse.copy(rig.root.matrixWorld).invert();let lowest=Infinity;
+   for(const mesh of feet){floorMesh.multiplyMatrices(floorInverse,mesh.matrixWorld);lowest=Math.min(lowest,groundSupport.minimum(mesh,floorMesh));}
    return Number.isFinite(lowest)?lowest:0;
   };
+  // Build support hulls during adoption, not the first walking frame.
+  rig.root.traverse(m=>{if(m.isSkinnedMesh&&(m.userData.riderSurfaceRole==='footwear'||/Feet/.test(m.name)))groundSupport.prepare(m);});
   R.locomote=(dt,o)=>{
    o=o||{}; const sp=Math.abs(o.speed||0), back=(o.speed||0)<-0.05;
    if(mode!=='clip'){mode='clip';rig.mixer.stopAllAction();for(const k in rig.actions){rig.actions[k].play();rig.actions[k].setEffectiveWeight(0);}}

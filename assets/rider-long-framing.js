@@ -10,7 +10,7 @@ export function installSideflow7(T,rig){
  const attrWeights=(g,id)=>{const m=new Map();for(let k=0;k<4;k++){const j=component(g.attributes.skinIndex,id,k),w=component(g.attributes.skinWeight,id,k);if(w)m.set(j,(m.get(j)||0)+w);}return m;};
  const blendWeights=(a,b,t)=>{const m=new Map();for(const[j,w]of a)m.set(j,(m.get(j)||0)+w*(1-t));for(const[j,w]of b)m.set(j,(m.get(j)||0)+w*t);return m;};
  function fit(mesh,parts){
-  const begun=performance.now(),source=mesh.geometry,g=source.clone(),P=g.attributes.position,meta=source.userData.forelockCorrection,join=source.userData.crownFallJoin,clumps=meta.clumps,counts=clumps.map(c=>c.centers.length*13+2),prefix=P.count-counts.reduce((a,b)=>a+b,0),changed=new Set(),details=[];
+  const begun=performance.now(),source=state.input,g=source.clone(),P=g.attributes.position,meta=source.userData.forelockCorrection,join=source.userData.crownFallJoin,clumps=meta.clumps,counts=clumps.map(c=>c.centers.length*13+2),prefix=P.count-counts.reduce((a,b)=>a+b,0),changed=new Set(),details=[];
   const surfaces=[...parts,rig.face].map(m=>{const geo=m.geometry.clone(),p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,...V().fromBufferAttribute(m.geometry.attributes.position,i).applyMatrix4(m.bindMatrix).applyMatrix4(headInverse).toArray());return{m,geo,surface:createTriangleSurface(T,geo)};});
   let queries=0;
   const cast=(sd,point,normal)=>{let best=null;for(const s of surfaces){queries++;const hit=s.surface.cast(point.clone().addScaledVector(normal,.8),normal.clone().negate(),h=>h.point.x*sd>=0&&h.distance<1.6,1.6);if(hit&&(!best||hit.distance<best.hit.distance))best={s,hit};}return best;};
@@ -34,24 +34,24 @@ export function installSideflow7(T,rig){
     // absent from the emitted surface rather than hidden inside the main mass.
     if(clumps[ci].layer===1){start+=counts[ci];continue;}
     keptRanges.push([start,start+counts[ci]]);
-    const c=clumps[ci],sd=c.side,j=c.layer,ts=c.arcParameters||c.centers.map((_,i)=>i/(c.centers.length-1)),protect=c.protectedArc,oldCenters=c.centers.map(a=>V(...a)),protectIndex=ts.findLastIndex(t=>t<=protect),temple=oldCenters[protectIndex].clone(),tipY=j?H.chin.y+.008:oldCenters.at(-1).y,end=rail(sd,tipY),jawY=H.chin.y+.010,shoulderY=jawY+(tipY-jawY)*.54,shoulderRail=rail(sd,shoulderY);
+    const c=clumps[ci],sd=c.side,j=c.layer,ts=c.arcParameters||c.centers.map((_,i)=>i/(c.centers.length-1)),protect=c.protectedArc,oldCenters=c.centers.map(a=>V(...a)),protectIndex=ts.findLastIndex(t=>t<=protect),temple=oldCenters[protectIndex].clone(),tipY=j?H.chin.y+.008:(sd<0?-.185:-.125),end=rail(sd,tipY),jawY=H.chin.y+.010,shoulderY=jawY+(tipY-jawY)*.54,shoulderRail=rail(sd,shoulderY);
     // Follow the cheek silhouette before the lock falls onto the shoulder.
     const cheek=V(sd*H.rx*.86,H.cy-.024,H.cz+.047),jaw=V(sd*H.rx*.91,jawY,H.cz+.017),shoulder=V(sd*(Math.abs(shoulderRail.p.x)+H.rx*.10),shoulderY,shoulderRail.p.z);
     const hangingEnd=end.p.clone();
     if(!j){
      // The main lock hangs beside the neck. Rear rails set lateral scale/ownership,
      // not a terminal weld: actual front shoulder supports set only the clearance.
-     hangingEnd.x=sd*(Math.abs(end.p.x)+H.rx*.05);hangingEnd.z=jaw.z;
+     hangingEnd.x=sd*(Math.abs(end.p.x)+H.rx*.05)-(sd<0?sd*.013:sd*.004);hangingEnd.z=jaw.z;shoulder.x+=sd*H.rx*(sd<0?.065:-.035);
      const tipSupport=cast(sd,hangingEnd,V(0,0,1));if(tipSupport)hangingEnd.z=Math.max(hangingEnd.z,tipSupport.hit.point.z+.015);
      shoulder.z=jaw.z;const shoulderSupport=cast(sd,shoulder,V(0,0,1));if(shoulderSupport)shoulder.z=Math.max(shoulder.z,shoulderSupport.hit.point.z+.012);
     }
     const guide=new T.CatmullRomCurve3([temple,cheek,jaw,shoulder,hangingEnd]);
     function atY(y){let lo=0,hi=1;for(let n=0;n<28;n++){const t=(lo+hi)*.5;if(guide.getPoint(t).y>y)lo=t;else hi=t;}return guide.getPoint((lo+hi)*.5);}
-    const centers=oldCenters.map((p,i)=>{const t=ts[i];if(t<=protect)return p.clone();const lift=j?(tipY-oldCenters.at(-1).y)*smooth(protect,1,t):0,y=p.y+lift,q=j?sampleMain(sd,y).addScaledVector(V(sd*.58,0,1).normalize(),-mainAt(sd,y).depth*.15):atY(y),release=smooth(protect,protect+.11,t);return p.clone().lerp(q,release);});
+    const centers=oldCenters.map((p,i)=>{const t=ts[i];if(t<=protect)return p.clone();const lift=(tipY-oldCenters.at(-1).y)*smooth(protect,1,t),y=p.y+lift,q=j?sampleMain(sd,y).addScaledVector(V(sd*.58,0,1).normalize(),-mainAt(sd,y).depth*.15):atY(y),release=smooth(protect,protect+.11,t);return p.clone().lerp(q,release);});
     const frameCenters=centers.map(p=>p.clone()),shifts=[],radials=[];
     const widths=[],depths=[],weights=[],vertexWeights=[],offsets=[];let maxShift=0;
     for(let i=0;i<ts.length;i++){
-     const t=ts[i],free=smooth(protect,protect+.11,t),u=Math.max(0,(t-protect)/(1-protect)),bulge=Math.sin(Math.PI*u),rawWidth=c.widths[i]+free*H.rx*(j?.080:.12)*bulge,rawDepth=c.depths[i]+free*H.rx*(j?.020:.030)*bulge,merge=j?smooth(H.cy+.026,H.cy-.045,centers[i].y)*free:0,mf=j?mainAt(sd,centers[i].y):null,mergedWidth=j?rawWidth*(1-merge)+Math.min(rawWidth,mf.width*.42)*merge:rawWidth,w=(i&&centers[i].y<H.chin.y+.050)?Math.min(mergedWidth,widths[i-1]):mergedWidth,d=j?rawDepth*(1-merge)+Math.min(rawDepth,mf.depth*.22)*merge:rawDepth;
+     const t=ts[i],free=smooth(protect,protect+.11,t),u=Math.max(0,(t-protect)/(1-protect)),bulge=Math.sin(Math.PI*u),rawWidth=(c.widths[i]+free*H.rx*(j?.080:.12)*bulge)*(1-free*(sd<0?.30:.42)),rawDepth=(c.depths[i]+free*H.rx*(j?.020:.030)*bulge)*(1-free*.28),merge=j?smooth(H.cy+.026,H.cy-.045,centers[i].y)*free:0,mf=j?mainAt(sd,centers[i].y):null,mergedWidth=j?rawWidth*(1-merge)+Math.min(rawWidth,mf.width*.42)*merge:rawWidth,w=(i&&centers[i].y<H.chin.y+.050)?Math.min(mergedWidth,widths[i-1]):mergedWidth,d=j?rawDepth*(1-merge)+Math.min(rawDepth,mf.depth*.22)*merge:rawDepth;
      widths.push(w);depths.push(d);
      if(t<=protect){offsets.push(null);weights.push(new Map([[head,1]]));vertexWeights.push(null);shifts.push(0);radials.push(V(sd*.58,0,1).normalize());continue;}
      const tangent=frameCenters[Math.min(i+1,centers.length-1)].clone().sub(frameCenters[Math.max(0,i-1)]).normalize(),radial=V(sd*.58,0,1).normalize(),out=radial.clone();out.addScaledVector(tangent,-out.dot(tangent)).normalize();const across=out.clone().cross(tangent).normalize();
@@ -82,7 +82,7 @@ export function installSideflow7(T,rig){
     }
     const tipId=start+counts[ci]-1;P.setXYZ(tipId,...centers.at(-1).toArray());for(let k=0;k<4;k++){g.attributes.skinIndex.array[tipId*4+k]=g.attributes.skinIndex.array[(tipId-2)*4+k];g.attributes.skinWeight.array[tipId*4+k]=g.attributes.skinWeight.array[(tipId-2)*4+k];}changed.add(tipId);
     details.push({side:sd,layer:j,protectedArc:protect,protectedVertices:(protectIndex+1)*13+1,nativePalette:palette.map(b=>jointNames[b]),guide:[temple,cheek,jaw,shoulder,hangingEnd].map(p=>p.toArray()),tip:centers.at(-1).toArray(),targetMethod:j?'short layer hidden inside main at jaw':'main gravity-hanging actual front support',freeTarget:hangingEnd.toArray(),railTarget:end.p.toArray(),railSourceIds:end.ids,railSourceLerp:end.t,tipRailGapM:centers.at(-1).distanceTo(end.p),maxLateralShiftM:maxShift});
-    newClumps.push({...c,centers:centers.map(p=>p.toArray()),widths,depths,sideflow7:true,sourceCenters:c.centers,sourceTip:c.tip,tip:centers.at(-1).toArray(),sourceArcLength:c.centerArcLength,centerArcLength:centers.reduce((s,p,i)=>s+(i?p.distanceTo(centers[i-1]):0),0)});start+=counts[ci];
+    newClumps.push({...c,centers:centers.map(p=>p.toArray()),widths,depths,sideflow7:true,sourceCenters:c.centers,sourceTip:c.tip,tipY:centers.at(-1).y,tip:centers.at(-1).toArray(),sourceArcLength:c.centerArcLength,centerArcLength:centers.reduce((s,p,i)=>s+(i?p.distanceTo(centers[i-1]):0),0)});start+=counts[ci];
    }
    P.needsUpdate=true;g.attributes.skinIndex.needsUpdate=true;g.attributes.skinWeight.needsUpdate=true;g.computeVertexNormals();if(g.attributes.tangent)g.computeTangents();
    for(const n of ['normal','tangent'])if(g.attributes[n])for(let i=0;i<P.count;i++)if(!changed.has(i))for(let k=0;k<g.attributes[n].itemSize;k++)g.attributes[n].array[i*g.attributes[n].itemSize+k]=source.attributes[n].array[i*g.attributes[n].itemSize+k];
@@ -104,12 +104,12 @@ export function installSideflow7(T,rig){
    }
    const groups=g.groups.map((q,i)=>({...q,count:groupCounts[i]}));g.setIndex(keptIndex);g.clearGroups();let groupStart=0;for(const q of groups){g.addGroup(groupStart,q.count,q.materialIndex);groupStart+=q.count;}
    g.setDrawRange(0,Infinity);g.computeBoundingSphere();if(g.boundingBox)g.computeBoundingBox();
-   g.userData={...source.userData,forelockCorrection:{...meta,clumps:newClumps},sideflow7:{revision:"11 main9 retained, redundant short closed layers removed",method:'Two continuous main locks with original scalp roots, main9 smooth native fall and intact scalp/rear surface. No redundant short closed layers.',removedShortVertices:oldCount-keptCount,retainedVertices:keptCount,details}};
-   mesh.geometry=g;source.dispose();state.output=g;stats.fits++;stats.queries+=queries;stats.last={fitMs:performance.now()-begun,queries,parts:parts.map(m=>m.name),prefix,changedVertices:changed.size,details};
+   g.userData={...source.userData,forelockCorrection:{...meta,clumps:newClumps},sideflow7:{revision:"73 asymmetric front framing",method:'Two unequal tapered front locks retain exact scalp roots. Original scalp and entire rear surface, topology and garment fitting retained.',removedShortVertices:oldCount-keptCount,retainedVertices:keptCount,details}};
+   const previous=mesh.geometry;mesh.geometry=g;if(previous!==state.input)previous.dispose();state.output=g;stats.fits++;stats.queries+=queries;stats.last={fitMs:performance.now()-begun,queries,parts:parts.map(m=>m.name),prefix,changedFrontVertices:changed.size,finalVertices:g.attributes.position.count,details};
   }finally{for(const s of surfaces){s.surface.dispose();s.geo.dispose();}}
  }
- function update(){if(dead)return;stats.updates++;const result=oldUpdate?.call(rig);if(depth)return result;const mesh=rig.hair?.name==='hair-long'?rig.hair.children.find(m=>m.geometry?.userData.forelockCorrection&&m.geometry?.userData.crownFallJoin):null;if(!mesh){state=null;return result;}const parts=outer(),key=parts.map(m=>m.uuid+':'+m.geometry.uuid).join('|');if(!state||state.mesh!==mesh||mesh.geometry!==state.output||state.key!==key){state={mesh,key,output:null};fit(mesh,parts);}return result;}
+ function update(){if(dead)return;stats.updates++;const result=oldUpdate?.call(rig);if(depth)return result;const mesh=rig.hair?.name==='hair-long'?rig.hair.children.find(m=>m.geometry?.userData.forelockCorrection&&m.geometry?.userData.crownFallJoin):null;if(!mesh){state?.input.dispose();state=null;return result;}const parts=outer(),key=parts.map(m=>m.uuid+':'+m.geometry.uuid).join('|');if(!state||state.mesh!==mesh||mesh.geometry!==state.output){state?.input.dispose();state={mesh,input:mesh.geometry.clone(),key:null,output:null};}if(state.key!==key){fit(mesh,parts);state.key=key;}return result;}
  rig.setLook=(...args)=>{depth++;try{return oldLook.apply(rig,args);}finally{depth--;if(!depth)update();}};
  rig.setOutfit=(...args)=>{depth++;try{return oldOutfit.apply(rig,args);}finally{depth--;if(!depth)update();}};
- rig.updateHairMass=update;rig.updatePoseDetails=update;rig.sideflowEvidence=()=>({...stats,active:!!state,disposed:dead});rig.dispose=()=>{if(dead)return;dead=true;state=null;oldDispose.call(rig);};update();return rig;
+ rig.updateHairMass=update;rig.updatePoseDetails=update;rig.sideflowEvidence=()=>({...stats,active:!!state,disposed:dead});rig.dispose=()=>{if(dead)return;dead=true;state?.input.dispose();state=null;oldDispose.call(rig);};update();return rig;
 }
