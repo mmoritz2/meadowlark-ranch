@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from '../assets/roundup-rewards.mjs';
 
-const proof=(overrides={})=>createRoundupFinish({runId:'first-herd',mode:'beginner',penned:3,time:70,remaining:50,at:1000,...overrides});
+const proof=(overrides={})=>createRoundupFinish({runId:'first-herd',mode:'beginner',penned:3,time:70,remaining:80,at:1000,...overrides});
 function fixture(initial={}){
  let stored=JSON.stringify({coins:7,gems:2,keys:1,...initial}),failure=null,readsFail=false,failReads=0;
  const trace={attempts:0,writes:0,applies:0};
@@ -17,30 +17,30 @@ function fixture(initial={}){
  return {storage,trace,apply,get save(){return JSON.parse(stored);},get bytes(){return stored;},set failure(v){failure=v;},set readsFail(v){readsFail=v;},failReads(n){failReads=n;},finish(p=proof(),fn=apply){return saveRoundupFinish(storage,{proof:p},fn);}};
 }
 
-test('authored modes preserve existing full-herd payouts and clocks',()=>{
- assert.deepEqual(ROUNDUP_MODES,{beginner:{name:'Gentle Roundup',n:3,time:120},full:{name:'Full Herd',n:5,time:150}});
+test('gentle mode gains a learning margin while full mode and all payouts stay unchanged',()=>{
+ assert.deepEqual(ROUNDUP_MODES,{beginner:{name:'Gentle Roundup',n:3,time:150},full:{name:'Full Herd',n:5,time:150}});
  const easy=proof(),full=proof({mode:'full',penned:5,time:100,remaining:50});
- assert.deepEqual([easy.pay,easy.gems,easy.keys,easy.score,easy.medal],[540,1,0,1150,'gold']);
+ assert.deepEqual([easy.pay,easy.gems,easy.keys,easy.score,easy.medal],[540,1,0,1300,'gold']);
  assert.deepEqual([full.pay,full.gems,full.keys,full.score,full.medal],[900,2,1,1750,'silver']);
  assert(Object.isFrozen(easy));assert(Object.isFrozen(ROUNDUP_MODES.full));
  assert.throws(()=>{easy.penned=0;},TypeError);
 });
 
 test('expired partial and empty rounds earn only their real penned horses',()=>{
- const partial=proof({penned:2,time:120,remaining:0}),empty=proof({penned:0,time:120,remaining:0});
+ const partial=proof({penned:2,time:150,remaining:0}),empty=proof({penned:0,time:150,remaining:0});
  assert.deepEqual([partial.pay,partial.gems,partial.keys,partial.score,partial.medal],[260,0,0,600,'bronze']);
  assert.deepEqual([empty.pay,empty.gems,empty.keys,empty.score,empty.medal],[0,0,0,0,'none']);
 });
 
 test('unfinished, nonfinite, impossible and unknown result proofs are rejected',()=>{
- for(const changes of [{penned:2},{mode:'constructor'},{mode:'missing'},{runId:''},{runId:' '},{runId:'a'.repeat(161)},{penned:-1},{penned:4},{penned:2.5},{time:NaN},{time:Infinity},{time:-1},{time:121},{remaining:Infinity},{remaining:-1},{remaining:121},{time:40},{at:0},{at:NaN}])assert.equal(proof(changes),null,JSON.stringify(changes));
+ for(const changes of [{penned:2},{mode:'constructor'},{mode:'missing'},{runId:''},{runId:' '},{runId:'a'.repeat(161)},{penned:-1},{penned:4},{penned:2.5},{time:NaN},{time:Infinity},{time:-1},{time:151},{remaining:Infinity},{remaining:-1},{remaining:151},{time:40},{at:0},{at:NaN}])assert.equal(proof(changes),null,JSON.stringify(changes));
  assert.equal(createRoundupFinish(),null);
 });
 
 test('time quantization leaves exact medal boundary authoritative',()=>{
- const silver=proof({time:78.05,remaining:41.95}),gold=proof({time:77.95,remaining:42.05});
- assert.equal(silver.score,1110);assert.equal(gold.score,1110);assert.equal(silver.medal,'silver');assert.equal(gold.medal,'gold');
- const fractional=proof({time:77.95431,remaining:42.04569});assert.equal(fractional.time,77.95);assert.equal(fractional.remaining,42.04569);
+ const silver=proof({time:97.501,remaining:52.499}),gold=proof({time:97.499,remaining:52.501});
+ assert.equal(silver.time,97.5);assert.equal(gold.time,97.5);assert.equal(silver.score,1162);assert.equal(gold.score,1163);assert.equal(silver.medal,'silver');assert.equal(gold.medal,'gold');
+ const fractional=proof({time:97.49431,remaining:52.50569});assert.equal(fractional.time,97.49);assert.equal(fractional.remaining,52.50569);
  assert.equal(fixture().finish(fractional).ok,true,'rounded proof remains valid on retry');
 });
 
@@ -54,16 +54,17 @@ test('one write saves rewards, receipt and best records together without changin
  assert.deepEqual(out.saved,f.save);
 });
 
-test('better medal is stored even when rounded scores tie',()=>{
- const f=fixture();f.finish(proof({runId:'silver',time:78.05,remaining:41.95}));
- const out=f.finish(proof({runId:'gold',time:77.95,remaining:42.05,at:2000}));
+test('a legacy saved score tie cannot suppress a newly earned better medal',()=>{
+ // Older records store medal and best score independently; do not use score as a medal gate.
+ const f=fixture({roundupBest:{beginner:{plays:1,score:1163,penned:3,time:100,medal:'silver',lastRunId:'legacy'}}});
+ const out=f.finish(proof({runId:'gold',time:97.49,remaining:52.51,at:2000}));
  assert.equal(out.ok,true);assert.equal(out.result.newBestScore,false);assert.equal(out.result.newBestMedal,true);assert.equal(out.result.previousBestMedal,'silver');
- assert.equal(f.save.roundupBest.beginner.medal,'gold');assert.equal(f.save.roundupBest.beginner.score,1110);
+ assert.equal(f.save.roundupBest.beginner.medal,'gold');assert.equal(f.save.roundupBest.beginner.score,1163);
 });
 
 test('later partial results preserve the full-herd medal, fastest time and score',()=>{
  const f=fixture();f.finish();const best=f.save.roundupBest.beginner;
- const out=f.finish(proof({runId:'partial',penned:1,time:120,remaining:0,at:2000}));
+ const out=f.finish(proof({runId:'partial',penned:1,time:150,remaining:0,at:2000}));
  assert.equal(out.result.newBestMedal,false);assert.equal(out.result.newBestScore,false);assert.equal(out.result.newBestTime,false);
  assert.deepEqual({...f.save.roundupBest.beginner,plays:best.plays,lastRunId:best.lastRunId},best);
 });
@@ -97,7 +98,7 @@ test('old run receipts stay acknowledged after many later rounds',()=>{
 
 test('conflicting receipt identities reject payment rather than overwrite a completed run',()=>{
  const f=fixture();f.finish();const before=f.bytes;
- const other=proof({time:80,remaining:40});const out=f.finish(other);assert.equal(out.ok,false);assert.match(out.reason,/different saved result/);assert.equal(f.bytes,before);assert.equal(f.trace.applies,1);
+ const other=proof({time:80,remaining:70});const out=f.finish(other);assert.equal(out.ok,false);assert.match(out.reason,/different saved result/);assert.equal(f.bytes,before);assert.equal(f.trace.applies,1);
 });
 
 test('recomputed proof refuses mutated payout, count, medal and time fields',()=>{
@@ -127,4 +128,20 @@ test('malformed legacy records normalize without losing separate claimed data',(
 test('special run identifiers become own receipt keys without prototype mutation',()=>{
  const f=fixture();for(const runId of ['__proto__','constructor'])assert.equal(f.finish(proof({runId})).ok,true);
  const records=f.save.roundupRewards.receipts;assert(Object.hasOwn(records,'__proto__'));assert(Object.hasOwn(records,'constructor'));assert.equal(records.__proto__.runId,'__proto__');assert.equal({}.saved,undefined);
+});
+
+
+test('new budget preserves old 120-second bests, historical receipts and claimed progression',()=>{
+ const oldResult={runId:'legacy120',mode:'beginner',name:'Gentle Roundup',total:3,penned:3,time:75,remaining:45,at:500,score:1125,medal:'gold',pay:540,gems:1,keys:0,saved:true};
+ const oldBest={plays:4,score:1125,penned:3,time:75,medal:'gold',lastRunId:'legacy120',custom:'keep'};
+ const claimed={version:1,claimed:{'first-partners':{at:10},'steady-hands':{at:20}}};
+ const f=fixture({roundupBest:{beginner:oldBest},roundupRewards:{version:1,receipts:{legacy120:oldResult},lastResult:oldResult},riderJourney:claimed});
+ const before=structuredClone(f.save);assert.deepEqual(f.save.roundupRewards.lastResult,oldResult,'loading rules never regrades an old receipt');
+ const out=f.finish(proof({runId:'new150',time:113.11,remaining:36.89,at:2000}));
+ assert.equal(out.ok,true);assert.equal(out.result.medal,'silver');assert.equal(out.result.pay,540);assert.equal(out.result.gems,1);assert.equal(out.result.keys,0);
+ const best=f.save.roundupBest.beginner;assert.deepEqual(best,{...oldBest,plays:5,lastRunId:'new150'});
+ assert.equal(out.result.previousBestTime,75);assert.equal(out.result.previousBestMedal,'gold');assert.equal(out.result.newBestTime,false);assert.equal(out.result.newBestScore,false);assert.equal(out.result.newBestMedal,false);
+ assert.deepEqual(f.save.roundupRewards.receipts.legacy120,oldResult);assert.deepEqual(f.save.riderJourney,claimed);
+ assert.equal(f.save.coins-before.coins,540);assert.equal(f.save.gems-before.gems,1);assert.equal(f.trace.writes,1);
+ const durable=f.bytes;assert.equal(f.finish(proof({runId:'new150',time:113.11,remaining:36.89,at:2000})).ok,true);assert.equal(f.bytes,durable);assert.equal(f.trace.writes,1);
 });

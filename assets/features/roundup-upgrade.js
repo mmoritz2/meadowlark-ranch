@@ -1,14 +1,15 @@
-import {roundupPace,roundupNextAttempt} from '../roundup-presentation.mjs?v=roundup-finish-1';
+import {roundupPace,roundupNextAttempt} from '../roundup-presentation.mjs?v=gentle-herd-1';
 /* Repeatable herding: a readable pressure target, medal targets, saved results, and a reason to ride again.
    The inline roundup owns horse movement, pen crossings, and its one payout transaction. */
 export const id='roundup-upgrade';
 export function install(G){
  const round=G.roundup;if(!round)return;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let receipt=null,tick=0,timer=0;
+ let receipt=null,tick=0,timer=0,penNotice=null;
  const style=document.createElement('style');style.textContent=`
  #roundupGuide{position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:7;width:min(400px,calc(100vw - 440px));background:#193d34f2;color:#fff9e9;padding:14px 16px;border-radius:14px;box-shadow:0 8px 24px #193d3426;font-family:inherit;display:none;box-sizing:border-box}
  #roundupGuide .round-top{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px;font-size:12px;font-weight:750}#roundupGuide .round-main{font-size:22px;font-weight:850;margin:6px 0}#roundupGuide .round-hint{font-size:12px;line-height:1.5;color:#e5edcf}#roundupGuide .round-time{font-variant-numeric:tabular-nums;color:#efdba0}#roundupGuide button{border:1px solid #ffffff44;background:#ffffff15;color:white;padding:5px 8px;border-radius:7px;min-height:44px;font:inherit;font-size:11px;cursor:pointer}
+ #roundupGuide .round-target{font-size:13px;font-weight:800;color:#f3d885;margin:3px 0 5px}#roundupGuide[data-pressure="guiding"] .round-target{color:#b8e7a0}#roundupGuide[data-pressure="too close"] .round-target,#roundupGuide[data-pressure="blocked"] .round-target{color:#ffc596}#roundupGuide .round-note{font-size:12px;color:#c4e7b3;line-height:1.4;margin-top:6px}#roundupGuide .round-note:empty{display:none}
  #roundupGuide .round-pace{border-top:1px solid #ffffff28;margin-top:8px;padding-top:8px;font-size:11px;line-height:1.45;color:#f0dda7}#roundupGuide .round-pace small{display:block;color:#e5edcf;font-size:11px}#roundupGuide[data-pending="true"] .round-main{font-size:18px}.round-next{padding:14px 16px;border:1px solid #cad5ba;border-radius:12px;margin-top:14px;background:#fffdf7}.round-next strong{display:block}.round-next p{margin:5px 0 0;font-size:13px}.round-pending{background:#f2e5c8;border-color:#c7a768}.round-saved{font-size:12px;font-weight:750;color:#58794d;margin-top:12px}
  .roundup-active #roundHud,.roundup-active #rushQuick,.roundup-active #questTrack,.roundup-active #sgFocus{display:none!important}
  #roundupResultPanel{position:fixed!important;inset:0!important;max-width:none!important;max-height:none!important;width:100%!important;height:100%!important;transform:none!important;margin:0!important;padding:22px!important;background:radial-gradient(ellipse at top right,#d3e1c7,transparent 60%),#f7f2e6!important;border:0!important;border-radius:0!important;color:#234536!important;box-sizing:border-box;z-index:14!important;overflow:auto!important}
@@ -42,29 +43,34 @@ export function install(G){
   G.seFrame?.settle();
  });
  const hud=document.createElement('aside');hud.id='roundupGuide';hud.setAttribute('aria-label','Roundup progress and guidance');
- hud.innerHTML='<div class="round-top"><span class="round-name"></span><span class="round-time"></span><button type="button"></button></div><div class="round-main"></div><div class="round-hint"></div><div class="round-pace"><span></span><small></small></div>';
- const fields={name:hud.querySelector('.round-name'),time:hud.querySelector('.round-time'),button:hud.querySelector('button'),main:hud.querySelector('.round-main'),hint:hud.querySelector('.round-hint'),pace:hud.querySelector('.round-pace span'),detail:hud.querySelector('.round-pace small')};
+ hud.innerHTML='<div class="round-top"><span class="round-name"></span><span class="round-time"></span><button type="button"></button></div><div class="round-main"></div><div class="round-target"></div><div class="round-hint"></div><div class="round-note" role="status" aria-live="polite"></div><div class="round-pace"><span></span><small></small></div>';
+ const fields={name:hud.querySelector('.round-name'),time:hud.querySelector('.round-time'),button:hud.querySelector('button'),main:hud.querySelector('.round-main'),target:hud.querySelector('.round-target'),note:hud.querySelector('.round-note'),hint:hud.querySelector('.round-hint'),pace:hud.querySelector('.round-pace span'),detail:hud.querySelector('.round-pace small')};
  fields.button.onclick=()=>{const s=round.state();if(s.pending)showResult(s.pending);else round.cancel();};
  document.body.append(hud);
  const THREE=G.THREE,marker=new THREE.Mesh(new THREE.RingGeometry(.8,1.08,40),new THREE.MeshBasicMaterial({color:0xe3c977,transparent:true,opacity:.72,depthWrite:false,side:THREE.DoubleSide}));
  marker.name='Roundup pressure position';marker.rotation.x=-Math.PI/2;marker.visible=false;G.scene.add(marker);
+ const focus=new THREE.Mesh(new THREE.RingGeometry(1.3,1.42,40),new THREE.MeshBasicMaterial({color:0xe3c977,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide}));
+ focus.name='Horse to guide home';focus.rotation.x=-Math.PI/2;focus.visible=false;G.scene.add(focus);
  const mini={x:0,z:0,col:'#efcd72',r:3,hidden:()=>{const s=round.state();return !s.active||!s.target;}};G.world.miniMarkers.push(mini);
  const home=round.state().pen;G.world.miniMarkers.push({x:home.x,z:home.z,col:'#8bc67c',r:4,hidden:()=>!round.state().active});
  G.on('courseGate',()=>{if(round.state().active){G.toast(round.state().pending?'Save your roundup result before starting an event.':'Finish or leave your roundup before starting an event.');return true;}});
  G.on('emoteGate',()=>{if(round.state().active){G.toast('Bring the herd home first.');return true;}});
- G.on('roundupStart',()=>{clearTimeout(timer);receipt=null;G.hidePanels();G.seFrame?.settle();paint();});
- G.on('roundupCancel',()=>{clearTimeout(timer);paint();});
+ G.on('roundupStart',()=>{clearTimeout(timer);receipt=null;penNotice=null;G.hidePanels();G.seFrame?.settle();paint();});
+ G.on('roundupCancel',()=>{clearTimeout(timer);penNotice=null;paint();});
+ G.on('roundupPen',r=>{penNotice={text:r.name+' is home!',until:Date.now()+4500};paint();});
  function showResult(r){if(!r)return;receipt=r;clearTimeout(timer);paint();timer=setTimeout(()=>{const s=round.state();if(s.pending?.runId===r.runId||!s.active&&s.lastResult?.runId===r.runId){G.ui.open('roundupResultPanel');G.seFrame?.settle();}},0);}
  G.on('roundupSavePending',showResult);G.on('roundupFinish',showResult);
  function paint(){
-  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active&&!s.shared?'block':'none';hud.dataset.pending=String(pending);marker.visible=!!(s.active&&!pending&&s.target&&!s.target.approachBlocked);if(!s.active)return;
+  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active&&!s.shared?'block':'none';hud.dataset.pending=String(pending);hud.dataset.pressure=s.target?.pressure||'';marker.visible=!!(s.active&&!s.shared&&!pending&&s.target&&!s.target.approachBlocked);focus.visible=!!(s.active&&!s.shared&&!pending&&s.target);if(!s.active)return;
   const t=s.target;
-  if(t){if(!t.approachBlocked){marker.position.set(t.standX,G.world.groundH(t.standX,t.standZ)+.065,t.standZ);marker.material.color.set(t.pressure==='guiding'?0xa5d987:0xe3c977);}mini.x=t.x;mini.z=t.z;}
+  if(t){const color=t.pressure==='guiding'?0xa5d987:['too close','blocked'].includes(t.pressure)?0xf0a975:0xe3c977;if(!t.approachBlocked){marker.position.set(t.standX,G.world.groundH(t.standX,t.standZ)+.065,t.standZ);marker.material.color.set(color);}focus.position.set(t.x,G.world.groundH(t.x,t.z)+.07,t.z);focus.material.color.set(color);mini.x=t.x;mini.z=t.z;}
   const pace=roundupPace(s);
-  let hint=s.countdown>0?`Starting in ${Math.ceil(s.countdown)} — the gold ring shows where to ride.`:t?.pressure==='guiding'?`Good angle. Walk behind ${t.name} toward the green pen.`:t?.pressure==='too close'?`Give ${t.name} a little room. Circle around to the gold ring.`:`Ride to the gold ring behind ${t?.name||'a loose horse'}, then ease toward the pen.`;
+  const gentle=s.mode==='beginner',horseName=t?.name||'the next horse';
+  const target=pending?'':t?`${gentle?'Guide':'Follow'} ${horseName}${gentle?' first':''} · ${{'guiding':'good spacing','too close':'give more room','turning':'turning','blocked':'path blocked'}[t.pressure]||'circle behind'}`:'';
+  let hint=s.countdown>0?`Starting in ${Math.ceil(s.countdown)}. ${gentle?'Bring them home one at a time. ':''}Ride to the gold ring.`:t?.pressure==='guiding'?`${gentle?'Stay in a walk':'Keep pace'} behind ${horseName} toward the green pen.`:t?.pressure==='too close'?`Ease back. ${horseName} needs more room. The gold ring shows a calmer distance.`:t?.pressure==='turning'?`Good position. Give ${horseName} time to turn toward the pen.`:t?.pressure==='blocked'?`Give ${horseName} room to turn around the obstacle.`:`Circle to the gold ring behind ${horseName}, then ${gentle?'walk':'ride'} forward.`;
   if(t?.approachBlocked&&s.countdown<=0)hint=`Circle around ${t.name} to find a clear approach. The direct route is blocked.`;
   if(pending)hint='Your result is held. Keep this tab open and retry saving.';
-  const values={name:s.name,time:pending?'Paused':Math.ceil(s.timeLeft)+'s',button:pending?'Result':'Leave',main:`${s.penned} of ${s.total} home`,hint,pace:pace.label,detail:pace.detail};
+  const values={name:s.name,time:pending?'Paused':Math.ceil(s.timeLeft)+'s',button:pending?'Result':'Leave',main:`${s.penned} of ${s.total} home`,target,note:!pending&&penNotice&&Date.now()<penNotice.until?penNotice.text:'',hint,pace:pace.label,detail:pace.detail};
   // Keep the focused/touched control alive as the countdown and hints update.
   for(const [key,value] of Object.entries(values))if(fields[key].textContent!==value)fields[key].textContent=value;
   fields.button.setAttribute('aria-label',pending?'View pending roundup result':'Leave roundup');

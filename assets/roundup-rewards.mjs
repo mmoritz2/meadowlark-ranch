@@ -1,7 +1,7 @@
 // A finished herd keeps one immutable proof until its reward receipt is durable.
 // The controller owns crossings/time; this module owns records and retry identity.
 export const ROUNDUP_MODES=Object.freeze({
- beginner:Object.freeze({name:'Gentle Roundup',n:3,time:120}),
+ beginner:Object.freeze({name:'Gentle Roundup',n:3,time:150}),
  full:Object.freeze({name:'Full Herd',n:5,time:150}),
 });
 const object=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:null;

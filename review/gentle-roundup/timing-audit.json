@@ -1,0 +1,111 @@
+{
+  "sourceFile": "/private/tmp/roundup-walk-playtest.json",
+  "sourceSha256": "56889cc668d15c20df797e31849a9749105e549f4bc98fd262ddda47bcd64c40",
+  "runId": "mv2p0akf-dgdmkn",
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "actual": {
+    "penned": 3,
+    "total": 3,
+    "seconds": 113.10810000002357,
+    "medal": "silver",
+    "timeLimitS": 120,
+    "goldLimitS": 78,
+    "remainingS": 6.891899999976431,
+    "pressureSecondsFromOneSecondSamples": {
+      "out of range": 37.486900000095346,
+      "guiding": 74.49089999997591,
+      "turning": 1.1302999999523138
+    },
+    "perHorse": {
+      "Juniper": {
+        "startElapsedS": 0,
+        "durationS": 28.876100000023843,
+        "statusesS": {
+          "out of range": 6.019800000071523,
+          "guiding": 22.85629999995232
+        },
+        "guidingDistancesM": {
+          "median": 10.017391618852594,
+          "min": 9.752826414561708,
+          "max": 11.604910835909699
+        },
+        "guidingSpeedsMps": {
+          "median": 1.455793639399358,
+          "min": 1.2171286442456193,
+          "max": 1.5566000304386107
+        }
+      },
+      "Maple": {
+        "startElapsedS": 28.876100000023843,
+        "durationS": 36.661500000119275,
+        "statusesS": {
+          "out of range": 13.63360000014308,
+          "turning": 1.1302999999523138,
+          "guiding": 21.89760000002388
+        },
+        "guidingDistancesM": {
+          "median": 11.014515299332924,
+          "min": 9.846877204176453,
+          "max": 11.718017739375979
+        },
+        "guidingSpeedsMps": {
+          "median": 1.3121464244322678,
+          "min": 1.2092434641124565,
+          "max": 1.493211496670201
+        }
+      },
+      "Pepper": {
+        "startElapsedS": 65.53760000014312,
+        "durationS": 47.570499999880454,
+        "statusesS": {
+          "out of range": 17.833499999880743,
+          "guiding": 29.73699999999971
+        },
+        "guidingDistancesM": {
+          "median": 10.029392278159259,
+          "min": 9.73782671854558,
+          "max": 11.718240082576747
+        },
+        "guidingSpeedsMps": {
+          "median": 1.4515769762922281,
+          "min": 1.2098115834136567,
+          "max": 1.511407910301594
+        }
+      }
+    },
+    "browserErrors": [],
+    "featureErrors": []
+  },
+  "proposal": {
+    "beginnerTimeLimitS": 150,
+    "beginnerGoldLimitS": 97.5,
+    "fullTimeLimitS": 150,
+    "marginOnThisRideS": 36.89189999997643,
+    "improvementToProposedGoldS": 15.608100000023569,
+    "improvementToPreviousGoldS": 35.10810000002357
+  },
+  "estimates": {
+    "guidedDistanceMFromSampledSpeed": 103.665115825958,
+    "approachAndTurningS": 38.61720000004766,
+    "samePathAndTransfersAtMeanGuideSpeed": [
+      {
+        "speedMps": 1.8,
+        "estimatedSeconds": 96.20893101446876
+      },
+      {
+        "speedMps": 1.9,
+        "estimatedSeconds": 93.17778727686766
+      },
+      {
+        "speedMps": 2.1,
+        "estimatedSeconds": 87.98154086955147
+      }
+    ]
+  },
+  "limitations": [
+    "One successful physical ride, not a population or worst-case benchmark.",
+    "Status durations and guided distance are estimates from one-second samples.",
+    "Projections hold path and transfer durations constant and do not simulate collision/steering feedback.",
+    "No physical gold completion is claimed;97.5-second target still needs skilled riding verification."
+  ]
+}

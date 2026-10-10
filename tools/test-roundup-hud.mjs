@@ -45,8 +45,8 @@ function fixture(){
   on(name,fn){const list=hooks.get(name)||[];list.push(fn);hooks.set(name,list);},run(name,...args){for(const fn of hooks.get(name)||[])fn(...args);},toast(){},
   hidePanels(){for(const id of panels.keys())document.getElementById(id).style.display='none';},
   ui:{panel(def){panels.set(def.id,def);const n=document.createElement('div');n.id=def.id;n.style.display='none';document.body.append(n);},action:(name,fn)=>actions.set(name,fn),open(id){G.hidePanels();const p=document.getElementById(id);p.innerHTML=panels.get(id).render();p.style.display='flex';trace.opens.push(id);}},
-  seFrame:{screens:new Set(),settle(){}},scene:{add(marker){trace.marker=marker;}},world:{miniMarkers:[],groundH:()=>0},
-  THREE:{RingGeometry:class{},MeshBasicMaterial:class{constructor(){this.color={set(){}};}},Mesh:class{constructor(_g,material){this.material=material;this.position={set(){}};this.rotation={};}}}};
+  seFrame:{screens:new Set(),settle(){}},scene:{add(marker){if(marker.name==='Roundup pressure position')trace.marker=marker;else if(marker.name==='Horse to guide home')trace.focus=marker;}},world:{miniMarkers:[],groundH:()=>0},
+  THREE:{RingGeometry:class{},MeshBasicMaterial:class{constructor(){this.color={value:null,set(value){this.value=value;}};}},Mesh:class{constructor(_g,material){this.material=material;this.position={set(){}};this.rotation={};}}}};
  const install=Function('document','MutationObserver','roundupPace','roundupNextAttempt','setTimeout','clearTimeout',source+'\nreturn install;')(
   document,class{observe(){}},roundupPace,roundupNextAttempt,fn=>{timers.set(++nextTimer,fn);return nextTimer;},id=>timers.delete(id));
  install(G);const hud=document.getElementById('roundupGuide');
@@ -59,7 +59,7 @@ test('elapsed and pressure updates preserve the focused HUD button and refresh r
  for(let i=0;i<8;i++){f.state.elapsed+=.15;f.state.timeLeft-=.15;f.state.target.pressure=i%2?'guiding':'too close';f.state.target.name=i%2?'Maple':'Juniper';f.paint();
   assert.equal(f.hud.querySelector('button'),button,'the live paint must retain its actual actionable node');assert.equal(f.document.activeElement,button);assert.equal(button.isConnected,true);
  }
- assert.notEqual(f.hud.textContent,before);assert.match(f.hud.textContent,/Maple/);assert.match(f.hud.textContent,/Good angle/);assert.equal(button.textContent,'Leave');assert.equal(button.getAttribute('aria-label'),'Leave roundup');
+ assert.notEqual(f.hud.textContent,before);assert.match(f.hud.textContent,/Maple/);assert.match(f.hud.textContent,/Guide Maple first · good spacing/);assert.match(f.hud.textContent,/Stay in a walk/);assert.equal(button.textContent,'Leave');assert.equal(button.getAttribute('aria-label'),'Leave roundup');
  button.click();assert.equal(f.trace.cancels,1);
 });
 
@@ -83,4 +83,15 @@ test('a blocked approach hides the pressure ring and explains how to circle for 
  assert.equal(f.trace.marker.visible,false);assert.match(f.hud.querySelector('.round-hint').textContent,/Circle around Juniper/);
  assert.doesNotMatch(f.hud.querySelector('.round-hint').textContent,/gold ring/);
  f.state.target.approachBlocked=false;f.state.target.standX=-90;f.state.target.standZ=2;f.paint();assert.equal(f.trace.marker.visible,true);
+});
+
+
+test('pressure cue and both rings agree while beginner handoff stays explicit',()=>{
+ const f=fixture();assert.match(f.hud.querySelector('.round-target').textContent,/Guide Juniper first/);assert.equal(f.trace.focus.visible,true);
+ f.state.target.pressure='too close';f.paint();assert.match(f.hud.querySelector('.round-hint').textContent,/Ease back/);assert.doesNotMatch(f.hud.textContent,/good spacing/);assert.equal(f.trace.marker.material.color.value,0xf0a975);assert.equal(f.trace.focus.material.color.value,0xf0a975);
+ f.state.target.pressure='guiding';f.paint();assert.equal(f.trace.focus.material.color.value,0xa5d987);assert.match(f.hud.querySelector('.round-hint').textContent,/Stay in a walk/);
+ f.state.target.name='Maple';f.state.target.pressure='circle behind';f.state.penned=1;f.G.run('roundupPen',{name:'Juniper'});assert.match(f.hud.querySelector('.round-target').textContent,/Guide Maple first/);assert.equal(f.hud.querySelector('.round-note').textContent,'Juniper is home!');
+ f.state.mode='full';f.state.target.pressure='guiding';f.paint();assert.match(f.hud.querySelector('.round-hint').textContent,/Keep pace/);assert.doesNotMatch(f.hud.querySelector('.round-target').textContent,/first/);
+ f.state.shared={sessionId:'club'};f.paint();assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,false);assert.equal(f.hud.style.display,'none');
+ f.state.shared=null;f.state.active=false;f.paint();assert.equal(f.trace.focus.visible,false);assert.equal(f.trace.marker.visible,false);
 });
