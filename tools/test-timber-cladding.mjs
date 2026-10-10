@@ -56,8 +56,8 @@ test('PBR channels share strip coordinates while existing sampler count and tang
 test('architecture keeps real recessed windows, mounted entrances and its existing batch budget',()=>{
  const a=createRanchArchitecture({THREE,loadTextures:false});
  const barn=a.buildBarn();barn.updateMatrixWorld(true);
- assert.equal(barn.userData.architecture.triangles,5104);assert.equal(barn.userData.architecture.drawCalls,12);
- const glass=new T.Raycaster(new T.Vector3(2.45,2.38,8),new T.Vector3(0,0,-1)).intersectObject(barn,true)[0];assert.equal(glass.object.material.name,'Ranch | window glass');assert(glass.point.z<2.71);
+ assert(barn.userData.architecture.triangles<=5104);assert.equal(barn.userData.architecture.drawCalls,12);
+ const glass=new T.Raycaster(new T.Vector3(8,2.25,-.40),new T.Vector3(-1,0,0)).intersectObject(barn,true)[0];assert.equal(glass.object.material.name,'Ranch | window glass');assert(glass.point.x<3.49);
  const shop=a.buildOutbuilding({exterior:'village',animatedDoorOpening:{width:2.3,height:2.7}});shop.updateMatrixWorld(true);
  const world=createSolidWorld({THREE});world.register(shop);const body={bottom:.38,top:2.65,radius:.55};
  for(let z=3.8;z>1;z-=.12)assert.equal(world.resolve({x:0,z},body),0);

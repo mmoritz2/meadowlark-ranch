@@ -23,10 +23,10 @@ import {installVillageEvergreens} from './village-planting.js?v=village-gardens-
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
-import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-ridges-1';
+import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=world-cohesion-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=world-cohesion-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';

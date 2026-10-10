@@ -1,6 +1,7 @@
+import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=world-cohesion-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-ridges-1';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=world-cohesion-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its
@@ -131,19 +132,20 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE;
-  material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE+'-'+HOLLOWPEAK_SNOW_PROFILE;
+  material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0],hollowSnow:[-1]};
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
   material.userData.soilSurface=soilSurface;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
-    sh.vertexShader = 'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
+    sh.vertexShader = 'attribute float hollowSnow; varying float terrainHollowSnow; attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
     sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      terrainHollowSnow = hollowSnow;
       terrainChalkRelief = chalkRelief;
       terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;
       terrainNormal = normalize(mat3(modelMatrix) * normal);`);
-    sh.fragmentShader = `varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
+    sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+`varying float terrainHollowSnow; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
       uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
       uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
       uniform sampler2D meadowDetail, stoneDetail, litterDetail;
@@ -311,6 +313,14 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         thawLitter=snowRegion*(1.0-winterCore)*(1.0-smoothstep(.58,.90,grade));
       #endif
       float snow=snowRegion*(1.0-smoothstep(.20,.58,grade))*lie;
+      #ifndef OUTER_LANDSCAPE
+        // HOLLOWPEAK_SNOW_DEPOSITS_V1: shared actual-terrain deposits, not a
+        // low-slope contour. Scoured flats retain cold litter instead of turf.
+        float hollowWeight=hollowpeakSnowWeight(p)*step(0.0,terrainHollowSnow);
+        float hollowDeposit=clamp(terrainHollowSnow,0.0,1.0);
+        snow=mix(snow,hollowDeposit,hollowWeight);
+        thawLitter=max(thawLitter,snowRegion*hollowWeight*(1.0-hollowDeposit));
+      #endif
       float amber  = 1.0-smoothstep(86.0,132.0, length(p-vec2( 300.0,-300.0))+ecoA);
       float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);
       float tundra = 1.0-smoothstep(80.0,128.0, length(p-vec2(-300.0,-320.0))+ecoB*0.85+ecoA*0.40);

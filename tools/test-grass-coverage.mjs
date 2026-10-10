@@ -4,12 +4,12 @@ import {readFileSync} from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createGrassTuftGeometry,createMeadowDistance} from '../assets/meadow-cover.js';
 
-for(const blades of [4,6,8])test(`${blades*2} middle leaves cover gaps within the retained triangle tier`,()=>{
+for(const blades of [4,6,8])test(`${blades} middle leaves cover gaps within the retained triangle tier`,()=>{
  const g=createGrassTuftGeometry(T,{bladeCount:blades,segments:2,profile:'middle-natural-v1'}),p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,c=g.attributes.color;
  try{
-  assert.equal(g.index.count/3,blades*3);assert.equal(p.count,blades*7);
-  const leaves=g.userData.middleCover.leafRanges;assert.equal(leaves.length,blades*2);
-  assert.equal(leaves.filter(l=>l.bent).length,blades/2);
+  assert.equal(g.index.count/3,blades*3);assert.equal(p.count,blades*5);
+  const leaves=g.userData.middleCover.leafRanges;assert.equal(leaves.length,blades);
+  assert.equal(leaves.filter(l=>l.bent).length,blades);
   for(const a of Object.values(g.attributes)){assert.equal(a.count,p.count);assert(Array.from(a.array).every(Number.isFinite));}
   let projected=0,minDot=1,maxRadius=0;
   for(let i=0;i<p.count;i++){maxRadius=Math.max(maxRadius,Math.hypot(p.getX(i),p.getZ(i)));assert(Math.abs(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))-1)<1e-6);}
@@ -19,12 +19,12 @@ for(const blades of [4,6,8])test(`${blades*2} middle leaves cover gaps within th
    projected+=Math.abs(f.y)*.5;f.normalize();for(const j of ids)minDot=Math.min(minDot,f.dot(new T.Vector3().fromBufferAttribute(n,j)));
   }
   assert(minDot>0,'No vertex normal points through its actual leaf surface');
-  assert(projected>blades*.013&&projected<blades*.017,'Long slender leaves supply real horizontal cover within a bounded footprint');
-  assert(maxRadius<=.60&&maxRadius>.50);assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y>=.45&&g.boundingBox.max.y<=.65);
+  assert(projected>blades*.013&&projected<blades*.020,'Long slender leaves supply real horizontal cover within a bounded footprint');
+  assert(maxRadius<=.60&&maxRadius>.40);assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y>=.85&&g.boundingBox.max.y<=1.15);
   for(const {vertexStart:s,vertexCount:count} of leaves){
    const tip=s+count-1;assert.equal(p.getY(s),0);assert.equal(p.getY(s+1),0);
-   assert(Math.hypot(p.getX(s),p.getZ(s))<.07&&Math.hypot(p.getX(s+1),p.getZ(s+1))<.07,'Every root stays beside the unchanged parent root');
-   const width=new T.Vector3().fromBufferAttribute(p,s).distanceTo(new T.Vector3().fromBufferAttribute(p,s+1));assert(width>=.026&&width<=.037);
+   assert(Math.hypot(p.getX(s),p.getZ(s))<.15&&Math.hypot(p.getX(s+1),p.getZ(s+1))<.15,'Every root stays beside the unchanged parent root');
+   const width=new T.Vector3().fromBufferAttribute(p,s).distanceTo(new T.Vector3().fromBufferAttribute(p,s+1));assert(width>=.04&&width<=.06);
    assert.equal(uv.getY(s),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(tip)>0);assert(c.getY(s)<.30&&c.getY(tip)>.90);
   }
  }finally{g.dispose();}

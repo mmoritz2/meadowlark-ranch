@@ -1,4 +1,4 @@
-import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
+import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=world-cohesion-1';
 
 // A short turf stand uses the same seventy triangles as an existing rich root.
 // Only the already-counted rich rows inside grazed ground can use this shape.

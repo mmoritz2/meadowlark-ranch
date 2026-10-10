@@ -1,3 +1,4 @@
+import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=world-cohesion-1';
 import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=hollowpeak-ridges-1';
 // Hollowpeak's watercourse is cut into the same height field used by the horses.
 // Original landforms; the cliff material is Poly Haven / Amal Kumar, CC0.
@@ -162,7 +163,7 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
   const relief=fallsRelief(x,z),wet=fallsContainsWater(x,z,2);
   const curvature=y-(heightAt(x+6,z)+heightAt(x-6,z)+heightAt(x,z+6)+heightAt(x,z-6))*.25;
   const surface=hollowpeakRockSurface({slope,curvature,relief,wet});
-  p.push(x,y+.012,z);uv.push(x/6.8,z/6.8);cover.push(surface.cover);weather.push(surface.weather);
+  p.push(x,y+.012,z);uv.push(x/6.8,z/6.8);cover.push(hollowpeakSnowRockCover({...surface,relief,curvature,wet},hollowpeakSnowAt(x,z,heightAt),hollowpeakSnowWeight(x,z)));weather.push(surface.weather);
   const shade=wet?.61:1;colors.push(shade,shade,shade);
  }
  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const a=iz*(nx+1)+ix,b=a+nx+1,d=a+1,c=b+1;if(Math.max(cover[a],cover[b],cover[c],cover[d])>.001)idx.push(a,b,d,d,b,c);}

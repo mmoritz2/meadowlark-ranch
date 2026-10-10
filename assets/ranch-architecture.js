@@ -320,20 +320,96 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     for(const xx of[x-.084,x+.084])b.box(.021,.24,.022,metal,xx,y,z+.143);
   }
   function buildBarn() {
-    const b=new Builder('Meadowlark timber barn'),w=7,d=5.5,h=4.2,ridge=6.05;
+    // Original three-bay stable: the roof retains the reserved footprint while
+    // the front wall moves back to make a real, collision-clear sheltered apron.
+    // All resources are resident; late construction does not affect world seeding.
+    const b=new Builder('Meadowlark timber stable'),w=7,d=5.5,h=3.62,ridge=5.35;
+    const recess=1.10,front=d/2-recess,postZ=d/2-.055;
     foundation(b,w,d);
-    shellWall(b,w,h,face(0,d/2,0),[
-      {type:'door',x:0,y:1.49,w:1.9,h:2.66,double:true},
-      ...[-2.32,2.32].map(x=>({x,y:2.23,w:1.10,h:1.13}))]);
-    shellWall(b,w,h,face(0,-d/2,Math.PI),[-2.2,0,2.2].map(x=>({x,y:2.15,w:1.1,h:1.1})));
-    for(const s of[-1,1]) {
-      const f=face(s*w/2,0,s*Math.PI/2);
-      shellWall(b,d,h,f,[-1.45,1.45].map(x=>({x,y:2.1,w:1.07,h:1.13})));
-      gable(b,d,h,ridge,f);
+    const stableWindow=(o,f)=>{
+      const {x,y,w,h}=o;
+      b.box(w-.02,h-.02,.018,dark,x,y,-.105,null,f);
+      b.box(w-.10,h-.10,.014,lit,x,y,-.09,null,f);
+      for(const side of[-1,1]) {
+        b.box(.075,h+.12,.17,trim,x+side*(w/2+.005),y,.02,null,f);
+        b.box(w+.12,.075,.17,trim,x,y+side*(h/2+.018),.02,null,f);
+      }
+      // A closed lower timber hatch and deep, barred upper opening replace the
+      // domestic cross casement. The opening has actual wall jamb thickness.
+      const hatch=.50;
+      b.box(w-.10,hatch,.075,wood,x,y-h/2+hatch/2+.035,.018,null,f);
+      for(const dy of[.085,hatch-.035])b.box(w-.17,.067,.045,wood,x,y-h/2+dy,.077,null,f);
+      const bars=7,barH=h-hatch-.10;
+      for(let k=1;k<=bars;k++)b.box(.018,barH,.027,metal,x-w/2+k*w/(bars+1),y+h/2-barH/2-.045,-.012,null,f);
+      b.box(w-.10,.027,.035,metal,x,y-h/2+hatch+.045,-.01,null,f);
+      for(const side of[-1,1])for(const dy of[.10,.42])
+        b.box(.23,.027,.021,metal,x+side*(w/2-.19),y-h/2+dy,.105,null,f);
+      b.box(w+.20,.085,.31,stoneLight,x,y-h/2-.055,.07,null,f);
+    };
+    const frontFrame=face(0,front,0),windows=[-2.30,2.30].map(x=>({x,y:2.03,w:1.60,h:1.26}));
+    // shellWall handles only the centre door here. Explicit side rectangles
+    // leave the stable windows open without adding obsolete casements/proxies.
+    const doorOpening={type:'door',x:0,y:1.49,w:1.9,h:2.66,double:true};
+    const openings=[doorOpening,...windows],xs=[-w/2,w/2,...openings.flatMap(o=>[o.x-o.w/2,o.x+o.w/2])].sort((a,b)=>a-b);
+    for(let i=0;i<xs.length-1;i++){
+      const left=xs[i],right=xs[i+1],mid=(left+right)/2;
+      const opening=openings.find(o=>mid>o.x-o.w/2&&mid<o.x+o.w/2);
+      const ranges=opening?[[.16,opening.y-opening.h/2],[opening.y+opening.h/2,h]]:[[.16,h]];
+      for(const [lo,hi]of ranges){
+        if(hi-lo<.005)continue;
+        b.box(right-left,hi-lo,.18,siding,mid,(lo+hi)/2,0,null,frontFrame);
+        for(let x=Math.ceil(left/.30)*.30;x<right-.025;x+=.30)
+          if(x>left+.025)b.box(.038,hi-lo,.029,siding,x,(lo+hi)/2,.102,null,frontFrame);
+      }
     }
-    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge);
-    for(const x of[-1.4,1.4])lantern(b,x,2.60,d/2+.18);
-    return b.finish({kind:'barn',width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:9});
+    door(b,doorOpening,frontFrame);
+    for(const o of windows)stableWindow(o,frontFrame);
+    shellWall(b,w,h,face(0,-d/2,Math.PI),[-2.05,2.05].map(x=>({x,y:2.12,w:1.25,h:1.04})));
+    for(const side of[-1,1]) {
+      const f=face(side*w/2,-recess/2,side*Math.PI/2);
+      shellWall(b,d-recess,h,f,[{x:0,y:2.10,w:1.55,h:1.06}]);
+      gable(b,d,h,ridge,face(side*w/2,0,side*Math.PI/2),siding,false);
+      for(const z of[-d/2,front]){
+        b.box(.145,h-.15,.145,trim,side*(w/2+.012),(h+.15)/2,z);
+        b.box(.19,.09,.19,stoneLight,side*(w/2+.012),.225,z);
+      }
+    }
+    roofAssembly(b,w,d,h,ridge);
+    // The open front has three broad bays; diagonal braces stay above a rider.
+    const postTop=3.49;
+    b.box(w-.12,.20,.19,wood,0,postTop,postZ);
+    for(const x of[-3.34,-1.12,1.12,3.34]){
+      b.box(.18,postTop-.19,.18,wood,x,(postTop+.19)/2,postZ);
+      b.box(.235,.14,.235,stoneLight,x,.25,postZ);
+      for(const side of[-1,1])if(Math.abs(x+side*.39)<3.46)
+        b.beam([x,3.02,postZ],[x+side*.39,3.45,postZ],.075,.095,wood);
+    }
+    // Short open rafters visibly tie the inset wall to the sheltered eave.
+    for(const x of[-3.34,-1.12,1.12,3.34])
+      b.beam([x,h-.04,front],[x,3.48,postZ],.10,.12,wood);
+    for(const x of[-1.31,1.31])lantern(b,x,2.65,front+.16);
+    // Low louvred ridge ventilator, seated through the roof, rather than a tower.
+    const ventW=1.52,ventD=.72,ventBottom=ridge-.15,ventTop=ridge+.39;
+    b.box(ventW,.07,ventD,metal,0,ventBottom,0);
+    for(const side of[-1,1]){
+      b.box(ventW-.10,.43,.025,dark,0,ridge+.10,side*ventD/2);
+      for(let row=0;row<4;row++)b.box(ventW-.07,.055,.075,wood,0,ridge-.07+row*.115,side*(ventD/2+.012),new THREE.Euler(side*.28,0,0));
+      b.box(.025,.43,ventD-.10,dark,side*ventW/2,ridge+.10,0);
+      for(let row=0;row<4;row++)b.box(.075,.055,ventD-.07,wood,side*(ventW/2+.012),ridge-.07+row*.115,0,new THREE.Euler(0,0,-side*.28));
+      for(const z of[-1,1])b.box(.075,.54,.075,trim,side*ventW/2,ridge+.10,z*ventD/2);
+    }
+    const capRise=.14,capHalf=ventD/2+.12,capPitch=Math.atan2(capRise,capHalf);
+    for(const side of[-1,1]){
+      b.box(ventW+.25,.065,capHalf/Math.cos(capPitch),roof,0,ventTop+capRise/2,side*capHalf/2,new THREE.Euler(side*capPitch,0,0));
+      b.box(ventW+.27,.07,.07,trim,0,ventTop,side*capHalf);
+    }
+    b.box(ventW+.27,.065,.12,metal,0,ventTop+capRise+.018,0);
+    // This model replaces eight old parts (32 Three UUID RNG draws). Preserve
+    // the historic seeded stream used by later decorative tree scale choices.
+    for(let draw=0;draw<32;draw++)Math.random();
+    return b.finish({kind:'barn',width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:6,
+      porch:{frontZ:postZ,wallZ:front,depth:recess,postX:[-3.34,-1.12,1.12,3.34]},
+      door:{x:0,z:front,width:1.9,height:2.66},ventilator:true});
   }
   function stoneSkirt(b,w,d,doorWidth=1.25) {
     // Individually coursed plinth and corner quoins, leaving the doorway clear.

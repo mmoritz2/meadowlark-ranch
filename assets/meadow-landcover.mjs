@@ -1,4 +1,4 @@
-import {meadowGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=world-cohesion-1';
 
 // Canvas rows increase with world Z. The terrain sampler already supplies the
 // corresponding texture Y flip; flipping here as well would mirror the fields.

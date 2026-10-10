@@ -1,46 +1,14 @@
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=world-cohesion-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=world-cohesion-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
-// A middle-distance stand keeps the near layer's spread with more, simpler
-// leaves. Its existing 12/18/24-triangle tiers now describe 8/12/16 rooted
-// blades; no instance, ecology or root-placement budget changes.
+// Middle-distance long blades match the nearby upright stand. Four/six/eight
+// three-triangle ribbons preserve the existing 12/18/24-triangle tier budgets.
 function createMiddleCoverGeometry(THREE,bladeCount) {
-  const P=[],C=[],U=[],I=[],leafRanges=[];
-  const bentCount=bladeCount/2,total=bladeCount*2;
-  for(let leaf=0;leaf<total;leaf++) {
-    const bent=leaf<bentCount,a=leaf*2.39996+.17*Math.sin(leaf*1.7);
-    const ca=Math.cos(a),sa=Math.sin(a),sx=-sa,sz=ca;
-    const spread=.012+(leaf%5)*.013,ox=ca*spread,oz=sa*spread;
-    const half=.0135+(leaf%4)*.0015;
-    const lean=bent?.36+(leaf%3)*.058:.40+(leaf%5)*.029;
-    const height=bent?.44+(leaf%4)*.048:.18+(leaf%5)*.033;
-    const base=P.length/3;
-    const points=[[-sx*half,0,-sz*half],[sx*half,0,sz*half]];
-    if(bent) {
-      const reach=lean*.48,shoulderHalf=half*.83;
-      points.push([ca*reach-sx*shoulderHalf,height,sa*reach-sz*shoulderHalf],
-        [ca*reach+sx*shoulderHalf,height,sa*reach+sz*shoulderHalf]);
-    }
-    points.push([ca*lean,bent?height*(leaf%3===0?1.06:.90):height,sa*lean]);
-    for(let j=0;j<points.length;j++) {
-      const t=j<2?0:j===points.length-1?1:.62;
-      const side=j===points.length-1?0:j%2===0?-1:1;
-      const [x,y,z]=points[j];P.push(ox+x,y,oz+z);
-      const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72),dry=leaf%11===0;
-      C.push(shade*(dry?1.02:.90),shade*(dry?.96:1),shade*(dry?.57:.73));U.push((side+1)/2,t);
-    }
-    for(const k of bent?[0,1,2,1,3,2,2,3,4]:[0,1,2])I.push(base+k);
-    leafRanges.push({vertexStart:base,vertexCount:points.length,bent});
-  }
-  const g=new THREE.BufferGeometry();
-  g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
-  g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));g.setIndex(I);
-  g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();
-  g.userData.middleCover={profile:'middle-cover-1',leaves:total,leafRanges};return g;
+ return createLushMeadowGeometry(THREE,{leafCount:bladeCount,segments:2,profile:'middle'});
 }
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
@@ -48,6 +16,7 @@ function createMiddleCoverGeometry(THREE,bladeCount) {
 // retain two segments, where the extra curvature is smaller than a pixel.
 export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='legacy'}={}) {
   if(profile==='middle-natural-v1'&&segments===2&&[4,6,8].includes(bladeCount))return createMiddleCoverGeometry(THREE,bladeCount);
+  if(profile==='near-folded-v1'&&bladeCount===8&&segments===3)return createLushMeadowGeometry(THREE,{leafCount:8,segments:3,profile:'near'});
   const P=[],N=[],C=[],U=[],I=[];
   const foldedNear=profile==='near-folded-v1'&&bladeCount===8&&segments===3;
   const structured=foldedNear||profile==='middle-natural-v1';

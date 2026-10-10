@@ -83,14 +83,14 @@ test('three rich families have grounded tapered leaves, valid actual normals and
       assert(Array.from(uv.array).every(v=>v>=0&&v<=1));
       for(let i=0;i<n.count;i++)assert(Math.abs(new THREE.Vector3().fromBufferAttribute(n,i).length()-1)<1e-6);
       for(let i=0;i<g.index.count;i+=3){const ids=Array.from(g.index.array.subarray(i,i+3));assert(ids.every(j=>Number.isInteger(j)&&j>=0&&j<p.count));const[a,b,c]=ids.map(j=>new THREE.Vector3().fromBufferAttribute(p,j)),face=new THREE.Vector3().crossVectors(b.sub(a),c.sub(a));assert(face.length()>1e-8);face.normalize();for(const id of ids)assert(face.dot(new THREE.Vector3().fromBufferAttribute(n,id))>0);}
-      assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y<=.95);heights.push(g.boundingBox.max.y);hashes.push(digest(Buffer.from(p.array.buffer)));
-      for(let i=0;i<p.count;i++)assert(Math.hypot(p.getX(i),p.getZ(i))<.5);
+      assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y<=1.60);heights.push(g.boundingBox.max.y);hashes.push(digest(Buffer.from(p.array.buffer)));
+      for(let i=0;i<p.count;i++)assert(Math.hypot(p.getX(i),p.getZ(i))<.6);
       const leaves=g.userData.grassFamily.leafRanges;assert.equal(leaves.length,14);
       for(const leaf of leaves){const at=leaf.vertexStart,tip=at+leaf.vertexCount-1;assert.equal(p.getY(at),0);assert.equal(p.getY(at+1),0);assert.equal(uv.getY(at),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(tip)>0);assert.equal(leaf.indexCount,(leaf.vertexCount-2)*3);}
       const normals=n.array.slice();g.computeVertexNormals();assert.deepEqual(n.array,normals);
     }finally{g.dispose();again.dispose();}
   }
-  assert.equal(new Set(hashes).size,3);assert(heights[0]>heights[1]*1.7);assert(heights[2]>heights[0]*1.3);
+  assert.equal(new Set(hashes).size,3);assert(heights[0]>heights[1]*1.6);assert(heights[2]>heights[0]*1.3);
 });
 
 test('selection is deterministic, respects budgets/exclusions and never mutates source rows or consumes placement RNG', () => {
