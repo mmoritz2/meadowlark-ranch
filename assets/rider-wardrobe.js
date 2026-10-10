@@ -40,7 +40,9 @@ export const CONNECTED_FAMILY_STATUS=RIDER_OUTFITS.map(o=>({id:o.id,family:famil
 
 export function createRiderLibrary(options){
  const T=options.THREE,base=createBase(options),ready=new Map(),pending=new Map(),textileByKit=new WeakMap(),get=['getX','getY','getZ','getW'];
- const V=()=>new T.Vector3(),json=async key=>options.connectedData?.[key]??await(await fetch(new URL('./models/rider/connected/'+key+'.json?v=character-polish-20261009',import.meta.url))).json();
+ const V=()=>new T.Vector3();
+ const connectedVersion=key=>key==='pants-f'||key==='pants-m'?'breeches75-20261010':'character-polish-20261009';
+ const json=async key=>options.connectedData?.[key]??await(await fetch(new URL('./models/rider/connected/'+key+'.json?v='+connectedVersion(key),import.meta.url))).json();
  const fromSource=(data,positions,source)=>{
   const g=new T.BufferGeometry(),joints=[],weights=[];let maxSourceDelta=0;
   for(let i=0;i<data.sourceVertexProvenance.length;i++){
