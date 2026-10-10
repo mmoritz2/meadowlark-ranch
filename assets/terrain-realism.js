@@ -1,6 +1,6 @@
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=flowering-margins-1';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=north-valley-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its

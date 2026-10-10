@@ -1,3 +1,4 @@
+import {northValleyRelief} from './north-valley-relief.mjs?v=north-valley-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {fieldSwardAt,FIELD_SWARD_RECOVERY} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
@@ -58,10 +59,10 @@ export function pastureRise(x,z) {
     const r2=((dx*co+dz*si)/c.rx)**2+((dz*co-dx*si)/c.rz)**2;
     if(r2<1)height+=c.h*(1-r2)**3;
   }
-  if(!height)return cloverApproachRelief(x,z);
+  if(!height)return cloverApproachRelief(x,z)+northValleyRelief(x,z);
   let keep=1;
   for(const [ax,az,r] of FIELD_ANCHORS)keep=Math.min(keep,smooth(r,r+64,Math.hypot(x-ax,z-az)));
-  return height*keep+cloverApproachRelief(x,z);
+  return height*keep+cloverApproachRelief(x,z)+northValleyRelief(x,z);
 }
 // Elliptical flower colonies have irregular edges but no cell-grid boundaries.
 export const FLOWER_DRIFTS=[

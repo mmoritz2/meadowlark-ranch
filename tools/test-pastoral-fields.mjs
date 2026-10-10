@@ -1,3 +1,4 @@
+import {northValleyRelief} from '../assets/north-valley-relief.mjs';
 import {northPastureAt} from '../assets/north-pasture.mjs';
 import assert from 'node:assert/strict';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from '../assets/field-sward-bands.mjs';
@@ -21,15 +22,15 @@ test('field earthworks preserve all protected building and arena footprints',()=
  // Clover now shapes that field; every other authored anchor still stays flat.
  for(const [x,z,r] of FIELD_ANCHORS.filter(([x,z])=>x!==47||z!==-50))for(let a=0;a<Math.PI*2;a+=.2)for(const f of[0,.25,.5,.99])
   assert.equal(pastureRise(x+Math.cos(a)*r*f,z+Math.sin(a)*r*f),0);
- for(const [x,z] of[[-490,0],[0,-490],[490,490],[-220,130],[-160,-210]])assert.equal(pastureRise(x,z),0);
+ for(const [x,z] of[[-490,0],[0,-498],[490,490],[-220,130],[-160,-210]])assert.equal(pastureRise(x,z),0);
  for(let x=18;x<=90;x+=.5)for(let z=-84;z<=-21;z+=.5)if(cottonwoodReserved(x,z,4))assert.equal(pastureRise(x,z),0,'actual town footing '+[x,z]);
  assert(FIELD_RISES.slice(0,4).every(c=>pastureRise(c.x,c.z)>9));
 });
-test('Clover relief is compact, finite and joins continuously to unchanged far fields',()=>{
+test('Clover relief is compact, finite and preserves terrain apart from explicit northern relief',()=>{
  let positive=0;
  for(let x=-480;x<=480;x+=2.5)for(let z=-480;z<=480;z+=2.5){
   const h=cloverApproachRelief(x,z);assert(Number.isFinite(h)&&h>=0&&h<=3.3);
-  if(x<=38||x>=104||z<=-137||z>=-83){assert.equal(h,0);assert.equal(pastureRise(x,z),legacy.pastureRise(x,z));}
+  if(x<=38||x>=104||z<=-137||z>=-83){assert.equal(h,0);assert.equal(pastureRise(x,z),legacy.pastureRise(x,z)+northValleyRelief(x,z));}
   if(h>.1)positive++;
  }
  assert(positive>60,'broad connected field support');
@@ -144,7 +145,7 @@ test('compact meadow margins preserve terrain, layouts and the legacy grazing po
  for(let x=-480;x<=480;x+=7)for(let z=-480;z<=480;z+=7){
   const margin=meadowMarginAt(x,z),grazing=meadowGrazingAt(x,z),effective=meadowSwardGrazingAt(x,z);
   assert.equal(grazing,legacy.meadowGrazingAt(x,z),'legacy cards, ferns and layout keep their mask');
-  assert.equal(pastureRise(x,z),legacy.pastureRise(x,z)+cloverApproachRelief(x,z));
+  assert.equal(pastureRise(x,z),legacy.pastureRise(x,z)+cloverApproachRelief(x,z)+northValleyRelief(x,z));
   assert(margin>=0&&margin<=1&&effective>=0&&effective<=Math.max(grazing,northPastureAt(x,z).cut));
   if(!inMarginBounds(x,z))assert.equal(margin,0,'compact authored footprint');
   if(outsideWest(x,z)){

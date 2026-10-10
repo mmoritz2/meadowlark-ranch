@@ -1,3 +1,4 @@
+import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
 import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
 import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
 import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
@@ -24,7 +25,7 @@ import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=vill
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=flowering-margins-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=north-valley-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -451,6 +452,20 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(trees.includes(t)){edge.trees.push(t);settlement.trees.push(t);beltCounts.set(site.belt,beltCounts.get(site.belt)+1);}
     }
     settlement.belts=SETTLEMENT_WOODLAND_BELTS.map(b=>({id:b.id,count:beltCounts.get(b.id),cap:b.cap}));
+    // Unequal original northern grove shoulders frame the open meadow. New
+    // trees share exact source views, terrain-aware clearance and wood proxies.
+    const northValley=state.northValleyWoodland={profile:NORTH_VALLEY_WOODLAND_PROFILE,trees:[],skipped:[],groups:[],budget:{maximum:NORTH_VALLEY_WOODLAND_MAX,additionalDistantTrianglesMax:NORTH_VALLEY_WOODLAND_MAX*2,detailBudgetChanged:false,plantsMaximum:NORTH_VALLEY_WOODLAND_MAX*5}};
+    const valleyCounts=new Map(NORTH_VALLEY_WOODLAND_GROUPS.map(g=>[g.id,0]));
+    for(const site of northValleyWoodlandCandidates()){
+      const grove=NORTH_VALLEY_WOODLAND_GROUPS.find(g=>g.id===site.grove);
+      if(valleyCounts.get(site.grove)>=grove.cap||northValley.trees.length>=NORTH_VALLEY_WOODLAND_MAX)continue;
+      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);
+      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);
+      if(rejection){northValley.skipped.push({x:site.x,z:site.z,grove:site.grove,reason:rejection});continue;}
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredNorthValley:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);
+      if(trees.includes(t)){edge.trees.push(t);northValley.trees.push(t);valleyCounts.set(site.grove,valleyCounts.get(site.grove)+1);}
+    }
+    northValley.groups=NORTH_VALLEY_WOODLAND_GROUPS.map(g=>({id:g.id,count:valleyCounts.get(g.id),cap:g.cap}));
     state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
@@ -594,7 +609,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // Regenerate leaf litter from surviving trunks; cleared meadows must not
     // keep the old brown forest-floor circles or camera obstacles.
     // Existing plant capture consumes these points after wood contacts are ready.
-    const plants=[...WOODLAND_EDGE_PLANTS,...settlementWoodlandPlants(settlement.trees)].map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
+    const plants=[...WOODLAND_EDGE_PLANTS,...settlementWoodlandPlants(settlement.trees),...northValleyWoodlandPlants(northValley.trees)].map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
       .filter(p=>edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)&&clear(p.x,p.z,.45)
         &&!cottonwoodReserved(p.x,p.z,1)&&!edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<1.25));
     finishEdge({trees:edge.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key,woodRadius:t.woodRadius,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()})),plants,collision:edge.collision,cameraInvalidated:edge.cameraInvalidated,physicsReady:edge.physicsReady,artOnly:false});
@@ -602,6 +617,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     settlement.trees=settlement.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,belt:t.belt,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,allowMeadowMargin:!!t.allowMeadowMargin,matrix:t.matrix.toArray()}));
     settlement.woodPartsRegistered=settlement.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
     settlement.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
+    northValley.trees=northValley.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,grove:t.grove,lobe:t.lobe,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,matrix:t.matrix.toArray()}));
+    northValley.woodPartsRegistered=northValley.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
+    northValley.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
+    northValley.plantsProposed=plants.filter(p=>northValley.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)).length;
+
     W.nearGroundCover?.invalidate?.();
   }
   // Complete scanned stones form the village skyline and adjoining river crags.
