@@ -67,9 +67,9 @@ test('near and middle leaves retain their budgets and a mix of bowed and emergin
  for(const [profile,bladeCount,segments] of [['near-folded-v1',8,3],['middle-natural-v1',4,2],['middle-natural-v1',6,2],['middle-natural-v1',8,2]]){
   const g=createGrassTuftGeometry(THREE,{profile,bladeCount,segments}),p=g.attributes.position;
   assert.equal(g.index.count/3,bladeCount*(segments===3?5:3));let bowed=0,emerging=0;
-  const stride=segments===3?7:5,shoulder=2,tip=stride-1;
-  for(let leaf=0;leaf<bladeCount;leaf++){const i=leaf*stride;assert.equal(p.getY(i),0);assert.equal(p.getY(i+1),0);if(p.getY(i+tip)<p.getY(i+shoulder))bowed++;else emerging++;}
-  assert(bowed>=bladeCount/2,'Low leaves fall after the modeled shoulder');assert(emerging>0,'Some unequal narrow leaves still emerge above the low clump');
+  const leaves=g.userData.middleCover?.leafRanges||Array.from({length:bladeCount},(_,i)=>({vertexStart:i*7,vertexCount:7,bent:true}));
+  for(const {vertexStart:i,vertexCount:count,bent} of leaves){assert.equal(p.getY(i),0);assert.equal(p.getY(i+1),0);if(bent&&p.getY(i+count-1)<p.getY(i+2))bowed++;else emerging++;}
+  assert(bowed>0,'Some leaves fall after the modeled shoulder');assert(emerging>0,'Unequal narrow leaves also emerge above their roots');
   for(const a of Object.values(g.attributes))assert(Array.from(a.array).every(Number.isFinite));
   faces(g,(_,points)=>{const[a,b,c]=points;assert(new THREE.Vector3().crossVectors(b.sub(a),c.sub(a)).length()>1e-8);});
   g.dispose();

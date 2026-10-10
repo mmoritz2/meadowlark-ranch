@@ -1,3 +1,4 @@
+import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 /* Placed ranch catalogue: measured joinery, PBR surfaces and CC0 scanned props.
  * Templates share geometry/textures. Preview clones share the exact silhouette,
@@ -18,6 +19,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  }
  const oak=material('oiled oak','#f1ece0',.88,0,'coated_pine',.74);
  const aged=material('weathered timber','#dfd2bd',.98,0,'weathered_brown_planks',1.8);
+ applyTimberGrain(aged,T);
  const endgrain=oak;
  const paint=material('limed timber','#e1dfcb',.88,0,'coated_pine',.74);
  for(const m of [oak,aged,paint])m.userData.grain=true;
@@ -40,8 +42,8 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  const glass=new T.MeshPhysicalMaterial({name:'Builder | glass',color:'#d5d9ce',roughness:.13,metalness:.1,transparent:true,opacity:.22,depthWrite:false});
  const glow=material('warm lamp flame','#d9a85a',.6);glow.emissive.set('#ffb45c');glow.emissiveIntensity=1.7;
  const roof=architecture.roofMaterial;roof.userData.metres=1.8;
- // Share the photographed grain with the structural architecture without replacing
- // its custom window/door materials, metre-scaled UVs or recessed geometry.
+ // Share the photographed channels; architecture keeps its board-interior sampler,
+ // directional grain coordinates, recessed openings and original solid geometry.
  for(const m of [architecture.sidingMaterial,...architecture.materials.values()].filter((m,i,a)=>m&&(m===architecture.sidingMaterial||/oiled oak/.test(m.name))&&a.indexOf(m)===i)){
   m.map=aged.map;m.normalMap=aged.normalMap;m.roughnessMap=aged.roughnessMap;m.aoMap=aged.aoMap;m.aoMapIntensity=.45;m.color.set('#d4c2a5');m.needsUpdate=true;
  }
@@ -60,7 +62,9 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
     for(let i=0;i<p.count;i++){const nx=Math.abs(n.getX(i)),ny=Math.abs(n.getY(i)),nz=Math.abs(n.getZ(i));
      if(m.userData.grain){const along=long==='x'?p.getX(i):long==='y'?p.getY(i):p.getZ(i);const across=long==='x'?(ny>nz?p.getZ(i):p.getY(i)):long==='y'?(nx>nz?p.getZ(i):p.getX(i)):(ny>nx?p.getX(i):p.getY(i));u.setXY(i,along/k+.15,across/k+.43);}
      else if(ny>nx&&ny>nz)u.setXY(i,p.getX(i)/k,p.getZ(i)/k);else if(nx>nz)u.setXY(i,p.getZ(i)/k,p.getY(i)/k);else u.setXY(i,p.getX(i)/k,p.getY(i)/k);
-    }}
+    }
+    if(m===aged)setTimberBoxUV(g,{width:size.x,height:size.y,depth:size.z,x,y,z,lengthMetres:1.8});
+   }
    const q=new T.Quaternion();if(rot)q.setFromEuler(new T.Euler(...rot));const transform=new T.Matrix4().compose(new T.Vector3(x,y,z),q,scale?new T.Vector3(...scale):new T.Vector3(1,1,1));recordSolidPart(T,this.root,g,m,transform);g.applyMatrix4(transform);
    if(!this.parts.has(m))this.parts.set(m,[]);this.parts.get(m).push(g);this.count++;return this;
   }
