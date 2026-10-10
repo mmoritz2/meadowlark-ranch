@@ -1,6 +1,6 @@
-import {createPhysicalBinding} from './rider-physical-binding.js?v=character-polish-20261009';
-import {shirtFinish} from './rider-shirt-finish.js?v=character-polish-20261009';
-import {trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {createPhysicalBinding} from './rider-physical-binding.js?v=tailored-coats69-20261010';
+import {shirtFinish} from './rider-shirt-finish.js?v=tailored-coats69-20261010';
+import {trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // A separate sleeveless layer over a complete cotton shirt. Both layers keep
 // the same source skeleton; the undershirt continues through each armhole.

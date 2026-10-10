@@ -1,4 +1,4 @@
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Fitted show coat with a separate stock-shirt inset, notch lapels, full front
 // closure and welt pockets. Every surface follows the draped coat's triangle skin.
@@ -7,16 +7,41 @@ export function showJacketFinish(T,kit,garment,data,{color='#283d50',lapel='#223
  const parent=garment.geometry.clone();if(!parent.attributes.uv)parent.setAttribute('uv',new T.Float32BufferAttribute(new Float32Array(parent.attributes.position.count*2),2));parent.computeVertexNormals();
  const a=parent.attributes,neck=data.boundaryLoops.find(l=>l.label==='neck').ids,roots=neck.map(id=>V().fromBufferAttribute(a.position,id)),center=roots.reduce((p,v)=>p.add(v),V()).divideScalar(roots.length),front=roots.filter(v=>v.z>center.z).sort((x,y)=>Math.abs(x.x)-Math.abs(y.x))[0];
  const hemY=Math.max(...data.boundaryLoops.find(l=>l.label==='hem').ids.map(id=>a.position.getY(id))),cuffX=Math.max(...data.boundaryLoops.filter(l=>l.label.startsWith('cuff')).flatMap(l=>l.ids.map(id=>Math.abs(a.position.getX(id)))));
- const geo=(v,idx)=>{const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(v.flatMap(q=>q.p.toArray()),3));g.setAttribute('skinIndex',new T.Uint16BufferAttribute(v.flatMap(q=>q.joints),4));g.setAttribute('skinWeight',new T.Float32BufferAttribute(v.flatMap(q=>q.weights),4));g.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap(q=>[q.p.x*4,q.p.y*4]),2));g.setIndex(idx);g.computeVertexNormals();g.computeBoundingSphere();return g;};
+ const geo=(v,idx)=>{const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(v.flatMap(q=>q.p.toArray()),3));g.setAttribute('skinIndex',new T.Uint16BufferAttribute(v.flatMap(q=>q.joints),4));g.setAttribute('skinWeight',new T.Float32BufferAttribute(v.flatMap(q=>q.weights),4));g.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap(q=>[q.p.x*4,q.p.y*4]),2));g.setIndex(idx);if(v.some(q=>q.coatSurface))g.userData.coatSurfaceBindings=v.map(q=>q.coatSurface||null);g.computeVertexNormals();g.computeBoundingSphere();return g;};
  const fabric=c=>{const m=new T.MeshStandardMaterial({color:c,roughness:.82,metalness:0,side:T.DoubleSide});m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vShowRest;').replace('#include <begin_vertex>','#include <begin_vertex>\nvShowRest=position;');sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vShowRest;').replace('#include <map_fragment>',`#include <map_fragment>
   float twill=(vShowRest.x+vShowRest.y*.75)*2300.0;
   float resolve=1.0-smoothstep(.8,3.0,fwidth(twill));
   diffuseColor.rgb*=1.0+.020*cos(twill)*resolve;`);};m.customProgramCacheKey=()=> 'tailored-show-twill2';return m;};
  const pieces=[],push=(name,g,m)=>{pieces.push({name,geometry:g,material:m,skeleton:garment.skeleton,bindMatrix:garment.bindMatrix});return pieces.at(-1);};
- const offset=(g,d)=>{for(let i=0;i<g.attributes.position.count;i++){const p=V().fromBufferAttribute(g.attributes.position,i),n=V().fromBufferAttribute(g.attributes.normal,i);p.addScaledVector(n,d);g.attributes.position.setXYZ(i,p.x,p.y,p.z);}g.computeBoundingSphere();return g;};
+ const offset=(g,d,frontFacing=false)=>{for(let i=0;i<g.attributes.position.count;i++){const p=V().fromBufferAttribute(g.attributes.position,i),n=V().fromBufferAttribute(g.attributes.normal,i);if(frontFacing&&n.z<0)n.negate();p.addScaledVector(n,d);g.attributes.position.setXYZ(i,p.x,p.y,p.z);}g.computeBoundingSphere();return g;};
  const bottom=front.y-.186;
- const inset=trimGarment(T,parent,[(x,y,z)=>z-center.z,(x,y)=>y-bottom-Math.abs(x)*2.35]);push('Show_Stock_Shirt_Inset',offset(inset,.0007),fabric(shirt));
- const sampler=surfaceSampler(T,[{...garment,geometry:parent}]),fit=(x,y,offset=.001)=>{const h=sampler.cast(V(x,y,.65),V(0,0,-1));if(!h)return null;return {p:h.point.clone().addScaledVector(h.normal,offset),joints:h.joints,weights:h.weights};};
+ // Keep the sampled triangle before normal lift changes the point's x/y. The
+ // pose driver can attach to that literal cloth surface without a second ray.
+ const sampler=surfaceSampler(T,[{...garment,geometry:parent}]),fit=(x,y,offset=.001)=>{
+  const h=sampler.cast(V(x,y,.65),V(0,0,-1));if(!h||h.normal.z<=.01)return null;
+  return {p:h.point.clone().addScaledVector(h.normal,offset),joints:h.joints,weights:h.weights,coatSurface:{faceIndex:h.faceIndex,ids:h.ids,bary:h.bary}};
+ };
+ // Carry the stock inset's original face through the same clipping operations.
+ // Recasting an edge after float rounding can lose its literal source triangle.
+ const fields=[(x,y,z)=>z-center.z,(x,y)=>y-bottom-Math.abs(x)*2.35],inset=trimGarment(T,parent,fields),insetBindings=[];
+ for(let f=0;f<parent.index.count;f+=3){
+  const ids=[0,1,2].map(j=>parent.index.getX(f+j));let poly=ids.map((id,j)=>({p:V().fromBufferAttribute(a.position,id).toArray(),bary:[0,1,2].map(k=>k===j?1:0)}));
+  for(const field of fields){const next=[];for(let j=0;j<poly.length;j++){const p=poly[j],q=poly[(j+1)%poly.length],fp=field(...p.p),fq=field(...q.p);if(fp>=0)next.push(p);if((fp>=0)!==(fq>=0)){const t=fp/(fp-fq);next.push({p:p.p.map((v,k)=>v+(q.p[k]-v)*t),bary:p.bary.map((v,k)=>v+(q.bary[k]-v)*t)});}}poly=next;if(!poly.length)break;}
+  for(let j=1;j<poly.length-1;j++)for(const q of[poly[0],poly[j],poly[j+1]])insetBindings.push({faceIndex:f/3,ids,bary:q.bary});
+ }
+ if(insetBindings.length!==inset.attributes.position.count)throw Error('Show stock inset source count differs');
+ // Folded neckline normals can face backward; lift the front inset forward.
+ offset(inset,.0007,true);
+ // Clipping duplicates triangle corners. Give each coincident material point
+ // one source frame, so those corners stay joined after the shell bends.
+ const insetAnchors=new Map(),insetKeys=[];
+ for(let i=0;i<insetBindings.length;i++){
+  const q=insetBindings[i],p=V().fromBufferAttribute(inset.attributes.position,i),key=p.toArray().join(':'),tri=new T.Triangle(...q.ids.map(id=>V().fromBufferAttribute(a.position,id))),normal=tri.getNormal(V()),score=normal.z,old=insetAnchors.get(key);
+  insetKeys.push(key);if(!old||score>old.score)insetAnchors.set(key,{binding:q,score});
+ }
+ for(let i=0;i<insetBindings.length;i++)insetBindings[i]=insetAnchors.get(insetKeys[i]).binding;
+ inset.userData.coatSurfaceBindings=insetBindings;
+ push('Show_Stock_Shirt_Inset',inset,fabric(shirt));
  const ribbon=(path,width,offset=.001)=>{const v=[],idx=[];let prev=null;for(let i=0;i<path.length;i++){const [x,y]=path[i],before=path[Math.max(0,i-1)],after=path[Math.min(path.length-1,i+1)],dx=after[0]-before[0],dy=after[1]-before[1],length=Math.hypot(dx,dy)||1,nx=dy/length*width/2,ny=-dx/length*width/2,q=fit(x-nx,y-ny,offset),r=fit(x+nx,y+ny,offset);if(!q||!r){prev=null;continue;}const k=v.length;v.push(q,r);if(prev!==null)idx.push(prev,prev+1,k,prev+1,k+1,k);prev=k;}return geo(v,idx);};
  // Lapels are bounded strips with a notched outer edge, fitted across each row.
  for(const side of[-1,1]){const vertices=[],indices=[],rows=58,cols=7;for(let row=0;row<rows;row++){const t=row/(rows-1),y=bottom+(front.y+.008-bottom)*t,inner=.007+.061*t,notch=.012*Math.exp(-(((t-.75)/.045)**2)),outer=inner+(.006+.034*Math.sin(Math.PI*t*.72))-notch;for(let col=0;col<cols;col++){const u=col/(cols-1),x=side*(inner+(outer-inner)*u),p=fit(x,y,.0016+.0024*Math.sin(u*Math.PI)*Math.sin(t*Math.PI));if(!p)throw Error('Show lapel misses jacket '+side+'/'+row+'/'+col);vertices.push(p);}}for(let row=0;row<rows-1;row++)for(let col=0;col<cols-1;col++){const a=row*cols+col,b=a+cols;indices.push(a,b,a+1,b,b+1,a+1);}push('Show_Notch_Lapel_'+side,geo(vertices,indices),fabric(lapel));
@@ -31,7 +56,7 @@ export function showJacketFinish(T,kit,garment,data,{color='#283d50',lapel='#223
  const bv=[],bi=[],addButton=(cx,cy,r)=>{const n=16,base=bv.length,mid=fit(cx,cy,.0031);if(!mid)return;bv.push(mid);for(let k=0;k<n;k++){const a=k*Math.PI*2/n,p=fit(cx+Math.cos(a)*r,cy+Math.sin(a)*r,.0024);if(!p)throw Error('Show button leaves coat');bv.push(p);}for(let k=0;k<n;k++)bi.push(base,base+1+k,base+1+(k+1)%n);};
  const buttonYs=[.23,.285,.34].map(d=>front.y-d).filter(y=>y>hemY+.012);for(const y of buttonYs)addButton(.003,y,.0040);push('Show_Antique_Metal_Buttons',geo(bv,bi),new T.MeshStandardMaterial({color:metal,roughness:.4,metalness:.7,side:T.DoubleSide}));
  // Stock tie: narrow fabric strip, with a small knot immediately under the collar.
- push('Show_Stock_Tie',ribbon(Array.from({length:30},(_,i)=>[0,front.y-.112+.115*i/29]),.014,.0015),fabric('#d4c9b2'));
+ push('Show_Stock_Tie',ribbon(Array.from({length:30},(_,i)=>[0,front.y-.112+.109*i/29]),.014,.0015),fabric('#d4c9b2'));
  const knotV=[],knotI=[];for(let row=0;row<9;row++){const t=row/8,y=front.y-.025+t*.016,w=.007+Math.sin(t*Math.PI)*.008;for(const x of [-w/2,w/2]){const p=fit(x,y,.0026);if(!p)throw Error('Stock knot leaves shirt');knotV.push(p);}if(row){const k=(row-1)*2;knotI.push(k,k+1,k+2,k+1,k+3,k+2);}}push('Show_Stock_Knot',geo(knotV,knotI),fabric('#cdc4b3'));
  sampler.dispose();parent.dispose();return {material:fabric(color),pieces,evidence:{style:'tailored equestrian show jacket with white stock shirt',lapels:2,weltPockets:2,buttons:buttonYs.length,insetDepthM:.186,stockCollarHeightM:height,shirtCuffWidthM:.009,detailTriangles:pieces.reduce((n,p)=>n+p.geometry.index.count/3,0)}};
 }

@@ -1,7 +1,7 @@
 /* Modern equestrian garment construction. Every added vertex keeps the body's
    interpolated joint weights, including folded collars and raised pocket edges. */
 import {mergeVertices,mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {trimGarment,surfaceSampler} from './rider-fit.js?v=character-polish-20261009';
+import {trimGarment,surfaceSampler} from './rider-fit.js?v=tailored-coats69-20261010';
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
 // The visible body uses this same opening, with a small overlap under cloth.
 export function garmentNeckY(x,zz,z,c,lining=false){

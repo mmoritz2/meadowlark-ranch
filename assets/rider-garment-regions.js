@@ -1,4 +1,4 @@
-import {trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Each region is an intersection of linear half-planes. Partition a union into
 // non-overlapping convex regions so a narrow strap crossing a triangle cannot

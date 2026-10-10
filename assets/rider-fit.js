@@ -13,7 +13,7 @@ export function surfaceSampler(THREE,meshes){
   }
   const ranked=[...entries].filter(([,w])=>w>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((s,v)=>s+v[1],0)||1;
   while(ranked.length<4)ranked.push([0,0]);
-  return {point:hit.point,normal:face.normal,joints:ranked.map(v=>v[0]),weights:ranked.map(v=>v[1]/sum),source};
+  return {point:hit.point,normal:face.normal,joints:ranked.map(v=>v[0]),weights:ranked.map(v=>v[1]/sum),source,faceIndex:hit.faceIndex,ids:[face.a,face.b,face.c],bary:bary.toArray()};
  };
  return {
   cast(origin,direction,accept=()=>true){

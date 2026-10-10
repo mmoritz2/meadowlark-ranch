@@ -148,7 +148,7 @@ vec3 riderFabric(vec3 base,vec3 p){
   float stitch=max(clothLine(uv.x+uv.y+.25,.015),clothLine(uv.x-uv.y+.25,.015));base=mix(base,cream,stitch*.85);
  }else if(d>15.5&&d<16.5){
   float zig=(fract(p.x*130.0)<.5?1.0:-1.0);base*=.84+.16*smoothstep(-.3,.3,clothWave(y+p.x*zig,1900.0));
-  base=mix(base,cream,max(clothLine(p.x*24.0,.018),clothLine(y*24.0,.018))*.15);
+  base=mix(base,cream,max(clothLine(p.x*24.0,.014),clothLine(y*24.0,.014))*.045);
  }else if(d>16.5&&d<17.5){
   vec2 cell=abs(fract(vec2(p.x*29.0,y*31.0))-.5);
   float diamonds=1.0-smoothstep(.30,.36,cell.x+cell.y),band=step(.48,fract(y*10.0));
@@ -202,4 +202,4 @@ vec3 riderBreeches(vec3 base,vec3 p){
  return base;
 }`;
 
-export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband,GARMENT_NECK_GLSL,garmentNeckY} from './rider-tailoring.js?v=character-polish-20261009';
+export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband,GARMENT_NECK_GLSL,garmentNeckY} from './rider-tailoring.js?v=tailored-coats69-20261010';

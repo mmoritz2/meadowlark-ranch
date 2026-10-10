@@ -1,6 +1,6 @@
-import {fitLowerLayer} from './rider-garment-layer-fit.js?v=character-polish-20261009';
-import {shirtFinish} from './rider-shirt-finish.js?v=character-polish-20261009';
-import {surfaceSampler} from './rider-fit.js?v=character-polish-20261009';
+import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-20261010';
+import {shirtFinish} from './rider-shirt-finish.js?v=tailored-coats69-20261010';
+import {surfaceSampler} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Roomy work jacket: eased shoulders/sleeves, a slightly longer hem, curved
 // patch pockets and actual topstitch ribbons sharing the garment skin field.

@@ -1,4 +1,4 @@
-import {surfaceSampler,trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler,trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // Folded collar, button placket and ribbing share the draped garment's weights.
 export function poloFinish(T,kit,garment,data,{color='#754653',trim='#613846',collarColor='#d9ccb6'}={}){

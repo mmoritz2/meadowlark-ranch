@@ -1,4 +1,4 @@
-import {surfaceSampler} from './rider-fit.js?v=character-polish-20261009';
+import {surfaceSampler} from './rider-fit.js?v=tailored-coats69-20261010';
 
 // A longer hem enters the hip region. Fit it to the actual connected trousers
 // instead of extrapolating the narrower shirt's waist cross-section.

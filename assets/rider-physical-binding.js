@@ -1,4 +1,4 @@
-import {trimGarment} from './rider-fit.js?v=character-polish-20261009';
+import {trimGarment} from './rider-fit.js?v=tailored-coats69-20261010';
 // A continuous sewn facing cut from the literal garment surface. Its physical
 // thickness closes both edges; no independent polar collar/corner frame or skin
 // mask changes the opening. Original surface/boundary skinning is authoritative.
