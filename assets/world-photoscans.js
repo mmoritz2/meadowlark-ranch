@@ -1,3 +1,4 @@
+import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
 import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
 import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
 import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
@@ -62,6 +63,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   group.name='Poly Haven environment';scene.add(group);
   const loaded=new Map(),trees=[],detailPatches=[];
   let outerRockParts=null;
+  let youngOuterSources=[];
   const zero=new THREE.Matrix4().makeScale(0,0,0),UP=new THREE.Vector3(0,1,0),WHITE=new THREE.Color(0xffffff);
   const q=new THREE.Quaternion(),v=new THREE.Vector3(),s=new THREE.Vector3();
   const rnd=(x,z,k=0)=>{const n=Math.sin(x*127.1+z*311.7+k*74.7)*43758.5453;return n-Math.floor(n);};
@@ -480,6 +482,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         }
         const mesh=instances(cards.get(source.key),matrices,'Outer woodland | '+source.key);mesh.receiveShadow=false;meshes.push(mesh);
       }
+      // Plain resident references only; the young pocket installer allocates late.
+      youngOuterSources=variants.filter(s=>s.key==='broadleaf'||s.key==='canopy-broadleaf').map(s=>({key:s.key,card:s.card,outerMaterial:cards.get(s.key)?.mat,sourceHeight:s.meta.sourceHeight,bottom:s.bounds.min.y,crownSpan:Math.max(s.bounds.max.x-s.bounds.min.x,s.bounds.max.z-s.bounds.min.z)}));
       state.outerWoodland={trees:outer.woodlandSites.length,draws:meshes.length,triangles:outer.woodlandSites.length*2,meshes};
       outer.stats.woodlandDraws=meshes.length;outer.stats.woodlandTriangles=outer.woodlandSites.length*2;
     }
@@ -891,6 +895,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     state.willows?.update();state.thunderOak?.update();updateTrees();
     try{installOuterRockClusters(G,outerRockParts,mergeGeometries);}catch(e){state.errors.push(e.message);console.warn('Scenic rock setup unavailable:',e);}
+    installYoungOuterWoodland(G,youngOuterSources);
     try{installOuterCanopyShade(G);}catch(e){state.errors.push(e.message);console.warn('Outer woodland shelter unavailable:',e);}
     return state.assets;
   })();
