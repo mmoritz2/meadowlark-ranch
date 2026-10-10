@@ -1,3 +1,4 @@
+import {createAdoptedRescueMount} from './rescue-adopted-mount.mjs?v=rescue-handoff-1';
 import {RESCUE_DEFINITION,RESCUE_APPROACH,sanitizeRescueSave,canAdoptClover,pendingRescueFinish,saveRescueFinish,saveCloverAdoption,mirrorRescueHorseXp,calmAfter,isTravelJump,rescueInteraction,rescueRetreatCandidates,insideRescueRetreat} from './rescue-rules.mjs?v=rescue-save-confirmed-1';
 export const id='rescue-rides';
 export function install(G){
@@ -67,7 +68,7 @@ export function install(G){
   if(player.flying||(player.y||0)>.2)return 'Land before starting the rescue.';
   if(G.worldPkg?.vehicle?.())return 'Finish your ferry or balloon trip first.';
   const rig=H.RIG?.(),motion=rig?.heroMotion?.state,footAction=G.onFoot?.state?.()?.horse;
-  if(!rig?.ready)return 'Your horse is still getting ready.';
+  if(!rig?.ready||rig.loadingBreed)return 'Your horse is still getting ready.';
   if(document.body.classList.contains('posing')||rig?.emote||motion?.action||motion?.transitioning||footAction?.action||footAction?.pending||footAction?.departure)return 'Finish your horse’s action before starting the rescue.';
   return '';
  }
@@ -220,5 +221,6 @@ export function install(G){
     horse:{x:horse.pos.x,z:horse.pos.z,distance:dist(player.pos,horse.pos),calm:A.calm,waiting:A.waiting,spooked:A.spooked,retreating:!!A.retreat,settling:Math.max(0,A.settling)},interaction:interaction(),elapsed:Math.round(A.elapsed*100)/100,
     returnStep:A.returnStep,totalReturnSteps:3,cue:A.cue}:null};
  }
- G.rescueRide={definition,start,cancel,snapshot,reassure,retrySave,adopt,pendingHorseId:()=>active?.finished?active.completion?.horseId??null:null};G.on('state',s=>{s.rescueRide=snapshot();});
+ const adoptedRiding=createAdoptedRescueMount(G,{active:()=>!!active,adoptionPending:()=>!!adoptionPending});
+ G.rescueRide={definition,start,cancel,snapshot,reassure,retrySave,adopt,...adoptedRiding,pendingHorseId:()=>active?.finished?active.completion?.horseId??null:null};G.on('state',s=>{s.rescueRide=snapshot();});
 }

@@ -612,7 +612,7 @@ body.touch #stickZone{display:block}
   <button data-qc="groom" title="Groom">🧼</button>
   <button data-qc="pet" title="Pet">💗</button>
  </div>
- <span id="nameEl">Clover</span>
+ <span id="nameEl">Bramble</span>
 </div>
 <div id="stickZone"><div id="stickBase"></div><div id="stickKnob"></div></div>
 <div id="touch">
@@ -708,7 +708,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=character-finish68-20261010';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=character-finish68-20261010';
+import {FEATURES} from './assets/features/index.js?v=first-partners-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=roundup-finish-1';
@@ -1276,7 +1276,7 @@ function refreshTack(){const fs=freshSave();if(!fs)return;tackInv=fs.tack||[];fo
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
  save=save&&save.horses?save:{v:2,ranchName:'Meadowlark Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
- save.horses.push({id:save.nextId++,name:'Clover',breed:'bay-sporthorse',colors:{body:'#765035',mane:'#221b16'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+ save.horses.push({id:save.nextId++,name:'Bramble',breed:'bay-sporthorse',colors:{body:'#765035',mane:'#221b16'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
  save.started=true;
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
@@ -12756,7 +12756,7 @@ function claimDaily(type){
 
 /* ---- achievements ---- */
 const ACHS=[
- {id:'herd2',icon:'🐴',label:'A friend for Clover',desc:'Own 2 horses',v:s=>s.horses.length,goal:2,r:{c:100}},
+ {id:'herd2',icon:'🐴',label:'A new stablemate',desc:'Own 2 horses',v:s=>s.horses.length,goal:2,r:{c:100}},
  {id:'herd5',icon:'🐴',label:'Growing herd',desc:'Own 5 horses',v:s=>s.horses.length,goal:5,r:{g:1}},
  {id:'herd10',icon:'🐴',label:'Big family',desc:'Own 10 horses',v:s=>s.horses.length,goal:10,r:{g:2}},
  {id:'herd16',icon:'🐴',label:'Mega herd',desc:'Own 16 horses',v:s=>s.horses.length,goal:16,r:{c:500}},

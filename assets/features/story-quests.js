@@ -557,7 +557,7 @@ export function install(G){
  }
  function openStarterNaming(){
   const s=fresh(); const i=Math.max(0,(s.horses||[]).findIndex(h=>h.breed==='bay-sporthorse')); const h=(s.horses||[])[i]; if(!h)return;
-  nameDialog({title:'A horse of your own',body:'She is yours — saddle, stall and all. Give her a name and pick her coat.',def:h.name||'Clover',coats:STARTER_COATS,coat:(s.starterCoat&&s.starterCoat.id)||'bay',cancel:false,onDone:(n,c)=>{setName(i,n||h.name||'Clover',c||'bay');}});
+  nameDialog({title:'A horse of your own',body:'She is yours — saddle, stall and all. Give her a name and pick her coat.',def:h.name||'Bramble',coats:STARTER_COATS,coat:(s.starterCoat&&s.starterCoat.id)||'bay',cancel:false,onDone:(n,c)=>{setName(i,n||h.name||'Bramble',c||'bay');}});
  }
  mkStall();
  if(fresh().story.era!==2&&idx()<PRO_N)spawnFoal();

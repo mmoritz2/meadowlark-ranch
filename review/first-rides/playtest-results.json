@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-10",
+  "scope": "Actual offline production first-session flow; normal key-event route drivers and explicit production buttons; no progress, pose or clock injection. Not a human usability study or whole-game parity claim.",
+  "checks": {
+    "genuineCharacterCreated": true,
+    "starterBramblePreserved": true,
+    "physicalRescueCompleted": true,
+    "adoptedPintoRidden": true,
+    "selectionSurvivedReload": true,
+    "allSixGatesCrossed": true,
+    "chapterClaimedAndEquippedAfterReload": true,
+    "nextGoalBeginnerRoundup": true,
+    "offlineThroughoutRecordedStates": true,
+    "noFeatureOrFixtureErrors": true
+  },
+  "rescueElapsedSeconds": 120.06,
+  "pastureResult": {
+    "id": "rush-pasture",
+    "name": "Pasture Dash",
+    "runId": "mv2mggc9-1-febb42",
+    "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+    "score": 1271,
+    "time": 35.9,
+    "timeBonus": 321,
+    "medal": "gold",
+    "bestCombo": 6,
+    "cleanJumps": 0,
+    "perfectJumps": 0,
+    "gates": 6,
+    "cleanGates": 6,
+    "penalties": 0,
+    "splits": [
+      5.54,
+      11.68,
+      20.1,
+      25.65,
+      29.88,
+      35.9
+    ],
+    "splitDelta": null,
+    "newBestScore": true,
+    "newBestTime": true,
+    "previousBestScore": 0,
+    "previousBestTime": null,
+    "pay": 105
+  },
+  "automatedTests": 56,
+  "sourceSha256": {
+    "assets/features/rescue-adopted-mount.mjs": "5fda40fbb3b7b5bd1a5dfff9f51fb01d70bdf4665920941776b60d6115d9ecc1",
+    "assets/features/rescue-rides.js": "6d1b83beaae19022d46adf715230964ef4b633ef1b94c2fe20e8fc89f1af8607",
+    "assets/features/ride-hub.js": "e61122594a60e91f80be380f5e3930a0b159db9c0e8134d655a8548e931ae431",
+    "assets/features/story-quests.js": "c089bb3797db5869fc5707dee3437985f1b9a915bbfc19e404e69d9ff85b6c79",
+    "assets/features/index.js": "f4533b617ae5388e03a510acc77db34a781373a9900bec3df63c5dc1377d34df",
+    "ranch3d.html": "a69154f36d0ff7c3c42348eb89df1368828f933545dc4d0828e0b12b7e12b154"
+  },
+  "notes": [
+    "The initial rescue/adoption run preceded minor final headline/session guard polish; the final source was reloaded before the course and reward checks.",
+    "Runtime screenshots are illustrative evidence; JSON records verify model identity and saved state.",
+    "The broader game-quality goal remains open."
+  ]
+}
