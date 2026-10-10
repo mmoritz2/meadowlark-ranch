@@ -1,0 +1,1070 @@
+TAP version 13
+# Subtest: two-client lobby admits known riders but starts neither core until explicit Ready and host Start
+ok 1 - two-client lobby admits known riders but starts neither core until explicit Ready and host Start
+  ---
+  duration_ms: 36.543458
+  ...
+# Subtest: the first host tick allows time for the admitted guest to send its first real input
+ok 2 - the first host tick allows time for the admitted guest to send its first real input
+  ---
+  duration_ms: 10.458792
+  ...
+# Subtest: real input packets reach host pressure and host frames reach guest with monotonic validation
+ok 3 - real input packets reach host pressure and host frames reach guest with monotonic validation
+  ---
+  duration_ms: 3.894875
+  ...
+# Subtest: one shared completion records each rider once and never pays currency or solo hooks
+ok 4 - one shared completion records each rider once and never pays currency or solo hooks
+  ---
+  duration_ms: 11.04
+  ...
+# Subtest: failed record write stays pending, explicit retry records once, and never changes the wallet
+ok 5 - failed record write stays pending, explicit retry records once, and never changes the wallet
+  ---
+  duration_ms: 3.931333
+  ...
+# Subtest: stale guest inputs stop contributing before the host cancels a disconnected two-rider session
+ok 6 - stale guest inputs stop contributing before the host cancels a disconnected two-rider session
+  ---
+  duration_ms: 6.513917
+  ...
+# Subtest: host leave, guest leave, and transport disconnect stop both sessions without recording a finish
+ok 7 - host leave, guest leave, and transport disconnect stop both sessions without recording a finish
+  ---
+  duration_ms: 18.347208
+  ...
+# Subtest: busy, wrong-room, unjoined and unknown-member attempts cannot enter a simulation
+ok 8 - busy, wrong-room, unjoined and unknown-member attempts cannot enter a simulation
+  ---
+  duration_ms: 0.855166
+  ...
+# Subtest: a rider who becomes busy after Ready refuses the incoming start without teleporting
+ok 9 - a rider who becomes busy after Ready refuses the incoming start without teleporting
+  ---
+  duration_ms: 2.206
+  ...
+# Subtest: all valid long network IDs can host a lobby accepted by another known club rider
+ok 10 - all valid long network IDs can host a lobby accepted by another known club rider
+  ---
+  duration_ms: 0.587
+  ...
+# Subtest: a guest in free camera sends no active pressure to the host
+ok 11 - a guest in free camera sends no active pressure to the host
+  ---
+  duration_ms: 1.116333
+  ...
+# Subtest: an unreadable committed record stays pending until readback confirms it without a second completion
+ok 12 - an unreadable committed record stays pending until readback confirms it without a second completion
+  ---
+  duration_ms: 4.199375
+  ...
+# Subtest: a conflicting already-saved receipt is not overwritten or presented as this completed ride
+ok 13 - a conflicting already-saved receipt is not overwritten or presented as this completed ride
+  ---
+  duration_ms: 8.6845
+  ...
+# Subtest: a matching unsaved receipt cannot confirm a failed write
+ok 14 - a matching unsaved receipt cannot confirm a failed write
+  ---
+  duration_ms: 1.569875
+  ...
+# Subtest: a guest stops after the host stops sending frames, without counting an incomplete session
+ok 15 - a guest stops after the host stops sending frames, without counting an incomplete session
+  ---
+  duration_ms: 249.291875
+  ...
+# Subtest: hosting rejects overlong IDs instead of publishing an invalid session
+ok 16 - hosting rejects overlong IDs instead of publishing an invalid session
+  ---
+  duration_ms: 13.249583
+  ...
+# Subtest: a four-rider lobby reserves unique slots, rejects a fifth, and can continue after one guest leaves
+ok 17 - a four-rider lobby reserves unique slots, rejects a fifth, and can continue after one guest leaves
+  ---
+  duration_ms: 235.652459
+  ...
+# Subtest: changing club rooms retains an unsaved personal completion and its explicit retry
+ok 18 - changing club rooms retains an unsaved personal completion and its explicit retry
+  ---
+  duration_ms: 5.8845
+  ...
+# Subtest: reload hydrates a verified personal completion without writing or counting the ride again
+ok 19 - reload hydrates a verified personal completion without writing or counting the ride again
+  ---
+  duration_ms: 5.626667
+  ...
+# Subtest: reload does not present malformed or unverified local records as a completed drive
+ok 20 - reload does not present malformed or unverified local records as a completed drive
+  ---
+  duration_ms: 18.00525
+  ...
+# Subtest: a finished host frame arriving before its terminal session still exits through the real Free ride action
+ok 21 - a finished host frame arriving before its terminal session still exits through the real Free ride action
+  ---
+  duration_ms: 12.510625
+  ...
+# Subtest: a lost terminal frame is recovered from retention after the host has already left
+ok 22 - a lost terminal frame is recovered from retention after the host has already left
+  ---
+  duration_ms: 2.818375
+  ...
+# Subtest: unrecoverable terminal data releases the guest after four bounded requests without recording a result
+ok 23 - unrecoverable terminal data releases the guest after four bounded requests without recording a result
+  ---
+  duration_ms: 7.800542
+  ...
+# Subtest: repeated retained finished sessions cannot reset the final-frame recovery deadline
+ok 24 - repeated retained finished sessions cannot reset the final-frame recovery deadline
+  ---
+  duration_ms: 8.469792
+  ...
+# Subtest: terminal recovery cannot bypass removal from the admitted roster
+ok 25 - terminal recovery cannot bypass removal from the admitted roster
+  ---
+  duration_ms: 1.366875
+  ...
+# Subtest: a twelve-second guest renderer stall holds countdown and allows inactive first input to complete staging
+ok 26 - a twelve-second guest renderer stall holds countdown and allows inactive first input to complete staging
+  ---
+  duration_ms: 325.514875
+  ...
+# Subtest: startup waits for every admitted guest and cannot use stale or unadmitted inputs as acknowledgements
+ok 27 - startup waits for every admitted guest and cannot use stale or unadmitted inputs as acknowledgements
+  ---
+  duration_ms: 275.201459
+  ...
+# Subtest: thirty-second staging timeout cancels an unready team without a record or simulated time
+ok 28 - thirty-second staging timeout cancels an unready team without a record or simulated time
+  ---
+  duration_ms: 45.291583
+  ...
+# Subtest: established six-second timeout begins after a late startup release instead of the original invitation time
+ok 29 - established six-second timeout begins after a late startup release instead of the original invitation time
+  ---
+  duration_ms: 33.813084
+  ...
+# Subtest: IDs exclude path separators, inherited keys and unbounded envelopes; names sanitize control text
+ok 30 - IDs exclude path separators, inherited keys and unbounded envelopes; names sanitize control text
+  ---
+  duration_ms: 106.694791
+  ...
+# Subtest: waiting session admits a detached host/guest roster without claiming authentication
+ok 31 - waiting session admits a detached host/guest roster without claiming authentication
+  ---
+  duration_ms: 3.050875
+  ...
+# Subtest: wrong club, topic session, host envelope and kind are rejected
+ok 32 - wrong club, topic session, host envelope and kind are rejected
+  ---
+  duration_ms: 2.53625
+  ...
+# Subtest: session expiry, stale packets, future timestamps and45minute lifetime are bounded
+ok 33 - session expiry, stale packets, future timestamps and45minute lifetime are bounded
+  ---
+  duration_ms: 0.645583
+  ...
+# Subtest: roster rejects excess riders, duplicate IDs/slots, missing host and reassigned host slot
+ok 34 - roster rejects excess riders, duplicate IDs/slots, missing host and reassigned host slot
+  ---
+  duration_ms: 10.617084
+  ...
+# Subtest: revision replay, ownership changes and session-state regression cannot replace a known session
+ok 35 - revision replay, ownership changes and session-state regression cannot replace a known session
+  ---
+  duration_ms: 2.046667
+  ...
+# Subtest: running roster can lose a rider but cannot substitute a new rider into their slot
+ok 36 - running roster can lose a rider but cannot substitute a new rider into their slot
+  ---
+  duration_ms: 0.255042
+  ...
+# Subtest: a waiting join request is validated before admission but cannot yet affect the herd
+ok 37 - a waiting join request is validated before admission but cannot yet affect the herd
+  ---
+  duration_ms: 1.528541
+  ...
+# Subtest: member requests reject full waiting rosters, running outsiders, malformed booleans and stale messages
+ok 38 - member requests reject full waiting rosters, running outsiders, malformed booleans and stale messages
+  ---
+  duration_ms: 5.764167
+  ...
+# Subtest: member revisions and timestamp order reject replay but permit voluntary readiness changes
+ok 39 - member revisions and timestamp order reject replay but permit voluntary readiness changes
+  ---
+  duration_ms: 2.377125
+  ...
+# Subtest: host frame preserves host flag, exact pen/bounds and detaches arrays
+ok 40 - host frame preserves host flag, exact pen/bounds and detaches arrays
+  ---
+  duration_ms: 0.533792
+  ...
+# Subtest: guest cannot publish a herd frame; wrong session, wrong room, stale and reordered frames are rejected
+ok 41 - guest cannot publish a herd frame; wrong session, wrong room, stale and reordered frames are rejected
+  ---
+  duration_ms: 0.1655
+  ...
+# Subtest: frame requires exactly the five known horses and finite pasture positions
+ok 42 - frame requires exactly the five known horses and finite pasture positions
+  ---
+  duration_ms: 9.598541
+  ...
+# Subtest: pen count matches flags and each penned horse has crossed into the actual pen
+ok 43 - pen count matches flags and each penned horse has crossed into the actual pen
+  ---
+  duration_ms: 0.340041
+  ...
+# Subtest: elapsed and individual pen flags stay monotonic even if count remains unchanged
+ok 44 - elapsed and individual pen flags stay monotonic even if count remains unchanged
+  ---
+  duration_ms: 0.189208
+  ...
+# Subtest: finished snapshot cannot reopen; partial timeout may display but cannot record a completed herd
+ok 45 - finished snapshot cannot reopen; partial timeout may display but cannot record a completed herd
+  ---
+  duration_ms: 0.310209
+  ...
+# Subtest: only admitted ready riders can submit fresh active or inactive inputs
+ok 46 - only admitted ready riders can submit fresh active or inactive inputs
+  ---
+  duration_ms: 0.093292
+  ...
+# Subtest: inputs reject stale/reordered/wrong-room packets and implausible coordinates
+ok 47 - inputs reject stale/reordered/wrong-room packets and implausible coordinates
+  ---
+  duration_ms: 0.175125
+  ...
+# Subtest: two admitted client inputs provide two independent pressure sources without synthesized riders
+ok 48 - two admitted client inputs provide two independent pressure sources without synthesized riders
+  ---
+  duration_ms: 0.377375
+  ...
+# Subtest: pressure excludes unadmitted/unready/stale/inactive input and never substitutes a duplicate ID
+ok 49 - pressure excludes unadmitted/unready/stale/inactive input and never substitutes a duplicate ID
+  ---
+  duration_ms: 0.357625
+  ...
+# Subtest: a newer stale or paused observation cannot fall back to older active pressure
+ok 50 - a newer stale or paused observation cannot fall back to older active pressure
+  ---
+  duration_ms: 0.340416
+  ...
+# Subtest: start needs2–4 admitted ready fresh riders including the host; only host may start
+ok 51 - start needs2–4 admitted ready fresh riders including the host; only host may start
+  ---
+  duration_ms: 0.423792
+  ...
+# Subtest: start cannot use stale/left/unready/missing members, readiness replay or a terminal session
+ok 52 - start cannot use stale/left/unready/missing members, readiness replay or a terminal session
+  ---
+  duration_ms: 0.691667
+  ...
+# Subtest: first completed shared practice records only a personal time receipt
+ok 53 - first completed shared practice records only a personal time receipt
+  ---
+  duration_ms: 6.893041
+  ...
+# Subtest: repeated finish returns the exact original receipt and never adds a play or a best time
+ok 54 - repeated finish returns the exact original receipt and never adds a play or a best time
+  ---
+  duration_ms: 0.298209
+  ...
+# Subtest: best time remains separate from the most recent attempt; a faster next run improves it
+ok 55 - best time remains separate from the most recent attempt; a faster next run improves it
+  ---
+  duration_ms: 0.151542
+  ...
+# Subtest: partial, malformed, solo and excess-player results cannot become a shared finish receipt
+ok 56 - partial, malformed, solo and excess-player results cannot become a shared finish receipt
+  ---
+  duration_ms: 0.250125
+  ...
+# Subtest: record receipts stay bounded at100 while retaining the new receipt despite clock movement
+ok 57 - record receipts stay bounded at100 while retaining the new receipt despite clock movement
+  ---
+  duration_ms: 347.89025
+  ...
+# Subtest: recording never mutates the game wallet, solo records, rally state, input or returned prior record
+ok 58 - recording never mutates the game wallet, solo records, rally state, input or returned prior record
+  ---
+  duration_ms: 14.973666
+  ...
+# Subtest: two-second member heartbeats expire for starting after6seconds even while session remains live
+ok 59 - two-second member heartbeats expire for starting after6seconds even while session remains live
+  ---
+  duration_ms: 18.771958
+  ...
+# Subtest: penned positions tolerate at most1cm of snapshot rounding at the actual pen edge
+ok 60 - penned positions tolerate at most1cm of snapshot rounding at the actual pen edge
+  ---
+  duration_ms: 34.888958
+  ...
+# Subtest: same-run conflicting result cannot replace or reuse an incompatible practice receipt
+ok 61 - same-run conflicting result cannot replace or reuse an incompatible practice receipt
+  ---
+  duration_ms: 0.841125
+  ...
+# Subtest: legacy shared frames default startup hold to false without mutating source state
+ok 62 - legacy shared frames default startup hold to false without mutating source state
+  ---
+  duration_ms: 0.161416
+  ...
+# Subtest: startup hold preserves initial3second countdown and zero progress including while paused
+ok 63 - startup hold preserves initial3second countdown and zero progress including while paused
+  ---
+  duration_ms: 0.776083
+  ...
+# Subtest: startupWaiting accepts only an optional boolean
+ok 64 - startupWaiting accepts only an optional boolean
+  ---
+  duration_ms: 0.151333
+  ...
+# Subtest: startup hold cannot claim advancing time, partial countdown, penned horses or a finished drive
+ok 65 - startup hold cannot claim advancing time, partial countdown, penned horses or a finished drive
+  ---
+  duration_ms: 0.13675
+  ...
+# Subtest: released startup countdown cannot be re-entered or rewound by a later frame
+ok 66 - released startup countdown cannot be re-entered or rewound by a later frame
+  ---
+  duration_ms: 0.415333
+  ...
+# Subtest: offline and live lobby card uses only real roster names and explicit ready consent
+ok 67 - offline and live lobby card uses only real roster names and explicit ready consent
+  ---
+  duration_ms: 44.257291
+  ...
+# Subtest: join sends the selected lobby identity and does not ready the guest
+ok 68 - join sends the selected lobby identity and does not ready the guest
+  ---
+  duration_ms: 2.60625
+  ...
+# Subtest: semantic clubhouse key ignores changing elapsed and guide positions but tracks readiness
+ok 69 - semantic clubhouse key ignores changing elapsed and guide positions but tracks readiness
+  ---
+  duration_ms: 3.605208
+  ...
+# Subtest: accepted riding transition closes menus once and keeps actual HUD Leave node and focus stable
+ok 70 - accepted riding transition closes menus once and keeps actual HUD Leave node and focus stable
+  ---
+  duration_ms: 1.664083
+  ...
+# Subtest: finish panel shows unsaved record honestly, retry refreshes the confirmed personal best
+ok 71 - finish panel shows unsaved record honestly, retry refreshes the confirmed personal best
+  ---
+  duration_ms: 17.099
+  ...
+# Subtest: stale finish timers cannot interrupt a later gathering
+ok 72 - stale finish timers cannot interrupt a later gathering
+  ---
+  duration_ms: 1.305958
+  ...
+# Subtest: controller refusal keeps the current screen and explains the failed command
+ok 73 - controller refusal keeps the current screen and explains the failed command
+  ---
+  duration_ms: 1.103458
+  ...
+# Subtest: Free ride releases a finished core but preserves the unsaved result for reopening
+ok 74 - Free ride releases a finished core but preserves the unsaved result for reopening
+  ---
+  duration_ms: 3.979042
+  ...
+# Subtest: Back to club releases a finished core and opens the existing Activities tab
+ok 75 - Back to club releases a finished core and opens the existing Activities tab
+  ---
+  duration_ms: 1.806667
+  ...
+# Subtest: staged riders see gathering feedback until the shared countdown can begin
+ok 76 - staged riders see gathering feedback until the shared countdown can begin
+  ---
+  duration_ms: 3.527959
+  ...
+# Subtest: rally scoring derives points from exact activity and medal counters
+ok 77 - rally scoring derives points from exact activity and medal counters
+  ---
+  duration_ms: 12.671792
+  ...
+# Subtest: accepted run IDs are deduplicated across reload; malformed and empty roundup results pay no points
+ok 78 - accepted run IDs are deduplicated across reload; malformed and empty roundup results pay no points
+  ---
+  duration_ms: 16.054709
+  ...
+# Subtest: cumulative peer snapshots use component maxima and never replay packet increments
+ok 79 - cumulative peer snapshots use component maxima and never replay packet increments
+  ---
+  duration_ms: 1.237292
+  ...
+# Subtest: rewards require own participation and persist once per tier and week across clubs
+ok 80 - rewards require own participation and persist once per tier and week across clubs
+  ---
+  duration_ms: 48.706958
+  ...
+# Subtest: trophy display is bounded while old claim masks remain permanent
+ok 81 - trophy display is bounded while old claim masks remain permanent
+  ---
+  duration_ms: 119.917417
+  ...
+# Subtest: forged finish hooks and unjoined or pending clubs receive no credit
+ok 82 - forged finish hooks and unjoined or pending clubs receive no credit
+  ---
+  duration_ms: 3.795291
+  ...
+# Subtest: actual Rush, rescue, roundup and trail finishes earn points once and emit receipts
+ok 83 - actual Rush, rescue, roundup and trail finishes earn points once and emit receipts
+  ---
+  duration_ms: 7.926125
+  ...
+# Subtest: finish object identity and persisted activity record both must verify
+ok 84 - finish object identity and persisted activity record both must verify
+  ---
+  duration_ms: 1.6875
+  ...
+# Subtest: membership changes and weekly rollover invalidate started activities
+ok 85 - membership changes and weekly rollover invalidate started activities
+  ---
+  duration_ms: 0.664791
+  ...
+# Subtest: fake peer transport waits for accepted member metadata and rejects wrong scopes or malformed snapshots
+ok 86 - fake peer transport waits for accepted member metadata and rejects wrong scopes or malformed snapshots
+  ---
+  duration_ms: 4.425792
+  ...
+# Subtest: pending snapshots retain maxima when an older packet arrives before member metadata
+ok 87 - pending snapshots retain maxima when an older packet arrives before member metadata
+  ---
+  duration_ms: 0.596667
+  ...
+# Subtest: repeated pending snapshots do not extend their original metadata wait expiry
+ok 88 - repeated pending snapshots do not extend their original metadata wait expiry
+  ---
+  duration_ms: 0.441167
+  ...
+# Subtest: only exact authored expedition trails earn rally credit, including live club routes
+ok 89 - only exact authored expedition trails earn rally credit, including live club routes
+  ---
+  duration_ms: 0.442125
+  ...
+# Subtest: storage failure does not announce a claim and retry/reload cannot duplicate payment
+ok 90 - storage failure does not announce a claim and retry/reload cannot duplicate payment
+  ---
+  duration_ms: 0.754167
+  ...
+# Subtest: activity entry rejects existing activities, flight and locked trails without replacing them
+ok 91 - activity entry rejects existing activities, flight and locked trails without replacing them
+  ---
+  duration_ms: 0.305166
+  ...
+# Subtest: malformed saves sanitize without prototype keys, invalid weeks or unbounded display rows
+ok 92 - malformed saves sanitize without prototype keys, invalid weeks or unbounded display rows
+  ---
+  duration_ms: 0.121417
+  ...
+# Subtest: old rescue, Rush and roundup records retroactively credit every goal without mutating history
+ok 93 - old rescue, Rush and roundup records retroactively credit every goal without mutating history
+  ---
+  duration_ms: 16.209209
+  ...
+# Subtest: exact chapter rewards are fixed, sequential and once-only
+ok 94 - exact chapter rewards are fixed, sequential and once-only
+  ---
+  duration_ms: 16.085542
+  ...
+# Subtest: selling or merging a reward cannot reopen its permanent claim
+ok 95 - selling or merging a reward cannot reopen its permanent claim
+  ---
+  duration_ms: 0.786875
+  ...
+# Subtest: explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+ok 96 - explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+  ---
+  duration_ms: 6.656958
+  ...
+# Subtest: each unfinished goal routes to the real activity and medal quality matters
+ok 97 - each unfinished goal routes to the real activity and medal quality matters
+  ---
+  duration_ms: 0.186125
+  ...
+# Subtest: malformed saves cannot create earned progress, crash the journey, or forge a claim
+ok 98 - malformed saves cannot create earned progress, crash the journey, or forge a claim
+  ---
+  duration_ms: 0.440792
+  ...
+# Subtest: runtime verifies persisted claims and does not announce failed storage writes
+ok 99 - runtime verifies persisted claims and does not announce failed storage writes
+  ---
+  duration_ms: 94.022042
+  ...
+# Subtest: runtime claim and explicit equip survive reload and forged finish events award nothing
+ok 100 - runtime claim and explicit equip survive reload and forged finish events award nothing
+  ---
+  duration_ms: 25.014459
+  ...
+# Subtest: captured 87-second Juniper stall now has an unobstructed marker inside pressure range
+ok 101 - captured 87-second Juniper stall now has an unobstructed marker inside pressure range
+  ---
+  duration_ms: 164.707375
+  ...
+# Subtest: all later captured stall samples remain within the effective flight zone
+ok 102 - all later captured stall samples remain within the effective flight zone
+  ---
+  duration_ms: 4.1215
+  ...
+# Subtest: an open pasture retains the original nine-metre direct pressure position
+ok 103 - an open pasture retains the original nine-metre direct pressure position
+  ---
+  duration_ms: 1.686542
+  ...
+# Subtest: a blocked ideal position finds an angular alternative instead of jumping out of range
+ok 104 - a blocked ideal position finds an angular alternative instead of jumping out of range
+  ---
+  duration_ms: 0.587459
+  ...
+# Subtest: a thin wall between rider and all markers gives no misleading marker
+ok 105 - a thin wall between rider and all markers gives no misleading marker
+  ---
+  duration_ms: 2.123958
+  ...
+# Subtest: a point across an internal fence is rejected even when its endpoint is open
+ok 106 - a point across an internal fence is rejected even when its endpoint is open
+  ---
+  duration_ms: 0.522583
+  ...
+# Subtest: a pasture boundary does not clamp an impossible rear approach into a false marker
+ok 107 - a pasture boundary does not clamp an impossible rear approach into a false marker
+  ---
+  duration_ms: 0.244792
+  ...
+# Subtest: solid model callback rejects blocked endpoints and routes
+ok 108 - solid model callback rejects blocked endpoints and routes
+  ---
+  duration_ms: 0.7855
+  ...
+# Subtest: rider may retreat out from a collider contact margin without crossing through it
+ok 109 - rider may retreat out from a collider contact margin without crossing through it
+  ---
+  duration_ms: 1.964292
+  ...
+# Subtest: full herd uses the same safe range and never weakens its collider clearance
+ok 110 - full herd uses the same safe range and never weakens its collider clearance
+  ---
+  duration_ms: 4.277959
+  ...
+# Subtest: candidate and geometry sampling remains bounded for malformed or faraway positions
+ok 111 - candidate and geometry sampling remains bounded for malformed or faraway positions
+  ---
+  duration_ms: 0.553666
+  ...
+# Subtest: selection does not mutate input points, collider data, or bounds
+ok 112 - selection does not mutate input points, collider data, or bounds
+  ---
+  duration_ms: 1.223541
+  ...
+# Subtest: actual target state marks a rider on the replacement marker as guiding
+ok 113 - actual target state marks a rider on the replacement marker as guiding
+  ---
+  duration_ms: 3.373625
+  ...
+# Subtest: actual state exposes blocked approach with null coordinates and bounded cache lifetime
+ok 114 - actual state exposes blocked approach with null coordinates and bounded cache lifetime
+  ---
+  duration_ms: 3.903625
+  ...
+# Subtest: finish gate rejects an unfinished clock and herd without touching save or scene
+ok 115 - finish gate rejects an unfinished clock and herd without touching save or scene
+  ---
+  duration_ms: 11.16
+  ...
+# Subtest: full gold saves rewards, bests, story, pass and week before one successful finish
+ok 116 - full gold saves rewards, bests, story, pass and week before one successful finish
+  ---
+  duration_ms: 16.0765
+  ...
+# Subtest: rejected write preserves earned run and actors without success, then retries exactly once
+ok 117 - rejected write preserves earned run and actors without success, then retries exactly once
+  ---
+  duration_ms: 8.31375
+  ...
+# Subtest: write wrapper failure after commit is acknowledged by durable readback
+ok 118 - write wrapper failure after commit is acknowledged by durable readback
+  ---
+  duration_ms: 1.487
+  ...
+# Subtest: unreadable post-write confirmation retains scene and acknowledges same receipt without regrant
+ok 119 - unreadable post-write confirmation retains scene and acknowledges same receipt without regrant
+  ---
+  duration_ms: 0.917667
+  ...
+# Subtest: partial clock expiry pays only the penned horses and never grants a full-herd Journey goal
+ok 120 - partial clock expiry pays only the penned horses and never grants a full-herd Journey goal
+  ---
+  duration_ms: 5.198042
+  ...
+# Subtest: an explicit cancellation cleans up without paying or recording a result
+ok 121 - an explicit cancellation cleans up without paying or recording a result
+  ---
+  duration_ms: 6.469042
+  ...
+# Subtest: production pen crossing reaches completion but cannot dispose the final actor before save
+ok 122 - production pen crossing reaches completion but cannot dispose the final actor before save
+  ---
+  duration_ms: 4.730125
+  ...
+# Subtest: gold medal is retained independently of a tied legacy best score
+ok 123 - gold medal is retained independently of a tied legacy best score
+  ---
+  duration_ms: 9.867083
+  ...
+# Subtest: a later partial round never erases saved full gold or its Journey credit
+ok 124 - a later partial round never erases saved full gold or its Journey credit
+  ---
+  duration_ms: 74.356666
+  ...
+# Subtest: a recovered first write targets the current saved week, VIP and objective exactly once
+ok 125 - a recovered first write targets the current saved week, VIP and objective exactly once
+  ---
+  duration_ms: 109.070375
+  ...
+# Subtest: menus, background tabs and free camera freeze actual roundup countdown and horse movement
+ok 126 - menus, background tabs and free camera freeze actual roundup countdown and horse movement
+  ---
+  duration_ms: 159.283333
+  ...
+# Subtest: a committed but unreadable finish reconciles its story before an unrelated quest or stale save
+ok 127 - a committed but unreadable finish reconciles its story before an unrelated quest or stale save
+  ---
+  duration_ms: 3.267791
+  ...
+# Subtest: a claimed successor is never rewound or reannounced by the old pending roundup receipt
+ok 128 - a claimed successor is never rewound or reannounced by the old pending roundup receipt
+  ---
+  duration_ms: 2.242125
+  ...
+# Subtest: beginner production state exposes the new clock and preserves a real old best on completion
+ok 129 - beginner production state exposes the new clock and preserves a real old best on completion
+  ---
+  duration_ms: 1.363375
+  ...
+# Subtest: elapsed and pressure updates preserve the focused HUD button and refresh real text
+ok 130 - elapsed and pressure updates preserve the focused HUD button and refresh real text
+  ---
+  duration_ms: 21.879583
+  ...
+# Subtest: pending state preserves button identity, focus and an explicit result reopening action
+ok 131 - pending state preserves button identity, focus and an explicit result reopening action
+  ---
+  duration_ms: 181.986166
+  ...
+# Subtest: the persistent button reads current state even before the next throttled paint
+ok 132 - the persistent button reads current state even before the next throttled paint
+  ---
+  duration_ms: 7.038917
+  ...
+# Subtest: a blocked approach hides the pressure ring and explains how to circle for a clear route
+ok 133 - a blocked approach hides the pressure ring and explains how to circle for a clear route
+  ---
+  duration_ms: 1.5145
+  ...
+# Subtest: pressure cue and both rings agree while beginner handoff stays explicit
+ok 134 - pressure cue and both rings agree while beginner handoff stays explicit
+  ---
+  duration_ms: 1.489667
+  ...
+# Subtest: beginner countdown states the explicit inclusive gold target before the clock starts
+ok 135 - beginner countdown states the explicit inclusive gold target before the clock starts
+  ---
+  duration_ms: 10.48675
+  ...
+# Subtest: full herd countdown keeps the half-second target accurate
+ok 136 - full herd countdown keeps the half-second target accurate
+  ---
+  duration_ms: 0.172416
+  ...
+# Subtest: active gold window counts down rather than claiming a medal
+ok 137 - active gold window counts down rather than claiming a medal
+  ---
+  duration_ms: 1.241834
+  ...
+# Subtest: 97.5 seconds exactly remains inside the actual production gold boundary
+ok 138 - 97.5 seconds exactly remains inside the actual production gold boundary
+  ---
+  duration_ms: 1.966375
+  ...
+# Subtest: 97.51 seconds is silver in production and in the live pace cue
+ok 139 - 97.51 seconds is silver in production and in the live pace cue
+  ---
+  duration_ms: 0.3355
+  ...
+# Subtest: 97.5 seconds is gold for the full herd but 97.51 is silver
+ok 140 - 97.5 seconds is gold for the full herd but 97.51 is silver
+  ---
+  duration_ms: 0.114791
+  ...
+# Subtest: tiny positive gold windows remain visibly positive
+ok 141 - tiny positive gold windows remain visibly positive
+  ---
+  duration_ms: 0.5485
+  ...
+# Subtest: pending save overrides countdown and apparent gold completion
+ok 142 - pending save overrides countdown and apparent gold completion
+  ---
+  duration_ms: 0.371292
+  ...
+# Subtest: a direct unsaved status is also pending
+ok 143 - a direct unsaved status is also pending
+  ---
+  duration_ms: 0.856583
+  ...
+# Subtest: unverified receipt cannot claim success or recommend another attempt
+ok 144 - unverified receipt cannot claim success or recommend another attempt
+  ---
+  duration_ms: 2.357459
+  ...
+# Subtest: silver target states exactly the integer improvement and gold time
+ok 145 - silver target states exactly the integer improvement and gold time
+  ---
+  duration_ms: 8.047
+  ...
+# Subtest: a hundredth-second miss receives a useful tenth-second improvement
+ok 146 - a hundredth-second miss receives a useful tenth-second improvement
+  ---
+  duration_ms: 12.720083
+  ...
+# Subtest: full herd silver uses its own deadline and improvement
+ok 147 - full herd silver uses its own deadline and improvement
+  ---
+  duration_ms: 2.538833
+  ...
+# Subtest: partial bronze rounds target the whole herd without claiming silver or gold
+ok 148 - partial bronze rounds target the whole herd without claiming silver or gold
+  ---
+  duration_ms: 86.519125
+  ...
+# Subtest: zero-home rounds offer the full target without inventing a reward
+ok 149 - zero-home rounds offer the full target without inventing a reward
+  ---
+  duration_ms: 0.951208
+  ...
+# Subtest: beginner gold invites the larger herd and acknowledges only an actual new best
+ok 150 - beginner gold invites the larger herd and acknowledges only an actual new best
+  ---
+  duration_ms: 1.554041
+  ...
+# Subtest: full gold chases the newly saved faster time rather than the older slower record
+ok 151 - full gold chases the newly saved faster time rather than the older slower record
+  ---
+  duration_ms: 0.946125
+  ...
+# Subtest: full gold retains a faster previous record when this ride did not beat it
+ok 152 - full gold retains a faster previous record when this ride did not beat it
+  ---
+  duration_ms: 1.780167
+  ...
+# Subtest: score and time record flags remain distinct
+ok 153 - score and time record flags remain distinct
+  ---
+  duration_ms: 0.85275
+  ...
+# Subtest: pace handles the expired partial round without a saved success claim
+ok 154 - pace handles the expired partial round without a saved success claim
+  ---
+  duration_ms: 1.736375
+  ...
+# Subtest: default targets and time-left fallback use the production mode definitions
+ok 155 - default targets and time-left fallback use the production mode definitions
+  ---
+  duration_ms: 0.374708
+  ...
+# Subtest: presentation is pure and does not change live state or durable receipts
+ok 156 - presentation is pure and does not change live state or durable receipts
+  ---
+  duration_ms: 0.137083
+  ...
+# Subtest: paused world reports a stopped timer rather than a running gold countdown
+ok 157 - paused world reports a stopped timer rather than a running gold countdown
+  ---
+  duration_ms: 0.1135
+  ...
+# Subtest: explicit historical 120-second timing remains presentable without using new defaults
+ok 158 - explicit historical 120-second timing remains presentable without using new defaults
+  ---
+  duration_ms: 0.073042
+  ...
+# Subtest: a walking rider can keep a calm horse moving home from the safe pressure marker
+ok 159 - a walking rider can keep a calm horse moving home from the safe pressure marker
+  ---
+  duration_ms: 10.835792
+  ...
+# Subtest: closing too quickly produces the too-close warning before a faster escape
+ok 160 - closing too quickly produces the too-close warning before a faster escape
+  ---
+  duration_ms: 0.166917
+  ...
+# Subtest: the beginner response is smooth at6m and bounded throughout both bands
+ok 161 - the beginner response is smooth at6m and bounded throughout both bands
+  ---
+  duration_ms: 0.880917
+  ...
+# Subtest: a rider on the wrong side moves the horse away but never receives a guiding cue
+ok 162 - a rider on the wrong side moves the horse away but never receives a guiding cue
+  ---
+  duration_ms: 29.376041
+  ...
+# Subtest: guiding requires strictly greater than one-half directional alignment
+ok 163 - guiding requires strictly greater than one-half directional alignment
+  ---
+  duration_ms: 0.160459
+  ...
+# Subtest: the pressure radius is exclusive and a disabled target cannot guide or spook
+ok 164 - the pressure radius is exclusive and a disabled target cannot guide or spook
+  ---
+  duration_ms: 5.798958
+  ...
+# Subtest: full mode retains exact fourteen-metre pressure and6/4.8 movement speeds
+ok 165 - full mode retains exact fourteen-metre pressure and6/4.8 movement speeds
+  ---
+  duration_ms: 10.626875
+  ...
+# Subtest: invalid input cannot activate pressure or leak NaN into movement/HUD
+ok 166 - invalid input cannot activate pressure or leak NaN into movement/HUD
+  ---
+  duration_ms: 0.734125
+  ...
+# Subtest: large finite points retain a finite normalized alignment and inputs stay untouched
+ok 167 - large finite points retain a finite normalized alignment and inputs stay untouched
+  ---
+  duration_ms: 0.918041
+  ...
+# Subtest: gentle mode gains a learning margin while full mode and all payouts stay unchanged
+ok 168 - gentle mode gains a learning margin while full mode and all payouts stay unchanged
+  ---
+  duration_ms: 13.167375
+  ...
+# Subtest: expired partial and empty rounds earn only their real penned horses
+ok 169 - expired partial and empty rounds earn only their real penned horses
+  ---
+  duration_ms: 0.176416
+  ...
+# Subtest: unfinished, nonfinite, impossible and unknown result proofs are rejected
+ok 170 - unfinished, nonfinite, impossible and unknown result proofs are rejected
+  ---
+  duration_ms: 0.756625
+  ...
+# Subtest: time quantization leaves exact medal boundary authoritative
+ok 171 - time quantization leaves exact medal boundary authoritative
+  ---
+  duration_ms: 9.221167
+  ...
+# Subtest: one write saves rewards, receipt and best records together without changing unrelated data
+ok 172 - one write saves rewards, receipt and best records together without changing unrelated data
+  ---
+  duration_ms: 1.902041
+  ...
+# Subtest: a legacy saved score tie cannot suppress a newly earned better medal
+ok 173 - a legacy saved score tie cannot suppress a newly earned better medal
+  ---
+  duration_ms: 0.68
+  ...
+# Subtest: later partial results preserve the full-herd medal, fastest time and score
+ok 174 - later partial results preserve the full-herd medal, fastest time and score
+  ---
+  duration_ms: 0.620333
+  ...
+# Subtest: a rejected write leaves every saved field unchanged and explicit retry pays once
+ok 175 - a rejected write leaves every saved field unchanged and explicit retry pays once
+  ---
+  duration_ms: 4.321084
+  ...
+# Subtest: a throwing storage wrapper after commit still confirms the durable receipt
+ok 176 - a throwing storage wrapper after commit still confirms the durable receipt
+  ---
+  duration_ms: 1.7435
+  ...
+# Subtest: unreadable confirmation stays pending then recovers without a second payment
+ok 177 - unreadable confirmation stays pending then recovers without a second payment
+  ---
+  duration_ms: 17.490333
+  ...
+# Subtest: failed first receipt read cannot bypass transaction-level duplicate protection
+ok 178 - failed first receipt read cannot bypass transaction-level duplicate protection
+  ---
+  duration_ms: 4.87275
+  ...
+# Subtest: old run receipts stay acknowledged after many later rounds
+ok 179 - old run receipts stay acknowledged after many later rounds
+  ---
+  duration_ms: 12.088042
+  ...
+# Subtest: conflicting receipt identities reject payment rather than overwrite a completed run
+ok 180 - conflicting receipt identities reject payment rather than overwrite a completed run
+  ---
+  duration_ms: 1.019
+  ...
+# Subtest: recomputed proof refuses mutated payout, count, medal and time fields
+ok 181 - recomputed proof refuses mutated payout, count, medal and time fields
+  ---
+  duration_ms: 0.28475
+  ...
+# Subtest: reward callback cannot replace proof identity and receipt is detached from live details
+ok 182 - reward callback cannot replace proof identity and receipt is detached from live details
+  ---
+  duration_ms: 0.170875
+  ...
+# Subtest: missing or throwing reward reducer rolls the whole draft back
+ok 183 - missing or throwing reward reducer rolls the whole draft back
+  ---
+  duration_ms: 0.165834
+  ...
+# Subtest: malformed legacy records normalize without losing separate claimed data
+ok 184 - malformed legacy records normalize without losing separate claimed data
+  ---
+  duration_ms: 0.686875
+  ...
+# Subtest: special run identifiers become own receipt keys without prototype mutation
+ok 185 - special run identifiers become own receipt keys without prototype mutation
+  ---
+  duration_ms: 19.473167
+  ...
+# Subtest: new budget preserves old 120-second bests, historical receipts and claimed progression
+ok 186 - new budget preserves old 120-second bests, historical receipts and claimed progression
+  ---
+  duration_ms: 4.673791
+  ...
+# Subtest: captured shelter position turns clear and physically escapes while rider holds pressure
+ok 187 - captured shelter position turns clear and physically escapes while rider holds pressure
+  ---
+  duration_ms: 113.126667
+  ...
+# Subtest: actual tick rides around the shelter/tree cluster with a walking rider continuing pressure
+ok 188 - actual tick rides around the shelter/tree cluster with a walking rider continuing pressure
+  ---
+  duration_ms: 568.836708
+  ...
+# Subtest: gentle open-ground pressure uses the shared walkable speed and original turn integration
+ok 189 - gentle open-ground pressure uses the shared walkable speed and original turn integration
+  ---
+  duration_ms: 0.229334
+  ...
+# Subtest: candidate detours stay in the away-facing half plane and prefer a consistent bypass side
+ok 190 - candidate detours stay in the away-facing half plane and prefer a consistent bypass side
+  ---
+  duration_ms: 0.231458
+  ...
+# Subtest: blocked walls and actual solid geometry cannot be bypassed by weakened contacts
+ok 191 - blocked walls and actual solid geometry cannot be bypassed by weakened contacts
+  ---
+  duration_ms: 16.269625
+  ...
+# Subtest: actual state warning and actual tick speed agree across beginner pressure boundaries
+ok 192 - actual state warning and actual tick speed agree across beginner pressure boundaries
+  ---
+  duration_ms: 12.932791
+  ...
+# Subtest: beginner warning changes at six metres without a movement-speed discontinuity
+ok 193 - beginner warning changes at six metres without a movement-speed discontinuity
+  ---
+  duration_ms: 4.24175
+  ...
+# Subtest: being on the wrong side never shows guiding and actually sends the horse away from the pen
+ok 194 - being on the wrong side never shows guiding and actually sends the horse away from the pen
+  ---
+  duration_ms: 0.990792
+  ...
+# Subtest: turning and solid-blocked horses never show a false green guiding state
+ok 195 - turning and solid-blocked horses never show a false green guiding state
+  ---
+  duration_ms: 4.393042
+  ...
+# Subtest: full solo and shared herds retain their original open-ground speeds
+ok 196 - full solo and shared herds retain their original open-ground speeds
+  ---
+  duration_ms: 1.321625
+  ...
+# Subtest: beginner target stays identifiable until penned and then hands control to the next horse
+ok 197 - beginner target stays identifiable until penned and then hands control to the next horse
+  ---
+  duration_ms: 2.293333
+  ...
+# Subtest: walking behind a horse sustains gentle pressure without repeated sprint-and-release cycles
+ok 198 - walking behind a horse sustains gentle pressure without repeated sprint-and-release cycles
+  ---
+  duration_ms: 52.936208
+  ...
+# Subtest: shared startup reuses five actors in four distinct pasture slots without a solo start or write
+ok 199 - shared startup reuses five actors in four distinct pasture slots without a solo start or write
+  ---
+  duration_ms: 109.654875
+  ...
+# Subtest: a flank rider changes the same horse motion through production combined-pressure physics
+ok 200 - a flank rider changes the same horse motion through production combined-pressure physics
+  ---
+  duration_ms: 29.792625
+  ...
+# Subtest: remote roster is detached, deduplicated, finite, bounded and capped at three plus local
+ok 201 - remote roster is detached, deduplicated, finite, bounded and capped at three plus local
+  ---
+  duration_ms: 0.839583
+  ...
+# Subtest: guest never advances clock, runs avoidance, pens a horse or pays locally
+ok 202 - guest never advances clock, runs avoidance, pens a horse or pays locally
+  ---
+  duration_ms: 9.356292
+  ...
+# Subtest: valid guest snapshots interpolate detached host positions even while a local menu is open
+ok 203 - valid guest snapshots interpolate detached host positions even while a local menu is open
+  ---
+  duration_ms: 0.820375
+  ...
+# Subtest: malformed, cross-session, reverse-clock, impossible-pen and out-of-bounds snapshots are rejected atomically
+ok 204 - malformed, cross-session, reverse-clock, impossible-pen and out-of-bounds snapshots are rejected atomically
+  ---
+  duration_ms: 1.140583
+  ...
+# Subtest: host and guest finish exactly once, retain actors, and never touch solo rewards or records
+ok 205 - host and guest finish exactly once, retain actors, and never touch solo rewards or records
+  ---
+  duration_ms: 0.5295
+  ...
+# Subtest: host menu, free camera, photo pause and background freeze the shared stopwatch and physics
+ok 206 - host menu, free camera, photo pause and background freeze the shared stopwatch and physics
+  ---
+  duration_ms: 6.286083
+  ...
+# Subtest: shared completion has no solo deadline and cannot override a pending or active solo round
+ok 207 - shared completion has no solo deadline and cannot override a pending or active solo round
+  ---
+  duration_ms: 3.30775
+  ...
+# Subtest: normal cancellation of a shared session releases only shared actors and stop hook
+ok 208 - normal cancellation of a shared session releases only shared actors and stop hook
+  ---
+  duration_ms: 9.587583
+  ...
+# Subtest: source exposes the narrow shared interface alongside unchanged solo entry points
+ok 209 - source exposes the narrow shared interface alongside unchanged solo entry points
+  ---
+  duration_ms: 1.203709
+  ...
+# Subtest: a blocked shared spawn fails without moving the rider or constructing the herd
+ok 210 - a blocked shared spawn fails without moving the rider or constructing the herd
+  ---
+  duration_ms: 0.49975
+  ...
+# Subtest: guest final state retains authoritative pen coordinates and rejects horses leaving it
+ok 211 - guest final state retains authoritative pen coordinates and rejects horses leaving it
+  ---
+  duration_ms: 1.245375
+  ...
+# Subtest: startup rendezvous holds the real countdown, all horse physics and elapsed time until one-way host release
+ok 212 - startup rendezvous holds the real countdown, all horse physics and elapsed time until one-way host release
+  ---
+  duration_ms: 0.788791
+  ...
+1..212
+# tests 212
+# suites 0
+# pass 212
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2746.592542

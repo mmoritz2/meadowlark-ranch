@@ -1,4 +1,4 @@
-import {ROUNDUP_MODES} from './roundup-rewards.mjs?v=roundup-finish-1';
+import {ROUNDUP_MODES} from './roundup-rewards.mjs?v=gentle-herd-1';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const nonnegative = (value, fallback = 0) => finite(value) ? Math.max(0, value) : fallback;

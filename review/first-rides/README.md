@@ -24,14 +24,18 @@ Horse readiness and removal of the actual loading curtain enable fixture control
 
 ## Controls and isolation
 
-- Proxies mirror only visible, enabled production buttons: `adventure:`, `journey:`, `rush:`, character save, the two quick activity buttons, reassurance, save retry and adventure cancellation. Each click rechecks the actual button. There is no arbitrary-selector or code endpoint.
+- Proxies mirror only visible production buttons and preserve their disabled state: `adventure:`, `journey:`, `rush:`, `herd:`, character save, the two quick activity buttons, reassurance, save retry and adventure cancellation. Each click rechecks the actual button. The `herd:` scope mirrors visible roundup result controls for saving, riding again, changing difficulty, choosing an activity, or closing the result; it does not provide a direct roundup API or arbitrary-selector/code endpoint.
 - W/A/D/S buttons generate ordinary key events for bounded wall-clock durations. The gait select uses the production riding control.
 - **Drive active rescue route** follows the published mission target through normal keys. It stops for the operator to click the real **Reassure Clover** button, then escorts her along the actual ridden line.
 - **Drive active Pasture Dash** follows the active production course's six gate positions through ordinary movement. The course engine recognizes all crossings and awards its own result.
-- Neither driver changes position, heading, simulation time, course index, trust, rewards, or save progress. Production activity entry may perform its normal start positioning.
+- **Drive active beginner roundup** requires an already active solo beginner roundup started through production UI. It follows the published horse/pressure target with ordinary W/A/D/S events and production gait selection, using walk near the target and trot for longer approaches. It circles behind a horse when needed, releases input during countdowns, menus or pending saves, and stops when the activity ends. Full and shared herd sessions are outside this driver’s scope.
+- **Herd spacing** compares rider steering aims. Value `9` follows the unchanged published gold-ring position; obstacles may make that marker differ from exactly nine metres. Value `7.5` aims closer only when the rider is already behind the horse and near its approach line. It changes the rider’s aiming point, not the production marker or horse pressure rule. Both choices use real collision handling; a selected spacing is not a guarantee of a clear path.
+- None of the drivers directly changes rider or loose-horse position/heading, horse speed, simulation time, course index, pen counts, trust, rewards, or save progress. They generate riding inputs; production owns horse motion, elapsed time, crossings and completion. Production activity entry may perform its normal start positioning.
 - Menus, background state and pending saves release input. A route blocked by scenery may require manual steering. An unexpected live network connection ends the client and stops this offline test.
 
-These drivers exercise normal movement and completion logic; they are not a substitute for a human usability study. The test reports actual rescue/journey/Rush state, mount identity/readiness, scenery status, errors and a compact save summary. It does not export a full save or online identity.
+These drivers exercise normal movement and completion logic; they are not a human usability study or evidence that a new player finds the controls intuitive. The report includes actual rescue/journey/Rush/roundup state, mount identity/readiness, driver status/aim, scenery status, errors and a compact save summary. It does not export a full save or online identity.
+
+`roundupTrace` records up to 250 diagnostic samples for the current roundup run, restarting when its run ID changes. Samples are taken when reported game elapsed time advances by at least 0.75 seconds, rather than advancing that clock. Each row contains elapsed time, penned count, target horse name/position, pressure cue, rider-to-horse distance, reported horse speed, approach-blocked state, and rider position/speed. It lets a reviewer distinguish spacing, steering, stalls and obstacle effects from an actual pen crossing. Recording a row never moves a horse or awards progress.
 
 ## Automated checks
 

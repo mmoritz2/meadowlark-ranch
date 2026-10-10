@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {chooseRoundupApproach} from '../assets/roundup-approach.mjs';
+import * as approach from '../assets/roundup-approach.mjs';
+import * as pressure from '../assets/roundup-pressure.mjs';
+import {ROUNDUP_MODES} from '../assets/roundup-rewards.mjs';
+const {chooseRoundupApproach}=approach;
 const bounds={x1:-110,x2:-33,z1:-45,z2:25},pen={x:-44,z:-8};
 const captured={horse:{x:-70.05001037502082,z:-1.0322879349380805},rider:{x:-79.93126458892823,z:6.714969306796876},pen,bounds,
  colliders:[{x:-78.06703661320132,z:-4.849029336761886,r:.8},{x:-81.14037748273948,z:-4.777269400358604,r:.8},{x:-81.41458904821971,z:-2.3796308872720204,r:.8},{x:-70.15581466997632,z:-4.191479997966275,r:.8},{x:-66.13761742858041,z:-15.500166657726039,r:.8},{x:-73.56703661320132,z:-1.7490293367618857,r:1.25},{x:-76.91458904821971,z:.7203691127279797,r:1.25}]};
@@ -79,10 +82,10 @@ assert(start>=0&&end>start);
 function stateFixture(o=captured){
  let now=1000,solidCalls=0;
  const pos={...o.horse,distanceTo(p){return Math.hypot(this.x-p.x,this.z-p.z);}},player={pos:{...o.rider}};
- const ROUND={on:true,mode:'beginner',horses:[{name:'Juniper',pos}],total:3,penned:0,t:33,elapsed:87,cd:0,runId:'captured',lastResult:null};
+ const ROUND={on:true,mode:'beginner',horses:[{name:'Juniper',pos}],total:3,penned:0,t:63,elapsed:87,cd:0,runId:'captured',lastResult:null};
  const G={input:{blocked:()=>false},world:{colliders:o.colliders||[],walls:o.walls||[],solidWorld:{resolve(p){solidCalls++;if(o.solid)o.solid(p);}}}};
- const state=Function('G','ROUND','ROUND_PEN','PAST','ROUND_MODES','player','Date','groundH','freshSave','chooseRoundupApproach','freeCam','document',source.slice(start,end)+'return roundupState;')(
-  G,ROUND,o.pen,o.bounds,{beginner:{name:'Gentle Roundup',time:120}},player,{now:()=>now},()=>0,()=>({}),chooseRoundupApproach,false,{hidden:false});
+ const bindings={...approach,...pressure,G,ROUND,ROUND_PEN:o.pen,PAST:o.bounds,ROUND_MODES:ROUNDUP_MODES,player,Date:{now:()=>now},groundH:()=>0,freshSave:()=>({}),freeCam:false,document:{hidden:false}};
+ const state=Function(...Object.keys(bindings),source.slice(start,end)+'return roundupState;')(...Object.values(bindings));
  return {state,player,G,advance:n=>now+=n,get solidCalls(){return solidCalls;}};
 }
 

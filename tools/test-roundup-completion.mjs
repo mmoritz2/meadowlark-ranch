@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as rewards from '../assets/roundup-rewards.mjs';
+import * as approach from '../assets/roundup-approach.mjs';
+import * as pressure from '../assets/roundup-pressure.mjs';
 import {journeyMetrics} from '../assets/features/rider-journey-rules.mjs';
 
 // Run production completion, retry, finish gates and pen cleanup against an
@@ -35,7 +37,7 @@ function fixture(options={}){
   trace.events.push({name,result:args[0]&&typeof args[0]==='object'?copy(args[0]):args[0]});for(const fn of hooks.get(name)||[])fn(...args);
  },trainingProgress:{apply(){return {};},confirmed:r=>trace.confirmed.push(copy(r))}};
  const STORY=[{type:'roundup',label:'Pen five runaways',goal:5,npc:'wren'},{type:'photo',goal:1,npc:'wren'}];
- const bindings={...rewards,G,player,scene:{remove:g=>trace.removed.push(g)},nameSprites:[],$:()=>hud,undressRig:h=>trace.undressed.push(h),
+ const bindings={...rewards,...approach,...pressure,G,player,scene:{remove:g=>trace.removed.push(g)},nameSprites:[],$:()=>hud,undressRig:h=>trace.undressed.push(h),
   freshSave,syncSave,localStorage,SAVE_KEY:key,VIPON:!vip,VIP_PASS:1.5,isVIP:s=>s.vip===true,weekKey:()=>week,
   DAILYQ:[{type:'photo',goal:2,label:'Take photographs'}],DAILY_N:1,QUEST_TYPES:{},STORY,storyIdx:0,storyProg:0,NPC_DEFS:[{id:'wren',name:'Wren'}],_dailyMemo:{key:'cached'},
   payReward:()=>trace.claims++,refreshTack(){},reloadHorses(){},sGem(){},mulOf:()=>1,
@@ -102,9 +104,9 @@ test('production pen crossing reaches completion but cannot dispose the final ac
  assert.equal(f.api.ROUND.penned,5);assert.equal(events(f,'roundupPen').length,1);assert.equal(events(f,'roundupSavePending').length,1);assert.equal(f.trace.removed.length,0);assert.equal(f.trace.disposed,0);assert.equal(events(f,'roundupFinish').length,0);
 });
 
-test('gold medal is retained independently of a tied rounded score',()=>{
- const f=fixture({mode:'beginner',remaining:42.05,elapsed:77.95,records:{beginner:{plays:1,score:1110,penned:3,time:78.05,medal:'silver',lastRunId:'prior'}}});
- assert.equal(f.finish(),true);assert.equal(f.api.ROUND.lastResult.score,1110);assert.equal(f.api.ROUND.lastResult.medal,'gold');assert.equal(f.save.roundupBest.beginner.medal,'gold');assert.equal(f.save.roundupBest.beginner.score,1110);assert.equal(f.save.roundupBest.beginner.time,77.95);
+test('gold medal is retained independently of a tied legacy best score',()=>{
+ const f=fixture({mode:'beginner',remaining:52.51,elapsed:97.49,records:{beginner:{plays:1,score:1163,penned:3,time:100,medal:'silver',lastRunId:'prior'}}});
+ assert.equal(f.finish(),true);assert.equal(f.api.ROUND.lastResult.score,1163);assert.equal(f.api.ROUND.lastResult.medal,'gold');assert.equal(f.save.roundupBest.beginner.medal,'gold');assert.equal(f.save.roundupBest.beginner.score,1163);assert.equal(f.save.roundupBest.beginner.time,97.49);
 });
 
 test('a later partial round never erases saved full gold or its Journey credit',()=>{
@@ -146,4 +148,15 @@ test('a claimed successor is never rewound or reannounced by the old pending rou
  f.editSave(s=>{s.story={idx:1,prog:0,rbase:15,claimed:'roundup'};});callback();assert.equal(f.trace.claims,0,'unreadable pending storage cannot authorize an old claim');
  f.failure=null;f.unreadable=false;callback();assert.equal(f.trace.claims,0);assert.deepEqual(f.api.liveStory(),{idx:1,prog:0});f.api.saveStory();assert.deepEqual(f.save.story,{idx:1,prog:0,rbase:15,claimed:'roundup'});
  assert.equal(f.api.retryRoundupSave(),true);assert.deepEqual(f.save.story,{idx:1,prog:0,rbase:15,claimed:'roundup'});assert.equal(f.trace.toasts.some(s=>s.includes('Ride back and tell')),false);assert.equal(f.save.stats.rounded,15);assert.equal(f.save.roundupBest.full.plays,1);assert.equal(f.trace.claims,0);
+});
+
+
+test('beginner production state exposes the new clock and preserves a real old best on completion',()=>{
+ const old={plays:2,score:1125,penned:3,time:75,medal:'gold',lastRunId:'old120'};
+ const f=fixture({mode:'beginner',penned:3,elapsed:113.11,remaining:36.89,records:{beginner:old}});
+ const state=f.api.roundupState();assert.equal(state.timeLimit,150);assert.equal(state.goldTimeLimit,97.5);
+ assert.equal(f.finish(),true);const r=f.api.ROUND.lastResult;
+ assert.equal(r.time,113.11);assert.equal(r.medal,'silver');assert.equal(r.pay,540);assert.equal(r.gems,1);assert.equal(r.keys,0);assert.equal(r.passPoints,18);assert.equal(r.starPoints,12);
+ assert.deepEqual(f.save.roundupBest.beginner,{...old,plays:3,lastRunId:'round-one'});assert.equal(journeyMetrics(f.save).beginnerPenned,3);
+ assert.equal(f.save.coins,640);assert.equal(f.save.gems,5);assert.equal(f.trace.writes,1);assert.equal(f.api.retryRoundupSave(),false);
 });

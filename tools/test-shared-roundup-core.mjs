@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as rewards from '../assets/roundup-rewards.mjs';
 import * as approach from '../assets/roundup-approach.mjs';
+import * as pressure from '../assets/roundup-pressure.mjs';
 import * as shared from '../assets/shared-herd-physics.mjs';
 const source=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8');
 const begin=source.indexOf('const ROUND_MODES='),end=source.indexOf('/* ===== Training drills',begin);
@@ -15,7 +16,7 @@ function fixture(){
  const RIG={ready:true,heroMotion:{state:{}}};
  const G={net:{net:{id:'local'}},input:{blocked:()=>blocked},riding:{releaseAll(){trace.release++;},selectGait(){}},world:{colliders:[],walls:[],pushOut(){trace.pushes++;}},worldPkg:{findClear(x,z,pad,radius,inside){return inside(x,z)?[x,z]:null;}},run:(name,data)=>trace.events.push({name,data}),onFoot:{on:false,state:()=>({})}};
  function makeHorse(){const group={position:vector(),rotation:{},visible:true,add(){},traverse(){}};return {group,legs:[],shadowM:{material:{dispose(){trace.disposed++;}}}};}
- const bindings={...rewards,...approach,...shared,G,player,RIG,DRILL:{},course:null,document,freeCam:false,PAST:{...bounds},THREE:{Vector3:vector},WILD_BREEDS:[{breed:'bay',body:'#654321',mane:'#321000'}],SPH:{},nameSprites:[],scene:{add(){},remove(){trace.removed++;}},makeHorse,nameSprite:()=>({position:vector(),removeFromParent(){}}),groundH:()=>0,$:()=>({style:{}}),toast(){},hidePanels(){blocked=false;},sNeigh(){},sChime(){},undressRig(){},dressWithRig(){},tickRig(){},animateHorse(){},GAITS:{walk:{},trot:{}},freshSave:()=>({roundupBest:{}}),syncSave(){trace.writes++;throw Error('shared session must never save');},refreshWallet(){throw Error('shared session must never pay');},confirmTrainingProgress(){throw Error('shared session must never credit');}};
+ const bindings={...rewards,...approach,...pressure,...shared,G,player,RIG,DRILL:{},course:null,document,freeCam:false,PAST:{...bounds},THREE:{Vector3:vector},WILD_BREEDS:[{breed:'bay',body:'#654321',mane:'#321000'}],SPH:{},nameSprites:[],scene:{add(){},remove(){trace.removed++;}},makeHorse,nameSprite:()=>({position:vector(),removeFromParent(){}}),groundH:()=>0,$:()=>({style:{}}),toast(){},hidePanels(){blocked=false;},sNeigh(){},sChime(){},undressRig(){},dressWithRig(){},tickRig(){},animateHorse(){},GAITS:{walk:{},trot:{}},freshSave:()=>({roundupBest:{}}),syncSave(){trace.writes++;throw Error('shared session must never save');},refreshWallet(){throw Error('shared session must never pay');},confirmTrainingProgress(){throw Error('shared session must never credit');}};
  const api=Function(...Object.keys(bindings),core+`;buildPen=()=>{ROUND.grp={visible:true};ROUND.ring=null;};return {ROUND,startSharedRoundup,sharedRoundupState,setSharedRoundupStartupWaiting,setSharedRoundupRiders,applySharedRoundupSnapshot,stopSharedRoundup,tickRoundup,startRoundup,endRoundup,retryRoundupSave,roundupState,setFreeCam:v=>{freeCam=v;}};`)(...Object.values(bindings));
  return {api,G,player,RIG,trace,document,bindings,set blocked(v){blocked=v;},start:(host=true,slot=0)=>api.startSharedRoundup({sessionId:'team-one',host,slot}),tick:(dt=.02,t=1)=>api.tickRoundup(dt,t)};
 }

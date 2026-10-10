@@ -711,8 +711,9 @@ import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007'
 import {FEATURES} from './assets/features/index.js?v=north-valley-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
-import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=roundup-finish-1';
+import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
 import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-approach-2';
+import {roundupPressure} from './assets/roundup-pressure.mjs?v=gentle-herd-1';
 import {sharedHerdRiders,sharedHerdPressure,validateSharedHerdSnapshot} from './assets/shared-herd-physics.mjs?v=shared-herd-2';
 const HORSE_ARRIVAL=createHorseArrival();
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
@@ -9542,7 +9543,7 @@ function finishCourse(){
 
    Five horses, two and a half minutes, and a pen at the east end. */
 const ROUND_MODES=ROUNDUP_MODES;
-const ROUND_N=3, ROUND_TIME=120;
+const ROUND_N=3, ROUND_TIME=150;
 const ROUND_PEN={x:-44,z:-8,r:7.5};
 const ROUND={on:false,t:0,horses:[],penned:0,grp:null,ring:null,mode:'beginner',cd:0,elapsed:0,total:3,pending:null,lastResult:null,shared:null};
 function roundupReady(){return true;}
@@ -9585,9 +9586,13 @@ function roundupState(){
  let target=null;
  if(h){const dx=ROUND_PEN.x-h.pos.x,dz=ROUND_PEN.z-h.pos.z,len=Math.hypot(dx,dz)||1;
   const at=roundupApproach(h);
-  const px=h.pos.x-player.pos.x,pz=h.pos.z-player.pos.z,d=Math.hypot(px,pz);
-  const aligned=d>0?(px*dx+pz*dz)/(d*len):0;
-  target={name:h.name,x:h.pos.x,z:h.pos.z,standX:at?.x??null,standZ:at?.z??null,approachBlocked:!at,distance:d,pressure:d<(ROUND.mode==='beginner'?12:14)&&aligned>.5?'guiding':d<7?'too close':'circle behind'};
+  const response=roundupPressure({horse:h.pos,rider:player.pos,pen:ROUND_PEN,mode:ROUND.mode});
+  let pressure=response.status;
+  if(pressure==='guiding'){
+   if(h.roundupBlocked)pressure='blocked';
+   else if(Number.isFinite(h.heading)&&(Math.sin(h.heading)*dx+Math.cos(h.heading)*dz)/len<.35)pressure='turning';
+  }
+  target={name:h.name,x:h.pos.x,z:h.pos.z,standX:at?.x??null,standZ:at?.z??null,approachBlocked:!at,distance:response.distance,pressure,speed:h.roundupSpeed||0};
  }
  return {active:ROUND.on,runId:ROUND.runId,shared:ROUND.shared?{sessionId:ROUND.shared.sessionId,host:ROUND.shared.host}:null,paused:ROUND.on&&(ROUND.shared&&!ROUND.shared.host?ROUND.shared.startupWaiting||ROUND.shared.remotePaused:ROUND.shared?.startupWaiting||roundupPaused()),mode:ROUND.mode,name:ROUND_MODES[ROUND.mode].name,timeLimit:ROUND_MODES[ROUND.mode].time,goldTimeLimit:ROUND_MODES[ROUND.mode].time*.65,pending:ROUND.pending?{...ROUND.pending.proof,saved:false,reason:ROUND.pending.reason}:null,countdown:ROUND.cd,timeLeft:Math.max(0,ROUND.t),elapsed:ROUND.elapsed,total:ROUND.total,penned:ROUND.penned,pen:{...ROUND_PEN},target,
   horses:ROUND.horses.map(h=>({name:h.name,x:h.pos.x,z:h.pos.z,penned:h.penned})),records:freshSave()?.roundupBest||{},lastResult:ROUND.lastResult};
@@ -9743,17 +9748,18 @@ function tickRoundup(dt,t){
   if(h.penned)continue;
   const dx=h.pos.x-px,dz=h.pos.z-pz,d=Math.hypot(dx,dz);let spd=0;
   const pressure=ROUND.shared?sharedHerdPressure(h.pos,[{x:px,z:pz},...ROUND.shared.riders]):null;
-  const pressured=ROUND.shared?!!pressure:d<(ROUND.mode==='beginner'?12:14)&&(ROUND.mode==='full'||h===target);
+  const response=ROUND.shared?null:roundupPressure({horse:h.pos,rider:player.pos,pen:ROUND_PEN,mode:ROUND.mode,enabled:ROUND.mode==='full'||h===target});
+  const pressured=ROUND.shared?!!pressure:response.active;h.roundupBlocked=false;
   if(pressured){
    const geometry={bounds:PAST,colliders:G.world.colliders,walls:G.world.walls,clearPoint:roundupPointClear};
    const escape=chooseRoundupEscape({horse:h.pos,rider:pressure?.rider||player.pos,pen:ROUND_PEN,side:h.roundupAvoidSide||0,...geometry});
    const away=escape?.heading??Math.atan2(dx,dz);h.roundupAvoidSide=escape?.side||0;
    const dh=Math.atan2(Math.sin(away-h.heading),Math.cos(away-h.heading));h.heading+=dh*Math.min(1,dt*4.5);
-   spd=escape?((pressure?.distance??d)<6?6:ROUND.mode==='beginner'?3.8:4.8):0;
+   spd=escape?(ROUND.shared?(pressure.distance<6?6:4.8):response.speed):0;h.roundupBlocked=!escape;
    const next={x:h.pos.x+Math.sin(h.heading)*spd*dt,z:h.pos.z+Math.cos(h.heading)*spd*dt};
    // At an obstacle, turn in place until the actual smoothed step is clear.
    // No teleport or push-through: open ground keeps its original turn/speed.
-   if(spd&&roundupPathClear({from:h.pos,to:next,...geometry})){h.pos.x=next.x;h.pos.z=next.z;}else spd=0;
+   if(spd&&roundupPathClear({from:h.pos,to:next,...geometry})){h.pos.x=next.x;h.pos.z=next.z;}else{h.roundupBlocked=true;spd=0;}
    h.phase+=dt*(spd?7:1.4);h.rest=1;
   }else{
    // Quiet horses stay near their grazing patch instead of wandering into an unseen corner.
@@ -9763,7 +9769,8 @@ function tickRoundup(dt,t){
   G.world.pushOut?.(h,.7);
   h.pos.x=Math.max(PAST.x1+2,Math.min(PAST.x2-2,h.pos.x));h.pos.z=Math.max(PAST.z1+2,Math.min(PAST.z2-2,h.pos.z));
   h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);h.parts.group.rotation.y=h.heading;
-  animateHorse(h.parts,h.phase,pressured?.7:.1,pressured?GAITS.trot:GAITS.walk,true,t,0);
+  h.roundupSpeed=spd;const walking=ROUND.mode==='beginner'&&!ROUND.shared&&spd<=2.2;
+  animateHorse(h.parts,h.phase,pressured?(walking?.35:.7):.1,pressured&&!walking?GAITS.trot:GAITS.walk,true,t,0);
   dressWithRig(h,h.parts,{body:h.wb.body,mane:h.wb.mane},{breed:h.wb.breed});tickRig(h,spd,dt,t,pressured?0:1);
   if(Math.hypot(h.pos.x-ROUND_PEN.x,h.pos.z-ROUND_PEN.z)<ROUND_PEN.r){h.penned=true;ROUND.penned++;h.parts.group.visible=false;sChime();G.run(ROUND.shared?'sharedRoundupPen':'roundupPen',{sessionId:ROUND.shared?.sessionId,penned:ROUND.penned,total:ROUND.total,name:h.name});}
  }
@@ -10020,7 +10027,7 @@ function openEvents(){
     return cl?'<span style="font-size:11px;color:#8c7a63">✅ '+t[0]+'</span>':wkRib>=t[0]?'<button data-wk="'+i+'" style="font-size:11px;padding:3px 8px">Claim '+rw+' ('+t[0]+'🎀)</button>':'<span style="font-size:11px;color:#b8a98a">🔒 '+t[0]+'🎀 → '+rw+'</span>';}).join('')+'</span></div>';
  {const rr=roundupReady(sw);
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🐎 The Runaway Roundup</b>'
-   +'<span style="width:100%;font-size:11px;color:#8c7a63">Guide three loose horses home in two minutes. Get behind each horse and follow the pressure marker. Earn 130🪙 per horse, with a bonus for the full herd. Retry anytime, or choose the five-horse challenge in All activities.</span>'
+   +'<span style="width:100%;font-size:11px;color:#8c7a63">Guide three loose horses home in two and a half minutes. Follow the highlighted horse one at a time, then walk behind it with room to turn. Earn 130🪙 per horse, with a bonus for the full herd. Retry anytime, or choose the five-horse challenge in All activities.</span>'
    +(ROUND.on?'<span style="font-size:12px">running now…</span>'
      :rr?'<button data-round="go">Start the roundup</button>'
         :'<span style="font-size:12px;color:#8c7a63">Next one in about '+roundupWaitMin(sw)+' min</span>')
