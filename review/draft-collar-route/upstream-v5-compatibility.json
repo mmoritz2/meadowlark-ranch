@@ -1,0 +1,62 @@
+[
+  {
+    "breed": "shire",
+    "frontVertices": 12094,
+    "newFullSha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
+    "newPrefixSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
+    "nonBodySuffixBitExact": true,
+    "attachmentAppendBitExact": true,
+    "checks": {
+      "positionDeltaFrontBitExact": true,
+      "normalDeltaFrontBitExact": true,
+      "1positionDeltaBitExact": true,
+      "1normalDeltaBitExact": true,
+      "2positionDeltaBitExact": true,
+      "2normalDeltaBitExact": true,
+      "3positionDeltaBitExact": true,
+      "3normalDeltaBitExact": true,
+      "4positionDeltaBitExact": true,
+      "4normalDeltaBitExact": true
+    }
+  },
+  {
+    "breed": "percheron",
+    "frontVertices": 12094,
+    "newFullSha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
+    "newPrefixSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
+    "nonBodySuffixBitExact": true,
+    "attachmentAppendBitExact": true,
+    "checks": {
+      "positionDeltaFrontBitExact": true,
+      "normalDeltaFrontBitExact": true,
+      "1positionDeltaBitExact": true,
+      "1normalDeltaBitExact": true,
+      "2positionDeltaBitExact": true,
+      "2normalDeltaBitExact": true,
+      "3positionDeltaBitExact": true,
+      "3normalDeltaBitExact": true,
+      "4positionDeltaBitExact": true,
+      "4normalDeltaBitExact": true
+    }
+  },
+  {
+    "breed": "clyde",
+    "frontVertices": 12094,
+    "newFullSha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
+    "newPrefixSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
+    "nonBodySuffixBitExact": true,
+    "attachmentAppendBitExact": true,
+    "checks": {
+      "positionDeltaFrontBitExact": true,
+      "normalDeltaFrontBitExact": true,
+      "1positionDeltaBitExact": true,
+      "1normalDeltaBitExact": true,
+      "2positionDeltaBitExact": true,
+      "2normalDeltaBitExact": true,
+      "3positionDeltaBitExact": true,
+      "3normalDeltaBitExact": true,
+      "4positionDeltaBitExact": true,
+      "4normalDeltaBitExact": true
+    }
+  }
+]

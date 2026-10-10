@@ -1,0 +1,108 @@
+{
+  "method": "Accepted lower collar route on reviewed v5 body; front and nonbody inputs preserved.",
+  "generatorFile": "tools/native-roster/author-lower-route.py",
+  "generatorSha256": "78595e424ee3dfba64e983bd5875e9d9bfde92ed67100ce85b480c661f482492",
+  "compatibleBodyRevision": "d247858 hindquarter-only",
+  "compatibilityEvidence": "upstream-v5-compatibility.json",
+  "breeds": {
+    "shire": {
+      "breed": "shire",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+      "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
+      "meshDescriptorSha256": "733b48722b2099c96ad5f1577826c14eaaba0eef60793ffc7abd3cde0595304a",
+      "priorAttachmentSha256": "eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf",
+      "baselineSha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
+      "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
+      "npzSha256": "86e02ed8ba3deb4ddaf3867ee40a599fa592458226f29118eccc2f749e1e5839",
+      "standingRoute": {
+        "version": 1,
+        "space": "source-standing-metres-before-actor-scale",
+        "liftM": 0.06,
+        "forwardM": 0.012,
+        "heightFade": [
+          1.1,
+          1.27
+        ],
+        "frontRise": [
+          0.3,
+          0.69
+        ]
+      },
+      "allowedVertices": 2404,
+      "vertexCount": 966,
+      "routeVertices": 926,
+      "newVertices": 452,
+      "minimumRouteJacobianDeterminant": 0.4705911688921687,
+      "maximumUnscaledStandingDisplacementM": 0.061188234163113475,
+      "unchangedRegionVerticesCount": 1478,
+      "routeVerticesIdsCount": 926,
+      "candidateSha256": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f"
+    },
+    "percheron": {
+      "breed": "percheron",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+      "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
+      "meshDescriptorSha256": "ba19e97df1ea391b885426ee39b32a335e2a78271618a8b4ab063b7a95f2e4bf",
+      "priorAttachmentSha256": "f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae",
+      "baselineSha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
+      "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
+      "npzSha256": "c18855ecb98e857020f6db90783a50e000c96ed814e4ccd7c1666381d4df6871",
+      "standingRoute": {
+        "version": 1,
+        "space": "source-standing-metres-before-actor-scale",
+        "liftM": 0.06,
+        "forwardM": 0.012,
+        "heightFade": [
+          1.1,
+          1.27
+        ],
+        "frontRise": [
+          0.3,
+          0.69
+        ]
+      },
+      "allowedVertices": 2404,
+      "vertexCount": 962,
+      "routeVertices": 916,
+      "newVertices": 448,
+      "minimumRouteJacobianDeterminant": 0.4707114046491515,
+      "maximumUnscaledStandingDisplacementM": 0.061188234163113475,
+      "unchangedRegionVerticesCount": 1488,
+      "routeVerticesIdsCount": 916,
+      "candidateSha256": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a"
+    },
+    "clyde": {
+      "breed": "clyde",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+      "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
+      "meshDescriptorSha256": "a2a20edc7019fce260a6a37156538ad4a19fd67e0496ab8c2ab2ede6bd6c7189",
+      "priorAttachmentSha256": "291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf",
+      "baselineSha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
+      "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
+      "npzSha256": "a0d40091b1258046ad440f8f71415469052fc039bcb3120c7d9f8db2840efba0",
+      "standingRoute": {
+        "version": 1,
+        "space": "source-standing-metres-before-actor-scale",
+        "liftM": 0.06,
+        "forwardM": 0.012,
+        "heightFade": [
+          1.1,
+          1.27
+        ],
+        "frontRise": [
+          0.3,
+          0.69
+        ]
+      },
+      "allowedVertices": 2404,
+      "vertexCount": 966,
+      "routeVertices": 908,
+      "newVertices": 452,
+      "minimumRouteJacobianDeterminant": 0.4705993941202523,
+      "maximumUnscaledStandingDisplacementM": 0.061188234163113475,
+      "unchangedRegionVerticesCount": 1496,
+      "routeVerticesIdsCount": 908,
+      "candidateSha256": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca"
+    }
+  }
+}

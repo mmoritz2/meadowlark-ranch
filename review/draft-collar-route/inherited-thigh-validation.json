@@ -1,0 +1,1028 @@
+{
+  "pass": true,
+  "scope": "Inherited v5 actual-gait thigh/source-surface regression",
+  "result": {
+    "thresholds": {
+      "foreSourceY": [
+        0.7,
+        1.4
+      ],
+      "hindSourceY": [
+        0.7,
+        1.75
+      ],
+      "minimumSourceTriangleAreaCm2": 0.1,
+      "sourceStrainMinimum": 0.35,
+      "variantStrainMaximum": 0.25,
+      "relativeStrainMaximum": 0.5,
+      "maximumAddedThighPatchCm2": 5
+    },
+    "triangles": {
+      "fore": 2325,
+      "hind": 3969
+    },
+    "assetHashes": {
+      "percheron": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a",
+      "shire": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f",
+      "clyde": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca"
+    },
+    "phasesPerGait": 41,
+    "gaits": {
+      "trot": {
+        "source": {
+          "fore": {
+            "compression": {
+              "areaCm2": 13.271615051605309,
+              "triangles": 4,
+              "phase": 0.825,
+              "triangleSamples": 84,
+              "sourceMeanStrain": 0.16188453636416555,
+              "variantMeanStrain": 0.16188453636416555
+            },
+            "stretch": {
+              "areaCm2": 34.14449159633713,
+              "triangles": 22,
+              "phase": 0.675,
+              "triangleSamples": 1036,
+              "sourceMeanStrain": 3.931830342861819,
+              "variantMeanStrain": 3.931830342861819
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 8.014461520467771,
+              "triangles": 2,
+              "phase": 0.25,
+              "triangleSamples": 66,
+              "sourceMeanStrain": 0.24101264486415439,
+              "variantMeanStrain": 0.24101264486415439
+            }
+          }
+        },
+        "percheron": {
+          "fore": {
+            "stretch": {
+              "areaCm2": 39.37953590699376,
+              "triangles": 24,
+              "phase": 0.75,
+              "triangleSamples": 1365,
+              "sourceMeanStrain": 3.9190995726829883,
+              "variantMeanStrain": 4.327993196131809
+            },
+            "extraStretch": {
+              "areaCm2": 2.6093624578263457,
+              "triangles": 2,
+              "phase": 0.4,
+              "triangleSamples": 66,
+              "sourceMeanStrain": 2.2732921334740803,
+              "variantMeanStrain": 3.6609615669651423
+            },
+            "opposedNormals": {
+              "areaCm2": 80.16058480782321,
+              "triangles": 17,
+              "phase": 0,
+              "triangleSamples": 1103,
+              "sourceMeanStrain": 1.119172947961617,
+              "variantMeanStrain": 1.1007206887069951
+            },
+            "compression": {
+              "areaCm2": 10.127282495328721,
+              "triangles": 2,
+              "phase": 0.8,
+              "triangleSamples": 160,
+              "sourceMeanStrain": 0.13540165675292537,
+              "variantMeanStrain": 0.16655160637290642
+            },
+            "extraCompression": {
+              "areaCm2": 8.927312448423983,
+              "triangles": 4,
+              "phase": 0.825,
+              "triangleSamples": 67,
+              "sourceMeanStrain": 0.5776170834647222,
+              "variantMeanStrain": 0.19969177465259755
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 8.256909983492909,
+              "triangles": 2,
+              "phase": 0.25,
+              "triangleSamples": 86,
+              "sourceMeanStrain": 0.2459552162134277,
+              "variantMeanStrain": 0.12927827842237263
+            }
+          }
+        },
+        "shire": {
+          "fore": {
+            "stretch": {
+              "areaCm2": 40.27250804322002,
+              "triangles": 25,
+              "phase": 0.25,
+              "triangleSamples": 1380,
+              "sourceMeanStrain": 5.038663553602439,
+              "variantMeanStrain": 6.8031000284450505
+            },
+            "extraStretch": {
+              "areaCm2": 2.8071678313109514,
+              "triangles": 2,
+              "phase": 0.4,
+              "triangleSamples": 75,
+              "sourceMeanStrain": 2.275121337262025,
+              "variantMeanStrain": 3.8096824801888354
+            },
+            "opposedNormals": {
+              "areaCm2": 113.01110817816209,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1236,
+              "sourceMeanStrain": 1.1149623282257743,
+              "variantMeanStrain": 1.0912269203542357
+            },
+            "compression": {
+              "areaCm2": 11.31147400955962,
+              "triangles": 2,
+              "phase": 0.8,
+              "triangleSamples": 163,
+              "sourceMeanStrain": 0.13540109915546725,
+              "variantMeanStrain": 0.1766437448572709
+            },
+            "extraCompression": {
+              "areaCm2": 10.398348734373696,
+              "triangles": 4,
+              "phase": 0.825,
+              "triangleSamples": 74,
+              "sourceMeanStrain": 0.5784281882592085,
+              "variantMeanStrain": 0.19262642165169624
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 9.057823248199744,
+              "triangles": 2,
+              "phase": 0.225,
+              "triangleSamples": 83,
+              "sourceMeanStrain": 0.2629263102686347,
+              "variantMeanStrain": 0.1383966621749996
+            }
+          }
+        },
+        "clyde": {
+          "fore": {
+            "stretch": {
+              "areaCm2": 36.67229000068247,
+              "triangles": 24,
+              "phase": 0.25,
+              "triangleSamples": 1315,
+              "sourceMeanStrain": 5.217511434085114,
+              "variantMeanStrain": 6.746468764667347
+            },
+            "extraStretch": {
+              "areaCm2": 2.7874586229443237,
+              "triangles": 2,
+              "phase": 0.4,
+              "triangleSamples": 52,
+              "sourceMeanStrain": 2.273050244873202,
+              "variantMeanStrain": 3.50955509019716
+            },
+            "opposedNormals": {
+              "areaCm2": 99.25816164286826,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1206,
+              "sourceMeanStrain": 1.1163256583626606,
+              "variantMeanStrain": 1.0938207561788287
+            },
+            "compression": {
+              "areaCm2": 21.43803856315234,
+              "triangles": 2,
+              "phase": 0.275,
+              "triangleSamples": 159,
+              "sourceMeanStrain": 0.3406234932871196,
+              "variantMeanStrain": 0.2322069729436024
+            },
+            "extraCompression": {
+              "areaCm2": 9.752564714750612,
+              "triangles": 4,
+              "phase": 0.825,
+              "triangleSamples": 61,
+              "sourceMeanStrain": 0.5778209064850601,
+              "variantMeanStrain": 0.20349243431283173
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 7.552020940211518,
+              "triangles": 2,
+              "phase": 0.2,
+              "triangleSamples": 84,
+              "sourceMeanStrain": 0.30498074646497486,
+              "variantMeanStrain": 0.21795019693134215
+            }
+          }
+        }
+      },
+      "canterLeft": {
+        "source": {
+          "fore": {
+            "compression": {
+              "areaCm2": 14.536649001353966,
+              "triangles": 7,
+              "phase": 0.9,
+              "triangleSamples": 189,
+              "sourceMeanStrain": 0.14105897710279414,
+              "variantMeanStrain": 0.14105897710279414
+            },
+            "stretch": {
+              "areaCm2": 51.89898781631437,
+              "triangles": 28,
+              "phase": 0.15,
+              "triangleSamples": 1239,
+              "sourceMeanStrain": 4.420857833688057,
+              "variantMeanStrain": 4.420857833688057
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.9830853716428587,
+              "triangles": 1,
+              "phase": 0.525,
+              "triangleSamples": 12,
+              "sourceMeanStrain": 0.22489347054629757,
+              "variantMeanStrain": 0.22489347054629757
+            }
+          }
+        },
+        "percheron": {
+          "fore": {
+            "compression": {
+              "areaCm2": 19.337436535306693,
+              "triangles": 4,
+              "phase": 0.275,
+              "triangleSamples": 379,
+              "sourceMeanStrain": 0.39226015725783,
+              "variantMeanStrain": 0.18537625009895647
+            },
+            "extraCompression": {
+              "areaCm2": 18.887194306013924,
+              "triangles": 3,
+              "phase": 0.1,
+              "triangleSamples": 116,
+              "sourceMeanStrain": 0.6006294897702085,
+              "variantMeanStrain": 0.22370343453717811
+            },
+            "stretch": {
+              "areaCm2": 57.016018862132356,
+              "triangles": 30,
+              "phase": 0.225,
+              "triangleSamples": 1538,
+              "sourceMeanStrain": 4.459199724692587,
+              "variantMeanStrain": 4.93708216870954
+            },
+            "extraStretch": {
+              "areaCm2": 2.6840466103844984,
+              "triangles": 3,
+              "phase": 0.625,
+              "triangleSamples": 61,
+              "sourceMeanStrain": 2.1041739682339777,
+              "variantMeanStrain": 3.6291363396953416
+            },
+            "opposedNormals": {
+              "areaCm2": 80.16058480782321,
+              "triangles": 17,
+              "phase": 0,
+              "triangleSamples": 1126,
+              "sourceMeanStrain": 1.2791301706159375,
+              "variantMeanStrain": 1.3173420609089654
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.7095878399085858,
+              "triangles": 1,
+              "phase": 0.5,
+              "triangleSamples": 20,
+              "sourceMeanStrain": 0.341916972768328,
+              "variantMeanStrain": 0.22649923058467392
+            }
+          }
+        },
+        "shire": {
+          "fore": {
+            "compression": {
+              "areaCm2": 22.05362390278928,
+              "triangles": 4,
+              "phase": 0.275,
+              "triangleSamples": 423,
+              "sourceMeanStrain": 0.29667620952565876,
+              "variantMeanStrain": 0.2149608443871299
+            },
+            "extraCompression": {
+              "areaCm2": 21.992173342155223,
+              "triangles": 3,
+              "phase": 0.1,
+              "triangleSamples": 170,
+              "sourceMeanStrain": 0.5998335404611237,
+              "variantMeanStrain": 0.19379390243995906
+            },
+            "stretch": {
+              "areaCm2": 63.51262465006115,
+              "triangles": 30,
+              "phase": 0.225,
+              "triangleSamples": 1550,
+              "sourceMeanStrain": 4.460168849069313,
+              "variantMeanStrain": 4.9515227365689185
+            },
+            "extraStretch": {
+              "areaCm2": 2.8987842826237107,
+              "triangles": 3,
+              "phase": 0.55,
+              "triangleSamples": 77,
+              "sourceMeanStrain": 2.268795841915388,
+              "variantMeanStrain": 3.7022262000868875
+            },
+            "opposedNormals": {
+              "areaCm2": 113.01110817816209,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1241,
+              "sourceMeanStrain": 1.2882382006147544,
+              "variantMeanStrain": 1.3225243224261118
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 4.065419035520978,
+              "triangles": 1,
+              "phase": 0.5,
+              "triangleSamples": 20,
+              "sourceMeanStrain": 0.341916972768328,
+              "variantMeanStrain": 0.2197900934850511
+            }
+          }
+        },
+        "clyde": {
+          "fore": {
+            "compression": {
+              "areaCm2": 20.629655974180185,
+              "triangles": 3,
+              "phase": 0.075,
+              "triangleSamples": 371,
+              "sourceMeanStrain": 0.6232711232410388,
+              "variantMeanStrain": 0.23242284557487605
+            },
+            "extraCompression": {
+              "areaCm2": 20.629655974180185,
+              "triangles": 3,
+              "phase": 0.1,
+              "triangleSamples": 125,
+              "sourceMeanStrain": 0.6003424056209206,
+              "variantMeanStrain": 0.21658473059552533
+            },
+            "stretch": {
+              "areaCm2": 60.56315003552535,
+              "triangles": 30,
+              "phase": 0.25,
+              "triangleSamples": 1494,
+              "sourceMeanStrain": 4.529545382641118,
+              "variantMeanStrain": 4.939986572993007
+            },
+            "extraStretch": {
+              "areaCm2": 2.8904309377618658,
+              "triangles": 3,
+              "phase": 0.625,
+              "triangleSamples": 60,
+              "sourceMeanStrain": 2.103951868318458,
+              "variantMeanStrain": 3.522069328044229
+            },
+            "opposedNormals": {
+              "areaCm2": 99.25816164286826,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1217,
+              "sourceMeanStrain": 1.2878584455647468,
+              "variantMeanStrain": 1.3188496424391423
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.9017017072836575,
+              "triangles": 1,
+              "phase": 0.5,
+              "triangleSamples": 19,
+              "sourceMeanStrain": 0.341916972768328,
+              "variantMeanStrain": 0.23938760221189842
+            }
+          }
+        }
+      },
+      "canterRight": {
+        "source": {
+          "fore": {
+            "compression": {
+              "areaCm2": 16.55269589921467,
+              "triangles": 7,
+              "phase": 0.65,
+              "triangleSamples": 196,
+              "sourceMeanStrain": 0.21705400732069757,
+              "variantMeanStrain": 0.21705400732069757
+            },
+            "stretch": {
+              "areaCm2": 51.89898781631437,
+              "triangles": 28,
+              "phase": 0,
+              "triangleSamples": 1294,
+              "sourceMeanStrain": 4.368299181078741,
+              "variantMeanStrain": 4.368299181078741
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.9830853716428587,
+              "triangles": 1,
+              "phase": 0.1,
+              "triangleSamples": 18,
+              "sourceMeanStrain": 0.22022505578212656,
+              "variantMeanStrain": 0.22022505578212656
+            }
+          }
+        },
+        "percheron": {
+          "fore": {
+            "compression": {
+              "areaCm2": 18.887194306013924,
+              "triangles": 3,
+              "phase": 0.125,
+              "triangleSamples": 310,
+              "sourceMeanStrain": 0.5755257573664501,
+              "variantMeanStrain": 0.2337425553885216
+            },
+            "extraCompression": {
+              "areaCm2": 12.987633261089538,
+              "triangles": 2,
+              "phase": 0.125,
+              "triangleSamples": 90,
+              "sourceMeanStrain": 0.6443925325223846,
+              "variantMeanStrain": 0.23616354236907047
+            },
+            "stretch": {
+              "areaCm2": 94.53924677747926,
+              "triangles": 43,
+              "phase": 0.225,
+              "triangleSamples": 1601,
+              "sourceMeanStrain": 4.11866106563458,
+              "variantMeanStrain": 5.151759049199579
+            },
+            "extraStretch": {
+              "areaCm2": 1.9201547105024406,
+              "triangles": 2,
+              "phase": 0.85,
+              "triangleSamples": 46,
+              "sourceMeanStrain": 2.1256532114555933,
+              "variantMeanStrain": 3.337047851306856
+            },
+            "opposedNormals": {
+              "areaCm2": 80.16058480782321,
+              "triangles": 17,
+              "phase": 0,
+              "triangleSamples": 1112,
+              "sourceMeanStrain": 1.259861439145678,
+              "variantMeanStrain": 1.2972945642507885
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.7095878399085858,
+              "triangles": 1,
+              "phase": 0.05,
+              "triangleSamples": 22,
+              "sourceMeanStrain": 0.334494318043653,
+              "variantMeanStrain": 0.2184672033181523
+            }
+          }
+        },
+        "shire": {
+          "fore": {
+            "compression": {
+              "areaCm2": 23.809381173922173,
+              "triangles": 5,
+              "phase": 0.35,
+              "triangleSamples": 337,
+              "sourceMeanStrain": 0.5755891111485738,
+              "variantMeanStrain": 0.23023089674460823
+            },
+            "extraCompression": {
+              "areaCm2": 17.196188003810608,
+              "triangles": 4,
+              "phase": 0.325,
+              "triangleSamples": 115,
+              "sourceMeanStrain": 0.5073775281073778,
+              "variantMeanStrain": 0.2175901680910871
+            },
+            "stretch": {
+              "areaCm2": 136.49671958964473,
+              "triangles": 52,
+              "phase": 0.225,
+              "triangleSamples": 1634,
+              "sourceMeanStrain": 4.037466555078496,
+              "variantMeanStrain": 4.905613677087284
+            },
+            "extraStretch": {
+              "areaCm2": 2.8987842826237107,
+              "triangles": 3,
+              "phase": 0.875,
+              "triangleSamples": 61,
+              "sourceMeanStrain": 2.095695105885886,
+              "variantMeanStrain": 3.480433511062812
+            },
+            "opposedNormals": {
+              "areaCm2": 113.01110817816209,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1244,
+              "sourceMeanStrain": 1.2592496172916374,
+              "variantMeanStrain": 1.291538533219942
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 4.065419035520978,
+              "triangles": 1,
+              "phase": 0.05,
+              "triangleSamples": 22,
+              "sourceMeanStrain": 0.334494318043653,
+              "variantMeanStrain": 0.21173363905876105
+            }
+          }
+        },
+        "clyde": {
+          "fore": {
+            "compression": {
+              "areaCm2": 21.43803856315234,
+              "triangles": 2,
+              "phase": 0.2,
+              "triangleSamples": 316,
+              "sourceMeanStrain": 0.26711291445801877,
+              "variantMeanStrain": 0.23967692582136796
+            },
+            "extraCompression": {
+              "areaCm2": 14.162983086921464,
+              "triangles": 2,
+              "phase": 0.125,
+              "triangleSamples": 89,
+              "sourceMeanStrain": 0.6443713590863143,
+              "variantMeanStrain": 0.2289488377991204
+            },
+            "stretch": {
+              "areaCm2": 57.83581390484827,
+              "triangles": 29,
+              "phase": 0,
+              "triangleSamples": 1559,
+              "sourceMeanStrain": 4.237253843816833,
+              "variantMeanStrain": 4.5328655176472505
+            },
+            "extraStretch": {
+              "areaCm2": 2.08052734915254,
+              "triangles": 2,
+              "phase": 0.85,
+              "triangleSamples": 42,
+              "sourceMeanStrain": 2.12565377139144,
+              "variantMeanStrain": 3.274839626937267
+            },
+            "opposedNormals": {
+              "areaCm2": 99.25816164286826,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1216,
+              "sourceMeanStrain": 1.2606154225240884,
+              "variantMeanStrain": 1.2906869673280872
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 3.9017017072836575,
+              "triangles": 1,
+              "phase": 0.05,
+              "triangleSamples": 22,
+              "sourceMeanStrain": 0.334494318043653,
+              "variantMeanStrain": 0.2316698622936311
+            }
+          }
+        }
+      },
+      "gallopLeft": {
+        "source": {
+          "fore": {
+            "compression": {
+              "areaCm2": 36.26670389121172,
+              "triangles": 13,
+              "phase": 0.125,
+              "triangleSamples": 660,
+              "sourceMeanStrain": 0.157033579119709,
+              "variantMeanStrain": 0.157033579119709
+            },
+            "stretch": {
+              "areaCm2": 55.53759274466129,
+              "triangles": 29,
+              "phase": 0.225,
+              "triangleSamples": 1407,
+              "sourceMeanStrain": 4.841022331700011,
+              "variantMeanStrain": 4.841022331700011
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 6.195022527373693,
+              "triangles": 1,
+              "phase": 0,
+              "triangleSamples": 103,
+              "sourceMeanStrain": 0.19968312256893433,
+              "variantMeanStrain": 0.19968312256893433
+            }
+          }
+        },
+        "percheron": {
+          "fore": {
+            "compression": {
+              "areaCm2": 20.75977472337292,
+              "triangles": 4,
+              "phase": 0.4,
+              "triangleSamples": 693,
+              "sourceMeanStrain": 0.3872331285639592,
+              "variantMeanStrain": 0.19735560485646475
+            },
+            "extraCompression": {
+              "areaCm2": 13.76240002145181,
+              "triangles": 5,
+              "phase": 0.95,
+              "triangleSamples": 399,
+              "sourceMeanStrain": 0.4523639073909846,
+              "variantMeanStrain": 0.13840358083869003
+            },
+            "stretch": {
+              "areaCm2": 58.01293099843715,
+              "triangles": 30,
+              "phase": 0.225,
+              "triangleSamples": 1661,
+              "sourceMeanStrain": 4.7214181274226075,
+              "variantMeanStrain": 4.9020276807040055
+            },
+            "opposedNormals": {
+              "areaCm2": 80.16058480782321,
+              "triangles": 17,
+              "phase": 0,
+              "triangleSamples": 1546,
+              "sourceMeanStrain": 1.2052520596724845,
+              "variantMeanStrain": 1.2938005946831146
+            },
+            "extraStretch": {
+              "areaCm2": 3.9512171053579457,
+              "triangles": 2,
+              "phase": 0.1,
+              "triangleSamples": 102,
+              "sourceMeanStrain": 1.903283276280125,
+              "variantMeanStrain": 3.2481502278629346
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 7.156226136537325,
+              "triangles": 2,
+              "phase": 0.725,
+              "triangleSamples": 136,
+              "sourceMeanStrain": 0.3290034828006294,
+              "variantMeanStrain": 0.23036877162356958
+            }
+          }
+        },
+        "shire": {
+          "fore": {
+            "compression": {
+              "areaCm2": 22.488009145957857,
+              "triangles": 5,
+              "phase": 0.175,
+              "triangleSamples": 698,
+              "sourceMeanStrain": 0.3461827304398061,
+              "variantMeanStrain": 0.21054328857472682
+            },
+            "extraCompression": {
+              "areaCm2": 15.436335606803983,
+              "triangles": 5,
+              "phase": 0.95,
+              "triangleSamples": 481,
+              "sourceMeanStrain": 0.45290835456537987,
+              "variantMeanStrain": 0.1256182604259734
+            },
+            "stretch": {
+              "areaCm2": 64.52777965032448,
+              "triangles": 30,
+              "phase": 0.225,
+              "triangleSamples": 1685,
+              "sourceMeanStrain": 4.726328689527307,
+              "variantMeanStrain": 4.901356950625287
+            },
+            "opposedNormals": {
+              "areaCm2": 113.01110817816209,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1761,
+              "sourceMeanStrain": 1.21383888378865,
+              "variantMeanStrain": 1.3006223733101983
+            },
+            "extraStretch": {
+              "areaCm2": 13.646476750203682,
+              "triangles": 5,
+              "phase": 0.125,
+              "triangleSamples": 128,
+              "sourceMeanStrain": 1.9249580690515473,
+              "variantMeanStrain": 3.473348401944529
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 9.180481382068319,
+              "triangles": 4,
+              "phase": 0.725,
+              "triangleSamples": 142,
+              "sourceMeanStrain": 0.35851614811901217,
+              "variantMeanStrain": 0.23077955287909818
+            }
+          }
+        },
+        "clyde": {
+          "fore": {
+            "compression": {
+              "areaCm2": 21.47758703498946,
+              "triangles": 5,
+              "phase": 0.15,
+              "triangleSamples": 668,
+              "sourceMeanStrain": 0.3111005555108996,
+              "variantMeanStrain": 0.2078857779104434
+            },
+            "extraCompression": {
+              "areaCm2": 14.905844060569995,
+              "triangles": 5,
+              "phase": 0.95,
+              "triangleSamples": 411,
+              "sourceMeanStrain": 0.45271543498288175,
+              "variantMeanStrain": 0.1435339431266015
+            },
+            "stretch": {
+              "areaCm2": 61.560767218907294,
+              "triangles": 30,
+              "phase": 0.225,
+              "triangleSamples": 1613,
+              "sourceMeanStrain": 4.725406110834158,
+              "variantMeanStrain": 4.822539464493976
+            },
+            "opposedNormals": {
+              "areaCm2": 99.25816164286826,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1642,
+              "sourceMeanStrain": 1.2133988353457006,
+              "variantMeanStrain": 1.2928851285255056
+            },
+            "extraStretch": {
+              "areaCm2": 4.177984675112149,
+              "triangles": 2,
+              "phase": 0.1,
+              "triangleSamples": 96,
+              "sourceMeanStrain": 1.9034733152683723,
+              "variantMeanStrain": 3.241832559320395
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 8.875905910159311,
+              "triangles": 4,
+              "phase": 0.725,
+              "triangleSamples": 134,
+              "sourceMeanStrain": 0.3585182270925849,
+              "variantMeanStrain": 0.23851135979203425
+            }
+          }
+        }
+      },
+      "gallopRight": {
+        "source": {
+          "fore": {
+            "compression": {
+              "areaCm2": 44.79588598900913,
+              "triangles": 14,
+              "phase": 0.2,
+              "triangleSamples": 581,
+              "sourceMeanStrain": 0.1493369546221631,
+              "variantMeanStrain": 0.1493369546221631
+            },
+            "stretch": {
+              "areaCm2": 59.32468781032645,
+              "triangles": 30,
+              "phase": 0.075,
+              "triangleSamples": 1395,
+              "sourceMeanStrain": 4.927654779029711,
+              "variantMeanStrain": 4.927654779029711
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 9.181444678316275,
+              "triangles": 2,
+              "phase": 0.625,
+              "triangleSamples": 127,
+              "sourceMeanStrain": 0.17119449217746405,
+              "variantMeanStrain": 0.17119449217746405
+            }
+          }
+        },
+        "percheron": {
+          "fore": {
+            "compression": {
+              "areaCm2": 35.92156280085444,
+              "triangles": 12,
+              "phase": 0.225,
+              "triangleSamples": 738,
+              "sourceMeanStrain": 0.2747858642502287,
+              "variantMeanStrain": 0.17893172755131334
+            },
+            "extraCompression": {
+              "areaCm2": 14.440200059694018,
+              "triangles": 6,
+              "phase": 0.2,
+              "triangleSamples": 418,
+              "sourceMeanStrain": 0.4633034598879515,
+              "variantMeanStrain": 0.18399416657542617
+            },
+            "stretch": {
+              "areaCm2": 58.01293099843715,
+              "triangles": 30,
+              "phase": 0,
+              "triangleSamples": 1653,
+              "sourceMeanStrain": 4.506344986866719,
+              "variantMeanStrain": 4.631660676084536
+            },
+            "extraStretch": {
+              "areaCm2": 2.408151731743282,
+              "triangles": 1,
+              "phase": 0,
+              "triangleSamples": 80,
+              "sourceMeanStrain": 1.5855366009807481,
+              "variantMeanStrain": 3.04474109639737
+            },
+            "opposedNormals": {
+              "areaCm2": 80.16058480782321,
+              "triangles": 17,
+              "phase": 0,
+              "triangleSamples": 1527,
+              "sourceMeanStrain": 1.3725386881896349,
+              "variantMeanStrain": 1.345453609840062
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 8.256909983492909,
+              "triangles": 2,
+              "phase": 0.6,
+              "triangleSamples": 169,
+              "sourceMeanStrain": 0.2100889618850049,
+              "variantMeanStrain": 0.12351775188726312
+            },
+            "opposedNormals": {
+              "areaCm2": 7.71581811934074,
+              "triangles": 1,
+              "phase": 0.775,
+              "triangleSamples": 1,
+              "sourceMeanStrain": 0.2322019593299771,
+              "variantMeanStrain": 0.12812806751132938
+            }
+          }
+        },
+        "shire": {
+          "fore": {
+            "compression": {
+              "areaCm2": 34.294359605914416,
+              "triangles": 10,
+              "phase": 0.2,
+              "triangleSamples": 763,
+              "sourceMeanStrain": 0.24303711613970413,
+              "variantMeanStrain": 0.18489944940036035
+            },
+            "extraCompression": {
+              "areaCm2": 20.510285292233057,
+              "triangles": 7,
+              "phase": 0.225,
+              "triangleSamples": 481,
+              "sourceMeanStrain": 0.4713109362899315,
+              "variantMeanStrain": 0.1644207345066118
+            },
+            "stretch": {
+              "areaCm2": 67.7845378739016,
+              "triangles": 31,
+              "phase": 0.075,
+              "triangleSamples": 1674,
+              "sourceMeanStrain": 4.8305408726572585,
+              "variantMeanStrain": 5.01716954740639
+            },
+            "extraStretch": {
+              "areaCm2": 4.312003100732998,
+              "triangles": 2,
+              "phase": 0,
+              "triangleSamples": 102,
+              "sourceMeanStrain": 1.5706956909841379,
+              "variantMeanStrain": 3.1860424373891387
+            },
+            "opposedNormals": {
+              "areaCm2": 113.01110817816209,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1744,
+              "sourceMeanStrain": 1.3703851593669394,
+              "variantMeanStrain": 1.331390633168658
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 9.180481382068319,
+              "triangles": 4,
+              "phase": 0.575,
+              "triangleSamples": 177,
+              "sourceMeanStrain": 0.3589343229701377,
+              "variantMeanStrain": 0.23126057120305032
+            },
+            "opposedNormals": {
+              "areaCm2": 8.428492296767764,
+              "triangles": 1,
+              "phase": 0.775,
+              "triangleSamples": 1,
+              "sourceMeanStrain": 0.2322019593299771,
+              "variantMeanStrain": 0.12998252881472708
+            }
+          }
+        },
+        "clyde": {
+          "fore": {
+            "compression": {
+              "areaCm2": 32.2074862690225,
+              "triangles": 10,
+              "phase": 0.2,
+              "triangleSamples": 732,
+              "sourceMeanStrain": 0.244553872861996,
+              "variantMeanStrain": 0.18472257898113767
+            },
+            "extraCompression": {
+              "areaCm2": 16.84746233706239,
+              "triangles": 6,
+              "phase": 0.225,
+              "triangleSamples": 408,
+              "sourceMeanStrain": 0.44862796467830185,
+              "variantMeanStrain": 0.16198852820361356
+            },
+            "stretch": {
+              "areaCm2": 61.560767218907294,
+              "triangles": 30,
+              "phase": 0.025,
+              "triangleSamples": 1590,
+              "sourceMeanStrain": 4.709807201335689,
+              "variantMeanStrain": 4.786290325429727
+            },
+            "extraStretch": {
+              "areaCm2": 2.5545981679859837,
+              "triangles": 1,
+              "phase": 0,
+              "triangleSamples": 66,
+              "sourceMeanStrain": 1.5855366009807481,
+              "variantMeanStrain": 3.022003832823395
+            },
+            "opposedNormals": {
+              "areaCm2": 99.25816164286826,
+              "triangles": 19,
+              "phase": 0,
+              "triangleSamples": 1623,
+              "sourceMeanStrain": 1.3726561171982412,
+              "variantMeanStrain": 1.3298410092412831
+            }
+          },
+          "hind": {
+            "compression": {
+              "areaCm2": 8.875905910159311,
+              "triangles": 4,
+              "phase": 0.575,
+              "triangleSamples": 173,
+              "sourceMeanStrain": 0.3589363753051966,
+              "variantMeanStrain": 0.23898827704063066
+            },
+            "opposedNormals": {
+              "areaCm2": 8.070794611879462,
+              "triangles": 1,
+              "phase": 0.775,
+              "triangleSamples": 1,
+              "sourceMeanStrain": 0.2322019593299771,
+              "variantMeanStrain": 0.09589349241134745
+            }
+          }
+        }
+      }
+    },
+    "runtimeMs": 15381
+  }
+}

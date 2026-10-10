@@ -1,0 +1,172 @@
+{
+  "passed": true,
+  "tests": 14,
+  "cases": [
+    {
+      "case": "shire reviewed route accepted",
+      "pass": true,
+      "result": {
+        "vertices": 966,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "86e02ed8ba3deb4ddaf3867ee40a599fa592458226f29118eccc2f749e1e5839",
+        "authoringBaseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 926,
+          "unchangedUpperVertices": 40,
+          "maximumStandingDisplacementDisplayedM": 0.058434453256901026,
+          "maximumTargetReconstructionDisplayedM": 4.936801944060314e-08,
+          "maximumTargetNormalDirectionError": 4.267212520318539e-08,
+          "minimumRouteJacobianDeterminant": 0.47059116987254423,
+          "unchangedRegionMaxDisplayedM": 7.398434458767057e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.936801944060314e-08,
+        "restNormalMaxDirectionError": 4.267212520318539e-08
+      }
+    },
+    {
+      "case": "percheron reviewed route accepted",
+      "pass": true,
+      "result": {
+        "vertices": 962,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "c18855ecb98e857020f6db90783a50e000c96ed814e4ccd7c1666381d4df6871",
+        "authoringBaseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 916,
+          "unchangedUpperVertices": 46,
+          "maximumStandingDisplacementDisplayedM": 0.05579831866363068,
+          "maximumTargetReconstructionDisplayedM": 4.79213687826841e-08,
+          "maximumTargetNormalDirectionError": 4.0601758805336563e-08,
+          "minimumRouteJacobianDeterminant": 0.4707114047093697,
+          "unchangedRegionMaxDisplayedM": 6.260860422462731e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.79213687826841e-08,
+        "restNormalMaxDirectionError": 4.0601758805336563e-08
+      }
+    },
+    {
+      "case": "clyde reviewed route accepted",
+      "pass": true,
+      "result": {
+        "vertices": 966,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "a0d40091b1258046ad440f8f71415469052fc039bcb3120c7d9f8db2840efba0",
+        "authoringBaseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 908,
+          "unchangedUpperVertices": 58,
+          "maximumStandingDisplacementDisplayedM": 0.05767013812282382,
+          "maximumTargetReconstructionDisplayedM": 4.804947598625554e-08,
+          "maximumTargetNormalDirectionError": 4.1058611430218604e-08,
+          "minimumRouteJacobianDeterminant": 0.4705993932396426,
+          "unchangedRegionMaxDisplayedM": 7.171044943093194e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.804947598625554e-08,
+        "restNormalMaxDirectionError": 4.1058611430218604e-08
+      }
+    },
+    {
+      "case": "unbounded lift",
+      "pass": true,
+      "rejection": "Unbounded standing collar reroute"
+    },
+    {
+      "case": "unreviewed upper region",
+      "pass": true,
+      "rejection": ""
+    },
+    {
+      "case": "incorrect independent target",
+      "pass": true,
+      "rejection": "Authoring target escapes the reviewed route envelope"
+    },
+    {
+      "case": "incorrect inverse raw position",
+      "pass": true,
+      "rejection": "('Incorrect inverse standing position solve', np.float64(9.987394588391472e-05))"
+    },
+    {
+      "case": "incorrect inverse raw normal",
+      "pass": true,
+      "rejection": "('Incorrect inverse standing normal solve', np.float64(1.730783700653999))"
+    },
+    {
+      "case": "incorrect target normal field",
+      "pass": true,
+      "rejection": "Authoring normals disagree with inverse-transpose route field"
+    },
+    {
+      "case": "wrong route region mask",
+      "pass": true,
+      "rejection": "Standing route region mismatch"
+    },
+    {
+      "case": "changed prior influences",
+      "pass": true,
+      "rejection": "Reroute changed existing animated skin influences"
+    },
+    {
+      "case": "protected fender selected",
+      "pass": true,
+      "rejection": "An attachment changes protected tack vertices"
+    },
+    {
+      "case": "nonfinite point",
+      "pass": true,
+      "rejection": ""
+    },
+    {
+      "case": "nonfinite field",
+      "pass": true,
+      "rejection": ""
+    }
+  ]
+}

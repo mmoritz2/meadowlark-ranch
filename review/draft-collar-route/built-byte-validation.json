@@ -1,0 +1,27 @@
+{
+  "pass": true,
+  "nonDraftRowsAndBuffersUnchanged": 22,
+  "drafts": [
+    {
+      "breed": "percheron",
+      "sha256": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a",
+      "previewBitExact": true,
+      "v5PrefixBitExact": true,
+      "reproducedAuthoringBitExact": true
+    },
+    {
+      "breed": "shire",
+      "sha256": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f",
+      "previewBitExact": true,
+      "v5PrefixBitExact": true,
+      "reproducedAuthoringBitExact": true
+    },
+    {
+      "breed": "clyde",
+      "sha256": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca",
+      "previewBitExact": true,
+      "v5PrefixBitExact": true,
+      "reproducedAuthoringBitExact": true
+    }
+  ]
+}

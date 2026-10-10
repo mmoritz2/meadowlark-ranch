@@ -479,7 +479,7 @@
     },
     {
       "id": "percheron",
-      "bufferSha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
+      "bufferSha256": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -495,13 +495,37 @@
         1024
       ],
       "collarAttachment": {
-        "vertices": 514,
-        "restReconstructionMaxDisplayedM": 6.260860422462731e-08,
-        "restNormalMaxDirectionError": 4.016423729313308e-08,
+        "vertices": 962,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
         "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
-        "protectedTackOutsideSparseIdsPreserved": true
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "c18855ecb98e857020f6db90783a50e000c96ed814e4ccd7c1666381d4df6871",
+        "authoringBaseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 916,
+          "unchangedUpperVertices": 46,
+          "maximumStandingDisplacementDisplayedM": 0.05579831866363068,
+          "maximumTargetReconstructionDisplayedM": 4.79213687826841e-08,
+          "maximumTargetNormalDirectionError": 4.0601758805336563e-08,
+          "minimumRouteJacobianDeterminant": 0.4707114047093697,
+          "unchangedRegionMaxDisplayedM": 6.260860422462731e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.79213687826841e-08,
+        "restNormalMaxDirectionError": 4.0601758805336563e-08
       },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
@@ -568,7 +592,7 @@
     },
     {
       "id": "shire",
-      "bufferSha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
+      "bufferSha256": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -584,13 +608,37 @@
         1024
       ],
       "collarAttachment": {
-        "vertices": 514,
-        "restReconstructionMaxDisplayedM": 7.398434458767057e-08,
-        "restNormalMaxDirectionError": 4.32506391670575e-08,
+        "vertices": 966,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
         "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
-        "protectedTackOutsideSparseIdsPreserved": true
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "86e02ed8ba3deb4ddaf3867ee40a599fa592458226f29118eccc2f749e1e5839",
+        "authoringBaseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 926,
+          "unchangedUpperVertices": 40,
+          "maximumStandingDisplacementDisplayedM": 0.058434453256901026,
+          "maximumTargetReconstructionDisplayedM": 4.936801944060314e-08,
+          "maximumTargetNormalDirectionError": 4.267212520318539e-08,
+          "minimumRouteJacobianDeterminant": 0.47059116987254423,
+          "unchangedRegionMaxDisplayedM": 7.398434458767057e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.936801944060314e-08,
+        "restNormalMaxDirectionError": 4.267212520318539e-08
       },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
@@ -657,7 +705,7 @@
     },
     {
       "id": "clyde",
-      "bufferSha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
+      "bufferSha256": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -673,13 +721,37 @@
         1024
       ],
       "collarAttachment": {
-        "vertices": 514,
-        "restReconstructionMaxDisplayedM": 7.171044943093194e-08,
-        "restNormalMaxDirectionError": 4.051083427787368e-08,
+        "vertices": 966,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
         "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
-        "protectedTackOutsideSparseIdsPreserved": true
+        "protectedTackOutsideSparseIdsPreserved": true,
+        "authoringSha256": "a0d40091b1258046ad440f8f71415469052fc039bcb3120c7d9f8db2840efba0",
+        "authoringBaseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
+        "standingRoute": {
+          "version": 1,
+          "space": "source-standing-metres-before-actor-scale",
+          "liftM": 0.06,
+          "forwardM": 0.012,
+          "heightFade": [
+            1.1,
+            1.27
+          ],
+          "frontRise": [
+            0.3,
+            0.69
+          ],
+          "reroutedVertices": 908,
+          "unchangedUpperVertices": 58,
+          "maximumStandingDisplacementDisplayedM": 0.05767013812282382,
+          "maximumTargetReconstructionDisplayedM": 4.804947598625554e-08,
+          "maximumTargetNormalDirectionError": 4.1058611430218604e-08,
+          "minimumRouteJacobianDeterminant": 0.4705993932396426,
+          "unchangedRegionMaxDisplayedM": 7.171044943093194e-08,
+          "skinInfluencesUnchanged": true
+        },
+        "restReconstructionMaxDisplayedM": 4.804947598625554e-08,
+        "restNormalMaxDirectionError": 4.1058611430218604e-08
       },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,

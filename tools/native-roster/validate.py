@@ -333,10 +333,15 @@ def main():
         collar_report=None
         if row.get('tackAttachment'):
             assert key in DRAFTS
-            used,collar_report=check_collar_attachment(row['tackAttachment'],packed,used,source_meshes[3],decoded_tack,ops,translation,row['actorScale'])
+            used,collar_report=check_collar_attachment(row['tackAttachment'],packed,used,source_meshes[3],decoded_tack,ops,translation,row['actorScale'],breed=key)
             assert collar_report['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
             assert row['tackAttachment']['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
-            assert row['tackAttachment']['authoringBaseMorphSha256']==HEAD_BUFFER_SHA[key]
+            # Legacy shoulder fits retain their reviewed pre-leg authoring basis.
+            # New collar-only routes are authored directly against the same pinned
+            # current prefix; neither path can change body/head/morph bytes.
+            authoring_base=collar_report['authoringBaseMorphSha256']
+            assert authoring_base in {HEAD_BUFFER_SHA[key],DRAFT_LEG_BUFFER_SHA[key]}
+            assert row['tackAttachment'].get('authoringBaseMorphSha256',DRAFT_LEG_BUFFER_SHA[key])==authoring_base
         shell_report=None
         shell=row.get('groom',{}).get('uprightCrest',{}).get('shell')
         if shell:

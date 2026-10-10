@@ -6159,9 +6159,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 514,
+        "vertices": 962,
         "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
-        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "method": "Prior four-influence shoulder attachment at70% strength, with a bounded static lower-V route6cm upward/1.2cm forward before actor scale. Source morph prefix, body, skin influences and hard tack endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
       "headShape": {
@@ -6406,8 +6406,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9193277107930626e-06,
-      "sha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
-      "byteLength": 753956,
+      "sha256": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a",
+      "byteLength": 776356,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
       "sourceWithersM": 1.897113904824186,
@@ -6620,9 +6620,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 514,
+        "vertices": 966,
         "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
-        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "method": "Prior four-influence shoulder attachment at70% strength, with a bounded static lower-V route6cm upward/1.2cm forward before actor scale. Source morph prefix, body, skin influences and hard tack endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
       "headShape": {
@@ -6867,8 +6867,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.4855925278298727e-06,
-      "sha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
-      "byteLength": 753956,
+      "sha256": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f",
+      "byteLength": 776556,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
       "sourceWithersM": 1.905771414287584,
@@ -7081,9 +7081,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 514,
+        "vertices": 966,
         "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
-        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "method": "Prior four-influence shoulder attachment at70% strength, with a bounded static lower-V route6cm upward/1.2cm forward before actor scale. Source morph prefix, body, skin influences and hard tack endpoints are preserved.",
         "preservedBaseMorphBytes": 728256
       },
       "headShape": {
@@ -7328,8 +7328,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.8951334106741555e-06,
-      "sha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
-      "byteLength": 753956,
+      "sha256": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca",
+      "byteLength": 776556,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,
       "sourceWithersM": 1.8885889697325051,

@@ -1,0 +1,434 @@
+[
+  {
+    "productionAttachment": {
+      "version": 1,
+      "vertexCount": 966,
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "source": "Production breeds.html with fixture-only UI and deterministic native motion sampling",
+    "studioSourceSha256": "c8a587863df0470d8f6d6543838da2d88252ddd195ece15809018ca1328b00bd",
+    "breed": "shire",
+    "attachment": null,
+    "view": "front",
+    "surface": "coat",
+    "naturalTackMeshes": [],
+    "motion": "gallop",
+    "lead": "left",
+    "requestedPhase01": 0.25,
+    "snapshotTimeS": 0.1625,
+    "paused": true,
+    "animation": {
+      "gait": "gallop",
+      "hasAmbientIdle": false,
+      "action": null,
+      "blocksTravel": false,
+      "lead": "left",
+      "phase01": 0.2500000091699457,
+      "bodyLiftM": 0,
+      "jumpTimeS": 0,
+      "speedMps": 3.5,
+      "grounded": true,
+      "intensity": 1,
+      "turn": 0,
+      "transitioning": false,
+      "transitionElapsedS": 0,
+      "transitionDurationS": 0.2,
+      "activeActions": 1,
+      "groomInertia": {
+        "time": 0.41250000000000053,
+        "remainderS": 3.729655473350135e-17,
+        "frames": 21,
+        "steps": 99,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 2.700868008888581,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0,
+          "sampleMs": 1.4000002145767212,
+          "solveMs": 0.7999999523162842,
+          "applyMs": 2.8000001907348633
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 0,
+        "eligibleProfile": "shire"
+      },
+      "expression": {
+        "enabled": true,
+        "blinkSupported": false,
+        "time": 0.41250000000000053,
+        "blink": 0,
+        "leftEar": 0.6880025773390548,
+        "rightEar": 0,
+        "breath": 0.7057150112258024,
+        "weights": {
+          "blink": 0,
+          "ears": 0,
+          "breathing": 0
+        },
+        "controls": 10,
+        "calibration": []
+      },
+      "hoofFlex": {
+        "eligible": true,
+        "finite": true,
+        "sourceControllerUpdatesOwned": 0,
+        "feet": {
+          "FL": {
+            "sourceMinimumM": 0.16490112575945703,
+            "finalMinimumM": 0.16490112587317235,
+            "gate": 1,
+            "requestedGate": 1,
+            "requestedMinimumM": 0.16490112587317235,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          },
+          "FR": {
+            "sourceMinimumM": 0.029027758256007036,
+            "finalMinimumM": 0.029027758256007022,
+            "gate": 0.6251993293892881,
+            "requestedGate": 0.6251993293892881,
+            "requestedMinimumM": 0.029027758256007022,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          }
+        },
+        "fallbacks": 0,
+        "lastCostMs": 0,
+        "maxCostMs": 0.20000004768371582,
+        "disposed": false
+      },
+      "restFallback": false,
+      "transitionsReviewed": false
+    },
+    "finite": true,
+    "bones": 677,
+    "vertices": 63824,
+    "bounds": {
+      "min": [
+        -0.6534323869588179,
+        -0.00009508785261085062,
+        -1.2076434180199587
+      ],
+      "max": [
+        0.6352019549327631,
+        1.898217385347761,
+        1.529501167771674
+      ],
+      "size": [
+        1.2886343418915809,
+        1.898312473200372,
+        2.737144585791633
+      ]
+    },
+    "variant": {
+      "file": "./models/native-roster/shire.bin",
+      "sha256": "61e045d468d3facba7552c5fcbe9980d6f2560284b6e0c7055b6d5b78a97f33f",
+      "coatSha256": "cf1d1ceb8b8a2810f5731c09738e7368e29897b9f52e928eb74f018ccf22b381",
+      "geometryHash": "317c0324",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "camera": {
+      "position": [
+        -0.009115216013027394,
+        1.4596250751144506,
+        5.789751649632091
+      ],
+      "target": [
+        -0.009115216013027394,
+        0.8953407040991239,
+        0.14690793947881683
+      ]
+    },
+    "errors": []
+  },
+  {
+    "productionAttachment": {
+      "version": 1,
+      "vertexCount": 962,
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "source": "Production breeds.html with fixture-only UI and deterministic native motion sampling",
+    "studioSourceSha256": "c8a587863df0470d8f6d6543838da2d88252ddd195ece15809018ca1328b00bd",
+    "breed": "percheron",
+    "attachment": null,
+    "view": "front",
+    "surface": "coat",
+    "naturalTackMeshes": [],
+    "motion": "gallop",
+    "lead": "left",
+    "requestedPhase01": 0.25,
+    "snapshotTimeS": 0.1625,
+    "paused": true,
+    "animation": {
+      "gait": "gallop",
+      "hasAmbientIdle": false,
+      "action": null,
+      "blocksTravel": false,
+      "lead": "left",
+      "phase01": 0.2500000091699457,
+      "bodyLiftM": 0,
+      "jumpTimeS": 0,
+      "speedMps": 3.5,
+      "grounded": true,
+      "intensity": 1,
+      "turn": 0,
+      "transitioning": false,
+      "transitionElapsedS": 0,
+      "transitionDurationS": 0.2,
+      "activeActions": 1,
+      "groomInertia": {
+        "time": 0.41250000000000053,
+        "remainderS": 3.729655473350135e-17,
+        "frames": 21,
+        "steps": 99,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 2.648360041107965,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0.19999992847442627,
+          "sampleMs": 1.200000286102295,
+          "solveMs": 0.8000000715255737,
+          "applyMs": 2.0000003576278687
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 0,
+        "eligibleProfile": "percheron"
+      },
+      "expression": {
+        "enabled": true,
+        "blinkSupported": false,
+        "time": 0.41250000000000053,
+        "blink": 0,
+        "leftEar": 0.2539601752782217,
+        "rightEar": 0,
+        "breath": 0.535901513315908,
+        "weights": {
+          "blink": 0,
+          "ears": 0,
+          "breathing": 0
+        },
+        "controls": 10,
+        "calibration": []
+      },
+      "hoofFlex": {
+        "eligible": true,
+        "finite": true,
+        "sourceControllerUpdatesOwned": 0,
+        "feet": {
+          "FL": {
+            "sourceMinimumM": 0.1649011257594573,
+            "finalMinimumM": 0.16490112587317263,
+            "gate": 1,
+            "requestedGate": 1,
+            "requestedMinimumM": 0.16490112587317263,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          },
+          "FR": {
+            "sourceMinimumM": 0.029027758256007105,
+            "finalMinimumM": 0.029027758256007105,
+            "gate": 0.6251993293892923,
+            "requestedGate": 0.6251993293892923,
+            "requestedMinimumM": 0.029027758256007105,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          }
+        },
+        "fallbacks": 0,
+        "lastCostMs": 0,
+        "maxCostMs": 0.10000002384185791,
+        "disposed": false
+      },
+      "restFallback": false,
+      "transitionsReviewed": false
+    },
+    "finite": true,
+    "bones": 677,
+    "vertices": 60688,
+    "bounds": {
+      "min": [
+        -0.6159941991017986,
+        -0.00009124092003483329,
+        -1.1469212411555165
+      ],
+      "max": [
+        0.5987989103489626,
+        1.7915036109064146,
+        1.424842622304217
+      ],
+      "size": [
+        1.2147931094507611,
+        1.7915948518264495,
+        2.5717638634597337
+      ]
+    },
+    "variant": {
+      "file": "./models/native-roster/percheron.bin",
+      "sha256": "e51d94c76339c9ec26adad95cf08b4d2efbc1c41f5f52355fdda38db92eea27a",
+      "coatSha256": "883aed999954f0b94df0507c55a236b388d9639a04ce91f2b1f53a3ab65ced89",
+      "geometryHash": "4093fa76",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "camera": {
+      "position": [
+        -0.008597644376418023,
+        1.377897705608655,
+        5.454903707249574
+      ],
+      "target": [
+        -0.008597644376418023,
+        0.8453667174664101,
+        0.12959382582712092
+      ]
+    },
+    "errors": []
+  },
+  {
+    "productionAttachment": {
+      "version": 1,
+      "vertexCount": 966,
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "source": "Production breeds.html with fixture-only UI and deterministic native motion sampling",
+    "studioSourceSha256": "c8a587863df0470d8f6d6543838da2d88252ddd195ece15809018ca1328b00bd",
+    "breed": "clyde",
+    "attachment": null,
+    "view": "front",
+    "surface": "coat",
+    "naturalTackMeshes": [],
+    "motion": "gallop",
+    "lead": "left",
+    "requestedPhase01": 0.25,
+    "snapshotTimeS": 0.1625,
+    "paused": true,
+    "animation": {
+      "gait": "gallop",
+      "hasAmbientIdle": false,
+      "action": null,
+      "blocksTravel": false,
+      "lead": "left",
+      "phase01": 0.2500000091699457,
+      "bodyLiftM": 0,
+      "jumpTimeS": 0,
+      "speedMps": 3.5,
+      "grounded": true,
+      "intensity": 1,
+      "turn": 0,
+      "transitioning": false,
+      "transitionElapsedS": 0,
+      "transitionDurationS": 0.2,
+      "activeActions": 1,
+      "groomInertia": {
+        "time": 0.41250000000000053,
+        "remainderS": 3.729655473350135e-17,
+        "frames": 21,
+        "steps": 99,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 2.6855654958204074,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0.09999990463256836,
+          "sampleMs": 0.6000001430511475,
+          "solveMs": 0.30000007152557373,
+          "applyMs": 3.099999785423279
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 0,
+        "eligibleProfile": "clyde"
+      },
+      "expression": {
+        "enabled": true,
+        "blinkSupported": false,
+        "time": 0.41250000000000053,
+        "blink": 0,
+        "leftEar": 0.4912969113089658,
+        "rightEar": 0,
+        "breath": 0.6316158467949935,
+        "weights": {
+          "blink": 0,
+          "ears": 0,
+          "breathing": 0
+        },
+        "controls": 10,
+        "calibration": []
+      },
+      "hoofFlex": {
+        "eligible": true,
+        "finite": true,
+        "sourceControllerUpdatesOwned": 0,
+        "feet": {
+          "FL": {
+            "sourceMinimumM": 0.16490112575945692,
+            "finalMinimumM": 0.16490112587317235,
+            "gate": 1,
+            "requestedGate": 1,
+            "requestedMinimumM": 0.16490112587317235,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          },
+          "FR": {
+            "sourceMinimumM": 0.029027758256007466,
+            "finalMinimumM": 0.029027758256007466,
+            "gate": 0.6251993293893142,
+            "requestedGate": 0.6251993293893142,
+            "requestedMinimumM": 0.029027758256007466,
+            "maxAddedLocalAngleDeg": 0.0000017075472925031877
+          }
+        },
+        "fallbacks": 0,
+        "lastCostMs": 0,
+        "maxCostMs": 0.10000002384185791,
+        "disposed": false
+      },
+      "restFallback": false,
+      "transitionsReviewed": false
+    },
+    "finite": true,
+    "bones": 677,
+    "vertices": 64160,
+    "bounds": {
+      "min": [
+        -0.6079028659678446,
+        -0.00009473142479086982,
+        -1.188589821770455
+      ],
+      "max": [
+        0.5908610656021409,
+        1.8534013152006708,
+        1.5081335267613665
+      ],
+      "size": [
+        1.1987639315699856,
+        1.8534960466254615,
+        2.6967233485318216
+      ]
+    },
+    "variant": {
+      "file": "./models/native-roster/clyde.bin",
+      "sha256": "e98efcce1af51e21232d3c100d6ffd65473dbe8433735fbfc3aa4cd9e65c4fca",
+      "coatSha256": "b7828f7c186ec9626ad02ed7637736f9cd4182ad7f3bd9ef625c0432687203df",
+      "geometryHash": "1c21249f",
+      "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+    },
+    "camera": {
+      "position": [
+        -0.008520900182851843,
+        1.4291672209912716,
+        5.697680769694908
+      ],
+      "target": [
+        -0.008520900182851843,
+        0.8742020537354256,
+        0.14802909713644333
+      ]
+    },
+    "errors": []
+  }
+]
