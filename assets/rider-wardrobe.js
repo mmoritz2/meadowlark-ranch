@@ -4,8 +4,8 @@ import {fitLowerLayer} from './rider-garment-layer-fit.js?v=character-polish-202
 // TMP integration candidate. Keeps the normal rider API and all existing outfit IDs.
 // Construction families still marked approximate below must receive dedicated art
 // before this becomes a complete catalog release.
-import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=rider-details-20261009';
-export * from './rider-model-base.js?v=rider-details-20261009';
+import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=visible-fine-lashes-20261010';
+export * from './rider-model-base.js?v=visible-fine-lashes-20261010';
 import {CLOTH_GLSL} from './rider-clothes.js?v=character-polish-20261009';
 import {finishRidingBoots} from './rider-boot-finish.js?v=character-polish-20261009';
 import {technicalFinish} from './rider-technical-finish.js?v=character-polish-20261009';
