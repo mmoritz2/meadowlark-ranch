@@ -1,5 +1,5 @@
 import {buildHelmetHarness} from './rider-helmet-harness.js?v=character-polish-20261009';
-import {naturalHandPose} from './rider-natural-hand-pose.js?v=character-polish-20261009';
+import {naturalHandPose,relaxedOnFootFingerPose} from './rider-natural-hand-pose.js?v=character-finish68-20261010';
 import {shapeHair as shapeWaveHair} from './rider-hairstyles-shape.js?v=character-polish-20261009';
 import {createHairMassResources} from './rider-hair-mass-manager.js?v=character-polish-20261009';
 /* The shared rider uses artist-authored Blender Studio CC0 heads (rider-heads.js)
@@ -154,6 +154,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const grip=gAnim.animations.find(c=>c.name===CLIP.drive)||gAnim.animations.find(c=>c.name===CLIP.idle);
   const seat=buildSeat(scene,bones,grip,skin,gAnim.scene);
   naturalHandPose(THREE,scene,bones,seat);
+  const relaxedOnFootFingers=body==='f'?relaxedOnFootFingerPose(THREE,scene,bones,seat,.50):null;
   /* ---- clips: her bones by name; the pelvis track moved onto her own hip height ---- */
   const clips={};
   let ualPelvis=null; gAnim.scene.traverse(o=>{if(o.name==='pelvis')ualPelvis=o.position.clone();});
@@ -198,11 +199,14 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
     const match=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(track.name),relaxed=match&&seat.relax.get(match[1]);
     if(relaxed)for(let i=0;i<track.values.length;i+=4){_q.fromArray(track.values,i).slerp(relaxed,.92).toArray(track.values,i);}
    }
+   // Female idle, conversation and walking share a partial curl without residual grip.
+   const relaxedFingers=relaxedOnFootFingers&&['Idle_Loop','Idle_Talking_Loop','Walk_Loop'].includes(c.name)?relaxedOnFootFingers:null;
+   if(relaxedFingers)for(const track of cl.tracks){const q=relaxedFingers.get(track.name.replace(/\.quaternion$/,''));if(q&&track.name.endsWith('.quaternion'))for(let i=0;i<track.values.length;i+=4)q.toArray(track.values,i);}
    // Several source clips omit finger tracks. Explicit relaxed tracks prevent
    // the last mounted grip from leaking into idle, walking or wardrobe previews.
    if(['Idle_Loop','Idle_Talking_Loop','Walk_Loop','Jog_Fwd_Loop','Sprint_Loop'].includes(c.name)){
     const tracked=new Set(cl.tracks.map(t=>t.name));
-    for(const [name,q]of seat.relax)if(!tracked.has(name+'.quaternion'))cl.tracks.push(new THREE.QuaternionKeyframeTrack(name+'.quaternion',[0,cl.duration],[...q.toArray(),...q.toArray()]));
+    for(const [name,q]of seat.relax)if(!tracked.has(name+'.quaternion')){const target=relaxedFingers?.get(name)||q;cl.tracks.push(new THREE.QuaternionKeyframeTrack(name+'.quaternion',[0,cl.duration],[...target.toArray(),...target.toArray()]));}
    }
    for(const t of cl.tracks)if(t.name==='pelvis.position'&&ualPelvis){const v=t.values;for(let i=0;i<v.length;i+=3){v[i]+=herPelvis.x-ualPelvis.x;v[i+1]+=herPelvis.y-ualPelvis.y;v[i+2]+=herPelvis.z-ualPelvis.z;}}
    clips[c.name]=cl;
@@ -253,7 +257,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    for(const side of [1,-1]){
     const sd=side>0?'l':'r',upper='upperarm_'+sd,lower='lowerarm_'+sd,hand='hand_'+sd;
     aim(upper,lower,V((F?(side>0?.18:.23):.32)*side,-1,-.015));
-    aim(lower,hand,V((F?(side>0?.045:.075):.06)*side,-1,F?(side>0?.10:.15):.14));
+    aim(lower,hand,V((F?(side>0?.125:.155):.06)*side,-1,F?(side>0?.10:.15):.14));
     // Turn the forearm as a whole: thumb forward, palm toward the thigh.
     // This avoids twisting only the wrist against a fixed forearm.
     bones[hand].quaternion.copy(rest.get(hand).q);bones[hand].updateMatrixWorld(true);
@@ -261,7 +265,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
     width.addScaledVector(axis,-width.dot(axis)).normalize();const target=V(0,0,1).addScaledVector(axis,-axis.z).normalize();
     const angle=Math.atan2(axis.dot(new THREE.Vector3().crossVectors(width,target)),width.dot(target));
     setWorld(bones[lower],new THREE.Quaternion().setFromAxisAngle(axis,angle).multiply(bones[lower].getWorldQuaternion(new THREE.Quaternion())));
-    aim(hand,'middle_01_'+sd,V(.04*side,-1,.10));
+    aim(hand,'middle_01_'+sd,V((F?.10:.04)*side,-1,.10));
     aim('thigh_'+sd,'calf_'+sd,V((F?(side>0?.04:.08):.055)*side,-1,F?(side>0?-.01:.13):-.035));
     aim('calf_'+sd,'foot_'+sd,V(.015*side,-1,F?(side>0?.035:-.065):.04));
     setWorld(bones['foot_'+sd],new THREE.Quaternion().setFromAxisAngle(V(0,1,0),side*(F?(side>0?.025:.08):.05)).multiply(footRest[sd]));
