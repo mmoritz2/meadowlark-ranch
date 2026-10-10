@@ -1470,7 +1470,7 @@ export function install(G){
     const key=(S.lap||1)+':'+at; CUR.refuseAt[key]=(CUR.refuseAt[key]||0)+1;
     const n=CUR.refuseAt[key];
     CUR.fenceFaults+=n===1?4:8; CUR.xcJump+=n===1?20:40;
-    if(n>=3&&!CUR.elim)eliminate(c);
+    if(n>=3&&!CUR.elim&&!c.ev?.rush)eliminate(c); // Rush keeps the log available to learn and retry.
    }
   }
   CUR.lastGrades=S.grades.length;

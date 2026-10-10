@@ -1,0 +1,89 @@
+{
+  "source": {
+    "sourceJsonSha256": "52b2b70a718ac134090c0707633d04a0066f04abc34f3c402dd9e66a6de6628a",
+    "mergedHead": "79c9c45"
+  },
+  "method": "Fresh production boot after merging the newer rider/terrain build, read-only diagnostics; no save or progression writes.",
+  "status": "Ready. Inspect and complete the real onboarding before choosing an activity.",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false,
+  "rush": {
+    "savedRiverRecord": {
+      "plays": 3,
+      "bestScore": 1400,
+      "bestTime": 95.46,
+      "medal": "silver",
+      "bestCombo": 6,
+      "splits": [
+        1.87,
+        7.44,
+        72.12,
+        75.16,
+        80.86,
+        85.56,
+        88.83,
+        95.46
+      ],
+      "lastRunId": "mv2r8fvw-1-zqlzum"
+    }
+  },
+  "journey": {
+    "riverRhythm": {
+      "id": "river-rhythm",
+      "status": "claimed",
+      "gearId": "journey-river-rhythm",
+      "owned": true,
+      "equipped": true,
+      "goals": [
+        {
+          "id": "river",
+          "label": "Finish River Run",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-river"
+          }
+        },
+        {
+          "id": "silver",
+          "label": "Earn silver or gold in any Ranch Rush",
+          "current": 2,
+          "target": 2,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-pasture"
+          }
+        }
+      ]
+    },
+    "current": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "status": "active"
+    },
+    "lastClaim": {
+      "id": "river-rhythm",
+      "name": "River Rhythm",
+      "coins": 250,
+      "gearId": "journey-river-rhythm",
+      "gearName": "Leaping Silver Shoes of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "rush",
+      "id": "rush-trail"
+    }
+  },
+  "mount": {
+    "rigReady": true,
+    "breed": "pinto"
+  }
+}

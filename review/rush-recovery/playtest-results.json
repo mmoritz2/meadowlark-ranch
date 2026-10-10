@@ -1,0 +1,446 @@
+{
+  "baseline": "1cfb568",
+  "scope": "Casual Ranch Rush low-log instructions, refusal recovery and retained penalties; formal-event elimination remains unchanged.",
+  "method": "Three real wall-time offline River Runs, started through visible production UI and ordinary input. The final run uses the reviewed code and slow manual side-skimming followed by normal-input recovery. No position, heading, speed, clock, jump-age, checkpoint, grade or progression injection. A separate single Trailblazer smoke run and fresh River-record reload were checked on merged79c9c45.",
+  "runId": "mv2pvnyl-1-4djjl3",
+  "checks": {
+    "firstRefusal": {
+      "status": "verified-browser",
+      "checkpoint": 3,
+      "zeroBasedIndex": 2,
+      "refusals": 1,
+      "courseStillActive": true,
+      "evidence": "river-first-refusal.json"
+    },
+    "thirdRefusal": {
+      "status": "verified-browser",
+      "checkpoint": 3,
+      "zeroBasedIndex": 2,
+      "refusals": 3,
+      "courseStillActive": true,
+      "evidence": "river-third-refusal.json"
+    },
+    "normalInputRecovery": {
+      "status": "verified-browser",
+      "grades": [
+        "refusal",
+        "refusal",
+        "refusal",
+        "perfect",
+        "good"
+      ],
+      "cleanGates": 6,
+      "cleanJumps": 2,
+      "evidence": "river-recovered-finish.json"
+    },
+    "result": {
+      "status": "verified-browser",
+      "id": "rush-river",
+      "runId": "mv2pvnyl-1-4djjl3",
+      "score": 1363,
+      "time": 95.46,
+      "medal": "silver",
+      "bestCombo": 6,
+      "cleanJumps": 2,
+      "perfectJumps": 1,
+      "gates": 6,
+      "cleanGates": 6,
+      "penalties": 3,
+      "timeBonus": 0,
+      "pay": 147,
+      "splits": [
+        1.87,
+        7.44,
+        72.12,
+        75.16,
+        80.86,
+        85.56,
+        88.83,
+        95.46
+      ]
+    },
+    "journeyClaimAndEquip": {
+      "status": "verified-browser",
+      "chapter": "river-rhythm",
+      "recordedCoins": 250,
+      "gearId": "journey-river-rhythm",
+      "gearName": "Leaping Silver Shoes of Stamina",
+      "owned": true,
+      "equipped": true,
+      "nextChapter": "trail-partners",
+      "evidence": "river-earned-shoes.json"
+    },
+    "reloadPersistence": {
+      "status": "verified-browser",
+      "savedRiverRecord": {
+        "plays": 1,
+        "bestScore": 1363,
+        "bestTime": 95.46,
+        "medal": "silver",
+        "bestCombo": 6,
+        "lastRunId": "mv2pvnyl-1-4djjl3"
+      },
+      "chapter": "river-rhythm",
+      "claimed": true,
+      "owned": true,
+      "equipped": true,
+      "nextChapter": "trail-partners",
+      "errors": [],
+      "featureErrors": [],
+      "evidence": "river-reloaded.json"
+    },
+    "wrongSideSkim": {
+      "status": "verified-browser-earlier-loaded-code",
+      "runId": "mv2q03dh-1-bphalg",
+      "checkpoint": 3,
+      "zeroBasedIndex": 2,
+      "groundedPastPlane": true,
+      "observedAcrossM": 0.5172703132029606,
+      "observedLateralM": 3.3333178369705108,
+      "jumpAge": null,
+      "indexRetainedUntilRealJump": 2,
+      "refusalsBeforeRecovery": 1,
+      "recoveryPhaseAtObservation": "approach",
+      "grades": [
+        "refusal",
+        "good",
+        "good"
+      ],
+      "finished": 8,
+      "total": 8,
+      "receipt": {
+        "id": "rush-river",
+        "name": "River Run",
+        "runId": "mv2q03dh-1-bphalg",
+        "score": 1313,
+        "time": 1787.98,
+        "timeBonus": 0,
+        "medal": "bronze",
+        "bestCombo": 6,
+        "cleanJumps": 2,
+        "perfectJumps": 0,
+        "gates": 6,
+        "cleanGates": 6,
+        "penalties": 1,
+        "splits": [
+          1.93,
+          7.55,
+          1764.04,
+          1767.05,
+          1772.61,
+          1778.03,
+          1781.59,
+          1787.98
+        ],
+        "splitDelta": 1692.52,
+        "newBestScore": false,
+        "newBestTime": false,
+        "previousBestScore": 1363,
+        "previousBestTime": 95.46,
+        "pay": 147
+      },
+      "savedRiverRecord": {
+        "plays": 2,
+        "bestScore": 1363,
+        "bestTime": 95.46,
+        "medal": "silver",
+        "bestCombo": 6,
+        "lastRunId": "mv2q03dh-1-bphalg"
+      },
+      "evidence": [
+        "river-side-skim-start.json",
+        "river-side-skim-finish.json"
+      ],
+      "timeIsPerformanceMeasurement": false,
+      "elapsedTimeNote": "1787.98 s includes about 29 minutes idle during an independent front audit; not representative performance.",
+      "latestGradualMovementCacheFix": "not-browser-verified-by-this-earlier-loaded-run"
+    },
+    "formalThirdRefusal": {
+      "status": "verified-source-tests",
+      "behavior": "Formal third refusal still eliminates; only casual Rush remains active.",
+      "browserStatus": "not-tested-in-this-run"
+    },
+    "finalCodeSlowSideSkim": {
+      "status": "verified-browser",
+      "runId": "mv2r8fvw-1-zqlzum",
+      "reviewedModulesSha256": {
+        "assets/features/course-guide.js": "9255a396788faa1210870a79c19fb2aa15d47fa0b60fcf84b2a1f5c04dc84ee4",
+        "assets/features/events2-disciplines.js": "be4f31b33ffdef29921890985751219736288c1dd44f899174dc5cfda4d36879",
+        "assets/features/ranch-rush-ui.js": "84002ee1c225cf21de44c5d9ade5c075af71196aa684553c696871fbe4d03059"
+      },
+      "checkpoint": 3,
+      "zeroBasedIndex": 2,
+      "manualInput": "Walk: two 1-second sideways steps, 1-second turn, then 2-second and 1-second forward steps; ordinary keys only.",
+      "groundedPastPlane": true,
+      "observedAcrossM": 3.168909879100751,
+      "observedLateralM": -3.132663384928966,
+      "jumpAge": null,
+      "checkpointRetained": 2,
+      "refusals": 1,
+      "recoveryPhase": "around",
+      "recoveryTarget": {
+        "x": 32.86827201635471,
+        "z": 107.81801948466054
+      },
+      "cacheBehavior": "Slow movement updated the published return path and switched from approach to around while retaining the same uncredited log.",
+      "grades": [
+        "refusal",
+        "good",
+        "perfect"
+      ],
+      "finished": 8,
+      "total": 8,
+      "receipt": {
+        "id": "rush-river",
+        "name": "River Run",
+        "runId": "mv2r8fvw-1-zqlzum",
+        "score": 1400,
+        "time": 190.05,
+        "timeBonus": 0,
+        "medal": "silver",
+        "bestCombo": 6,
+        "cleanJumps": 2,
+        "perfectJumps": 1,
+        "gates": 6,
+        "cleanGates": 6,
+        "penalties": 1,
+        "splits": [
+          1.96,
+          7.53,
+          165.07,
+          168,
+          173.8,
+          179.25,
+          182.64,
+          190.05
+        ],
+        "splitDelta": 94.59,
+        "newBestScore": true,
+        "newBestTime": false,
+        "previousBestScore": 1363,
+        "previousBestTime": 95.46,
+        "pay": 147
+      },
+      "savedRiverRecord": {
+        "plays": 3,
+        "bestScore": 1400,
+        "bestTime": 95.46,
+        "medal": "silver",
+        "bestCombo": 6,
+        "splits": [
+          1.87,
+          7.44,
+          72.12,
+          75.16,
+          80.86,
+          85.56,
+          88.83,
+          95.46
+        ],
+        "lastRunId": "mv2r8fvw-1-zqlzum"
+      },
+      "timeIsPerformanceMeasurement": false,
+      "timeNote": "190.05 s includes manual inspection pauses; no speed claim.",
+      "evidence": [
+        "river-final-refusal.json",
+        "river-final-side-skim.json",
+        "river-final-finish.json"
+      ],
+      "codeBoundary": "The three named reviewed modules were unchanged since boot. This does not claim a full replay after a later rider/terrain merge."
+    },
+    "finalMergedReloadPersistence": {
+      "status": "verified-browser",
+      "mergedHead": "79c9c45",
+      "savedRiverRecord": {
+        "plays": 3,
+        "bestScore": 1400,
+        "bestTime": 95.46,
+        "medal": "silver",
+        "bestCombo": 6,
+        "splits": [
+          1.87,
+          7.44,
+          72.12,
+          75.16,
+          80.86,
+          85.56,
+          88.83,
+          95.46
+        ],
+        "lastRunId": "mv2r8fvw-1-zqlzum"
+      },
+      "chapter": "river-rhythm",
+      "claimed": true,
+      "owned": true,
+      "equipped": true,
+      "nextChapter": "trail-partners",
+      "errors": [],
+      "featureErrors": [],
+      "evidence": "river-final-reloaded.json"
+    },
+    "mergedTrailblazerSmoke": {
+      "status": "verified-browser-one-run",
+      "mergedHead": "79c9c45",
+      "runId": "mv2req07-1-o7t2pz",
+      "finished": 10,
+      "total": 10,
+      "grades": [
+        "early",
+        "good",
+        "good"
+      ],
+      "receipt": {
+        "id": "rush-trail",
+        "name": "Trailblazer",
+        "runId": "mv2req07-1-o7t2pz",
+        "score": 2034,
+        "time": 50.77,
+        "timeBonus": 394,
+        "medal": "silver",
+        "bestCombo": 7,
+        "cleanJumps": 2,
+        "perfectJumps": 0,
+        "gates": 7,
+        "cleanGates": 7,
+        "penalties": 1,
+        "splits": [
+          2.15,
+          9.47,
+          14.82,
+          17.77,
+          24.95,
+          32.11,
+          35.89,
+          43.72,
+          48.33,
+          50.77
+        ],
+        "newBestScore": true,
+        "newBestTime": true,
+        "previousBestScore": 0,
+        "previousBestTime": null,
+        "pay": 189
+      },
+      "savedTrailRecord": {
+        "plays": 1,
+        "bestScore": 2034,
+        "bestTime": 50.77,
+        "medal": "silver",
+        "bestCombo": 7,
+        "splits": [
+          2.15,
+          9.47,
+          14.82,
+          17.77,
+          24.95,
+          32.11,
+          35.89,
+          43.72,
+          48.33,
+          50.77
+        ],
+        "lastRunId": "mv2req07-1-o7t2pz"
+      },
+      "nextAction": {
+        "kind": "roundup",
+        "mode": "full"
+      },
+      "journeyTrailGoalDone": true,
+      "journeyFiveHorseGoalDone": false,
+      "errors": [],
+      "featureErrors": [],
+      "evidence": "trail-merged-finish.json"
+    }
+  },
+  "validation": {
+    "tests": 72,
+    "passed": 72,
+    "failed": 0,
+    "evidence": "validation.tap",
+    "sha256": "f93fbf708b10f08c0f4b948b9d442168a07e1198ae64cf3288e4aaf0a62286d8",
+    "mergedHead": "79c9c45",
+    "note": "Final merged focused test batch. The three reviewed riding/recovery module hashes match the booted final-code browser run; a later full-game rider/terrain reload is a separate check."
+  },
+  "limits": [
+    "Three offline local River Runs on the saved pinto mount; this is not a human usability study.",
+    "Trailblazer has one ordinary-input run on merged79c9c45; all breeds, touch-only play and multiplayer remain untested here.",
+    "The older second run does not verify the latest cache fix; the separate final run browser-verifies the reviewed course-guide, discipline and Rush UI modules through gradual side movement.",
+    "The second receipt's 1787.98 s includes about 29 minutes idle and must not be presented as a normal completion time.",
+    "Final run time 190.05 s includes inspection pauses and is not a normal performance measurement.",
+    "The fixture releases keys after each refusal; production owns penalties, elapsed time, real crossings and payout.",
+    "Evidence JSON is a selected projection of diagnostics, not a full save or online identity export."
+  ],
+  "evidence": [
+    {
+      "json": "river-first-refusal.json",
+      "screenshot": "river-first-refusal.jpg",
+      "sourceJsonSha256": "13accd4b9dfcdf161c73c7f851c527b450e82adb49e7d5a7f31dde6417a65acf",
+      "screenshotSha256": "61bc3ace8fecabd9830c8a2c2578489fede62456a4c67a8e200f1d035d39ce21"
+    },
+    {
+      "json": "river-third-refusal.json",
+      "screenshot": "river-third-refusal.jpg",
+      "sourceJsonSha256": "d84c1efd38bf8d6fadbe5a50de169b5846bbfd8f66014171532c114b6b8305f9",
+      "screenshotSha256": "12aaad182314e97540ac71f1d97c923d8dd24c45aab25a46675533f6dc4b2733"
+    },
+    {
+      "json": "river-recovered-finish.json",
+      "screenshot": "river-recovered-finish.jpg",
+      "sourceJsonSha256": "9c6c245470b5dff92bc4ff4131d3da7fb2b6ac910caa150018f77d1297053529",
+      "screenshotSha256": "c627c928fc4240c2582c4edc3a74f6dca6d1afd6f78406b97d99cd33ed99c929"
+    },
+    {
+      "json": "river-earned-shoes.json",
+      "screenshot": "river-earned-shoes.jpg",
+      "sourceJsonSha256": "49add9fb990305a5dc04523254a3b5a83f652c58c98c8e39d3c195fd9936f9fb",
+      "screenshotSha256": "36e62b06801c2aa829f2a741ba8653f0e855bea2702378df2ab9e6d6c8730c10"
+    },
+    {
+      "json": "river-reloaded.json",
+      "sourceJsonSha256": "72d81de7c7984ecc28dc733f7659b8c7c381f1691d96c5197a83c1e337a8f585"
+    },
+    {
+      "json": "river-side-skim-start.json",
+      "screenshot": "river-side-skim-start.jpg",
+      "sourceJsonSha256": "27ecf56c4b4f68b970645f33ad5feb943f860726cac12d83ffa2137686dda813",
+      "screenshotSha256": "7c73346a5e3c84f635f1d92a266a65ccd74278bbc21a2fd0f7a38f048c8ff466"
+    },
+    {
+      "json": "river-side-skim-finish.json",
+      "screenshot": "river-side-skim-finish.jpg",
+      "sourceJsonSha256": "9f2b6941dbeb2fd926478fc70ebf4d8c2f96b95df9c93e7edacb5e83246fb242",
+      "screenshotSha256": "c9a2e53ba08dff356f8b0f8e9fbe9914f97ae466d6f2db101d9a9a3609595c83"
+    },
+    {
+      "json": "river-final-refusal.json",
+      "sourceJsonSha256": "4a6636d7f69f7630107e1017e0e2eaa1dc428ae9e056d74a636793f71fd7b8e2"
+    },
+    {
+      "json": "river-final-side-skim.json",
+      "screenshot": "river-final-side-skim.jpg",
+      "sourceJsonSha256": "38ed2cc624ee11542e6ab1bc29f03dbe1fd30e4c620ea1c679d55731d814d89a",
+      "screenshotSha256": "0b13f04dc56bf1d692eaf09d3487173837dc51f21cc3af3bb56c13b4890b09ec"
+    },
+    {
+      "json": "river-final-finish.json",
+      "screenshot": "river-final-finish.jpg",
+      "sourceJsonSha256": "b9902d8c5fdc125632b2f99e5503738d29152a39dff935b03ef882c743d29931",
+      "screenshotSha256": "78d97232ebb5c6d4dec7daebc7c9d270135dcc280d51b6044c089fcde28fbf4b"
+    },
+    {
+      "json": "river-final-reloaded.json",
+      "sourceJsonSha256": "52b2b70a718ac134090c0707633d04a0066f04abc34f3c402dd9e66a6de6628a"
+    },
+    {
+      "json": "trail-merged-finish.json",
+      "screenshot": "trail-merged-finish.jpg",
+      "sourceJsonSha256": "4002aab21b855f1efee945b5f6f57e8a8a3f66bb35dea644146a3b372fdf9a80",
+      "screenshotSha256": "9fd8e1545965c721f678c74775d2f74de11f4cc0fb2b4e45113e6670bbbd2cd7"
+    }
+  ],
+  "runIds": [
+    "mv2pvnyl-1-4djjl3",
+    "mv2q03dh-1-bphalg",
+    "mv2r8fvw-1-zqlzum"
+  ]
+}
