@@ -1,0 +1,1079 @@
+{
+  "source": {
+    "sourceJsonSha256": "4a6636d7f69f7630107e1017e0e2eaa1dc428ae9e056d74a636793f71fd7b8e2",
+    "reviewedModulesSha256": {
+      "assets/features/course-guide.js": "9255a396788faa1210870a79c19fb2aa15d47fa0b60fcf84b2a1f5c04dc84ee4",
+      "assets/features/events2-disciplines.js": "be4f31b33ffdef29921890985751219736288c1dd44f899174dc5cfda4d36879",
+      "assets/features/ranch-rush-ui.js": "84002ee1c225cf21de44c5d9ade5c075af71196aa684553c696871fbe4d03059"
+    }
+  },
+  "runId": "mv2r8fvw-1-zqlzum",
+  "method": "Production UI start, slow manual ordinary keys and normal-input recovery, real wall time. No position, heading, speed, clock, jump age, checkpoint, grade or progression injection.",
+  "codeScope": "Final reviewed course-guide, discipline and Rush UI code was unchanged since boot. Module hashes identify those files, not the whole game or later rider/terrain merges.",
+  "status": "Stopped after an actual log refusal All fixture keys released; inspect the real course and use manual controls or resume.",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false,
+  "rush": {
+    "active": {
+      "id": "rush-river",
+      "name": "River Run",
+      "started": true,
+      "countdown": 0,
+      "elapsed": 19.34,
+      "score": 225,
+      "combo": 0,
+      "bestCombo": 2,
+      "completed": 2,
+      "total": 8,
+      "next": {
+        "kind": "fence",
+        "label": "Low log \u00b7 jump"
+      },
+      "lastCue": "Try again \u2014 jump as you approach the log",
+      "splitDelta": 0.09,
+      "bestTime": 95.46,
+      "medal": "none",
+      "nextMedal": {
+        "key": "bronze",
+        "target": 500,
+        "remaining": 275
+      }
+    },
+    "result": null,
+    "savedRiverRecord": {
+      "plays": 2,
+      "bestScore": 1363,
+      "bestTime": 95.46,
+      "medal": "silver",
+      "bestCombo": 6,
+      "splits": [
+        1.87,
+        7.44,
+        72.12,
+        75.16,
+        80.86,
+        85.56,
+        88.83,
+        95.46
+      ],
+      "lastRunId": "mv2q03dh-1-bphalg"
+    }
+  },
+  "rushCourse": {
+    "id": "rush-river",
+    "active": true,
+    "elapsed": 19.340900000095374,
+    "index": 2,
+    "total": 8,
+    "target": {
+      "kind": "fence",
+      "label": "low log",
+      "x": 41,
+      "z": 111,
+      "heading": 0.7853981633974483,
+      "distance": 1.5930340036697734,
+      "across": -1.5929794506631483,
+      "lateral": 0.013183573608138821
+    },
+    "cue": null,
+    "recovery": {
+      "phase": "approach",
+      "hint": "Return to the approach marker, then face the log.",
+      "target": {
+        "x": 35.34314575050762,
+        "z": 105.34314575050762
+      }
+    },
+    "player": {
+      "x": 39.88291562244385,
+      "z": 109.86427123384668,
+      "heading": 0.9079679592900864,
+      "speed": 0,
+      "height": 0,
+      "jumpAge": null
+    },
+    "grades": [
+      "refusal"
+    ],
+    "lastGrade": "refusal",
+    "refusals": 1
+  },
+  "mount": {
+    "rigReady": true,
+    "breed": "pinto"
+  },
+  "traceTransitions": [
+    {
+      "elapsed": 0,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.999999999999998,
+        "across": -9.999999999999996,
+        "lateral": -1.7763568394002505e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.549305384178419,
+        "z": 58.44310917210183,
+        "heading": 0.714090698612158,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "off"
+    },
+    {
+      "elapsed": 0,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.999999999999998,
+        "across": -9.999999999999996,
+        "lateral": -1.7763568394002505e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.549305384178419,
+        "z": 58.44310917210183,
+        "heading": 0.714090698612158,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": "driver started",
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 0.5011000000238418,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.48012825433871,
+        "across": -9.48012825433871,
+        "lateral": -5.329070518200751e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.208825501884252,
+        "z": 58.83597057474895,
+        "heading": 0.714090698612158,
+        "speed": 2.1221564169275324,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 1.1347000000476835,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 7.539427052508075,
+        "across": -7.539427052508075,
+        "lateral": 3.9968028886505635e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -4.937801018861154,
+        "z": 60.30253728592943,
+        "heading": 0.714090698612158,
+        "speed": 3.6121365701835444,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 1.7022000000476838,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 5.319309148593288,
+        "across": -5.319309148593288,
+        "lateral": -2.220446049250313e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -3.4837780046991567,
+        "z": 61.980256148424054,
+        "heading": 0.714090698612158,
+        "speed": 4.093393640182529,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 1.9124000000953676,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 44.14540696605321,
+        "across": -44.0332202358581,
+        "lateral": 3.1452300168470018
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -2.9121751529519733,
+        "z": 62.63979790044003,
+        "heading": 0.714090698612158,
+        "speed": 4.183075682503865,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 2.4363000000715256,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 41.25475073718185,
+        "across": -41.14991003215046,
+        "lateral": 2.9392792880107557
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -1.0189961125963576,
+        "z": 64.82423525469649,
+        "heading": 0.714090698612158,
+        "speed": 6.329946140019805,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 2.978400000095368,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 37.516035718963145,
+        "across": -37.4206962110404,
+        "lateral": 2.6729068722171654
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 1.4296025272764716,
+        "z": 67.6495413776267,
+        "heading": 0.714090698612158,
+        "speed": 7.237848387958889,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 3.479700000047684,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 33.77896646503378,
+        "across": -33.69312397183859,
+        "lateral": 2.4066517122741917
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 3.8771233058572117,
+        "z": 70.47360381445061,
+        "heading": 0.714090698612158,
+        "speed": 7.585051215569518,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 4.104300000071525,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 28.974175416145503,
+        "across": -28.900543339256135,
+        "lateral": 2.0643245242325996
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 7.023927694490845,
+        "z": 74.10453195518171,
+        "heading": 0.714090698612158,
+        "speed": 7.755513192310826,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 4.690999999999999,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 24.38259451355532,
+        "across": -24.3206310219909,
+        "lateral": 1.7371879301422464
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 10.031094247213327,
+        "z": 77.57433951601531,
+        "heading": 0.714090698612158,
+        "speed": 8.08015176002543,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 5.291900000095366,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 19.171164449180523,
+        "across": -19.122444765720815,
+        "lateral": 1.3658889118372084
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 13.444218945201216,
+        "z": 81.512560321386,
+        "heading": 0.714090698612158,
+        "speed": 9.030289204894787,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 5.889200000047684,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 13.793844044476772,
+        "across": -13.758789746271725,
+        "lateral": 0.9827706961623033
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 16.965990293099114,
+        "z": 85.57614264588354,
+        "heading": 0.714090698612158,
+        "speed": 7.969815289145697,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 6.496900000095367,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 9.828320940086744,
+        "across": -9.803344226418105,
+        "lateral": 0.700238873315647
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 19.56313247496569,
+        "z": 88.57284516342185,
+        "heading": 0.714090698612158,
+        "speed": 5.836961366644046,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 7.0798000000715255,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 6.575853157990544,
+        "across": -6.5591419412470735,
+        "lateral": 0.4685101386606032
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 21.69327295068066,
+        "z": 91.03069955847754,
+        "heading": 0.714090698612158,
+        "speed": 5.454172237987361,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 7.484300000071526,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 25.590280437141114,
+        "across": -25.588372145755546,
+        "lateral": 0.31251205072574706
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 23.127267926481977,
+        "z": 92.6853091459406,
+        "heading": 0.714090698612158,
+        "speed": 5.391116319566034,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 8.00860000002384,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 22.37648941286392,
+        "across": -22.37601763311219,
+        "lateral": 0.14530425548923098
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 25.280511820068305,
+        "z": 95.07502057128491,
+        "heading": 0.8145450817683525,
+        "speed": 6.172846793386068,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 8.580700000047681,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 18.478434232584647,
+        "across": -18.47661914104298,
+        "lateral": 0.2589919010322106
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 28.118192241459617,
+        "z": 97.75192238247507,
+        "heading": 0.8145450817683525,
+        "speed": 7.207864758167596,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 9.088900000095364,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 15.006722308927406,
+        "across": -15.006287526984373,
+        "lateral": 0.1142327218125363
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 30.469727061461285,
+        "z": 100.3081775970072,
+        "heading": 0.7917332839537966,
+        "speed": 6.340277858137478,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 9.71360000002384,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 11.730883462209196,
+        "across": -11.730106778880138,
+        "lateral": 0.13498799947929108
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 32.80101288242218,
+        "z": 102.61011102280095,
+        "heading": 0.7917332839537966,
+        "speed": 4.732809914997367,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 10.110800000071523,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 9.9102163372757,
+        "across": -9.909133085098977,
+        "lateral": 0.1465242416906447
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 34.09679308475421,
+        "z": 103.88957651493887,
+        "heading": 0.7917332839537966,
+        "speed": 4.505671480002181,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 10.610999999999999,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 7.684922628816861,
+        "across": -7.683243793674724,
+        "lateral": 0.16062570734564918
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 35.68070573888014,
+        "z": 105.45354668508615,
+        "heading": 0.7917332839537966,
+        "speed": 4.4218082369356235,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 11.18620000004768,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 5.1513567365866795,
+        "across": -5.148325811558184,
+        "lateral": 0.17668493320238943
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 37.484519021290374,
+        "z": 107.23464879248857,
+        "heading": 0.7917332839537966,
+        "speed": 4.3998589222899085,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 11.32820000004768,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 4.527341363010583,
+        "across": -4.523736104578695,
+        "lateral": 0.18064183722963723
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 37.92896859222506,
+        "z": 107.67350245608291,
+        "heading": 0.7917332839537966,
+        "speed": 4.398061221358484,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 11.476100000023838,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 3.8778089005624423,
+        "across": -3.8734048251340885,
+        "lateral": 0.18476181940341685
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 38.39173551727151,
+        "z": 108.13044284646247,
+        "heading": 0.7917332839537966,
+        "speed": 4.396812755972912,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 11.914600000023839,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.9644289837974414,
+        "across": -1.9644287283522741,
+        "lateral": -0.0010018022336915067
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 39.61023074387159,
+        "z": 109.61164750617729,
+        "heading": 0.5028281750415369,
+        "speed": 4.395092136160289,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 12.013600000023839,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.5339192242988318,
+        "across": -1.5330437198437021,
+        "lateral": -0.05181833383382295
+      },
+      "cue": "late",
+      "recovery": null,
+      "player": {
+        "x": 39.879333294599384,
+        "z": 109.95261548508675,
+        "heading": 0.7230047755648694,
+        "speed": 4.3949195566566015,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run"
+    },
+    {
+      "elapsed": 12.10560000002384,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.6847347400108048,
+        "across": -1.6847336903748813,
+        "lateral": 0.0018806156192858747
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 39.81004317909969,
+        "z": 109.80738358698528,
+        "heading": 0.9079679592900864,
+        "speed": 0.3307894079464991,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "running River Run",
+      "recoveryDistanceM": 6.315266589638258
+    },
+    {
+      "elapsed": 12.10560000002384,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.6847347400108048,
+        "across": -1.6847336903748813,
+        "lateral": 0.0018806156192858747
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 39.81004317909969,
+        "z": 109.80738358698528,
+        "heading": 0.9079679592900864,
+        "speed": 0.3307894079464991,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": "driver stopped",
+      "assistance": false,
+      "driverStatus": "Stopped after an actual log refusal",
+      "recoveryDistanceM": 6.315266589638258
+    },
+    {
+      "elapsed": 13.304400000095372,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.5930340036697734,
+        "across": -1.5929794506631483,
+        "lateral": 0.013183573608138821
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 39.88291562244385,
+        "z": 109.86427123384668,
+        "heading": 0.9079679592900864,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "Stopped after an actual log refusal",
+      "recoveryDistanceM": 6.407034113085229
+    },
+    {
+      "elapsed": 19.340900000095374,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 1.5930340036697734,
+        "across": -1.5929794506631483,
+        "lateral": 0.013183573608138821
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 39.88291562244385,
+        "z": 109.86427123384668,
+        "heading": 0.9079679592900864,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "Stopped after an actual log refusal"
+    }
+  ],
+  "timeCaveat": "Final receipt 190.05 s includes manual inspection pauses and is not a speed or ordinary completion-time claim."
+}

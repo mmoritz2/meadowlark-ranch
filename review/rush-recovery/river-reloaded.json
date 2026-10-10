@@ -1,0 +1,82 @@
+{
+  "source": {
+    "sourceJsonSha256": "72d81de7c7984ecc28dc733f7659b8c7c381f1691d96c5197a83c1e337a8f585"
+  },
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "status": "Ready. Inspect and complete the real onboarding before choosing an activity.",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false,
+  "rush": {
+    "active": null,
+    "result": null,
+    "savedRiverRecord": {
+      "plays": 1,
+      "bestScore": 1363,
+      "bestTime": 95.46,
+      "medal": "silver",
+      "bestCombo": 6,
+      "lastRunId": "mv2pvnyl-1-4djjl3"
+    }
+  },
+  "rushCourse": null,
+  "journey": {
+    "riverRhythm": {
+      "id": "river-rhythm",
+      "status": "claimed",
+      "gearId": "journey-river-rhythm",
+      "owned": true,
+      "equipped": true,
+      "goals": [
+        {
+          "id": "river",
+          "label": "Finish River Run",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-river"
+          }
+        },
+        {
+          "id": "silver",
+          "label": "Earn silver or gold in any Ranch Rush",
+          "current": 2,
+          "target": 2,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-pasture"
+          }
+        }
+      ]
+    },
+    "current": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "status": "active"
+    },
+    "lastClaim": {
+      "id": "river-rhythm",
+      "name": "River Rhythm",
+      "coins": 250,
+      "gearId": "journey-river-rhythm",
+      "gearName": "Leaping Silver Shoes of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "rush",
+      "id": "rush-trail"
+    }
+  },
+  "mount": {
+    "rigReady": true,
+    "horseId": 2,
+    "breed": "pinto"
+  }
+}

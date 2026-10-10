@@ -1,0 +1,173 @@
+{
+  "source": {
+    "sourceJsonSha256": "27ecf56c4b4f68b970645f33ad5feb943f860726cac12d83ffa2137686dda813",
+    "screenshotSha256": "7c73346a5e3c84f635f1d92a266a65ccd74278bbc21a2fd0f7a38f048c8ff466"
+  },
+  "method": "Production UI start and ordinary input, real wall time; no position, heading, speed, clock, jump-age, checkpoint, grade or progression writes.",
+  "codeScope": "Already-loaded browser code predates the latest gradual-movement recovery-cache fix; this evidence does not verify that new branch.",
+  "status": "Key released.",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false,
+  "rush": {
+    "active": {
+      "id": "rush-river",
+      "name": "River Run",
+      "started": true,
+      "countdown": 0,
+      "elapsed": 1729.53,
+      "score": 225,
+      "combo": 0,
+      "bestCombo": 2,
+      "completed": 2,
+      "total": 8,
+      "next": {
+        "kind": "fence",
+        "label": "Low log \u00b7 jump"
+      },
+      "lastCue": "Try again \u2014 jump as you approach the log",
+      "splitDelta": 0.11,
+      "bestTime": 95.46,
+      "medal": "none",
+      "nextMedal": {
+        "key": "bronze",
+        "target": 500,
+        "remaining": 275
+      }
+    },
+    "result": null,
+    "savedRiverRecord": {
+      "plays": 1,
+      "bestScore": 1363,
+      "bestTime": 95.46,
+      "medal": "silver",
+      "bestCombo": 6,
+      "lastRunId": "mv2pvnyl-1-4djjl3"
+    }
+  },
+  "rushCourse": {
+    "id": "rush-river",
+    "active": true,
+    "elapsed": 1729.5318000000973,
+    "index": 2,
+    "total": 8,
+    "target": {
+      "kind": "fence",
+      "label": "low log",
+      "x": 41,
+      "z": 111,
+      "heading": 0.7853981633974483,
+      "distance": 3.373214546865772,
+      "across": 0.5172703132029606,
+      "lateral": 3.3333178369705108
+    },
+    "cue": null,
+    "recovery": {
+      "phase": "approach",
+      "hint": "Return to the approach marker, then face the log.",
+      "target": {
+        "x": 35.34314575050762,
+        "z": 105.34314575050762
+      }
+    },
+    "player": {
+      "x": 43.722776992544226,
+      "z": 109.00875369980038,
+      "heading": 1.829138934275338,
+      "speed": 0,
+      "height": 0,
+      "jumpAge": null
+    },
+    "grades": [
+      "refusal"
+    ],
+    "lastGrade": "refusal",
+    "refusals": 1
+  },
+  "mount": {
+    "rigReady": true,
+    "breed": "pinto"
+  },
+  "traceTransitions": [
+    {
+      "elapsed": 1431.160300000097,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 3.373214546865772,
+        "across": 0.5172703132029606,
+        "lateral": 3.3333178369705108
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 43.722776992544226,
+        "z": 109.00875369980038,
+        "heading": 1.829138934275338,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "off"
+    },
+    {
+      "elapsed": 1729.5318000000973,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 3.373214546865772,
+        "across": 0.5172703132029606,
+        "lateral": 3.3333178369705108
+      },
+      "cue": null,
+      "recovery": {
+        "phase": "approach",
+        "hint": "Return to the approach marker, then face the log.",
+        "target": {
+          "x": 35.34314575050762,
+          "z": 105.34314575050762
+        }
+      },
+      "player": {
+        "x": 43.722776992544226,
+        "z": 109.00875369980038,
+        "heading": 1.829138934275338,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "refusal"
+      ],
+      "lastGrade": "refusal",
+      "refusals": 1,
+      "event": null,
+      "assistance": false,
+      "driverStatus": "off"
+    }
+  ],
+  "elapsedTimeCaveat": "Receipt 1787.98 s includes about 29 minutes idle while a separate front-shape audit was running; it is not representative riding performance."
+}

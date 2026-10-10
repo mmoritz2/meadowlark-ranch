@@ -1,0 +1,379 @@
+TAP version 13
+# Event guidance: approach geometry, entry locks, touch preflight, final-fence accounting and result clarity passed.
+# Subtest: tools/test-event-guidance.mjs
+ok 1 - tools/test-event-guidance.mjs
+  ---
+  duration_ms: 178.633833
+  ...
+# Subtest: refused entry preserves the checkpoint and never overwrites an active course
+ok 2 - refused entry preserves the checkpoint and never overwrites an active course
+  ---
+  duration_ms: 5.807375
+  ...
+# Subtest: physical and presentation entry guards refuse before course construction or relocation
+ok 3 - physical and presentation entry guards refuse before course construction or relocation
+  ---
+  duration_ms: 9.543625
+  ...
+# Subtest: successful recovery preserves scoring, rematch identity, field and proof through countdown
+ok 4 - successful recovery preserves scoring, rematch identity, field and proof through countdown
+  ---
+  duration_ms: 2.337
+  ...
+# Subtest: saved fatigue and event effects are restored with finite bounded values
+ok 5 - saved fatigue and event effects are restored with finite bounded values
+  ---
+  duration_ms: 0.870791
+  ...
+# Subtest: recovery countdown neither heals fatigue nor consumes effects, and releases the hold at GO
+ok 6 - recovery countdown neither heals fatigue nor consumes effects, and releases the hold at GO
+  ---
+  duration_ms: 0.722
+  ...
+# Subtest: recovery retains fallback rival identity across a changed week
+ok 7 - recovery retains fallback rival identity across a changed week
+  ---
+  duration_ms: 0.2355
+  ...
+# Subtest: stale course cleanup cannot erase a new recovered run or field
+ok 8 - stale course cleanup cannot erase a new recovered run or field
+  ---
+  duration_ms: 0.46675
+  ...
+# Subtest: unavailable staging keeps proof and rolls back the relocation
+ok 9 - unavailable staging keeps proof and rolls back the relocation
+  ---
+  duration_ms: 3.01175
+  ...
+# Subtest: legacy checkpoints recover known progress without claiming unavailable exact field state
+ok 10 - legacy checkpoints recover known progress without claiming unavailable exact field state
+  ---
+  duration_ms: 1.416667
+  ...
+# Subtest: changed route layout or revision refuses without consuming the old checkpoint
+ok 11 - changed route layout or revision refuses without consuming the old checkpoint
+  ---
+  duration_ms: 1.498333
+  ...
+# Subtest: checkpoint writes and explicit drop require confirmation; refund and removal are atomic
+ok 12 - checkpoint writes and explicit drop require confirmation; refund and removal are atomic
+  ---
+  duration_ms: 23.4025
+  ...
+# Subtest: cleanup only removes the matching checkpoint
+ok 13 - cleanup only removes the matching checkpoint
+  ---
+  duration_ms: 0.55
+  ...
+# Subtest: production recovery stages at the actual next gate and restores judges and native rivals
+ok 14 - production recovery stages at the actual next gate and restores judges and native rivals
+  ---
+  duration_ms: 12.330875
+  ...
+# Subtest: missing safe recovery line cannot teleport or claim a restored course
+ok 15 - missing safe recovery line cannot teleport or claim a restored course
+  ---
+  duration_ms: 0.591083
+  ...
+# Subtest: Cottonwood recovery leaves the horse rear inside the arena, without bypassing safety checks
+ok 16 - Cottonwood recovery leaves the horse rear inside the arena, without bypassing safety checks
+  ---
+  duration_ms: 0.462208
+  ...
+# Subtest: non-cardinal fence staging tolerates roundoff at four metres but not shorter approaches
+ok 17 - non-cardinal fence staging tolerates roundoff at four metres but not shorter approaches
+  ---
+  duration_ms: 11.898709
+  ...
+# Subtest: saved gate watch settles its measured approach instead of gaining teleport accuracy
+ok 18 - saved gate watch settles its measured approach instead of gaining teleport accuracy
+  ---
+  duration_ms: 2.042959
+  ...
+# Subtest: legacy judging does not replay every refusal at the resumed obstacle
+ok 19 - legacy judging does not replay every refusal at the resumed obstacle
+  ---
+  duration_ms: 0.829542
+  ...
+# Subtest: a saved fallback field never silently turns into a newly generated ghost field
+ok 20 - a saved fallback field never silently turns into a newly generated ghost field
+  ---
+  duration_ms: 0.33325
+  ...
+# Subtest: ticket refund hook distinguishes a new countdown from an already-started recovered round
+ok 21 - ticket refund hook distinguishes a new countdown from an already-started recovered round
+  ---
+  duration_ms: 0.17075
+  ...
+# Follow-camera input: menu/surface zoom, pointer ownership, 1.4s release grace, ownership resume, blur/visibility release and frame-rate parity passed.
+# Subtest: tools/test-follow-camera-input.mjs
+ok 3 - tools/test-follow-camera-input.mjs
+  ---
+  duration_ms: 157.727458
+  ...
+# Camera wall clearance, independent sightline, orbit framing, recovery and ground clearance passed.
+# wall direction -1: largest camera step 0.170 m
+# wall direction 1: largest camera step 0.170 m
+# doorway direction -1: largest camera step 0.345 m
+# doorway direction 1: largest camera step 0.345 m
+# corner direction -1: largest camera step 0.390 m
+# corner direction 1: largest camera step 0.390 m
+# Subtest: tools/test-follow-camera.mjs
+ok 4 - tools/test-follow-camera.mjs
+  ---
+  duration_ms: 341.753375
+  ...
+# Subtest: three fixed challenges award reachable medals through actual progress, not retries
+ok 24 - three fixed challenges award reachable medals through actual progress, not retries
+  ---
+  duration_ms: 1.477917
+  ...
+# Subtest: the pasture route and its early-turn corner pass clear of the permanent hay bales
+ok 25 - the pasture route and its early-turn corner pass clear of the permanent hay bales
+  ---
+  duration_ms: 0.973458
+  ...
+# Subtest: a clean gate chain grows points; wide gates reset it without preventing a finish
+ok 26 - a clean gate chain grows points; wide gates reset it without preventing a finish
+  ---
+  duration_ms: 0.131041
+  ...
+# Subtest: jump grades come from the course engine and refusals never advance a split
+ok 27 - jump grades come from the course engine and refusals never advance a split
+  ---
+  duration_ms: 0.105875
+  ...
+# Subtest: a completed slow ride still earns skill points, with bounded time bonus
+ok 28 - a completed slow ride still earns skill points, with bounded time bonus
+  ---
+  duration_ms: 0.580667
+  ...
+# Subtest: unfinished or invalid runs never record a result
+ok 29 - unfinished or invalid runs never record a result
+  ---
+  duration_ms: 0.173333
+  ...
+# Subtest: duplicate crossing observations at completion cannot farm chain points
+ok 30 - duplicate crossing observations at completion cannot farm chain points
+  ---
+  duration_ms: 0.077209
+  ...
+# Subtest: replay updates plays once and stores no second purse
+ok 31 - replay updates plays once and stores no second purse
+  ---
+  duration_ms: 0.321334
+  ...
+# Subtest: fastest splits and highest score belong to their own runs
+ok 32 - fastest splits and highest score belong to their own runs
+  ---
+  duration_ms: 1.376125
+  ...
+# Subtest: route changes retire incomparable PBs without erasing replay count
+ok 33 - route changes retire incomparable PBs without erasing replay count
+  ---
+  duration_ms: 1.19775
+  ...
+# Subtest: malformed persisted data is finite, bounded, namespaced and has no invented medal
+ok 34 - malformed persisted data is finite, bounded, namespaced and has no invented medal
+  ---
+  duration_ms: 0.589208
+  ...
+# Subtest: nonmonotonic saved splits and invalid finish payloads cannot corrupt records
+ok 35 - nonmonotonic saved splits and invalid finish payloads cannot corrupt records
+  ---
+  duration_ms: 0.764917
+  ...
+# Subtest: entry preserves an existing formal round and refuses airborne/vehicle entry
+ok 36 - entry preserves an existing formal round and refuses airborne/vehicle entry
+  ---
+  duration_ms: 0.934709
+  ...
+# Subtest: Rush courses do not enter the formal difficulty, PvP or qualification catalogs
+ok 37 - Rush courses do not enter the formal difficulty, PvP or qualification catalogs
+  ---
+  duration_ms: 0.874375
+  ...
+# Subtest: native action guards run before mounting and a refused restart is not reported as started
+ok 38 - native action guards run before mounting and a refused restart is not reported as started
+  ---
+  duration_ms: 0.355166
+  ...
+# Subtest: post-engine observations update live chain; a final crossing flushes once without its own payment
+ok 39 - post-engine observations update live chain; a final crossing flushes once without its own payment
+  ---
+  duration_ms: 0.774542
+  ...
+# Subtest: abandoning a challenge discards its chain without saving a false completion
+ok 40 - abandoning a challenge discards its chain without saving a false completion
+  ---
+  duration_ms: 0.128625
+  ...
+# Subtest: real-time challenges remove ineffective clock pickups while keeping useful items and pads
+ok 41 - real-time challenges remove ineffective clock pickups while keeping useful items and pads
+  ---
+  duration_ms: 0.130625
+  ...
+# Subtest: old rescue, Rush and roundup records retroactively credit every goal without mutating history
+ok 42 - old rescue, Rush and roundup records retroactively credit every goal without mutating history
+  ---
+  duration_ms: 2.585667
+  ...
+# Subtest: exact chapter rewards are fixed, sequential and once-only
+ok 43 - exact chapter rewards are fixed, sequential and once-only
+  ---
+  duration_ms: 1.087583
+  ...
+# Subtest: selling or merging a reward cannot reopen its permanent claim
+ok 44 - selling or merging a reward cannot reopen its permanent claim
+  ---
+  duration_ms: 0.255083
+  ...
+# Subtest: explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+ok 45 - explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+  ---
+  duration_ms: 0.170875
+  ...
+# Subtest: each unfinished goal routes to the real activity and medal quality matters
+ok 46 - each unfinished goal routes to the real activity and medal quality matters
+  ---
+  duration_ms: 0.146
+  ...
+# Subtest: malformed saves cannot create earned progress, crash the journey, or forge a claim
+ok 47 - malformed saves cannot create earned progress, crash the journey, or forge a claim
+  ---
+  duration_ms: 0.933375
+  ...
+# Subtest: runtime verifies persisted claims and does not announce failed storage writes
+ok 48 - runtime verifies persisted claims and does not announce failed storage writes
+  ---
+  duration_ms: 2.120125
+  ...
+# Subtest: runtime claim and explicit equip survive reload and forged finish events award nothing
+ok 49 - runtime claim and explicit equip survive reload and forged finish events award nothing
+  ---
+  duration_ms: 1.411875
+  ...
+# Subtest: wrong side gets a clear path around a log end, never backward through it
+ok 50 - wrong side gets a clear path around a log end, never backward through it
+  ---
+  duration_ms: 5.674291
+  ...
+# Subtest: sideways missed approaches and post-skimming positions remain recoverable
+ok 51 - sideways missed approaches and post-skimming positions remain recoverable
+  ---
+  duration_ms: 3.492042
+  ...
+# Subtest: gradual side-skimming accumulates movement and replaces a stale route across the log
+ok 52 - gradual side-skimming accumulates movement and replaces a stale route across the log
+  ---
+  duration_ms: 1.989916
+  ...
+# Subtest: recovery persists through corner waypoints, asks rider to face forward, then releases
+ok 53 - recovery persists through corner waypoints, asks rider to face forward, then releases
+  ---
+  duration_ms: 1.966458
+  ...
+# Subtest: changing to face-the-log guidance invalidates the cached chevron spine immediately
+ok 54 - changing to face-the-log guidance invalidates the cached chevron spine immediately
+  ---
+  duration_ms: 0.578167
+  ...
+# Subtest: a refusal near the correct side creates space to rebuild the approach
+ok 55 - a refusal near the correct side creates space to rebuild the approach
+  ---
+  duration_ms: 0.377625
+  ...
+# Subtest: ordinary forward jumps do not trigger recovery at or after the plane
+ok 56 - ordinary forward jumps do not trigger recovery at or after the plane
+  ---
+  duration_ms: 0.121959
+  ...
+# Subtest: formal fences and gates retain their current guide, course/target changes clear recovery
+ok 57 - formal fences and gates retain their current guide, course/target changes clear recovery
+  ---
+  duration_ms: 0.313375
+  ...
+# Subtest: rotated logs preserve the correct approach side
+ok 58 - rotated logs preserve the correct approach side
+  ---
+  duration_ms: 8.798875
+  ...
+# Subtest: collider or wall on one side chooses the other, a sealed approach gives no false arrow
+ok 59 - collider or wall on one side chooses the other, a sealed approach gives no false arrow
+  ---
+  duration_ms: 2.458542
+  ...
+# Subtest: world clearance respects precise solid parts, bounds, water and steep ground
+ok 60 - world clearance respects precise solid parts, bounds, water and steep ground
+  ---
+  duration_ms: 2.2715
+  ...
+# Subtest: planning is cached, blocked forward checks are bounded, and snapshots are read-only
+ok 61 - planning is cached, blocked forward checks are bounded, and snapshots are read-only
+  ---
+  duration_ms: 0.299958
+  ...
+# Subtest: following recovery backward does not count; a real forward jump then advances exactly once
+ok 62 - following recovery backward does not count; a real forward jump then advances exactly once
+  ---
+  duration_ms: 1.097875
+  ...
+# Subtest: Rush third and fourth refusals preserve the course while accumulating every penalty
+ok 63 - Rush third and fourth refusals preserve the course while accumulating every penalty
+  ---
+  duration_ms: 1.3565
+  ...
+# Subtest: observing the same Rush grades again cannot reprice or increment refusals
+ok 64 - observing the same Rush grades again cannot reprice or increment refusals
+  ---
+  duration_ms: 0.320625
+  ...
+# Subtest: formal third refusal eliminates once, pays exactly 60 coins and cancels asynchronously
+ok 65 - formal third refusal eliminates once, pays exactly 60 coins and cancels asynchronously
+  ---
+  duration_ms: 2.644792
+  ...
+# Subtest: an absent event or explicit false Rush flag keeps the formal elimination rule
+ok 66 - an absent event or explicit false Rush flag keeps the formal elimination rule
+  ---
+  duration_ms: 0.363208
+  ...
+# Subtest: Rush continues pricing scaled rail faults and counts refusals per obstacle and lap
+ok 67 - Rush continues pricing scaled rail faults and counts refusals per obstacle and lap
+  ---
+  duration_ms: 0.456875
+  ...
+# Subtest: previously observed grades and existing penalties survive a later Rush refusal
+ok 68 - previously observed grades and existing penalties survive a later Rush refusal
+  ---
+  duration_ms: 0.34275
+  ...
+# Subtest: a previous score cannot hide recovery or an imminent jump instruction
+ok 69 - a previous score cannot hide recovery or an imminent jump instruction
+  ---
+  duration_ms: 1.080792
+  ...
+# Subtest: keyboard and touch riders learn the actual jump input even with direct Journey entry
+ok 70 - keyboard and touch riders learn the actual jump input even with direct Journey entry
+  ---
+  duration_ms: 1.110542
+  ...
+# Subtest: airborne riders keep their line and cannot receive a second jump request
+ok 71 - airborne riders keep their line and cannot receive a second jump request
+  ---
+  duration_ms: 0.218708
+  ...
+# Subtest: brief earned feedback returns to the next action without adding a second overlay
+ok 72 - brief earned feedback returns to the next action without adding a second overlay
+  ---
+  duration_ms: 1.087333
+  ...
+1..72
+# tests 72
+# suites 0
+# pass 72
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 362.820416

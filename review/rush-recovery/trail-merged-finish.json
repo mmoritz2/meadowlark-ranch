@@ -1,0 +1,1140 @@
+{
+  "source": {
+    "sourceJsonSha256": "4002aab21b855f1efee945b5f6f57e8a8a3f66bb35dea644146a3b372fdf9a80",
+    "screenshotSha256": "9fd8e1545965c721f678c74775d2f74de11f4cc0fb2b4e45113e6670bbbd2cd7",
+    "mergedHead": "79c9c45"
+  },
+  "method": "One merged-build Trailblazer started through production UI and driven by ordinary input, production gait selection and actual guide-cue Space pulses; no position, heading, speed, clock, jump age, checkpoint, grade or progression injection.",
+  "status": "Ranch Rush ended. Inspect the actual grades and production result.",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false,
+  "rush": {
+    "result": {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "runId": "mv2req07-1-o7t2pz",
+      "score": 2034,
+      "time": 50.77,
+      "timeBonus": 394,
+      "medal": "silver",
+      "bestCombo": 7,
+      "cleanJumps": 2,
+      "perfectJumps": 0,
+      "gates": 7,
+      "cleanGates": 7,
+      "penalties": 1,
+      "splits": [
+        2.15,
+        9.47,
+        14.82,
+        17.77,
+        24.95,
+        32.11,
+        35.89,
+        43.72,
+        48.33,
+        50.77
+      ],
+      "newBestScore": true,
+      "newBestTime": true,
+      "previousBestScore": 0,
+      "previousBestTime": null,
+      "pay": 189
+    },
+    "savedTrailRecord": {
+      "plays": 1,
+      "bestScore": 2034,
+      "bestTime": 50.77,
+      "medal": "silver",
+      "bestCombo": 7,
+      "splits": [
+        2.15,
+        9.47,
+        14.82,
+        17.77,
+        24.95,
+        32.11,
+        35.89,
+        43.72,
+        48.33,
+        50.77
+      ],
+      "lastRunId": "mv2req07-1-o7t2pz"
+    }
+  },
+  "rushCourse": {
+    "id": "rush-trail",
+    "active": false,
+    "elapsed": 50.769100000023826,
+    "index": 10,
+    "total": 10,
+    "target": null,
+    "cue": null,
+    "recovery": null,
+    "player": {
+      "x": 335,
+      "z": 73.57435654700802,
+      "heading": 6.329037379160488,
+      "speed": 0,
+      "height": 0,
+      "jumpAge": null
+    },
+    "grades": [
+      "early",
+      "good",
+      "good"
+    ],
+    "lastGrade": "good",
+    "refusals": 0
+  },
+  "journey": {
+    "current": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "status": "active",
+      "goals": [
+        {
+          "id": "trail",
+          "label": "Finish Trailblazer",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-trail"
+          }
+        },
+        {
+          "id": "five-home",
+          "label": "Pen all 5 horses in one full roundup",
+          "current": 0,
+          "target": 5,
+          "done": false,
+          "action": {
+            "kind": "roundup",
+            "mode": "full"
+          }
+        }
+      ],
+      "owned": false,
+      "equipped": false
+    },
+    "nextAction": {
+      "kind": "roundup",
+      "mode": "full"
+    }
+  },
+  "mount": {
+    "rigReady": true,
+    "breed": "pinto"
+  },
+  "traceTransitions": [
+    {
+      "elapsed": 0,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 10.000000000000021,
+        "across": -10.00000000000002,
+        "lateral": -4.440892098500626e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 262.4332611957114,
+        "z": -62.91161615782696,
+        "heading": 1.2753554896511765,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "off"
+    },
+    {
+      "elapsed": 0,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 10.000000000000021,
+        "across": -10.00000000000002,
+        "lateral": -4.440892098500626e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 262.4332611957114,
+        "z": -62.91161615782696,
+        "heading": 1.2753554896511765,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": "driver started",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 0.6103999999761581,
+      "index": 0,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 9.662283811877506,
+        "across": -9.662283811877506,
+        "lateral": -8.881784197001252e-16
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 262.7563454518862,
+        "z": -62.81328616681724,
+        "heading": 1.2753554896511765,
+        "speed": 1.7788737779846602,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 2.192700000047683,
+      "index": 1,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 52.154953356823576,
+        "across": -11.857397225090867,
+        "lateral": 50.789184780805954
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 268.10471838854147,
+        "z": -61.185520490443906,
+        "heading": 1.2753554896511765,
+        "speed": 4.211979340262566,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 9.468300000071526,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 21.458899965309456,
+        "across": -21.05190882547715,
+        "lateral": 4.159509889993711
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 314.85248092077967,
+        "z": -48.865190065443755,
+        "heading": 1.4187738890610118,
+        "speed": 4.489061417586624,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 12.668800000071531,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 9.081567721191256,
+        "across": -9.049428855335242,
+        "lateral": 0.7633542210591777
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 323.80528110775276,
+        "z": -57.55085455202326,
+        "heading": 2.574448915939255,
+        "speed": 4.382383592204963,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 13.619000000000007,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.918242011732577,
+        "across": -4.883109090863345,
+        "lateral": 0.5868135075976502
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 326.04554139831515,
+        "z": -61.06804388924524,
+        "heading": 2.574448915939255,
+        "speed": 4.391955424619214,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 13.619000000000007,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.918242011732577,
+        "across": -4.883109090863345,
+        "lateral": 0.5868135075976502
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 326.04554139831515,
+        "z": -61.06804388924524,
+        "heading": 2.574448915939255,
+        "speed": 4.391955424619214,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 13.717000000000006,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.491008353052202,
+        "across": -4.464088631385436,
+        "lateral": 0.4909874930382241
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 326.33841619844526,
+        "z": -61.38266290007607,
+        "heading": 2.332310181368591,
+        "speed": 4.392323973205252,
+        "height": 0,
+        "jumpAge": 0.098
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 13.859100000023847,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 3.8706600126214314,
+        "across": -3.8432419851450064,
+        "lateral": 0.45989126641546174
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 326.6763943785545,
+        "z": -61.90437956957035,
+        "heading": 2.683417692199723,
+        "speed": 4.392761151333335,
+        "height": 0,
+        "jumpAge": 0.24010000002384185
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 13.94730000007153,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 3.4838979690964087,
+        "across": -3.4581859271366766,
+        "lateral": 0.42248686657448875
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 326.9016921806235,
+        "z": -62.218876242556334,
+        "heading": 2.465485768564138,
+        "speed": 4.392984370738032,
+        "height": 0.180096459393576,
+        "jumpAge": 0.32830000007152554
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 14.731500000000006,
+      "index": 2,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 0.24306277989489192,
+        "across": -0.036829985047808475,
+        "lateral": 0.24025625313737597
+      },
+      "cue": "late",
+      "recovery": null,
+      "player": {
+        "x": 328.77362276493125,
+        "z": -65.08850345989202,
+        "heading": 2.5003227699746615,
+        "speed": 4.394006581902673,
+        "height": 0,
+        "jumpAge": 1.1125
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 14.864100000023848,
+      "index": 3,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 21.41331926936285,
+        "across": -20.035652493795627,
+        "lateral": 7.556644181085112
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 329.12217309061054,
+        "z": -65.55540393879473,
+        "heading": 2.5003227699746615,
+        "speed": 4.394081128902964,
+        "height": 0,
+        "jumpAge": 1.245100000023842
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 17.72350000000002,
+      "index": 4,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 50.769206716797505,
+        "across": -17.24831964420193,
+        "lateral": 47.74942743221488
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 337.31939988038823,
+        "z": -80.3669753920047,
+        "heading": 2.6890289254404025,
+        "speed": 4.587733998738476,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 24.983800000071565,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 28.23893251115889,
+        "across": -27.947523287827433,
+        "lateral": 4.046387456253999
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 345.5548712865636,
+        "z": -126.75651258148642,
+        "heading": 2.775582381899372,
+        "speed": 5.360899605509715,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 30.087500000000034,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 9.186263031364156,
+        "across": -9.16307964073614,
+        "lateral": 0.6522269382160304
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 331.4245964089118,
+        "z": -139.5904901658115,
+        "heading": 4.069014425135951,
+        "speed": 4.3879694907774605,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 31.01720000004772,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 4.9971294313522785,
+        "across": -4.988268484181762,
+        "lateral": 0.2974560192803759
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 328.072391839592,
+        "z": -142.10398079106653,
+        "heading": 4.069014425135951,
+        "speed": 4.848167065086336,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 31.01720000004772,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 4.9971294313522785,
+        "across": -4.988268484181762,
+        "lateral": 0.2974560192803759
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 328.072391839592,
+        "z": -142.10398079106653,
+        "heading": 4.069014425135951,
+        "speed": 4.848167065086336,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 31.114400000095404,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 4.527741643992163,
+        "across": -4.514584850194174,
+        "lateral": 0.34491741785261176
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 327.6455544304012,
+        "z": -142.31478542948184,
+        "heading": 4.31495572717258,
+        "speed": 4.925579137049345,
+        "height": 0,
+        "jumpAge": 0.09720000004768373
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 31.350300000071567,
+      "index": 5,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 3.3496643116564733,
+        "across": -3.3383256536660895,
+        "lateral": 0.2753776150305507
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 326.6849446484587,
+        "z": -142.99717119166468,
+        "heading": 4.18792366134582,
+        "speed": 5.068304273836102,
+        "height": 0.1968106096084546,
+        "jumpAge": 0.3331000000238419
+      },
+      "grades": [
+        "early"
+      ],
+      "lastGrade": "early",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 32.10880000007156,
+      "index": 6,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 27.726704319960746,
+        "across": -5.3214431897393,
+        "lateral": 27.211254561760047
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 323.4911764365987,
+        "z": -145.2712946233853,
+        "heading": 4.163534824361022,
+        "speed": 5.279441778609296,
+        "height": 0,
+        "jumpAge": 1.091600000023842
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 35.88990000009539,
+      "index": 7,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 42.63090982557631,
+        "across": -28.216006946677737,
+        "lateral": 31.957024650950416
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 301.9570246509504,
+        "z": -156.21600694667774,
+        "heading": 4.214380277373007,
+        "speed": 5.366912717540932,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 43.715800000071546,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 19.631022252382724,
+        "across": -19.220068322075463,
+        "lateral": 3.9957487869355646
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 273.99574878693556,
+        "z": -129.22006832207546,
+        "heading": 5.4107915209143345,
+        "speed": 4.395818753604207,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 46.189100000023856,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 9.047878156848144,
+        "across": -9.00027516907862,
+        "lateral": 0.9269013011300444
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 270.92690130113004,
+        "z": -119.00027516907862,
+        "heading": 6.131867337106284,
+        "speed": 4.394380698255828,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 46.29700000000001,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 8.580344609089197,
+        "across": -8.527579044404021,
+        "lateral": 0.9501101263366536
+      },
+      "cue": "lineup",
+      "recovery": null,
+      "player": {
+        "x": 270.95011012633665,
+        "z": -118.52757904440402,
+        "heading": 6.3984937332332485,
+        "speed": 4.394380329418845,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 46.38710000002385,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 8.185799953124095,
+        "across": -8.132838366436431,
+        "lateral": 0.9296563762950427
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 270.92965637629504,
+        "z": -118.13283836643643,
+        "heading": 6.175852046414668,
+        "speed": 4.394380096259935,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 47.28080000007153,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 4.25870151103576,
+        "across": -4.228181484916902,
+        "lateral": 0.5089399676820108
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 270.508939967682,
+        "z": -114.2281814849169,
+        "heading": 6.175852046414668,
+        "speed": 4.394379350274748,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 47.28080000007153,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 4.25870151103576,
+        "across": -4.228181484916902,
+        "lateral": 0.5089399676820108
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 270.508939967682,
+        "z": -114.2281814849169,
+        "heading": 6.175852046414668,
+        "speed": 4.394379350274748,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 47.372700000047686,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 3.8548926762601674,
+        "across": -3.826662016325855,
+        "lateral": 0.46567731133609414
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 270.4656773113361,
+        "z": -113.82666201632586,
+        "heading": 6.175852046414668,
+        "speed": 4.394379335178472,
+        "height": 0,
+        "jumpAge": 0.09189999997615814
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 47.711200000047675,
+      "index": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 2.3676247012311378,
+        "across": -2.347724699541061,
+        "lateral": 0.30632574335936624
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.30632574335937,
+        "z": -112.34772469954106,
+        "heading": 6.175852046414668,
+        "speed": 4.3943793036746905,
+        "height": 0.4847699125919679,
+        "jumpAge": 0.43039999997615813
+      },
+      "grades": [
+        "early",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 48.28840000009536,
+      "index": 9,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 17.836272924306183,
+        "across": -17.784254749018324,
+        "lateral": 1.3612181501717886
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.24921595286577,
+        "z": -109.83453176394534,
+        "heading": 6.058971343370402,
+        "speed": 4.394379287696968,
+        "height": 0.26139515183263407,
+        "jumpAge": 1.0076000000238419
+      },
+      "grades": [
+        "early",
+        "good",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "elapsed": 50.769100000023826,
+      "index": 10,
+      "target": null,
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.316681740955,
+        "z": -96.03195489648307,
+        "heading": 6.329037379160488,
+        "speed": 1.5894204703135806,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "early",
+        "good",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "event": "course ended",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    }
+  ]
+}
