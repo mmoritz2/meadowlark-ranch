@@ -1,11 +1,29 @@
 /* Short riding challenges: direct entry, readable skill feedback, and a useful next ride. */
 export const id='ranch-rush-ui';
+// Keep the one riding cue focused on the next decision. Recovery and takeoff
+// outrank a previous score flash; airborne horses must not be asked to jump again.
+export function rushRidingCue({active,jumpCue='',recovery=null,feedback=false,touch=false,airborne=false,hasJumps=false}={}){
+ if(!active)return '';
+ const jump=touch?'Tap Jump':'Press Space',action=touch?'tap Jump':'press Space';
+ if(!active.started)return hasJumps?`Get ready — follow the line. ${jump} at the low logs.`:'Get ready — follow the glowing line.';
+ if(recovery)return recovery.hint||'Circle around the log and follow the line to retry.';
+ if(active.next?.kind==='fence'){
+  if(airborne)return 'Stay straight over the log.';
+  if(jumpCue==='perfect')return `Jump now — ${action}.`;
+  if(jumpCue==='good')return `${jump} to jump.`;
+  if(jumpCue==='lineup')return 'Line up with the log before asking for the jump.';
+  if(jumpCue==='late')return 'Too close — circle back for another approach.';
+  if(jumpCue==='early')return 'Keep straight — wait for Jump now.';
+ }
+ if(feedback&&active.lastCue)return active.lastCue;
+ return active.next?.kind==='fence'?`Low log ahead — ${action} when the cue says Jump now.`:`Next gate ${active.completed+1} of ${active.total} — follow the glowing line.`;
+}
 export function install(G){
  const rush=G.ranchRush;if(!rush)return;
  const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const number=n=>Math.round(n||0).toLocaleString(),time=n=>Number.isFinite(n)?n.toFixed(1)+'s':'—';
  const medal=m=>m&&m!=='none'?m[0].toUpperCase()+m.slice(1):'Finish';
- let mode='choose',receipt=null,elapsed=1,lastHtml='',finishTimer=0,quickOwner=null;
+ let mode='choose',receipt=null,elapsed=1,lastHtml='',finishTimer=0,quickOwner=null,lastCourse=null,lastCueKey='',cueRemaining=0;
  const style=document.createElement('style');style.textContent=`
  #rushQuick{position:fixed;right:16px;top:132px;width:238px;z-index:6;padding:14px;border:1px solid #e5d6a455;border-radius:16px;background:#183f35ed;color:#fff7e3;box-shadow:0 8px 28px #10261f33;font-family:inherit}
  #rushQuick .rush-eyebrow{color:#ead595}#rushQuick strong{display:block;margin:5px 0 9px;font-size:17px}#rushQuick .rush-quick-row{display:flex;gap:6px}
@@ -59,14 +77,17 @@ export function install(G){
  function paint(){const a=rush.snapshot().active;document.body.classList.toggle('rush-active',!!a);
   const expandedSmallGoal=innerWidth<=800&&($('seGoalToggle')?.getAttribute('aria-expanded')==='true'||document.body.classList.contains('se-shortcuts-open'));
   const blocked=G.input?.blocked()||!!G.course.get()||Math.abs(G.horse.player.speed)>1.2||expandedSmallGoal||!!quickOwner?.hidden?.();
-  quick.style.display=blocked?'none':'';hud.style.display=a?'block':'none';if(!a){document.body.style.removeProperty('--rush-course-top');return;}
+  quick.style.display=blocked?'none':'';hud.style.display=a?'block':'none';if(!a){lastCourse=null;lastCueKey='';cueRemaining=0;document.body.style.removeProperty('--rush-course-top');return;}
+  const course=G.course.get();if(course!==lastCourse){lastCourse=course;lastCueKey='';cueRemaining=0;}
+  const cueKey=a.completed+':'+a.lastCue;if(cueKey!==lastCueKey){lastCueKey=cueKey;cueRemaining=a.completed>0?1.6:0;}
+  const cue=rushRidingCue({active:a,jumpCue:G.courseGuide?.jumpCue?.(),recovery:G.courseGuide?.recovery?.(),feedback:cueRemaining>0,touch:document.body.classList.contains('touch'),airborne:G.horse.player.y>=.05||G.horse.RIG()?.heroJumpAge!=null,hasJumps:rush.definitions.some(d=>d.id===a.id&&d.fences>0)});
   const target=a.nextMedal,progress=target?Math.min(100,a.score/target.target*100):100;
   const split=a.splitDelta===null?(a.bestTime?'Your best: '+time(a.bestTime):'First run: set your benchmark'):`${Math.abs(a.splitDelta).toFixed(1)}s ${a.splitDelta<=0?'ahead of':'behind'} your fastest ride`;
-  const html=`<div class="rush-hud-top"><span>${esc(a.name)}</span><span>${a.completed}/${a.total} · ${time(a.elapsed)}</span></div><div class="rush-hud-score"><b>${number(a.score)}</b><span style="font-size:11px">points</span><span class="rush-chain">${a.combo>1?a.combo+' in a row':'Build your chain'}</span></div><div class="rush-meter"><i style="width:${progress}%"></i></div><div class="rush-hud-note">${target?`${number(target.remaining)} to ${medal(target.key)}`:'Gold target beaten'} · ${split}</div><div class="rush-hud-cue">${!a.started?'Get ready — follow the glowing line':esc(a.lastCue)}</div>`;
+  const html=`<div class="rush-hud-top"><span>${esc(a.name)}</span><span>${a.completed}/${a.total} · ${time(a.elapsed)}</span></div><div class="rush-hud-score"><b>${number(a.score)}</b><span style="font-size:11px">points</span><span class="rush-chain">${a.combo>1?a.combo+' in a row':'Build your chain'}</span></div><div class="rush-meter"><i style="width:${progress}%"></i></div><div class="rush-hud-note">${target?`${number(target.remaining)} to ${medal(target.key)}`:'Gold target beaten'} · ${split}</div><div class="rush-hud-cue">${esc(cue)}</div>`;
   if(html!==lastHtml){hud.innerHTML=html;lastHtml=html;}
   if(hud.getClientRects().length)document.body.style.setProperty('--rush-course-top',Math.ceil(hud.getBoundingClientRect().bottom+8)+'px');
  }
- G.on('tick',dt=>{elapsed+=dt;if(elapsed<.15)return;elapsed=0;paint();});
+ G.on('tick',dt=>{cueRemaining=Math.max(0,cueRemaining-dt);elapsed+=dt;if(elapsed<.15)return;elapsed=0;paint();});
  function setQuickAction(owner){quickOwner=owner;quick.querySelector('.rush-eyebrow').textContent=owner.eyebrow;quick.querySelector('strong').textContent=owner.title;$('rushQuickStart').textContent=owner.label;$('rushChoose').textContent=owner.chooseLabel;$('rushChoose').setAttribute('aria-label',owner.chooseLabel);}
  G.ranchRushUI={open,result,setQuickAction,state:()=>({open:isOpen(),mode,receiptId:receipt?.runId||null})};
  paint();

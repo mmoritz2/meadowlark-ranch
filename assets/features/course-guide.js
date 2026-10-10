@@ -32,12 +32,12 @@
    packages moving one horse is the collision this codebase keeps producing, so nothing in here
    writes player.pos, player.heading or player.speed, and there is no hook that could.
 
-   And it allocates nothing per frame. The chevron run is an InstancedMesh whose matrices are
-   composed once per LEG, anchored to the target rather than to the rider: instance 0 always
-   sits at the obstacle and the run walks backwards from it, so riding the leg changes only the
-   instance count. A frame costs one projection onto a three-point polyline, an integer, and two
-   opacity writes. ranch3d.html:8066 records what the last piece of per-frame geometry in this
-   game cost; this one is answered before it is asked. */
+   Ordinary guidance reuses a cached InstancedMesh: matrices are rebuilt when its leg or route
+   changes, while riding mostly updates projection, visible instance count and opacity. Free
+   routes can be relaid after the rider drifts off the cached line. Rush log recovery also
+   caches its waypoints, checks accumulated movement and path clearance at bounded 300 ms
+   intervals, and rebuilds the route when needed. It creates no new meshes during riding;
+   recovery planning and changed snapshots may allocate small temporary objects. */
 export const id='course-guide';
 const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12], TO_SHOW=2.2;
 const JUMP_CUES={early:'Wait',good:'Jump',perfect:'Jump now',late:'Too close',lineup:'Line up'};
@@ -58,6 +58,95 @@ export function jumpCue(j,player){
  if(time>=TO_GOOD[0]&&time<=TO_GOOD[1])return 'good';
  return time<TO_GOOD[0]?'late':'early';
 }
+// Recovery only draws a route. The riding engine still owns every crossing and grade.
+const recoveryDistance=(p,a,b)=>{const x=b.x-a.x,z=b.z-a.z,l=x*x+z*z,t=l?Math.max(0,Math.min(1,((p.x-a.x)*x+(p.z-a.z)*z)/l)):0;return Math.hypot(p.x-a.x-x*t,p.z-a.z-z*t);};
+const recoveryCross=(a,b,c)=>((b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x));
+function recoverySegmentsNear(a,b,c,d,r){
+ if(recoveryCross(a,b,c)*recoveryCross(a,b,d)<0&&recoveryCross(c,d,a)*recoveryCross(c,d,b)<0)return true;
+ return Math.min(recoveryDistance(a,c,d),recoveryDistance(b,c,d),recoveryDistance(c,a,b),recoveryDistance(d,a,b))<r;
+}
+function recoveryRail(j){const sn=Math.sin(j.rotY||0),cs=Math.cos(j.rotY||0);return [{x:j.x-cs*1.8,z:j.z+sn*1.8},{x:j.x+cs*1.8,z:j.z-sn*1.8}];}
+export function rushRecoverySegmentClear(a,b,{world={},course,skip}={}){
+ if(![a?.x,a?.z,b?.x,b?.z].every(Number.isFinite)||Math.hypot(b.x-a.x,b.z-a.z)>100)return false;
+ // These are horse-width clearances, not permission to jump through world props.
+ for(const c of world.colliders||[])if(!(c.precise&&world.solidWorld)&&Number.isFinite(c.r)&&recoveryDistance(c,a,b)<c.r+.8)return false;
+ for(const w of world.walls||[])if(recoverySegmentsNear(a,b,{x:w.x1,z:w.z1},{x:w.x2,z:w.z2},.85))return false;
+ for(const j of course?.jumps||[]){if(j===skip||j.kind!=='fence')continue;const [p,q]=recoveryRail(j);if(recoverySegmentsNear(a,b,p,q,.9))return false;}
+ const n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/.65));let previous=null;
+ try{for(let i=0;i<=n;i++){
+  const t=i/n,x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=world.groundH?.(x,z)??0;
+  if(Math.hypot(x,z)>454||Math.hypot(x-20,z-16)<5||!Number.isFinite(y)||previous!==null&&Math.abs(y-previous)>.8)return false;previous=y;
+  if(world.terrainH&&world.riverZ&&world.riverLevel&&Math.abs(z-world.riverZ(x))<9&&world.riverLevel(x)-world.terrainH(x,z)>.3&&y<=world.terrainH(x,z)+.3)return false;
+  if(world.solidWorld){const point={x,z};world.solidWorld.resolve(point,{bottom:y+.38,top:y+2.65,radius:.7});if(Math.hypot(point.x-x,point.z-z)>.001)return false;}
+ }}catch{return false;}
+ return true;
+}
+export function createRushFenceRecovery({clearSegment=()=>true,isJumping=p=>(p.y||0)>.05||(p.vy||0)>0}={}){
+ let owner=null,fence=null,refusals=0,recovering=false,path=[],cursor=0,side=0,checked=-Infinity,lastX=0,lastZ=0,revision=0,state=null,forwardChecked=-Infinity,forwardClear=false;
+ const local=p=>{const dx=p.x-fence.x,dz=p.z-fence.z,sn=Math.sin(fence.rotY||0),cs=Math.cos(fence.rotY||0);return {x:dx*cs-dz*sn,z:dx*sn+dz*cs};};
+ const point=(x,z)=>{const sn=Math.sin(fence.rotY||0),cs=Math.cos(fence.rotY||0);return {x:fence.x+x*cs+z*sn,z:fence.z-x*sn+z*cs};};
+ function reset(){owner=null;fence=null;refusals=0;recovering=false;path=[];cursor=0;side=0;checked=-Infinity;forwardChecked=-Infinity;forwardClear=false;state=null;revision++;}
+ function clear(a,b){
+  const [p,q]=recoveryRail(fence),start=recoveryDistance(a,p,q);
+  // A rider who skimmed a post can already be inside this conservative margin.
+  // Permit only a segment that moves out without getting any closer to the rail.
+  const margin=start<1?Math.max(.01,start-.001):1;
+  return !recoverySegmentsNear(a,b,p,q,margin)&&recoveryDistance(b,p,q)>=Math.min(start,1)&&clearSegment(a,b,owner,fence);
+ }
+ function publish(phase,target){
+  const hint=phase==='blocked'?'Circle wider to find a clear way back to the log’s approach.':phase==='lineup'?'Turn toward the log, then ride forward and jump.':phase==='approach'?'Return to the approach marker, then face the log.':'Follow the line around the end of the log.';
+  if(state?.phase!==phase||state?.target?.x!==target?.x||state?.target?.z!==target?.z){revision++;state=Object.freeze({phase,hint,target:target?Object.freeze({x:target.x,z:target.z}):null});}
+ }
+ function choose(p,at){
+  let best=null,bestCost=Infinity;
+  for(const back of [8,11,15]){
+   const goal=point(0,-back),direct=[goal];
+   if(!clearSegment(goal,point(0,-1.15),owner,fence))continue;
+   const candidates=[{points:direct,side:0}];
+   for(const sign of [1,-1])for(const width of [3.5,5.5,8]){
+    const x=sign*width;
+    candidates.push({points:[point(x,Math.max(2.7,at.z)),point(x,-back),goal],side:sign});
+    if(at.z<-.95)candidates.push({points:[point(x,-back),goal],side:sign});
+   }
+   for(const candidate of candidates){let from=p,cost=0,ok=true;const trimmed=[];
+    for(const to of candidate.points){if(Math.hypot(to.x-from.x,to.z-from.z)<.1)continue;if(!clear(from,to)){ok=false;break;}cost+=Math.hypot(to.x-from.x,to.z-from.z);trimmed.push(to);from=to;}
+    if(!ok||!trimmed.length)continue;
+    if(side&&candidate.side&&candidate.side!==side)cost+=4;
+    if(cost<bestCost){bestCost=cost;best={path:trimmed,side:candidate.side};}
+   }
+  }
+  path=best?.path||[];cursor=0;side=best?.side||side;revision++;
+ }
+ function update(c,player,now=0){
+  const j=c?.ev?.rush&&!c.done?c.jumps?.[c.idx]:null;
+  if(!j||j.kind!=='fence'||![j.x,j.z,player?.pos?.x,player?.pos?.z].every(Number.isFinite)){if(owner)reset();return null;}
+  if(c!==owner||j!==fence){reset();owner=c;fence=j;refusals=c.ce?.refusals||0;}
+  const p=player.pos,at=local(p),count=c.ce?.refusals||0,newRefusal=count>refusals;refusals=count;
+  const close=Math.hypot(at.x,at.z)<24;
+  if(!recovering&&(newRefusal||!isJumping(player)&&close&&(at.z>=-.2||at.z>-3&&Math.abs(at.x)>=1.8))){recovering=true;checked=-Infinity;}
+  if(!recovering)return null;
+  // A safe forward approach releases recovery. Standing over the rail never does.
+  const atApproach=at.z<=-6&&Math.abs(at.x)<=1.35;
+  if(atApproach){
+   if(now-forwardChecked>=300){forwardChecked=now;forwardClear=clearSegment(p,point(0,-1.15),c,j);}
+   if(forwardClear&&Math.cos((player.heading||0)-(j.rotY||0))>.8){recovering=false;path=[];cursor=0;state=null;revision++;return null;}
+   publish(forwardClear?'lineup':'blocked',forwardClear?{x:j.x,z:j.z}:null);return state;
+  }
+  while(cursor<path.length&&Math.hypot(p.x-path[cursor].x,p.z-path[cursor].z)<.9){cursor++;revision++;}
+  if(now-checked>=300||!Number.isFinite(checked)){
+   checked=now;
+   const moved=Math.hypot(p.x-lastX,p.z-lastZ)>1.2;
+   if(!path.length||cursor>=path.length||moved){
+    if(!path.length||cursor>=path.length||!clear(p,path[cursor]))choose(p,at);
+    // Accumulate gradual walking from the last real validation, not each poll.
+    lastX=p.x;lastZ=p.z;
+   }
+  }
+  const target=path[cursor]||null;publish(!target?'blocked':cursor===path.length-1?'approach':'around',target);return state;
+ }
+ return {update,reset,snapshot:()=>state,get path(){return path;},get cursor(){return cursor;},get revision(){return revision;}};
+}
+
 // This follow rig owns its orbit separately from the fallback camera. Keep its
 // input lifecycle in one place so menus, focus loss and other camera owners do
 // not leave a held pointer or change the rider's saved zoom behind a screen.
@@ -123,6 +212,7 @@ export function install(G){
  if(!THREE||!G.scene||!W||!player)return;                 // nothing to draw on or nobody to draw for
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  const groundH=(x,z)=>{try{const h=W.groundH(x,z);return h===h?h:0;}catch(e){return 0;}};
+ const fenceRecovery=createRushFenceRecovery({clearSegment:(a,b,c,j)=>rushRecoverySegmentClear(a,b,{world:W,course:c,skip:j}),isJumping:p=>(p.y||0)>.05||(p.vy||0)>0||G.horse.RIG?.()?.heroJumpAge!=null});
 
  /* ---------------------------------------------------------------- the look ------------- */
  /* Six biomes and four seasons of ground under one ribbon: meadow green, farm stubble, forest
@@ -241,7 +331,8 @@ export function install(G){
   try{
    const c=G.course.get();
    const j=c&&!c.dressage&&c.jumps?c.jumps[c.idx]:null;
-   if(j&&enabled&&c.started&&!closing){
+   const recovering=fenceRecovery.update(c,player,performance.now());
+   if(j&&enabled&&c.started&&!closing&&!recovering){
     cue=jumpCue(j,player);
     if(cue&&cue!=='lineup'){
      show=cue==='perfect'||cue==='good'?cue:'miss';
@@ -401,6 +492,14 @@ export function install(G){
   }
   const j=c.jumps&&c.jumps[c.idx]; if(!j)return PL;
   PL.circle=false;
+  const recovery=fenceRecovery.update(c,player,performance.now());
+  if(recovery){
+   if(!recovery.target)return PL;
+   PL.pts[0][0]=player.pos.x;PL.pts[0][1]=player.pos.z;PL.n=1;
+   if(recovery.phase==='lineup'){PL.pts[1][0]=j.x;PL.pts[1][1]=j.z;PL.n=2;}
+   else for(let i=fenceRecovery.cursor;i<fenceRecovery.path.length&&PL.n<5;i++){const p=fenceRecovery.path[i];PL.pts[PL.n][0]=p.x;PL.pts[PL.n++][1]=p.z;}
+   PL.tx=recovery.target.x;PL.tz=recovery.target.z;PL.scored=false;PL.mode=5;PL.a=c.idx;PL.b=fenceRecovery.revision;PL.ok=true;return PL;
+  }
   const S=c.ce, lap=(S&&S.lap)||1;
   const L=S&&S.line&&c.idx>0?S.line[c.idx]:null;    // the same condition course-engine lays and penalises on
   if(L){
@@ -424,7 +523,7 @@ export function install(G){
  /* A new course means a new first leg whatever the indices happen to say, and the finish means
     the ribbon should already be going before cancelCourse pulls the course object out from under
     it on the next turn of the loop. */
- G.on('courseStart',()=>{SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});
+ G.on('courseStart',()=>{fenceRecovery.reset();SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});
  /* Sister packages replay a finish without a live course object to re-pay a round; only the
     finish of the course actually being ridden should take the ribbon down. */
  G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get())closing=true;});
@@ -481,7 +580,7 @@ export function install(G){
         as nothing — and only its size. The line beside this already says 'Canter a circle at B',
         and on a phone every word here is squeezed out of that line: the long version squeezed it to
         130 px and three or four lines, the last of them under the green stamina bar. */
-     distEl.textContent=circ?'· big circle':toCue?'· '+JUMP_CUES[toCue]:'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
+     distEl.textContent=fenceRecovery.snapshot()?'· '+({around:'Circle around',approach:'Return to approach',lineup:'Face the log',blocked:'Find a clear approach'}[fenceRecovery.snapshot().phase]):circ?'· big circle':toCue?'· '+JUMP_CUES[toCue]:'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
      if(distEl.style.display!=='')distEl.style.display='';}
     else if(distEl.style.display!=='none')distEl.style.display='none';
    }
@@ -491,7 +590,7 @@ export function install(G){
  /* ---------------------------------------------------------------- state + handles ------ */
  G.on('state',o=>{
   o.guide={on:fade>0.01,fade:+fade.toFixed(2),chevrons:core.count,built:SP.built,
-   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,
+   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,recovery:fenceRecovery.snapshot(),
    spacing:+SP.spacing.toFixed(2),legLen:+SP.len.toFixed(1),onScoredLine:!SP.free&&SP.n>0,
    lays:STATS.lays,target:tx===null?null:[+tx.toFixed(1),+tz.toFixed(1)],
    dist:tx===null?null:+Math.hypot(player.pos.x-tx,player.pos.z-tz).toFixed(1),
@@ -502,7 +601,7 @@ export function install(G){
     setEnabled is the honest way to measure what the ribbon costs: the same page, the same
     course, the feature on and off. */
  G.courseGuide={core,rim,ring,bigRing,CIRC,reticle,SP,STATS,plan,
-  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,TO_PERFECT,TO_GOOD,TO_SHOW,
+  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,recovery:()=>fenceRecovery.snapshot(),TO_PERFECT,TO_GOOD,TO_SHOW,
   mats:{core:coreMat,rim:rimMat,ringLit:ringLitMat,ringDark:ringDarkMat},
   setEnabled(b){enabled=!!b;if(!enabled){fade=0;hide();}},
   isEnabled:()=>enabled,isOn:()=>fade>0.01,fadeNow:()=>fade,
