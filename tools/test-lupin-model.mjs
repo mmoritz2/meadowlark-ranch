@@ -39,8 +39,8 @@ function touchesStem(group){
  for(const id of group){
   const f=faces[id],vertices=[f.a,f.b,f.c];
   for(const p of vertices)if(stem.some(s=>s.closestPointToPoint(p,closest).distanceTo(p)<1e-7))return true;
-  // A closed green bud can cross the stem surface with its edges, rather than
-  // placing a tip vertex exactly on one of the five stalk faces.
+  // Petal folds and the closed bud may meet the real stalk by a surface-edge
+  // intersection; they need not pin a duplicated vertex exactly to a face.
   for(let k=0;k<3;k++){
    const a=vertices[k],b=vertices[(k+1)%3],delta=b.clone().sub(a),length=delta.length();
    if(!length)continue;const ray=new T.Ray(a,delta.divideScalar(length));
@@ -58,9 +58,21 @@ test('one geometry and the same resource/RNG behavior fit the 240-triangle stalk
  for(const id of g.index.array)assert(id>=0&&id<g.attributes.position.count);
 });
 
-test('the original stalk and fourteen leaf quads retain every vertex, index, color and normal',()=>{
- for(const name of ['position','color','normal'])assert.deepEqual(g.attributes[name].array.slice(0,76*3),before.geometry.attributes[name].array.slice(0,76*3),name);
+test('two palmate whorls connect twelve leaflets through actual petioles to the stalk',()=>{
+ // Stem+foliage retain their exact38-triangle allocation, now arranged as two
+ // petiole quads and twelve leaflets instead of fourteen independent leaves.
  assert.deepEqual(g.index.array.slice(0,38*3),before.geometry.index.array.slice(0,38*3));
+ const groups=components(10,38);assert.equal(groups.length,2);
+ for(const group of groups){
+  assert.equal(group.length,14);assert(touchesStem(group),'Palmate whorl does not meet the stalk');
+  const first=Math.min(...group),petioleStart=g.index.array[first*3];
+  const joint=point(petioleStart+3);
+  for(let leaf=0;leaf<6;leaf++)assert(joint.distanceTo(point(petioleStart+4+leaf*4))<1e-7,'Leaflet misses its common palmate joint');
+  const height=joint.y;assert(height>.15&&height<.4,'Low palmate foliage leaves an exposed flowering stem');
+ }
+ const c=g.attributes.color;
+ for(let i=0;i<76;i++)assert(c.getY(i)>c.getX(i)&&c.getY(i)>c.getZ(i),'Stem/leaf colors remain green');
+ assert.equal(g.attributes.position.count,532,'No vertices added to the stalk budget');
 });
 
 test('real triangle normals are finite, unit and agree with every incident face winding',()=>{
@@ -79,7 +91,13 @@ test('all twenty-four pea florets and the closed green tip contact actual stalk 
   if(Math.max(...group)<faces.length-8){
    const closest=new T.Vector3(),vertices=group.flatMap(id=>[faces[id].a,faces[id].b,faces[id].c]);
    const root=vertices.find(p=>stem.some(s=>s.closestPointToPoint(p,closest).distanceTo(p)<1e-7));
-   const radial=new T.Vector3(root.x-.028*root.y/.78,0,root.z).normalize();
+   assert(root,'Each floret root must touch an actual emitted stalk face');
+   // Infer the emitted stalk's centreline from its two pentagonal rings.
+   // The attachment proof therefore follows the actual longer bent stem.
+   const height=Math.max(...stem.flatMap(f=>[f.a.y,f.b.y,f.c.y]));
+   const ring=stem.flatMap(f=>[f.a,f.b,f.c]).filter(p=>Math.abs(p.y-height)<1e-7);
+   const centre=ring.reduce((v,p)=>v.add(p),new T.Vector3()).multiplyScalar(1/ring.length);
+   const radial=new T.Vector3(root.x-centre.x*root.y/height,0,root.z-centre.z*root.y/height).normalize();
    for(const id of group)assert(faces[id].getNormal(new T.Vector3()).dot(radial)>0,'Pea petal faces into the stalk');
   }
  }
@@ -87,13 +105,14 @@ test('all twenty-four pea florets and the closed green tip contact actual stalk 
  const key=p=>p.toArray().map(n=>n.toFixed(7)).join(',');
  for(const id of tip){const vertices=[faces[id].a,faces[id].b,faces[id].c];for(let k=0;k<3;k++){const edge=[key(vertices[k]),key(vertices[(k+1)%3])].sort().join('|');edges.set(edge,(edges.get(edge)||0)+1);}}
  assert([...edges.values()].every(count=>count===2),'Terminal bud must be a closed surface');
- // The original palmate foliage still sets the width; the terminal bud may
- // extend the former 78cm stalk by only a few centimetres.
- assert(g.boundingBox.min.y===0&&g.boundingBox.max.y<=.81);
- for(const axis of ['x','z']){
-  assert(g.boundingBox.min[axis]>=before.geometry.boundingBox.min[axis]-1e-7);
-  assert(g.boundingBox.max[axis]<=before.geometry.boundingBox.max[axis]+1e-7);
- }
+ // Long exposed stalk and palmate foliage remain metre-scale plants. The
+ // caller preserves established colony top height; authored cores vary locally.
+ assert(g.boundingBox.min.y===0&&g.boundingBox.max.y>1.1&&g.boundingBox.max.y<1.15);
+ assert(g.boundingBox.max.x-g.boundingBox.min.x<.55);
+ assert(g.boundingBox.max.z-g.boundingBox.min.z<.45);
+ const petalVertices=Array.from({length:24*18},(_,i)=>point(76+i));
+ assert(Math.min(...petalVertices.map(p=>p.y))>.56,'Colored florets must leave a green lower stem exposed');
+
 });
 
 test('geometry generation is deterministic and does not mutate its previous model fixture',()=>{

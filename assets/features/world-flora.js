@@ -43,7 +43,9 @@ export function install(G){
  // cannot advance the sequential seed stream for the rest of the whole basin.
  // Writers below still use live groundH, including all local root transforms.
  const planning=W.hollowpeakPlacement;
- const planningH=planning?.heightAt||groundH;
+ const underlyingPlanningH=planning?.heightAt||groundH;
+ const chalkPlanning=G.vistas?.chalkDown;
+ const planningH=(x,z)=>{const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
  const plantingExcluded=planning?.excludesDryPlants||((x,z)=>fallsExcludesDryPlants(x,z,groundH));
  const F={};                                             // this package's live state, exposed for QA
  G.floraPkg=F;
@@ -465,7 +467,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     is pushed under the analytic ground — a stem that hovers a centimetre on a crest is the first
     thing the eye finds. */
  function put(name,x,z,h,wid,col,lean,sink){
-  if(G.vistas?.chalkDown?.isChalk(x,z))return false;
+  if((chalkPlanning?.planningIsChalk||chalkPlanning?.isChalk)?.(x,z))return false;
   if(W.sceneryArt.containsWaterfall(x,z,.6))return false;
   const b=BANK[name]; if(!b||b.n>=b.cap)return false;
   _e.set((rnd()-0.5)*(lean||0),rnd()*Math.PI*2,(rnd()-0.5)*(lean||0));
@@ -990,6 +992,26 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   grazedTufts.maxLowestPointAfter=grazedTufts.maxLowestPointAfter===null?lowestAfter:Math.max(grazedTufts.maxLowestPointAfter,lowestAfter);
  }
  F.grazedTufts=grazedTufts;
+
+ // Suppress live cutting cover only after every density/height policy. Earlier
+ // zeroing would feed Matrix4.decompose a singular basis in the cleanup passes.
+ // Counts, seed draws, compacted row identities, colours and root positions stay
+ // unchanged; only the final decorative plant basis is hidden.
+ function clearLiveChalkCover(){
+  const cleared={};if(!chalkPlanning?.isChalk)return cleared;
+  for(const name of ['scrub','juni','sage','brack','reed','tuft','petal','succ','oco']){
+   const b=BANK[name];let count=0;
+   for(let i=0;i<b.n;i++){
+    b.im.getMatrixAt(i,_m);const a=_m.elements;
+    if(!chalkPlanning.isChalk(a[12],a[14]))continue;
+    for(const column of [0,4,8])for(let axis=0;axis<3;axis++)a[column+axis]=0;
+    b.im.setMatrixAt(i,_m);count++;
+   }
+   cleared[name]=count;
+  }
+  return cleared;
+ }
+ F.chalkCover=clearLiveChalkCover();
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

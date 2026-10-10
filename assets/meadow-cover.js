@@ -139,81 +139,8 @@ export function meadowBladeColor(color,x,z,variation=.5){
   return color.setHSL(hh,ss,ll);
 }
 
-// Fully modelled lupin: palmate foliage, asymmetric pea flowers and green buds.
-// 238 triangles per stalk; no alpha cards or flower-coloured green stems.
-export function createLupinGeometry(THREE){
-  const P=[],C=[],I=[];
-  const color=new THREE.Color();
-  function face(points,hex){
-    const b=P.length/3;color.set(hex);
-    for(const p of points){P.push(...p);C.push(color.r,color.g,color.b);}
-    I.push(b,b+1,b+2);if(points.length===4)I.push(b,b+2,b+3);
-  }
-  for(let i=0;i<5;i++){
-    const a=i*Math.PI*2/5,b=(i+1)*Math.PI*2/5;
-    face([[Math.cos(a)*.012,0,Math.sin(a)*.012],[Math.cos(b)*.012,0,Math.sin(b)*.012],
-      [Math.cos(b)*.004+.028,.78,Math.sin(b)*.004],[Math.cos(a)*.004+.028,.78,Math.sin(a)*.004]],'#518137');
-  }
-  for(let leaf=0;leaf<14;leaf++){
-    const a=leaf*2.39996,y=.055+(leaf%3)*.060,len=.12+(leaf%4)*.018;
-    const c=Math.cos(a),s=Math.sin(a),w=.028;
-    face([[0,y,0],[c*len*.60-s*w,y+.03,s*len*.60+c*w],[c*len,y+.10,s*len],
-      [c*len*.60+s*w,y+.05,s*len*.60-c*w]],leaf%2?'#648e3e':'#83a852');
-  }
-  // Each pea floret has a folded upright banner, two unequal wings and a
-  // projecting keel. The petals share one root on the real pentagonal stalk.
-  const petal=(points,hex,outward)=>{
-    const [a,b,c]=points,u=b.map((n,k)=>n-a[k]),v=c.map((n,k)=>n-a[k]);
-    const dot=(u[1]*v[2]-u[2]*v[1])*outward[0]+(u[2]*v[0]-u[0]*v[2])*outward[1]+(u[0]*v[1]-u[1]*v[0])*outward[2];
-    face(dot<0?[...points].reverse():points,hex);
-  };
-  for(let ring=0;ring<8;ring++)for(let flower=0;flower<3;flower++){
-    const phase=ring*2.07+flower*2.39996,variation=Math.sin(phase*1.71+2.1);
-    const a=flower*Math.PI*2/3+ring*1.87+variation*.19,y=.335+ring*.055+Math.sin(phase)*.004;
-    const scale=1.25*(1-ring*.065)*(1+variation*.075),c=Math.cos(a),s=Math.sin(a);
-    const sector=Math.PI*2/5,delta=((a%sector)+sector)%sector-sector/2;
-    const radius=(.012-y*.008/.78)*Math.cos(Math.PI/5)/Math.cos(delta);
-    const root=[.028*y/.78+c*radius,y,s*radius],outward=[c,0,s];
-    const point=([u,v,d])=>[root[0]+s*u*scale+c*d*scale,root[1]+v*scale,root[2]-c*u*scale+s*d*scale];
-    const emit=(points,hex)=>petal(points.map(point),hex,outward);
-    const hood=ring%3===0?'#a875c2':'#9763b5',wing=ring%2?'#8b60ad':'#8055a2';
-    // Two shallow banner folds rise above the wings; unequal shoulders avoid
-    // the former repeated bowl silhouettes. All dimensions are metres.
-    const base=[0,0,0],left=[-.007,.001,.003],right=[.006,.002,.003];
-    const upperLeft=[-.023,.024,.011],crest=[-.001,.029,.013],upperRight=[.021,.023,.012];
-    emit([base,left,upperLeft,crest],hood);
-    emit([base,crest,upperRight,right],hood);
-    emit([base,[-.022,-.009,.022],[-.002,-.012,.027]],wing);
-    emit([base,[.004,-.012,.027],[.020,-.008,.023]],wing);
-    emit([base,[-.007,-.011,.023],[-.003,-.014,.027],[.007,-.012,.026]],'#835ba6');
-  }
-  // A small closed terminal bud meets the existing stalk before tapering out.
-  // Four triangular sides per half keep the whole plant at 238 triangles.
-  const lower=[.028*.754/.78,.754,0],upper=[.028,.791,0],bud=[];
-  for(let i=0;i<4;i++){const a=i*Math.PI/2;bud.push([.028+Math.cos(a)*.007,.779,Math.sin(a)*.007]);}
-  for(let i=0;i<4;i++){
-    const j=(i+1)%4;
-    petal([lower,bud[j],bud[i]],i%2?'#638547':'#719150',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
-    petal([upper,bud[i],bud[j]],i%2?'#719150':'#86a364',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
-  }
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeVertexNormals();
-  // Join only the two banner panels for soft petal shading. Their normals
-  // derive from these Float32 triangles; stem, leaves, wings and keel stay exact.
-  const positions=g.attributes.position.array,normals=g.attributes.normal.array,indices=g.index.array;
-  for(let flower=0;flower<24;flower++){
-    const start=76+flower*18,sums=new Map(),key=id=>positions.slice(id*3,id*3+3).join(',');
-    for(let triangle=38+flower*8;triangle<42+flower*8;triangle++){
-      const ids=Array.from(indices.slice(triangle*3,triangle*3+3)),[a,b,c]=ids.map(id=>id*3);
-      const ux=positions[b]-positions[a],uy=positions[b+1]-positions[a+1],uz=positions[b+2]-positions[a+2];
-      const vx=positions[c]-positions[a],vy=positions[c+1]-positions[a+1],vz=positions[c+2]-positions[a+2];
-      const n=[uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx];
-      for(const id of ids){const k=key(id),sum=sums.get(k)||[0,0,0];for(let axis=0;axis<3;axis++)sum[axis]+=n[axis];sums.set(k,sum);}
-    }
-    for(let id=start;id<start+8;id++){const n=sums.get(key(id)),length=Math.hypot(...n);for(let axis=0;axis<3;axis++)normals[id*3+axis]=n[axis]/length;}
-  }
-  g.computeBoundingBox();g.computeBoundingSphere();return g;
-}
+// The modelled flower bank retains its existing mesh and 238-triangle budget.
+export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=landmark-fields-1';
 
 // A bounded ring carries pasture silhouettes into the middle distance. Slots
 // only rebuild when a 12 m cell enters the ring; no extra work per grass blade

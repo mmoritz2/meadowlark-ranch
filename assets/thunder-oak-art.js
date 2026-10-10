@@ -12,15 +12,20 @@ export function createThunderOakGeometry(T,ground=(x,z)=>0){
  const geo=(p,uv,c,index)=>{const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('color',new T.Float32BufferAttribute(c,3));g.setIndex(index);g.computeVertexNormals();return g;};
  function bounds(points){const b=new T.Box3();for(const p of points)b.expandByPoint(p);if(b.max.y-b.min.y>.055)proxies.push({min:b.min.toArray(),max:b.max.toArray(),matrix:new T.Matrix4().toArray()});}
  function shade(p,inside=false){const moss=(1-smooth(.2,1.3,p.y))*.18,light=.82+.08*Math.sin(p.y*.8+p.x*2+p.z);return inside?[.71,.66,.57]:[light-moss*.8,light-moss*.1,light-moss];}
- function tube(points,r0,{end=.015,sides=9,steps=14,collision=false,burnt=false}={}){
+ function tube(points,r0,{end=.015,sides=9,steps=14,collision=false,burnt=false,broken=false}={}){
   stats.limbs++;const curve=new T.CatmullRomCurve3(points),frames=curve.computeFrenetFrames(steps,false),p=[],uv=[],c=[],idx=[],rings=[],length=curve.getLength();
   for(let k=0;k<=steps;k++){const t=k/steps,at=curve.getPointAt(t),r=(end+(r0-end)*Math.pow(1-t,.92))*(.62+.38*smooth(0,.10,t)),ring=[];
-   for(let j=0;j<=sides;j++){const a=j/sides*Math.PI*2,rad=r*(1+.07*Math.sin(a*5+t*8)+.025*Math.sin(a*11-t*17)),n=frames.normals[k].clone().multiplyScalar(Math.cos(a)).addScaledVector(frames.binormals[k],Math.sin(a)),point=fit(at.clone().addScaledVector(n,rad));ring.push(point);p.push(...point);uv.push(j/sides*Math.PI*2*r0,t*length);c.push(...shade(point,burnt));
+   for(let j=0;j<=sides;j++){const a=j/sides*Math.PI*2,rad=r*(1+.07*Math.sin(a*5+t*8)+.025*Math.sin(a*11-t*17)),n=frames.normals[k].clone().multiplyScalar(Math.cos(a)).addScaledVector(frames.binormals[k],Math.sin(a)),point=fit(at.clone().addScaledVector(n,rad));if(broken&&k===steps)point.addScaledVector(curve.getTangentAt(1),r0*.10*Math.sin(j*1.71+points[0].x));ring.push(point);p.push(...point);uv.push(j/sides*Math.PI*2*r0,t*length);c.push(...shade(point,burnt));
     if(k<steps&&j<sides){const b=k*(sides+1)+j,d=b+sides+1;idx.push(b,b+1,d,b+1,d+1,d);}}
    if(collision&&k)bounds([...ring,...rings[k-1]]);rings.push(ring);
   }
   // Irregular branch ends are closed, including the tiny twig tips.
-  for(const k of[0,steps]){const point=fit(curve.getPointAt(k/steps)),center=p.length/3;p.push(...point);uv.push(.5,.5);c.push(...shade(point,burnt));for(let j=0;j<sides;j++){const a=k*(sides+1)+j,b=a+1;idx.push(center,...(k===0?[b,a]:[a,b]));}}
+  for(const k of[0,steps]){const point=fit(curve.getPointAt(k/steps)),center=p.length/3;p.push(...point);uv.push(.5,.5);c.push(...shade(point,burnt));
+   // Broken faces have a hard bark-to-endgrain seam. Reusing the tube normals
+   // would smear their irregular cut into the lateral bark at a blunt end.
+   const capStart=p.length/3;
+   if(broken)for(let j=0;j<=sides;j++){const source=k*(sides+1)+j;p.push(...p.slice(source*3,source*3+3));uv.push(.5+.5*Math.cos(j/sides*Math.PI*2),.5+.5*Math.sin(j/sides*Math.PI*2));c.push(...c.slice(source*3,source*3+3));}
+   for(let j=0;j<sides;j++){const a=broken?capStart+j:k*(sides+1)+j,b=a+1;idx.push(center,...(k===0?[b,a]:[a,b]));}}
   (burnt?scar:wood).push(geo(p,uv,c,idx));return curve;
  }
  function splitShaft(side,points,radii){
@@ -28,7 +33,7 @@ export function createThunderOakGeometry(T,ground=(x,z)=>0){
   for(let k=0;k<=steps;k++){
    const t=k/steps,at=curve.getPointAt(t),tangent=curve.getTangentAt(t),out=V(side,0,0).addScaledVector(tangent,-tangent.x*side).normalize(),front=tangent.clone().cross(out).normalize();
    const f=t*(radii.length-1),n=Math.min(radii.length-2,Math.floor(f)),r=radii[n]+(radii[n+1]-radii[n])*(f-n),ring=[];
-   for(let j=0;j<=sides;j++){const a=-Math.PI*.55+j/sides*Math.PI*1.10,flute=1+.055*Math.sin(a*11+t*10)+.02*Math.sin(a*23-t*17),point=fit(at.clone().addScaledVector(out,Math.cos(a)*r*flute).addScaledVector(front,Math.sin(a)*r*.80*flute));outer.push(...point);ou.push(j/sides*Math.PI*1.1*radii[0],t*length);oc.push(...shade(point));ring.push(point);
+   for(let j=0;j<=sides;j++){const a=-Math.PI*.55+j/sides*Math.PI*1.10,flute=1+.055*Math.sin(a*11+t*10)+.02*Math.sin(a*23-t*17),point=fit(at.clone().addScaledVector(out,Math.cos(a)*r*flute).addScaledVector(front,Math.sin(a)*r*.80*flute));if(k===steps)point.y+=.04*Math.sin(j*.51+side)+.012*Math.sin(j*1.4);outer.push(...point);ou.push(j/sides*Math.PI*1.1*radii[0],t*length);oc.push(...shade(point));ring.push(point);
     if(k<steps&&j<sides){const b=k*(sides+1)+j,d=b+sides+1;oi.push(b,b+1,d,b+1,d+1,d);}}
    // Charred heartwood is recessed and corrugated along the torn grain.
    for(let j=0;j<=10;j++){const u=j/10,point=ring[0].clone().lerp(ring[sides],u).addScaledVector(out,Math.sin(u*Math.PI)*(.27+.035*Math.sin(t*47+u*5))*r);cut.push(...point);cu.push(u*radii[0]*1.6,t*length);cc.push(...shade(point,true));
@@ -40,20 +45,21 @@ export function createThunderOakGeometry(T,ground=(x,z)=>0){
   const tipP=[...center],tipUV=[.5,.5],tipC=[...shade(center,true)],tipI=[];for(const p of rim){tipP.push(...p);tipUV.push((p.x-center.x)*2+.5,(p.z-center.z)*2+.5);tipC.push(...shade(p,true));}for(let j=0;j<rim.length;j++)tipI.push(0,j+1,(j+1)%rim.length+1);
   wood.push(geo(outer,ou,oc,oi));scar.push(geo(cut,cu,cc,ci),geo(tipP,tipUV,tipC,tipI));return curve;
  }
- splitShaft(-1,[V(-.72,-.12,0),V(-.94,2.4,.12),V(-1.48,5.8,-.15),V(-2.4,9.1,.18),V(-3.17,12.3,.32),V(-3.9,14.5,.42)],[1.27,1.15,.93,.64,.32,.045]);
- splitShaft(1,[V(.72,-.12,.10),V(1.03,2.1,.13),V(1.70,5.7,-.22),V(2.54,8.4,-.45),V(2.98,10.6,-.1),V(3.56,12.85,-.35)],[1.23,1.16,.92,.65,.39,.07]);
+ splitShaft(-1,[V(-.72,-.12,0),V(-.94,2.4,.12),V(-1.48,5.8,-.15),V(-2.4,9.1,.18),V(-3.17,12.3,.32),V(-3.9,14.5,.42)],[1.27,1.15,.93,.64,.38,.24]);
+ splitShaft(1,[V(.72,-.12,.10),V(1.03,2.1,.13),V(1.70,5.7,-.22),V(2.54,8.4,-.45),V(2.98,10.6,-.1),V(3.56,12.85,-.35)],[1.23,1.16,.92,.65,.43,.28]);
  // Buttresses join the split to the hill; root tips fit the exact terrain.
  for(let i=0;i<11;i++){const a=i*2.399,reach=2.5+rand()*1.3,s=Math.cos(a)>0?1:-1;const base=V(s*.76,.86,.08),end=V(Math.cos(a)*reach,-.12,Math.sin(a)*reach*.82);
   tube([base,V(end.x*.58,.28,end.z*.58),end],.31+rand()*.15,{end:.035,sides:11,steps:11,collision:true});}
- // Twisted dead scaffold limbs carry a few fine, irregular forks.
- const limbs=[[-1.30,4.8,.1,-5.1,7.6,-1.9,.48],[-1.8,6.7,-.1,-5.3,9.7,2.8,.43],[-2.5,9.5,.15,-6.4,13.8,-.5,.36],[-3.0,11.7,.3,-2.0,15.6,2.0,.25],[-3.6,13.5,.4,-5.4,16.1,1.4,.18],[1.55,4.9,-.1,4.8,7.6,-2.7,.45],[2.4,8.1,-.4,5.2,10.9,-3.4,.36],[3.0,10.3,-.1,6.6,13.4,1.6,.29],[3.45,12.2,-.25,2.7,15.25,-2.2,.20]];
- for(const row of limbs){const a=V(...row.slice(0,3));a.x+=Math.sign(a.x)*.35;const b=V(...row.slice(3,6)),d=b.clone().sub(a),mid=a.clone().lerp(b,.46).add(V(d.z*.11,-.35,-d.x*.1));const curve=tube([a,mid,b],row[6],{end:.035,sides:11,steps:18});
-  for(let j=0;j<3;j++){const t=.47+j*.18,start=curve.getPoint(t),side=j%2?1:-1,end=start.clone().add(V(side*(.7+rand()*1.6),1.0+rand()*1.8,(rand()-.5)*2));const fork=tube([start,start.clone().lerp(end,.5).add(V(.12,-.18,.09)),end],row[6]*(1-t)*.63,{end:.012,sides:7,steps:10});
-   for(let k=0;k<2;k++){const s=fork.getPoint(.60+k*.18),e=s.clone().add(V((rand()-.5)*1.25,.55+rand()*.75,(rand()-.5)*1.1));tube([s,s.clone().lerp(e,.55).add(V(.08,.05,-.05)),e],.028,{end:.006,sides:5,steps:6});}
+ // Unequal lateral dead scaffolds have blunt storm-torn ends and short crooked
+ // side shoots, rather than repeated upward antlers.
+ const limbs=[[-1.30,4.8,.1,-6.0,6.6,-1.9,.48],[-1.8,6.7,-.1,-5.6,8.4,2.8,.43],[-2.5,9.5,.15,-6.1,11.0,-1.2,.36],[-3.0,11.7,.3,-6.6,12.25,2.0,.25],[-3.6,13.5,.4,-5.35,14.25,1.4,.18],[1.55,4.9,-.1,5.35,6.8,-2.7,.45],[2.4,8.1,-.4,6.3,8.8,-3.4,.36],[3.0,10.3,-.1,7.0,11.2,1.6,.29],[3.45,12.2,-.25,5.8,13.0,-2.2,.20]];
+ for(const row of limbs){const a=V(...row.slice(0,3));a.x+=Math.sign(a.x)*.35;const b=V(...row.slice(3,6)),d=b.clone().sub(a),mid=a.clone().lerp(b,.56).add(V(d.z*.13,.65,-d.x*.10));const curve=tube([a,mid,b],row[6],{end:.055+row[6]*.16,sides:11,steps:18,broken:true});
+  for(let j=0;j<3;j++){const t=.47+j*.18,start=curve.getPoint(t),side=j%2?1:-1,end=start.clone().add(V(side*(.50+rand()*1.15),-.35+rand()*.95,(rand()-.5)*1.7));const fork=tube([start,start.clone().lerp(end,.5).add(V(.12,-.18,.09)),end],row[6]*(1-t)*.63,{end:.028,sides:7,steps:10,broken:true});
+   for(let k=0;k<2;k++){const s=fork.getPoint(.60+k*.18),e=s.clone().add(V((rand()-.5)*.90,-.28+rand()*.60,(rand()-.5)*.80));tube([s,s.clone().lerp(e,.55).add(V(.08,.05,-.05)),e],.028,{end:.006,sides:5,steps:6});}
   }
  }
  // One low, living bough spreads south from the surviving right-hand stem.
- const living=tube([V(1.90,5.5,.38),V(3.1,6.8,1.4),V(5.35,8.45,2.5),V(7.2,8.6,3.9)],.48,{end:.035,sides:12,steps:22});
+ const living=tube([V(1.90,5.5,.38),V(3.0,6.7,2.1),V(1.8,8.3,5.1),V(-.4,8.45,6.4)],.48,{end:.035,sides:12,steps:22});
  function leaf(at,heading,tilt,length,width,flex){
   const axis=V(Math.cos(heading)*Math.sin(tilt),Math.cos(tilt),Math.sin(heading)*Math.sin(tilt)),right=V(-Math.sin(heading),0,Math.cos(heading)),normal=axis.clone().cross(right).normalize(),base=leafP.length/3,light=.66+rand()*.33;
   const outline=[[0,0],[-.20,.13],[-.42,.21],[-.29,.31],[-.50,.42],[-.34,.52],[-.44,.65],[-.27,.75],[-.29,.84],[0,1],[.29,.84],[.27,.75],[.44,.65],[.34,.52],[.50,.42],[.29,.31],[.42,.21],[.20,.13]];
@@ -64,16 +70,25 @@ export function createThunderOakGeometry(T,ground=(x,z)=>0){
   const rim=[0,2,4,6,8,9,10,12,14,16];for(let i=1;i<rim.length-1;i++)farI.push(base+rim[0],base+rim[i],base+rim[i+1]);stats.leaves++;
  }
  for(let i=0;i<15;i++){
-  const f=.22+i*.052,start=living.getPoint(f),side=i%2?1:-1,spread=.9+rand()*1.5,end=start.clone().add(V(side*spread*.70,.28+rand()*1.3,side*spread));
+  const f=.22+i*.052,start=living.getPoint(f),side=i%2?1:-1,spread=.9+rand()*1.5,end=start.clone().add(V(side*spread*.95,.20+rand()*1.15,side*spread*.30));
   const twig=tube([start,start.clone().lerp(end,.55).add(V(.2,.45,.12)),end],.10*(1-f)+.015,{end:.012,sides:7,steps:10});
   for(let j=0;j<9;j++){
-   const t=.15+j*.095,anchor=twig.getPoint(t),a=rand()*Math.PI*2,reach=.42+rand()*.56,tip=anchor.clone().add(V(Math.cos(a)*reach,.2+rand()*.45,Math.sin(a)*reach));
+   const t=.28+j*.077,anchor=twig.getPoint(t),a=rand()*Math.PI*2,reach=.42+rand()*.56,tip=anchor.clone().add(V(Math.cos(a)*reach,.2+rand()*.45,Math.sin(a)*reach));
    const shoot=tube([anchor,anchor.clone().lerp(tip,.48),tip],.016,{end:.003,sides:4,steps:4});
-   for(let k=0;k<20;k++){const u=.02+k*.046,at=shoot.getPoint(u),head=a+k*2.399;leaf(at,head,1.2+rand()*1.8,.22+rand()*.14,.13+rand()*.085,t);}
+   for(let k=0;k<20;k++){const u=.20+.76*Math.pow((k+.5)/20,.65),at=shoot.getPoint(u),head=a+k*2.399;leaf(at,head,1.2+rand()*1.8,.20+rand()*.16,.145+rand()*.095,t);}
   }
  }
  const bark=mergeGeometries(wood,false),heart=mergeGeometries(scar,false);[...wood,...scar].forEach(g=>g.dispose());const leaves=geo(leafP,leafUV,leafC,leafI);leaves.setAttribute('oakFlex',new T.Float32BufferAttribute(leafFlex,1));const farLeaves=leaves.clone();farLeaves.setIndex(farI);
- for(const g of[bark,heart,leaves,farLeaves]){g.computeBoundingBox();g.computeBoundingSphere();}
+ // The upper weathered crown is broad and broken, while the original split
+ // root plate and every shaft vertex below7m keep their exact ground/contact fit.
+ // A monotone height transform also updates the recorded upper proxy extents.
+ const crownY=y=>y<=7?y:y-.20*(y-7)*smooth(0,4,y-7);
+ for(const g of[bark,heart,leaves,farLeaves]){
+  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setY(i,crownY(p.getY(i)));
+  if(g===farLeaves)g.setAttribute('normal',leaves.attributes.normal.clone());else g.computeVertexNormals();
+  g.computeBoundingBox();g.computeBoundingSphere();
+ }
+ for(const proxy of proxies){proxy.min[1]=crownY(proxy.min[1]);proxy.max[1]=crownY(proxy.max[1]);}
  stats.woodTriangles=(bark.index.count+heart.index.count)/3;stats.leafTriangles=leafI.length/3;stats.farLeafTriangles=farI.length/3;
  return{bark,heart,leaves,farLeaves,proxies,stats};
 }
