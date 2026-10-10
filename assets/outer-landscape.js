@@ -1,5 +1,6 @@
+import {outerWatershedHeight,reseatOuterWoodland} from './outer-watershed.mjs?v=northern-watershed-2';
 import {createOuterRockData,retainRockClearWoodland} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
-import {patchOuterGroundSurface} from './outer-ground-surface.mjs?v=outer-ground-grain-4';
+import {patchOuterGroundSurface} from './outer-ground-surface.mjs?v=outer-ground-sward-5';
 import {outerCountrysideRelief} from './outer-countryside-relief.mjs?v=outer-countryside-relief-3';
 import {selectOuterWoodland,OUTER_GROVES_GLSL} from './outer-woodland.mjs?v=branching-groves-2';
 // Original foothills connect the fixed riding terrain to the distant skyline.
@@ -59,7 +60,7 @@ export function patchOuterRegions(shader){
  return true;
 }
 export function outerDistance(x,z){return Math.hypot(Math.max(0,Math.abs(x)-500),Math.max(0,Math.abs(z)-500));}
-export function foothillHeight(x,z,heightAt){
+function legacyFoothillHeight(x,z,heightAt){
  const d=outerDistance(x,z),edge=heightAt(Math.max(-500,Math.min(500,x)),Math.max(-500,Math.min(500,z)));
  if(!d)return edge;
  const warp=(noise(x*.0038+41,z*.0038-13)-.5)*75;
@@ -68,10 +69,16 @@ export function foothillHeight(x,z,heightAt){
  const region=regionalProfileAt(x,z),regional=smooth(20,145,d);
  const ridges=(7+24*broad+8*folds*folds)*smooth(0,145,d)*(1-smooth(370,950,d))*mix(1,region.foothillScale,regional);
  const shoulders=(noise(x*.015+51,z*.013+16)-.5)*6*smooth(12,65,d)*(1-smooth(260,650,d))*mix(1,region.foothillRoughness,regional);
- return edge*(1-smooth(20,100,d))+ridges+shoulders-24*smooth(650,1150,d)
+ const legacyHeight=edge*(1-smooth(20,100,d))+ridges+shoulders-24*smooth(650,1150,d)
   +outerCountrysideRelief(x,z)*(1-region.valley*.62);
+ return legacyHeight;
 }
-const BANDS=[[0,2048],[4,2048],[12,1024],[26,1024],[42,512],[60,512],[80,512],[100,512],[122,512],[144,512],[168,512],[192,512],[216,512],[242,512],[268,512],[294,512],[322,512],[350,512],[380,512],[410,512],[450,512],[510,512],[590,512],[730,512],[950,512],[1200,512]];
+export function foothillHeight(x,z,heightAt){return outerWatershedHeight(x,z,legacyFoothillHeight(x,z,heightAt));}
+const WOODLAND_ANCHOR_BANDS=[[0,2048],[4,2048],[12,1024],[26,1024],[42,512],[60,512],[80,512],[100,512],[122,512],[144,512],[168,512],[192,512],[216,512],[242,512],[268,512],[294,512],[322,512],[350,512],[380,512],[410,512],[450,512],[510,512],[590,512],[730,512],[950,512],[1200,512]];
+// The original plain sampling mesh anchors woodland identities without making
+// an extra render geometry, material, UUID or ambient random call.
+function woodlandAnchorMesh(heightAt){const p=[],indices=[],rows=[];for(const [distance,n]of WOODLAND_ANCHOR_BANDS){rows.push({start:p.length/3,n});for(let i=0;i<=n;i++){const [bx,bz]=edgePoint(i,n),scale=1+distance/500,x=bx*scale,z=bz*scale;p.push(x,legacyFoothillHeight(x,z,heightAt),z);}}for(let j=0;j<rows.length-1;j++){const a=rows[j],b=rows[j+1];for(let i=0;i<b.n;i++){const c=b.start+i,d=c+1,k=a.n/b.n,x=a.start+i*k;if(k===1)indices.push(x,x+1,c,x+1,d,c);else indices.push(x,x+1,c,x+1,d,c,x+1,x+2,d);}}return{positions:new Float32Array(p),index:new Uint16Array(indices)};}
+const BANDS=[[0,2048],[4,2048],[12,1024],[26,1024],[42,512],[58,512],[74,512],[90,512],[106,512],[122,512],[138,512],[154,512],[170,512],[186,512],[202,512],[218,512],[234,512],[250,512],[266,512],[282,512],[298,512],[314,512],[330,512],[346,512],[362,512],[378,512],[394,512],[410,512],[450,512],[510,512],[590,512],[730,512],[950,512],[1200,512]];
 function edgePoint(i,n){const t=i/n*4,side=Math.min(3,Math.floor(t)),u=(t-side)*1000;return side===0?[-500+u,-500]:side===1?[500,-500+u]:side===2?[500-u,500]:[-500,500-u];}
 export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  const old=scene.getObjectByName('Horizon ground disc');
@@ -101,12 +108,14 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  // Match the original edge normals at the shared vertices, including stream cuts.
  const normals=geometry.attributes.normal,sourceNormal=source.attributes.normal;
  for(let i=0;i<=BANDS[0][1];i++){const [x,z]=edgePoint(i,BANDS[0][1]),ix=Math.round((x+500)/1000*segments),iz=Math.round((z+500)/1000*segments),id=iz*(segments+1)+ix;normals.setXYZ(i,sourceNormal.getX(id),sourceNormal.getY(id),sourceNormal.getZ(id));}
- const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterRegions(shader);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-ground-grain-4';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
+ const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterRegions(shader);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-ground-sward-5';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
  const mesh=old||new T.Mesh();if(old){old.geometry.dispose();old.material.map?.dispose();old.material.dispose();}else scene.add(mesh);
  mesh.geometry=geometry;mesh.material=material;mesh.name='Continuous outer countryside';mesh.position.set(0,0,0);mesh.rotation.set(0,0,0);mesh.scale.set(1,1,1);mesh.castShadow=false;mesh.receiveShadow=true;mesh.matrixAutoUpdate=false;mesh.updateMatrix();
  // Sample the actual mesh triangles so every woodland root touches the new
  // surface. A separate hash stream leaves all in-basin placement unchanged.
- const originalWoodlandSites=selectOuterWoodland({positions:geometry.attributes.position.array,index:geometry.index.array,regionalProfileAt});
+ const anchorMesh=woodlandAnchorMesh(heightAt);
+ const anchorSites=selectOuterWoodland({...anchorMesh,regionalProfileAt});
+ const originalWoodlandSites=reseatOuterWoodland(anchorSites,geometry.attributes.position.array,geometry.index.array);
  const rockClusterData=createOuterRockData({positions:geometry.attributes.position.array,index:geometry.index.array});
  const {kept:woodlandSites,excluded:excludedRoots}=retainRockClearWoodland(originalWoodlandSites,rockClusterData);
  const rockClusters={...rockClusterData.stats,ready:false,excludedRoots,originalWoodlandTrees:originalWoodlandSites.length};
