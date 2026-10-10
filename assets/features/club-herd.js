@@ -1,4 +1,4 @@
-import {safeHerdId,cleanHerdName,validateHerdSession,validateHerdMember,validateHerdFrame,validateHerdInput,herdPressureSources,canStartHerd,herdRecordResult} from '../club-herd-protocol.mjs?v=club-herd-1';
+import {safeHerdId,cleanHerdName,validateHerdSession,validateHerdMember,validateHerdFrame,validateHerdInput,herdPressureSources,canStartHerd,herdRecordResult} from '../club-herd-protocol.mjs?v=club-herd-2';
 // One volunteered host simulates the herd. This uses the game's existing
 // friends-room transport; shared times never award solo medals or currency.
 export const id='club-herd';
@@ -6,7 +6,7 @@ export function install(G){
  const N=G.net,S=G.save,core=G.roundup?.shared;if(!N||!core)return;
  const now=()=>Date.now(),me=()=>N.net.id,name=()=>cleanHerdName(N.myName())||'Rider';
  const sessions=new Map(),members=new Map(),inputs=new Map(),frames=new Map(),terminal=new Map();
- let scope='',currentId=null,self=null,seq=0,frameSeq=0,lastBeat=0,lastSend=0,lastNotice=0,notice='',lastResult=null,pendingResult=null;
+ let scope='',currentId=null,self=null,seq=0,frameSeq=0,lastBeat=0,lastSend=0,lastNotice=0,notice='',lastResult=null,pendingResult=null,finalRecovery=null,startupRendezvous=null,playStartedAt=0;
  S.ensure(s=>{s.clubHerdRecords=s.clubHerdRecords||{};});
  try{const record=S.fresh()?.clubHerdRecords,r=record?.receipts?.[record.lastRunId],loaded=r?.saved===true&&herdRecordResult(record,r);if(loaded?.deduped)lastResult={...loaded.receipt,bestTime:loaded.save.bestTime};}catch{}
  const fail=reason=>({ok:false,reason}),copy=v=>JSON.parse(JSON.stringify(v));
@@ -35,7 +35,7 @@ export function install(G){
   const s=sessions.get(currentId);if(s&&s.hostId===me()&&s.status!=='finished'){
    revise(s,{status:'cancelled'});terminal.set(s.sid,copy(s));
   }else if(s&&self){self={...self,left:true,ready:false};publishSelf();terminal.set(s.sid+'/'+me(),{...self,code:scope});}
-  currentId=null;self=null;inputs.clear();core.stop(reason);notice=reason;emit();return {ok:true};
+  currentId=null;self=null;inputs.clear();finalRecovery=null;startupRendezvous=null;playStartedAt=0;core.stop(reason);notice=reason;emit();return {ok:true};
  }
  function scopeCheck(){const next=context().code;if(next===scope)return;if(currentId)disconnectLocal('You left this club’s herd drive.');sessions.clear();members.clear();inputs.clear();frames.clear();terminal.clear();scope=next;lastBeat=0;if(scope)N.subscribe('srf1/'+scope+'/herddrive/#');}
  function expire(){
@@ -44,7 +44,7 @@ export function install(G){
  function lobby(s){
   const current=currentId===s.sid,state=current?core.state():null,map=rows(s.sid),roster=s.roster.map(r=>({...r,online:r.id===me()?connected():now()-(map.get(r.id)?.at||frames.get(s.sid)?.receivedAt*(r.id===s.hostId?1:0)||s.at)<6000}));
   return {id:s.sid,hostId:s.hostId,host:s.n,status:s.status,roster,canJoin:s.status==='waiting'&&roster.length<4&&!currentId&&connected(),hosted:s.hostId===me(),ready:current&&!!self?.ready,
-   canStart:current&&connected()&&canStartHerd(s,map,{now:now(),selfId:me()}),riding:!!state&&!state.finished,paused:!!state?.paused,waitingForHost:!!state&&s.hostId!==me()&&now()-(frames.get(s.sid)?.receivedAt||s.at)>1800,
+   canStart:current&&connected()&&canStartHerd(s,map,{now:now(),selfId:me()}),riding:!!state&&!state.finished,paused:!!state?.paused,waitingForRiders:!!state?.startupWaiting,waitingNames:state?.host&&startupRendezvous?s.roster.filter(r=>r.id!==me()&&!startupRendezvous.arrived.has(r.id)).map(r=>r.name):[],waitingForHost:!!state&&s.hostId!==me()&&now()-(frames.get(s.sid)?.receivedAt||s.at)>1800,
    elapsed:state?.elapsed||0,penned:state?.penned||0,total:5,guide:state?G.roundup.state().target:null};
  }
  function snapshot(){scopeCheck();const s=sessions.get(currentId);return {connected:connected(),code:scope,reason:connectionReason(),notice,lobbies:[...sessions.values()].filter(s=>s.expiresAt>now()&&s.status==='waiting'&&!blocked(s.n)).map(lobby),current:s?lobby(s):null,lastResult:copy(lastResult),records:S.fresh()?.clubHerdRecords||{}};}
@@ -66,7 +66,9 @@ export function install(G){
   if(!self?.ready||self.left||!s.roster.some(r=>r.id===me()&&r.ready))return fail('Mark Ready before entering the herd drive.');
   const reason=connectionReason()||busy();if(reason)return fail(reason);
   if(!core.start({sessionId:s.sid,host:s.hostId===me(),slot:s.roster.find(r=>r.id===me()).slot}))return fail('The herd drive could not start.');
-  seq=0;frameSeq=0;inputs.clear();frames.delete(s.sid);lastSend=0;notice='';G.hidePanels?.();G.riding?.releaseAll?.();G.seFrame?.settle?.();return {ok:true};
+  seq=0;frameSeq=0;inputs.clear();frames.delete(s.sid);finalRecovery=null;lastSend=0;notice='';playStartedAt=0;
+  startupRendezvous=s.hostId===me()?{sid:s.sid,startedAt:now(),arrived:new Set()}:null;
+  if(s.hostId===me()&&!core.setStartupWaiting(true)){core.stop('The herd could not wait for riders.');return fail('The herd could not wait for riders.');}G.hidePanels?.();G.riding?.releaseAll?.();G.seFrame?.settle?.();return {ok:true};
  }
  function start(){
   const s=sessions.get(currentId);if(!s||s.hostId!==me())return fail('Only the host can start the herd drive.');if(s.status!=='waiting'||!canStartHerd(s,rows(s.sid),{now:now(),selfId:me()}))return fail('Gather at least two riders and wait for everyone to mark Ready.');
@@ -82,16 +84,27 @@ export function install(G){
  }
  function finish(state){
   const s=sessions.get(currentId);if(!s||state.sessionId!==s.sid||!state.finished||state.penned!==5||lastResult?.runId===s.sid)return;
-  pendingResult={runId:s.sid,elapsed:Math.round(state.elapsed*100)/100,total:5,penned:5,participants:s.roster.map(r=>r.name),at:now()};
+  finalRecovery=null;pendingResult={runId:s.sid,elapsed:Math.round(state.elapsed*100)/100,total:5,penned:5,participants:s.roster.map(r=>r.name),at:now()};
   if(s.hostId===me()){revise(s,{status:'finished'});sendFrame();}else s.status='finished';saveResult();G.run('clubHerdFinish',copy(lastResult));
  }
  function again(){if(pendingResult)return fail('Save your shared time first.');const own=sessions.get(currentId)?.hostId===me();if(currentId)disconnectLocal('Gather your club for another herd drive.');if(own)return host();G.clubHub?.open?.('activities');return {ok:true};}
+ function recoverFinalFrame(s){
+  if(s.hostId===me()||!core.state()||core.state().finished)return;
+  if(finalRecovery?.sid!==s.sid)finalRecovery={sid:s.sid,startedAt:now(),lastRequest:null,attempts:0};
+  if(finalRecovery.attempts<4&&(finalRecovery.lastRequest===null||now()-finalRecovery.lastRequest>=2000)){
+   finalRecovery.lastRequest=now();finalRecovery.attempts++;
+   // Resubscribing asks MQTT for the retained terminal frame. It still enters
+   // through receive() and both protocol/core validators before any record.
+   N.subscribe(topic('frame',s.sid));
+  }
+ }
  function acceptSession(sid,m){
   const old=sessions.get(sid),s=validateHerdSession(sid,m,{now:now(),code:scope,known:old});if(!s||blocked(s.n)||!memberAllowed(s.hostId)||!old&&sessions.size>=12)return;
   sessions.set(sid,s);if(currentId===sid){
    if(s.status==='cancelled'){core.stop('The host ended this herd drive.');currentId=null;self=null;notice='The host ended this herd drive.';}
    else if(s.status==='riding'&&old?.status==='waiting'&&self?.ready){const result=begin(s);if(!result.ok)disconnectLocal(result.reason);}
    else if(!s.roster.some(r=>r.id===me())&&old?.roster.some(r=>r.id===me()))disconnectLocal('You are no longer in this herd drive.');
+   else if(s.status==='finished'&&core.state()&&!core.state().finished)recoverFinalFrame(s);
    else if(s.roster.some(r=>r.id===me()))notice='';
   }emit();
  }
@@ -110,13 +123,13 @@ export function install(G){
   if(p[3]==='member'&&p.length===6&&p[5]===m.id){acceptMember(s,m);return true;}
   if(currentId!==s.sid||!core.state())return true;
   if(p[3]==='input'&&p.length===6&&p[5]===m.id&&s.hostId===me()){
-   const v=validateHerdInput(m,{now:now(),session:s,lastSeq:inputs.get(m.id)?.seq||0});if(v&&!blocked(v.n))inputs.set(v.id,v);return true;
+   const v=validateHerdInput(m,{now:now(),session:s,lastSeq:inputs.get(m.id)?.seq||0});if(v&&!blocked(v.n)){inputs.set(v.id,v);if(startupRendezvous?.sid===s.sid)startupRendezvous.arrived.add(v.id);}return true;
   }
   if(p[3]==='frame'&&p.length===5&&s.hostId!==me()){
    const last=frames.get(s.sid),v=validateHerdFrame(m,{now:now(),session:s,lastSeq:last?.seq||0,known:last});if(v&&core.applySnapshot(v.state)){frames.set(s.sid,{...v,receivedAt:now()});if(v.state.finished)finish(v.state);}return true;
   }return true;
  }
- function sendFrame(){const s=sessions.get(currentId),state=core.state();if(!s||s.hostId!==me()||!state||!connected())return;N.publish(topic('frame',s.sid),{kind:'frame',sid:s.sid,seq:++frameSeq,at:now(),state});}
+ function sendFrame(){const s=sessions.get(currentId),state=core.state();if(!s||s.hostId!==me()||!state||!connected())return;N.publish(topic('frame',s.sid),{kind:'frame',sid:s.sid,seq:++frameSeq,at:now(),state},state.finished?{retain:true,qos:1}:undefined);}
  function sendInput(){
   const s=sessions.get(currentId);if(!s||!core.state())return;const p=G.horse.player;
   const input={kind:'input',id:me(),n:name(),sid:s.sid,seq:++seq,at:now(),x:p.pos.x,z:p.pos.z,active:!G.input?.blocked?.()&&!G.photoPause&&!G.cam?.isFree?.()&&!document.hidden&&!p.onFoot&&!p.flying};
@@ -125,13 +138,23 @@ export function install(G){
  function tick(){
   scopeCheck();expire();const s=sessions.get(currentId);if(!s)return;
   if(!connected()){disconnectLocal('Connection lost. This herd drive has ended; reconnect to ride again.');return;}
-  const state=core.state();if(s.status==='riding'&&state){
-   if(s.hostId!==me()&&now()-(frames.get(s.sid)?.receivedAt||s.startAt||s.at)>6000){disconnectLocal('The host stopped sending the herd. Reconnect for another drive.');return;}
+  let state=core.state();
+  if(s.status==='riding'&&state?.host&&startupRendezvous){
+   const guests=s.roster.filter(r=>r.id!==me());
+   if(guests.length&&guests.every(r=>startupRendezvous.arrived.has(r.id))){core.setStartupWaiting(false);startupRendezvous=null;playStartedAt=now();state=core.state();sendFrame();}
+   else if(now()-startupRendezvous.startedAt>=30000){disconnectLocal('A teammate did not finish loading the pasture. Gather your club and try again; this ride was not recorded.');return;}
+  }
+  if(s.status==='finished'&&s.hostId!==me()&&state&&!state.finished){
+   recoverFinalFrame(s);
+   if(finalRecovery&&now()-finalRecovery.startedAt>=8000){const reason='The final herd result could not be received. This ride was not recorded. Reconnect for another drive.';disconnectLocal(reason);G.toast(reason);return;}
+  }
+  if(s.status==='riding'&&state){
+   if(s.hostId!==me()&&(state.startupWaiting?now()-(s.startAt||s.at)>30000:now()-(frames.get(s.sid)?.receivedAt||s.startAt||s.at)>6000)){disconnectLocal(state.startupWaiting?'The herd did not finish gathering in time. Reconnect with your club and try again.':'The host stopped sending the herd. Reconnect for another drive.');return;}
    if(now()-lastSend>=150){lastSend=now();sendInput();if(s.hostId===me()){const sources=herdPressureSources(inputs,{now:now(),roster:s.roster,selfId:me()});core.setRiders(sources);sendFrame();}}
   }
   if(now()-lastBeat>=2000){lastBeat=now();publishSelf();if(s.hostId===me()){
    if(s.status==='waiting'){const fresh=s.roster.filter(r=>r.id===me()||now()-(rows(s.sid).get(r.id)?.at||0)<10000);if(fresh.length!==s.roster.length)s.roster=fresh;}
-   if(s.status==='riding'&&now()-(s.startAt||s.at)>6000&&s.roster.filter(r=>r.id===me()||now()-(inputs.get(r.id)?.at||0)<6000).length<2){disconnectLocal('Your teammates disconnected. Gather your club for another drive.');return;}
+   if(s.status==='riding'&&!startupRendezvous&&now()-(playStartedAt||s.startAt||s.at)>6000&&s.roster.filter(r=>r.id===me()||now()-(inputs.get(r.id)?.at||0)<6000).length<2){disconnectLocal('Your teammates disconnected. Gather your club for another drive.');return;}
    revise(s);if(s.status==='finished')sendFrame();
   }}
   if(now()-lastNotice>=500){lastNotice=now();emit();}

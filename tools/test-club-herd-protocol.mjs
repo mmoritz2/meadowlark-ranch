@@ -280,3 +280,48 @@ test('same-run conflicting result cannot replace or reuse an incompatible practi
   assert.equal(herdRecordResult(first.save,proof(change)),null);
  assert.equal(JSON.stringify(first.save),before);
 });
+
+
+test('legacy shared frames default startup hold to false without mutating source state',()=>{
+ const m=frame(),before=JSON.stringify(m),v=validateHerdFrame(m,options());assert.ok(v);
+ assert.equal(v.state.startupWaiting,false);assert.equal(JSON.stringify(m),before);
+ m.state.startupWaiting=false;assert.equal(validateHerdFrame(m,options()).state.startupWaiting,false);
+});
+
+test('startup hold preserves initial3second countdown and zero progress including while paused',()=>{
+ const m=frame();Object.assign(m.state,{startupWaiting:true,countdown:3,elapsed:0});
+ const v=validateHerdFrame(m,options());assert.ok(v);assert.equal(v.state.startupWaiting,true);
+ assert.equal(v.state.countdown,3);assert.equal(v.state.elapsed,0);assert.equal(v.state.penned,0);
+ m.state.paused=true;assert.ok(validateHerdFrame(m,options()));
+ const again=copy(m);again.seq=2;
+ assert.ok(validateHerdFrame(again,options({known:v,lastSeq:1})));
+});
+
+test('startupWaiting accepts only an optional boolean',()=>{
+ for(const flag of [null,0,1,'true',{},[]]){
+  const m=frame();Object.assign(m.state,{startupWaiting:flag,countdown:3,elapsed:0});
+  assert.equal(validateHerdFrame(m,options()),null);
+ }
+});
+
+test('startup hold cannot claim advancing time, partial countdown, penned horses or a finished drive',()=>{
+ for(const change of [{elapsed:.001},{countdown:2.9},{countdown:0},{countdown:4},{finished:true},{active:false}]){
+  const m=frame();Object.assign(m.state,{startupWaiting:true,countdown:3,elapsed:0,...change});
+  assert.equal(validateHerdFrame(m,options()),null);
+ }
+ const penned=pennedFrame(1);Object.assign(penned.state,{startupWaiting:true,countdown:3,elapsed:0});
+ assert.equal(validateHerdFrame(penned,options()),null);
+});
+
+test('released startup countdown cannot be re-entered or rewound by a later frame',()=>{
+ const held=frame();Object.assign(held.state,{startupWaiting:true,countdown:3,elapsed:0});
+ const known=validateHerdFrame(held,options());assert.ok(known);
+ const release=copy(held);release.seq=2;release.state.startupWaiting=false;release.state.countdown=2.85;
+ const released=validateHerdFrame(release,options({known,lastSeq:1}));assert.ok(released);
+ const rehold=copy(held);rehold.seq=3;
+ assert.equal(validateHerdFrame(rehold,options({known:released,lastSeq:2})),null);
+ const legacy=copy(release);delete legacy.state.startupWaiting;
+ const legacyKnown=validateHerdFrame(legacy,options({known,lastSeq:1}));assert.ok(legacyKnown);
+ assert.equal(legacyKnown.state.startupWaiting,false);
+ assert.equal(validateHerdFrame(rehold,options({known:legacyKnown,lastSeq:2})),null);
+});

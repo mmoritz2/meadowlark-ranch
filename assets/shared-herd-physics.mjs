@@ -30,6 +30,8 @@ export function validateSharedHerdSnapshot(value,{sessionId,bounds,names,pen,pre
   !Number.isFinite(value.elapsed)||value.elapsed<0||value.elapsed>86400||!Number.isInteger(value.penned)||value.penned<0||value.penned>5||
   value.finished!==(value.penned===5)||!Array.isArray(value.horses)||value.horses.length!==5||value.countdown>0&&value.elapsed>0)return null;
  if(previous&&(value.elapsed<previous.elapsed||value.penned<previous.penned||value.countdown>previous.countdown||previous.finished&&!value.finished))return null;
+ const startupWaiting=value.startupWaiting??false;
+ if(typeof startupWaiting!=='boolean'||startupWaiting&&(value.finished||value.elapsed!==0||value.penned!==0||value.countdown<=0)||previous&&startupWaiting&&((previous.startupWaiting??false)===false||value.countdown!==previous.countdown))return null;
  const horses=[];let penned=0;
  for(let i=0;i<5;i++){
   const h=value.horses[i],old=previous?.horses?.[i];
@@ -39,5 +41,5 @@ export function validateSharedHerdSnapshot(value,{sessionId,bounds,names,pen,pre
   if(h.penned)penned++;horses.push({name:h.name,x:h.x,z:h.z,heading:h.heading,phase:h.phase,penned:h.penned});
  }
  if(penned!==value.penned)return null;
- return {sessionId,host:true,active:true,total:5,countdown:value.countdown,elapsed:value.elapsed,penned,finished:value.finished,paused:value.paused,horses};
+ return {sessionId,host:true,active:true,total:5,countdown:value.countdown,elapsed:value.elapsed,penned,finished:value.finished,paused:value.paused,startupWaiting,horses};
 }

@@ -16,12 +16,12 @@ function fixture(){
  const G={net:{net:{id:'local'}},input:{blocked:()=>blocked},riding:{releaseAll(){trace.release++;},selectGait(){}},world:{colliders:[],walls:[],pushOut(){trace.pushes++;}},worldPkg:{findClear(x,z,pad,radius,inside){return inside(x,z)?[x,z]:null;}},run:(name,data)=>trace.events.push({name,data}),onFoot:{on:false,state:()=>({})}};
  function makeHorse(){const group={position:vector(),rotation:{},visible:true,add(){},traverse(){}};return {group,legs:[],shadowM:{material:{dispose(){trace.disposed++;}}}};}
  const bindings={...rewards,...approach,...shared,G,player,RIG,DRILL:{},course:null,document,freeCam:false,PAST:{...bounds},THREE:{Vector3:vector},WILD_BREEDS:[{breed:'bay',body:'#654321',mane:'#321000'}],SPH:{},nameSprites:[],scene:{add(){},remove(){trace.removed++;}},makeHorse,nameSprite:()=>({position:vector(),removeFromParent(){}}),groundH:()=>0,$:()=>({style:{}}),toast(){},hidePanels(){blocked=false;},sNeigh(){},sChime(){},undressRig(){},dressWithRig(){},tickRig(){},animateHorse(){},GAITS:{walk:{},trot:{}},freshSave:()=>({roundupBest:{}}),syncSave(){trace.writes++;throw Error('shared session must never save');},refreshWallet(){throw Error('shared session must never pay');},confirmTrainingProgress(){throw Error('shared session must never credit');}};
- const api=Function(...Object.keys(bindings),core+`;buildPen=()=>{ROUND.grp={visible:true};ROUND.ring=null;};return {ROUND,startSharedRoundup,sharedRoundupState,setSharedRoundupRiders,applySharedRoundupSnapshot,stopSharedRoundup,tickRoundup,startRoundup,endRoundup,retryRoundupSave,roundupState,setFreeCam:v=>{freeCam=v;}};`)(...Object.values(bindings));
+ const api=Function(...Object.keys(bindings),core+`;buildPen=()=>{ROUND.grp={visible:true};ROUND.ring=null;};return {ROUND,startSharedRoundup,sharedRoundupState,setSharedRoundupStartupWaiting,setSharedRoundupRiders,applySharedRoundupSnapshot,stopSharedRoundup,tickRoundup,startRoundup,endRoundup,retryRoundupSave,roundupState,setFreeCam:v=>{freeCam=v;}};`)(...Object.values(bindings));
  return {api,G,player,RIG,trace,document,bindings,set blocked(v){blocked=v;},start:(host=true,slot=0)=>api.startSharedRoundup({sessionId:'team-one',host,slot}),tick:(dt=.02,t=1)=>api.tickRoundup(dt,t)};
 }
 function place(h,x,z,heading=Math.PI/2){h.pos.set(x,0,z);h.heading=heading;h.anchor={x,z};}
 function snapshot(f){return structuredClone(f.api.sharedRoundupState());}
-function go(f){f.api.ROUND.cd=0;}
+function go(f){if(f.api.ROUND.shared?.host)f.api.setSharedRoundupStartupWaiting(false);f.api.ROUND.cd=0;}
 const soloEvent=e=>['roundupStart','roundupPen','roundupFinish','roundupCancel','roundupSavePending'].includes(e.name);
 
 test('shared startup reuses five actors in four distinct pasture slots without a solo start or write',()=>{
@@ -101,7 +101,7 @@ test('normal cancellation of a shared session releases only shared actors and st
 });
 
 test('source exposes the narrow shared interface alongside unchanged solo entry points',()=>{
- assert(source.includes('shared:{start:startSharedRoundup,state:sharedRoundupState,setRiders:setSharedRoundupRiders,applySnapshot:applySharedRoundupSnapshot,stop:stopSharedRoundup}'));
+ assert(source.includes('shared:{start:startSharedRoundup,state:sharedRoundupState,setStartupWaiting:setSharedRoundupStartupWaiting,setRiders:setSharedRoundupRiders,applySnapshot:applySharedRoundupSnapshot,stop:stopSharedRoundup}'));
 });
 
 
@@ -114,4 +114,11 @@ test('guest final state retains authoritative pen coordinates and rejects horses
  const h=fixture(),g=fixture();h.start();g.start(false);go(h);for(const horse of h.api.ROUND.horses)place(horse,-44,-8);h.tick(.02);
  const done=snapshot(h);assert.equal(g.api.applySharedRoundupSnapshot(done),true);assert.deepEqual(snapshot(g).horses,done.horses);
  const rollback=structuredClone(done);rollback.elapsed+=1;rollback.horses[0].penned=false;rollback.penned=4;rollback.finished=false;assert.equal(g.api.applySharedRoundupSnapshot(rollback),false);
+});
+
+
+test('startup rendezvous holds the real countdown, all horse physics and elapsed time until one-way host release',()=>{
+ const f=fixture();f.start();const before=snapshot(f);for(let i=0;i<30;i++)f.tick(.1,i/10);assert.deepEqual(snapshot(f),before);assert.equal(before.startupWaiting,true);assert.equal(before.paused,true);assert.equal(f.trace.pushes,0);
+ assert.equal(f.api.setSharedRoundupStartupWaiting(false),true);f.tick(.1);assert(f.api.ROUND.cd<3);assert.equal(f.api.ROUND.elapsed,0);assert.equal(f.api.setSharedRoundupStartupWaiting(true),false);assert.equal(f.api.sharedRoundupState().startupWaiting,false);
+ const guest=fixture();guest.start(false);assert.equal(guest.api.setSharedRoundupStartupWaiting(false),false);assert.equal(guest.api.sharedRoundupState().startupWaiting,true);
 });

@@ -66,6 +66,9 @@ export function validateHerdMember(m,{now,session,known}={}) {
 export function validateHerdFrame(m,{now,session,lastSeq=0,known}={}) {
  if (!context(session,now,['riding','finished']) || !envelope(m,'frame',session,now) || m.id !== session.hostId || !integer(m.seq) || !integer(lastSeq) || m.seq <= lastSeq || !object(m.state)) return null;
  const s = m.state;
+ if (s.startupWaiting !== undefined && typeof s.startupWaiting !== 'boolean') return null;
+ const startupWaiting = s.startupWaiting === true;
+ if (startupWaiting && (!s.active || s.finished || s.countdown !== 3 || s.elapsed !== 0 || s.penned !== 0)) return null;
  if (s.host !== true || s.sessionId !== session.sid || typeof s.active !== 'boolean' || typeof s.finished !== 'boolean' || typeof s.paused !== 'boolean' || !finite(s.countdown) || s.countdown < 0 || s.countdown > 10 || !finite(s.elapsed) || s.elapsed < 0 || s.elapsed > HERD_LIFETIME/1000 || s.total !== 5 || !integer(s.penned) || s.penned > 5 || !Array.isArray(s.horses) || s.horses.length !== 5 || !sameFields(s.pen,HERD_PEN,['x','z','r'])) return null;
  if (s.bounds != null && !sameFields(s.bounds,HERD_BOUNDS,['x1','x2','z1','z2'])) return null;
  if (session.status === 'finished' && !s.finished || s.penned === 5 && !s.finished || !s.active && !s.finished) return null;
@@ -78,10 +81,13 @@ export function validateHerdFrame(m,{now,session,lastSeq=0,known}={}) {
  if (horses.filter(h=>h.penned).length !== s.penned) return null;
  const prior = known?.state || known;
  if (prior) {
+  // Startup can release once; a later frame cannot restart the initial hold.
+  // Missing legacy flags mean released, just as the sanitized default does.
+  if (startupWaiting && (prior.startupWaiting !== true || s.countdown !== prior.countdown)) return null;
   if (prior.sessionId !== s.sessionId || s.elapsed < prior.elapsed || s.penned < prior.penned || prior.finished && !s.finished) return null;
   if (prior.horses?.some(old=>old.penned&&!horses.some(h=>h.name===old.name&&h.penned))) return null;
  }
- const state = {host:true,sessionId:s.sessionId,active:s.active,countdown:s.countdown,elapsed:s.elapsed,penned:s.penned,total:5,finished:s.finished,paused:s.paused,horses,pen:{...HERD_PEN},...(s.bounds == null ? {} : {bounds:{...HERD_BOUNDS}})};
+ const state = {host:true,sessionId:s.sessionId,active:s.active,startupWaiting,countdown:s.countdown,elapsed:s.elapsed,penned:s.penned,total:5,finished:s.finished,paused:s.paused,horses,pen:{...HERD_PEN},...(s.bounds == null ? {} : {bounds:{...HERD_BOUNDS}})};
  return {kind:'frame',id:m.id,n:cleanHerdName(m.n)||session.n,sid:m.sid,seq:m.seq,at:m.at,state};
 }
 

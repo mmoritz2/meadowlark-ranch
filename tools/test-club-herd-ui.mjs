@@ -57,3 +57,10 @@ test('Free ride releases a finished core but preserves the unsaved result for re
 test('Back to club releases a finished core and opens the existing Activities tab',()=>{
  const f=fixture();f.s.current={...f.current(),status:'finished'};f.act('activities');assert.equal(f.calls.at(-1).k,'stop');assert.deepEqual(f.trace.clubOpens,['activities']);
 });
+
+test('staged riders see gathering feedback until the shared countdown can begin',()=>{
+ const f=fixture();f.s.current={...f.current(),status:'riding',riding:true,paused:true,waitingForRiders:true,waitingNames:['Jess & <horse>']};f.paint();
+ assert.equal(f.hud.hidden,false);assert.match(f.hud.textContent,/Gathering Jess & <horse>/);assert.match(f.hud.textContent,/clock has not started/);assert.match(f.G.clubHerdUI.section(),/starts when everyone arrives/);
+ const key=f.G.clubHerdUI.sectionKey();f.s.current.waitingForRiders=false;f.s.current.waitingNames=[];f.s.current.paused=false;f.paint();
+ assert.notEqual(f.G.clubHerdUI.sectionKey(),key);assert.doesNotMatch(f.hud.textContent,/Gathering|clock has not started/);
+});
