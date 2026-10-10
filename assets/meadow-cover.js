@@ -1,7 +1,7 @@
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=north-valley-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
 // A middle-distance stand keeps the near layer's spread with more, simpler

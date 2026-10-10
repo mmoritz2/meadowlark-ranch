@@ -1,3 +1,4 @@
+import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
 import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
 import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
 import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
@@ -22,10 +23,10 @@ import {installVillageEvergreens} from './village-planting.js?v=village-gardens-
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
-import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
+import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-ridges-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=north-valley-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-ridges-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -295,14 +296,20 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       trees.push(t);
     };
     // Respect cleared placements in both the original seed batches and new landmark zones.
+    state.hollowpeakMownSeeds=[];
     const seedMatrix=new THREE.Matrix4();
     for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','blossom','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
       if(!leaves)continue;
       const kind=stem.userData.treeSpecies,height=kind==='pine'?7.4:kind==='snowpine'?7.2:6.2;
       stem.userData.treePoints.forEach((p,i)=>{
-        stem.getMatrixAt(i,seedMatrix);if(seedMatrix.determinant()===0)return;
-        leaves.getMatrixAt(i,seedMatrix);if(seedMatrix.determinant()===0)return;
+        stem.getMatrixAt(i,seedMatrix);const woodHidden=seedMatrix.determinant()===0;
+        leaves.getMatrixAt(i,seedMatrix);const leavesHidden=seedMatrix.determinant()===0;
+        if(woodHidden||leavesHidden){
+          const retired=retireHiddenHollowpeakSeed(W,p,kind,true,ALPINE_BOUNDS);
+          if(retired)state.hollowpeakMownSeeds.push(retired);
+          return;
+        }
         add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind});
       });
     }

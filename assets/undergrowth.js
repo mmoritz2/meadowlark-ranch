@@ -2,7 +2,7 @@ import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {loadUndergrowthModels} from './undergrowth-models.js?v=individual-undergrowth-1';
 import {coverBiome,coverHash,coverShape,selectCover,UNDERGROWTH_TIERS} from './undergrowth-layout.mjs?v=dry-foothills-1';
 import {treeImpostor,enableOpaqueFoliageCoverage,patchFoliageCoverage,patchSeasonalFoliage} from './tree-impostors.js?v=canopy-lighting-1';
-import {alpineSnowAt} from './falls-landscape.js?v=alpine-range-1';
+import {alpineSnowAt} from './falls-landscape.js?v=hollowpeak-ridges-1';
 
 export function installUndergrowth(G,{flowerShrubs=[],staticShrubs=[]}={}){
  staticShrubs=staticShrubs.filter(root=>!['cold','dry'].includes(coverBiome(root.position.x,root.position.z,alpineSnowAt(root.position.x,root.position.z))));

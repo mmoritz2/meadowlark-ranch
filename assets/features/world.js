@@ -9,7 +9,7 @@ import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
 import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';
-import {fallsAllowsHorse} from '../falls-landscape.js?v=alpine-range-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-ridges-1';
 import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
 export const id='world';
 export function install(G){

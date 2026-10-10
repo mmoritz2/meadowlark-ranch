@@ -8,7 +8,10 @@ const step=1000/512,n=513,heights=Float32Array.from({length:n*n},(_,i)=>fallsTer
 function ground(x,z){const gx=(x+500)/step,gz=(z+500)/step,ix=Math.floor(gx),iz=Math.floor(gz),fx=gx-ix,fz=gz-iz,i=iz*n+ix,a=heights[i],b=heights[i+n],c=heights[i+n+1],d=heights[i+1];return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);}
 const colliders=[],art=createFallsLandscape({THREE:T,scene:new T.Scene(),heightAt:ground,terrainStep:step,waterMaterial:createRiverMaterial({THREE:T,map:null}),colliders,loadTextures:false});
 test('the mountain connects the upper catchment to the falls while preserving riding approaches',()=>{
- assert(fallsRelief(-168,-256)>18);assert(fallsRelief(-129,-266)>20);
+ // The former uniform plateau is now lower between two unequal rock spurs.
+ assert(fallsRelief(-168,-256)>12);assert(fallsRelief(-129,-266)>12);
+ assert(fallsRelief(-179,-266)>fallsRelief(-168,-256)+10);
+ assert(fallsRelief(-123,-269)>fallsRelief(-129,-266)+8);
  for(const [x,z] of [[0,0],[-169,-186],[-138,-204],[-92,-173],[-150,-216],[-160,-215],[-187,-236],[-200,-245],[-250,-275]])assert.equal(fallsTerrainHeight(x,z,3),3);
  assert(art.triangles>1000&&art.triangles<18000);assert(art.shadow.castShadow&&art.rock.receiveShadow);
  for(const o of art.group.children)for(const a of Object.values(o.geometry.attributes))assert([...a.array].every(Number.isFinite));

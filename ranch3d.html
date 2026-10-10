@@ -668,24 +668,25 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
-import {installUndergrowth} from './assets/undergrowth.js?v=horse-arrival-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=north-valley-1';
+import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-ridges-1';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=hollowpeak-ridges-1';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-coverage-2';
-import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=north-valley-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=hollowpeak-ridges-1';
+import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-ridges-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=countryside-banks-1';
 import {createGeology} from './assets/geology.js?v=countryside-banks-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
 import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1';
-import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=alpine-range-1';
+import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=hollowpeak-ridges-1';
+import {legacyFallsTerrainHeight,createHollowpeakPlacementPlan} from './assets/hollowpeak-placement-reference.mjs?v=hollowpeak-ridges-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=north-valley-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=hollowpeak-ridges-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=timber-cladding-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
@@ -703,12 +704,12 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=north-valley-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=hollowpeak-mow-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-fit74-20261010';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=rider-fit74-20261010';
+import {FEATURES} from './assets/features/index.js?v=hollowpeak-ridges-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
@@ -1488,7 +1489,7 @@ const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
 const STREAM_JOIN=160;                          // it meets the river around z≈160
 const riverLevel=x=>0.50-x*0.009;
 const streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));
-function rawH(x,z){
+function rawH(x,z,fallsHeight=fallsTerrainHeight){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
  const far=1-THREE.MathUtils.smoothstep(d,380,460);
@@ -1513,7 +1514,7 @@ function rawH(x,z){
   h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);
  }
 
- return fallsTerrainHeight(x,z,oasisTerrainHeight(x,z,h));
+ return fallsHeight(x,z,oasisTerrainHeight(x,z,h));
 }
 /* ===== Roads =====
    A valley with towns in it and no roads between them reads as scenery rather than a place
@@ -1577,6 +1578,9 @@ function terrainH(x,z){
  const a=TERRAIN_HEIGHTS[i],b=TERRAIN_HEIGHTS[i+n],c=TERRAIN_HEIGHTS[i+n+1],d=TERRAIN_HEIGHTS[i+1];
  return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);
 }
+// Preserve authored planting decisions while every rendered/physical root uses terrainH.
+const hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,
+ rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight),heightAt:(x,z)=>groundH(x,z)});
 const groundSurfaces=[];
 const colliders=[];
 const walls=[];
@@ -4406,7 +4410,7 @@ for(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--
  const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 for(const name of ['oak','birch','blossom','pine','snowpine'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
- const p=FOLIAGE[name][i];if(!fallsExcludesDryPlants(p.x,p.z,terrainH)&&!cottonwoodReserved(p.x,p.z,3))continue;
+ const p=FOLIAGE[name][i];if(!hollowpeakPlacement.excludesDryPlants(p.x,p.z)&&!cottonwoodReserved(p.x,p.z,3))continue;
  const ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:3.8,cactus2:0.8,
@@ -15004,7 +15008,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
