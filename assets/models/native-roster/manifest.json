@@ -4727,7 +4727,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+      "sha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4904,7 +4904,29 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 3,
+        "version": 4,
+        "legContour": {
+          "version": 1,
+          "meshIndex": 0,
+          "lowerJointRadiusM": 0.085,
+          "upperJointRadiusM": 0.09,
+          "lateralGainAtJoint": 0.35,
+          "depthGainAtJoint": 0.0,
+          "lateralTaperStartEndM": [
+            0.14,
+            0.2
+          ],
+          "hoofDepthStartEndM": [
+            0.15,
+            0.28
+          ],
+          "upperFadeStartEndM": [
+            0.82,
+            1.1
+          ],
+          "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
+          "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
         "limbCenters": [
           {
             "id": "foreRight",
@@ -4953,6 +4975,24 @@
                 -0.13486118120265808,
                 0.414376495778605
               ]
+            ],
+            "joints": [
+              {
+                "name": "fingers_01_r_0273",
+                "pointM": [
+                  -0.15439335944685112,
+                  0.20319671432516834,
+                  0.3014318124149533
+                ]
+              },
+              {
+                "name": "hand_r_0272",
+                "pointM": [
+                  -0.16136835853107126,
+                  0.5597299118043054,
+                  0.3754078134880665
+                ]
+              }
             ],
             "hoofVertexCount": 352,
             "hoofSourceCentroid": [
@@ -5008,6 +5048,24 @@
                 0.4180459731807108
               ]
             ],
+            "joints": [
+              {
+                "name": "fingers_01_l_0187",
+                "pointM": [
+                  0.11379374462739439,
+                  0.197314764180875,
+                  0.4502556709761125
+                ]
+              },
+              {
+                "name": "hand_l_0206",
+                "pointM": [
+                  0.13044966536003996,
+                  0.559417302517547,
+                  0.4854906735894444
+                ]
+              }
+            ],
             "hoofVertexCount": 353,
             "hoofSourceCentroid": [
               0.11170414232125526,
@@ -5062,6 +5120,24 @@
                 -0.6551003371540047
               ]
             ],
+            "joints": [
+              {
+                "name": "toes_01_r_0477",
+                "pointM": [
+                  -0.24478011555577092,
+                  0.19477616786355684,
+                  -0.7213193558141554
+                ]
+              },
+              {
+                "name": "foot_r_0476",
+                "pointM": [
+                  -0.2123169418791324,
+                  0.6159620857562415,
+                  -0.8067946742891855
+                ]
+              }
+            ],
             "hoofVertexCount": 319,
             "hoofSourceCentroid": [
               -0.25737607530289436,
@@ -5115,6 +5191,24 @@
                 0.1677366684489105,
                 -0.6598990186681992
               ]
+            ],
+            "joints": [
+              {
+                "name": "toes_01_l_0408",
+                "pointM": [
+                  0.21826616436416896,
+                  0.20275865957023587,
+                  -0.9133200608541439
+                ]
+              },
+              {
+                "name": "foot_l_0407",
+                "pointM": [
+                  0.18569753913277537,
+                  0.6324522714888349,
+                  -0.9055907695166663
+                ]
+              }
             ],
             "hoofVertexCount": 295,
             "hoofSourceCentroid": [
@@ -5343,7 +5437,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+      "sha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
       "byteLength": 728256,
       "meshes": [
         {
@@ -5520,7 +5614,29 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 3,
+        "version": 4,
+        "legContour": {
+          "version": 1,
+          "meshIndex": 0,
+          "lowerJointRadiusM": 0.085,
+          "upperJointRadiusM": 0.09,
+          "lateralGainAtJoint": 0.35,
+          "depthGainAtJoint": 0.0,
+          "lateralTaperStartEndM": [
+            0.14,
+            0.2
+          ],
+          "hoofDepthStartEndM": [
+            0.15,
+            0.28
+          ],
+          "upperFadeStartEndM": [
+            0.82,
+            1.1
+          ],
+          "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
+          "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
         "limbCenters": [
           {
             "id": "foreRight",
@@ -5569,6 +5685,24 @@
                 -0.13486118120265808,
                 0.414376495778605
               ]
+            ],
+            "joints": [
+              {
+                "name": "fingers_01_r_0273",
+                "pointM": [
+                  -0.15439335944685112,
+                  0.20319671432516834,
+                  0.3014318124149533
+                ]
+              },
+              {
+                "name": "hand_r_0272",
+                "pointM": [
+                  -0.16136835853107126,
+                  0.5597299118043054,
+                  0.3754078134880665
+                ]
+              }
             ],
             "hoofVertexCount": 352,
             "hoofSourceCentroid": [
@@ -5624,6 +5758,24 @@
                 0.4180459731807108
               ]
             ],
+            "joints": [
+              {
+                "name": "fingers_01_l_0187",
+                "pointM": [
+                  0.11379374462739439,
+                  0.197314764180875,
+                  0.4502556709761125
+                ]
+              },
+              {
+                "name": "hand_l_0206",
+                "pointM": [
+                  0.13044966536003996,
+                  0.559417302517547,
+                  0.4854906735894444
+                ]
+              }
+            ],
             "hoofVertexCount": 353,
             "hoofSourceCentroid": [
               0.11170414232125526,
@@ -5678,6 +5830,24 @@
                 -0.6551003371540047
               ]
             ],
+            "joints": [
+              {
+                "name": "toes_01_r_0477",
+                "pointM": [
+                  -0.24478011555577092,
+                  0.19477616786355684,
+                  -0.7213193558141554
+                ]
+              },
+              {
+                "name": "foot_r_0476",
+                "pointM": [
+                  -0.2123169418791324,
+                  0.6159620857562415,
+                  -0.8067946742891855
+                ]
+              }
+            ],
             "hoofVertexCount": 319,
             "hoofSourceCentroid": [
               -0.25737607530289436,
@@ -5731,6 +5901,24 @@
                 0.1677366684489105,
                 -0.6598990186681992
               ]
+            ],
+            "joints": [
+              {
+                "name": "toes_01_l_0408",
+                "pointM": [
+                  0.21826616436416896,
+                  0.20275865957023587,
+                  -0.9133200608541439
+                ]
+              },
+              {
+                "name": "foot_l_0407",
+                "pointM": [
+                  0.18569753913277537,
+                  0.6324522714888349,
+                  -0.9055907695166663
+                ]
+              }
             ],
             "hoofVertexCount": 295,
             "hoofSourceCentroid": [
@@ -5959,7 +6147,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+      "sha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
       "byteLength": 728256,
       "meshes": [
         {
@@ -6136,7 +6324,29 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 3,
+        "version": 4,
+        "legContour": {
+          "version": 1,
+          "meshIndex": 0,
+          "lowerJointRadiusM": 0.085,
+          "upperJointRadiusM": 0.09,
+          "lateralGainAtJoint": 0.35,
+          "depthGainAtJoint": 0.0,
+          "lateralTaperStartEndM": [
+            0.14,
+            0.2
+          ],
+          "hoofDepthStartEndM": [
+            0.15,
+            0.28
+          ],
+          "upperFadeStartEndM": [
+            0.82,
+            1.1
+          ],
+          "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
+          "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
         "limbCenters": [
           {
             "id": "foreRight",
@@ -6185,6 +6395,24 @@
                 -0.13486118120265808,
                 0.414376495778605
               ]
+            ],
+            "joints": [
+              {
+                "name": "fingers_01_r_0273",
+                "pointM": [
+                  -0.15439335944685112,
+                  0.20319671432516834,
+                  0.3014318124149533
+                ]
+              },
+              {
+                "name": "hand_r_0272",
+                "pointM": [
+                  -0.16136835853107126,
+                  0.5597299118043054,
+                  0.3754078134880665
+                ]
+              }
             ],
             "hoofVertexCount": 352,
             "hoofSourceCentroid": [
@@ -6240,6 +6468,24 @@
                 0.4180459731807108
               ]
             ],
+            "joints": [
+              {
+                "name": "fingers_01_l_0187",
+                "pointM": [
+                  0.11379374462739439,
+                  0.197314764180875,
+                  0.4502556709761125
+                ]
+              },
+              {
+                "name": "hand_l_0206",
+                "pointM": [
+                  0.13044966536003996,
+                  0.559417302517547,
+                  0.4854906735894444
+                ]
+              }
+            ],
             "hoofVertexCount": 353,
             "hoofSourceCentroid": [
               0.11170414232125526,
@@ -6294,6 +6540,24 @@
                 -0.6551003371540047
               ]
             ],
+            "joints": [
+              {
+                "name": "toes_01_r_0477",
+                "pointM": [
+                  -0.24478011555577092,
+                  0.19477616786355684,
+                  -0.7213193558141554
+                ]
+              },
+              {
+                "name": "foot_r_0476",
+                "pointM": [
+                  -0.2123169418791324,
+                  0.6159620857562415,
+                  -0.8067946742891855
+                ]
+              }
+            ],
             "hoofVertexCount": 319,
             "hoofSourceCentroid": [
               -0.25737607530289436,
@@ -6347,6 +6611,24 @@
                 0.1677366684489105,
                 -0.6598990186681992
               ]
+            ],
+            "joints": [
+              {
+                "name": "toes_01_l_0408",
+                "pointM": [
+                  0.21826616436416896,
+                  0.20275865957023587,
+                  -0.9133200608541439
+                ]
+              },
+              {
+                "name": "foot_l_0407",
+                "pointM": [
+                  0.18569753913277537,
+                  0.6324522714888349,
+                  -0.9055907695166663
+                ]
+              }
             ],
             "hoofVertexCount": 295,
             "hoofSourceCentroid": [

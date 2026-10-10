@@ -7,6 +7,7 @@ other breeds retain exact source positions and normals below 0.65 m.
 """
 from pathlib import Path
 import argparse, ast, copy, hashlib, io, json, re, sys
+from functools import lru_cache
 import numpy as np
 from PIL import Image
 from scipy.sparse import coo_matrix
@@ -127,6 +128,30 @@ DRAFT_SHAPES = {
         neck_arch_rise_per_withers=.075, head_width=1.23, head_length=1.12,
         hoof_width=1.46, shaft_width=1.34, joint_width=1.41, upper_limb_width=1.56),
 }
+DRAFT_LEG_CONTOUR = {
+    'version':1,'meshIndex':0,
+    'lowerJointRadiusM':.085,'upperJointRadiusM':.090,
+    'lateralGainAtJoint':.35,'depthGainAtJoint':0.,
+    'lateralTaperStartEndM':[.14,.20], 'hoofDepthStartEndM':[.15,.28],
+    'upperFadeStartEndM':[.82,1.10],
+    'method':'Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.',
+    'preserved':'Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated.',
+}
+DRAFT_LEG_JOINTS = {
+    'foreLeft':('fingers_01_l_0187','hand_l_0206'),
+    'foreRight':('fingers_01_r_0273','hand_r_0272'),
+    'hindLeft':('toes_01_l_0408','foot_l_0407'),
+    'hindRight':('toes_01_r_0477','foot_r_0476'),
+}
+
+@lru_cache(maxsize=1)
+def draft_joint_centers():
+    # Read the actual asymmetric native rest pose, not a shared guessed height.
+    doc,_=glb.read_glb(SOURCE);worlds,_=glb.node_worlds(doc)
+    by_name={node['name']:i for i,node in enumerate(doc['nodes']) if 'name' in node}
+    return {leg:[{'name':name,'pointM':(worlds[by_name[name]][:3,3]+TRANSLATION).tolist()}
+                 for name in names] for leg,names in DRAFT_LEG_JOINTS.items()}
+
 DRAFT_STIRRUP_LIFT_M = {'percheron':.04,'shire':.12,'clyde':.05}
 DRAFT_REAR_CONTOUR = {
     'version':2,'meshIndex':0,
@@ -233,6 +258,7 @@ def draft_limb_centers(body):
                 centers.append((points.min(0)+points.max(0))*.5)
             result.append(dict(id=('fore' if front else 'hind')+('Left' if side>0 else 'Right'),
                 front=front,side=side,heights=heights,centers=np.asarray(centers).tolist(),
+                joints=copy.deepcopy(draft_joint_centers()[('fore' if front else 'hind')+('Left' if side>0 else 'Right')]),
                 hoofVertexCount=int(hoof.sum()),hoofSourceCentroid=body[hoof][:,[0,2]].mean(0).tolist()))
     return result
 
@@ -252,6 +278,27 @@ def draft_limbs(p,s,limbs):
         c=np.asarray(limb['centers'])
         center=np.column_stack([np.interp(y[ids],limb['heights'],c[:,axis]) for axis in range(2)])
         q[np.ix_(ids,[0,2])]+=(p[np.ix_(ids,[0,2])]-center)*((factor[ids]-1)*fade[ids]*region[ids])[:,None]
+    return q
+
+def draft_leg_contour(p,target,limbs):
+    """Keep added draft volume away from the source skin's bending creases.
+
+    Only the added shape is attenuated, never the original articulated limb.
+    Hoof X width is unchanged below0.14m; its original forward/back envelope
+    removes the extra toe/heel sweep that otherwise intersects the Trot floor.
+    """
+    q=target.copy();y=p[:,1];art=DRAFT_LEG_CONTOUR
+    for limb in limbs:
+        select=(p[:,0]*limb['side']>0)&((p[:,2]>.10) if limb['front'] else (p[:,2]<-.40))
+        ids=np.where(select&(y<art['upperFadeStartEndM'][1]))[0]
+        lower,upper=(joint['pointM'][1] for joint in limb['joints'])
+        bend=np.maximum(np.exp(-((y[ids]-lower)/art['lowerJointRadiusM'])**2),
+                        np.exp(-((y[ids]-upper)/art['upperJointRadiusM'])**2))
+        bend*=1-smooth(*art['upperFadeStartEndM'],y[ids])
+        lateral=1-(1-art['lateralGainAtJoint'])*bend*smooth(*art['lateralTaperStartEndM'],y[ids])
+        depth=(1-(1-art['depthGainAtJoint'])*bend)*smooth(*art['hoofDepthStartEndM'],y[ids])
+        q[ids,0]=p[ids,0]+(q[ids,0]-p[ids,0])*lateral
+        q[ids,2]=p[ids,2]+(q[ids,2]-p[ids,2])*depth
     return q
 
 def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True, collar_mask=None, front_contour=True, refine_head=True):
@@ -320,6 +367,8 @@ def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True,
         depth_keep=art['minimumDepthOffsetFactor']+(1-art['minimumDepthOffsetFactor'])*smooth(*art['depthOffsetSourceYBlendM'],p[:,1])
         target[:,0]-=p[:,0]*width*upper*front*(1-width_keep)
         target[:,1]-=(y-.86)*depth*torso*BASE_WITHERS*upper*front*(1-depth_keep)
+    if key in DRAFT_SHAPES and limbs is not None:
+        target=draft_leg_contour(p,target,limbs)
     return target
 
 def groups(indices, count):
@@ -618,7 +667,7 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':3,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':4,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,

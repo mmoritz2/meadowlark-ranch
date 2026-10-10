@@ -111,7 +111,7 @@ with the reviewed version 2 shape.
 
 The source standing pose is asymmetric, so each of its four limbs has a separate
 measured X/Z centerline rather than a mirrored arbitrary center. Hooves gain
-42% (Percheron), 50% (Shire), or 46% (Clydesdale) in horizontal width and depth.
+42% (Percheron), 50% (Shire), or 46% (Clydesdale) in lateral width.
 The cannon remains slimmer than the knee/hock and muscular upper limb; the
 radial offset fades into the body from 0.82–1.10 source metres. No lower-limb Y
 coordinate or bone center is moved by the ideal cage, and no limb is lengthened.
@@ -125,6 +125,34 @@ the pinned contact keeps the decoded standing floor exactly zero. The manifest
 records centerlines, factors, fade range and protected contact threshold. The
 build report records width gains against the earlier native draft directions,
 each hoof's center error, lower-leg Y error, Jacobian bounds and floor.
+
+Leg contour version 4 retains that broad lateral hoof shape while returning
+the low toe/heel depth to its source envelope. The extra forward/back shape
+eases back in between source Y=0.15–0.28 m. This prevents enlarged toe and heel
+surfaces from sweeping through the ground during the unchanged native trot.
+`DRAFT_LEG_CONTOUR` smoothly reduces added lateral/depth gains around each
+limb's actual named pastern and knee/hock joints, read from the asymmetric
+native rest pose. The added lateral gain keeps 35% at a hinge; the added depth
+gain reaches zero there. This changes the added draft shape, preserving the
+original limb surface, joints, weights, lengths and animation. The correction
+fades out by Y=1.10 m; upper-body positions/normals and all four non-body meshes
+remain exactly equal to the reviewed prior release. Coats and all 22 non-draft
+buffers are unchanged.
+
+`node tools/test-native-draft-leg-deformation.mjs` compares 81 production Trot
+poses with the identical source pose. It checks 5,694 lower-leg triangles for
+new severe collapse, actual hoof-floor penetration, retained broad hoof width,
+source weights/binds/clips and Belgian/Suffolk foundation mapping. The corrected
+three foundations add no severe lower-leg collapse in these samples, and their
+lowest hoof skin is about 1.5–1.6 mm below the floor, matching the source's small
+existing error. Upper-leg/chest diagnostics remain separate; this test does not
+claim that all inherited source deformation is removed. The feather test also
+samples the newly fitted Shire, Clydesdale and Tempest hairs through Trot.
+
+For visual review, open `review/native-draft-legs/review.html`. The visible
+controls provide exact cycle phases, fixed front/side/rear views, leg close-up,
+hair visibility and a sculpture surface using the production loader and motion.
+Check both standing and moving poses; numerical tests do not replace this check.
 
 Draft Western tack also has shorter fenders to keep the existing human rider's
 legs within reach of the wider saddle. Only the 13,895-vertex tack mesh is

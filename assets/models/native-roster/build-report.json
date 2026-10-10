@@ -6156,7 +6156,7 @@
         "maxDisplayedCorrectionM": 0.05417399654287189,
         "unselectedIdealTargetExactlyPreserved": true,
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
-        "previousUnselectedQuantizedCoefficientsExact": null
+        "previousUnselectedQuantizedCoefficientsExact": true
       },
       "headShape": {
         "family": "draft",
@@ -6219,26 +6219,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.4833600299413811,
-            "newDisplayedWidthM": 0.48336316798011975,
+            "previousDisplayedWidthM": 0.465958805055315,
+            "newDisplayedWidthM": 0.46581721597600834,
             "previousDisplayedMeanYM": 0.5981460465610844,
-            "newDisplayedMeanYM": 0.5981955442083786
+            "newDisplayedMeanYM": 0.5981956327559714
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6665533654881738,
-            "newDisplayedWidthM": 0.604430302773062,
+            "previousDisplayedWidthM": 0.6664003842139764,
+            "newDisplayedWidthM": 0.6043370512229982,
             "previousDisplayedMeanYM": 0.7022854268415548,
-            "newDisplayedMeanYM": 0.7237941539725814
+            "newDisplayedMeanYM": 0.7237939557867198
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.8443120482496687,
+            "previousDisplayedWidthM": 0.8443120466746181,
             "newDisplayedWidthM": 0.6821461314771763,
             "previousDisplayedMeanYM": 0.7892523843955858,
-            "newDisplayedMeanYM": 0.8607839451635317
+            "newDisplayedMeanYM": 0.8607839410775606
           },
           {
             "sourceYCenterM": 1.1,
@@ -6285,26 +6285,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.3659715448006661,
-            "newDisplayedWidthM": 0.3659674263033073,
+            "previousDisplayedWidthM": 0.3548255349697899,
+            "newDisplayedWidthM": 0.3547382542263303,
             "previousDisplayedMeanYM": 0.5929664566066823,
-            "newDisplayedMeanYM": 0.592994300961634
+            "newDisplayedMeanYM": 0.5929943011704274
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5169139443619379,
-            "newDisplayedWidthM": 0.48884360239039754,
+            "previousDisplayedWidthM": 0.5169112463062945,
+            "newDisplayedWidthM": 0.48883898507585016,
             "previousDisplayedMeanYM": 0.7050999236904285,
-            "newDisplayedMeanYM": 0.7209436847476535
+            "newDisplayedMeanYM": 0.720943744213935
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.63428704468349,
+            "previousDisplayedWidthM": 0.6342870446558624,
             "newDisplayedWidthM": 0.5622638835056036,
             "previousDisplayedMeanYM": 0.7832393312308104,
-            "newDisplayedMeanYM": 0.8304324306439589
+            "newDisplayedMeanYM": 0.8304324300740497
           },
           {
             "sourceYCenterM": 1.1,
@@ -6349,11 +6349,11 @@
             0.1748261845428556
           ],
           "newWidthXZ": [
-            0.19008597267817645,
-            0.2482504850285332
+            0.19008343321272037,
+            0.17482684575730145
           ],
-          "centerShiftM": 1.526006652339765e-07,
-          "maxYChangeM": 2.5997852486549927e-06
+          "centerShiftM": 1.666871486131732e-07,
+          "maxYChangeM": 2.583842364053089e-06
         },
         {
           "id": "foreLeft",
@@ -6363,11 +6363,11 @@
             0.193247887392626
           ],
           "newWidthXZ": [
-            0.17727073664083998,
-            0.2744148339114722
+            0.1772747835971676,
+            0.19324861496551987
           ],
-          "centerShiftM": 1.6613198118294835e-07,
-          "maxYChangeM": 2.686163747367236e-06
+          "centerShiftM": 1.1279300109110042e-07,
+          "maxYChangeM": 2.650708031425031e-06
         },
         {
           "id": "hindRight",
@@ -6377,11 +6377,11 @@
             0.17118751263981036
           ],
           "newWidthXZ": [
-            0.18892183100397172,
-            0.24308580813507263
+            0.18892287130973226,
+            0.17119125910543465
           ],
-          "centerShiftM": 6.161277033050996e-08,
-          "maxYChangeM": 2.5731229029990477e-06
+          "centerShiftM": 7.495735301096731e-08,
+          "maxYChangeM": 2.6522507198534218e-06
         },
         {
           "id": "hindLeft",
@@ -6391,16 +6391,16 @@
             0.16545573112004752
           ],
           "newWidthXZ": [
-            0.18863237615907474,
-            0.2349429639119731
+            0.18862915441834013,
+            0.16545375071963564
           ],
-          "centerShiftM": 1.902982147746713e-07,
-          "maxYChangeM": 2.7088435650621245e-06
+          "centerShiftM": 1.9606737703150078e-07,
+          "maxYChangeM": 2.678651204485183e-06
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 2.9273381827177314e-06,
-      "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+      "maxLowerLimbYChangeM": 2.9193277107930626e-06,
+      "sha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
       "byteLength": 728256,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
@@ -6415,7 +6415,7 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.609238253359303,
-          "maxPositionQuantizationErrorM": 4.820721914416102e-06,
+          "maxPositionQuantizationErrorM": 4.772411255130136e-06,
           "maxAppearanceDeltaM": 0.1901314402029513,
           "fixedLowerVertices": 1
         },
@@ -6611,7 +6611,7 @@
         "maxDisplayedCorrectionM": 0.06122029925062179,
         "unselectedIdealTargetExactlyPreserved": true,
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
-        "previousUnselectedQuantizedCoefficientsExact": null
+        "previousUnselectedQuantizedCoefficientsExact": true
       },
       "headShape": {
         "family": "draft",
@@ -6674,26 +6674,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.513371010984744,
-            "newDisplayedWidthM": 0.5133712730425768,
+            "previousDisplayedWidthM": 0.4914286360474387,
+            "newDisplayedWidthM": 0.4912888403458322,
             "previousDisplayedMeanYM": 0.6264001431603545,
-            "newDisplayedMeanYM": 0.6264562399599629
+            "newDisplayedMeanYM": 0.6264561969872426
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.7045642299622021,
-            "newDisplayedWidthM": 0.6424093444247005,
+            "previousDisplayedWidthM": 0.7043971892834464,
+            "newDisplayedWidthM": 0.6423012310428053,
             "previousDisplayedMeanYM": 0.7334055342927307,
-            "newDisplayedMeanYM": 0.7577323314511062
+            "newDisplayedMeanYM": 0.7577323364614398
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.8792360063758609,
+            "previousDisplayedWidthM": 0.879236004750267,
             "newDisplayedWidthM": 0.7160209929632675,
             "previousDisplayedMeanYM": 0.8193280493988809,
-            "newDisplayedMeanYM": 0.90023170011531
+            "newDisplayedMeanYM": 0.9002316919183511
           },
           {
             "sourceYCenterM": 1.1,
@@ -6740,26 +6740,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.38958629471997736,
-            "newDisplayedWidthM": 0.38958923857233885,
+            "previousDisplayedWidthM": 0.37538889787127777,
+            "newDisplayedWidthM": 0.37529573189020704,
             "previousDisplayedMeanYM": 0.6209765773027558,
-            "newDisplayedMeanYM": 0.6210081751168498
+            "newDisplayedMeanYM": 0.6210083297855069
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5544489675715722,
+            "previousDisplayedWidthM": 0.5544458536693161,
             "newDisplayedWidthM": 0.5238726105458313,
             "previousDisplayedMeanYM": 0.7361830520801182,
-            "newDisplayedMeanYM": 0.7541027367258006
+            "newDisplayedMeanYM": 0.754102784096801
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.6781100904080041,
+            "previousDisplayedWidthM": 0.6781100903561056,
             "newDisplayedWidthM": 0.5999632482597995,
             "previousDisplayedMeanYM": 0.8132416641083081,
-            "newDisplayedMeanYM": 0.8666180596998854
+            "newDisplayedMeanYM": 0.866618058481399
           },
           {
             "sourceYCenterM": 1.1,
@@ -6804,11 +6804,11 @@
             0.1748261845428556
           ],
           "newWidthXZ": [
-            0.20079158119467108,
-            0.2622426020572932
+            0.2007963701776172,
+            0.17482597984264786
           ],
-          "centerShiftM": 1.567461491267017e-08,
-          "maxYChangeM": 2.873497690542015e-06
+          "centerShiftM": 9.663513763302932e-08,
+          "maxYChangeM": 2.831777275308367e-06
         },
         {
           "id": "foreLeft",
@@ -6818,11 +6818,11 @@
             0.193247887392626
           ],
           "newWidthXZ": [
-            0.18726333837136092,
-            0.2898756234296746
+            0.18725934461340563,
+            0.19324801107862655
           ],
-          "centerShiftM": 1.8000516059644826e-07,
-          "maxYChangeM": 2.8609882671559728e-06
+          "centerShiftM": 6.278765999783152e-08,
+          "maxYChangeM": 2.8876826728245486e-06
         },
         {
           "id": "hindRight",
@@ -6832,11 +6832,11 @@
             0.17118751263981036
           ],
           "newWidthXZ": [
-            0.199570508375427,
-            0.25677989616936825
+            0.19956530716881354,
+            0.17119070634988287
           ],
-          "centerShiftM": 1.1654110519148126e-07,
-          "maxYChangeM": 2.9859595506200043e-06
+          "centerShiftM": 1.3147187012625408e-07,
+          "maxYChangeM": 2.841655841329116e-06
         },
         {
           "id": "hindLeft",
@@ -6846,16 +6846,16 @@
             0.16545573112004752
           ],
           "newWidthXZ": [
-            0.19925956814066148,
-            0.24817929052830234
+            0.19925576505510875,
+            0.16545848243145178
           ],
-          "centerShiftM": 1.2087238160881433e-07,
-          "maxYChangeM": 2.8363213296911383e-06
+          "centerShiftM": 1.8557150464291616e-07,
+          "maxYChangeM": 2.941735106148924e-06
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 3.203417125452468e-06,
-      "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+      "maxLowerLimbYChangeM": 3.4855925278298727e-06,
+      "sha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
       "byteLength": 728256,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
@@ -6870,7 +6870,7 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.7219331623677688,
-          "maxPositionQuantizationErrorM": 4.086945823564735e-06,
+          "maxPositionQuantizationErrorM": 4.099357820718071e-06,
           "maxAppearanceDeltaM": 0.15821302508974106,
           "fixedLowerVertices": 1
         },
@@ -7066,7 +7066,7 @@
         "maxDisplayedCorrectionM": 0.05143646176838123,
         "unselectedIdealTargetExactlyPreserved": true,
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
-        "previousUnselectedQuantizedCoefficientsExact": null
+        "previousUnselectedQuantizedCoefficientsExact": true
       },
       "headShape": {
         "family": "draft",
@@ -7129,26 +7129,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.5035876179101453,
-            "newDisplayedWidthM": 0.5035847484111816,
+            "previousDisplayedWidthM": 0.48336497735614253,
+            "newDisplayedWidthM": 0.48324257824841566,
             "previousDisplayedMeanYM": 0.6182161782285277,
-            "newDisplayedMeanYM": 0.6182634010038426
+            "newDisplayedMeanYM": 0.6182632771458654
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6786774530442243,
-            "newDisplayedWidthM": 0.6258581176670116,
+            "previousDisplayedWidthM": 0.6785297717986838,
+            "newDisplayedWidthM": 0.6257682405158369,
             "previousDisplayedMeanYM": 0.7278761149682477,
-            "newDisplayedMeanYM": 0.7483277991788367
+            "newDisplayedMeanYM": 0.7483277351607064
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.83031034940503,
+            "previousDisplayedWidthM": 0.830310348008624,
             "newDisplayedWidthM": 0.692021765944183,
             "previousDisplayedMeanYM": 0.8228461833788304,
-            "newDisplayedMeanYM": 0.8908626923783246
+            "newDisplayedMeanYM": 0.8908626729999342
           },
           {
             "sourceYCenterM": 1.1,
@@ -7195,26 +7195,26 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.3818004635719935,
-            "newDisplayedWidthM": 0.38179851636250706,
+            "previousDisplayedWidthM": 0.368741608618404,
+            "newDisplayedWidthM": 0.3686648408966564,
             "previousDisplayedMeanYM": 0.612862114022106,
-            "newDisplayedMeanYM": 0.6128886805390094
+            "newDisplayedMeanYM": 0.6128886685455159
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5314479319831854,
+            "previousDisplayedWidthM": 0.5314452048538152,
             "newDisplayedWidthM": 0.5064943477662623,
             "previousDisplayedMeanYM": 0.7309527515128266,
-            "newDisplayedMeanYM": 0.7460179127669556
+            "newDisplayedMeanYM": 0.7460179153951992
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.6370194759169084,
+            "previousDisplayedWidthM": 0.6370194758731395,
             "newDisplayedWidthM": 0.5738345779390855,
             "previousDisplayedMeanYM": 0.8164234236422567,
-            "newDisplayedMeanYM": 0.8612975172348183
+            "newDisplayedMeanYM": 0.8612975168969261
           },
           {
             "sourceYCenterM": 1.1,
@@ -7259,11 +7259,11 @@
             0.1748261845428556
           ],
           "newWidthXZ": [
-            0.19543900224313188,
-            0.2552457326495406
+            0.19543978369106452,
+            0.1748246505769434
           ],
-          "centerShiftM": 1.1597945610162161e-07,
-          "maxYChangeM": 2.428584262886835e-06
+          "centerShiftM": 1.0293148233817164e-07,
+          "maxYChangeM": 2.458876249986086e-06
         },
         {
           "id": "foreLeft",
@@ -7273,11 +7273,11 @@
             0.193247887392626
           ],
           "newWidthXZ": [
-            0.18226734176967446,
-            0.28214370993401944
+            0.18227066809066114,
+            0.1932474616395189
           ],
-          "centerShiftM": 7.09652557268996e-08,
-          "maxYChangeM": 2.4839348343602685e-06
+          "centerShiftM": 7.526412236482688e-09,
+          "maxYChangeM": 2.469550475309168e-06
         },
         {
           "id": "hindRight",
@@ -7287,11 +7287,11 @@
             0.17118751263981036
           ],
           "newWidthXZ": [
-            0.19424792557749423,
-            0.2499345040663301
+            0.194245031311408,
+            0.17118593489117317
           ],
-          "centerShiftM": 1.6122519707902996e-07,
-          "maxYChangeM": 2.437635588600079e-06
+          "centerShiftM": 1.0599203323735814e-07,
+          "maxYChangeM": 2.4926203505380717e-06
         },
         {
           "id": "hindLeft",
@@ -7301,16 +7301,16 @@
             0.16545573112004752
           ],
           "newWidthXZ": [
-            0.193946179402647,
-            0.2415652945109289
+            0.19394175329307478,
+            0.16545773988923806
           ],
-          "centerShiftM": 1.409050936126944e-07,
-          "maxYChangeM": 2.6547328160209105e-06
+          "centerShiftM": 1.772785825361878e-07,
+          "maxYChangeM": 2.525049637422394e-06
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 2.7440898695552107e-06,
-      "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+      "maxLowerLimbYChangeM": 2.8951334106741555e-06,
+      "sha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
       "byteLength": 728256,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,
