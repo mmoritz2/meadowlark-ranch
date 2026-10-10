@@ -12,9 +12,9 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js?v=character-polish-20261009';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=character-polish-20261009';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=rider-details-20261009';
 import {outfitPalette} from '../rider-clothes.js?v=character-polish-20261009';
-import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=character-polish-20261009';
+import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=rider-details-20261009';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -285,6 +285,7 @@ export function install(G){
   CH.holder.scale.setScalar(0.91);
   if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,tt,look);
  }
+ const portraitFocus=new THREE.Vector3();
  function frame(t){
   if(!CH.open||!CH.renderer)return;
   CH.raf=requestAnimationFrame(frame);
@@ -296,7 +297,17 @@ export function install(G){
   if(!CH.drag)CH.spin+=0;                          // she holds still unless turned
   CH.holder.rotation.y=CH.spin;
   const lift=(R.rig?.kit.proportionLift||0)*CH.holder.scale.y;
-  if(CH.zoom){CH.cam.position.set(0,1.40+lift,1.35);CH.cam.lookAt(0,1.36+lift,0);}
+  if(CH.zoom){
+   const head=R.rig?.bones?.Head;
+   if(head){
+    head.getWorldPosition(portraitFocus);
+    portraitFocus.y+=.035*CH.holder.scale.y;
+    // Keep the full helmet width inside narrow portrait panels.
+    const distance=Math.max(.98,.48/(2*Math.tan(THREE.MathUtils.degToRad(CH.cam.fov)/2)*CH.cam.aspect));
+    CH.cam.position.set(portraitFocus.x,portraitFocus.y+.025,portraitFocus.z+distance);
+    CH.cam.lookAt(portraitFocus);
+   }else{CH.cam.position.set(0,1.40+lift,1.35);CH.cam.lookAt(0,1.36+lift,0);}
+  }
   else{CH.cam.position.set(0,1.00+lift*.5,4.1);CH.cam.lookAt(0,0.80+lift*.5,0);}
   R?.rig?.updateHairMass?.();CH.renderer.render(CH.scene,CH.cam);
  }

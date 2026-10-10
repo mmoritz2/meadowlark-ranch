@@ -420,7 +420,7 @@ function sculptedHairShape(THREE,kit,style){
 
  // Long framing clumps follow the actual cheek/jaw before releasing onto the
  // torso. Preserve the source part roots and style-specific tip heights.
- const faceFollowingForelock=(sd,j,root,rootMid,temple,tipY,width)=>{
+ const originalForelock=(sd,j,root,rootMid,temple,tipY,width)=>{
   const V=(x,y,z)=>new THREE.Vector3(x,y,z),below=H.chin.y-.024;
   const tip=restHairPoint(THREE,kit,V(sd*(H.rx*1.08+j*.007),tipY,H.cz+.076-j*.006),true,.013);
   const cheek=scalpPoint(THREE,kit,V(sd*H.rx*.97,H.cy-.026,H.cz+.056-j*.005),.008);
@@ -438,6 +438,62 @@ function sculptedHairShape(THREE,kit,style){
   for(const i of [0,segments]){const id=P.length/3;P.push(...centers[i]);U.push(1,i/segments*3);for(let k=0;k<sides;k++){const v=i*(sides+1)+k;i?I.push(id,v+1,v):I.push(id,v,v+1);}}
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));geometry.setIndex(I);geometry.computeVertexNormals();pieces.push(geometry);forelockMeta.push({side:sd,layer:j,sourceRoot:root.toArray(),tipY,tip:tip.toArray(),centerArcLength:path.getLength(),centers,widths,depths});
  };
+ const longForelock=(sd,j,root,rootMid,temple,tipY,width)=>{
+  const V=(x,y,z)=>new THREE.Vector3(x,y,z),below=H.chin.y-.024;
+  const tip=restHairPoint(THREE,kit,V(sd*(H.rx*1.08+j*.007),tipY,H.cz+.076-j*.006),true,.013);
+  const cheek=scalpPoint(THREE,kit,V(sd*H.rx*.97,H.cy-.026,H.cz+.056-j*.005),.008);
+  const jaw=scalpPoint(THREE,kit,V(sd*H.rx*.95,H.chin.y+.024,H.cz+.047-j*.005),.009);
+  const released=restHairPoint(THREE,kit,V(sd*(H.rx*.97+j*.004),below,H.cz+.047-j*.005),true,.013);
+  const bend=restHairPoint(THREE,kit,V(sd*(H.rx*1.075+j*.007),below+(tipY-below)*.54,H.cz+.068-j*.006),true,.015);
+  const points=[root,rootMid,temple,...[cheek,jaw,released,bend].filter(v=>v.y<temple.y-.002&&v.y>tipY+.005).sort((a,b)=>b.y-a.y),tip];
+  const path=new THREE.CatmullRomCurve3(points),arcLength=path.getLength(),P=[],U=[],I=[],sides=12,centers=[],widths=[],depths=[];
+  // The shorter lock shares the longer lock's lower flow at equal anatomical
+  // height. Its tip tucks under that surface; the long outline remains intact.
+  const parentFlow=j?forelockMeta.find(c=>c.side===sd&&c.layer===0):null;
+  const parentAtHeight=y=>{
+   if(!parentFlow)return null;
+   const a=parentFlow.centers;
+   for(let k=1;k<a.length;k++)if(a[k-1][1]>=y&&a[k][1]<=y){
+    const f=(a[k-1][1]-y)/(a[k-1][1]-a[k][1]||1),c=V(...a[k-1]).lerp(V(...a[k]),f),tangent=V(...a[k]).sub(V(...a[k-1])).normalize(),out=V(sd*.58,0,1);out.addScaledVector(tangent,-out.dot(tangent)).normalize();
+    return{c,out,across:out.clone().cross(tangent).normalize(),w:parentFlow.widths[k-1]*(1-f)+parentFlow.widths[k]*f,depth:parentFlow.depths[k-1]*(1-f)+parentFlow.depths[k]*f};
+   }
+   return null;
+  };
+  const flowAt=t=>{
+   const c=path.getPointAt(t),parent=parentAtHeight(c.y),blend=parent?smooth(H.chin.y-.003,H.chin.y-.060,c.y):0;
+   if(blend){const q=parent.c.clone().addScaledVector(parent.across,sd*parent.w*.12).addScaledVector(parent.out,-parent.depth*.10);q.y=c.y;c.lerp(q,blend);}
+   return{c,parent,blend};
+  };
+  // Leave the fitted scalp and temple section exactly where it was. Shape the
+  // free lock as one unequal, shallow clump, rather than parallel round cords.
+  let lo=0,hi=1;
+  for(let n=0;n<32;n++){const mid=(lo+hi)*.5;if(path.getUtoTmapping(mid)<2/(points.length-1))lo=mid;else hi=mid;}
+  const protectedArc=(lo+hi)*.5,capLength=.019-j*.002,capStart=1-capLength/arcLength;
+  const arcParameters=Array.from({length:65},(_,i)=>i/64);
+  // Extra rings resolve the last centimetre without resampling protected roots.
+  for(let i=0;i<8;i++)arcParameters.push(capStart+(1-capStart)*i/8);
+  arcParameters.sort((a,b)=>a-b);
+  const samples=arcParameters.filter((t,i)=>!i||t-arcParameters[i-1]>1e-10),segments=samples.length-1;
+  for(let i=0;i<=segments;i++){
+   const t=samples[i],flow=flowAt(t),c=flow.c,tangent=flow.blend?flowAt(Math.min(1,t+1e-5)).c.sub(flowAt(Math.max(0,t-1e-5)).c).normalize():path.getTangentAt(t).normalize(),out=V(sd*.58,0,1);out.addScaledVector(tangent,-out.dot(tangent)).normalize();const across=out.clone().cross(tangent).normalize();
+   const rootGrow=.25+.75*smooth(0,.16,t),oldTaper=1-.58*smooth(.32,.86,t),oldEnd=smooth(.86,1,t),oldRound=Math.sqrt(Math.max(.0001,1-oldEnd*oldEnd));
+   const oldWidth=width*rootGrow*oldTaper*oldRound,oldDepth=width*.45*(.55+.45*smooth(0,.16,t))*oldTaper*oldRound;
+   const free=smooth(protectedArc,Math.min(.84,protectedArc+.18),t),cap=Math.max(0,Math.min(1,(t-capStart)/(1-capStart))),roundEnd=Math.sqrt(Math.max(.00001,1-cap*cap));
+   const shapedWidth=width*.80*rootGrow*(1-.66*smooth(.32,.98,t))*roundEnd;
+   let w=oldWidth+(shapedWidth-oldWidth)*free,depth=oldDepth+(shapedWidth*(.235+j*.020)-oldDepth)*free;
+   if(flow.blend){w+=(Math.min(w,flow.parent.w*.75)-w)*flow.blend;depth+=(Math.min(depth,flow.parent.depth*.75)-depth)*flow.blend;}
+   centers.push(c.toArray());widths.push(w);depths.push(depth);
+   const ridgeCenter=.12+.20*Math.sin((t-protectedArc)*2.8+sd*.35+j*.7);
+   for(let k=0;k<=sides;k++){
+    const a=k/sides*Math.PI*2,x=Math.cos(a),y=Math.sin(a),outer=Math.max(0,y),ridge=w*.075*Math.exp(-Math.pow((x-ridgeCenter)/.34,2))*outer*outer*free;
+    const q=c.clone().addScaledVector(across,x*w+w*.10*y*y*free*(j?-.7:1)).addScaledVector(out,y*depth+ridge);P.push(...q.toArray());U.push(k/sides*2,t*3);
+    if(i<segments&&k<sides){const n=sides+1,v=i*n+k;I.push(v,v+1,v+n,v+1,v+n+1,v+n);}
+   }
+  }
+  for(const i of [0,segments]){const id=P.length/3;P.push(...centers[i]);U.push(1,samples[i]*3);for(let k=0;k<sides;k++){const v=i*(sides+1)+k;i?I.push(id,v+1,v):I.push(id,v,v+1);}}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));geometry.setIndex(I);geometry.computeVertexNormals();pieces.push(geometry);forelockMeta.push({side:sd,layer:j,sourceRoot:root.toArray(),tipY,tip:tip.toArray(),centerArcLength:arcLength,centers,widths,depths,arcParameters:samples,protectedArc,capLength,profileFlow5:true,sourceTip:tip.toArray(),emittedTip:flowAt(1).c.toArray(),flowReleaseChinY:H.chin.y,flowMethod:parentFlow?"short underlap into main at equal height":"main flow preserved"});
+ };
+ const faceFollowingForelock=style==='long'?longForelock:originalForelock;
  // Swept framing leaves blend the part into the temple and break the outline.
  if(!fallOnly&&!layered)for(const sd of [-1,1])for(let j=0;j<(short?5:2);j++){
   const root=scalpPoint(THREE,kit,V(sd*(.018+j*.012),H.top-.007,H.cz+.032),.005),temple=scalpPoint(THREE,kit,V(sd*H.rx*.91,H.browTop+.031-j*.010,H.cz+.083),.006),tipEnd=style==='bob'?-.050:style==='beachbob'?-.078:style==='lob'?-.118:style==='mermaidwaves'?-.185:style==='waves'?-.132:-.152,tip=short?scalpPoint(THREE,kit,V(sd*H.rx,H.browTop-.010-j*.009,H.cz+.038),.004):V(sd*(H.rx*1.10+j*.007),tipEnd+j*.027,H.cz+.126+j*.004),mid=short?temple.clone().lerp(tip,.52):V(sd*(H.rx*.97+.007*Math.sin(j*1.7)),(temple.y+tip.y)*.45,H.cz+.142+.007*Math.cos(j*1.6));

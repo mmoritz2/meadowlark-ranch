@@ -44,12 +44,12 @@ import {createHairMassResources} from './rider-hair-mass-manager.js?v=character-
 import {HAND19} from './rider-hand-data.js?v=character-polish-20261009';
 import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,GARMENT_NECK_GLSL,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=character-polish-20261009';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=character-polish-20261009';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=rider-details-20261009';
 import {refineRiderProportions} from './rider-proportions.js?v=character-polish-20261009';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=fuller-lashes-20261009';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=defined-lashes-20261009';
 import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=character-polish-20261009';
 import {prepareRiderHead as prepareLiveHead} from './rider-live-heads.js?v=character-polish-20261009';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=character-polish-20261009';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=rider-details-20261009';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
