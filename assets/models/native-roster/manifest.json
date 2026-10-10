@@ -4727,7 +4727,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "814bd6ae5a3112b2c9d69447185b79064278ee48f88faf95ae734714173be09d",
+      "sha256": "cceba4fcc9aaaedae2c54002b88eefb961b328d791febe45ccdfa307ab154858",
       "byteLength": 753956,
       "meshes": [
         {
@@ -4871,7 +4871,7 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 514,
-        "baseMorphSha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
+        "baseMorphSha256": "d12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b",
         "authoringSha256": "f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "authoringBaseMorphSha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
@@ -4945,7 +4945,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 4,
+        "version": 5,
         "legContour": {
           "version": 1,
           "meshIndex": 0,
@@ -4967,6 +4967,30 @@
           ],
           "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
           "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
+        "upperLegContour": {
+          "version": 3,
+          "meshIndex": 0,
+          "sourceYSupportM": [
+            0.72,
+            1.65
+          ],
+          "sourceZBlendM": [
+            -0.15,
+            -0.4
+          ],
+          "addedVolumeFadeInM": [
+            0.72,
+            0.94
+          ],
+          "addedVolumeFadeOutM": [
+            1.15,
+            1.65
+          ],
+          "minimumAddedVolumeFactor": 0.4,
+          "interpolation": "C2 quintic smoothstep",
+          "method": "Smoothly taper only added draft X/Y/Z volume through the original stifle into the upper hindquarter. This separates overlapping torso and radial-limb mass over a broad anatomical region without shrinking the source surface.",
+          "preserved": "Lower-leg contour through0.72m, forebody from sourceZ-0.15m, upper body above1.65m, all source body weights, joints and clips; nonbody morphs and reviewed collar append remain unchanged."
         },
         "limbCenters": [
           {
@@ -5268,7 +5292,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour, upper-limb support and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -5478,7 +5502,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "4228c42ab2f3e32cc5131892cfe4f839e0702156f204bf567f4d104a89b69ca9",
+      "sha256": "3d421c20bf627a13bb77bf4fa9ca651a263ea16e6abcce5de512974e40b83ed2",
       "byteLength": 753956,
       "meshes": [
         {
@@ -5622,7 +5646,7 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 514,
-        "baseMorphSha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
+        "baseMorphSha256": "8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b",
         "authoringSha256": "eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "authoringBaseMorphSha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
@@ -5696,7 +5720,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 4,
+        "version": 5,
         "legContour": {
           "version": 1,
           "meshIndex": 0,
@@ -5718,6 +5742,30 @@
           ],
           "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
           "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
+        "upperLegContour": {
+          "version": 3,
+          "meshIndex": 0,
+          "sourceYSupportM": [
+            0.72,
+            1.65
+          ],
+          "sourceZBlendM": [
+            -0.15,
+            -0.4
+          ],
+          "addedVolumeFadeInM": [
+            0.72,
+            0.94
+          ],
+          "addedVolumeFadeOutM": [
+            1.15,
+            1.65
+          ],
+          "minimumAddedVolumeFactor": 0.4,
+          "interpolation": "C2 quintic smoothstep",
+          "method": "Smoothly taper only added draft X/Y/Z volume through the original stifle into the upper hindquarter. This separates overlapping torso and radial-limb mass over a broad anatomical region without shrinking the source surface.",
+          "preserved": "Lower-leg contour through0.72m, forebody from sourceZ-0.15m, upper body above1.65m, all source body weights, joints and clips; nonbody morphs and reviewed collar append remain unchanged."
         },
         "limbCenters": [
           {
@@ -6019,7 +6067,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour, upper-limb support and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -6229,7 +6277,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "9359251e9f00267becbfa3c271786f262b21c8bb18e7aeb1e1b3b4513e986c37",
+      "sha256": "da0fc78117a8549393eefa060ea4d34641700339fa4fb3bd402986f94e2e8272",
       "byteLength": 753956,
       "meshes": [
         {
@@ -6373,7 +6421,7 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 514,
-        "baseMorphSha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
+        "baseMorphSha256": "a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1",
         "authoringSha256": "291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf",
         "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
         "authoringBaseMorphSha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
@@ -6447,7 +6495,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 4,
+        "version": 5,
         "legContour": {
           "version": 1,
           "meshIndex": 0,
@@ -6469,6 +6517,30 @@
           ],
           "method": "Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.",
           "preserved": "Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated."
+        },
+        "upperLegContour": {
+          "version": 3,
+          "meshIndex": 0,
+          "sourceYSupportM": [
+            0.72,
+            1.65
+          ],
+          "sourceZBlendM": [
+            -0.15,
+            -0.4
+          ],
+          "addedVolumeFadeInM": [
+            0.72,
+            0.94
+          ],
+          "addedVolumeFadeOutM": [
+            1.15,
+            1.65
+          ],
+          "minimumAddedVolumeFactor": 0.4,
+          "interpolation": "C2 quintic smoothstep",
+          "method": "Smoothly taper only added draft X/Y/Z volume through the original stifle into the upper hindquarter. This separates overlapping torso and radial-limb mass over a broad anatomical region without shrinking the source surface.",
+          "preserved": "Lower-leg contour through0.72m, forebody from sourceZ-0.15m, upper body above1.65m, all source body weights, joints and clips; nonbody morphs and reviewed collar append remain unchanged."
         },
         "limbCenters": [
           {
@@ -6770,7 +6842,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour, upper-limb support and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,

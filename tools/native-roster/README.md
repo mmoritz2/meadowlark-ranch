@@ -154,9 +154,37 @@ existing error. Upper-leg/chest diagnostics remain separate; this test does not
 claim that all inherited source deformation is removed. The feather test also
 samples the newly fitted Shire, Clydesdale and Tempest hairs through Trot.
 
+Draft shape version 5 adds a **hind-body-only** thigh blend. The broad torso
+cage and radial limb widening overlapped at the original stifle/hip skin,
+compressing large patches in Trot and both Canter/Gallop leads. A C2 quintic
+field tapers only the added X/Y/Z volume: it fades in from source Y=0.72–0.94 m,
+keeps 40% of the added volume through 1.15 m, and eases back to the full draft
+shape by 1.65 m. Its rear mask fades from zero at Z=-0.15 m to full at -0.40 m.
+The original horse surface is not narrowed, and no joints, weights or gait
+tracks change. The broad transition avoids the artificial waist produced by
+ending the correction directly above the stifle.
+
+`draftShape.upperLegContour` records that field. The 13,929 body vertices in
+its protected lower/front/upper regions retain their released positions and
+normals bit for bit; the independent validator pins these subsets to version 4.
+The front chest, head, coat, seat/actor scale, all four non-body morph blocks,
+and fitted collar append remain unchanged. Other breeds are unchanged. The
+builder accepts only the exact reviewed body-prefix hash plus the preserved
+non-body hash before reusing the collar data.
+
+`node tools/test-native-draft-thigh-deformation.mjs` samples 41 phases of the
+production Trot, left/right Canter and left/right Gallop, comparing all three
+draft foundations with the identical original pose. Hind coverage reaches
+source Y=1.75 m, beyond the complete field. It detects connected draft-added
+compression on nondegenerate source triangles rather than hiding inherited
+folds; the reported forearm and source-existing shoulder/thigh deformation
+remain separate limitations. This is a deformation regression, not a claim
+that all self-intersections or source gait artifacts are eliminated.
+
 For visual review, open `review/native-draft-legs/review.html`. The visible
-controls provide exact cycle phases, fixed front/side/rear views, leg close-up,
-hair visibility and a sculpture surface using the production loader and motion.
+controls provide exact cycle phases, both side views, front/rear views, leg and
+thigh close-ups, both Canter/Gallop leads, hair visibility and a sculpture surface
+using the production loader and motion.
 Check both standing and moving poses; numerical tests do not replace this check.
 
 Draft Western tack also has shorter fenders to keep the existing human rider's

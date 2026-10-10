@@ -139,6 +139,14 @@ DRAFT_LEG_CONTOUR = {
     'method':'Smooth anisotropic attenuation of added draft width around the original named pastern and knee/hock joints. Broad lateral hoof and shaft volume remain; low toe/heel forward flare returns to the source envelope.',
     'preserved':'Source geometry is never reduced. All source joints, weights, clips, standing sole anchors, lower-leg height and body above1.10m remain unchanged; only added X/Z draft shape is attenuated.',
 }
+DRAFT_UPPER_LEG_CONTOUR = {
+    'version':3,'meshIndex':0,'sourceYSupportM':[.72,1.65],
+    'sourceZBlendM':[-.15,-.40],
+    'addedVolumeFadeInM':[.72,.94],'addedVolumeFadeOutM':[1.15,1.65],
+    'minimumAddedVolumeFactor':.40,'interpolation':'C2 quintic smoothstep',
+    'method':'Smoothly taper only added draft X/Y/Z volume through the original stifle into the upper hindquarter. This separates overlapping torso and radial-limb mass over a broad anatomical region without shrinking the source surface.',
+    'preserved':'Lower-leg contour through0.72m, forebody from sourceZ-0.15m, upper body above1.65m, all source body weights, joints and clips; nonbody morphs and reviewed collar append remain unchanged.',
+}
 DRAFT_LEG_JOINTS = {
     'foreLeft':('fingers_01_l_0187','hand_l_0206'),
     'foreRight':('fingers_01_r_0273','hand_r_0272'),
@@ -371,6 +379,14 @@ def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True,
         target[:,1]-=(y-.86)*depth*torso*BASE_WITHERS*upper*front*(1-depth_keep)
     if key in DRAFT_SHAPES and limbs is not None:
         target=draft_leg_contour(p,target,limbs)
+        art=DRAFT_UPPER_LEG_CONTOUR
+        def c2(a,b,value):
+            t=np.clip((value-a)/(b-a),0,1)
+            return t*t*t*(t*(6*t-15)+10)
+        blend=c2(*art['addedVolumeFadeInM'],p[:,1])*(1-c2(*art['addedVolumeFadeOutM'],p[:,1]))
+        blend*=c2(*art['sourceZBlendM'],p[:,2])
+        gain=1-(1-art['minimumAddedVolumeFactor'])*blend
+        target=p+(target-p)*gain[:,None]
     return target
 
 def groups(indices, count):
@@ -673,11 +689,11 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':4,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':5,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,
-                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.',
+                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour, upper-limb support and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.',
                 'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR),
                 'frontContour':{**copy.deepcopy(DRAFT_FRONT_CONTOUR),'collarComponentIds':collar_components,
                     'collarVertexCount':int(collar_mask.sum()),'boundary':collar_boundary}}

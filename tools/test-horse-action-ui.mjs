@@ -63,13 +63,43 @@ test('Stop and movement cancel scheduled repeat without clearing the user prefer
 test('Enabling Repeat after completion starts a new full preview, rather than staying armed forever',()=>{
  const f=studio(),e=f.elements;e.action.value='rear';e.action.onchange();f.motion.action=null;f.motion.mode='stand';f.run('updateStudioActionUI()');e['repeat-action'].onclick();f.run('tickStudioRepeat(.91)');assert.equal(f.motion.action.type,'rear');assert.equal(f.calls.filter(c=>c==='rear').length,2);
 });
+function studioFrames(){
+ const code=html.split('// Studio frame clock uses')[1]?.split('// End Studio frame clock.')[0];
+ assert(code,'production animation loop is available');
+ let frame,visibility,draws=0;const deltas=[];
+ const document={hidden:false,addEventListener(name,fn){assert.equal(name,'visibilitychange');visibility=fn;}};
+ const ctx=vm.createContext({performance:{now(){throw new Error('Do not mix event time with frame timestamps');}},document,renderer:{setAnimationLoop(fn){frame=fn;}},paused:false,
+  simulate(dt){assert(Number.isFinite(dt)&&dt>0&&dt<=.1,'native motion receives a finite positive bounded delta');deltas.push(dt);},draw(){draws++;}});
+ vm.runInContext('// Studio frame clock uses'+code,ctx);
+ return{frame,document,ctx,deltas,get draws(){return draws;},visibility(){visibility();}};
+}
 test('Hidden tabs freeze preview/repeat time without changing the manual pause choice',()=>{
- const line=html.match(/let last=performance.now\(\);document.addEventListener\('visibilitychange'[\s\S]*?renderer.setAnimationLoop\(now=>\{[\s\S]*?\}\);/)[0];
- let frame,visibility,simulated=0,draws=0,now=100;const document={hidden:false,addEventListener(name,fn){assert.equal(name,'visibilitychange');visibility=fn;}};
- const ctx=vm.createContext({performance:{now:()=>now},document,renderer:{setAnimationLoop(fn){frame=fn;}},paused:false,simulate(dt){simulated+=dt;},draw(){draws++;}});vm.runInContext(line,ctx);
- frame(116);assert.equal(simulated,.016);document.hidden=true;now=120;visibility();frame(5000);assert.equal(simulated,.016);assert.equal(draws,1);assert.equal(ctx.paused,false);
- document.hidden=false;now=6000;visibility();frame(6016);assert.equal(simulated,.032,'no hidden elapsed-time catch-up');ctx.paused=true;frame(6032);assert.equal(simulated,.032);assert.equal(ctx.paused,true);
+ const f=studioFrames();f.frame(100);f.frame(116);assert.deepEqual(f.deltas,[.016]);
+ f.document.hidden=true;f.visibility();f.frame(5000);assert.deepEqual(f.deltas,[.016]);assert.equal(f.draws,2);assert.equal(f.ctx.paused,false);
+ f.document.hidden=false;f.visibility();f.frame(6000);f.frame(6016);assert.deepEqual(f.deltas,[.016,.016],'first visible frame primes the clock without hidden elapsed-time catch-up');
+ f.ctx.paused=true;f.frame(6032);f.frame(20000);assert.deepEqual(f.deltas,[.016,.016]);assert.equal(f.ctx.paused,true);
+ f.ctx.paused=false;f.frame(20016);assert.deepEqual(f.deltas,[.016,.016,.016],'paused elapsed time never reaches the next playback frame');
  assert.match(html,/loading=true;studioRepeatArmed=false;studioRepeatClock=0;updateStudioActionUI/,'horse selection immediately clears repeat intent, including failed loads');
+});
+test('A queued frame older than a visibility event cannot create the observed negative native delta',()=>{
+ const f=studioFrames();f.frame(100);f.frame(116);
+ // The event may run at performance.now()=130 while a frame stamped 128 is queued.
+ // Resetting to that event time used to feed -0.002 into native motion.update().
+ f.visibility();f.frame(128);assert.deepEqual(f.deltas,[.016]);f.frame(144);assert.deepEqual(f.deltas,[.016,.016]);
+ assert.equal(f.draws,4,'the newly visible scene still draws immediately');
+});
+test('Duplicate and out-of-order frames do not rewind the clock or advance the action',()=>{
+ const f=studioFrames();f.frame(100);f.frame(116);f.frame(116);f.frame(110);f.frame(-10);
+ assert.deepEqual(f.deltas,[.016]);f.frame(132);assert.deepEqual(f.deltas,[.016,.016],'a stale timestamp cannot inflate the next update');
+ f.frame(5000);assert.equal(f.deltas.at(-1),.1,'long visible stalls keep the existing 100 ms cap');
+ f.frame(5016);assert.equal(f.deltas.at(-1),.016);
+});
+test('Nonfinite frame timestamps cannot poison later playback and rendering continues',()=>{
+ const f=studioFrames();f.frame(100);f.frame(116);
+ for(const invalid of [NaN,Infinity,-Infinity,undefined]){
+  f.frame(invalid);f.frame(200);assert.equal(f.deltas.length,1,'invalid time clears the clock; the next valid frame only primes it');
+ }
+ f.frame(216);assert.deepEqual(f.deltas,[.016,.016]);assert.equal(f.draws,11);
 });
 test('Selected-action help comes from the actual descriptor',()=>{
  const f=studio(),e=f.elements;f.motion.actionDescriptor=()=>({label:'Rear',description:'A measured lift, then a soft landing.'});e.action.value='rear';f.run('updateStudioActionUI()');assert.equal(e['action-description'].hidden,false);assert.equal(e['action-description'].textContent,'A measured lift, then a soft landing.');e.action.value='';f.run('updateStudioActionUI()');assert.equal(e['action-description'].hidden,true);

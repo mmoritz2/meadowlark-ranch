@@ -61,18 +61,23 @@ HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d
 HEAD_DRAFT_BODY_SHA = {'percheron': '98cd1cc826f6940f36f53dce781a00eca0335447c0e718d9b0e8329d9e1ab3ac', 'shire': '87585e7f68d91e80884d626a902ac510960eb8f66e05e6bcd34208753ee25b2d', 'clyde': '6ce61579e46ade8e1a52a8b2bea02d6776e7d6a8364f2ae647acbf6a05194a12'}
 # End head revision pins.
 
-# Reviewed leg-contour revision keeps the prior head/upper-body and all four
-# non-body meshes exact. Its broad hooves preserve source toe/heel depth.
+# Reviewed v5 hind-thigh blend retains the v4 lower legs, front body, head,
+# all four non-body meshes and fitted collar. Broad hoof toe/heel depth is unchanged.
 DRAFT_LEG_BUFFER_SHA = {
-    'percheron': 'aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647',
-    'shire': '8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2',
-    'clyde': '11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c',
+    'percheron': 'd12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b',
+    'shire': '8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b',
+    'clyde': 'a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1',
 }
 DRAFT_LEG_BODY_SHA = {
-    'percheron': 'f67e6d6b96a8f0c5c2d2f0e71a7522a480aa293c54f82c8b1ff9ac98e345aad3',
-    'shire': '211fd2bdfef0ef85139ad88dab2a62289c52fb7f5aba41bec323aeef08877d37',
-    'clyde': '39b1d2af6ce233750cd4ad438efb648cfc98787ba668b28f84f898e5c8bcf315',
+    'percheron': '9937f8314d9dc3940e9f1e150f0631a23e73a618fa1a3a233d368f17256b437f',
+    'shire': 'b6b79ee349f47a7f2ee15d9f6fcd15781437781fbee1a46a168a54a17803c5f0',
+    'clyde': 'b086aeb1e5df0713ce0e5e7041af5341f92885a2b795ab6e57294d701ab9dfc6',
 }
+
+
+# These position+normal subset hashes come from released v4 bytes, not the new
+# candidate: sourceY<=.72, sourceY>=1.65, or sourceZ>=-.15 must stay bit-exact.
+DRAFT_UPPER_PROTECTED_SHA = {'percheron': '87e91e7ab76d43505de23e421c84fef9a8e41e1f13f0bc8ab566f7e8aa9b8b5f', 'shire': '6fa8ec68f11e9c1fde9b505421442a9b300b643aff28e6286b630e3760502ff6', 'clyde': '751dfff7a550041a2a68eecd7c1b719fe2b147b98fca8b89ddf8487fceef7df9'}
 
 
 def sha(path):
@@ -283,7 +288,8 @@ def main():
             assert not row.get('tackAttachment') or key in DRAFTS
             assert row['headShape']['version'] == 1 and hashlib.sha256(approved_bytes).hexdigest() == approved, (key, 'approved appearance revision changed')
             if key in DRAFTS:
-                assert row['draftShape']['version'] == 4 and row['draftShape']['legContour']['version'] == 1
+                assert row['draftShape']['version'] == 5 and row['draftShape']['legContour']['version'] == 1
+                assert row['draftShape']['upperLegContour']['version'] == 3
         elif key not in DRAFTS:
             assert sha(path) == NON_DRAFT_SHA[key], (key, 'non-draft buffer changed')
         assert len(packed) == row['byteLength'] and len(row['meshes']) == 5
@@ -319,6 +325,10 @@ def main():
                 if key in DRAFTS:
                     expected = DRAFT_LEG_BODY_SHA[key]
                     assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
+                    sourceworld=source_mesh['world']
+                    upper_protected=(sourceworld[:,1]<=.72)|(sourceworld[:,1]>=1.65)|(sourceworld[:,2]>=-.15)
+                    preserved=outp[upper_protected].tobytes()+outn[upper_protected].tobytes()
+                    assert upper_protected.sum()==13929 and hashlib.sha256(preserved).hexdigest()==DRAFT_UPPER_PROTECTED_SHA[key], (key, 'released lower/front/upper surface changed')
                 floor = float(outworld[:, 1].min())
         collar_report=None
         if row.get('tackAttachment'):
@@ -346,6 +356,7 @@ def main():
         if shell_report: report['additiveGroomShell']=shell_report
         if draft:
             report['draftLowerLegValidation'] = draft
+            report['draftUpperProtectedSurface']={'vertices':int(upper_protected.sum()),'positionsAndNormalsBitExactToV4':True,'sourceYAtOrBelowM':.72,'sourceYAtOrAboveM':1.65,'sourceZAtOrAboveM':-.15}
         else:
             report['releasedBufferBitExact'] = not bool(row.get('headShape'))
         if row.get('headShape'):
