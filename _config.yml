@@ -1,0 +1,20 @@
+# Keep Jekyll 3's default build-only exclusions when adding local exclusions.
+# The live native horse GLBs and fitting metadata still live under review/;
+# never exclude that parent directory. These five older studies are not loaded
+# by the game or the retained review viewers. Source stays in Git.
+exclude:
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle
+  - vendor/cache
+  - vendor/gems
+  - vendor/ruby
+  - review/native-breed-targets
+  - review/native-bay-sporthorse-canter
+  - review/native-bay-sporthorse-canter-cubic
+  - review/native-bay-sporthorse-trot
+  - review/native-white-canter-continuous

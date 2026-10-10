@@ -6158,6 +6158,12 @@
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
         "previousUnselectedQuantizedCoefficientsExact": true
       },
+      "tackAttachment": {
+        "vertices": 514,
+        "baseMorphSha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "preservedBaseMorphBytes": 728256
+      },
       "headShape": {
         "family": "draft",
         "affectedBodyVertices": 7717,
@@ -6400,8 +6406,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9193277107930626e-06,
-      "sha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
-      "byteLength": 728256,
+      "sha256": "814bd6ae5a3112b2c9d69447185b79064278ee48f88faf95ae734714173be09d",
+      "byteLength": 753956,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
       "sourceWithersM": 1.897113904824186,
@@ -6612,6 +6618,12 @@
         "unselectedIdealTargetExactlyPreserved": true,
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
         "previousUnselectedQuantizedCoefficientsExact": true
+      },
+      "tackAttachment": {
+        "vertices": 514,
+        "baseMorphSha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "preservedBaseMorphBytes": 728256
       },
       "headShape": {
         "family": "draft",
@@ -6855,8 +6867,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.4855925278298727e-06,
-      "sha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
-      "byteLength": 728256,
+      "sha256": "4228c42ab2f3e32cc5131892cfe4f839e0702156f204bf567f4d104a89b69ca9",
+      "byteLength": 753956,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
       "sourceWithersM": 1.905771414287584,
@@ -7067,6 +7079,12 @@
         "unselectedIdealTargetExactlyPreserved": true,
         "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
         "previousUnselectedQuantizedCoefficientsExact": true
+      },
+      "tackAttachment": {
+        "vertices": 514,
+        "baseMorphSha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "preservedBaseMorphBytes": 728256
       },
       "headShape": {
         "family": "draft",
@@ -7310,8 +7328,8 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.8951334106741555e-06,
-      "sha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
-      "byteLength": 728256,
+      "sha256": "9359251e9f00267becbfa3c271786f262b21c8bb18e7aeb1e1b3b4513e986c37",
+      "byteLength": 753956,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,
       "sourceWithersM": 1.8885889697325051,

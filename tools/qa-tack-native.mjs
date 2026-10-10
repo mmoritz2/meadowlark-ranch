@@ -34,7 +34,7 @@ const set=id=>Object.fromEntries(TACK_PIECES.filter(p=>p.collectionId===id).map(
 
 const {createNativeRiderReins}=await import('../assets/native-rider.js');
 const catalogOnly=process.argv.includes('--catalog'),optionalOnly=process.argv.includes('--optional');
-const fixtures=['white-western','bay-western','bay-sporthorse-native','welsh','shire'];
+const fixtures=process.argv.find(a=>a.startsWith('--horses='))?.slice(9).split(',')||['white-western','bay-western','bay-sporthorse-native','welsh','shire'];
 const vec=()=>new THREE.Vector3();
 function skinned(root){const out=[];root.traverse(o=>{if(o.isSkinnedMesh)out.push(o);});return out;}
 function inspectGeometry(kit){

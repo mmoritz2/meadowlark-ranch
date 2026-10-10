@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'assets/models/native-roster'
 sys.path.insert(0, str(ROOT / 'tools/asset-gen'))
 import rig_hero_horse as glb
+from collar_validation import check_collar_attachment
 
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 SOURCE_TRANSLATION = np.array([-6.225790382362317e-9, .0047147771075021355, -1.6744842715166992])
@@ -275,14 +276,16 @@ def main():
         assert np.array_equal(row['sourceTranslation'], SOURCE_TRANSLATION), (key, 'alignment changed')
         path = (ROOT/'assets'/row['file']).resolve()
         assert sha(path) == row['sha256'], (key, 'buffer checksum')
+        packed = path.read_bytes()
         if row.get('headShape'):
             approved = DRAFT_LEG_BUFFER_SHA[key] if key in DRAFTS else HEAD_BUFFER_SHA[key]
-            assert row['headShape']['version'] == 1 and sha(path) == approved, (key, 'approved appearance revision changed')
+            approved_bytes=packed[:728256] if row.get('tackAttachment') else packed
+            assert not row.get('tackAttachment') or key in DRAFTS
+            assert row['headShape']['version'] == 1 and hashlib.sha256(approved_bytes).hexdigest() == approved, (key, 'approved appearance revision changed')
             if key in DRAFTS:
                 assert row['draftShape']['version'] == 4 and row['draftShape']['legContour']['version'] == 1
         elif key not in DRAFTS:
             assert sha(path) == NON_DRAFT_SHA[key], (key, 'non-draft buffer changed')
-        packed = path.read_bytes()
         assert len(packed) == row['byteLength'] and len(row['meshes']) == 5
         used, normal_error, draft = 0, 0., None
         for index, (rec, source_mesh) in enumerate(zip(row['meshes'], source_meshes)):
@@ -300,6 +303,8 @@ def main():
             outn = (n+values['normalDelta']).astype('<f4')
             assert np.isfinite(outp).all() and np.isfinite(outn).all()
             normal_error = max(normal_error, float(abs(np.linalg.norm(outn, axis=1)-1).max()))
+            if index == 3:
+                decoded_tack={'position':outp,'normal':outn}
             if index == 0:
                 protected = source_mesh['lower']
                 outworld = transform(source_mesh['matrix'], outp, translation)
@@ -315,6 +320,13 @@ def main():
                     expected = DRAFT_LEG_BODY_SHA[key]
                     assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
                 floor = float(outworld[:, 1].min())
+        collar_report=None
+        if row.get('tackAttachment'):
+            assert key in DRAFTS
+            used,collar_report=check_collar_attachment(row['tackAttachment'],packed,used,source_meshes[3],decoded_tack,ops,translation,row['actorScale'])
+            assert collar_report['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
+            assert row['tackAttachment']['baseMorphSha256']==DRAFT_LEG_BUFFER_SHA[key]
+            assert row['tackAttachment']['authoringBaseMorphSha256']==HEAD_BUFFER_SHA[key]
         shell_report=None
         shell=row.get('groom',{}).get('uprightCrest',{}).get('shell')
         if shell:
@@ -330,6 +342,7 @@ def main():
                   'protectedBodyPositionsAndNormalsBitExact': key not in DRAFTS,
                   'standingBodyFloorM': floor, 'maxNormalLengthError': normal_error,
                   'actorScale': row['actorScale'], 'withersM': row['withersM'], 'textureSize': [1024, 1024]}
+        if collar_report: report['collarAttachment']=collar_report
         if shell_report: report['additiveGroomShell']=shell_report
         if draft:
             report['draftLowerLegValidation'] = draft
@@ -343,7 +356,8 @@ def main():
     assert len(rows) == 25 and len({r['bodyGeometrySha256'] for r in rows}) == 25
     assert sha(source) == SOURCE_SHA
     report = {'sourceSha256': SOURCE_SHA, 'all25NativeFoundations': True, 'distinctBodyGeometryCount': 25,
-              'sharedOriginalNativeSkeletonSize': 677, 'unchangedSkinWeightsBindsAndAnimations': True,
+              'sharedOriginalNativeSkeletonSize': 677, 'unchangedSourceSkinWeightsBindsAndAnimations': True,
+              'runtimeCollarSkinOverrides': [r['id'] for r in rows if r.get('collarAttachment')],
               'unchangedIndicesAndUVs': True, 'nonDraftBuffersBitExact': len(NON_DRAFT_SHA)-len(set(HEAD_BUFFER_SHA)-DRAFTS),
               'draftLowerLegThicknessUpdated': sorted(DRAFTS),
               'reviewedDraftBodyPositionsBitExact': sorted(DRAFTS-set(HEAD_DRAFT_BODY_SHA)),

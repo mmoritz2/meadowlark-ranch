@@ -1,0 +1,50 @@
+[
+  {
+    "horse": "shire",
+    "previewSha256": "4616d450ea381a34910a5a6a00b4e84c82456d112c36c3427febd3e90ab63d5c",
+    "attachmentVertices": 514,
+    "poses": 48,
+    "standingMaxErrorM": 2.4991806568767045e-7,
+    "protectedAnimatedMaxErrorM": 0,
+    "finiteCollarSamples": 24672,
+    "nativeFoundation": {
+      "meshes": 2,
+      "saddleTriangles": 15208,
+      "bridleTriangles": 5090,
+      "padTriangles": 1720,
+      "hiddenSourceReinTriangles": 1640
+    }
+  },
+  {
+    "horse": "percheron",
+    "previewSha256": "8296d418a3e4c78fbf022031e0fb9716271bd8de9f3b4361ba907e39087dca2d",
+    "attachmentVertices": 514,
+    "poses": 48,
+    "standingMaxErrorM": 2.4597606010167544e-7,
+    "protectedAnimatedMaxErrorM": 0,
+    "finiteCollarSamples": 24672,
+    "nativeFoundation": {
+      "meshes": 2,
+      "saddleTriangles": 15208,
+      "bridleTriangles": 5090,
+      "padTriangles": 1720,
+      "hiddenSourceReinTriangles": 1640
+    }
+  },
+  {
+    "horse": "clyde",
+    "previewSha256": "a86917f3af6e47e76e29d49515e1ef00b9036c235a97f6cf5ef41653e0e2a134",
+    "attachmentVertices": 514,
+    "poses": 48,
+    "standingMaxErrorM": 2.3384210486328014e-7,
+    "protectedAnimatedMaxErrorM": 0,
+    "finiteCollarSamples": 24672,
+    "nativeFoundation": {
+      "meshes": 2,
+      "saddleTriangles": 15208,
+      "bridleTriangles": 5090,
+      "padTriangles": 1720,
+      "hiddenSourceReinTriangles": 1640
+    }
+  }
+]

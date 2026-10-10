@@ -4727,8 +4727,8 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
-      "byteLength": 728256,
+      "sha256": "814bd6ae5a3112b2c9d69447185b79064278ee48f88faf95ae734714173be09d",
+      "byteLength": 753956,
       "meshes": [
         {
           "meshIndex": 0,
@@ -4866,6 +4866,47 @@
         "originalUVsPreserved": true
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "tackAttachment": {
+        "version": 1,
+        "meshIndex": 3,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "vertexCount": 514,
+        "baseMorphSha256": "aa729d6fa97b111052335f822dd9001b2e7cadd8f90b1e1966af2235f8c73647",
+        "authoringSha256": "f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "authoringBaseMorphSha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+        "preservedNonBodyMorphSha256": "1812e30b8e24bdb349f6dda95360da3286249560bd876ff91d636915de2bfe3b",
+        "vertexIds": {
+          "byteOffset": 728256,
+          "count": 514,
+          "itemSize": 1,
+          "componentType": "uint16"
+        },
+        "position": {
+          "byteOffset": 729284,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "normal": {
+          "byteOffset": 735452,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "skinIndex": {
+          "byteOffset": 741620,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "uint16"
+        },
+        "skinWeight": {
+          "byteOffset": 745732,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "float32"
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "draft",
@@ -5437,8 +5478,8 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
-      "byteLength": 728256,
+      "sha256": "4228c42ab2f3e32cc5131892cfe4f839e0702156f204bf567f4d104a89b69ca9",
+      "byteLength": 753956,
       "meshes": [
         {
           "meshIndex": 0,
@@ -5576,6 +5617,47 @@
         "originalUVsPreserved": true
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "tackAttachment": {
+        "version": 1,
+        "meshIndex": 3,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "vertexCount": 514,
+        "baseMorphSha256": "8ba4d986f21697ca10ced24d54477d1b6424bd040ccdf210fc20a02b16f1afd2",
+        "authoringSha256": "eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "authoringBaseMorphSha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+        "preservedNonBodyMorphSha256": "1d3c785762aa7fcac4d2f4d16844a8e9a0e6c07b80d552cd47729ad4bb59a618",
+        "vertexIds": {
+          "byteOffset": 728256,
+          "count": 514,
+          "itemSize": 1,
+          "componentType": "uint16"
+        },
+        "position": {
+          "byteOffset": 729284,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "normal": {
+          "byteOffset": 735452,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "skinIndex": {
+          "byteOffset": 741620,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "uint16"
+        },
+        "skinWeight": {
+          "byteOffset": 745732,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "float32"
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "draft",
@@ -6147,8 +6229,8 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
-      "byteLength": 728256,
+      "sha256": "9359251e9f00267becbfa3c271786f262b21c8bb18e7aeb1e1b3b4513e986c37",
+      "byteLength": 753956,
       "meshes": [
         {
           "meshIndex": 0,
@@ -6286,6 +6368,47 @@
         "originalUVsPreserved": true
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "tackAttachment": {
+        "version": 1,
+        "meshIndex": 3,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "vertexCount": 514,
+        "baseMorphSha256": "11ef3c254a2ed1a0eaa764cb56b46c516d1bac0f6bbefbd844314be16108334c",
+        "authoringSha256": "291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf",
+        "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+        "authoringBaseMorphSha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+        "preservedNonBodyMorphSha256": "3e35042e5f6c5803e1487de6f20b0eacd1c959b07f332e8a6298b7ab252144a9",
+        "vertexIds": {
+          "byteOffset": 728256,
+          "count": 514,
+          "itemSize": 1,
+          "componentType": "uint16"
+        },
+        "position": {
+          "byteOffset": 729284,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "normal": {
+          "byteOffset": 735452,
+          "count": 1542,
+          "itemSize": 3,
+          "componentType": "float32"
+        },
+        "skinIndex": {
+          "byteOffset": 741620,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "uint16"
+        },
+        "skinWeight": {
+          "byteOffset": 745732,
+          "count": 2056,
+          "itemSize": 4,
+          "componentType": "float32"
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "draft",

@@ -22,8 +22,10 @@ The builder checks those hashes before finishing. The three draft foundations
 also serve their existing aliases, including Belgian, Suffolk, Glacier and
 Tempest; aliases keep their own colors and fantasy appearance.
 
-The 677 original joints, skin weights, inverse binds, mesh topology, material
-slots, source UVs and approved animations remain unchanged. Every variant uses
+The 677 original joints, body skin weights, inverse binds, mesh topology,
+material slots, source UVs and approved animations remain unchanged. Reviewed
+draft breastcollars carry a separate sparse attachment override; the source GLB
+is unchanged. Every variant uses
 the White Western full native body as the source and its complete gait package
 at runtime. The model is not reduced to the older 40-joint artist-body rig.
 
@@ -137,7 +139,10 @@ gain reaches zero there. This changes the added draft shape, preserving the
 original limb surface, joints, weights, lengths and animation. The correction
 fades out by Y=1.10 m; upper-body positions/normals and all four non-body meshes
 remain exactly equal to the reviewed prior release. Coats and all 22 non-draft
-buffers are unchanged.
+buffers are unchanged. The newer breastcollar attachment is retained byte for
+byte. Its builder accepts this explicitly reviewed body-only revision and
+checks the original non-body morph hash; unknown shape changes still require
+a new collar fit and review.
 
 `node tools/test-native-draft-leg-deformation.mjs` compares 81 production Trot
 poses with the identical source pose. It checks 5,694 lower-leg triangles for

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
+  "method": "Four-influence shoulder attachment at 70% strength. Standing surface, center tie, metal ring and saddle endpoints are preserved.",
+  "breeds": {
+    "shire": {
+      "file": "shire.npz",
+      "sha256": "eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf",
+      "baseMorphSha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575"
+    },
+    "percheron": {
+      "file": "percheron.npz",
+      "sha256": "f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae",
+      "baseMorphSha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d"
+    },
+    "clyde": {
+      "file": "clyde.npz",
+      "sha256": "291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf",
+      "baseMorphSha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d"
+    }
+  }
+}

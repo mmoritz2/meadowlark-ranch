@@ -1,6 +1,7 @@
 """Build compact breed appearance derivatives on the approved native 677 rig.
 
-No skeleton, skin weight, bind, index, UV or animation data is changed. Regional
+No source skeleton, bind, index, UV or animation data is changed. Reviewed draft
+breastcollars append sparse skin/geometry overrides; body skin stays original. Regional
 body/groom appearance changes are encoded as quantized geometry deltas. Drafts
 also widen limb crosssections without moving their centers or ground contacts;
 other breeds retain exact source positions and normals below 0.65 m.
@@ -19,6 +20,7 @@ OUT = ROOT / 'assets/models/native-roster'
 sys.path.insert(0, str(ROOT / 'tools/asset-gen'))
 import rig_hero_horse as glb
 from groom import shape_fjord_groom
+from collar_attachment import pack_collar_attachment
 
 SOURCE = ROOT / 'review/native-trot-reference-kit/white/model.glb'
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
@@ -634,6 +636,7 @@ def main():
                                      'fixedLowerVertices':int(fixed.sum()) if m['index']!=2 else 0})
         if groom_report and groom_report.get('crestShell'):
             groom_report['shell']=pack_groom_shell(groom_report.pop('crestShell'),meshes[2],packed)
+        collar_attachment=pack_collar_attachment(key,packed)
         file=OUT/(key+'.bin');pending.append((file,packed))
         if not args.geometry_only: paint_coat(key,atlas,covered,original)
         coatfile=OUT/(key+'-coat.webp')
@@ -649,6 +652,9 @@ def main():
                      'colorSrgb':srgb(COATS[key][0]).tolist(),'hairColorSrgb':hair_srgb,'hairColorLinear':list(HAIR[COATS[key][1]]),
                      'neutralFile':'./models/native-roster/neutralcoat.png','originalUVsPreserved':True},
              'limitations':'Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.'}
+        if collar_attachment:
+            row['tackAttachment']=collar_attachment
+            report['tackAttachment']={'vertices':collar_attachment['vertexCount'],'baseMorphSha256':collar_attachment['baseMorphSha256'],'method':collar_attachment['method'],'preservedBaseMorphBytes':728256}
         if groom_report:
             row['groom'].pop('maneLengthFactor',None)
             row['groom']['uprightCrest']={k:v for k,v in groom_report.items() if k!='cards'}

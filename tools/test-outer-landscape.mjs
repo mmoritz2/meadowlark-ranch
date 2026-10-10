@@ -102,7 +102,7 @@ test('the first three bands retain their legacy heights and colors exactly',()=>
 
 test('the exact annulus budget covers the whole area without gaps or inverted triangles',()=>{
  const g=art.mesh.geometry,p=g.attributes.position,idx=g.index;let area=0;
- assert.equal(p.count,17434);assert.equal(idx.count/3,32256);assert.equal(art.stats.vertices,17434);assert.equal(art.stats.triangles,32256);assert.equal(art.edgeCount,2049);assert.equal(art.stats.draws,1);
+ assert.equal(p.count,21538);assert.equal(idx.count/3,40448);assert.equal(art.stats.vertices,21538);assert.equal(art.stats.triangles,40448);assert.equal(art.edgeCount,2049);assert.equal(art.stats.draws,1);
  for(let i=0;i<idx.count;i+=3){const a=idx.getX(i),b=idx.getX(i+1),c=idx.getX(i+2),cross=(p.getZ(b)-p.getZ(a))*(p.getX(c)-p.getX(a))-(p.getX(b)-p.getX(a))*(p.getZ(c)-p.getZ(a));assert(cross>0);area+=cross*.5;}
  assert(Math.abs(area-4*(1700**2-500**2))<.1);
  for(let a=.037;a<Math.PI*2;a+=.29)for(const d of[2,9,35,95,180,390,740,1150]){
@@ -147,10 +147,10 @@ function directionAt(x,z){
 }
 function directionalSurface(){
  const geometry=art.mesh.geometry,position=geometry.attributes.position,color=geometry.attributes.color,index=geometry.index;
- const groups=Object.fromEntries(['north','dry','pastoral','valley'].map(k=>[k,{vertices:0,height:0,r:0,g:0,b:0,trees:0,area:0}]));
+ const groups=Object.fromEntries(['north','dry','pastoral','valley'].map(k=>[k,{vertices:0,height:0,minHeight:Infinity,maxHeight:-Infinity,r:0,g:0,b:0,trees:0,area:0}]));
  for(let i=0;i<position.count;i++){
   const x=position.getX(i),z=position.getZ(i),d=outerDistance(x,z),k=directionAt(x,z);if(!k||d<145||d>410)continue;
-  const group=groups[k];group.vertices++;group.height+=position.getY(i);group.r+=color.getX(i);group.g+=color.getY(i);group.b+=color.getZ(i);
+  const group=groups[k];group.vertices++;group.height+=position.getY(i);group.minHeight=Math.min(group.minHeight,position.getY(i));group.maxHeight=Math.max(group.maxHeight,position.getY(i));group.r+=color.getX(i);group.g+=color.getY(i);group.b+=color.getZ(i);
  }
  for(const root of art.woodlandSites){const k=directionAt(root.x,root.z);if(k)groups[k].trees++;}
  for(let i=0;i<index.count;i+=3){
@@ -163,7 +163,8 @@ function directionalSurface(){
 
 test('authored outer directions create lower pastoral hills, a visible open saddle, and warm/cool material contrast',()=>{
  const {north,dry,pastoral,valley}=directionalSurface();
- assert(north.height>dry.height*1.2,'Northern relief must be higher than the dry shoulders');
+ assert(north.maxHeight>dry.maxHeight*1.1,'Northern divides retain height above the dry shoulders');
+ assert(north.maxHeight-north.minHeight>30,'Northern divides must retain distinct low drainage corridors');
  assert(dry.height>pastoral.height*1.3,'Pastoral hills must stay below the western relief');
  assert(valley.height<pastoral.height*.6,'The southwest saddle must open the skyline');
  assert(dry.r-dry.b>.25,'Dry shoulders need a warm mineral tint');

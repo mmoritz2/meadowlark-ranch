@@ -1,0 +1,884 @@
+{
+  "status": "completed lighting visual review and passed post-merge terrain smoke",
+  "origin": "http://127.0.0.1:18798",
+  "sourceArtifactsDirectory": "/private/tmp",
+  "sanitization": "Selected visual diagnostics only; no save, player identity, or networking credentials.",
+  "comparisonLimits": [
+    "Viewpoints are explicitly staged visual fixtures, not gameplay completion evidence.",
+    "The main midnight before/after captures share player and camera coordinates, but scenery is procedural across reloads. No pixel-aligned comparison is claimed.",
+    "No performance benchmark or physical mobile-device test is claimed.",
+    "Light-color diagnostics support but do not replace the browser operator visual inspection."
+  ],
+  "observations": [
+    {
+      "source": "Root browser operator",
+      "view": "Low-quality midnight pasture",
+      "result": "The bay is distinct against the surroundings after adjustment; the baseline rendered it nearly black."
+    },
+    {
+      "source": "Root browser operator",
+      "view": "Low-quality midnight White Western",
+      "result": "The bright coat retains visible detail."
+    },
+    {
+      "source": "Root browser operator",
+      "view": "High-quality midnight trail and Medium-quality midnight village",
+      "result": "Riding surroundings remain readable."
+    },
+    {
+      "source": "Root browser operator",
+      "view": "Dawn, noon, dusk",
+      "result": "All three were inspected; warm transition-hour appearance and noon grade retained."
+    },
+    {
+      "source": "Root browser operator",
+      "view": "Opposite-facing pasture Shire",
+      "result": "Partly occluded by nearby barn/rock; this angle alone does not establish unobstructed shaded-side readability."
+    },
+    {
+      "source": "Root browser operator",
+      "view": "Merged candidate: Low pasture and trail, Shire",
+      "result": "Grass and path readable; coat outline and white feet visible; dark sky retained."
+    }
+  ],
+  "shireTrail": {
+    "status": "captured; native Shire confirmed without errors",
+    "source": "night-riding-shire-trail.json",
+    "note": "Browser operator captured the actual Shire model on the separate high-quality trail view; the opposite pasture view remains partly occluded."
+  },
+  "normalWalk": {
+    "requestedDurationSeconds": 2,
+    "input": "Ordinary W at walk gait; no coordinate patch during the walk",
+    "start": {
+      "x": -14,
+      "z": -41
+    },
+    "end": {
+      "x": -16.691983581161793,
+      "z": -43.86023255498442
+    },
+    "displacementMeters": 3.927811842468702
+  },
+  "noonComparison": {
+    "lightColorsEqual": true,
+    "fogColorEqual": true,
+    "fogDensityDifference": 2.168404344971009e-19,
+    "exposureEqual": true,
+    "sunIntensityBefore": 2.984180000006186,
+    "sunIntensityAfter": 3.0006178634791145,
+    "cloudBefore": 0.5800000000000001,
+    "cloudAfter": 0.5988724035280069,
+    "interpretation": "The small sun-intensity difference follows the moving cloud field; it is not a failed noon comparison."
+  },
+  "sourceReview": {
+    "addedLights": false,
+    "exposureChanges": false,
+    "source": "Root source review; each captured renderer exposure is 1"
+  },
+  "relatedRegressions": {
+    "passed": 18,
+    "failed": 0,
+    "source": "night-riding-tests.log",
+    "scope": "Existing related tests; not an automated visual or performance score"
+  },
+  "samples": [
+    {
+      "capture": "before",
+      "source": "night-riding-before.json",
+      "stagedView": "pasture",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.06654963523659,
+          6.543269914950506,
+          -10.294087050170562
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 0.5800000000000001,
+      "fog": {
+        "color": "#050812",
+        "density": 0.001687978884115745
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#5a6d95",
+          "groundColor": "#2e3640",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#7d90bd",
+          "groundColor": null,
+          "intensity": 1.4542872874917971,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "after",
+      "source": "night-riding-after.json",
+      "stagedView": "pasture",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.00021937500014901161,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.06654963523659,
+          6.543269914950506,
+          -10.294087050170562
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 0.5983735740129441,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879789028833244
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.4620862530648528,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "day-before",
+      "source": "night-riding-day-before.json",
+      "stagedView": "pasture",
+      "requestedTime": "noon",
+      "targetDayT": 0.5,
+      "dayT": 0.5001081249999503,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.06654963523659,
+          6.543269914950506,
+          -10.294087050170562
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 0.5800000000000001,
+      "fog": {
+        "color": "#a5cbd7",
+        "density": 0.0014500000000048608
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#c3d8ef",
+          "groundColor": "#8d8868",
+          "intensity": 0.9399999999961113,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#fff1df",
+          "groundColor": null,
+          "intensity": 2.984180000006186,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "day-after",
+      "source": "night-riding-day-after.json",
+      "stagedView": "pasture",
+      "requestedTime": "noon",
+      "targetDayT": 0.5,
+      "dayT": 0.5001145833333334,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.06654963523659,
+          6.543269914950506,
+          -10.294087050170562
+        ],
+        "fov": 52.04302796001791
+      },
+      "exposure": 1,
+      "cloud": 0.5988724035280069,
+      "fog": {
+        "color": "#a5cbd7",
+        "density": 0.001450000000004861
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#c3d8ef",
+          "groundColor": "#8d8868",
+          "intensity": 0.9399999999961111,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#fff1df",
+          "groundColor": null,
+          "intensity": 3.0006178634791145,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "trail-high",
+      "source": "night-riding-trail-high.json",
+      "stagedView": "trail",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.00014104166676600773,
+      "quality": "high",
+      "bloom": true,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -14,
+        "z": -41,
+        "heading": -2.38648825011112,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -9.547913315888927,
+          3.682484824980873,
+          -37.575344175847306
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879790459608465
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.6325632298201103,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "walk",
+      "source": "night-riding-walk.json",
+      "stagedView": "trail",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0,
+      "quality": "high",
+      "bloom": true,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -16.691983581161793,
+        "z": -43.86023255498442,
+        "heading": -2.38648825011112,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -12.233220425162456,
+          3.710458347186066,
+          -40.42661901682185
+        ],
+        "fov": 52.103905617842585
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879790518488375
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.6325632558269862,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "dawn",
+      "source": "night-riding-dawn.json",
+      "stagedView": "trail",
+      "requestedTime": "dawn",
+      "targetDayT": 0.16,
+      "dayT": 0.1601433333332339,
+      "quality": "high",
+      "bloom": true,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": -16.691983581161793,
+        "z": -43.86023255498442,
+        "heading": -2.38648825011112,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -12.239890319191996,
+          3.7078590356745336,
+          -40.43556791336089
+        ],
+        "fov": 52.04302796001791
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#c79493",
+        "density": 0.0021968619480768887
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#6e83aa",
+          "groundColor": "#464646",
+          "intensity": 0.7460433251545325,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#ffa77a",
+          "groundColor": null,
+          "intensity": 3.8460274363183435,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "dusk",
+      "source": "night-riding-dusk.json",
+      "stagedView": "village",
+      "requestedTime": "dusk",
+      "targetDayT": 0.84,
+      "dayT": 0.8399999999999999,
+      "quality": "high",
+      "bloom": true,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": 27,
+        "z": -31,
+        "heading": 2.158798930342464,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          22.882552073367265,
+          3.7634043224708047,
+          -27.17953328398088
+        ],
+        "fov": 52.04302796001791
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#ca8e6f",
+        "density": 0.0017981116469507543
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#7789ad",
+          "groundColor": "#5d4b42",
+          "intensity": 0.7469471285005139,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#ff8e40",
+          "groundColor": null,
+          "intensity": 3.8448536824685764,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "village-medium",
+      "source": "night-riding-village-medium.json",
+      "stagedView": "village",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.00014083333338300386,
+      "quality": "medium",
+      "bloom": true,
+      "horse": {
+        "breed": "bay",
+        "source": "Browser operator: owned starter; early diagnostics did not include breed"
+      },
+      "player": {
+        "x": 27,
+        "z": -31,
+        "heading": 2.158798930342464,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          22.882552073367265,
+          3.7634043224708047,
+          -27.17953328398088
+        ],
+        "fov": 52.04302796001791
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879790777063963
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.6325632504749041,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "white",
+      "source": "night-riding-white.json",
+      "stagedView": "pasture",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "white-western",
+        "colors": {
+          "body": "#f4f2ec",
+          "mane": "#e3dacc"
+        },
+        "modelKey": "white-western",
+        "requestedBreed": "white-western",
+        "loadingBreed": null
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.0665496352366,
+          6.543269914950507,
+          -10.29408705017056
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 0.724266515582449,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879789128543834
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.5155235822947046,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "shire",
+      "source": "night-riding-shire.json",
+      "stagedView": "pastureOpposite",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.00011124999995032947,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "shire",
+        "colors": {
+          "body": "#3a352f",
+          "mane": "#35302b"
+        },
+        "modelKey": "shire",
+        "requestedBreed": "shire",
+        "loadingBreed": null
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 4.145659762861183,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -49.84134665120973,
+          6.543269914950507,
+          -12.77792015514961
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 0.5800000000000001,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879788802031666
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.4542872633652328,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "shire-trail",
+      "source": "night-riding-shire-trail.json",
+      "stagedView": "trail",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.0001962499998509884,
+      "quality": "high",
+      "bloom": true,
+      "horse": {
+        "breed": "shire",
+        "colors": {
+          "body": "#3a352f",
+          "mane": "#35302b"
+        },
+        "modelKey": "shire",
+        "requestedBreed": "shire",
+        "loadingBreed": null
+      },
+      "player": {
+        "x": -14,
+        "z": -41,
+        "heading": -2.38648825011112,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -9.547913315888929,
+          3.682484824980873,
+          -37.5753441758473
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879792374150488
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.6325632936337993,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "merged-pasture",
+      "source": "night-riding-merged-pasture.json",
+      "stagedView": "pasture",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0.0002272916667163372,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "shire",
+        "colors": {
+          "body": "#3a352f",
+          "mane": "#35302b"
+        },
+        "modelKey": "shire",
+        "requestedBreed": "shire",
+        "loadingBreed": null
+      },
+      "player": {
+        "x": -55,
+        "z": -15,
+        "heading": 1.0040671092713902,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -58.06654963523659,
+          6.543269914950506,
+          -10.294087050170562
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879788936609102
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.6325631860818588,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    },
+    {
+      "capture": "merged-trail",
+      "source": "night-riding-merged-trail.json",
+      "stagedView": "trail",
+      "requestedTime": "midnight",
+      "targetDayT": 0,
+      "dayT": 0,
+      "quality": "low",
+      "bloom": false,
+      "horse": {
+        "breed": "shire",
+        "colors": {
+          "body": "#3a352f",
+          "mane": "#35302b"
+        },
+        "modelKey": "shire",
+        "requestedBreed": "shire",
+        "loadingBreed": null
+      },
+      "player": {
+        "x": -14,
+        "z": -41,
+        "heading": -2.38648825011112,
+        "speed": 0,
+        "rigReady": true
+      },
+      "camera": {
+        "position": [
+          -9.547913315883601,
+          3.6824848249808726,
+          -37.5753441758567
+        ],
+        "fov": 52
+      },
+      "exposure": 1,
+      "cloud": 1,
+      "fog": {
+        "color": "#050812",
+        "density": 0.0016879789605476758
+      },
+      "gradedLights": [
+        {
+          "type": "HemisphereLight",
+          "color": "#8196bc",
+          "groundColor": "#58667b",
+          "intensity": 0.78,
+          "castShadow": false
+        },
+        {
+          "type": "DirectionalLight",
+          "color": "#a7bce0",
+          "groundColor": null,
+          "intensity": 1.632563212987497,
+          "castShadow": true
+        }
+      ],
+      "networkConnected": false,
+      "errors": [],
+      "featureErrors": []
+    }
+  ],
+  "mergedCandidate": {
+    "remoteRevision": "18acd40",
+    "incomingChanges": "Terrain and eyelashes",
+    "runtimeLightingChangesAfterReview": false,
+    "visualSmokeStatus": "passed: rendered Low pasture and trail with Shire",
+    "terrainRegressions": {
+      "passed": 18,
+      "failed": 0,
+      "source": "night-riding-merged-tests.log"
+    },
+    "note": "Browser operator confirmed readable grass/path, visible coat outline and white feet, and retained dark sky on the reloaded merged candidate."
+  }
+}

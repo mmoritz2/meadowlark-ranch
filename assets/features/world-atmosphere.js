@@ -107,6 +107,8 @@ export function install(G){
  const C_HEMI_DAWN=C('#93abd4'),C_HEMI_GOLD=C('#a9bcdc'),C_HEMI_NOON=C('#c3d8ef'),C_HEMI_NIGHT=C('#5a6d95');
  const C_GRND_DAWN=C('#6a6354'),C_GRND_GOLD=C('#9a6f45'),C_GRND_NOON=C('#8d8868'),C_GRND_NIGHT=C('#2e3640');
  const C_NIGHT_TOP=C('#05091a'),C_NIGHT_HOR=C('#19294a'),WHITE=C('#ffffff');
+ // Moonlit riding needs light on the shaded legs and ground, while the sky stays dark.
+ const C_RIDE_MOON=C('#a7bce0'),C_RIDE_SKY=C('#8196bc'),C_RIDE_BOUNCE=C('#58667b');
 
  /* ================= 4. cloud shadows ================= */
  /* The same field is evaluated on the GPU for the pattern on the turf and on the CPU for the
@@ -527,6 +529,8 @@ export function install(G){
   previousDay=day;
   const blend=rate=>reset?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*rate);
   const e=K.elev,rain=A.rain||0;
+  // Fade in below the horizon only; the daylight and golden-hour palettes remain exact.
+  const nightReadability=sstep(K.night,.05,.85);
   const pm=1-K.morning;
   ramp(_sun ,R_SUN_DAWN,e);ramp(_sun2,R_SUN_DUSK,e);_sun.lerp(_sun2,pm);
   ramp(_hor ,R_HOR_DAWN,e);ramp(_tmp ,R_HOR_DUSK,e);_hor.lerp(_tmp,pm);
@@ -541,7 +545,7 @@ export function install(G){
    const key=(rain?1.25:lerp(keyDay,3.85,K.horizon))*(1-K.night*0.72)+0.80*K.night;
    SM.key+=(key-SM.key)*blend(3.5);
    sun.intensity=SM.key*(0.74+0.26*(A.cloud||1));   // a cloud passing over dims the world, not only the turf
-   sun.color.copy(_sun);
+   sun.color.copy(_sun).lerp(C_RIDE_MOON,nightReadability);
    // Shadow coverage is owned by the terrain-following quality controller.
 
   }
@@ -549,9 +553,9 @@ export function install(G){
   if(hemi){
    const h=K.horizon;
    _tmp.copy(C_HEMI_NOON).lerp(C_HEMI_GOLD,h*pm).lerp(C_HEMI_DAWN,h*K.morning);
-   hemi.color.copy(C_HEMI_NIGHT).lerp(_tmp,K.day);
+   hemi.color.copy(C_HEMI_NIGHT).lerp(_tmp,K.day).lerp(C_RIDE_SKY,nightReadability);
    _tmp.copy(C_GRND_NOON).lerp(C_GRND_GOLD,h*pm).lerp(C_GRND_DAWN,h*K.morning);
-   hemi.groundColor.copy(C_GRND_NIGHT).lerp(_tmp,K.day);
+   hemi.groundColor.copy(C_GRND_NIGHT).lerp(_tmp,K.day).lerp(C_RIDE_BOUNCE,nightReadability);
    /* The floor matters more than it looks: below about 0.7 the near grass at dawn goes to a
       murky olive and the whole quarter reads as underexposed rather than as early. */
    const fill=rain?1.05:lerp(.94,0.66,K.horizon)*K.day+0.78*(1-K.day);

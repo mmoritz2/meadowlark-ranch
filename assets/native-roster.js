@@ -1,5 +1,7 @@
+import {applyNativeCollarAttachment} from './native-collar-attachment.js?v=draft-collar-1';
 /* Breed bodies share the approved horse's skeleton and clips. Shape overrides
- * change mesh positions/normals only; each prepared breed owns its geometry. */
+ * change body positions/normals; reviewed draft collars also carry private
+ * skin influences. Each prepared breed owns its geometry. */
 export function nativeRosterProfiles(catalog, variants, source) {
  const profiles={};
  for(const [key,entry] of Object.entries(catalog.breeds)){
@@ -43,5 +45,6 @@ export function applyNativeRosterShape({THREE,gltf,spec,binary,coat}){
    for(const m of Array.isArray(mesh.material)?mesh.material:[mesh.material])m.color.fromArray(variant.coat.hairColorLinear);
   }
  }
+ if(variant.tackAttachment)applyNativeCollarAttachment({THREE,mesh:meshes[variant.tackAttachment.meshIndex],record:variant.tackAttachment,binary,profile:spec});
  return gltf;
 }

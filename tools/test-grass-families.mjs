@@ -24,24 +24,41 @@ for(let family=0;family<3;family++)test(`${GRASS_FAMILIES[family].name}: finite 
 test('families have different physical silhouettes and repeat deterministically',()=>{
  const geometries=GRASS_FAMILIES.map((_,i)=>createGrassFamilyGeometry(THREE,i));
  try{const hashes=geometries.map(g=>crypto.createHash('sha256').update(Buffer.from(g.attributes.position.array.buffer)).digest('hex'));assert.equal(new Set(hashes).size,3);
-  assert(geometries[0].boundingBox.max.y>geometries[1].boundingBox.max.y*2);assert(geometries[2].boundingBox.max.y>geometries[0].boundingBox.max.y*1.3);
+  assert(geometries[0].boundingBox.max.y>geometries[1].boundingBox.max.y*1.6);assert(geometries[2].boundingBox.max.y>geometries[0].boundingBox.max.y*1.3);
   for(let i=0;i<3;i++){const again=createGrassFamilyGeometry(THREE,i);for(const key of Object.keys(again.attributes))assert.deepEqual(again.attributes[key].array,geometries[i].attributes[key].array);assert.deepEqual(again.index.array,geometries[i].index.array);again.dispose();}
   assert.throws(()=>createGrassFamilyGeometry(THREE,-1));assert.throws(()=>createGrassFamilyGeometry(THREE,3));assert.throws(()=>createGrassFamilyGeometry(THREE,.5));
  }finally{geometries.forEach(g=>g.dispose());}
 });
-test('every leaf grows from paired grounded roots to a narrower falling point',()=>{
- for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,uv=g.attributes.uv;
-  for(let leaf=0;leaf<GRASS_FAMILIES[family].leaves;leaf++){const start=leaf*9,tip=start+8;assert.equal(p.getY(start),0);assert.equal(p.getY(start+1),0);assert.equal(uv.getY(start),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(start+6)>p.getY(tip),'Final bowed leaf segment falls');assert(p.getY(tip)>0);const widths=[0,2,4,6].map(j=>new THREE.Vector3().fromBufferAttribute(p,start+j).distanceTo(new THREE.Vector3().fromBufferAttribute(p,start+j+1)));assert(widths[3]<widths[1]);}
-  g.dispose();
+test('each narrow leaf is grounded, tapers to one point, and the stand has uneven arching tops',()=>{
+ for(let family=0;family<3;family++){
+  const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,uv=g.attributes.uv,ranges=g.userData.grassFamily.leafRanges;
+  assert.equal(ranges.length,GRASS_FAMILIES[family].leaves);let arching=0;const tops=[];
+  for(const r of ranges){
+   const start=r.vertexStart,tip=start+r.vertexCount-1,shoulder=tip-2;
+   assert.equal(p.getY(start),0);assert.equal(p.getY(start+1),0);
+   assert.equal(uv.getY(start),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(tip)>0);
+   if(p.getY(shoulder)>p.getY(tip))arching++;
+   const widths=[];for(let i=start;i<tip;i+=2)widths.push(new THREE.Vector3().fromBufferAttribute(p,i).distanceTo(new THREE.Vector3().fromBufferAttribute(p,i+1)));
+   assert(widths.every(w=>w>.004&&w<.06));if(widths.length>2)assert(widths.at(-1)<Math.max(...widths));
+   const top=Math.max(...Array.from({length:r.vertexCount},(_,i)=>p.getY(start+i)));tops.push(top);
+   // A grass blade rises well above its horizontal deflection; reject the
+   // low, almost-horizontal radial fan that looked like a repeated rosette.
+   const root=new THREE.Vector3().fromBufferAttribute(p,start).add(new THREE.Vector3().fromBufferAttribute(p,start+1)).multiplyScalar(.5);
+   const deflection=Math.hypot(p.getX(tip)-root.x,p.getZ(tip)-root.z);
+   assert(top>deflection*.5);
+  }
+  assert(arching>=ranges.length/2,'Most blades arch in their upper section');
+  assert(Math.max(...tops)>Math.min(...tops)*1.4,'Unequal tops form an irregular stand');g.dispose();
  }
 });
 test('original geometry adds no texture/material allocation or import-time resources',()=>{
  const source=fs.readFileSync(new URL('../assets/grass-families.mjs',import.meta.url),'utf8');assert(!source.includes('Math.random'));assert(!source.includes('new T.Texture'));assert(!source.includes('Material('));assert(!source.includes('fetch('));
 });
 
-test('leafy sward keeps its mass low and roots darker than the blade shoulders',()=>{
- for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,c=g.attributes.color;
-  for(let leaf=0;leaf<GRASS_FAMILIES[family].leaves;leaf++){const k=leaf*9;assert(c.getY(k)<.30);assert(c.getY(k+4)>c.getY(k)*2);const width=new THREE.Vector3().fromBufferAttribute(p,k+2).distanceTo(new THREE.Vector3().fromBufferAttribute(p,k+3));assert(width>.018&&width<.08);}
+test('ordinary sward retains dark connected roots and lighter leaf shoulders',()=>{
+ for(let family=0;family<3;family++){
+  const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,c=g.attributes.color;
+  for(const r of g.userData.grassFamily.leafRanges){const k=r.vertexStart;assert(c.getY(k)<.30);assert(c.getY(k+2)>c.getY(k)*2);assert(Math.hypot(p.getX(k),p.getZ(k))<.10);}
   g.dispose();
  }
 });
