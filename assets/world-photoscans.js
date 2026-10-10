@@ -1,3 +1,4 @@
+import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
 import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
 import {patchSummerLeafPigment,isSummerLeafMaterial} from './summer-leaf-pigment.mjs?v=summer-leaf-pigment-1';
 import {SETTLEMENT_WOODLAND_BELTS,SETTLEMENT_WOODLAND_MAX,terrainAwareWoodEnvelope,settlementWoodlandCandidates,settlementWoodlandPlants} from './settlement-woodland.mjs?v=settlement-woodland-1';
@@ -8,7 +9,7 @@ import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
-import {patchOuterFog} from './outer-landscape.js?v=outer-countryside-2';
+import {patchOuterFog} from './outer-landscape.js?v=outer-rock-clusters-3';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
 import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
@@ -59,6 +60,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const loader=new GLTFLoader(),wind={value:0},group=new THREE.Group();
   group.name='Poly Haven environment';scene.add(group);
   const loaded=new Map(),trees=[],detailPatches=[];
+  let outerRockParts=null;
   const zero=new THREE.Matrix4().makeScale(0,0,0),UP=new THREE.Vector3(0,1,0),WHITE=new THREE.Color(0xffffff);
   const q=new THREE.Quaternion(),v=new THREE.Vector3(),s=new THREE.Vector3();
   const rnd=(x,z,k=0)=>{const n=Math.sin(x*127.1+z*311.7+k*74.7)*43758.5453;return n-Math.floor(n);};
@@ -680,6 +682,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);
+    outerRockParts=parts;
     rocks.forEach((rock,i)=>{
       const piece=parts[i%parts.length],p=rock.userData.scanPlacement;
       if(!p)return;
@@ -883,7 +886,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
       finally{if(install===installTrees&&!edge.settled)finishEdge({trees:[],plants:[],failed:true,error:state.errors.at(-1)||'tree setup incomplete',physicsReady:false,artOnly:true});}
     }
-    state.willows?.update();state.thunderOak?.update();updateTrees();return state.assets;
+    state.willows?.update();state.thunderOak?.update();updateTrees();
+    try{installOuterRockClusters(G,outerRockParts,mergeGeometries);}catch(e){state.errors.push(e.message);console.warn('Scenic rock setup unavailable:',e);}
+    return state.assets;
   })();
   let timer=0;
   G.on('tick',(dt,t)=>{

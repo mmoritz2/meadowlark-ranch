@@ -1,3 +1,4 @@
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grazed-sward-4';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=pasture-structure-2';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
@@ -19,7 +20,7 @@ export function swardFamilyAt(x,z){
 export function prepareSwardRows(cells,{canBasal=()=>true,cellCache=new WeakMap()}={}){
  const start=now(),rows=[];let classified=0,reused=0,index=0;
  for(let cellIndex=0;cellIndex<cells.length;cellIndex++){const c=cells[cellIndex];if(!Number.isInteger(c.count)||c.count<0||c.count*16>c.matrices.length||c.count*3>c.colors.length)throw Error('Invalid source cell count');let cached=cellCache.get(c);
-  if(!cached||cached.version!==c.version||cached.count!==c.count){const list=[];for(let row=0;row<c.count;row++){const o=row*16,x=c.matrices[o+12],y=c.matrices[o+13],z=c.matrices[o+14];if(!Number.isFinite(x+y+z))throw Error('Nonfinite source root');const warm=!!canBasal(x,z),basal=warm&&swardHash(x,z,19)<.75,variant=Math.min(4,Math.floor(swardHash(x,z,2)*5)),scaleY=Math.hypot(c.matrices[o+4],c.matrices[o+5],c.matrices[o+6]);list.push({cellIndex,row,x,y,z,richEligible:basal,basal,family:basal?swardFamilyAt(x,z):0,variant,height:(.32+.20*swardHash(x,z,3))*clamp(scaleY,.65,1.25),accent:null,accentCandidate:basal&&swardHash(x,z,1)<.045*swardPatchAt(x,z)});classified++;}cached={version:c.version,count:c.count,rows:list};cellCache.set(c,cached);}else reused+=cached.count;
+  if(!cached||cached.version!==c.version||cached.count!==c.count){const list=[];for(let row=0;row<c.count;row++){const o=row*16,x=c.matrices[o+12],y=c.matrices[o+13],z=c.matrices[o+14];if(!Number.isFinite(x+y+z))throw Error('Nonfinite source root');const warm=!!canBasal(x,z),basal=warm&&swardHash(x,z,19)<.75,variant=Math.min(4,Math.floor(swardHash(x,z,2)*5)),scaleY=Math.hypot(c.matrices[o+4],c.matrices[o+5],c.matrices[o+6]);list.push({cellIndex,row,x,y,z,richEligible:basal,basal,family:basal?swardFamilyAt(x,z):0,grazed:basal&&selectsGrazedSward(x,z,swardHash(x,z,37)),variant,height:(.32+.20*swardHash(x,z,3))*clamp(scaleY,.65,1.25),accent:null,accentCandidate:basal&&swardHash(x,z,1)<.045*swardPatchAt(x,z)});classified++;}cached={version:c.version,count:c.count,rows:list};cellCache.set(c,cached);}else reused+=cached.count;
   for(const r of cached.rows){r.sourceIndex=index++;rows.push(r);}
  }
  return {rows,classifiedRoots:classified,reusedRoots:reused,eligibilityMs:now()-start};
@@ -87,12 +88,12 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   if(!active){const started=now();if(lastQuality===null||(['high','medium'].includes(lastQuality)&&!lastVR)||vr!==lastVR)restore();
    for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;
    const roots=source.cells.reduce((n,c)=>n+c.count,0),count=vr?Math.floor(roots*.5):roots,total=now()-started;
-   state.stats={sourceRoots:roots,nearRoots:count,basalRoots:0,familyCounts:[0,0,0],scanRoots:0,scanCap:0,scanCounts:[0,0,0,0,0],submittedTriangles:count*MIXED_SWARD.sourceTriangles,sourceSubmittedTriangles:count*MIXED_SWARD.sourceTriangles,budgetMaxTriangles:count*MIXED_SWARD.sourceTriangles,triangleDelta:0,classifiedRoots:0,reusedEligibilityRoots:0,accentChecks:0,timing:{rebuilds:++rebuilds,eligibilityMs:0,broadphaseMs:0,selectionMs:0,planMs:0,packMs:total,totalMs:total,scope:'Original Low/VR draw, no grass classification or scan selection'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0};
+   state.stats={sourceRoots:roots,nearRoots:count,basalRoots:0,familyCounts:[0,0,0,0],grazedRoots:0,scanRoots:0,scanCap:0,scanCounts:[0,0,0,0,0],submittedTriangles:count*MIXED_SWARD.sourceTriangles,sourceSubmittedTriangles:count*MIXED_SWARD.sourceTriangles,budgetMaxTriangles:count*MIXED_SWARD.sourceTriangles,triangleDelta:0,classifiedRoots:0,reusedEligibilityRoots:0,accentChecks:0,timing:{rebuilds:++rebuilds,eligibilityMs:0,broadphaseMs:0,selectionMs:0,planMs:0,packMs:total,totalMs:total,scope:'Original Low/VR draw, no grass classification or scan selection'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0};
    lastKey=key;lastX=x;lastZ=z;lastQuality=quality;lastVR=vr;return;
   }
   const started=now();let eligibilityMs=0;if(key!==cachedKey||!cachedMetadata){cachedMetadata=prepareSwardRows(source.cells,{canBasal:source.canBasal,cellCache});eligibilityMs=cachedMetadata.eligibilityMs;cachedKey=key;}else{cachedMetadata.classifiedRoots=0;cachedMetadata.reusedRoots=cachedMetadata.rows.length;}const classified=now();source.beginAccentQuery?.(x,z,MIXED_SWARD.radius);const scoped=now(),plan=planMixedSward(source.cells,{x,z,quality,vr,canAccent:source.canAccent,metadata:cachedMetadata}),planned=now();copy(plan.near,originalNear);
-  const families=[[],[],[]];for(const row of plan.basal)families[row.family].push(row);
-  for(let i=0;i<3;i++)copy(families[i],state.basalMeshes[i]);
+  const families=[[],[],[],[]];for(const row of plan.basal)families[row.grazed?3:row.family].push(row);
+  for(let i=0;i<4;i++)copy(families[i],state.basalMeshes[i]);
   const counts=[0,0,0,0,0];for(const mesh of state.meshes){mesh.count=0;mesh.instanceMatrix.array.fill(0);}
   for(const r of plan.scans){const i=r.variant,mesh=state.meshes[i],row=counts[i]++,c=source.cells[r.cellIndex],offset=r.row*16,dst=row*16,scale=r.height/state.sources[i].sourceHeight;
    for(let col=0;col<3;col++){const start=offset+col*4,length=Math.hypot(c.matrices[start],c.matrices[start+1],c.matrices[start+2]);if(length<1e-8)throw Error('Zero scan root basis');for(let axis=0;axis<3;axis++)mesh.instanceMatrix.array[dst+col*4+axis]=c.matrices[start+axis]*scale/length;}
@@ -100,7 +101,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   }
   for(let i=0;i<5;i++){state.meshes[i].count=counts[i];state.meshes[i].instanceMatrix.needsUpdate=true;}
   const finished=now();timingSamples.push(finished-started);if(timingSamples.length>32)timingSamples.shift();const sorted=timingSamples.slice().sort((a,b)=>a-b);
-  state.stats={...plan.stats,familyCounts:families.map(rows=>rows.length),scanCounts:counts,timing:{rebuilds:++rebuilds,eligibilityMs,broadphaseMs:scoped-classified,selectionMs:planned-scoped,planMs:planned-started,packMs:finished-planned,totalMs:finished-started,last32MedianMs:sorted[Math.floor(sorted.length*.5)],last32P95Ms:sorted[Math.min(sorted.length-1,Math.floor(sorted.length*.95))],scope:'CPU planning/repacking only; no render, GPU or FPS claim'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0,geometrySource:'Three original meadow families and five resident scanned accents',rootPolicy:'Every drawn row uses an unchanged counted near source root/yaw; no coordinate resampling',retirementPolicy:'Only rows beyond original near-wind zero-fade radius plus 1.5m movement buffer are omitted from this draw'};
+  state.stats={...plan.stats,familyCounts:families.map(rows=>rows.length),grazedRoots:families[3].length,scanCounts:counts,timing:{rebuilds:++rebuilds,eligibilityMs,broadphaseMs:scoped-classified,selectionMs:planned-scoped,planMs:planned-started,packMs:finished-planned,totalMs:finished-started,last32MedianMs:sorted[Math.floor(sorted.length*.5)],last32P95Ms:sorted[Math.min(sorted.length-1,Math.floor(sorted.length*.95))],scope:'CPU planning/repacking only; no render, GPU or FPS claim'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0,geometrySource:'Three wild meadow families, one short grazed stand and five resident scanned accents',rootPolicy:'Every drawn row uses an unchanged counted near source root/yaw; no coordinate resampling',retirementPolicy:'Only rows beyond original near-wind zero-fade radius plus 1.5m movement buffer are omitted from this draw'};
   lastKey=key;lastX=x;lastZ=z;lastQuality=quality;lastVR=vr;
  }
  const onTick=(dt,t)=>{try{const p=G.horse.player.pos;tick(t,p.x,p.z);}catch(error){state.errors.push(error.message);state.dispose();console.warn('Mixed sward returned to original cover',error);}};
@@ -111,11 +112,11 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,W.ranchBuilderArt?.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,G.worldPaths?.roadsideReady]);if(state.disposed)return state;
   let material=null;scene.traverse(o=>{if(o.isMesh&&!material&&!Array.isArray(o.material)&&o.material.name==='Trail edge | scanned meadow grass')material=o.material;});if(!material?.map)throw Error('Resident scanned grass material unavailable; keeping original grass');
   const response=await fetchAsset(assetUrl);if(!response.ok)throw Error('Sward asset HTTP '+response.status);const data=await response.arrayBuffer();if(globalThis.crypto?.subtle){const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',data)),v=>v.toString(16).padStart(2,'0')).join('');if(digest!==MIXED_SWARD.assetSha256)throw Error('Sward asset bytes changed');}const sources=readSwardSpecimens(data);if(state.disposed)return state;state.sources=sources;
-  for(let i=0;i<3;i++){
-   const geo=createGrassFamilyGeometry(T,i);ownedGeometries.push(geo);
+  for(let i=0;i<4;i++){
+   const geo=i===3?createGrazedSwardGeometry(T):createGrassFamilyGeometry(T,i);ownedGeometries.push(geo);
    if(geo.index.count/3!==MIXED_SWARD.richTriangles)throw Error('Meadow family exceeds shared triangle contract');
    const mesh=new T.InstancedMesh(geo,originalNear.material,originalNear.instanceMatrix.count);mesh.setColorAt(0,new T.Color());
-   mesh.name='Mixed pasture | '+GRASS_FAMILIES[i].name;mesh.count=0;mesh.frustumCulled=false;mesh.receiveShadow=true;mesh.castShadow=false;
+   mesh.name='Mixed pasture | '+(i===3?'Short grazed turf':GRASS_FAMILIES[i].name);mesh.count=0;mesh.frustumCulled=false;mesh.receiveShadow=true;mesh.castShadow=false;
    mesh.userData.fineGroundCover=true;mesh.userData.grassFamily=i;state.basalMeshes.push(mesh);scene.add(mesh);
   }
   state.basal=state.basalMeshes[0];

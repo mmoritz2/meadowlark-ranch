@@ -1,3 +1,4 @@
+import {createOuterRockData,retainRockClearWoodland} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
 import {patchOuterGroundSurface} from './outer-ground-surface.mjs?v=outer-ground-grain-4';
 import {outerCountrysideRelief} from './outer-countryside-relief.mjs?v=outer-countryside-relief-3';
 import {selectOuterWoodland,OUTER_GROVES_GLSL} from './outer-woodland.mjs?v=branching-groves-2';
@@ -105,7 +106,10 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  mesh.geometry=geometry;mesh.material=material;mesh.name='Continuous outer countryside';mesh.position.set(0,0,0);mesh.rotation.set(0,0,0);mesh.scale.set(1,1,1);mesh.castShadow=false;mesh.receiveShadow=true;mesh.matrixAutoUpdate=false;mesh.updateMatrix();
  // Sample the actual mesh triangles so every woodland root touches the new
  // surface. A separate hash stream leaves all in-basin placement unchanged.
- const woodlandSites=selectOuterWoodland({positions:geometry.attributes.position.array,index:geometry.index.array,regionalProfileAt});
+ const originalWoodlandSites=selectOuterWoodland({positions:geometry.attributes.position.array,index:geometry.index.array,regionalProfileAt});
+ const rockClusterData=createOuterRockData({positions:geometry.attributes.position.array,index:geometry.index.array});
+ const {kept:woodlandSites,excluded:excludedRoots}=retainRockClearWoodland(originalWoodlandSites,rockClusterData);
+ const rockClusters={...rockClusterData.stats,ready:false,excludedRoots,originalWoodlandTrees:originalWoodlandSites.length};
  const stats={woodlandTrees:woodlandSites.length,triangles:indices.length/3,vertices:p.length/3,draws:1,bands:BANDS.length,innerHalfSize:500,outerHalfSize:1700};
- return{mesh,woodlandSites,edgeCount:BANDS[0][1]+1,stats};
+ return{mesh,woodlandSites,rockClusterData,rockClusters,edgeCount:BANDS[0][1]+1,stats};
 }

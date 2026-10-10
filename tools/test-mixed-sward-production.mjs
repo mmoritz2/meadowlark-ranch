@@ -1,3 +1,5 @@
+import {selectsGrazedSward} from '../assets/grazed-sward.mjs';
+import {swardHash} from '../assets/mixed-sward.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -259,7 +261,7 @@ test('deferred installation, High→Low→VR→High and disposal preserve origin
   assert.deepEqual(state.errors, []);
   assert(state.stats.basalRoots > 0);
   assert(state.stats.scanRoots > 0);
-  assert.equal(state.basalMeshes.length, 3);
+  assert.equal(state.basalMeshes.length, 4);
   assert.equal(state.basal, state.basalMeshes[0]);
   assert(state.basalMeshes.every(m => m.material === w.nearMaterial && !m.castShadow && m.receiveShadow));
   assert(state.meshes.every(m => m.material === w.scanMaterial && !m.castShadow && m.receiveShadow));
@@ -271,7 +273,7 @@ test('deferred installation, High→Low→VR→High and disposal preserve origin
   w.quality('low'); w.tick();
   originalRows(w); actualBudget(w, state);
   assert(state.basalMeshes.every(m => m.count === 0));
-  assert.deepEqual(state.stats.familyCounts,[0,0,0]);
+  assert.deepEqual(state.stats.familyCounts,[0,0,0,0]);
   assert(state.meshes.every(m => m.count === 0));
   const checks = {...w.checks}, builds = state.stats.timing.rebuilds;
   const matrixVersion = w.near.instanceMatrix.version;
@@ -363,7 +365,7 @@ function exactFamilyRows(w,state){
    const matrix=mesh.instanceMatrix.array.subarray(i*16,i*16+16),color=mesh.instanceColor.array.subarray(i*3,i*3+3),key=[matrix[12],matrix[13],matrix[14]].join(','),source=rows.get(key);
    assert(source,'Every draw originates at a counted source root');assert(!seen.has(key),'No root duplicated between source and family draws');seen.add(key);
    assert.deepEqual(matrix,source.matrix,'Full original basis, yaw, scale and translation preserved');assert.deepEqual(color,source.color,'Full source color preserved');
-   if(mesh!==w.near){const family=state.basalMeshes.indexOf(mesh);assert.equal(family,swardFamilyAt(matrix[12],matrix[14]));assert.equal(mesh.userData.grassFamily,family);assignments.set(key,family);}
+   if(mesh!==w.near){const family=state.basalMeshes.indexOf(mesh);assert.equal(family,selectsGrazedSward(matrix[12],matrix[14],swardHash(matrix[12],matrix[14],37))?3:swardFamilyAt(matrix[12],matrix[14]));assert.equal(mesh.userData.grassFamily,family);assignments.set(key,family);}
   }
  }
  assert.equal(seen.size,state.stats.nearRoots+state.stats.basalRoots);
@@ -427,4 +429,20 @@ test('Low initial draw and source growth cannot retain a smaller pending upload 
  assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);
  w.cells[0].count+=7;w.cells[0].version++;w.version();w.repackOriginal();w.tick();assert.equal(w.near.count,totalRoots(w.cells));originalRows(w);actualBudget(w,state);
  assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);assert.deepEqual(w.checks,{basal:0,accent:0,query:0});state.dispose();
+});
+
+// Move existing fixture rows into an actual grazed meadow, without altering
+// the production source-cell generator, plan budget or matrix/color packing.
+test('grazed bucket reuses counted rich roots and leaves tall-margin source bases exact',async()=>{
+ const w=world();for(const c of w.cells)for(let i=0;i<c.count;i++){c.matrices[i*16+12]+=88;c.matrices[i*16+14]-=157;}w.G.horse.player.pos={x:88,z:-157};w.repackOriginal();w.unlock();const before=sourceDigest(w.cells),state=installMixedSward(w.G,{fetchAsset});await state.ready;
+ assert.deepEqual(state.errors,[]);assert(state.stats.grazedRoots>100);assert.equal(state.stats.grazedRoots,state.basalMeshes[3].count);assert(state.stats.familyCounts.slice(0,3).some(n=>n>0));exactFamilyRows(w,state);actualBudget(w,state);
+ const sourceRows=new Set();for(const c of w.cells)for(let i=0;i<c.count;i++)sourceRows.add([c.matrices[i*16+12],c.matrices[i*16+14]].join(','));
+ const short=state.basalMeshes[3];for(let i=0;i<short.count;i++){const a=short.instanceMatrix.array,o=i*16;assert(sourceRows.has([a[o+12],a[o+14]].join(',')));assert(selectsGrazedSward(a[o+12],a[o+14],swardHash(a[o+12],a[o+14],37)));}
+ assert.equal(short.material,w.nearMaterial);assert.equal(short.geometry.index.count/3,70);
+ const initialAssignments=exactFamilyRows(w,state),grazedCount=short.count;
+ w.quality('low');w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);originalRows(w);actualBudget(w,state);
+ w.quality('high');w.tick();assert.equal(short.count,grazedCount);assert.deepEqual(exactFamilyRows(w,state),initialAssignments);actualBudget(w,state);
+ w.vr(true);w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);originalRows(w);actualBudget(w,state);
+ w.vr(false);w.tick();assert.equal(short.count,grazedCount);assert.deepEqual(exactFamilyRows(w,state),initialAssignments);actualBudget(w,state);
+ assert.equal(sourceDigest(w.cells),before);state.dispose();originalRows(w);assert.equal(w.sharedDisposed(),0);
 });
