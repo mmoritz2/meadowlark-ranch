@@ -93,11 +93,11 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   }
   if(!root)continue;
   // Fuller outer spacing and fine tapered tips keep the fan visible at editor scale.
-  const stagger=[.89,1.04,.96,.92][i%4],length=(.0037+.0116*Math.pow(t,.8))*stagger*(1+.52*THREE.MathUtils.smoothstep(t,.35,.85)),fan=side*(.0003+.0115*t+[.0002,-.0001,.0001,-.0002][i%4]),base=positions.length/3;
+  const stagger=[.89,1.04,.96,.92][i%4],length=(.0040+.0124*Math.pow(t,.8))*stagger*(1+.52*THREE.MathUtils.smoothstep(t,.35,.85)),fan=side*(.0003+.0115*t+[.0002,-.0001,.0001,-.0002][i%4]),base=positions.length/3;
   const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.30,length*.06,length*.62)),root.clone().add(V(fan,length*.87,length*.76)));
   roots.push(root.toArray());lengths.push(length);
   for(let j=0;j<=segments;j++){
-   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00052*Math.pow(1-u,1.12)+.000018;
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00066*Math.pow(1-u,1.12)+.000018;
    for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
     if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
    }
@@ -107,7 +107,7 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
  for(const side of [-1,1]){
   const lid=roots.filter(p=>Math.sign(p[0])===side).map(p=>V(...p));
   if(lid.length<2)continue;
-  const line=new THREE.CatmullRomCurve3(lid),band=new THREE.TubeGeometry(line,32,.00076,6,false),offset=positions.length/3,points=band.attributes.position;
+  const line=new THREE.CatmullRomCurve3(lid),band=new THREE.TubeGeometry(line,32,.00086,6,false),offset=positions.length/3,points=band.attributes.position;
   for(let i=0;i<points.count;i++){
    const t=Math.floor(i/7)/32,center=line.getPointAt(t),taper=.08+.92*Math.min(1,t/.12,(1-t)/.12);
    const point=new THREE.Vector3().fromBufferAttribute(points,i).sub(center).multiplyScalar(taper).add(center);positions.push(...point.toArray());
@@ -115,5 +115,5 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   for(const i of band.index.array)indices.push(offset+i);band.dispose();
  }
  surface.dispose();eyeSurface.dispose();face.dispose();eyeGeometry.dispose();
- const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;geo.userData.lashStyle={strands:roots.length,lengthM:[Math.min(...lengths),Math.max(...lengths)],radiusM:.000538,fan:'defined-outer-fan'};return geo;
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;geo.userData.lashStyle={strands:roots.length,lengthM:[Math.min(...lengths),Math.max(...lengths)],radiusM:.000678,fan:'defined-outer-fan'};return geo;
 }
