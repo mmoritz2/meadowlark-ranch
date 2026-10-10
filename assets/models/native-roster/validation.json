@@ -3,7 +3,12 @@
   "all25NativeFoundations": true,
   "distinctBodyGeometryCount": 25,
   "sharedOriginalNativeSkeletonSize": 677,
-  "unchangedSkinWeightsBindsAndAnimations": true,
+  "unchangedSourceSkinWeightsBindsAndAnimations": true,
+  "runtimeCollarSkinOverrides": [
+    "percheron",
+    "shire",
+    "clyde"
+  ],
   "unchangedIndicesAndUVs": true,
   "nonDraftBuffersBitExact": 15,
   "draftLowerLegThicknessUpdated": [
@@ -468,7 +473,7 @@
     },
     {
       "id": "percheron",
-      "bufferSha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+      "bufferSha256": "8296d418a3e4c78fbf022031e0fb9716271bd8de9f3b4361ba907e39087dca2d",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -483,6 +488,15 @@
         1024,
         1024
       ],
+      "collarAttachment": {
+        "vertices": 514,
+        "restReconstructionMaxDisplayedM": 6.260860422462731e-08,
+        "restNormalMaxDirectionError": 4.016423729313308e-08,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+        "protectedTackOutsideSparseIdsPreserved": true
+      },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,
@@ -541,7 +555,7 @@
     },
     {
       "id": "shire",
-      "bufferSha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+      "bufferSha256": "4616d450ea381a34910a5a6a00b4e84c82456d112c36c3427febd3e90ab63d5c",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -556,6 +570,15 @@
         1024,
         1024
       ],
+      "collarAttachment": {
+        "vertices": 514,
+        "restReconstructionMaxDisplayedM": 7.398434458767057e-08,
+        "restNormalMaxDirectionError": 4.32506391670575e-08,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+        "protectedTackOutsideSparseIdsPreserved": true
+      },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,
@@ -614,7 +637,7 @@
     },
     {
       "id": "clyde",
-      "bufferSha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+      "bufferSha256": "a86917f3af6e47e76e29d49515e1ef00b9036c235a97f6cf5ef41653e0e2a134",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -629,6 +652,15 @@
         1024,
         1024
       ],
+      "collarAttachment": {
+        "vertices": 514,
+        "restReconstructionMaxDisplayedM": 7.171044943093194e-08,
+        "restNormalMaxDirectionError": 4.051083427787368e-08,
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "baseMorphBytes": 728256,
+        "baseMorphSha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+        "protectedTackOutsideSparseIdsPreserved": true
+      },
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,

@@ -1,0 +1,178 @@
+{
+  "reviewedCommit": "d267efafc1fac9b13a7f3fd42f8e79bad805f1f9",
+  "productionChanges": false,
+  "finding": "Breastcollar clips at shoulder in trot and canter; static fit candidates rejected.",
+  "rows": [
+    {
+      "breed": "shire",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "rest",
+      "lead": "left",
+      "requestedPhase01": 0,
+      "snapshotTimeS": 0,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/shire.bin",
+        "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+        "coatSha256": "cf1d1ceb8b8a2810f5731c09738e7368e29897b9f52e928eb74f018ccf22b381",
+        "geometryHash": "f54b6ac0",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "shire",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "trot",
+      "lead": "left",
+      "requestedPhase01": 0.25,
+      "snapshotTimeS": 0.18,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/shire.bin",
+        "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+        "coatSha256": "cf1d1ceb8b8a2810f5731c09738e7368e29897b9f52e928eb74f018ccf22b381",
+        "geometryHash": "f54b6ac0",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "shire",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "canter",
+      "lead": "left",
+      "requestedPhase01": 0.5,
+      "snapshotTimeS": 0.32,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/shire.bin",
+        "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
+        "coatSha256": "cf1d1ceb8b8a2810f5731c09738e7368e29897b9f52e928eb74f018ccf22b381",
+        "geometryHash": "f54b6ac0",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "percheron",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "rest",
+      "lead": "left",
+      "requestedPhase01": 0,
+      "snapshotTimeS": 0,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/percheron.bin",
+        "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+        "coatSha256": "883aed999954f0b94df0507c55a236b388d9639a04ce91f2b1f53a3ab65ced89",
+        "geometryHash": "c4355c9e",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "percheron",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "trot",
+      "lead": "left",
+      "requestedPhase01": 0.25,
+      "snapshotTimeS": 0.18,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/percheron.bin",
+        "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+        "coatSha256": "883aed999954f0b94df0507c55a236b388d9639a04ce91f2b1f53a3ab65ced89",
+        "geometryHash": "c4355c9e",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "percheron",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "canter",
+      "lead": "left",
+      "requestedPhase01": 0.5,
+      "snapshotTimeS": 0.32,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/percheron.bin",
+        "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
+        "coatSha256": "883aed999954f0b94df0507c55a236b388d9639a04ce91f2b1f53a3ab65ced89",
+        "geometryHash": "c4355c9e",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "clyde",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "rest",
+      "lead": "left",
+      "requestedPhase01": 0,
+      "snapshotTimeS": 0,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/clyde.bin",
+        "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+        "coatSha256": "b7828f7c186ec9626ad02ed7637736f9cd4182ad7f3bd9ef625c0432687203df",
+        "geometryHash": "4021add2",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "clyde",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "trot",
+      "lead": "left",
+      "requestedPhase01": 0.25,
+      "snapshotTimeS": 0.18,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/clyde.bin",
+        "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+        "coatSha256": "b7828f7c186ec9626ad02ed7637736f9cd4182ad7f3bd9ef625c0432687203df",
+        "geometryHash": "4021add2",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    },
+    {
+      "breed": "clyde",
+      "view": "quarter",
+      "surface": "coat",
+      "motion": "canter",
+      "lead": "left",
+      "requestedPhase01": 0.5,
+      "snapshotTimeS": 0.32,
+      "finite": true,
+      "bones": 677,
+      "variant": {
+        "file": "./models/native-roster/clyde.bin",
+        "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
+        "coatSha256": "b7828f7c186ec9626ad02ed7637736f9cd4182ad7f3bd9ef625c0432687203df",
+        "geometryHash": "4021add2",
+        "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"
+      },
+      "errors": []
+    }
+  ]
+}
