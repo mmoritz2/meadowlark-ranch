@@ -1,0 +1,935 @@
+{
+  "status": "passed: lobby, physical shared herding, host pause, five-horse completion, free ride, and live transport disconnect",
+  "environment": {
+    "origins": [
+      "http://127.0.0.1:18796",
+      "http://127.0.0.1:18797"
+    ],
+    "transport": "Existing real MQTT transport; two independent anonymous QA clients",
+    "privateQaClub": "qah-bbe4f0741c224e3f",
+    "ids": {
+      "host": "pqahbbe4f0741c224e3fh",
+      "guest": "pqahbbe4f0741c224e3fg"
+    },
+    "input": "Actual production UI handlers; real-wall-time W/A/S/D driver and existing walk/trot controls",
+    "sourceArtifactsDirectory": "/private/tmp"
+  },
+  "sanitization": "Only fixed QA identities, selected controller/core state, check labels/results, errors, and separate QA herd receipts. No full ranch save or user data.",
+  "runId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+  "receipts": {
+    "host": {
+      "runId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+      "elapsed": 138.57,
+      "total": 5,
+      "penned": 5,
+      "participants": [
+        "QA Host",
+        "QA Guest"
+      ],
+      "at": 1791643767069,
+      "newBest": true,
+      "bestTime": 138.57,
+      "saved": true
+    },
+    "guest": {
+      "runId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+      "elapsed": 138.57,
+      "total": 5,
+      "penned": 5,
+      "participants": [
+        "QA Host",
+        "QA Guest"
+      ],
+      "at": 1791643767854,
+      "newBest": true,
+      "bestTime": 138.57,
+      "saved": true
+    }
+  },
+  "scenarios": [
+    {
+      "scenario": "lobby",
+      "source": "club-herd-lobby-report.json",
+      "status": "PASSED: lobby checks only",
+      "passedChecks": 9,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both real MQTT clients connected"
+        },
+        {
+          "ok": true,
+          "label": "Both joined the same live herd lobby"
+        },
+        {
+          "ok": true,
+          "label": "Both actual riders are ready in both rosters"
+        },
+        {
+          "ok": true,
+          "label": "The host can start after both riders are ready"
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643102113,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": null,
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2i0upo-vsi6e",
+            "status": "waiting",
+            "hosted": true,
+            "ready": true,
+            "canStart": true,
+            "riding": false,
+            "paused": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "slot": 0,
+                "ready": true,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "slot": 1,
+                "ready": true,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": false,
+            "steps": 0
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643102115,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": true
+          },
+          "shared": null,
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2i0upo-vsi6e",
+            "status": "waiting",
+            "hosted": false,
+            "ready": true,
+            "canStart": false,
+            "riding": false,
+            "paused": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "ready": true,
+                "slot": 0,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "ready": true,
+                "slot": 1,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": false,
+            "steps": 0
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    },
+    {
+      "scenario": "moving",
+      "source": "club-herd-moving-report.json",
+      "status": "PASSED: riding checks only",
+      "passedChecks": 11,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both real MQTT clients connected"
+        },
+        {
+          "ok": true,
+          "label": "Host and guest hold the same shared production herd"
+        },
+        {
+          "ok": true,
+          "label": "Both clients render five shared horses"
+        },
+        {
+          "ok": true,
+          "label": "Received herd positions agree within live frame/interpolation tolerance",
+          "data": {
+            "maxPositionDelta": 1.9665188823262987,
+            "elapsedDelta": 0.7676999999284746
+          }
+        },
+        {
+          "ok": true,
+          "label": "Both riders physically moved after staging",
+          "data": {
+            "hostDistance": 36.03953903911718,
+            "guestDistance": 30.622717722673183
+          }
+        },
+        {
+          "ok": true,
+          "label": "At least two shared horses changed position on both clients",
+          "data": {
+            "hostCount": 5,
+            "guestCount": 4
+          }
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643628075,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": true,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 35.802299999952304,
+            "penned": 1,
+            "total": 5,
+            "finished": false,
+            "startupWaiting": false,
+            "paused": false,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "riding",
+            "hosted": true,
+            "ready": true,
+            "canStart": false,
+            "riding": true,
+            "paused": false,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "slot": 0,
+                "ready": true,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "slot": 1,
+                "ready": true,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": true,
+            "steps": 76
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643628073,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": false,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 35.24169999992846,
+            "penned": 1,
+            "total": 5,
+            "finished": false,
+            "startupWaiting": false,
+            "paused": false,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "riding",
+            "hosted": false,
+            "ready": true,
+            "canStart": false,
+            "riding": true,
+            "paused": false,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "ready": true,
+                "slot": 0,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "ready": true,
+                "slot": 1,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": true,
+            "steps": 67
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    },
+    {
+      "scenario": "pause",
+      "source": "club-herd-pause-report.json",
+      "status": "PASSED: pause checks only",
+      "passedChecks": 10,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both real MQTT clients connected"
+        },
+        {
+          "ok": true,
+          "label": "Host and guest hold the same shared production herd"
+        },
+        {
+          "ok": true,
+          "label": "Both clients render five shared horses"
+        },
+        {
+          "ok": true,
+          "label": "Received herd positions agree within live frame/interpolation tolerance",
+          "data": {
+            "maxPositionDelta": 4.039324680508247e-10,
+            "elapsedDelta": 0
+          }
+        },
+        {
+          "ok": true,
+          "label": "Host pause is visible in both production shared states"
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643651089,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": true,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 48.778899999976154,
+            "penned": 1,
+            "total": 5,
+            "finished": false,
+            "startupWaiting": false,
+            "paused": true,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "riding",
+            "hosted": true,
+            "ready": true,
+            "canStart": false,
+            "riding": true,
+            "paused": true,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "slot": 0,
+                "ready": true,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "slot": 1,
+                "ready": true,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": false,
+            "steps": 124
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643651088,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": false,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 48.778899999976154,
+            "penned": 1,
+            "total": 5,
+            "finished": false,
+            "startupWaiting": false,
+            "paused": true,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "riding",
+            "hosted": false,
+            "ready": true,
+            "canStart": false,
+            "riding": true,
+            "paused": true,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "ready": true,
+                "slot": 0,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "ready": true,
+                "slot": 1,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": true,
+            "steps": 115
+          },
+          "personal": {
+            "bestTime": null,
+            "plays": null,
+            "receiptCount": 0,
+            "lastRunId": null
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    },
+    {
+      "scenario": "finished",
+      "source": "club-herd-finished-report.json",
+      "status": "PASSED: finished checks only",
+      "passedChecks": 6,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both clients saved the same completed five-horse time"
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643785067,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": true,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 138.57489999997594,
+            "penned": 5,
+            "total": 5,
+            "finished": true,
+            "startupWaiting": false,
+            "paused": true,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "finished",
+            "hosted": true,
+            "ready": true,
+            "canStart": false,
+            "riding": false,
+            "paused": true,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "slot": 0,
+                "ready": true,
+                "online": true
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "slot": 1,
+                "ready": true,
+                "online": false
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": false,
+            "steps": 427
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643785065,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": true
+          },
+          "shared": {
+            "sessionId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "host": false,
+            "active": true,
+            "countdown": 0,
+            "elapsed": 138.57489999997594,
+            "penned": 5,
+            "total": 5,
+            "finished": true,
+            "startupWaiting": false,
+            "paused": true,
+            "horseCount": 5
+          },
+          "current": {
+            "id": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb",
+            "status": "finished",
+            "hosted": false,
+            "ready": true,
+            "canStart": false,
+            "riding": false,
+            "paused": true,
+            "waitingForRiders": false,
+            "waitingForHost": false,
+            "roster": [
+              {
+                "id": "pqahbbe4f0741c224e3fh",
+                "name": "QA Host",
+                "ready": true,
+                "slot": 0,
+                "online": false
+              },
+              {
+                "id": "pqahbbe4f0741c224e3fg",
+                "name": "QA Guest",
+                "ready": true,
+                "slot": 1,
+                "online": true
+              }
+            ]
+          },
+          "notice": "",
+          "driver": {
+            "active": false,
+            "steps": 472
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    },
+    {
+      "scenario": "left",
+      "source": "club-herd-left-report.json",
+      "status": "PASSED: left checks only",
+      "passedChecks": 6,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both clients released their previously running herd"
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643818951,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": null,
+          "current": null,
+          "notice": "You left the herd drive.",
+          "driver": {
+            "active": false,
+            "steps": 427
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643818950,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": true
+          },
+          "shared": null,
+          "current": null,
+          "notice": "You left the herd drive.",
+          "driver": {
+            "active": false,
+            "steps": 472
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    },
+    {
+      "scenario": "disconnected",
+      "source": "club-herd-disconnected-report.json",
+      "status": "PASSED: left checks only",
+      "passedChecks": 6,
+      "checks": [
+        {
+          "ok": true,
+          "label": "Both allowlisted client reports received"
+        },
+        {
+          "ok": true,
+          "label": "Both reports are fresh"
+        },
+        {
+          "ok": true,
+          "label": "Two independent production network identities"
+        },
+        {
+          "ok": true,
+          "label": "Both saves belong to this private QA club"
+        },
+        {
+          "ok": true,
+          "label": "No feature or uncaught runtime errors"
+        },
+        {
+          "ok": true,
+          "label": "Both clients released their previously running herd"
+        }
+      ],
+      "clients": {
+        "host": {
+          "sampleAt": 1791643986972,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fh",
+            "name": "QA Host",
+            "connected": true
+          },
+          "shared": null,
+          "current": null,
+          "notice": "Your teammates disconnected. Gather your club for another drive.",
+          "driver": {
+            "active": false,
+            "steps": 427
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        },
+        "guest": {
+          "sampleAt": 1791643986971,
+          "net": {
+            "id": "pqahbbe4f0741c224e3fg",
+            "name": "QA Guest",
+            "connected": false
+          },
+          "shared": null,
+          "current": null,
+          "notice": "Connection lost. This herd drive has ended; reconnect to ride again.",
+          "driver": {
+            "active": false,
+            "steps": 472
+          },
+          "personal": {
+            "bestTime": 138.57,
+            "plays": 1,
+            "receiptCount": 1,
+            "lastRunId": "pqahbbe4f0741c224e3fh-mv2ib2nr-reixb"
+          },
+          "errors": [],
+          "runtimeErrors": []
+        }
+      },
+      "errors": []
+    }
+  ],
+  "operatorObservations": [
+    {
+      "source": "Root browser operator",
+      "observation": "Host menu pause also held the stopwatch fixed across samples; the exported pause snapshot has both clocks at 48.778899999976154 seconds."
+    },
+    {
+      "source": "Root browser operator",
+      "observation": "A second actual drive reached about 2.3 seconds before the guest real MQTT client was ended. Both cores/current sessions cleared; each previous plays=1 and receiptCount=1 remained."
+    },
+    {
+      "source": "Root browser operator",
+      "observation": "At a 390x844 browser viewport, the result and action controls visibly fit and were reachable. This was not a physical mobile-device test."
+    }
+  ],
+  "regressions": {
+    "focused": {
+      "passed": 90,
+      "failed": 0,
+      "source": "club-herd-focused.log",
+      "command": "node --test tools/test-club-herd-protocol.mjs tools/test-shared-roundup-core.mjs tools/test-club-herd-controller.mjs tools/test-club-herd-ui.mjs"
+    },
+    "related": {
+      "passed": 327,
+      "failed": 0,
+      "source": "club-herd-regression.log"
+    }
+  },
+  "screenshots": {
+    "baseDirectory": "/private/tmp",
+    "files": [
+      {
+        "path": "club-herd-complete.jpg",
+        "shows": "Completed two-rider result"
+      },
+      {
+        "path": "club-herd-phone-result.jpg",
+        "shows": "Result at browser viewport 390x844"
+      },
+      {
+        "path": "club-herd-phone-actions.jpg",
+        "shows": "Reachable actions at browser viewport 390x844"
+      },
+      {
+        "path": "club-herd-pause.jpg",
+        "shows": "Host menu pause"
+      }
+    ],
+    "repositoryCopies": false
+  },
+  "limitations": [
+    "No physical mobile-device test.",
+    "No authenticated or authoritative server claim; this used the existing MQTT transport.",
+    "No browser wallet-delta measurement; currency non-award is covered by source regressions.",
+    "Lost final-packet recovery and retry bounds are covered by source regressions; the completed browser run was not a deliberately dropped-packet test.",
+    "Night-time gameplay looked quite dark; lighting follow-up remains outside this feature."
+  ]
+}

@@ -57,7 +57,7 @@ export function install(G){
  function showResult(r){if(!r)return;receipt=r;clearTimeout(timer);paint();timer=setTimeout(()=>{const s=round.state();if(s.pending?.runId===r.runId||!s.active&&s.lastResult?.runId===r.runId){G.ui.open('roundupResultPanel');G.seFrame?.settle();}},0);}
  G.on('roundupSavePending',showResult);G.on('roundupFinish',showResult);
  function paint(){
-  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active?'block':'none';hud.dataset.pending=String(pending);marker.visible=!!(s.active&&!pending&&s.target&&!s.target.approachBlocked);if(!s.active)return;
+  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active&&!s.shared?'block':'none';hud.dataset.pending=String(pending);marker.visible=!!(s.active&&!pending&&s.target&&!s.target.approachBlocked);if(!s.active)return;
   const t=s.target;
   if(t){if(!t.approachBlocked){marker.position.set(t.standX,G.world.groundH(t.standX,t.standZ)+.065,t.standZ);marker.material.color.set(t.pressure==='guiding'?0xa5d987:0xe3c977);}mini.x=t.x;mini.z=t.z;}
   const pace=roundupPace(s);
