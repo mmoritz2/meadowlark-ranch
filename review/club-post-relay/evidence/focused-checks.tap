@@ -1,0 +1,486 @@
+TAP version 13
+# Subtest: two-client lobby admits known riders but starts neither core until explicit Ready and host Start
+ok 1 - two-client lobby admits known riders but starts neither core until explicit Ready and host Start
+  ---
+  duration_ms: 5.900333
+  ...
+# Subtest: the first host tick allows time for the admitted guest to send its first real input
+ok 2 - the first host tick allows time for the admitted guest to send its first real input
+  ---
+  duration_ms: 4.649875
+  ...
+# Subtest: real input packets reach host pressure and host frames reach guest with monotonic validation
+ok 3 - real input packets reach host pressure and host frames reach guest with monotonic validation
+  ---
+  duration_ms: 1.444
+  ...
+# Subtest: one shared completion records each rider once and never pays currency or solo hooks
+ok 4 - one shared completion records each rider once and never pays currency or solo hooks
+  ---
+  duration_ms: 2.286708
+  ...
+# Subtest: failed record write stays pending, explicit retry records once, and never changes the wallet
+ok 5 - failed record write stays pending, explicit retry records once, and never changes the wallet
+  ---
+  duration_ms: 2.662292
+  ...
+# Subtest: stale guest inputs stop contributing before the host cancels a disconnected two-rider session
+ok 6 - stale guest inputs stop contributing before the host cancels a disconnected two-rider session
+  ---
+  duration_ms: 2.168042
+  ...
+# Subtest: host leave, guest leave, and transport disconnect stop both sessions without recording a finish
+ok 7 - host leave, guest leave, and transport disconnect stop both sessions without recording a finish
+  ---
+  duration_ms: 4.360666
+  ...
+# Subtest: busy, wrong-room, unjoined and unknown-member attempts cannot enter a simulation
+ok 8 - busy, wrong-room, unjoined and unknown-member attempts cannot enter a simulation
+  ---
+  duration_ms: 0.745667
+  ...
+# Subtest: a rider who becomes busy after Ready refuses the incoming start without teleporting
+ok 9 - a rider who becomes busy after Ready refuses the incoming start without teleporting
+  ---
+  duration_ms: 0.834375
+  ...
+# Subtest: all valid long network IDs can host a lobby accepted by another known club rider
+ok 10 - all valid long network IDs can host a lobby accepted by another known club rider
+  ---
+  duration_ms: 0.459
+  ...
+# Subtest: a guest in free camera sends no active pressure to the host
+ok 11 - a guest in free camera sends no active pressure to the host
+  ---
+  duration_ms: 0.984959
+  ...
+# Subtest: an unreadable committed record stays pending until readback confirms it without a second completion
+ok 12 - an unreadable committed record stays pending until readback confirms it without a second completion
+  ---
+  duration_ms: 1.57375
+  ...
+# Subtest: a conflicting already-saved receipt is not overwritten or presented as this completed ride
+ok 13 - a conflicting already-saved receipt is not overwritten or presented as this completed ride
+  ---
+  duration_ms: 1.405042
+  ...
+# Subtest: a matching unsaved receipt cannot confirm a failed write
+ok 14 - a matching unsaved receipt cannot confirm a failed write
+  ---
+  duration_ms: 0.99225
+  ...
+# Subtest: a guest stops after the host stops sending frames, without counting an incomplete session
+ok 15 - a guest stops after the host stops sending frames, without counting an incomplete session
+  ---
+  duration_ms: 2.34725
+  ...
+# Subtest: hosting rejects overlong IDs instead of publishing an invalid session
+ok 16 - hosting rejects overlong IDs instead of publishing an invalid session
+  ---
+  duration_ms: 0.155541
+  ...
+# Subtest: a four-rider lobby reserves unique slots, rejects a fifth, and can continue after one guest leaves
+ok 17 - a four-rider lobby reserves unique slots, rejects a fifth, and can continue after one guest leaves
+  ---
+  duration_ms: 2.843583
+  ...
+# Subtest: changing club rooms retains an unsaved personal completion and its explicit retry
+ok 18 - changing club rooms retains an unsaved personal completion and its explicit retry
+  ---
+  duration_ms: 1.029458
+  ...
+# Subtest: reload hydrates a verified personal completion without writing or counting the ride again
+ok 19 - reload hydrates a verified personal completion without writing or counting the ride again
+  ---
+  duration_ms: 0.976833
+  ...
+# Subtest: reload does not present malformed or unverified local records as a completed drive
+ok 20 - reload does not present malformed or unverified local records as a completed drive
+  ---
+  duration_ms: 1.659041
+  ...
+# Subtest: a finished host frame arriving before its terminal session still exits through the real Free ride action
+ok 21 - a finished host frame arriving before its terminal session still exits through the real Free ride action
+  ---
+  duration_ms: 2.154958
+  ...
+# Subtest: a lost terminal frame is recovered from retention after the host has already left
+ok 22 - a lost terminal frame is recovered from retention after the host has already left
+  ---
+  duration_ms: 1.119167
+  ...
+# Subtest: unrecoverable terminal data releases the guest after four bounded requests without recording a result
+ok 23 - unrecoverable terminal data releases the guest after four bounded requests without recording a result
+  ---
+  duration_ms: 1.405708
+  ...
+# Subtest: repeated retained finished sessions cannot reset the final-frame recovery deadline
+ok 24 - repeated retained finished sessions cannot reset the final-frame recovery deadline
+  ---
+  duration_ms: 1.876375
+  ...
+# Subtest: terminal recovery cannot bypass removal from the admitted roster
+ok 25 - terminal recovery cannot bypass removal from the admitted roster
+  ---
+  duration_ms: 0.83
+  ...
+# Subtest: a twelve-second guest renderer stall holds countdown and allows inactive first input to complete staging
+ok 26 - a twelve-second guest renderer stall holds countdown and allows inactive first input to complete staging
+  ---
+  duration_ms: 2.054709
+  ...
+# Subtest: startup waits for every admitted guest and cannot use stale or unadmitted inputs as acknowledgements
+ok 27 - startup waits for every admitted guest and cannot use stale or unadmitted inputs as acknowledgements
+  ---
+  duration_ms: 1.873334
+  ...
+# Subtest: thirty-second staging timeout cancels an unready team without a record or simulated time
+ok 28 - thirty-second staging timeout cancels an unready team without a record or simulated time
+  ---
+  duration_ms: 0.797708
+  ...
+# Subtest: established six-second timeout begins after a late startup release instead of the original invitation time
+ok 29 - established six-second timeout begins after a late startup release instead of the original invitation time
+  ---
+  duration_ms: 1.308209
+  ...
+# Subtest: two riders explicitly ready and start; the host waits for fresh guest observations before collection
+ok 30 - two riders explicitly ready and start; the host waits for fresh guest observations before collection
+  ---
+  duration_ms: 10.596041
+  ...
+# Subtest: real ride completes two explicit handoffs and both couriers record once with no economy or solo hooks
+ok 31 - real ride completes two explicit handoffs and both couriers record once with no economy or solo hooks
+  ---
+  duration_ms: 54.355083
+  ...
+# Subtest: handoffs require an offered pouch, both nearby stopped riders, and grounded horses
+ok 32 - handoffs require an offered pouch, both nearby stopped riders, and grounded horses
+  ---
+  duration_ms: 9.328458
+  ...
+# Subtest: stale, replayed and impossible position inputs cannot contribute distance or poison the next real input
+ok 33 - stale, replayed and impossible position inputs cannot contribute distance or poison the next real input
+  ---
+  duration_ms: 2.78825
+  ...
+# Subtest: an actual local fast travel observation ends the unfinished relay without recording
+ok 34 - an actual local fast travel observation ends the unfinished relay without recording
+  ---
+  duration_ms: 1.3715
+  ...
+# Subtest: stale partner observations pause elapsed time and the returning fresh rider can resume
+ok 35 - stale partner observations pause elapsed time and the returning fresh rider can resume
+  ---
+  duration_ms: 1.495167
+  ...
+# Subtest: optional woodland route supports ordinary jumping but exchange waits for landing and locks the return choice
+ok 36 - optional woodland route supports ordinary jumping but exchange waits for landing and locks the return choice
+  ---
+  duration_ms: 11.691125
+  ...
+# Subtest: failed writes and unreadable committed receipts stay pending until explicit verified retry, exactly once
+ok 37 - failed writes and unreadable committed receipts stay pending until explicit verified retry, exactly once
+  ---
+  duration_ms: 42.944834
+  ...
+# Subtest: a completed frame can arrive before the terminal session and a late session cannot repeat the receipt
+ok 38 - a completed frame can arrive before the terminal session and a late session cannot repeat the receipt
+  ---
+  duration_ms: 20.031584
+  ...
+# Subtest: retained final proof survives host departure and lets a guest recover its missing completion
+ok 39 - retained final proof survives host departure and lets a guest recover its missing completion
+  ---
+  duration_ms: 20.523292
+  ...
+# Subtest: missing final proof has bounded recovery and never invents a completion
+ok 40 - missing final proof has bounded recovery and never invents a completion
+  ---
+  duration_ms: 22.847292
+  ...
+# Subtest: leaving, trail cancellation and transport disconnect stop both unfinished couriers without rewards
+ok 41 - leaving, trail cancellation and transport disconnect stop both unfinished couriers without rewards
+  ---
+  duration_ms: 4.3635
+  ...
+# Subtest: unknown riders, other rooms, unjoined riders and busy riders cannot form a relay
+ok 42 - unknown riders, other rooms, unjoined riders and busy riders cannot form a relay
+  ---
+  duration_ms: 0.558083
+  ...
+# Subtest: a delayed accept cannot spend an old offer and a fresh accept succeeds only once
+ok 43 - a delayed accept cannot spend an old offer and a fresh accept succeeds only once
+  ---
+  duration_ms: 7.452792
+  ...
+# Subtest: guest interaction pauses after stale host frames and ends if the host never returns
+ok 44 - guest interaction pauses after stale host frames and ends if the host never returns
+  ---
+  duration_ms: 4.934833
+  ...
+# Subtest: a committed receipt awaiting readback remains retryable after cancellation or changing club rooms
+ok 45 - a committed receipt awaiting readback remains retryable after cancellation or changing club rooms
+  ---
+  duration_ms: 40.673708
+  ...
+# Subtest: a rider who becomes busy after Ready declines the start and the partner stops cleanly
+ok 46 - a rider who becomes busy after Ready declines the start and the partner stops cleanly
+  ---
+  duration_ms: 0.68975
+  ...
+# Subtest: outbound guidance retains the north gate corner until close enough, then advances at the captured nearby pose
+ok 47 - outbound guidance retains the north gate corner until close enough, then advances at the captured nearby pose
+  ---
+  duration_ms: 1.389541
+  ...
+# Subtest: every narrow gate corner requires its advertised radius outbound and on the actual reply trip home
+ok 48 - every narrow gate corner requires its advertised radius outbound and on the actual reply trip home
+  ---
+  duration_ms: 23.923916
+  ...
+# Subtest: all surveyed route pins hold at 1.2m and advance inside .8m on road and woodland round trips
+ok 49 - all surveyed route pins hold at 1.2m and advance inside .8m on road and woodland round trips
+  ---
+  duration_ms: 53.439542
+  ...
+# Subtest: identifiers reject unsafe keys and names remove control characters
+ok 50 - identifiers reject unsafe keys and names remove control characters
+  ---
+  duration_ms: 2.224417
+  ...
+# Subtest: waiting sessions have one or two unique slots and running sessions require exact crew and roles
+ok 51 - waiting sessions have one or two unique slots and running sessions require exact crew and roles
+  ---
+  duration_ms: 0.608833
+  ...
+# Subtest: session ownership, code, expiry, lifetime and revision order are enforced
+ok 52 - session ownership, code, expiry, lifetime and revision order are enforced
+  ---
+  duration_ms: 0.810625
+  ...
+# Subtest: waiting member admission is limited to the second rider and updates cannot replay
+ok 53 - waiting member admission is limited to the second rider and updates cannot replay
+  ---
+  duration_ms: 1.044542
+  ...
+# Subtest: only a host with exactly two fresh independently ready members can start
+ok 54 - only a host with exactly two fresh independently ready members can start
+  ---
+  duration_ms: 1.063209
+  ...
+# Subtest: inputs enforce the real area, finite speed, admitted crew, booleans and short freshness
+ok 55 - inputs enforce the real area, finite speed, admitted crew, booleans and short freshness
+  ---
+  duration_ms: 0.389458
+  ...
+# Subtest: input continuity rejects replay, clock reversal and large jumps with a capped time allowance
+ok 56 - input continuity rejects replay, clock reversal and large jumps with a capped time allowance
+  ---
+  duration_ms: 0.21125
+  ...
+# Subtest: actions require admitted riders, exact context counters and explicit accept/route payloads
+ok 57 - actions require admitted riders, exact context counters and explicit accept/route payloads
+  ---
+  duration_ms: 1.8055
+  ...
+# Subtest: all relay stages admit only their real carrier, two handoffs and minimum ridden legs
+ok 58 - all relay stages admit only their real carrier, two handoffs and minimum ridden legs
+  ---
+  duration_ms: 4.254583
+  ...
+# Subtest: frames enforce host ownership, packet order, finite totals and immutable completed outcomes
+ok 59 - frames enforce host ownership, packet order, finite totals and immutable completed outcomes
+  ---
+  duration_ms: 0.5365
+  ...
+# Subtest: offer packets require the actual passing stage, sender, receiver, revision and kind
+ok 60 - offer packets require the actual passing stage, sender, receiver, revision and kind
+  ---
+  duration_ms: 0.348625
+  ...
+# Subtest: route choices tolerate skipped deliver frames but become fixed at the exchange
+ok 61 - route choices tolerate skipped deliver frames but become fixed at the exchange
+  ---
+  duration_ms: 0.094958
+  ...
+# Subtest: frame telemetry is detached, admitted, bounded, unique and may remain stale while paused
+ok 62 - frame telemetry is detached, admitted, bounded, unique and may remain stale while paused
+  ---
+  duration_ms: 0.113625
+  ...
+# Subtest: finished session arriving before its frame permits only the matching completed snapshot
+ok 63 - finished session arriving before its frame permits only the matching completed snapshot
+  ---
+  duration_ms: 0.077875
+  ...
+# Subtest: completion records contain only two real roles and a stable timestamp-bound run identity
+ok 64 - completion records contain only two real roles and a stable timestamp-bound run identity
+  ---
+  duration_ms: 0.346208
+  ...
+# Subtest: exact completion replay is idempotent and conflicts in time, roles, names or order reject
+ok 65 - exact completion replay is idempotent and conflicts in time, roles, names or order reject
+  ---
+  duration_ms: 0.609458
+  ...
+# Subtest: 32 receipts plus a creation-time watermark permanently prevent pruned completion replay
+ok 66 - 32 receipts plus a creation-time watermark permanently prevent pruned completion replay
+  ---
+  duration_ms: 3.586625
+  ...
+# Subtest: recovered oversized ledgers are bounded even on duplicate returns and carry no unrelated save fields
+ok 67 - recovered oversized ledgers are bounded even on duplicate returns and carry no unrelated save fields
+  ---
+  duration_ms: 0.886541
+  ...
+# Subtest: airborne telemetry remains usable while preserving a strict grounded flag for handoffs
+ok 68 - airborne telemetry remains usable while preserving a strict grounded flag for handoffs
+  ---
+  duration_ms: 0.104292
+  ...
+# Subtest: lobby consent and role swap are explicit and use actual participant IDs
+ok 69 - lobby consent and role swap are explicit and use actual participant IDs
+  ---
+  duration_ms: 5.26425
+  ...
+# Subtest: live prompts retain button focus, eligibility comes from controller, and accepted start closes once
+ok 70 - live prompts retain button focus, eligibility comes from controller, and accepted start closes once
+  ---
+  duration_ms: 2.918917
+  ...
+# Subtest: cargo is one pouch on the acknowledged courier and disappears for an absent remote
+ok 71 - cargo is one pouch on the acknowledged courier and disappears for an absent remote
+  ---
+  duration_ms: 0.886417
+  ...
+# Subtest: optional log is collision-backed only while the shared route needs it and cleanup is exact
+ok 72 - optional log is collision-backed only while the shared route needs it and cleanup is exact
+  ---
+  duration_ms: 0.4735
+  ...
+# Subtest: pending receipt never claims saved success or allows closing; confirmed retry refreshes result
+ok 73 - pending receipt never claims saved success or allows closing; confirmed retry refreshes result
+  ---
+  duration_ms: 1.151041
+  ...
+# Subtest: old result timer cannot interrupt a later lobby and clubhouse key ignores movement telemetry
+ok 74 - old result timer cannot interrupt a later lobby and clubhouse key ignores movement telemetry
+  ---
+  duration_ms: 0.385958
+  ...
+# Subtest: strict relay cleanup requires exact owned completed trail and readiness, emits no reward hooks
+ok 75 - strict relay cleanup requires exact owned completed trail and readiness, emits no reward hooks
+  ---
+  duration_ms: 0.169667
+  ...
+# PASS Host publishes a real waiting session with intact sender identity
+# PASS Join, ready and host start synchronize without moving or auto-starting guests
+# PASS Real stops update independent progress; another ride packet cannot alter it
+# PASS Late rider receives retained session and voluntarily begins full route
+# PASS Duplicate and older participant revisions cannot roll progress backward
+# PASS Resume restores earned stop, and finish is durable across leave/reload
+# PASS Packets cannot finish or award the local rider
+# PASS Course, vehicle, unrelated trail and region unlock guards explain rejection
+# PASS Offline and another room are never presented as connected club play
+# PASS Disconnect/reconnect preserves trail progress and refreshes presence
+# PASS Club switch stops only the associated trail and rejects old-club packets
+# PASS Blocked host is hidden and expired host ends stale lobby without payouts
+# PASS Host cancellation ends every joined client and old state cannot resurrect it
+# PASS Participant snapshots arriving first retain newest revision
+# PASS Leave and reload preserves revision so peers immediately accept a rejoin
+# PASS Offline host cancellation is published on reconnect
+# PASS Scheduled route and RSVP lead to a real waiting lobby and voluntary guest start
+# PASS Linked lobby survives reload, cancel permits relaunch, and old packets cannot revive it
+# PASS Plan route validation preserves free-text plans and handles retained delivery order
+# PASS Live adventures, drill, flight and locked routes reject launch before lobby mutation
+# 20 club ride checks passed.
+# Subtest: tools/test-club-rides.mjs
+ok 5 - tools/test-club-rides.mjs
+  ---
+  duration_ms: 58.735166
+  ...
+# Subtest: slow imports remain loading, preserve their stage, and offer retry without claiming failure
+ok 77 - slow imports remain loading, preserve their stage, and offer retry without claiming failure
+  ---
+  duration_ms: 1.23
+  ...
+# Subtest: background time does not trigger slow-connection advice
+ok 78 - background time does not trigger slow-connection advice
+  ---
+  duration_ms: 0.407625
+  ...
+# Subtest: a real model/import failure keeps a retry action and cannot be overwritten by late progress
+ok 79 - a real model/import failure keeps a retry action and cannot be overwritten by late progress
+  ---
+  duration_ms: 2.235709
+  ...
+# Subtest: successful readiness clears obsolete slow-load advice and retry controls
+ok 80 - successful readiness clears obsolete slow-load advice and retry controls
+  ---
+  duration_ms: 0.394375
+  ...
+# Subtest: optional consumers stay pending before and during the first horse request
+ok 81 - optional consumers stay pending before and during the first horse request
+  ---
+  duration_ms: 1.278583
+  ...
+# Subtest: default scheduling gives the current screen two animation-frame opportunities
+ok 82 - default scheduling gives the current screen two animation-frame opportunities
+  ---
+  duration_ms: 0.684958
+  ...
+# Subtest: a rig that is not the current attached selection cannot schedule arrival
+ok 83 - a rig that is not the current attached selection cannot schedule arrival
+  ---
+  duration_ms: 0.089959
+  ...
+# Subtest: a newer breed request invalidates a previously scheduled ready callback
+ok 84 - a newer breed request invalidates a previously scheduled ready callback
+  ---
+  duration_ms: 0.111292
+  ...
+# Subtest: attachment or selection changes during the frame delay require a new valid signal
+ok 85 - attachment or selection changes during the frame delay require a new valid signal
+  ---
+  duration_ms: 0.166042
+  ...
+# Subtest: an explicit current failure resolves every scenery waiter instead of rejecting
+ok 86 - an explicit current failure resolves every scenery waiter instead of rejecting
+  ---
+  duration_ms: 0.165917
+  ...
+# Subtest: a post-fetch installation failure wins over an already scheduled success
+ok 87 - a post-fetch installation failure wins over an already scheduled success
+  ---
+  duration_ms: 0.070375
+  ...
+# Subtest: startup settlement is sticky and later breed changes do not rerun scenery
+ok 88 - startup settlement is sticky and later breed changes do not rerun scenery
+  ---
+  duration_ms: 0.090292
+  ...
+# Subtest: verified mounted UI completes without a frame while optional scenery remains deferred
+ok 89 - verified mounted UI completes without a frame while optional scenery remains deferred
+  ---
+  duration_ms: 0.338333
+  ...
+# Subtest: pending, stale or invalid mounts cannot reveal ready UI
+ok 90 - pending, stale or invalid mounts cannot reveal ready UI
+  ---
+  duration_ms: 0.356167
+  ...
+# Subtest: production mounted callback requires every current-selection and attachment condition
+ok 91 - production mounted callback requires every current-selection and attachment condition
+  ---
+  duration_ms: 7.806959
+  ...
+1..91
+# tests 91
+# suites 0
+# pass 91
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 398.371

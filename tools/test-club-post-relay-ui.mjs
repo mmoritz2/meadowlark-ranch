@@ -1,0 +1,56 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const original=fs.readFileSync(new URL('./test-roundup-hud.mjs',import.meta.url),'utf8');
+let domSource=original.slice(original.indexOf('function dom(){'),original.indexOf('function fixture(){'));
+domSource=domSource.replace("const match=(n,s)=>", "const match=(n,s)=>s.startsWith('[data-')?n.getAttribute(s.slice(1,-1).split('=')[0])!==undefined&&(!s.includes('=')||n.getAttribute(s.slice(1,-1).split('=')[0])===s.slice(1,-1).split('=')[1].replaceAll('\\\"','')):");
+domSource=domSource.replace("n.attributes[k]=String(v);", "n.attributes[k]=String(v);if(k.startsWith('data-'))n.dataset[k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=String(v);");
+domSource=domSource.replace("n.focus=()=>", "n.addEventListener=()=>{};n.blur=()=>{if(document.activeElement===n)document.activeElement=document.body;};n.focus=()=>");
+const makeDOM=Function(domSource+'return dom;')();
+const source=fs.readFileSync(new URL('../assets/features/club-post-relay-ui.js',import.meta.url),'utf8').replace(/^export /gm,'');
+class Vector{constructor(x=0,y=0,z=0){this.set(x,y,z);}set(x,y,z){Object.assign(this,{x,y,z});return this;}copy(v){return this.set(v.x,v.y,v.z);}add(v){return this.set(this.x+v.x,this.y+v.y,this.z+v.z);}sub(v){return this.set(this.x-v.x,this.y-v.y,this.z-v.z);}multiplyScalar(a){return this.set(this.x*a,this.y*a,this.z*a);}length(){return Math.hypot(this.x,this.y,this.z);}normalize(){return this.multiplyScalar(1/(this.length()||1));}}
+class Actor{constructor(geometry,material){Object.assign(this,{geometry,material,name:'',children:[],position:new Vector(),rotation:{},scale:new Vector(1,1,1),quaternion:{setFromUnitVectors(){}},visible:true});}add(a){this.children.push(a);}traverse(fn){fn(this);for(const a of this.children)a.traverse(fn);}getWorldPosition(v){v.copy(this.position);}}
+class Resource{dispose(){this.disposed=true;}}
+function fixture(){
+ const document=makeDOM(),hooks=new Map(),actions=new Map(),panels=new Map(),timers=new Map();let serial=0;
+ const s={me:'p1',connected:true,code:'PRIVATE',reason:'',notice:'',lobbies:[],current:null,lastResult:null,records:{}};
+ const trace={calls:[],closes:0,releases:0,toasts:[],clubOpens:[],scene:new Set()},rig={ready:true,nativeSeatFollower:{getWorldPosition(v){v.set(0,2,0);}},profile:{}};
+ const G={clubPostRelay:{snapshot:()=>structuredClone(s)},on(k,fn){const a=hooks.get(k)||[];a.push(fn);hooks.set(k,a);},run(k,...args){for(const fn of hooks.get(k)||[])fn(...args);},toast:v=>trace.toasts.push(v),riding:{releaseAll(){trace.releases++;}},hidePanels(){trace.closes++;for(const id of panels.keys())document.getElementById(id).style.display='none';},seFrame:{screens:new Set(),settle(){}},clubHub:{open:t=>trace.clubOpens.push(t)},horse:{player:{pos:{x:0,z:0},heading:0,onFoot:false},RIG:()=>rig},net:{remotes:{}},trail:{arrow:new Actor()},world:{groundH:()=>0,walls:[],mapMarkers:[],miniMarkers:[]},scene:{add:a=>trace.scene.add(a),remove:a=>trace.scene.delete(a)},THREE:{Vector3:Vector,Group:Actor,Mesh:Actor,MeshStandardMaterial:Resource,MeshBasicMaterial:Resource,BoxGeometry:Resource,RingGeometry:Resource,CylinderGeometry:Resource,TorusGeometry:Resource,DoubleSide:2},
+  ui:{action:(k,fn)=>actions.set(k,fn),panel(def){panels.set(def.id,def);const n=document.createElement('div');n.id=def.id;n.style.display='none';document.body.append(n);},rerender(id){document.getElementById(id).innerHTML=panels.get(id).render();},open(id){G.hidePanels();this.rerender(id);document.getElementById(id).style.display='flex';}}};
+ for(const k of ['host','join','ready','start','leave','again','retrySave','interact','setRoute'])G.clubPostRelay[k]=(...args)=>{trace.calls.push({k,args});return {ok:true};};
+ const install=Function('document','MutationObserver','setTimeout','clearTimeout',source+'return install;')(document,class{observe(){}},fn=>{timers.set(++serial,fn);return serial;},id=>timers.delete(id));install(G);
+ const current=()=>({id:'relay',localId:'p1',hostId:'p1',host:'Mae',hosted:true,status:'waiting',ready:true,canStart:false,roster:[{id:'p1',name:'Mae',ready:true},{id:'p2',name:'Jess & <horse>',ready:false}],firstId:'p1',otherId:'p2',carrierId:null,cargo:null,stage:'collect',elapsed:0,distance:0,route:'road',stations:{wren:{x:-11,z:-15.8},pines:{x:-30,z:-58},ada:{x:39,z:-39}},target:{x:-11,z:-15.8},guide:{x:-11,z:-15.8,label:'Wren'},interaction:{action:'collect',label:'Collect post',inReach:false,eligible:false,reason:'Ride to Wren.'}});
+ return {G,s,trace,document,current,rig,act:(k,el)=>actions.get('relaypost')([k],el),paint:()=>G.run('tick',.2),flush(){for(const [id,fn]of timers){timers.delete(id);fn();}},hud:document.getElementById('clubPostRelayHud'),panel:document.getElementById('clubPostRelayResultPanel')};
+}
+const result={runId:'relay',elapsed:68.4,distance:302,participants:[{id:'p1',name:'Mae'},{id:'p2',name:'Jess & <horse>'}],firstId:'p1',otherId:'p2',handoffs:2,saved:false};
+test('lobby consent and role swap are explicit and use actual participant IDs',()=>{
+ const f=fixture();f.s.current=f.current();const html=f.G.clubPostRelayUI.section();assert.match(html,/Jess &amp; &lt;horse&gt;/);assert.match(html,/relaypost:start[^>]*disabled/);assert.match(html,/Choose Ready/);f.act('start-other');assert.deepEqual(f.trace.calls.at(-1),{k:'start',args:[{firstId:'p2'}]});f.act('ready');assert.deepEqual(f.trace.calls.at(-1),{k:'ready',args:[false]});f.act('join',{dataset:{relayId:'selected-lobby'}});assert.deepEqual(f.trace.calls.at(-1),{k:'join',args:['selected-lobby']});
+});
+test('live prompts retain button focus, eligibility comes from controller, and accepted start closes once',()=>{
+ const f=fixture();f.s.current={...f.current(),status:'riding'};f.paint();assert.equal(f.trace.closes,1);const action=f.hud.querySelector('[data-relay-action="action"]');assert(action);action.focus();assert.equal(action.disabled,true);
+ for(let n=0;n<5;n++){f.s.current.elapsed+=.2;f.s.current.interaction.eligible=true;f.paint();assert.equal(f.hud.querySelector('[data-relay-action="action"]'),action);assert.equal(f.document.activeElement,action);}
+ assert.equal(action.disabled,false);assert.equal(f.trace.closes,1);f.act('action');assert.equal(f.trace.calls.at(-1).k,'interact');
+});
+test('cargo is one pouch on the acknowledged courier and disappears for an absent remote',()=>{
+ const f=fixture();f.s.current={...f.current(),status:'riding',stage:'outbound',carrierId:'p1',cargo:'post'};f.paint();assert.equal(f.G.clubPostRelayUI.state().art.parcelVisible,true);const group=[...f.trace.scene][0],parcel=group.children.find(x=>x.name==='Shared courier pouch');assert.equal(group.children.filter(x=>x.name==='Shared courier pouch').length,1);
+ f.rig.nativeSeatFollower.getWorldPosition=v=>v.set(7,4,9);f.G.run('tick',.016);assert.equal(parcel.position.x,7.33);assert.equal(parcel.position.y,3.73,'cargo follows actual seat between HUD repaints');
+ f.s.current.carrierId='p2';f.paint();assert.equal(parcel.visible,false);assert.equal(f.trace.scene.size,1,'no proxy actor is fabricated');
+ const remoteGroup=new Actor();remoteGroup.parent={};const remoteRig={...f.rig,ready:undefined,scene:{parent:remoteGroup}};f.G.net.remotes.p2={parts:{group:remoteGroup},rig:remoteRig,lastSeen:.2,heading:0};f.G.run('remoteTick');assert.equal(parcel.visible,true,'real attached remote rigs do not carry the local-player ready flag');remoteRig.scene.parent=null;f.G.run('remoteTick');assert.equal(parcel.visible,false,'a detached rig cannot wear the pouch');remoteRig.scene.parent=remoteGroup;f.G.run('remoteTick');assert.equal(parcel.visible,true);f.G.net.remotes.p2.lastSeen=2;f.G.run('remoteTick');assert.equal(parcel.visible,false);
+});
+test('optional log is collision-backed only while the shared route needs it and cleanup is exact',()=>{
+ const f=fixture();const other={x1:99,z1:99,x2:100,z2:100};f.G.world.walls.push(other);f.s.current={...f.current(),status:'riding',stage:'deliver',route:'woodland',carrierId:'p2',cargo:'post'};f.paint();assert.equal(f.G.world.walls.length,2);f.paint();assert.equal(f.G.world.walls.length,2);f.s.current={...f.s.current,stage:'backToPines',returnRoute:'woodland',route:'road'};f.paint();assert.equal(f.G.world.walls.length,2);f.s.current.status='finished';f.paint();assert.deepEqual(f.G.world.walls,[other]);assert.equal(f.trace.scene.size,0);
+});
+test('pending receipt never claims saved success or allows closing; confirmed retry refreshes result',()=>{
+ const f=fixture();f.s.current={...f.current(),status:'finished'};f.s.lastResult=structuredClone(result);f.G.run('clubPostRelayFinish',f.s.lastResult);f.flush();assert.equal(f.panel.style.display,'flex');assert.match(f.panel.textContent,/Retry save/);assert.match(f.panel.innerHTML,/relaypost:close[^>]*disabled/);assert.doesNotMatch(f.panel.textContent,/coins|gems|time is saved/);f.act('close');assert.equal(f.trace.calls.length,0);assert.match(f.trace.toasts[0],/Retry saving/);
+ f.G.clubPostRelay.retrySave=()=>{f.s.lastResult={...result,saved:true,newBest:true,bestTime:68.4};f.G.run('clubPostRelayChanged');return {ok:true};};f.act('save');assert.match(f.panel.textContent,/New personal best · saved/);assert.doesNotMatch(f.panel.innerHTML,/relaypost:close[^>]*disabled/);f.act('activities');assert.equal(f.trace.calls.at(-1).k,'leave');assert.deepEqual(f.trace.clubOpens,['activities']);
+});
+test('old result timer cannot interrupt a later lobby and clubhouse key ignores movement telemetry',()=>{
+ const f=fixture();f.s.lastResult=structuredClone(result);f.G.run('clubPostRelayFinish',f.s.lastResult);f.s.current=f.current();f.flush();assert.equal(f.panel.style.display,'none');const key=f.G.clubPostRelayUI.sectionKey();f.s.current.elapsed=10;f.s.current.guide.x+=1;assert.equal(f.G.clubPostRelayUI.sectionKey(),key);f.s.current.roster[1].ready=true;assert.notEqual(f.G.clubPostRelayUI.sectionKey(),key);
+});
+const core=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8');
+const seam=core.slice(core.indexOf('function finishUnrewardedManagedTrail(r){'),core.indexOf('/* The trail internals',core.indexOf('function finishUnrewardedManagedTrail(r){')));
+test('strict relay cleanup requires exact owned completed trail and readiness, emits no reward hooks',()=>{
+ const events=[],arrow={visible:true};let ready=false,released=0;const ride={managed:'club-post-relay',clubPostRelayId:'relay',idx:4,pts:[1,2,3,4]},G={run(k,r){events.push(k);return k==='unrewardedTrailFinishReady'?ready:undefined;}};
+ const f=Function('G','arrow','ride','release',seam+'let trailRide=ride;function releaseAllRidingControls(){release();}return {finish:finishUnrewardedManagedTrail,current:()=>trailRide};')(G,arrow,ride,()=>released++);
+ assert.equal(f.finish({...ride}),false);assert.equal(f.finish(ride),false);ready=true;ride.managed='cottonwood-post';assert.equal(f.finish(ride),false);ride.managed='club-post-relay';ride.idx=3;assert.equal(f.finish(ride),false);ride.idx=4;assert.equal(f.finish(ride),true);assert.equal(f.current(),null);assert.equal(arrow.visible,false);assert.equal(released,1);assert.equal(f.finish(ride),false);assert.equal(events.filter(x=>x==='unrewardedTrailFinished').length,1);assert(!events.some(x=>['trailDone','trailStop','trailFinishReady'].includes(x)));
+});
