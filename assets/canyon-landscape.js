@@ -136,7 +136,51 @@ const countrysideBanks={
  'western-wall':{front:-1,spine:[[-13,8,.02],[0,18,.13],[17,15,.18],[30,18.5,.06],[47,12.5,.18],[64,5,.10]],cuts:[[8,6.5,5],[28,6,4.5],[44,6,3.8]]},
  'eastern-wall':{front:1,spine:[[-10,9,.05],[0,17,.12],[13,18,.02],[25,12,.14],[39,5,.02]],cuts:[[-6,5.5,4.5],[10,4.5,5.8],[24,6,3.8]]}
 };
-function countrysideBankHeight(r,best,side,along,edge,legacyHeight){
+// Original connected fronts. This returns bank-local relief before
+// the existing canyonRelief keepLandmarks, source support and water/route masks.
+// No mesh, texture, UUID or scene-RNG construction.
+const clamp=v=>Math.max(0,Math.min(1,v));
+const ease=(a,b,v)=>{const t=clamp((v-a)/(b-a));return t*t*t*(t*(t*6-15)+10);};
+const CHAINS=Object.freeze({
+ 'western-wall':[[-20,0,-.02],[-13,2.8,-.01],[-5,9.5,.02],[5,15.5,.08],[17,19.5,.10],[28,14.5,.02],[40,18,.10],[51,10.5,.06],[65,0,0]],
+ 'eastern-wall':[[-14,0,.02],[-9,2.5,0],[-3,8.5,.02],[4,13.5,.05],[12,16.5,-.04],[20,11.5,.05],[29,5,0],[36,0,0]]
+});
+const CUTS=Object.freeze({
+ 'western-wall':[[9,6.5,3.8],[29,7,3.1],[44,6,2.6]],
+ 'eastern-wall':[[8,5,2.8],[23,5.5,2.2]]
+});
+function chainAt(along,chain){
+ if(along<=chain[0][0]||along>=chain.at(-1)[0])return[0,0];
+ let i=1;while(along>chain[i][0])i++;const a=chain[i-1],b=chain[i],t=ease(a[0],b[0],along);
+ return[a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
+}
+export function coyoteBankShape({id,front,best,side,along,edge}){
+ const chain=CHAINS[id];if(!chain)return null;
+ const[rise,offset]=chainAt(along,chain);if(rise===0)return 0;
+ // Across-slope crown is broad and tilted; no radial tip supplies its summit.
+ const q=side-front*offset,r=Math.abs(q),facing=q*front;
+ const crown=.29+.035*Math.sin(along*.072+(id==='western-wall'?.4:1.1));
+ const face=1-.36*ease(crown-.035,crown+.115,r)
+  -.24*ease(.54,.71,r)-.40*ease(.80,1.08,r);
+ const rear=1-ease(.09,1.06,r);
+ const blend=ease(-.10,.22,facing),shoulder=rear+(face-rear)*blend;
+ // Unequal diagonal notches interrupt the exposed face and bench, not the toe
+ // or entire crown. Their zero endpoints do not create an isolated new peak.
+ let recess=0;for(const[station,width,depth]of CUTS[id]){
+  const u=(along-station-facing*4.2)/width;
+  if(Math.abs(u)<1)recess+=depth*(1-u*u)**3;
+ }
+ recess*=ease(.12,.38,facing)*(1-ease(.86,1.08,r));
+ // The retained original physical support determines the hem only. It no
+ // longer caps the authored body to the old cone-shaped legacyHeight.
+ const hem=(1-ease(.90,1.08,best))*(1-ease(.91,1.08,edge));
+ return Math.max(0,rise*Math.max(0,shoulder)-recess)*hem;
+}
+export const coyoteBankShapeControls={chains:CHAINS,cuts:CUTS};
+
+function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false){
+ const authored=coyoteBankShape({id:r.id,front:countrysideBanks[r.id].front,best,side,along,edge});
+ if(!planning&&authored!==null)return authored;
  const bank=countrysideBanks[r.id];let a=bank.spine[0],b=a;
  for(let i=1;i<bank.spine.length;i++){b=bank.spine[i];if(along<=b[0])break;a=b;}
  const t=a===b?0:crestSmooth(0,1,(along-a[0])/(b[0]-a[0]));
@@ -153,7 +197,7 @@ function countrysideBankHeight(r,best,side,along,edge,legacyHeight){
  gully*=crestSmooth(-.18,.12,facing)*(1-crestSmooth(.90,1.08,best));
  return Math.min(legacyHeight,Math.max(0,rise*shoulder-gully));
 }
-export function canyonRelief(x,z){
+export function canyonRelief(x,z,planning=false){
  let height=0,oasisUpperDelta=0;
  for(const r of prepared){
   if(x<r.minX||x>r.maxX||z<r.minZ||z>r.maxZ)continue;
@@ -171,7 +215,7 @@ export function canyonRelief(x,z){
   const cap=1-.20*smooth(.34,.52,edge)-.62*smooth(.57,.82,edge)-.18*smooth(.81,1.08,edge);
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
   let ridgeHeight=Math.max(0,crest*cap*crown);
-  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight);
+  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning);
   if(r.id==='oasis-butte')oasisUpperDelta=Math.max(0,crest*(1-crestSmooth(.18,1.08,edge))*crown)-ridgeHeight;
   height=Math.max(height,ridgeHeight);
  }
@@ -197,6 +241,41 @@ export function canyonReplacesFormation(x,z,radius=0){
 export function canyonCliffAt(x,z,heightAt){
  if(canyonRelief(x,z)<.1)return false;
  return Math.hypot(heightAt(x+1,z)-heightAt(x-1,z),heightAt(x,z+1)-heightAt(x,z-1))>.72*2;
+}
+
+// Historical Coyote decision ground. The physical grid always uses canyonRelief;
+// this reference prevents a local front edit from advancing sequential planting
+// decisions and relocating distant quarters. Pure numbers: no renderer or RNG.
+export const canyonPlanningRelief=(x,z)=>canyonRelief(x,z,true);
+export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep}){
+ if(typeof rawHeightAt!=='function'||typeof heightAt!=='function'||!(terrainStep>0))throw Error('Invalid canyon planning sampler');
+ const banks=prepared.filter(r=>r.id==='eastern-wall'||r.id==='western-wall');
+ const bounds={x0:Math.min(...banks.map(r=>r.minX)),x1:Math.max(...banks.map(r=>r.maxX)),z0:Math.min(...banks.map(r=>r.minZ)),z1:Math.max(...banks.map(r=>r.maxZ))};
+ const ix0=Math.floor((bounds.x0+500)/terrainStep)-1,iz0=Math.floor((bounds.z0+500)/terrainStep)-1;
+ const ix1=Math.ceil((bounds.x1+500)/terrainStep)+1,iz1=Math.ceil((bounds.z1+500)/terrainStep)+1;
+ const nx=ix1-ix0+1,nz=iz1-iz0+1,heights=new Float32Array(nx*nz);
+ for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){
+  const y=rawHeightAt((ix+ix0)*terrainStep-500,(iz+iz0)*terrainStep-500);if(!Number.isFinite(y))throw Error('Nonfinite canyon planning ground');heights[iz*nx+ix]=y;
+ }
+ function planningHeight(x,z){
+  const gx=(x+500)/terrainStep-ix0,gz=(z+500)/terrainStep-iz0,ix=Math.floor(gx),iz=Math.floor(gz);
+  if(ix<0||iz<0||ix>=nx-1||iz>=nz-1)return heightAt(x,z);
+  const fx=gx-ix,fz=gz-iz,i=iz*nx+ix,a=heights[i],b=heights[i+nx],c=heights[i+nx+1],v=heights[i+1];
+  return fx+fz<=1?a+(v-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(v-c)*(1-fz);
+ }
+ const cliffAt=(x,z,probeHeight=planningHeight)=>canyonPlanningRelief(x,z)>=.1&&Math.hypot(probeHeight(x+1,z)-probeHeight(x-1,z),probeHeight(x,z+1)-probeHeight(x,z-1))>.72*2;
+ const barriers=[],seen=new Set(),cell=2.5,level=2.2;
+ // Same original contour recipe, with historical relief. These numbers are
+ // decision occupancy only; revised physical contacts stay in canyonLandscape.
+ for(const r of prepared)for(let z=r.minZ;z<r.maxZ;z+=cell)for(let x=r.minX;x<r.maxX;x+=cell){
+  const corners=[[x,z],[x+cell,z],[x+cell,z+cell],[x,z+cell]],h=corners.map(p=>canyonPlanningRelief(...p));
+  for(let i=0;i<4;i++){const j=(i+1)%4;if((h[i]>level)===(h[j]>level))continue;
+   const t=(level-h[i])/(h[j]-h[i]),cx=corners[i][0]+(corners[j][0]-corners[i][0])*t,cz=corners[i][1]+(corners[j][1]-corners[i][1])*t,key=Math.round(cx*2)+','+Math.round(cz*2);
+   if(seen.has(key))continue;seen.add(key);barriers.push({x:cx,z:cz,r:1.05});
+  }
+ }
+ const collidersForPlanning=(colliders,liveBarriers)=>{const live=new Set(liveBarriers||[]);return [...colliders.filter(c=>!live.has(c)),...barriers];};
+ return {profile:'coyote-bank-planning-11fb567',heightAt:planningHeight,cliffAt,collidersForPlanning,bounds,grid:{ix0,iz0,nx,nz,heights,bytes:heights.byteLength},barriers};
 }
 
 export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material,colliders}){

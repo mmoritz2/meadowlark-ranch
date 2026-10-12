@@ -1,3 +1,4 @@
+import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1';
 import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
    Amberwood, Willowmere, Frostpine and Ochre Reach opened yesterday and received a biome colour
@@ -88,6 +89,7 @@ export function install(G){
     everywhere and cost one extra triangle pair. */
  const G_CROSS=mergeGeometries([G_PLANE.clone(),G_PLANE.clone().rotateY(Math.PI/2)],false);
  const G_TUFT=mergeGeometries([G_BLADE.clone(),G_BLADE.clone().rotateY(Math.PI/2)],false);
+ const workshop=createRegionalWorkshopArt({G});P.workshops=workshop.stats;
  const WHITE=mt('#ffffff',{roughness:1});               // the base for anything coloured per instance
  function put(geo,c,sx,sy,sz,x,y,z,g,o){const m=new THREE.Mesh(geo,mt(c,o));m.scale.set(sx,sy,sz);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
  const bx=(g,c,x,y,z,w,h,d)=>put(G_BOX,c,w,h,d,x,y,z,g);
@@ -137,13 +139,14 @@ export function install(G){
     carried per material exactly as mergeStatics does it, so a settlement's water and its walls
     end up in different meshes and only the walls cast. Nothing baked can ever move again, which
     is why everything that turns, swings or drifts is built outside the bake. */
- function bake(g,shadow){
+ function bake(g,shadow,prepared=false){
+  if(!prepared){const token=workshop.prepareBake(g);if(token)return workshop.legacyBake(token,()=>bake(g,shadow,true));}
   g.updateMatrixWorld(true);
   const byMat=new Map();let n=0;
   g.traverse(o=>{
    if(!o.isMesh||o.isInstancedMesh||Array.isArray(o.material))return;
    const geo=o.geometry;if(!geo.index||!geo.attributes.normal||!geo.attributes.uv)return;
-   const c=geo.clone();setQuarterPrimitiveUV(c,o.scale,o.position,o.material.userData.quarterSurface);c.applyMatrix4(o.matrixWorld);
+   const c=geo.clone();if(!c.userData.workshopUV)setQuarterPrimitiveUV(c,o.scale,o.position,o.material.userData.quarterSurface);c.applyMatrix4(o.matrixWorld);
    for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')c.deleteAttribute(k);
    const e=byMat.get(o.material)||{list:[],cast:false};
    e.list.push(c);e.cast=e.cast||o.castShadow;byMat.set(o.material,e);n++;
@@ -188,6 +191,7 @@ export function install(G){
   if(fadeAt&&im.boundingSphere)fade(im,im.boundingSphere.center.x,im.boundingSphere.center.z,fadeAt+im.boundingSphere.radius);
   return im;
  }
+ function workshopLogs(items,shadow,fadeAt,name){const im=scatter(workshop.logGeometry,workshop.logMaterials,workshop.logItems(items),shadow,fadeAt);if(im){P.draws++;im.name=name;im.userData.workshopArt={profile:workshop.stats.profile,kind:'worked-logs',count:items.length,draws:2,triangles:items.length*workshop.logGeometry.index.count/3};workshop.stats.logBatches.push({...im.userData.workshopArt,name});}return im;}
  let fadeT=0;
  function tickFade(dt){
   fadeT+=dt;if(fadeT<0.4)return;fadeT=0;
@@ -371,7 +375,7 @@ export function install(G){
   const floats=[];
   for(let i=0;i<9;i++){const a=rr(0,6.28),d=rr(2,8.5);floats.push({x:POND.x+Math.cos(a)*d,y:POND.y-0.05,z:POND.z+Math.sin(a)*d,sx:rr(3.4,6.2),sy:0.26,sz:0.26,ry:rr(0,6.28),c:i%3?'#6b5336':'#7d6340'});}
   for(let i=0;i<11;i++){const a=i/11*2.1-0.4;floats.push({x:POND.x+Math.cos(a)*11.5,y:POND.y-0.02,z:POND.z+Math.sin(a)*11.5,sx:3.6,sy:0.3,sz:0.3,ry:a+Math.PI/2,c:'#5d4830'});}
-  scatter(G_LOG,WHITE,floats,false,190);
+  workshopLogs(floats,false,190,'Amberwood | floating barked logs');
   /* Sedge round the waterline, which is what turns a disc of water into a pond. */
   const sedge=[];
   for(let i=0;i<220;i++){const a=rr(0,6.28),d=POND.r*rr(0.9,1.4),x=POND.x+Math.cos(a)*d,z=POND.z+Math.sin(a)*d;
@@ -389,7 +393,7 @@ export function install(G){
   bx(mg,T_DARK,-4.3,2.3,0,0.9,0.5,4.4);                              // the launder, running in off the pond
   bx(mg,'#2f4c46',-4.3,2.46,0,0.72,0.06,4.2);                        // and the water standing in it
   for(let i=0;i<4;i++)beam(mg,T_MID,-4.3,0.2,-1.9+i*1.3,-4.3,2.1,-1.9+i*1.3,0.07);
-  place(solid,mg,mil[0],mil[1],MYAW);
+  workshop.queue(mg,'mill');place(solid,mg,mil[0],mil[1],MYAW);
   collide(mil[0],mil[1],4.7);
   const wh=new THREE.Group();
   for(const s of [-1,1])for(let k=0;k<16;k++){
@@ -401,7 +405,7 @@ export function install(G){
   cy(wh,IRON,0,0,0,0.16,1.7).rotation.x=Math.PI/2;
   const wpt=world(mil[0],mil[1],MYAW,-4.3,-2.9);
   wh.position.set(wpt[0],groundH(mil[0],mil[1])+2.5,wpt[1]);wh.rotation.y=MYAW;
-  wh.name='quarter_wheel';scene.add(own(wh));P.draws+=3;P.anim.push('mill wheel');
+  wh.name='quarter_wheel';workshop.upgradeDynamic(wh,'wheel');scene.add(own(wh));P.draws+=3;P.anim.push('mill wheel');
   G.on('tick',dt=>{if(hyp(player.pos.x,player.pos.z,wpt[0],wpt[1])<220)wh.rotation.z-=dt*0.35;});
 
   /* The three buildings you can walk into. */
@@ -467,7 +471,7 @@ export function install(G){
   for(const s of [-1,1]){const w2=world(deck[0],deck[1],F.yaw,s*2.3,0.7);logs.push({x:w2[0],y:dy+0.16,z:w2[1],sx:0.3,sy:0.3,sz:4.6,ry:F.yaw,c:'#4e3a26'});}
   const deck2=F.at(-4,21),d2y=groundH(deck2[0],deck2[1]);
   for(let row=0;row<4;row++)for(let i=0;i<5-row;i++)logs.push({x:deck2[0]+(i-(4-row)/2+0.5)*0.56,y:d2y+0.34+row*0.5,z:deck2[1]+row*0.05,sx:rr(2.0,2.7),sy:0.25,sz:0.25,ry:0.2,c:BARK[(row+i)%4]});
-  scatter(G_LOG,WHITE,logs,true,260);
+  workshopLogs(logs,true,260,'Amberwood | stacked sawn timber');
   const yard=F.at(6,2),yg=new THREE.Group();
   for(const s of [-1,1]){bx(yg,T_MID,s*1.5,0.5,0,0.24,1.0,0.24);bx(yg,T_MID,s*1.5,0.5,1.4,0.24,1.0,0.24);}
   bx(yg,T_PALE,0,1.05,0.7,3.6,0.16,1.9);
@@ -482,7 +486,7 @@ export function install(G){
   for(let i=0;i<24;i++){const a=rr(0,6.28),d=rr(12,50),x=F.cx+Math.cos(a)*d,z=F.cz+Math.sin(a)*d;
    if(Math.hypot(x,z)>448)continue;
    fallen.push({x,y:groundH(x,z)+0.2,z,sx:rr(2.4,5.2),sy:0.33,sz:0.33,ry:rr(0,6.28),rz:rr(-0.05,0.05),c:i%3?'#6b5336':'#7d6340'});}
-  scatter(G_LOG,WHITE,fallen,true,240);
+  workshopLogs(fallen,true,240,'Amberwood | fallen barked timber');
 
   /* Keep these placed maples as replaceable fallbacks. The photoscan installer
      swaps their crowns after the local assets are ready, sharing the surrounding
@@ -966,7 +970,7 @@ vQMistUV=uv;
   for(let k=1;k<4;k++){const y=k*1.95,f=1.5+(0.45-1.5)*(y/7.8);
    for(const [ax,az,b2x,b2z] of [[-1,-1,1,-1],[1,-1,1,1],[1,1,-1,1],[-1,1,-1,-1]])beam(wg,T_MID,ax*f,y,az*f,b2x*f,y,b2z*f,0.05);}
   bx(wg,T_MID,0,7.9,0,1.5,0.2,1.5);
-  place(solid,wg,mill[0],mill[1],MYAW);
+  workshop.queue(wg,'tower');place(solid,wg,mill[0],mill[1],MYAW);
   collide(mill[0],mill[1],2.2);
   const fan=new THREE.Group();
   for(let k=0;k<14;k++){const a=k/14*Math.PI*2;
@@ -974,7 +978,7 @@ vQMistUV=uv;
    beam(fan,IRON,0,0,0,Math.cos(a)*1.95,Math.sin(a)*1.95,0,0.025);}
   cy(fan,IRON,0,0,-0.24,0.18,0.55).rotation.x=Math.PI/2;
   fan.position.set(mill[0],groundH(mill[0],mill[1])+8.7,mill[1]);fan.rotation.y=MYAW+0.3;
-  fan.name='quarter_fan';scene.add(own(fan));P.draws+=2;P.anim.push('windmill');
+  fan.name='quarter_fan';workshop.upgradeDynamic(fan,'fan');scene.add(own(fan));P.draws+=2;P.anim.push('windmill');
   {const tail=new THREE.Group();
    bx(tail,TIN,0,0,-2.5,0.06,1.1,2.0);beam(tail,IRON,0,0,-0.5,0,0,-1.9,0.04);
    tail.position.set(mill[0],groundH(mill[0],mill[1])+8.6,mill[1]);tail.rotation.y=MYAW+0.3;
@@ -989,7 +993,7 @@ vQMistUV=uv;
   beam(kg,IRON,1.9,3.4,0,3.3,1.05,0,0.06);
   bx(kg,T_DARK,3.7,0.45,0,1.1,0.9,3.0);bx(kg,T_MID,3.7,0.94,0,0.96,0.12,2.86);
   put(G_DISC,'#3f6f78',1.4,1.4,1,3.7,0.9,0,kg,{roughness:0.15,metalness:0.3,transparent:true,opacity:0.9}).rotation.x=-Math.PI/2;
-  place(solid,kg,tank[0],tank[1],TYAW);
+  workshop.queue(kg,'tank');place(solid,kg,tank[0],tank[1],TYAW);
   collide(tank[0],tank[1],2.7);
   const tro=world(tank[0],tank[1],TYAW,3.7,0);
 
