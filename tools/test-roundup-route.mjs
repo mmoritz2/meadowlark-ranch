@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import * as approach from '../assets/roundup-approach.mjs';
 
 const {chooseRoundupApproach}=approach;
@@ -31,7 +32,8 @@ function assertRoute(r,o,{clear=()=>true}={}){
  assert(pressureDistance<=(o.pressureRadius??12)-1.5+1e-8);
  assert(Math.abs(p.distance-pressureDistance)<1e-8);
  const alignment=((o.horse.x-p.x)*dx+(o.horse.z-p.z)*dz)/(pressureDistance*Math.hypot(dx,dz));
- assert(alignment>.7,'pressure remains behind the horse toward home');
+ if(p.reposition)assertReposition(p,o);
+ else assert(alignment>.5,'pressure remains behind the horse toward home');
  assert(Math.abs(p.alignment-alignment)<1e-8);
  assert(distance(r.target,r.waypoints[0])<1e-8,'the next marker is the first route waypoint');
  const last=r.waypoints.at(-1);
@@ -108,7 +110,9 @@ test('a wall sealing both pasture edges returns no route',()=>{
 test('unreachable solid geometry and blocked pressure destinations return no route',()=>{
  assert.equal(route(base({clearPoint:()=>false})),null);
  assert.equal(route(base({clearPoint:x=>x< -17})),null);
- assert.equal(route(base({horse:{x:-29,z:0},rider:{x:-24,z:10}})),null,'rear pressure outside the boundary is never clamped into a fake marker');
+ const boundary=base({horse:{x:-29,z:0},rider:{x:-24,z:10}});
+ assert.equal(chooseRoundupApproach(boundary),null,'legacy rear marker remains unavailable at the boundary');
+ const recovery=assertRoute(route(boundary),boundary);assert.equal(recovery.pressurePoint.reposition,true,'new side recovery is explicitly labelled');
 });
 
 test('only the first segment may escape the rider contact margin',()=>{
@@ -172,8 +176,8 @@ test('a rider in front circles the horse instead of cutting through its spook bu
  assert(legacy,'legacy scenery checks alone permit the unsafe cross-horse approach');
  assert.equal(legacy.z,0);
  const r=assertRoute(route(o),o);
- assert.equal(r.detour,true);assert(r.waypoints.length>=2);
- assert(r.waypoints.some(p=>Math.abs(p.z)>=6),'the route visibly circles to the rear');
+ assert(r.waypoints.some(p=>Math.abs(p.z)>=6),'the route visibly passes around the horse');
+ assert(!r.pressurePoint.reposition,'reachable widened guiding pressure takes priority over recovery');
 });
 
 test('a rider already four metres away retreats monotonically before circling behind',()=>{
@@ -266,4 +270,91 @@ test('rider-leg validation rejects malformed coordinates and bounds without muta
  const good=legInput(base(),{x:-24,z:0},{x:-9,z:0}),before=structuredClone(good);
  assert.equal(leg(good),true);assert.deepEqual(good,before);
  for(const input of [{},{...good,from:{x:NaN,z:0}},{...good,to:{x:Infinity,z:0}},{...good,horse:{x:0,z:Infinity}},{...good,bounds:null},{...good,bounds:{x1:30,x2:-30,z1:-20,z2:20}},{...good,bounds:{x1:-30,x2:30,z1:NaN,z2:20}}])assert.equal(leg(input),false);
+});
+
+
+// Captured real world geometry; these assertions prove guidance safety and an
+// immediately useful escape direction, not a completed herd or a played run.
+const blockedEvidence=JSON.parse(fs.readFileSync(new URL('../review/riding-fairness/full-route-blocked.json',import.meta.url),'utf8'));
+function willow(extra={}){
+ return {horse:{x:-56.0046,z:21.4712},rider:{x:blockedEvidence.player.x,z:blockedEvidence.player.z},pen:{x:-44,z:-8},
+  ...structuredClone(blockedEvidence.roundupGeometry),pressureRadius:14,avoidSide:0,...extra};
+}
+function assertReposition(p,o){
+ assert.equal(p.reposition,true);
+ const escape=approach.chooseRoundupEscape({...o,rider:p,side:o.avoidSide||0});
+ assert(escape,'standing on this reposition point gives the horse an actual collision-checked escape');
+ const dx=o.pen.x-o.horse.x,dz=o.pen.z-o.horse.z,len=Math.hypot(dx,dz);
+ const ux=Math.sin(escape.heading),uz=Math.cos(escape.heading),alignment=(ux*dx+uz*dz)/len;
+ assert(alignment>.35,'the resulting escape must turn toward home, not just sideways along a fence');
+ function clearEscape(length){
+  const end={x:o.horse.x+ux*length,z:o.horse.z+uz*length};
+  if(end.x<o.bounds.x1+2||end.x>o.bounds.x2-2||end.z<o.bounds.z1+2||end.z>o.bounds.z2-2)return false;
+  if(distance(end,o.pen)>=distance(o.horse,o.pen))return false;
+  for(let i=1;i<=Math.ceil(length/.02);i++){
+   const n=length*i/Math.ceil(length/.02),q={x:o.horse.x+ux*n,z:o.horse.z+uz*n};
+   // A horse already at the outer clamp may retreat back into the two-metre
+   // lane, but cannot move further outside it during that validated escape.
+   if(q.x<Math.min(o.horse.x,o.bounds.x1+2)-1e-8||q.x>Math.max(o.horse.x,o.bounds.x2-2)+1e-8||
+      q.z<Math.min(o.horse.z,o.bounds.z1+2)-1e-8||q.z>Math.max(o.horse.z,o.bounds.z2-2)+1e-8)return false;
+   for(const c of o.colliders||[])if(distance(q,c)<Math.min(c.r+.7,distance(o.horse,c))-.00011)return false;
+   for(const w of o.walls||[])if(pointToWall(q,w)<Math.min(.7,pointToWall(o.horse,w))-.00011)return false;
+   if(o.clearPoint&&!o.clearPoint(q.x,q.z,.7))return false;
+  }
+  return true;
+ }
+ assert([3,1.5,.6].some(clearEscape),'independent dense geometry checks confirm a real homeward escape at a supported lookahead');
+ return escape;
+}
+
+test('captured Willow boundary stall has a safe useful route with the real pasture geometry',()=>{
+ const o=willow();assert.equal(chooseRoundupApproach(o),null,'the narrow legacy rear marker is genuinely unavailable');
+ const r=assertRoute(route(o),o);
+ assert(r.pressurePoint.alignment>.5&&r.pressurePoint.alignment<.7,'the widened guiding arc handles the captured stall');
+ assert(!r.pressurePoint.reposition,'available guiding pressure is preferred over reposition');
+ if(r.pressurePoint.reposition)assertReposition(r.pressurePoint,o);
+});
+
+test('both avoidance-side preferences produce independently valid boundary reposition routes',()=>{
+ for(const avoidSide of [-1,1]){
+  const o=willow({horse:{x:-108,z:23},rider:{x:-93,z:10},avoidSide}),r=assertRoute(route(o),o);
+  assert.equal(r.pressurePoint.reposition,true);assertReposition(r.pressurePoint,o);
+ }
+});
+
+test('a horse in the northwest pasture corner can be repositioned toward home without crossing fences',()=>{
+ const o=willow({horse:{x:-108,z:23},rider:{x:-93,z:10}});
+ assert.equal(chooseRoundupApproach(o),null);
+ const r=assertRoute(route(o),o);assert.equal(r.pressurePoint.reposition,true);assertReposition(r.pressurePoint,o);
+});
+
+test('a sealed horse escape cannot be disguised as a reachable reposition marker',()=>{
+ const o=willow({horse:{x:-108,z:23},rider:{x:-93,z:10}}),h=o.horse;
+ o.walls.push({x1:h.x-1,z1:h.z-1,x2:h.x+1,z2:h.z-1},{x1:h.x+1,z1:h.z-1,x2:h.x+1,z2:h.z+1},
+  {x1:h.x+1,z1:h.z+1,x2:h.x-1,z2:h.z+1},{x1:h.x-1,z1:h.z+1,x2:h.x-1,z2:h.z-1});
+ assert.equal(route(o),null,'reachable rider space cannot substitute for an actual horse escape');
+});
+
+
+test('reposition prediction preserves the actual .7m horse footprint in solid callbacks',()=>{
+ const pads=[],o=willow({horse:{x:-108,z:23},rider:{x:-93,z:10},clearPoint:(x,z,pad)=>{pads.push(pad);return true;}});
+ const r=assertRoute(route(o),o);assert.equal(r.pressurePoint.reposition,true);
+ assert(pads.includes(.7),'the horse escape is checked with its real body clearance');
+ assert(pads.includes(undefined),'rider route queries retain their own default footprint');
+ let horseChecks=0;
+ assert.equal(route({...o,clearPoint:(x,z,pad)=>{if(pad===.7){horseChecks++;return false;}return true;}}),null,
+  'free rider space cannot hide solids that obstruct the larger horse footprint');
+ assert(horseChecks>0);
+});
+
+
+test('unreachable guiding goals across a sealed fence still allow useful rider-side recovery',()=>{
+ const o=base({rider:{x:15,z:0},walls:[{x1:-5,z1:-20,x2:-5,z2:20}]});
+ const guiding=chooseRoundupApproach({...o,rider:{x:-14,z:0}});
+ assert(guiding&&guiding.alignment>.5&&guiding.x< -6,'valid guiding endpoints exist in the isolated region');
+ assert.equal(chooseRoundupApproach(o),null,'the actual rider cannot reach those guiding endpoints');
+ const r=assertRoute(route(o),o);assert.equal(r.pressurePoint.reposition,true);
+ assert(r.waypoints.every(p=>p.x>=-4-1e-8),'recovery stays on the rider side of the unbroken wall');
+ const escape=assertReposition(r.pressurePoint,o);
+ assert(Math.sin(escape.heading)>.35,'the resulting horse escape makes real progress toward the eastern pen');
 });

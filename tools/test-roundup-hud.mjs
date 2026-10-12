@@ -130,3 +130,29 @@ test('blocked, pending and shared states cannot expose a stale detour ring',()=>
  f.state.pending=null;f.state.shared={sessionId:'club',host:false};f.paint();assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,false);assert.equal(f.hud.style.display,'none');
  f.state.shared=null;f.paint();assert.equal(f.trace.marker.visible,true,'a normal solo route can become visible again');
 });
+
+
+test('boundary reposition shows a turn-away ring without claiming guiding, then returns to pressure',()=>{
+ const f=fixture(),button=f.hud.querySelector('button');button.focus();
+ Object.assign(f.state,{mode:'full',name:'Full Herd',total:5,timeLimit:150,goldTimeLimit:97.5,timeLeft:140});
+ Object.assign(f.state.target,{name:'Willow',pressure:'circle behind',approachPhase:'reposition',approachTarget:{x:-99,z:21},standX:-100,standZ:23});f.paint();
+ assert.equal(f.trace.marker.visible,true);assert.deepEqual({x:f.trace.marker.position.x,y:f.trace.marker.position.y,z:f.trace.marker.position.z},{x:-99,y:.065,z:21},'reposition uses the published final approach target');
+ assert.equal(f.hud.dataset.approach,'reposition');assert.equal(f.hud.dataset.pressure,'circle behind');
+ assert.match(f.hud.querySelector('.round-target').textContent,/Follow Willow · give room to turn/);
+ assert.match(f.hud.querySelector('.round-hint').textContent,/help Willow turn away from the fence/);
+ assert.doesNotMatch(f.hud.textContent,/good spacing|Keep a steady trot/,'a recovery point is not a claim of safe guiding pressure');
+ assert.equal(f.trace.marker.material.color.value,0xe3c977,'reposition remains gold instead of using the guiding green');
+ Object.assign(f.state.target,{pressure:'guiding',approachPhase:'pressure',approachTarget:{x:-98,z:15}});f.paint();
+ assert.equal(f.hud.dataset.approach,'pressure');assert.match(f.hud.querySelector('.round-target').textContent,/good spacing/);
+ assert.match(f.hud.querySelector('.round-hint').textContent,/Keep a steady trot/);assert.doesNotMatch(f.hud.querySelector('.round-hint').textContent,/turn away from the fence/);
+ assert.deepEqual({x:f.trace.marker.position.x,z:f.trace.marker.position.z},{x:-98,z:15});assert.equal(f.trace.marker.material.color.value,0xa5d987);
+ assert.equal(f.hud.querySelector('button'),button);assert.equal(f.document.activeElement,button,'phase changes preserve the actionable button and focus');
+});
+
+test('actual too-close pressure overrides the reposition instruction with Ease back',()=>{
+ const f=fixture();Object.assign(f.state.target,{name:'Willow',pressure:'too close',approachPhase:'reposition',approachTarget:{x:-99,z:21}});f.paint();
+ assert.equal(f.hud.dataset.approach,'reposition');assert.equal(f.hud.dataset.pressure,'too close');
+ assert.match(f.hud.querySelector('.round-hint').textContent,/Ease back\. Willow needs more room/);
+ assert.doesNotMatch(f.hud.querySelector('.round-hint').textContent,/help Willow turn away|Keep a steady trot|Stay in a walk/);
+ assert.doesNotMatch(f.hud.textContent,/good spacing/);assert.equal(f.trace.marker.material.color.value,0xf0a975);assert.equal(f.trace.focus.material.color.value,0xf0a975);
+});

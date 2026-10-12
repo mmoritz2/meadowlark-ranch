@@ -130,3 +130,23 @@ test('walking behind a horse sustains gentle pressure without repeated sprint-an
  }
  assert.equal(released,0);assert(maxSpeed<=2.1);assert(f.h.pos.x> -72,'ordinary walking produces meaningful homeward progress');
 });
+
+
+test('actual horse tick can leave a pasture corner using the published recovery route',()=>{
+ const f=fixture({mode:'full',colliders:[],walls:[{x1:-110,z1:25,x2:-33,z2:25},{x1:-110,z1:-45,x2:-110,z2:25}],horse:{x:-108,z:23},rider:{x:-100,z:5},heading:Math.PI/2});
+ const initialDistance=Math.hypot(f.h.pos.x-pen.x,f.h.pos.z-pen.z);let sawRecovery=false,maxStep=0;
+ for(let i=0;i<1800&&f.ROUND.on;i++){
+  const target=f.state().target;if(target?.approachPhase==='reposition')sawRecovery=true;
+  if(target?.approachTarget){
+   // Synthetic rider inputs follow the public waypoint; production tick owns
+   // every loose-horse step, heading, clearance and pen crossing.
+   const next=target.approachTarget,dx=next.x-f.player.pos.x,dz=next.z-f.player.pos.z,d=Math.hypot(dx,dz),step=Math.min(d,2.1415/60);
+   if(d>.2){f.player.pos.x+=dx/d*step;f.player.pos.z+=dz/d*step;}
+  }
+  const before={x:f.h.pos.x,z:f.h.pos.z};f.tick(1/60,i/60);maxStep=Math.max(maxStep,Math.hypot(f.h.pos.x-before.x,f.h.pos.z-before.z));
+  assert(f.h.pos.x>=bounds.x1+2-1e-8&&f.h.pos.x<=bounds.x2-2+1e-8&&f.h.pos.z>=bounds.z1+2-1e-8&&f.h.pos.z<=bounds.z2-2+1e-8,'the horse remains inside the physical pasture');
+ }
+ assert(sawRecovery,'the test exercises the explicit recovery phase');
+ assert(maxStep<=6/60+.0002,'recovery cannot teleport or boost the existing horse step');
+ assert(Math.hypot(f.h.pos.x-pen.x,f.h.pos.z-pen.z)<initialDistance-10,'the real collision/turn integration makes meaningful homeward progress');
+});

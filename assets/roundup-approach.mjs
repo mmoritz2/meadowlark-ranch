@@ -98,9 +98,23 @@ export function roundupRiderLegClear({from,to,horse,bounds,colliders=[],walls=[]
  return checks.open(to)&&checks.clear(from,to);
 }
 
+// A fence-side recovery point is useful only when the horse's existing escape
+// choice (including its remembered bypass side) can move it toward home. This
+// predicts the real movement helper; it does not force a heading or move a horse.
+export function roundupRepositionValid(options={},candidate){
+ const {horse,pen,bounds,colliders=[],walls=[],clearPoint,pressureRadius=12,avoidSide=0}=options;
+ if(!finite(horse)||!finite(pen)||!finite(candidate)||!Number.isFinite(pressureRadius)||pressureRadius<9)return false;
+ const distance=Math.hypot(candidate.x-horse.x,candidate.z-horse.z),dx=pen.x-horse.x,dz=pen.z-horse.z,len=Math.hypot(dx,dz);
+ if(distance<7.5-1e-8||distance>Math.min(10.5,pressureRadius-1.5)+1e-8||len<.001||
+    !roundupRiderLegClear({from:candidate,to:candidate,horse,bounds,colliders,walls,clearPoint}))return false;
+ const escape=chooseRoundupEscape({horse,pen,rider:candidate,bounds,colliders,walls,clearPoint,side:avoidSide});
+ return !!escape&&Number.isFinite(escape.heading)&&(Math.sin(escape.heading)*dx+Math.cos(escape.heading)*dz)/len>.35;
+}
+
 // A direct pressure marker remains the first choice. When scenery blocks that
 // ray, find a bounded rider route without changing horse movement or clearance.
-// The caller may cache these waypoints, but must revalidate as the horse moves.
+// Only after guiding goals are unreachable may a marked fence-side recovery be
+// offered. Both searches share one geometry/expansion budget and fail closed.
 export function chooseRoundupRoute(options={}){
  const {horse,pen,rider,bounds,colliders=[],walls=[],pressureRadius=12,clearPoint}=options;
  if(!finite(horse)||!finite(pen)||!finite(rider)||!Array.isArray(colliders)||!Array.isArray(walls)||
@@ -108,18 +122,22 @@ export function chooseRoundupRoute(options={}){
     bounds.x2<=bounds.x1||bounds.z2<=bounds.z1||pressureRadius<9||Math.hypot(rider.x-horse.x,rider.z-horse.z)>160||
     rider.x<bounds.x1||rider.x>bounds.x2||rider.z<bounds.z1||rider.z>bounds.z2)return null;
  const MAX_NODES=1200,MAX_EXPANDED=700,MAX_SOLID_CHECKS=12000,STEP=2.5;
- let solidChecks=0,exhausted=false;
+ let solidChecks=0,exhausted=false,expanded=0;
  const solidCache=new Map();
- function solidOpen(x,z){
+ function solidOpen(x,z,pad){
   if(!clearPoint)return true;
-  const key=x+','+z;if(solidCache.has(key))return solidCache.get(key);
+  // Horse escape probes use .7m, while rider clearance uses the caller's
+  // default. Keep their cache entries separate and retain the exact footprint.
+  const key=x+','+z+','+(pad??'rider');if(solidCache.has(key))return solidCache.get(key);
   if(solidChecks>=MAX_SOLID_CHECKS){exhausted=true;return false;}
-  solidChecks++;const yes=!!clearPoint(x,z);solidCache.set(key,yes);return yes;
+  solidChecks++;const yes=!!clearPoint(x,z,pad);solidCache.set(key,yes);return yes;
  }
  function result(points,pressurePoint){
   const waypoints=points.map(p=>Object.freeze({x:p.x,z:p.z}));let length=0,from=rider;
   for(const p of waypoints){length+=Math.hypot(p.x-from.x,p.z-from.z);from=p;}
-  return Object.freeze({waypoints:Object.freeze(waypoints),target:waypoints[0],pressurePoint:Object.freeze({x:pressurePoint.x,z:pressurePoint.z,distance:pressurePoint.distance,alignment:pressurePoint.alignment}),detour:waypoints.length>1,length});
+  const goal={x:pressurePoint.x,z:pressurePoint.z,distance:pressurePoint.distance,alignment:pressurePoint.alignment};
+  if(pressurePoint.reposition)goal.reposition=true;
+  return Object.freeze({waypoints:Object.freeze(waypoints),target:waypoints[0],pressurePoint:Object.freeze(goal),detour:waypoints.length>1,length});
  }
  const {open,clear,outsideHorse}=riderRouteClearance({horse,rider,bounds,colliders,walls,solidOpen});
  const direct=chooseRoundupApproach({...options,clearPoint:solidOpen});
@@ -127,60 +145,84 @@ export function chooseRoundupRoute(options={}){
  if(direct&&outsideHorse(rider,direct))return result([direct],direct);
  const dx=pen.x-horse.x,dz=pen.z-horse.z,len=Math.hypot(dx,dz);if(len<.001)return null;
  const ux=dx/len,uz=dz/len;
- const goals=[];
- for(const angle of [0,.2617993878,-.2617993878,.5235987756,-.5235987756,.7853981634,-.7853981634])for(const distance of [9,8.25,9.75,7.5,10.5]){
-  if(distance>pressureRadius-1.5)continue;const cos=Math.cos(angle),sin=Math.sin(angle);
-  const p={x:horse.x+(-ux*cos-uz*sin)*distance,z:horse.z+(-uz*cos+ux*sin)*distance,distance,alignment:cos,preference:Math.abs(angle)*3+Math.abs(distance-9)};
-  if(open(p))goals.push(p);
+ function candidates(degrees,reposition=false){
+  const goals=[];
+  for(const degree of degrees)for(const distance of [9,8.25,9.75,7.5,10.5]){
+   if(distance>pressureRadius-1.5)continue;const angle=degree*Math.PI/180,cos=Math.cos(angle),sin=Math.sin(angle);
+   const p={x:horse.x+(-ux*cos-uz*sin)*distance,z:horse.z+(-uz*cos+ux*sin)*distance,distance,alignment:cos,preference:Math.abs(angle)*3+Math.abs(distance-9)};
+   if(!open(p))continue;
+   if(reposition){p.reposition=true;if(!roundupRepositionValid({...options,clearPoint:solidOpen},p))continue;}
+   else if(cos<=.5)continue;
+   goals.push(p);if(exhausted)break;
+  }
+  return goals;
  }
- if(!goals.length||exhausted)return null;
- // A lower-ranked direct candidate can avoid the horse even when the legacy
- // preferred marker would ask the rider to cut through its flight zone.
- const directGoals=goals.slice().sort((a,b)=>(a.preference+Math.hypot(a.x-rider.x,a.z-rider.z)*.025)-(b.preference+Math.hypot(b.x-rider.x,b.z-rider.z)*.025));
- for(const goal of directGoals){const safe=clear(rider,goal);if(exhausted)return null;if(safe)return result([goal],goal);}
  const nx=Math.floor((bounds.x2-bounds.x1-2)/STEP)+1,nz=Math.floor((bounds.z2-bounds.z1-2)/STEP)+1;
- if(nx<1||nz<1||nx*nz>MAX_NODES)return null;
- const heuristic=p=>Math.min(...goals.map(g=>Math.hypot(g.x-p.x,g.z-p.z)+g.preference));
- const nodes=Array.from({length:nx*nz},(_,id)=>({id,x:bounds.x1+1+Math.floor(id/nz)*STEP,z:bounds.z1+1+(id%nz)*STEP,g:Infinity,parent:-1,closed:false,open:null}));
- const queue=[];
- function push(node,g,parent){
-  if(g>=node.g)return;node.g=g;node.parent=parent;
-  const entry={id:node.id,g,f:g+heuristic(node)};let i=queue.length;queue.push(entry);
-  while(i){const parentIndex=(i-1)>>1;if(queue[parentIndex].f<=entry.f)break;queue[i]=queue[parentIndex];i=parentIndex;}queue[i]=entry;
- }
- function pop(){
-  const first=queue[0],tail=queue.pop();if(queue.length){let i=0;
-   while(i*2+1<queue.length){let child=i*2+1;if(child+1<queue.length&&queue[child+1].f<queue[child].f)child++;if(queue[child].f>=tail.f)break;queue[i]=queue[child];i=child;}queue[i]=tail;
-  }return first;
- }
- const isOpen=node=>node.open??(node.open=open(node));
- for(const node of nodes){const d=Math.hypot(node.x-rider.x,node.z-rider.z);if(d<=STEP*3&&isOpen(node)&&clear(rider,node))push(node,d,-1);}
+ let nodes=null,explored=false;
  const edges=new Map(),neighbours=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
- let best=null,expanded=0;
- while(queue.length&&!exhausted&&expanded<MAX_EXPANDED){
-  const entry=pop(),node=nodes[entry.id];if(node.closed||entry.g!==node.g)continue;
-  if(best&&entry.f>=best.cost)break;node.closed=true;expanded++;
-  for(const goal of goals){const d=Math.hypot(goal.x-node.x,goal.z-node.z),cost=node.g+d+goal.preference;
-   if(d<=STEP*3&&(!best||cost<best.cost)&&clear(node,goal))best={node:node.id,goal,cost};
+ const isOpen=node=>node.open??(node.open=open(node));
+ function search(goals){
+  if(!goals.length||exhausted)return null;
+  // A lower-ranked direct candidate may avoid the horse even when the legacy
+  // preferred marker would cut through its flight zone.
+  const directGoals=goals.slice().sort((a,b)=>(a.preference+Math.hypot(a.x-rider.x,a.z-rider.z)*.025)-(b.preference+Math.hypot(b.x-rider.x,b.z-rider.z)*.025));
+  for(const goal of directGoals){const safe=clear(rider,goal);if(exhausted)return null;if(safe)return result([goal],goal);}
+  if(nx<1||nz<1||nx*nz>MAX_NODES){exhausted=true;return null;}
+  if(!nodes)nodes=Array.from({length:nx*nz},(_,id)=>({id,x:bounds.x1+1+Math.floor(id/nz)*STEP,z:bounds.z1+1+(id%nz)*STEP,g:Infinity,parent:-1,closed:false,open:null}));
+  const heuristic=p=>Math.min(...goals.map(g=>Math.hypot(g.x-p.x,g.z-p.z)+g.preference));
+  const queue=[];
+  function push(node,g,parent){
+   if(g>=node.g)return;node.g=g;node.parent=parent;
+   const entry={id:node.id,g,f:g+heuristic(node)};let i=queue.length;queue.push(entry);
+   while(i){const parentIndex=(i-1)>>1;if(queue[parentIndex].f<=entry.f)break;queue[i]=queue[parentIndex];i=parentIndex;}queue[i]=entry;
   }
-  const ix=Math.floor(node.id/nz),iz=node.id%nz;
-  for(const [ox,oz] of neighbours){const x=ix+ox,z=iz+oz;if(x<0||x>=nx||z<0||z>=nz)continue;
-   const next=nodes[x*nz+z];if(next.closed||!isOpen(next))continue;
-   const key=Math.min(node.id,next.id)+':'+Math.max(node.id,next.id);let safe=edges.get(key);
-   if(safe===undefined){safe=clear(node,next);edges.set(key,safe);}
-   if(safe)push(next,node.g+Math.hypot(next.x-node.x,next.z-node.z),node.id);
+  function pop(){
+   const first=queue[0],tail=queue.pop();if(queue.length){let i=0;
+    while(i*2+1<queue.length){let child=i*2+1;if(child+1<queue.length&&queue[child+1].f<queue[child].f)child++;if(queue[child].f>=tail.f)break;queue[i]=queue[child];i=child;}queue[i]=tail;
+   }return first;
   }
+  let best=null;
+  function connect(node){
+   for(const goal of goals){const d=Math.hypot(goal.x-node.x,goal.z-node.z),cost=node.g+d+goal.preference;
+    if(d<=STEP*3&&(!best||cost<best.cost)&&clear(node,goal))best={node:node.id,goal,cost};
+   }
+  }
+  if(explored){
+   // An exhausted reachable component already proves no guiding goal can be
+   // reached. Reuse its optimal paths for recovery instead of a second flood.
+   for(const node of nodes)if(node.closed&&!exhausted)connect(node);
+  }else{
+   for(const node of nodes){const d=Math.hypot(node.x-rider.x,node.z-rider.z);if(d<=STEP*3&&isOpen(node)&&clear(rider,node))push(node,d,-1);}
+   while(queue.length&&!exhausted){
+    const entry=pop(),node=nodes[entry.id];if(node.closed||entry.g!==node.g)continue;
+    if(best&&entry.f>=best.cost)break;
+    if(expanded>=MAX_EXPANDED){exhausted=true;break;}node.closed=true;expanded++;connect(node);
+    const ix=Math.floor(node.id/nz),iz=node.id%nz;
+    for(const [ox,oz] of neighbours){const x=ix+ox,z=iz+oz;if(x<0||x>=nx||z<0||z>=nz)continue;
+     const next=nodes[x*nz+z];if(next.closed||!isOpen(next))continue;
+     const key=Math.min(node.id,next.id)+':'+Math.max(node.id,next.id);let safe=edges.get(key);
+     if(safe===undefined){safe=clear(node,next);edges.set(key,safe);}
+     if(safe)push(next,node.g+Math.hypot(next.x-node.x,next.z-node.z),node.id);
+    }
+   }
+   explored=!best&&!queue.length&&!exhausted;
+  }
+  if(!best||exhausted)return null;
+  const route=[best.goal];for(let id=best.node;id!==-1;id=nodes[id].parent)route.unshift(nodes[id]);
+  // Remove grid corners only when the complete replacement leg remains clear.
+  const smooth=[];let from=rider,start=0;
+  while(start<route.length&&!exhausted){let far=start;
+   for(let i=route.length-1;i>start;i--)if(clear(from,route[i])){far=i;break;}
+   if(!clear(from,route[far]))return null;smooth.push(route[far]);from=route[far];start=far+1;
+  }
+  return exhausted?null:result(smooth,best.goal);
  }
- if(!best||exhausted)return null;
- const route=[best.goal];for(let id=best.node;id!==-1;id=nodes[id].parent)route.unshift(nodes[id]);
- // Remove needless grid corners only when the complete replacement leg passes
- // exactly the same clearance checks. This keeps the displayed route readable.
- const smooth=[];let from=rider,start=0;
- while(start<route.length&&!exhausted){let far=start;
-  for(let i=route.length-1;i>start;i--)if(clear(from,route[i])){far=i;break;}
-  if(!clear(from,route[far]))return null;smooth.push(route[far]);from=route[far];start=far+1;
- }
- return exhausted?null:result(smooth,best.goal);
+ const guiding=search(candidates([0,15,-15,30,-30,45,-45,57,-57]));
+ if(guiding||exhausted)return guiding;
+ // A side goal is explicitly a reposition, never a green guiding promise.
+ // Sampling farther around a corner permits the real collision escape to turn
+ // the horse homeward without asking the rider to stand beyond a fence.
+ return search(candidates([65,-65,75,-75,90,-90,105,-105,120,-120,135,-135,150,-150,165,-165,180],true));
 }
 
 // Roundup horses retain the shared .7m contact footprint. Unlike the general

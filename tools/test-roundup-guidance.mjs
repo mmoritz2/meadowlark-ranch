@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {updateRoundupGuidance} from '../assets/roundup-guidance.mjs';
-import {roundupRiderLegClear} from '../assets/roundup-approach.mjs';
+import {roundupRiderLegClear,chooseRoundupEscape} from '../assets/roundup-approach.mjs';
 
 const wall={x1:-17,z1:-5,x2:-17,z2:5};
 const base=(extra={})=>({key:'Juniper',horse:{x:0,z:0},pen:{x:20,z:0},rider:{x:-24,z:0},bounds:{x1:-30,x2:30,z1:-20,z2:20},colliders:[],walls:[],...extra});
@@ -17,7 +18,7 @@ function safe(state,o){
  assert.equal(typeof state.blocked,'boolean');
  assert(Number.isInteger(state.cursor)&&state.cursor>=0);
  assert(Number.isFinite(state.plannedAt)&&Number.isFinite(state.planMs)&&state.planMs>=0);
- assert(['detour','pressure'].includes(state.phase));
+ assert(['detour','pressure','reposition'].includes(state.phase));
  if(state.blocked){assert.equal(state.target,null);assert.equal(state.route,null);return state;}
  assert(state.route&&Object.isFrozen(state.route));
  assert(state.target&&Object.isFrozen(state.target));
@@ -163,4 +164,56 @@ test('small horse drift refreshes pressure metadata without replacing a still sa
 test('without an explicit timing callback planning exposes zero measured time',()=>{
  const options=base({walls:[wall]}),state=safe(updateRoundupGuidance(null,options,1000),options);
  assert.equal(state.planMs,0);
+});
+
+
+const boundaryEvidence=JSON.parse(fs.readFileSync(new URL('../review/riding-fairness/full-route-blocked.json',import.meta.url),'utf8'));
+function boundaryFixture(extra={}){
+ return fixture({key:'Corner horse',horse:{x:-108,z:23},rider:{x:-93,z:10},pen:{x:-44,z:-8},
+  ...structuredClone(boundaryEvidence.roundupGeometry),pressureRadius:14,avoidSide:1,...extra});
+}
+function currentEscape(state,o){
+ const p=state.pressurePoint;assert.equal(p.reposition,true,'reposition metadata survives public-state construction');
+ const escape=chooseRoundupEscape({...o,rider:p,side:o.avoidSide||0});assert(escape);
+ const dx=o.pen.x-o.horse.x,dz=o.pen.z-o.horse.z;
+ assert((Math.sin(escape.heading)*dx+Math.cos(escape.heading)*dz)/Math.hypot(dx,dz)>.35,'current preference produces a useful homeward turn');
+ return escape;
+}
+
+test('boundary guidance labels the final leg as reposition and keeps earlier legs as detours',()=>{
+ const f=boundaryFixture();let state=safe(f.update(null,1000),f.options);
+ currentEscape(state,f.options);
+ for(let n=0;n<state.route.waypoints.length+1&&state.phase==='detour';n++){
+  assert(state.cursor<state.route.waypoints.length-1);Object.assign(f.options.rider,state.target);
+  state=safe(f.update(state,1010+n),f.options);currentEscape(state,f.options);
+ }
+ assert.equal(state.phase,'reposition');assert.equal(state.cursor,state.route.waypoints.length-1);
+});
+
+test('avoidance-side changes trigger immediate current-prediction validation of a reposition',()=>{
+ const f=boundaryFixture(),a=safe(f.update(null,1000),f.options);currentEscape(a,f.options);
+ f.options.avoidSide=-1;const b=safe(f.update(a,1010),f.options);
+ assert.equal(f.trace.clockCalls,4,'a changed escape preference cannot reuse an old prediction unchecked');
+ currentEscape(b,f.options);
+});
+
+test('same-array geometry changes that seal horse escape invalidate cached reposition guidance',()=>{
+ const f=boundaryFixture(),a=safe(f.update(null,1000),f.options),p=a.pressurePoint,h=f.options.horse;
+ currentEscape(a,f.options);
+ // A ring is remote from the rider leg but leaves no .6m horse escape with
+ // its .7m body footprint. Push into the same array to exercise live validation.
+ for(let i=0;i<24;i++){const angle=i*Math.PI*2/24;f.options.colliders.push({x:h.x+Math.cos(angle)*1.15,z:h.z+Math.sin(angle)*1.15,r:.35});}
+ assert.equal(roundupRiderLegClear({from:f.options.rider,to:a.target,...f.options}),true,'the rider leg itself is still clear');
+ assert.equal(chooseRoundupEscape({...f.options,rider:p,side:f.options.avoidSide}),null,'the horse prediction is now blocked');
+ const b=safe(f.update(a,1010),f.options);assert.equal(b.blocked,true);assert.equal(b.target,null);assert.equal(f.trace.clockCalls,4);
+});
+
+test('reposition guidance periodically checks for newly reachable guiding pressure',()=>{
+ const f=boundaryFixture(),a=safe(f.update(null,1000),f.options);currentEscape(a,f.options);
+ let state=a;
+ while(state.phase==='detour'){Object.assign(f.options.rider,state.target);state=safe(f.update(state,1010),f.options);}
+ const plans=f.trace.clockCalls;
+ const later=safe(f.update(state,1600),f.options);
+ assert(f.trace.clockCalls>plans,'a reposition plan has a bounded refresh period');
+ if(later.pressurePoint?.reposition)currentEscape(later,f.options);
 });

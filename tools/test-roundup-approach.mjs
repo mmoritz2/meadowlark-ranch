@@ -113,3 +113,13 @@ test('actual solo state exposes a safe detour marker separately from the final p
  Object.assign(f.player.pos,{x:t.standX,z:t.standZ});
  assert.equal(f.state().target.pressure,'guiding','the separate final position still guides the horse home');
 });
+
+
+test('actual solo corner state distinguishes a recovery position from guiding pressure',()=>{
+ const o={horse:{x:-108,z:23},rider:{x:-100,z:5},pen:{x:-44,z:-8},bounds:{x1:-110,x2:-33,z1:-45,z2:25},colliders:[],walls:[{x1:-110,z1:25,x2:-33,z2:25},{x1:-110,z1:-45,x2:-110,z2:25}]};
+ const f=stateFixture(o);f.horse.roundupAvoidSide=1;let t=f.state().target;
+ assert.equal(t.approachBlocked,false);
+ for(const p of f.horse.guidanceCache.route.waypoints){Object.assign(f.player.pos,p);f.advance(10);t=f.state().target;}
+ assert.equal(t.approachPhase,'reposition');assert.notEqual(t.pressure,'guiding','the public state cannot describe a side recovery as good guiding pressure');
+ assert(approach.roundupRepositionValid({...o,avoidSide:1},t.approachTarget),'the visible final recovery point predicts the same real escape helper');
+});
