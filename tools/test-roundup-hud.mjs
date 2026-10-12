@@ -45,8 +45,8 @@ function fixture(){
   on(name,fn){const list=hooks.get(name)||[];list.push(fn);hooks.set(name,list);},run(name,...args){for(const fn of hooks.get(name)||[])fn(...args);},toast(){},
   hidePanels(){for(const id of panels.keys())document.getElementById(id).style.display='none';},
   ui:{panel(def){panels.set(def.id,def);const n=document.createElement('div');n.id=def.id;n.style.display='none';document.body.append(n);},action:(name,fn)=>actions.set(name,fn),open(id){G.hidePanels();const p=document.getElementById(id);p.innerHTML=panels.get(id).render();p.style.display='flex';trace.opens.push(id);}},
-  seFrame:{screens:new Set(),settle(){}},scene:{add(marker){if(marker.name==='Roundup pressure position')trace.marker=marker;else if(marker.name==='Horse to guide home')trace.focus=marker;}},world:{miniMarkers:[],groundH:()=>0},
-  THREE:{RingGeometry:class{},MeshBasicMaterial:class{constructor(){this.color={value:null,set(value){this.value=value;}};}},Mesh:class{constructor(_g,material){this.material=material;this.position={set(){}};this.rotation={};}}}};
+  seFrame:{screens:new Set(),settle(){}},scene:{add(marker){if(marker.name==='Roundup approach position')trace.marker=marker;else if(marker.name==='Horse to guide home')trace.focus=marker;}},world:{miniMarkers:[],groundH:()=>0},
+  THREE:{RingGeometry:class{},MeshBasicMaterial:class{constructor(){this.color={value:null,set(value){this.value=value;}};}},Mesh:class{constructor(_g,material){this.material=material;this.position={x:0,y:0,z:0,set(x,y,z){this.x=x;this.y=y;this.z=z;}};this.rotation={};}}}};
  const install=Function('document','MutationObserver','roundupPace','roundupNextAttempt','setTimeout','clearTimeout',source+'\nreturn install;')(
   document,class{observe(){}},roundupPace,roundupNextAttempt,fn=>{timers.set(++nextTimer,fn);return nextTimer;},id=>timers.delete(id));
  install(G);const hud=document.getElementById('roundupGuide');
@@ -91,7 +91,42 @@ test('pressure cue and both rings agree while beginner handoff stays explicit',(
  f.state.target.pressure='too close';f.paint();assert.match(f.hud.querySelector('.round-hint').textContent,/Ease back/);assert.doesNotMatch(f.hud.textContent,/good spacing/);assert.equal(f.trace.marker.material.color.value,0xf0a975);assert.equal(f.trace.focus.material.color.value,0xf0a975);
  f.state.target.pressure='guiding';f.paint();assert.equal(f.trace.focus.material.color.value,0xa5d987);assert.match(f.hud.querySelector('.round-hint').textContent,/Stay in a walk/);
  f.state.target.name='Maple';f.state.target.pressure='circle behind';f.state.penned=1;f.G.run('roundupPen',{name:'Juniper'});assert.match(f.hud.querySelector('.round-target').textContent,/Guide Maple first/);assert.equal(f.hud.querySelector('.round-note').textContent,'Juniper is home!');
- f.state.mode='full';f.state.target.pressure='guiding';f.paint();assert.match(f.hud.querySelector('.round-hint').textContent,/Keep pace/);assert.doesNotMatch(f.hud.querySelector('.round-target').textContent,/first/);
+ f.state.mode='full';f.state.target.pressure='guiding';f.paint();assert.match(f.hud.querySelector('.round-hint').textContent,/Keep a steady trot/);assert.doesNotMatch(f.hud.querySelector('.round-target').textContent,/first/);
  f.state.shared={sessionId:'club'};f.paint();assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,false);assert.equal(f.hud.style.display,'none');
  f.state.shared=null;f.state.active=false;f.paint();assert.equal(f.trace.focus.visible,false);assert.equal(f.trace.marker.visible,false);
+});
+
+
+test('a detour displays the published next waypoint instead of the final pressure point',()=>{
+ const f=fixture();Object.assign(f.state.target,{pressure:'guiding',approachPhase:'detour',approachTarget:{x:-98,z:9},standX:-90,standZ:2});f.paint();
+ assert.equal(f.trace.marker.name,'Roundup approach position');assert.equal(f.trace.marker.visible,true);
+ assert.deepEqual({x:f.trace.marker.position.x,y:f.trace.marker.position.y,z:f.trace.marker.position.z},{x:-98,y:.065,z:9},'the gold ring belongs to the immediate route waypoint');
+ assert.equal(f.hud.dataset.approach,'detour');assert.match(f.hud.querySelector('.round-target').textContent,/follow the gold ring/);
+ assert.match(f.hud.querySelector('.round-hint').textContent,/Follow the gold ring around Juniper/);
+ assert.doesNotMatch(f.hud.querySelector('.round-hint').textContent,/Stay in a walk|Keep a steady trot/,'detour guidance overrides the pressure cue');
+ f.state.target.approachTarget={x:-94,z:7};f.paint();
+ assert.deepEqual({x:f.trace.marker.position.x,z:f.trace.marker.position.z},{x:-94,z:7},'the displayed ring follows the next published leg');
+ assert.equal(f.state.target.standX,-90,'the final pressure destination remains distinct');
+});
+
+test('pressure phase follows the current published target and restores the appropriate gait cue',()=>{
+ const f=fixture();Object.assign(f.state.target,{pressure:'guiding',approachPhase:'pressure',approachTarget:{x:-88,z:3},standX:-90,standZ:2});f.paint();
+ assert.equal(f.hud.dataset.approach,'pressure');assert.deepEqual({x:f.trace.marker.position.x,z:f.trace.marker.position.z},{x:-88,z:3},'a newer published pressure target takes precedence over older final coordinates');
+ assert.match(f.hud.querySelector('.round-target').textContent,/good spacing/);assert.match(f.hud.querySelector('.round-hint').textContent,/Stay in a walk/);
+ f.state.mode='full';f.state.target.approachTarget={x:-87,z:4};f.paint();
+ assert.deepEqual({x:f.trace.marker.position.x,z:f.trace.marker.position.z},{x:-87,z:4});assert.match(f.hud.querySelector('.round-hint').textContent,/Keep a steady trot/);
+ delete f.state.target.approachTarget;f.paint();
+ assert.deepEqual({x:f.trace.marker.position.x,z:f.trace.marker.position.z},{x:-90,z:2},'legacy states still use their final pressure coordinates');
+});
+
+test('blocked, pending and shared states cannot expose a stale detour ring',()=>{
+ const f=fixture();Object.assign(f.state.target,{approachPhase:'detour',approachTarget:{x:-98,z:9}});f.paint();assert.equal(f.trace.marker.visible,true);
+ f.state.target.approachBlocked=true;f.state.target.approachPhase='blocked';f.paint();
+ assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,true);assert.equal(f.hud.dataset.approach,'blocked');
+ assert.match(f.hud.querySelector('.round-hint').textContent,/direct route is blocked/);assert.doesNotMatch(f.hud.querySelector('.round-hint').textContent,/Follow the gold ring/);
+ f.state.target.approachBlocked=false;f.state.target.approachPhase='detour';f.state.pending=f.pending('one');f.paint();
+ assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,false,'pending save suppresses both stale horse rings');assert.equal(f.hud.dataset.pending,'true');
+ assert.match(f.hud.querySelector('.round-hint').textContent,/result is held/);
+ f.state.pending=null;f.state.shared={sessionId:'club',host:false};f.paint();assert.equal(f.trace.marker.visible,false);assert.equal(f.trace.focus.visible,false);assert.equal(f.hud.style.display,'none');
+ f.state.shared=null;f.paint();assert.equal(f.trace.marker.visible,true,'a normal solo route can become visible again');
 });
