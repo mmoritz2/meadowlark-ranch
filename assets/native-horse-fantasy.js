@@ -73,7 +73,7 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
  const tintedHair=new Set(),hairRest=[];
  scene.traverse(mesh=>{
   if(ember||clubPrize)return;
-  if(!mesh.isSkinnedMesh||mesh===skin||mesh.geometry.attributes.position.count!==inst.profile.hairVertexCount)return;
+  if(!mesh.isSkinnedMesh||mesh===skin||mesh.geometry.attributes.position.count!==inst.profile.hairVertexCount&&!mesh.userData.nativeEquestrianGroom)return;
   for(const m of Array.isArray(mesh.material)?mesh.material:[mesh.material]){
    if(tintedHair.has(m))continue;tintedHair.add(m);
    hairRest.push({material:m,color:m.color.clone(),roughness:m.roughness});

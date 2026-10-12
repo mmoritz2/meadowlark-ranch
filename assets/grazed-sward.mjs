@@ -1,4 +1,4 @@
-import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=world-cohesion-1';
+import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=cold-landscape-1';
 
 // A short turf stand uses the same seventy triangles as an existing rich root.
 // Only the already-counted rich rows inside grazed ground can use this shape.
@@ -11,16 +11,15 @@ export function selectsGrazedSward(x,z,sample){return sample<grazedSwardWeight(x
 
 export function createGrazedSwardGeometry(T){
  const P=[],C=[],U=[],I=[];
- // Longer low reaches overlap neighboring stands without moving a base or
- // growing the source height. Twelve curved leaves and thirty-four fine leaves
- // spend the same
- // seventy triangles on a finer turf silhouette, not a few broad weeds.
- // Several small growth points occupy the stand; roots do not all meet in a
- // broadleaf rosette. Their shared parent root and sampled ground stay exact.
+ // Slim upright leaves collect around seven existing growth points. Several
+ // leaves share each point's lean instead of spreading into a broad star. Twelve
+ // curved leaves and thirty-four fine tips retain the seventy-triangle budget;
+ // their exact source heights and sampled parent ground stay unchanged.
  const roots=[[0,0],[.125,.075],[-.12,.085],[.12,-.09],[-.125,-.095],[.015,.165],[-.025,-.155]];
+ const headings=[.20,.77,2.14,.49,3.83,1.21,4.73],offsets=[-.42,-.27,-.10,.09,.25,.43,.60];
  for(let leaf=0;leaf<GRAZED_SWARD.leaves;leaf++){
-  const root=roots[leaf%roots.length],angle=leaf*2.399963229728653+.16*(leaf%3),dx=Math.cos(angle),dz=Math.sin(angle);
-  const height=.38+(leaf%7)*.045,lean=.24+(leaf%5)*.043,half=.012+(leaf%5)*.001;
+  const root=roots[leaf%roots.length],angle=headings[leaf%roots.length]+offsets[Math.floor(leaf/roots.length)],dx=Math.cos(angle),dz=Math.sin(angle);
+  const height=.38+(leaf%7)*.045,lean=.13+(leaf%5)*.019,half=.0072+(leaf%5)*.0005;
   const rings=leaf<GRAZED_SWARD.bentLeaves?[0,.57,1]:[0,1],base=P.length/3;
   for(let ring=0;ring<rings.length;ring++){
    const t=rings[ring],turn=angle+(leaf%2?-.17:.20)*t,rx=-Math.sin(turn),rz=Math.cos(turn);
@@ -35,5 +34,5 @@ export function createGrazedSwardGeometry(T){
   }
  }
  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(P,3));g.setAttribute('color',new T.Float32BufferAttribute(C,3));g.setAttribute('uv',new T.Float32BufferAttribute(U,2));g.setIndex(I);g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();
- g.userData.grazedSward={profile:'grazed-sward-4',triangles:I.length/3,leaves:GRAZED_SWARD.leaves};return g;
+ g.userData.grazedSward={profile:'grazed-sward-5',triangles:I.length/3,leaves:GRAZED_SWARD.leaves};return g;
 }

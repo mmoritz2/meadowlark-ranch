@@ -20,6 +20,7 @@ OUT = ROOT / 'assets/models/native-roster'
 sys.path.insert(0, str(ROOT / 'tools/asset-gen'))
 import rig_hero_horse as glb
 from groom import shape_fjord_groom
+from equestrian_groom import shape_equestrian_groom
 from collar_attachment import pack_collar_attachment
 
 SOURCE = ROOT / 'review/native-trot-reference-kit/white/model.glb'
@@ -117,19 +118,21 @@ GROOM = {
 # Original art directions for the native draft foundations. These surface-only
 # multipliers deliberately keep the approved skeleton and limb lengths intact.
 DRAFT_SHAPES = {
-    'percheron': dict(barrel_width=1.50, hindquarter_width=1.55, body_depth=1.25,
-        body_length=1.055, neck_thickness=1.53, neck_length=1.00,
-        neck_arch_rise_per_withers=.065, head_width=1.27, head_length=1.055,
+    'percheron': dict(barrel_width=1.34, hindquarter_width=1.38, body_depth=1.16,
+        body_length=1.055, neck_thickness=1.32, neck_length=1.00,
+        neck_arch_rise_per_withers=.065, head_width=1.16, head_length=1.025,
         hoof_width=1.42, shaft_width=1.32, joint_width=1.37, upper_limb_width=1.52),
-    'shire': dict(barrel_width=1.52, hindquarter_width=1.52, body_depth=1.27,
-        body_length=1.07, neck_thickness=1.56, neck_length=1.085,
-        neck_arch_rise_per_withers=.075, head_width=1.25, head_length=1.14,
+    'shire': dict(barrel_width=1.36, hindquarter_width=1.40, body_depth=1.18,
+        body_length=1.07, neck_thickness=1.34, neck_length=1.085,
+        neck_arch_rise_per_withers=.075, head_width=1.15, head_length=1.09,
         hoof_width=1.50, shaft_width=1.36, joint_width=1.44, upper_limb_width=1.60),
-    'clyde': dict(barrel_width=1.43, hindquarter_width=1.45, body_depth=1.23,
-        body_length=1.075, neck_thickness=1.46, neck_length=1.12,
-        neck_arch_rise_per_withers=.075, head_width=1.23, head_length=1.12,
+    'clyde': dict(barrel_width=1.30, hindquarter_width=1.33, body_depth=1.14,
+        body_length=1.075, neck_thickness=1.28, neck_length=1.12,
+        neck_arch_rise_per_withers=.075, head_width=1.14, head_length=1.075,
         hoof_width=1.46, shaft_width=1.34, joint_width=1.41, upper_limb_width=1.56),
 }
+# Preserve the accepted lower-leg quantization while refining the upper body.
+DRAFT_BODY_QUANTIZATION = {'percheron': {'positionDelta': 0.0005155946854695227, 'normalDelta': 1.931503167525907e-05}, 'shire': {'positionDelta': 0.0005687527805570516, 'normalDelta': 2.083181094273871e-05}, 'clyde': {'positionDelta': 0.00047971323284621154, 'normalDelta': 1.8190587537247804e-05}}
 DRAFT_LEG_CONTOUR = {
     'version':1,'meshIndex':0,
     'lowerJointRadiusM':.085,'upperJointRadiusM':.090,
@@ -198,8 +201,8 @@ HEAD_FAMILIES = {
                   muzzle_length_m=-.006, nasal_bridge_m=-.001, throat_clearance_m=.004),
     'pony': dict(forehead_width=.100, cheek_width=.065, muzzle_width=.100,
                  muzzle_length_m=-.013, nasal_bridge_m=.001, throat_clearance_m=.003),
-    'draft': dict(forehead_width=.065, cheek_width=.080, muzzle_width=.055,
-                  muzzle_length_m=.003, nasal_bridge_m=.005, throat_clearance_m=-.004),
+    'draft': dict(forehead_width=.110, cheek_width=-.030, muzzle_width=-.060,
+                  muzzle_length_m=-.006, nasal_bridge_m=.003, throat_clearance_m=.009),
 }
 HEAD_PROFILE_FAMILIES = {'sunset':'refined', 'akhal':'refined', 'bay':'stock',
     'pinto':'stock', 'appaloosa':'stock', 'iceland':'pony', 'fjord':'pony',
@@ -209,9 +212,40 @@ HEAD_OVERRIDES = {
     'akhal': dict(nasal_bridge_m=0., muzzle_width=-.065, cheek_width=-.080,
                   throat_clearance_m=.010, muzzle_length_m=0.),
     'fjord': dict(muzzle_length_m=-.009, muzzle_width=.110, cheek_width=.080),
-    'percheron': dict(nasal_bridge_m=.001, muzzle_length_m=0., cheek_width=.065),
-    'clyde': dict(nasal_bridge_m=.003, cheek_width=.060),
+    'percheron': dict(nasal_bridge_m=0., muzzle_length_m=-.006, cheek_width=-.025),
+    'clyde': dict(nasal_bridge_m=.001, cheek_width=-.020),
 }
+
+
+DRAFT_EYE_STYLE={'version':1,'tangentialGain':.20,'radialGain':.08,
+    'fullRadiusM':.040,'supportRadiusM':.090,
+    'controls':['eye_l_059','eye_r_063'],
+    'method':'Shared compact eye-centered field on the body, eyeballs and bridle; source pivots, weights and clips unchanged.'}
+
+@lru_cache(maxsize=1)
+def draft_eye_frames():
+    doc,_=glb.read_glb(SOURCE);worlds,_=glb.node_worlds(doc)
+    by_name={n.get('name'):i for i,n in enumerate(doc['nodes'])}
+    result=[]
+    for name in DRAFT_EYE_STYLE['controls']:
+        i=by_name[name];children=doc['nodes'][i]['children']
+        assert len(children)==1 and doc['nodes'][children[0]]['name'].startswith('eyeend_')
+        centre=worlds[i][:3,3]+TRANSLATION
+        axis=worlds[children[0]][:3,3]-worlds[i][:3,3];axis/=np.linalg.norm(axis)
+        result.append((centre,axis))
+    return result
+
+def draft_eye_refinement(p,key):
+    result=np.zeros_like(np.asarray(p,dtype=float))
+    if key not in DRAFT_SHAPES:return result
+    art=DRAFT_EYE_STYLE
+    for centre,axis in draft_eye_frames():
+        delta=p-centre;radius=np.linalg.norm(delta,axis=1)
+        t=np.clip((radius-art['fullRadiusM'])/(art['supportRadiusM']-art['fullRadiusM']),0,1)
+        weight=1-t*t*t*(t*(6*t-15)+10)
+        radial=(delta@axis)[:,None]*axis
+        result+=(art['tangentialGain']*(delta-radial)+art['radialGain']*radial)*weight[:,None]
+    return result
 
 
 def head_shape(key):
@@ -241,7 +275,7 @@ def head_refinement(p, key):
                shape['muzzle_width']*muzzle)
     forward=shape['muzzle_length_m']*muzzle
     dorsal=shape['nasal_bridge_m']*bridge+shape['throat_clearance_m']*throat
-    return lateral[:,None]*HEAD_SIDE+forward[:,None]*HEAD_AXIS+dorsal[:,None]*HEAD_FACE
+    return lateral[:,None]*HEAD_SIDE+forward[:,None]*HEAD_AXIS+dorsal[:,None]*HEAD_FACE+draft_eye_refinement(np.asarray(p),key)
 
 
 def draft_limb_centers(body):
@@ -582,6 +616,8 @@ def main():
             targetnormal=np.linalg.solve(jac.transpose(0,2,1),worldnormal[...,None])[...,0]
             if m['index']==2 and key=='fjord':
                 q,targetnormal,groom_report=shape_fjord_groom(p,q,hairgroups,targetnormal)
+            elif m['index']==2 and key in DRAFT_SHAPES:
+                q,targetnormal,groom_report=shape_equestrian_groom(p,q,hairgroups,targetnormal)
             elif m['index']==2:
                 mane,tail=GROOM[key]
                 for ids in hairgroups:
@@ -599,11 +635,13 @@ def main():
             fixed=p[:,1]<=(.00005 if limb_cage is not None else .65)
             if m['index']!=2:
                 delta[fixed]=0;ndelta[fixed]=0
-            def pack(a):
+            def pack(a,field):
                 peak=float(np.max(abs(a)));scale=max(peak/32760,1e-10)
+                if m['index']==0 and key in DRAFT_BODY_QUANTIZATION:
+                    scale=max(scale,DRAFT_BODY_QUANTIZATION[key][field])
                 quant=np.rint(a/scale).astype('<i2');offset=len(packed);packed.extend(quant.tobytes())
                 return {'byteOffset':offset,'count':int(a.size),'scale':scale},quant.astype(float)*scale
-            pd,recovered=pack(delta);nd,nrecovered=pack(ndelta)
+            pd,recovered=pack(delta,'positionDelta');nd,nrecovered=pack(ndelta,'normalDelta')
             actual_error=np.linalg.norm(np.einsum('nij,nj->ni',m['linear'],recovered-delta),axis=1)
             assert np.isfinite(recovered).all() and actual_error.max()<2e-5
             if m['index']==0:
@@ -650,9 +688,11 @@ def main():
             report['meshes'].append({'meshIndex':m['index'],'vertices':len(p),'minCageJacobianDeterminant':float(det.min()),
                                      'maxPositionQuantizationErrorM':float(actual_error.max()),'maxAppearanceDeltaM':float(np.linalg.norm(q-p,axis=1).max()),
                                      'fixedLowerVertices':int(fixed.sum()) if m['index']!=2 else 0})
+        # The collar format pins the original five-mesh prefix. Additive draft
+        # hair follows that section so existing attachment offsets stay valid.
+        collar_attachment=pack_collar_attachment(key,packed) if key in DRAFT_SHAPES else None
         if groom_report and groom_report.get('crestShell'):
             groom_report['shell']=pack_groom_shell(groom_report.pop('crestShell'),meshes[2],packed)
-        collar_attachment=pack_collar_attachment(key,packed)
         file=OUT/(key+'.bin');pending.append((file,packed))
         if not args.geometry_only: paint_coat(key,atlas,covered,original)
         coatfile=OUT/(key+'-coat.webp')
@@ -673,13 +713,14 @@ def main():
             report['tackAttachment']={'vertices':collar_attachment['vertexCount'],'baseMorphSha256':collar_attachment['baseMorphSha256'],'method':collar_attachment['method'],'preservedBaseMorphBytes':728256}
         if groom_report:
             row['groom'].pop('maneLengthFactor',None)
-            row['groom']['uprightCrest']={k:v for k,v in groom_report.items() if k!='cards'}
+            groom_kind='equestrian' if key in DRAFT_SHAPES else 'uprightCrest'
+            row['groom'][groom_kind]={k:v for k,v in groom_report.items() if groom_kind=='equestrian' or k!='cards'}
             report['groom']=groom_report
             if groom_report.get('shell'):
-                row['limitations']='Source body, eye, tack and original hair topology are preserved. The short continuous crest is an additive mesh attached to copied native hair-root skin weights; native motions remain unchanged.'
+                row['limitations']='Original source topology and motion are preserved. The additive groom copies original hair skin weights; native articulated limb proportions and gait clips remain shared.'
         if head_shape(key):
             row['headShape']={'version':1, 'family':HEAD_PROFILE_FAMILIES[key],
-                'parameters':head_shape(key), 'sourceOriginM':HEAD_ORIGIN.tolist(),
+                'parameters':head_shape(key), **({'eyeStyle':copy.deepcopy(DRAFT_EYE_STYLE)} if key in DRAFT_SHAPES else {}), 'sourceOriginM':HEAD_ORIGIN.tolist(),
                 'sourceAxes':{'lateral':HEAD_SIDE.tolist(),'longitudinal':HEAD_AXIS.tolist(),'dorsal':HEAD_FACE.tolist()},
                 'sameFieldOnBodyEyesAndBridle':True, 'unchangedRigAndArticulatedLimbProportions':True,
                 'scope':'Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained.'}
@@ -689,7 +730,7 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':5,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':6,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,

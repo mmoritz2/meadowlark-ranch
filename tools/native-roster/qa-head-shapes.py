@@ -101,6 +101,27 @@ def main():
         assert np.array_equal(build.head_refinement(seat,key),np.zeros((1,3)))
         assert np.array_equal(build.cage(seat,s,key,refine_head=False)[0]-build.TRANSLATION,row['sourceSeat'])
         assert .002<field_max<.020,(key,'head pass is absent or excessive',field_max)
+        eyes=[]
+        if key in build.DRAFT_SHAPES:
+            # Measure decoded lid surfaces controlled by the real native lids,
+            # not a nominal setting or an arbitrary head bounding box.
+            shaped=validate.transform(meshes[0]['matrix'],body_out,build.TRANSLATION)
+            without_eye=build.cage(body,s,key,limbs)-build.draft_eye_refinement(body,key)
+            for side,(centre,optical) in zip(['l','r'],build.draft_eye_frames()):
+                horizontal=np.cross(optical,[0.,1.,0.]);horizontal/=np.linalg.norm(horizontal)
+                vertical=np.cross(horizontal,optical)
+                selected_lids=np.zeros(len(body),bool)
+                for prefix in ['uppereyelid_','lowereyelid_']:
+                    joint=next(i for i,node in enumerate(skin['joints']) if doc['nodes'][node]['name'].startswith(prefix+side+'_'))
+                    influence=((meshes[0]['joints']==joint)*meshes[0]['weights']).sum(axis=1)
+                    selected_lids|=(influence>.97)&(np.linalg.norm(body-centre,axis=1)<.06)
+                assert selected_lids.sum()>=8, (key,side,'Verified lid surface absent')
+                ratios=[]
+                for axis in [horizontal,vertical]:
+                    before=np.ptp(without_eye[selected_lids]@axis);after=np.ptp(shaped[selected_lids]@axis)
+                    ratio=float(after/before);assert 1.12<ratio<1.30,(key,side,'Eye opening expansion',ratio)
+                    ratios.append(ratio)
+                eyes.append({'side':side,'verifiedLidVertices':int(selected_lids.sum()),'widthGain':ratios[0],'heightGain':ratios[1]})
         max_motion=0.
         source=meshes[0];rest_delta=decode(data,row['meshes'][0],'positionDelta')
         # Compare new head displacement with the identical preserved rig and
@@ -122,7 +143,7 @@ def main():
             assert row.get('draftShape')==before.get('draftShape') and row['actorScale']==before['actorScale']
         rows.append({'id':key,'family':row['headShape']['family'],'maxDisplayedHeadDeltaM':field_max,
             'maxOutsideHeadQuantizationM':outside_max,'maxAnimatedAdditionalHeadDeltaM':max_motion,
-            'nativeGaitFrames':len(frames),'displayedBitDeltaM':bits,'meshes':mesh_rows})
+            'nativeGaitFrames':len(frames),'displayedBitDeltaM':bits,'eyeOpenings':eyes,'meshes':mesh_rows})
     report={'pass':True,'sourceRigHashUnchanged':build.SOURCE_SHA,'jointCount':677,'reviewRequired':'Bare head/front/side/quarter and fitted bridle animation. Numerical checks do not certify anatomical appearance.','rows':rows}
     if args.report:args.report.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'pass':True,'profiles':keys,'nativeGaitFramesPerProfile':len(frames),

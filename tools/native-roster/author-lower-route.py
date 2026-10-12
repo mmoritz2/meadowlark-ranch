@@ -5,6 +5,8 @@ Run from a repository checkout (only NumPy and the repository GLB reader needed)
 
 The three pinned 514-vertex NPZs are the previously reviewed attachment basis.
 Current morph buffers are read only through their pinned728256-byte prefix.
+Their standing cage is inverse-solved onto the preserved shoulder influences;
+the old attachment positions never overwrite newly authored proportions.
 All four joint influences remain exact. Desired standing positions and normals
 are saved before inversion/float32 quantization for independent validation.
 No production file is changed. The outputNPZs are inputs to collar_attachment.py.
@@ -17,10 +19,11 @@ SOURCE_SHA='b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 MOTION_SHA='87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157'
 TRANSLATION=np.array([-6.225790382362317e-9,.0047147771075021355,-1.6744842715166992])
 BASE_BYTES=728256
-# Reviewed v5 changes only the hindquarter; all front/nonbody inputs are exact.
-PREFIX_SHA={'shire': '8bc94d0bf79af6bec8f420e7cdc582b198803dc4441d8236c471d418855efe9b', 'percheron': 'd12069a7b46c7299b0d8a35a287a0c8a8edb87017efcb0fe4c2c86bb1e34a38b', 'clyde': 'a737671dc6f9dc2d985fb48aa04362554a0b2e4008487382c2a1bb4a555220e1'}
+# Reviewed v6 shared draft cage. Rebase the original70% shoulder weights onto
+# the new standing cage before applying the unchanged lower-V route.
+PREFIX_SHA={'percheron': 'b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b', 'shire': 'abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c', 'clyde': 'bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076'}
 PRIOR_SHA={'percheron':'f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae','shire':'eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf','clyde':'291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf'}
-MESH_DESCRIPTOR_SHA={'shire':'733b48722b2099c96ad5f1577826c14eaaba0eef60793ffc7abd3cde0595304a','percheron':'ba19e97df1ea391b885426ee39b32a335e2a78271618a8b4ab063b7a95f2e4bf','clyde':'a2a20edc7019fce260a6a37156538ad4a19fd67e0496ab8c2ab2ede6bd6c7189'}
+MESH_DESCRIPTOR_SHA={'percheron': 'c9e5002103f868ea8d48168fd1683b591bdc34d67a52bbed12aac7b77cbfe197', 'shire': '1065b7b0cc3685f5b2ae3645f62d0aa78eb6c5414b2f568bca21296bfc38b1f4', 'clyde': '961fd759760be4dd6ec11db0d2dc7cff465bf7a2d98110928850a41c82b6afa9'}
 RANGES=((0,43),(76,196),(426,531),(754,976),(3348,3428),(3601,3823),(4053,4158),(5369,5393),(5517,5690),(5826,5999),(7416,7646),(8356,8586),(9508,9738),(9782,9802),(9810,9855),(9892,10064),(11392,11412),(11522,11542),(12073,12224))
 ROUTE={'version':1,'space':'source-standing-metres-before-actor-scale','liftM':.060,'forwardM':.012,'heightFade':[1.10,1.27],'frontRise':[.30,.69]}
 
@@ -32,7 +35,8 @@ def derivative(a,b,x):
 def unit(v):return v/np.maximum(np.linalg.norm(v,axis=1)[:,None],1e-20)
 def transform(mat,p):return np.einsum('nij,nj->ni',mat,np.c_[p,np.ones(len(p))])[:,:3]+TRANSLATION
 
-def author(root,basis,out,breed,glb):
+def author(root,basis,out,breed,glb,morph_dir=None):
+ morph_dir=morph_dir or root/'assets/models/native-roster'
  source=root/'review/native-trot-reference-kit/white/model.glb';assert sha(source.read_bytes())==SOURCE_SHA
  motion=root/'assets/models/horse-motions/white-western.glb';assert sha(motion.read_bytes())==MOTION_SHA
  doc,binary=glb.read_glb(source);skin=doc['skins'][0];assert len(skin['joints'])==677
@@ -41,16 +45,26 @@ def author(root,basis,out,breed,glb):
  prim=doc['meshes'][3]['primitives'][0];attrs=prim['attributes']
  rawp=glb.accessor(doc,binary,attrs['POSITION']);rawn=glb.accessor(doc,binary,attrs['NORMAL']).astype(float)
  joints=glb.accessor(doc,binary,attrs['JOINTS_0']).copy();weights=glb.accessor(doc,binary,attrs['WEIGHTS_0']).astype('<f4').copy()
- manifest=json.loads((root/'assets/models/native-roster/manifest.json').read_text());row=manifest['breeds'][breed]
+ manifest=json.loads((morph_dir/'manifest.json').read_text());row=manifest['breeds'][breed]
  assert sha(json.dumps(row['meshes'][3],sort_keys=True,separators=(',',':')).encode())==MESH_DESCRIPTOR_SHA[breed]
- data=(root/'assets/models/native-roster'/(breed+'.bin')).read_bytes();assert sha(data[:BASE_BYTES])==PREFIX_SHA[breed]
+ data=(morph_dir/(breed+'.bin')).read_bytes();assert sha(data[:BASE_BYTES])==PREFIX_SHA[breed]
  def delta(key):
   d=row['meshes'][3][key];return np.frombuffer(data,dtype='<i2',count=d['count'],offset=d['byteOffset']).reshape(-1,3)*d['scale']
  position=(rawp+delta('positionDelta')).astype('<f4').astype(float)
  normal=unit((rawn+delta('normalDelta')).astype('<f4').astype(float))
  priorfile=basis/(breed+'.npz');assert sha(priorfile.read_bytes())==PRIOR_SHA[breed]
  prior=np.load(priorfile);priorids=prior['ids'].astype(int);assert len(priorids)==514
- position[priorids]=prior['position'];normal[priorids]=prior['normal'];joints[priorids]=prior['skinIndex'];weights[priorids]=prior['skinWeight']
+ # Preserve the fitted shoulder skin influences, not their obsolete positions.
+ # The new shared cage supplies independent desired standing surface targets.
+ source_mat=np.einsum('nw,nwij->nij',weights,ops[joints])
+ desired=transform(source_mat,position)
+ desired_normal=np.einsum('nij,nj->ni',source_mat[:,:3,:3],normal)
+ joints[priorids]=prior['skinIndex'];weights[priorids]=prior['skinWeight']
+ fitted_mat=np.einsum('nw,nwij->nij',weights[priorids],ops[joints[priorids]])
+ position[priorids]=np.linalg.solve(fitted_mat[:,:3,:3],(desired[priorids]-TRANSLATION-fitted_mat[:,:3,3])[...,None])[...,0]
+ normal[priorids]=unit(np.linalg.solve(fitted_mat[:,:3,:3],desired_normal[priorids][...,None])[...,0])
+ assert np.linalg.norm(transform(fitted_mat,position[priorids])-desired[priorids],axis=1).max()<2e-5
+
  allowed=np.zeros(len(position),bool)
  for lo,hi in RANGES:allowed[lo:hi+1]=True
  ids=np.where(allowed)[0];assert len(ids)==2404
@@ -74,8 +88,8 @@ def author(root,basis,out,breed,glb):
  (out/(breed+'-authoring.json')).write_text(json.dumps(details,indent=2)+'\n');print(json.dumps({k:v for k,v in details.items() if not k.endswith('Ids') and k!='unchangedRegionVertices'}),flush=True)
 
 if __name__=='__main__':
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[2]);ap.add_argument('--basis-dir',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--only',default='shire,percheron,clyde');args=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[2]);ap.add_argument('--basis-dir',type=Path);ap.add_argument('--morph-dir',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--only',default='shire,percheron,clyde');args=ap.parse_args()
  args.basis_dir=args.basis_dir or args.root/'tools/native-roster/collar-attachments/prior-70percent'
  sys.path.insert(0,str(args.root/'tools/asset-gen'));import rig_hero_horse as glb
  for breed in args.only.split(','):
-  assert breed in PREFIX_SHA;author(args.root,args.basis_dir,args.out,breed,glb)
+  assert breed in PREFIX_SHA;author(args.root,args.basis_dir,args.out,breed,glb,args.morph_dir)

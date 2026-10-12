@@ -1,8 +1,8 @@
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=world-cohesion-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=fine-meadows-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=world-cohesion-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=cold-landscape-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
 // Middle-distance long blades match the nearby upright stand. Four/six/eight

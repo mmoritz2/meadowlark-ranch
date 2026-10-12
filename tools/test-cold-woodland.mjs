@@ -129,7 +129,7 @@ test('cover profiles consume no RNG and are deterministic regardless of visitati
 
 test('actual winter bank pass preserves outside bytes, removes summer cores and keeps shortened roots grounded',()=>{
  const source=readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8');
- const start=source.indexOf(' /* ---- 6l. winter woodland floor'),end=source.indexOf(' /* ================= 7. hand the banks to the renderer',start);
+ const start=source.indexOf(' /* ---- 6l. winter woodland floor'),end=source.indexOf(' /* ---- 6m. the shared grazed field interiors',start);
  assert.ok(start>=0&&end>start,'Winter postpass boundaries missing');
  const run=new Function('THREE','BANK','_m','_v','_q','_sc','_col','hsh','groundH','coldCoverProfile','F',source.slice(start,end));
  const groundH=(x,z)=>x*.004-z*.003+Math.sin(x*.07)*.2;
