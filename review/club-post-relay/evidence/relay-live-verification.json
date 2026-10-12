@@ -1,0 +1,66 @@
+{
+  "commit": "06e758b9eab7f737f825b702f519e349a82a519b",
+  "pagesRun": 38283836759,
+  "checks": [
+    {
+      "path": "ranch3d.html",
+      "match": true,
+      "expected": "c0d9688a2a028465ffab195d797ff2da54755bae977e2f7f3d0e4364b7d273d6",
+      "live": "c0d9688a2a028465ffab195d797ff2da54755bae977e2f7f3d0e4364b7d273d6"
+    },
+    {
+      "path": "assets/features/index.js",
+      "match": true,
+      "expected": "92db48ee567ef26a8bd5a88f86d71d7d3ba5d23bb593d2bb4a45469002f7720a",
+      "live": "92db48ee567ef26a8bd5a88f86d71d7d3ba5d23bb593d2bb4a45469002f7720a"
+    },
+    {
+      "path": "assets/features/club-post-relay.js",
+      "match": true,
+      "expected": "d356613f242296c10966f15898ec061efad05867f1b68120d040ab52ad0704dc",
+      "live": "d356613f242296c10966f15898ec061efad05867f1b68120d040ab52ad0704dc"
+    },
+    {
+      "path": "assets/features/club-post-relay-ui.js",
+      "match": true,
+      "expected": "297f60cfda9f226a00a84efc1549d75e6c511372ed24f626635e1831cc41351f",
+      "live": "297f60cfda9f226a00a84efc1549d75e6c511372ed24f626635e1831cc41351f"
+    },
+    {
+      "path": "assets/club-post-relay-protocol.mjs",
+      "match": true,
+      "expected": "78a85b33829d9a9607273fbd26a3298409484924b8ad49b2b8bd2fab9fae48aa",
+      "live": "78a85b33829d9a9607273fbd26a3298409484924b8ad49b2b8bd2fab9fae48aa"
+    },
+    {
+      "path": "assets/features/clubhouse-ui.js",
+      "match": true,
+      "expected": "18664aab95742285330c5dff74ae1f0113c84b99b0ea3726e9b46967fef3d087",
+      "live": "18664aab95742285330c5dff74ae1f0113c84b99b0ea3726e9b46967fef3d087"
+    },
+    {
+      "path": "assets/features/club-herd.js",
+      "match": true,
+      "expected": "274a5e8a4d9a0a8d87b788744cfe9ec5ad4f64e4b0932bed49b917755d041b83",
+      "live": "274a5e8a4d9a0a8d87b788744cfe9ec5ad4f64e4b0932bed49b917755d041b83"
+    },
+    {
+      "path": "assets/features/club-rides.js",
+      "match": true,
+      "expected": "179e76ef332ae0829d2a59558b7a1eeec705010b10a61038d64a331491a49bba",
+      "live": "179e76ef332ae0829d2a59558b7a1eeec705010b10a61038d64a331491a49bba"
+    },
+    {
+      "path": "assets/horse-arrival.js",
+      "match": true,
+      "expected": "9e66d6e71d598eca582bb8ed2d70b83c07af89dd6121c507b07f9ddab2d88eb8",
+      "live": "9e66d6e71d598eca582bb8ed2d70b83c07af89dd6121c507b07f9ddab2d88eb8"
+    },
+    {
+      "path": "assets/game-loading.js",
+      "match": true,
+      "expected": "edddfcc0baf7132cf7af6b456c921f5461ba1888364bdda81e7be8fcd466439c",
+      "live": "edddfcc0baf7132cf7af6b456c921f5461ba1888364bdda81e7be8fcd466439c"
+    }
+  ]
+}
