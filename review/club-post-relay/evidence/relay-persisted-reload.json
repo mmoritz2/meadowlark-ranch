@@ -1,0 +1,243 @@
+{
+  "status": "PASSED: selected reload observations only",
+  "checks": [
+    {
+      "ok": true,
+      "label": "Both source/origin/token-checked reports received"
+    },
+    {
+      "ok": true,
+      "label": "Both reports are fresh"
+    },
+    {
+      "ok": true,
+      "label": "Two distinct production-generated rider identities"
+    },
+    {
+      "ok": true,
+      "label": "No captured feature or post-boot gameplay runtime errors; fixture command diagnostics are separate"
+    },
+    {
+      "ok": true,
+      "label": "Both normally joined the same private club"
+    },
+    {
+      "ok": true,
+      "label": "Both clients expose the same confirmed saved relay receipt"
+    },
+    {
+      "ok": true,
+      "label": "Both receipts agree on the positive authoritative elapsed riding time"
+    },
+    {
+      "ok": true,
+      "label": "Both confirmed receipts agree on run, time, route distance, courier identities and handoffs"
+    },
+    {
+      "ok": true,
+      "label": "Both saved receipts retain two actual parcel handoffs"
+    },
+    {
+      "ok": true,
+      "label": "Both receipts identify exactly the two production-generated couriers"
+    },
+    {
+      "ok": true,
+      "label": "Both saved ledgers contain the exact matching receipt, last run ID and exactly one play in this fresh fixture"
+    },
+    {
+      "ok": true,
+      "label": "Reload retained the previously observed completed run"
+    },
+    {
+      "ok": true,
+      "label": "Persisted record projections are available"
+    }
+  ],
+  "clients": {
+    "guest": {
+      "network": {
+        "id": "courier-b",
+        "name": "Relay Guest",
+        "club": "private-review-club",
+        "connected": true
+      },
+      "club": {
+        "code": "private-review-club",
+        "name": "Relay Review Club",
+        "founderId": "courier-a",
+        "pub": false,
+        "pendingJoin": false,
+        "canCreate": false
+      },
+      "relay": {
+        "me": "courier-b",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": null,
+        "lastResult": {
+          "runId": "courier-a-mv5hrtpe-g2wh3",
+          "elapsed": 660.27,
+          "distance": 288.19,
+          "participants": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host"
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest"
+            }
+          ],
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "handoffs": 2,
+          "at": 1791824045090,
+          "newBest": true,
+          "bestTime": 660.27,
+          "saved": true
+        },
+        "records": {
+          "plays": 1,
+          "bestTime": 660.27,
+          "lastRunId": "courier-a-mv5hrtpe-g2wh3",
+          "receipts": {
+            "courier-a-mv5hrtpe-g2wh3": {
+              "runId": "courier-a-mv5hrtpe-g2wh3",
+              "elapsed": 660.27,
+              "distance": 288.19,
+              "participants": [
+                {
+                  "id": "courier-a",
+                  "name": "Relay Host"
+                },
+                {
+                  "id": "courier-b",
+                  "name": "Relay Guest"
+                }
+              ],
+              "firstId": "courier-a",
+              "otherId": "courier-b",
+              "handoffs": 2,
+              "at": 1791824045090,
+              "newBest": true,
+              "bestTime": 660.27,
+              "saved": true
+            }
+          },
+          "closedBefore": 0
+        }
+      },
+      "player": {
+        "x": -7,
+        "z": 10,
+        "heading": 3.141592653589793,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    },
+    "host": {
+      "network": {
+        "id": "courier-a",
+        "name": "Relay Host",
+        "club": "private-review-club",
+        "connected": true
+      },
+      "club": {
+        "code": "private-review-club",
+        "name": "Relay Review Club",
+        "founderId": "courier-a",
+        "pub": false,
+        "pendingJoin": false,
+        "canCreate": false
+      },
+      "relay": {
+        "me": "courier-a",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": null,
+        "lastResult": {
+          "runId": "courier-a-mv5hrtpe-g2wh3",
+          "elapsed": 660.27,
+          "distance": 288.19,
+          "participants": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host"
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest"
+            }
+          ],
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "handoffs": 2,
+          "at": 1791824045090,
+          "newBest": true,
+          "bestTime": 660.27,
+          "saved": true
+        },
+        "records": {
+          "plays": 1,
+          "bestTime": 660.27,
+          "lastRunId": "courier-a-mv5hrtpe-g2wh3",
+          "receipts": {
+            "courier-a-mv5hrtpe-g2wh3": {
+              "runId": "courier-a-mv5hrtpe-g2wh3",
+              "elapsed": 660.27,
+              "distance": 288.19,
+              "participants": [
+                {
+                  "id": "courier-a",
+                  "name": "Relay Host"
+                },
+                {
+                  "id": "courier-b",
+                  "name": "Relay Guest"
+                }
+              ],
+              "firstId": "courier-a",
+              "otherId": "courier-b",
+              "handoffs": 2,
+              "at": 1791824045090,
+              "newBest": true,
+              "bestTime": 660.27,
+              "saved": true
+            }
+          },
+          "closedBefore": 0
+        }
+      },
+      "player": {
+        "x": -7,
+        "z": 10,
+        "heading": 3.141592653589793,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    }
+  }
+}

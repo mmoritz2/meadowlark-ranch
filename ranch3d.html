@@ -712,7 +712,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=lip-contour78-20261012';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=ranch-actors-2';
+import {FEATURES} from './assets/features/index.js?v=club-post-relay-1-ranch-actors-2';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {worldHorseCanDress,beginWorldHorseLoad,settleWorldHorseLoad,retireWorldHorse} from './assets/world-horse-lifecycle.mjs?v=ranch-actors-2';
@@ -9044,8 +9044,9 @@ addEventListener('keydown',e=>{
  // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
  if(e.code==='KeyB'&&!player.onFoot&&!freeCam&&!build.type&&!build.remove&&!build.move&&dragonElement(myHorses[rideIdx])){keys.KeyB=true;e.preventDefault();return;}
  if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
- if(e.code==='KeyE'&&(postInteractionHeld||G.cottonwoodPost?.context()?.inReach)){
-  if(!e.repeat&&!postInteractionHeld){postInteractionHeld=true;G.cottonwoodPost.interact();}
+ const postController=G.clubPostRelay?.context()?.inReach?G.clubPostRelay:G.cottonwoodPost?.context()?.inReach?G.cottonwoodPost:null;
+ if(e.code==='KeyE'&&(postInteractionHeld||postController)){
+  if(!e.repeat&&!postInteractionHeld){postInteractionHeld=true;postController?.interact();}
   e.preventDefault();return;
  }
  keys[e.code]=true;
@@ -10417,8 +10418,15 @@ function finishManagedTrail(r){
  r.finishNotified=true;G.run('trailDone',r);
  if(trailRide===r)trailRide=null;arrow.visible=false;return true;
 }
+// Cooperative relays own their verified shared receipts. Closing their trail
+// must not trigger expedition payments, solo progress or club contribution hooks.
+function finishUnrewardedManagedTrail(r){
+ if(!r||r!==trailRide||r.managed!=='club-post-relay'||typeof r.clubPostRelayId!=='string'||!r.clubPostRelayId||r.finishNotified||r.idx!==r.pts.length||G.run('unrewardedTrailFinishReady',r)!==true)return false;
+ r.finishNotified=true;releaseAllRidingControls();trailRide=null;arrow.visible=false;
+ G.run('unrewardedTrailFinished',r);return true;
+}
 /* The trail internals, for the social-play package (named rides, custom pins, expeditions). */
-G.trail={STOPS:TRAIL_STOPS,start:startTrail,stop:stopTrail,finishManaged:finishManagedTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){if(v===trailRide)return;if(trailRide&&!stopTrail())return;trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
+G.trail={STOPS:TRAIL_STOPS,start:startTrail,stop:stopTrail,finishManaged:finishManagedTrail,finishUnrewardedManaged:finishUnrewardedManagedTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){if(v===trailRide)return;if(trailRide&&!stopTrail())return;trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
 function tickTrail(dt){
  if(!trailRide||course)return;
  if(G.run('trailTick',trailRide,dt)===true)return;
@@ -13480,7 +13488,7 @@ function spawnNPC(def){const g=makeNPC(def);g.position.set(def.x,groundH(def.x,d
 const npcList=NPC_DEFS.map(spawnNPC);
 function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);const e=spawnNPC(def);npcList.push(e);return e;}
 const npc=npcList[0].g;
-$('ctx').onclick=()=>{if(gameInputBlocked()||freeCam)return;if(G.cottonwoodPost?.context()?.inReach){G.cottonwoodPost.interact();return;}if(nearNPC)openDlg();else if(nearThing)useThing();};
+$('ctx').onclick=()=>{if(gameInputBlocked()||freeCam)return;if(G.clubPostRelay?.context()?.inReach){G.clubPostRelay.interact();return;}if(G.cottonwoodPost?.context()?.inReach){G.cottonwoodPost.interact();return;}if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
 const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true,coat:'moonlit',glow:true};
 const WILD_BREEDS=[
@@ -14282,7 +14290,7 @@ function tick(stepSeconds){
  nearNPC=null; let ndb=3.5;
  for(const q of npcList){const nd=Math.hypot(player.pos.x-q.g.position.x,player.pos.z-q.g.position.z);if(nd<ndb){ndb=nd;nearNPC=q;}}
  tickThings(dt); tickTrail(dt); tickParty(dt); tickRunaways(dt,t);
- const rl=runawayLabel(),postAction=G.cottonwoodPost?.context();
+ const rl=runawayLabel(),postAction=G.clubPostRelay?.context()||G.cottonwoodPost?.context();
  $('ctx').style.display=(postAction?.inReach||nearNPC||nearThing||rl)?'block':'none';
  if(postAction?.inReach)$('ctx').textContent=postAction.label+' (E)';else if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
  const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;

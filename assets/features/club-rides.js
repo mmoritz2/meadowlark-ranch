@@ -31,6 +31,7 @@ export function install(G){
   return '';
  }
  function playReason(sid){
+  if(G.clubPostRelay?.snapshot?.().current)return 'Leave your post relay before joining another club ride.';
   if(G.course?.get())return 'Finish your event before joining a club ride.';
   if(G.course?.drillActive?.())return 'Finish your drill before joining a club ride.';
   if(G.rescueRide?.snapshot?.().active)return 'Finish or end your rescue before joining a club ride.';

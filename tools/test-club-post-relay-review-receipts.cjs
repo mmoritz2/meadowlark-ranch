@@ -1,0 +1,24 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('review/club-post-relay/review.js','utf8');
+const helpers=source.slice(source.indexOf('function receiptFields('),source.indexOf('function verify('));
+const ctx=vm.createContext({});vm.runInContext(helpers,ctx);
+const ids=['host-real','guest-real'];
+const receipt={runId:'run-real',elapsed:155.46,distance:410.5,firstId:ids[0],otherId:ids[1],handoffs:2,at:1823300000000,participants:ids.map((id,i)=>({id,name:i?'Guest':'Host'})),saved:true};
+const row=r=>({relay:{records:{plays:1,lastRunId:r.runId,receipts:{[r.runId]:r}}}});
+const copy=x=>JSON.parse(JSON.stringify(x));let checks=0;
+function check(actual,expected,label){assert.equal(actual,expected,label);checks++;}
+check(ctx.sameReceipt(receipt,copy(receipt)),true,'real matching positive elapsed');
+check(ctx.sameReceipt({...receipt,elapsed:undefined},{...receipt,elapsed:undefined}),false,'undefined time cannot pass');
+check(ctx.sameReceipt(receipt,{...receipt,elapsed:200}),false,'mismatched authoritative elapsed');
+check(ctx.sameReceipt({...receipt,elapsed:0},{...receipt,elapsed:0}),false,'zero elapsed cannot pass');
+check(ctx.sameReceipt({...receipt,elapsed:NaN},{...receipt,elapsed:NaN}),false,'nonfinite cannot pass');
+check(ctx.sameReceipt(receipt,{...receipt,saved:false}),false,'pending save cannot pass');
+check(ctx.receiptCouriers(receipt,ids),true,'exact actual courier IDs');
+check(ctx.receiptCouriers({...receipt,participants:[receipt.participants[0],receipt.participants[0]]},ids),false,'duplicate participant cannot pass');
+check(ctx.receiptCouriers(receipt,['host-real','unrelated']),false,'unrelated rider cannot pass');
+check(ctx.savedLedgerMatches(row(receipt),receipt,ids),true,'one matching saved ledger play');
+let r=row(receipt);r.relay.records.plays=2;check(ctx.savedLedgerMatches(r,receipt,ids),false,'repeat play rejected in fresh circuit');
+r=row(receipt);r.relay.records.receipts.other={...receipt,runId:'other'};check(ctx.savedLedgerMatches(r,receipt,ids),false,'extra run cannot pass');
+r=row(receipt);r.relay.records.lastRunId='other';check(ctx.savedLedgerMatches(r,receipt,ids),false,'lastRun must match');
+r=row({...receipt,elapsed:200});check(ctx.savedLedgerMatches(r,receipt,ids),false,'ledger must match actual receipt elapsed');
+console.log(checks+' extracted receipt checks passed.');
