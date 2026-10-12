@@ -447,7 +447,7 @@ export function install(G){
      asset rather than as a foal nobody has named yet. */
   {const nm=fresh().story.name; if(nm)setFoalName(nm);}
  }
- function removeFoal(){if(!foal)return;try{G.scene.remove(foal.group);}catch(e){}foal=null;}
+ function removeFoal(){if(!foal)return;if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(foal);else G.scene.remove(foal.group);foal=null;}
  /* On screen she is the valley's own dapple grey, on the rig every other horse wears. The procedural
     body above is only the stand-in for the second or so before the rig has loaded: beside a rigged
     bay it read as a pale blue llama, a tube for a neck and a bead for a head, in the one yard every
