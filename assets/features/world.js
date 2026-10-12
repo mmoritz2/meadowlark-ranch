@@ -775,7 +775,7 @@ export function install(G){
   m.taming=true;m.trust=100;m.follow=true;m.helperNames=helpers(m);m.flee=0;
   toast(m.name+' trusts you. Stop nearby to choose a home.');return true;
  }
- function removeMember(m){try{scene.remove(m.parts.group);}catch(e){}const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
+ function removeMember(m){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(m);else scene.remove(m.parts.group);const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
  function nearestSanctuary(x,z){let best=null,bd=1e9;for(const sc of SANCTUARIES){const d=hyp(x,z,sc.x,sc.z);if(d<bd){bd=d;best=sc;}}return best;}
  const tameEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pendingWild=new Set();
@@ -992,7 +992,7 @@ export function install(G){
  }
  /* The rescued horses graze inside the rails: up to six shown, the rest counted. */
  function refreshSanctuary(sc){
-  for(const h of sc.horses){try{scene.remove(h.parts.group);}catch(e){}}sc.horses=[];
+  for(const h of sc.horses){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(h);else scene.remove(h.parts.group);}sc.horses=[];
   const list=((S.fresh()||{}).sanctuary||{})[sc.id]||[];
   list.slice(0,6).forEach((e,k)=>{const a=k/6*Math.PI*2,r=sc.r*0.5;const x=sc.x+Math.cos(a)*r,z=sc.z+Math.sin(a)*r;
    const parts=H.makeHorse({colors:{body:e.body||'#8a5a2b',mane:e.mane||'#332214'},seed:k+3,breed:e.breed||'bay'});const tag=plate('🏕️ '+String(e.name||'Rescue').slice(0,14));tag.position.y=2.7;parts.group.add(tag);parts.group.position.set(x,groundH(x,z),z);parts.group.name='sanctuary-horse';scene.add(parts.group);

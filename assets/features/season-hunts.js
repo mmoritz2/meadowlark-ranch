@@ -340,7 +340,7 @@ export function install(G){
    tick:(dt,t)=>{t.x=b.pos.x;t.z=b.pos.z;}});
  }
  function bountyUnmesh(b){
-  if(b.parts){try{scene.remove(b.parts.group);}catch(e){}b.parts=null;b.tag=null;}
+  if(b.parts){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(b);else scene.remove(b.parts.group);b.parts=null;b.tag=null;}
   if(b.thing){const k=W.things.indexOf(b.thing);if(k>=0)W.things.splice(k,1);b.thing=null;}
  }
  /* Hoofprints. Five flattened discs on the line she came in on, dragged along as she drifts, and

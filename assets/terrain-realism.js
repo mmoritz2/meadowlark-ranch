@@ -1,7 +1,7 @@
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=cliff-landscape-4';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=ranch-actors-2';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its

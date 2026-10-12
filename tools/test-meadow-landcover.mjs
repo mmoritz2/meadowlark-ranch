@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createMeadowGrazingPixels,extendWoodlandMask} from '../assets/meadow-landcover.mjs';
 import {meadowGrazingAt} from '../assets/pastoral-fields.mjs';
+import {ranchLandcoverTurfAt} from '../assets/ranch-grounds.mjs';
 
 test('cached grazing uses world pixel centres and positive-Z canvas rows',()=>{
   const size=1024,data=createMeadowGrazingPixels(size),step=1000/size;
   const at=(x,z)=>{
     const column=Math.floor((x+500)/step),row=Math.floor((z+500)/step);
     const index=(row*size+column)*4;
-    assert.equal(data[index+2],Math.round(meadowGrazingAt(-500+(column+.5)*step,-500+(row+.5)*step)*255));
+    assert.equal(data[index+2],Math.round(Math.max(meadowGrazingAt(-500+(column+.5)*step,-500+(row+.5)*step),ranchLandcoverTurfAt(-500+(column+.5)*step,-500+(row+.5)*step))*255));
     return data[index+2];
   };
   assert.ok(at(65,-145)>240,'Clover field is present north of the ranch');
