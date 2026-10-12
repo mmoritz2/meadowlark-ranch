@@ -3,6 +3,39 @@ import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-
 const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*t*(10+t*(-15+6*t));};
 const component=(a,i,k)=>a[['getX','getY','getZ','getW'][k]](i);
 
+// Fair a supported hanging line with a bending penalty. Contact is an upper
+// bound, not a contour to trace: the free curve can bridge the nape indentation
+// and raised collar while every emitted section retains its measured clearance.
+function fairSupportedLine(original,rows,N){
+ const count=N+1,A=Array.from({length:count},()=>new Float64Array(count)),b=new Float64Array(count),fixed=new Map(),lambda=6000,tension=12;
+ for(let i=0;i<count;i++){A[i][i]=1;b[i]=rows[i].z;if(i/N<=.10)fixed.set(i,original[i].z);}
+ for(let i=1;i<N;i++){
+  const ids=[i-1,i,i+1],v=[1,-2,1];for(let j=0;j<3;j++)for(let k=0;k<3;k++)A[ids[j]][ids[k]]+=lambda*v[j]*v[k];
+ }
+ for(let i=0;i<N;i++){A[i][i]+=tension;A[i+1][i+1]+=tension;A[i][i+1]-=tension;A[i+1][i]-=tension;}
+ let z=rows.map(r=>r.z);
+ function solve(){
+  const ids=Array.from({length:count},(_,i)=>i).filter(i=>!fixed.has(i)),n=ids.length,L=Array.from({length:n},()=>new Float64Array(n)),rhs=ids.map(i=>{let value=b[i];for(const[j,v]of fixed)value-=A[i][j]*v;return value;}),y=new Float64Array(n),x=new Float64Array(n);
+  // The original second-difference energy is pentadiagonal. Removing fixed
+  // contact rows leaves at most two nonzero neighbours in the compressed order.
+  for(let i=0;i<n;i++)for(let j=Math.max(0,i-2);j<=i;j++){
+   let value=A[ids[i]][ids[j]];for(let k=Math.max(0,i-2,j-2);k<j;k++)value-=L[i][k]*L[j][k];L[i][j]=i===j?Math.sqrt(Math.max(1e-12,value)):value/L[j][j];
+  }
+  for(let i=0;i<n;i++){let value=rhs[i];for(let k=Math.max(0,i-2);k<i;k++)value-=L[i][k]*y[k];y[i]=value/L[i][i];}
+  for(let i=n-1;i>=0;i--){let value=y[i];for(let k=i+1;k<=Math.min(n-1,i+2);k++)value-=L[k][i]*x[k];x[i]=value/L[i][i];}
+  for(let i=0;i<n;i++)z[ids[i]]=x[i];for(const[i,v]of fixed)z[i]=v;
+ }
+ for(let iteration=0;iteration<count*4;iteration++){
+  solve();let worst=-1,error=1e-9;
+  for(let i=0;i<count;i++)if(!fixed.has(i)&&z[i]-rows[i].limit>error){worst=i;error=z[i]-rows[i].limit;}
+  if(worst>=0){fixed.set(worst,rows[worst].limit);continue;}
+  let release=-1,gradient=1e-8;
+  for(const[i]of fixed){if(i/N<=.10)continue;let value=-b[i];for(let j=Math.max(0,i-2);j<=Math.min(N,i+2);j++)value+=A[i][j]*z[j];if(value>gradient){release=i;gradient=value;}}
+  if(release>=0){fixed.delete(release);continue;}break;
+ }
+ return z.map((v,i)=>i/N<=.10?original[i].z:Math.min(v,rows[i].limit));
+}
+
 // Each braided length, loose end and tie shares a material axis and its native
 // skeleton attachment. Only outfit/style changes rebuild this fitted assembly.
 export function installNativeBraids(T,rig){
@@ -63,7 +96,7 @@ export function installNativeBraids(T,rig){
    }
    for(const state of states)for(const binding of state.source.userData.braidBindings){
     if(binding.front||assemblies.has(binding.assembly))continue;
-    const axis=new T.CatmullRomCurve3(binding.axis.map(p=>V().fromArray(p))),original=Array.from({length:N+1},(_,i)=>axis.getPoint(i/N)),oldFrames=frames(original),rows=[];
+    const central=rig.hair.name==='hair-braid'||rig.hair.name==='hair-braidedpony',axis=new T.CatmullRomCurve3(binding.axis.map(p=>V().fromArray(p))),original=Array.from({length:N+1},(_,i)=>axis.getPoint(i/N)),oldFrames=frames(original),rows=[];
     // Derive support from the complete emitted cross section, including every
     // weave lobe, loose end and tie, instead of a nominal strand radius.
     const extents=new Array(N+1).fill(0);
@@ -77,29 +110,38 @@ export function installNativeBraids(T,rig){
 
     for(let i=0;i<=N;i++){
      const t=i/N,point=original[i],radius=Math.max(extents[i],binding.radius*.20),margin=radius+.008;
-     let limit=point.z,owner=null,ownerZ=Infinity,hitCount=0;
-     // Sample the width actually occupied by the braid. Head and current outer
-     // clothing provide clearance; only clothing supplies released ownership.
+     let limit=central?Infinity:point.z,owner=null,ownerZ=Infinity,hitCount=0;
+     // Sample the width actually occupied by the braid. The central style
+     // takes ownership from its local skull/neck or outer clothing support;
+     // the existing twin-braid path retains clothing-only released ownership.
      for(const x of [point.x-radius,point.x,point.x+radius])for(const y of [point.y-radius,point.y,point.y+radius])for(const part of surfaces){
       castQueries++;const hit=part.surface.cast(V().set(x,y,-.8),V().set(0,0,1),h=>Math.abs(h.point.z-rig.kit.head.cz)<.45);
       if(!hit)continue;hitCount++;limit=Math.min(limit,hit.point.z-margin);
-      if(part.mesh!==rig.face&&hit.point.z<ownerZ){const weights=ownership(part,hit);if(weights){owner=weights;ownerZ=hit.point.z;}}
+      // The central braid follows its real skull/neck until the outer collar
+      // or shirt becomes the rear support. That surface also owns its motion.
+      if((central||part.mesh!==rig.face)&&hit.point.z<ownerZ){const weights=ownership(part,hit);if(weights){owner=weights;ownerZ=hit.point.z;}}
      }
-     const follow=smooth(.10,.22,t)*(1-headAttachment(point));
-     rows.push({z:t<=.10?point.z:Math.min(point.z,point.z+(limit-point.z)*follow),limit:t<=.10?point.z:point.z+(limit-point.z)*follow,follow,weights:owner,hits:hitCount});
+     if(!Number.isFinite(limit))limit=point.z;
+     const follow=central?smooth(.10,.25,t):smooth(.10,.22,t)*(1-headAttachment(point)),target=point.z+(limit-point.z)*follow;
+     rows.push({z:t<=.10?point.z:central?target:Math.min(point.z,target),limit:t<=.10?point.z:target,follow,weights:owner,hits:hitCount});
     }
     const valid=rows.map((r,i)=>r.weights?i:-1).filter(i=>i>=0);
     for(let i=0;i<=N;i++)if(!rows[i].weights){let near=valid[0];for(const j of valid)if(Math.abs(j-i)<Math.abs(near-i))near=j;rows[i].weights=new Map(near===undefined?[[spineIndex,1]]:rows[near].weights);}
-    // Fit one smooth displacement field, then apply it to all three pieces.
-    // A released tail continues hanging behind the deepest support already met.
-    let rear=rows[0].z;
-    for(let i=0;i<=N;i++){if(i/N>.25){rear=Math.min(rear,rows[i].limit);rows[i].limit=rear;rows[i].z=Math.min(rows[i].z,rear);}else rear=rows[i].z;}
-    let z=rows.map(r=>r.z);
-    for(let pass=0;pass<100;pass++){
+    // One smooth displacement field carries every woven lobe, tie and end.
+    // Central sections return toward the current-height support as the neck
+    // narrows. Other styles retain their existing deepest-support release.
+    if(!central){let rear=rows[0].z;
+     for(let i=0;i<=N;i++){if(i/N>.25){rear=Math.min(rear,rows[i].limit);rows[i].limit=rear;rows[i].z=Math.min(rows[i].z,rear);}else rear=rows[i].z;}
+    }
+    let z=central?fairSupportedLine(original,rows,N):rows.map(r=>r.z);
+    if(!central)for(let pass=0;pass<100;pass++){
      const curvature=z.map((v,i)=>i===0||i===N?0:z[i-1]-2*v+z[i+1]);
      z=z.map((v,i)=>i/N<=.10||i===N?v:Math.min(rows[i].limit,v-.055*(curvature[i-1]-2*curvature[i]+curvature[i+1])));
     }
     let weights=rows.map(r=>r.weights);
+    if(central)weights=weights.map((_,i)=>{
+     const out=new Map();let total=0;for(let j=0;j<=N;j++){const d=Math.abs(original[j].y-original[i].y);if(d>.045)continue;const factor=Math.exp(-.5*(d/.018)**2);total+=factor;for(const[k,w]of rows[j].weights)out.set(k,(out.get(k)||0)+w*factor);}for(const[k,w]of out)out.set(k,w/total);return out;
+    });
     for(let pass=0;pass<3;pass++)weights=weights.map((r,i)=>{const out=new Map();for(const[d,k]of[[-1,.25],[0,.5],[1,.25]])for(const[j,w]of weights[Math.max(0,Math.min(N,i+d))])out.set(j,(out.get(j)||0)+w*k);return out;});
     const fitted=original.map((p,i)=>p.clone().setZ(z[i])),newFrames=frames(fitted);
     assemblies.set(binding.assembly,{original,fitted,oldFrames,newFrames,weights:weights.map((r,i)=>{const out=new Map([...r].map(([j,w])=>[j,w*rows[i].follow]));out.set(headIndex,(out.get(headIndex)||0)+1-rows[i].follow);return out;}),maxShift:Math.max(...z.map((v,i)=>Math.abs(v-original[i].z))),samples:N+1,hits:rows.filter(r=>r.hits).length,rootPreserved:original.slice(0,Math.floor(N*.10)+1).every((p,i)=>p.equals(fitted[i]))});
