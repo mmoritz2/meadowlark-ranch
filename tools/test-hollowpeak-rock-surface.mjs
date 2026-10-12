@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as T from '../assets/vendor/three/build/three.module.js';
+import * as T from '/Users/mbphome/.codex/worktrees/equestrian-visual-goal/meadowlark-ranch/assets/vendor/three/build/three.module.js';
 import {hollowpeakRockSurface,applyHollowpeakRockSurface} from '../assets/hollowpeak-rock-surface.mjs';
 import {createFallsLandscape,fallsTerrainHeight,HOLLOWPEAK} from '../assets/falls-landscape.js';
 
@@ -40,6 +40,6 @@ test('shader uses matched triplanar channels, derivative normal frames and share
  assert.equal((s.fragmentShader.match(/uniform sampler/g)||[]).length,(T.ShaderLib.standard.fragmentShader.match(/uniform sampler/g)||[]).length,'no additional texture bindings');
  assert(s.fragmentShader.includes('n*max(mapN.z,.08)'),'unperturbed normal map keeps the actual geometric normal');
  assert(s.fragmentShader.includes('diffuseColor.a*=mountainCover'));
- assert(s.fragmentShader.includes('rockColour.rgb=mix(vec3(mineralValue),rockColour.rgb,.42)'),'photographed chroma is retained rather than replaced with gray');
- assert.equal(m.customProgramCacheKey(),'hollowpeak-rock-surface-2');
+ assert(s.fragmentShader.includes('rockColour.rgb=mix(vec3(mineralValue),rockColour.rgb,.32)'),'photographed chroma is retained rather than replaced with gray');
+ assert.equal(m.customProgramCacheKey(),'hollowpeak-rock-surface-4');
 });

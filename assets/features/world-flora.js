@@ -1,5 +1,5 @@
-import {grazedTuftScale} from '../meadow-tufts.mjs?v=cold-landscape-1';
-import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=cold-landscape-1';
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=cliff-landscape-4';
+import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=cliff-landscape-4';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
    index.js for the contract. Nothing runs at import time.

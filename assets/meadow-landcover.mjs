@@ -1,4 +1,4 @@
-import {meadowGrazingAt} from './pastoral-fields.mjs?v=cold-landscape-1';
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=cliff-landscape-4';
 
 // Canvas rows increase with world Z. The terrain sampler already supplies the
 // corresponding texture Y flip; flipping here as well would mirror the fields.

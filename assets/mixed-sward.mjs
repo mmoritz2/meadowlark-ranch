@@ -1,4 +1,4 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=cold-landscape-1';
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=cliff-landscape-4';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=fine-meadows-1';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
