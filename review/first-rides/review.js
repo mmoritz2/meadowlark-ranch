@@ -114,7 +114,7 @@ function startRushDriver(){
 function startRoundupDriver(){
  const initial=G?.roundup?.state();
  if(networkStopped||!ready||!initial?.active||initial.shared||!['beginner','full'].includes(initial.mode)){status('Start a solo roundup through a visible production button first.');return;}
- const runId=initial.runId,mode=initial.mode;
+ const runId=initial.runId,mode=initial.mode;let blockedSince=0;
  stop();w.document.activeElement?.blur?.();driverStatus='running '+mode+' roundup';status('Herding through ordinary riding keys; no horse position or pen-count injection.');
  driver=setInterval(()=>{try{
   const s=G.roundup.state(),p=G.horse.player,h=s.target;
@@ -122,7 +122,11 @@ function startRoundupDriver(){
   if(s.shared||s.runId!==runId||s.mode!==mode){stop();status('Stopped: the roundup changed. Inspect before resuming.');report();return;}
   if(blocked()||s.paused||s.pending||s.countdown>0){release();driverStatus='waiting for countdown, UI or save';return;}
   if(!h){release();driverStatus='waiting for a loose horse';return;}
-  if(h.approachBlocked||!Number.isFinite(h.standX)||!Number.isFinite(h.standZ)){stop();status('Stopped: the production herd marker has no clear approach. Manual steering needed.');report();return;}
+  if(h.approachBlocked||!Number.isFinite(h.standX)||!Number.isFinite(h.standZ)){
+   release();blockedSince=blockedSince||Date.now();driverStatus='waiting for a clear production herd route';driverTarget={horse:h.name,blocked:true};
+   if(Date.now()-blockedSince>2000){stop();status('Stopped: the production herd marker has no clear approach. Manual steering needed.');report();}return;
+  }
+  blockedSince=0;
   const dx=s.pen.x-h.x,dz=s.pen.z-h.z,len=Math.hypot(dx,dz),ux=dx/len,uz=dz/len;
   const px=p.pos.x-h.x,pz=p.pos.z-h.z,along=px*ux+pz*uz,side=px*(-uz)+pz*ux;
   const routed=!!h.approachTarget;
@@ -134,8 +138,8 @@ function startRoundupDriver(){
   if(!routed&&along>-5){const sign=Math.sign(side)||1;x=h.x-ux*8-uz*sign*17;z=h.z-uz*8+ux*sign*17;}
   if(!Number.isFinite(x)||!Number.isFinite(z)){release();driverStatus='no clear marker: manual steering needed';driverTarget={horse:h.name,blocked:true};return;}
   const distance=Math.hypot(x-p.pos.x,z-p.pos.z),angle=Math.atan2(x-p.pos.x,z-p.pos.z),delta=Math.atan2(Math.sin(angle-p.heading),Math.cos(angle-p.heading));
-  const keepingFullPace=mode==='full'&&h.pressure==='guiding'&&h.speed>2.2&&Math.abs(delta)<.35;
-  G.riding.selectGait(distance>15||keepingFullPace?'trot':'walk');
+  const keepingFullPace=mode==='full'&&Math.abs(delta)<.35&&((h.pressure==='guiding'&&h.speed>2.2)||(h.approachPhase==='pressure'&&along<-6&&distance>1.4));
+  G.riding.selectGait(distance>(mode==='full'?8:15)||keepingFullPace?'trot':'walk');
   key('KeyA',delta>.035);key('KeyD',delta<-.035);key('KeyW',Math.abs(delta)<.6&&distance>.8);key('KeyS',Math.abs(delta)>1&&p.speed>1.2);
   driverSteps++;driverStatus='running '+mode+' roundup';driverTarget={x,z,distance,horse:h.name,pressure:h.pressure,spacing,approachBlocked:h.approachBlocked,approachPhase:h.approachPhase,planMs:h.approachPlanMs};
  }catch(e){stop();fail(e);}},100);

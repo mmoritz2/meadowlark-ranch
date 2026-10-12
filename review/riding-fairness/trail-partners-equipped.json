@@ -1,0 +1,458 @@
+{
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "journey": {
+    "chapters": [
+      {
+        "id": "first-partners",
+        "number": 1,
+        "name": "First Partners",
+        "description": "Find your stride and earn a lost horse’s trust.",
+        "goals": [
+          {
+            "id": "clover",
+            "label": "Bring Clover home",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rescue",
+              "id": "clover"
+            }
+          },
+          {
+            "id": "pasture",
+            "label": "Finish Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 150,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "pad",
+            "style": "western",
+            "name": "Leaping Silver Pad of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-first-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "steady-hands",
+        "number": 2,
+        "name": "Steady Hands",
+        "description": "Read the herd and keep a clean riding rhythm.",
+        "goals": [
+          {
+            "id": "three-home",
+            "label": "Pen all 3 horses in one beginner roundup",
+            "current": 3,
+            "target": 3,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "beginner"
+            }
+          },
+          {
+            "id": "clean-chain",
+            "label": "Build a 4-obstacle chain in any Ranch Rush",
+            "current": 4,
+            "target": 4,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 200,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "bridle",
+            "style": "western",
+            "name": "Leaping Silver Bridle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-steady-hands",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "river-rhythm",
+        "number": 3,
+        "name": "River Rhythm",
+        "description": "Take the river course and ride for a silver medal.",
+        "goals": [
+          {
+            "id": "river",
+            "label": "Finish River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "silver",
+            "label": "Earn silver or gold in any Ranch Rush",
+            "current": 2,
+            "target": 2,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 250,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "shoes",
+            "style": "western",
+            "name": "Leaping Silver Shoes of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-river-rhythm",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 5,
+            "target": 5,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-trail-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "meadowlark-champion",
+        "number": 5,
+        "name": "Meadowlark Champion",
+        "description": "Put everything together: four gold medals and a champion’s saddle.",
+        "goals": [
+          {
+            "id": "pasture-gold",
+            "label": "Earn gold in Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          },
+          {
+            "id": "river-gold",
+            "label": "Earn gold in River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "trail-gold",
+            "label": "Earn gold in Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "roundup-gold",
+            "label": "Earn gold in the 5-horse roundup",
+            "current": 0,
+            "target": 1,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 750,
+          "gear": {
+            "rarity": "Legendary",
+            "set": "Aurora",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Aurora Saddle of Agility",
+            "bonus": {
+              "jump": 5,
+              "agility": 5,
+              "stamina": 2
+            }
+          }
+        },
+        "status": "active",
+        "gearId": "journey-meadowlark-champion",
+        "owned": false,
+        "equipped": false
+      }
+    ],
+    "current": {
+      "id": "meadowlark-champion",
+      "number": 5,
+      "name": "Meadowlark Champion",
+      "description": "Put everything together: four gold medals and a champion’s saddle.",
+      "goals": [
+        {
+          "id": "pasture-gold",
+          "label": "Earn gold in Pasture Dash",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-pasture"
+          }
+        },
+        {
+          "id": "river-gold",
+          "label": "Earn gold in River Run",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-river"
+          }
+        },
+        {
+          "id": "trail-gold",
+          "label": "Earn gold in Trailblazer",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-trail"
+          }
+        },
+        {
+          "id": "roundup-gold",
+          "label": "Earn gold in the 5-horse roundup",
+          "current": 0,
+          "target": 1,
+          "done": false,
+          "action": {
+            "kind": "roundup",
+            "mode": "full"
+          }
+        }
+      ],
+      "reward": {
+        "coins": 750,
+        "gear": {
+          "rarity": "Legendary",
+          "set": "Aurora",
+          "slot": "saddle",
+          "style": "western",
+          "name": "Leaping Aurora Saddle of Agility",
+          "bonus": {
+            "jump": 5,
+            "agility": 5,
+            "stamina": 2
+          }
+        }
+      },
+      "status": "active",
+      "gearId": "journey-meadowlark-champion",
+      "owned": false,
+      "equipped": false
+    },
+    "claimedCount": 4,
+    "complete": false,
+    "title": null,
+    "lastClaim": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "coins": 350,
+      "gearId": "journey-trail-partners",
+      "gearName": "Leaping Silver Saddle of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "roundup",
+      "mode": "full"
+    }
+  },
+  "roundup": {
+    "active": false,
+    "runId": "mv5f1nk9-dqbk7g",
+    "shared": null,
+    "paused": false,
+    "mode": "full",
+    "name": "Full Herd",
+    "timeLimit": 150,
+    "goldTimeLimit": 97.5,
+    "pending": null,
+    "countdown": 0,
+    "timeLeft": 1.2713000000024703,
+    "elapsed": 148.72869999999727,
+    "total": 5,
+    "penned": 5,
+    "pen": {
+      "x": -44,
+      "z": -8,
+      "r": 7.5
+    },
+    "target": null,
+    "horses": [],
+    "records": {
+      "beginner": {
+        "plays": 2,
+        "score": 1040,
+        "penned": 3,
+        "time": 121.9,
+        "medal": "silver",
+        "lastRunId": "mv5e219s-ewxa56"
+      },
+      "full": {
+        "plays": 3,
+        "score": 1506,
+        "penned": 5,
+        "time": 148.73,
+        "medal": "silver",
+        "lastRunId": "mv5f1nk9-dqbk7g"
+      }
+    },
+    "lastResult": {
+      "passPoints": 30,
+      "starPoints": 20,
+      "progress": {
+        "rounded": 5,
+        "dailyDone": [],
+        "story": null,
+        "modules": {
+          "side-quests": {
+            "updates": []
+          },
+          "season-challenges": {
+            "updates": [],
+            "completed": [],
+            "banked": false
+          },
+          "season-almanac": {
+            "updates": []
+          }
+        }
+      },
+      "runId": "mv5f1nk9-dqbk7g",
+      "mode": "full",
+      "name": "Full Herd",
+      "total": 5,
+      "penned": 5,
+      "time": 148.73,
+      "remaining": 1.2713000000024703,
+      "at": 1791819701885,
+      "score": 1506,
+      "medal": "silver",
+      "pay": 900,
+      "gems": 2,
+      "keys": 1,
+      "previousBestScore": 900,
+      "previousBestTime": null,
+      "previousBestMedal": "bronze",
+      "newBestScore": true,
+      "newBestTime": true,
+      "newBestMedal": true,
+      "saved": true
+    }
+  },
+  "player": {
+    "x": -34.69656569833824,
+    "z": -24.78151638524126,
+    "heading": -0.04697714011132767,
+    "speed": 0,
+    "rigReady": true,
+    "horseId": 2,
+    "horseName": "Clover",
+    "breed": "pinto",
+    "modelKey": "pinto",
+    "loadingBreed": false
+  },
+  "errors": [
+    "ResizeObserver loop completed with undelivered notifications."
+  ],
+  "featureErrors": []
+}

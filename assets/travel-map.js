@@ -79,7 +79,25 @@ export function createTravelMap({G,paths,travel}){
   const metres=zoom>2?50:100;const bar=wrap.querySelector('.tm-scale');bar.style.width=Math.max(24,metres*s)+'px';bar.textContent=metres+' m';
   wrap.querySelector('[data-map="in"]').disabled=zoom>=8;wrap.querySelector('[data-map="out"]').disabled=zoom<=1;
  }
- function resize(){if(open){clampPan();draw();}}
+ // Drawing writes canvas dimensions and pin styles. Never perform those writes
+ // inside ResizeObserver delivery; coalesce them after layout has settled.
+ let resizeFrame=null,resizeVersion=0,resizeSize=null;
+ function cancelResize(){
+  resizeVersion++;if(resizeFrame!==null)cancelAnimationFrame(resizeFrame);
+  resizeFrame=null;resizeSize=null;
+ }
+ function resize(){
+  if(!open||resizeFrame!==null)return;
+  const version=resizeVersion;
+  resizeFrame=requestAnimationFrame(()=>{
+   // A canceled callback from a closed map must not clear a reopened map's job.
+   if(version!==resizeVersion)return;
+   resizeFrame=null;if(!open||!art)return;
+   const width=stage.clientWidth,height=stage.clientHeight,dpr=Math.min(2,devicePixelRatio||1);
+   if(!width||!height||resizeSize&&resizeSize.width===width&&resizeSize.height===height&&resizeSize.dpr===dpr)return;
+   clampPan();draw();resizeSize={width,height,dpr};
+  });
+ }
  function setZoom(next,px=stage.clientWidth/2,py=stage.clientHeight/2){const old=scale(),wx=(px-stage.clientWidth/2-panX)/old,wz=(py-stage.clientHeight/2-panY)/old;zoom=Math.max(1,Math.min(8,next));panX=px-stage.clientWidth/2-wx*scale();panY=py-stage.clientHeight/2-wz*scale();clampPan();draw();}
  function show(){
   if(open)return;previousFocus=document.activeElement;G.hidePanels();G.riding.releaseAll();current().speed=0;G.riding.lock('travel-map',true);
@@ -89,7 +107,7 @@ export function createTravelMap({G,paths,travel}){
   wrap.querySelector('.tm-count').textContent=entries.filter(e=>!e.locked).length+' of '+entries.length+' stops open';
   timer=setInterval(()=>{const next=getEntries();if(next.map(e=>e.name+e.locked).join('|')!==entries.map(e=>e.name+e.locked).join('|')){entries=next;buildPins();renderList();renderDetail();wrap.querySelector('.tm-count').textContent=entries.filter(e=>!e.locked).length+' of '+entries.length+' stops open';}else if(blockState!==blockingState())renderDetail();draw();},700);
  }
- function close(){if(!open)return;open=false;clearInterval(timer);timer=null;wrap.style.display='none';G.riding.releaseAll();G.riding.lock('travel-map',false);G.seFrame?.settle();previousFocus?.isConnected&&previousFocus.focus?.({preventScroll:true});}
+ function close(){if(!open)return;open=false;cancelResize();clearInterval(timer);timer=null;wrap.style.display='none';G.riding.releaseAll();G.riding.lock('travel-map',false);G.seFrame?.settle();previousFocus?.isConnected&&previousFocus.focus?.({preventScroll:true});}
  closeButton.onclick=close;wrap.addEventListener('click',e=>{if(e.target===wrap)close();});dialog.addEventListener('click',e=>e.stopPropagation());
  search.addEventListener('input',()=>{renderList();list.scrollTop=0;});
  wrap.querySelector('.tm-places').onclick=e=>{showPlaces=!showPlaces;e.currentTarget.setAttribute('aria-pressed',String(showPlaces));draw();};
