@@ -1,3 +1,4 @@
+import {shapeLongRearMass} from './rider-long-rear-mass.js?v=hair-flow76-20261012';
 import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*t*(10+t*(-15+6*t));};
 const component=(a,i,k)=>a[['getX','getY','getZ','getW'][k]](i);
@@ -104,7 +105,8 @@ export function installSideflow7(T,rig){
    }
    const groups=g.groups.map((q,i)=>({...q,count:groupCounts[i]}));g.setIndex(keptIndex);g.clearGroups();let groupStart=0;for(const q of groups){g.addGroup(groupStart,q.count,q.materialIndex);groupStart+=q.count;}
    g.setDrawRange(0,Infinity);g.computeBoundingSphere();if(g.boundingBox)g.computeBoundingBox();
-   g.userData={...source.userData,forelockCorrection:{...meta,clumps:newClumps},sideflow7:{revision:"73 asymmetric front framing",method:'Two unequal tapered front locks retain exact scalp roots. Original scalp and entire rear surface, topology and garment fitting retained.',removedShortVertices:oldCount-keptCount,retainedVertices:keptCount,details}};
+   g.userData={...source.userData,forelockCorrection:{...meta,clumps:newClumps},sideflow7:{revision:"73 asymmetric front framing",method:'Two unequal tapered front locks retain exact scalp roots. Original scalp and front attachment retained; rear composition is recorded independently in longRearMass.',removedShortVertices:oldCount-keptCount,retainedVertices:keptCount,details}};
+   shapeLongRearMass(T,g,p=>{let best=null;for(const s of surfaces){const hit=s.surface.cast(V(p.x,p.y,-.8),V(0,0,1),h=>h.distance<1.6,1.6);if(hit&&(!best||hit.point.z<best.z))best=hit.point;}return best;});
    const previous=mesh.geometry;mesh.geometry=g;if(previous!==state.input)previous.dispose();state.output=g;stats.fits++;stats.queries+=queries;stats.last={fitMs:performance.now()-begun,queries,parts:parts.map(m=>m.name),prefix,changedFrontVertices:changed.size,finalVertices:g.attributes.position.count,details};
   }finally{for(const s of surfaces){s.surface.dispose();s.geo.dispose();}}
  }
