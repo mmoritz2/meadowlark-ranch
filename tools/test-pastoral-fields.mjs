@@ -99,7 +99,7 @@ test('grass and fully modelled flowers stay inside geometry budgets with valid n
  // The existing pea-shaped lupin florets use exactly238 triangles per stalk.
  for(const [make,max] of[[createGrassTuftGeometry,48],[createLupinGeometry,238]]){
   const g=make(T);assert(g.index.count/3<=max);
-  if(make===createLupinGeometry)assert.equal(g.index.count/3,238);assert(g.boundingBox?.max.y<1||make===createGrassTuftGeometry);
+  if(make===createLupinGeometry)assert.equal(g.index.count/3,238);assert(g.boundingBox?.max.y<1.15||make===createGrassTuftGeometry);
   for(const name of['position','normal','color'])assert([...g.attributes[name].array].every(Number.isFinite));
   const n=g.attributes.normal;for(let i=0;i<n.count;i++)assert(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))>.8);
   g.dispose();

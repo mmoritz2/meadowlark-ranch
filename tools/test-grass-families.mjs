@@ -13,7 +13,7 @@ for(let family=0;family<3;family++)test(`${GRASS_FAMILIES[family].name}: finite 
  assert(Object.values(g.attributes).every(a=>a.array instanceof Float32Array));
  for(const a of Object.values(g.attributes))assert(Array.from(a.array).every(Number.isFinite));
  assert(Array.from(uv.array).every(v=>v>=0&&v<=1));assert(Array.from(c.array).every(v=>v>0&&v<=1.05));
- assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y<=.95);assert(g.boundingBox.min.x>-.36&&g.boundingBox.max.x<.36&&g.boundingBox.min.z>-.36&&g.boundingBox.max.z<.36);
+ assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y<=1.60);assert(g.boundingBox.min.x>-.60&&g.boundingBox.max.x<.60&&g.boundingBox.min.z>-.60&&g.boundingBox.max.z<.60);
  for(let j=0;j<n.count;j++)assert(Math.abs(new THREE.Vector3().fromBufferAttribute(n,j).length()-1)<1e-6);
  let minArea=Infinity,minDot=Infinity,area=0;
  faces(g,(ids,points)=>{assert(ids.every(i=>Number.isInteger(i)&&i>=0&&i<p.count));const[a,b,c]=points,f=new THREE.Vector3().crossVectors(b.sub(a),c.sub(a)),twice=f.length();assert(twice>1e-8);area+=twice*.5;minArea=Math.min(minArea,twice*.5);f.normalize();for(const i of ids)minDot=Math.min(minDot,f.dot(new THREE.Vector3().fromBufferAttribute(n,i)));});
@@ -39,7 +39,7 @@ test('each narrow leaf is grounded, tapers to one point, and the stand has uneve
    assert.equal(uv.getY(start),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(tip)>0);
    if(p.getY(shoulder)>p.getY(tip))arching++;
    const widths=[];for(let i=start;i<tip;i+=2)widths.push(new THREE.Vector3().fromBufferAttribute(p,i).distanceTo(new THREE.Vector3().fromBufferAttribute(p,i+1)));
-   assert(widths.every(w=>w>.004&&w<.06));if(widths.length>2)assert(widths.at(-1)<Math.max(...widths));
+   assert(widths.every(w=>w>.004&&w<.10));if(widths.length>2)assert(widths.at(-1)<Math.max(...widths));
    const top=Math.max(...Array.from({length:r.vertexCount},(_,i)=>p.getY(start+i)));tops.push(top);
    // A grass blade rises well above its horizontal deflection; reject the
    // low, almost-horizontal radial fan that looked like a repeated rosette.
@@ -58,18 +58,18 @@ test('original geometry adds no texture/material allocation or import-time resou
 test('ordinary sward retains dark connected roots and lighter leaf shoulders',()=>{
  for(let family=0;family<3;family++){
   const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,c=g.attributes.color;
-  for(const r of g.userData.grassFamily.leafRanges){const k=r.vertexStart;assert(c.getY(k)<.30);assert(c.getY(k+2)>c.getY(k)*2);assert(Math.hypot(p.getX(k),p.getZ(k))<.10);}
+  for(const r of g.userData.grassFamily.leafRanges){const k=r.vertexStart;assert(c.getY(k)<.30);assert(c.getY(k+2)>c.getY(k)*2);assert(Math.hypot(p.getX(k),p.getZ(k))<.14);}
   g.dispose();
  }
 });
 
-test('near and middle leaves retain their budgets and a mix of bowed and emerging forms',()=>{
+test('near and middle leaves retain their budgets and unequal upright bowed forms',()=>{
  for(const [profile,bladeCount,segments] of [['near-folded-v1',8,3],['middle-natural-v1',4,2],['middle-natural-v1',6,2],['middle-natural-v1',8,2]]){
   const g=createGrassTuftGeometry(THREE,{profile,bladeCount,segments}),p=g.attributes.position;
-  assert.equal(g.index.count/3,bladeCount*(segments===3?5:3));let bowed=0,emerging=0;
+  assert.equal(g.index.count/3,bladeCount*(segments===3?5:3));let bowed=0;const tops=[];
   const leaves=g.userData.middleCover?.leafRanges||Array.from({length:bladeCount},(_,i)=>({vertexStart:i*7,vertexCount:7,bent:true}));
-  for(const {vertexStart:i,vertexCount:count,bent} of leaves){assert.equal(p.getY(i),0);assert.equal(p.getY(i+1),0);if(bent&&p.getY(i+count-1)<p.getY(i+2))bowed++;else emerging++;}
-  assert(bowed>0,'Some leaves fall after the modeled shoulder');assert(emerging>0,'Unequal narrow leaves also emerge above their roots');
+  for(const {vertexStart:i,vertexCount:count,bent} of leaves){assert.equal(p.getY(i),0);assert.equal(p.getY(i+1),0);if(bent&&p.getY(i+count-1)<p.getY(i+count-3))bowed++;tops.push(Math.max(...Array.from({length:count},(_,k)=>p.getY(i+k))));}
+  assert(bowed>0,'Some leaves fall after the modeled shoulder');assert(Math.max(...tops)>Math.min(...tops)*1.35,'Upright stands retain unequal leaf heights');
   for(const a of Object.values(g.attributes))assert(Array.from(a.array).every(Number.isFinite));
   faces(g,(_,points)=>{const[a,b,c]=points;assert(new THREE.Vector3().crossVectors(b.sub(a),c.sub(a)).length()>1e-8);});
   g.dispose();

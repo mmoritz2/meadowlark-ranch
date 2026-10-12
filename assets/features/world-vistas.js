@@ -1,5 +1,5 @@
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
+import {createChalkDown} from '../chalk-down.js?v=landmark-fields-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -564,7 +564,7 @@ export function install(G){
   const vx=+(SCARP.x-ox*95).toFixed(2),vz=+(SCARP.z-oz*95).toFixed(2);
   /* What course-clear takes off the mound and the stone's patch: a tree whose foot is buried under a metre of chalk down
      otherwise pokes its crown out of the slope. Raised ground only, from the same profile the mesh is built from. */
-  P.clearZones.push(down.contains);
+  P.clearZones.push(down.planningContains);
   // Keep a widening sightline from the viewing stone to the figure clear of trees.
   P.clearZones.push((x,z)=>{const dx=x-SCARP.x,dz=z-SCARP.z,u=dx*ax+dz*az,v=dx*ox+dz*oz;return v>-100&&v<-12&&Math.abs(u)<9+(v+100)*.20;});
   P.clearZones.push((x,z)=>hyp(x,z,vx,vz)<7.5);
@@ -572,7 +572,7 @@ export function install(G){
    id:'chalkmare',name:'The Chalk Mare',glyph:'🐎',mapLabel:'🐎 The Chalk Mare',labelDz:16,
    x:vx,z:vz,fixed:!!SCARP.sited,clear:5,maxR:18,seed:812,label:'🐎 The Chalk Mare',labelY:3.6,labelW:4.4,tall:19,reach:17,mini:'#f4f0e0',
    colliders:[[0,0,1.2]],
-   blurb:'Twenty-seven metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
+   blurb:'Twenty-three metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
    arrive:'Follow the down to see the chalk cutting up close, or look back from the viewing stone.',
    build(A,a2){
     A.patch(0,0,7,DIRT,DIRT_RIM,0.07,16,2);

@@ -1,5 +1,5 @@
-import {grazedTuftScale} from '../meadow-tufts.mjs?v=north-valley-1';
-import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpine-range-1';
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=world-cohesion-1';
+import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=world-cohesion-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
    index.js for the contract. Nothing runs at import time.
@@ -39,6 +39,14 @@ export const id='world-flora';
 export function install(G){
  const {THREE,scene}=G, W=G.world, T=G.tables;
  const groundH=W.groundH, riverZ=W.riverZ, streamX=W.streamX, pathDist=W.pathDist;
+ // Planning stays on the original local mountain so one changed acceptance
+ // cannot advance the sequential seed stream for the rest of the whole basin.
+ // Writers below still use live groundH, including all local root transforms.
+ const planning=W.hollowpeakPlacement;
+ const underlyingPlanningH=planning?.heightAt||groundH;
+ const chalkPlanning=G.vistas?.chalkDown;
+ const planningH=(x,z)=>{const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
+ const plantingExcluded=planning?.excludesDryPlants||((x,z)=>fallsExcludesDryPlants(x,z,groundH));
  const F={};                                             // this package's live state, exposed for QA
  G.floraPkg=F;
 
@@ -55,7 +63,7 @@ export function install(G){
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
  /* How steep the ground is here, from the same surface the horse walks on. Bracken wants this
     and trees do not want the top of it. */
- const slopeAt=(x,z)=>Math.hypot(groundH(x+2,z)-groundH(x-2,z),groundH(x,z+2)-groundH(x,z-2))/4;
+ const slopeAt=(x,z)=>Math.hypot(planningH(x+2,z)-planningH(x-2,z),planningH(x,z+2)-planningH(x,z-2))/4;
 
  /* The regions whose planting differs, spelled the way ranch3d.html spells them so a plant and
     the ground colour underneath it always agree about which country they are in. */
@@ -110,7 +118,7 @@ export function install(G){
  const key=(i,j)=>i*8192+j;
  const addOcc=(x,z,r)=>{const i0=Math.floor((x-r)/HC),i1=Math.floor((x+r)/HC),j0=Math.floor((z-r)/HC),j1=Math.floor((z+r)/HC);
   for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++){const k=key(i,j);let a=occ.get(k);if(!a)occ.set(k,a=[]);a.push(x,z,r);}};
- for(const c of W.colliders)addOcc(c.x,c.z,c.r);
+ for(const c of planning?.collidersForPlanning(W.colliders,W.fallsLandscape?.barriers)||W.colliders)addOcc(c.x,c.z,c.r);
  const taken=(x,z,pad)=>{const i=Math.floor(x/HC),j=Math.floor(z/HC);
   for(let di=-1;di<=1;di++)for(let dj=-1;dj<=1;dj++){const a=occ.get(key(i+di,j+dj));if(!a)continue;
    for(let n=0;n<a.length;n+=3){const dx=x-a[n],dz=z-a[n+1],r=a[n+2]+pad;if(dx*dx+dz*dz<r*r)return true;}}
@@ -128,7 +136,7 @@ export function install(G){
  const inBasin=(x,z)=>x*x+z*z<448*448;
  const onWater=(x,z,m)=>Math.abs(z-riverZ(x))<m||(z<166&&Math.abs(x-streamX(z))<m*0.8)||hyp(x,z,20,16)<m+2||oasisContainsWater(x,z,.7);
  const okGround=(x,z)=>{
-  if(!inBasin(x,z)||canyonCliffAt(x,z,groundH)||fallsExcludesDryPlants(x,z,groundH))return false;
+  if(!inBasin(x,z)||canyonCliffAt(x,z,planningH)||plantingExcluded(x,z))return false;
   if(Math.abs(x)<32&&Math.abs(z)<28)return false;          // the arena and its run-off stay sand
   if(Math.abs(x)<5&&z>BRA-3&&z<BRB+3)return false;         // never on the bridge deck
   return pathDist(x,z)>3.4;                                // the roads are worn, and stay worn
@@ -459,7 +467,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     is pushed under the analytic ground — a stem that hovers a centimetre on a crest is the first
     thing the eye finds. */
  function put(name,x,z,h,wid,col,lean,sink){
-  if(G.vistas?.chalkDown?.isChalk(x,z))return false;
+  if((chalkPlanning?.planningIsChalk||chalkPlanning?.isChalk)?.(x,z))return false;
   if(W.sceneryArt.containsWaterfall(x,z,.6))return false;
   const b=BANK[name]; if(!b||b.n>=b.cap)return false;
   _e.set((rnd()-0.5)*(lean||0),rnd()*Math.PI*2,(rnd()-0.5)*(lean||0));
@@ -984,6 +992,26 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   grazedTufts.maxLowestPointAfter=grazedTufts.maxLowestPointAfter===null?lowestAfter:Math.max(grazedTufts.maxLowestPointAfter,lowestAfter);
  }
  F.grazedTufts=grazedTufts;
+
+ // Suppress live cutting cover only after every density/height policy. Earlier
+ // zeroing would feed Matrix4.decompose a singular basis in the cleanup passes.
+ // Counts, seed draws, compacted row identities, colours and root positions stay
+ // unchanged; only the final decorative plant basis is hidden.
+ function clearLiveChalkCover(){
+  const cleared={};if(!chalkPlanning?.isChalk)return cleared;
+  for(const name of ['scrub','juni','sage','brack','reed','tuft','petal','succ','oco']){
+   const b=BANK[name];let count=0;
+   for(let i=0;i<b.n;i++){
+    b.im.getMatrixAt(i,_m);const a=_m.elements;
+    if(!chalkPlanning.isChalk(a[12],a[14]))continue;
+    for(const column of [0,4,8])for(let axis=0;axis<3;axis++)a[column+axis]=0;
+    b.im.setMatrixAt(i,_m);count++;
+   }
+   cleared[name]=count;
+  }
+  return cleared;
+ }
+ F.chalkCover=clearLiveChalkCover();
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

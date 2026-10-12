@@ -84,7 +84,7 @@ test('snow keeps its single resident texture slot beside the current soil and gr
  assert.equal(m.userData.fieldSurface.sharedGrazing,true);assert.equal(m.userData.soilSurface.asset,'sandy_gravel_02');
  assert.match(m.customProgramCacheKey(),/^terrain-biomes-v[0-9]+/);
  assert.deepEqual(m.defaultAttributeValues.chalkRelief,[0]);
- assert.equal(shader.vertexShader,'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n#include <begin_vertex>\n      terrainChalkRelief = chalkRelief;\n      terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;\n      terrainNormal = normalize(mat3(modelMatrix) * normal);');
+ assert.equal(shader.vertexShader,'attribute float hollowSnow; varying float terrainHollowSnow; attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n#include <begin_vertex>\n      terrainHollowSnow = hollowSnow;\n      terrainChalkRelief = chalkRelief;\n      terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;\n      terrainNormal = normalize(mat3(modelMatrix) * normal);');
 });
 
 test('cold climate footprints and tier-specific powder blending remain explicit in the current shader',()=>{
