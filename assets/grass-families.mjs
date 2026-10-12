@@ -1,9 +1,9 @@
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=fine-meadows-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=field-grass-3';
 // Three ordinary pasture forms share the existing seventy-triangle budget.
 export const GRASS_FAMILIES=Object.freeze([
- Object.freeze({id:0,name:'Long arching meadow',triangles:70,leaves:14,seedStems:0}),
- Object.freeze({id:1,name:'Low overlapping meadow',triangles:70,leaves:14,seedStems:0}),
- Object.freeze({id:2,name:'Long seeded meadow',triangles:70,leaves:14,seedStems:2})
+ Object.freeze({id:0,name:'Long arching meadow',triangles:70,leaves:22,seedStems:0}),
+ Object.freeze({id:1,name:'Low overlapping meadow',triangles:70,leaves:22,seedStems:0}),
+ Object.freeze({id:2,name:'Long seeded meadow',triangles:70,leaves:22,seedStems:2})
 ]);
 export function createGrassFamilyGeometry(T,family=0){
  if(!Number.isInteger(family)||!GRASS_FAMILIES[family])throw Error('Unknown grass family');

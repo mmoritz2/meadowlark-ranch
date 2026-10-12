@@ -669,10 +669,10 @@ import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} fro
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=cliff-landscape-4';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=cliff-landscape-4';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=field-grass-3';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=ranch-actors-2';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=field-grass-3';
 import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=landmark-fields-1';
 import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
 import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=cliff-landscape-4';
@@ -3171,12 +3171,29 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;
  transformed.y*=1.0-parting*.30;
 #endif`);
- if(grassAreaFade)sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
+ if(grassAreaFade){
+  sh.vertexShader=sh.vertexShader
+   .replace('transformed.x+=(sin(uTime*1.7+wph)*'+sway+'+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;','transformed.x+=nearGrassWindX*transformed.y;')
+   .replace('transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;','transformed.z+=nearGrassWindZ*transformed.y;')
+   .replace('transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;','transformed.xz+=nearGrassPartVector*transformed.y;')
+   .replace('transformed.y*=1.0-parting*.30;','transformed.y*=nearGrassPartScale;');
+  sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
 #ifdef USE_INSTANCING
  float nearNormalFade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(instanceMatrix[3].xz,uPlayer.xz));
  objectNormal.xz*=max(sqrt(nearNormalFade),.0001);
+ float nearGrassPhase=instanceMatrix[3].x*.19+instanceMatrix[3].z*.13;
+ float nearGrassSwayScale=length(instanceMatrix[1].xyz)*inversesqrt(max(dot(instanceMatrix[0].xyz,instanceMatrix[0].xyz),.000001));
+ float nearGrassWindX=(sin(uTime*1.7+nearGrassPhase)*${sway}+sin(uTime*3.1+nearGrassPhase*2.3)*.07)*nearGrassSwayScale;
+ float nearGrassWindZ=cos(uTime*1.2+nearGrassPhase)*.16*nearGrassSwayScale;
+ vec2 nearGrassAway=instanceMatrix[3].xz-uPlayer.xz;
+ float nearGrassParting=1.0-smoothstep(.35,1.35,length(nearGrassAway));
+ vec2 nearGrassPartVector=normalize(nearGrassAway+vec2(.001))*nearGrassParting*.70;
+ float nearGrassPartScale=1.0-nearGrassParting*.30;
+ // Inverse transpose of the same wind/parting shear and final Y scale.
+ objectNormal.y=(objectNormal.y-(nearGrassWindX+nearGrassPartVector.x)*objectNormal.x-(nearGrassWindZ+nearGrassPartVector.y)*objectNormal.z)/nearGrassPartScale;
 #endif`);
- };if(grassAreaFade)mat.customProgramCacheKey=()=> 'near-meadow-cover-2';};
+ }
+ };if(grassAreaFade)mat.customProgramCacheKey=()=> 'near-meadow-cover-3';};
  /* ===== ground cover =====
     Grass alone is a lawn. What makes ground read as country is the litter on it: ferns and
     scrub in the meadow, dry brush and spinifex in the canyon, snow-crusted tufts up at

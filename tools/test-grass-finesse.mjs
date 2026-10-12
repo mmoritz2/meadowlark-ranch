@@ -9,13 +9,14 @@ for(const options of cases)test(`fine ${options.profile} ${options.leafCount}: s
  try{
   assert.equal(g.index.count/3,options.leafCount*(options.segments===3?5:3)+(options.seeded?28:0));
   for(const a of Object.values(g.attributes)){assert.equal(a.count,p.count);assert(Array.from(a.array).every(Number.isFinite));}
-  let bowed=0;for(const r of ranges){const root=new T.Vector3().fromBufferAttribute(p,r.vertexStart).add(new T.Vector3().fromBufferAttribute(p,r.vertexStart+1)).multiplyScalar(.5);assert.equal(root.y,0);assert(root.length()<.13);
+  let upright=0;for(const r of ranges){const root=new T.Vector3().fromBufferAttribute(p,r.vertexStart).add(new T.Vector3().fromBufferAttribute(p,r.vertexStart+1)).multiplyScalar(.5);assert.equal(root.y,0);assert(root.length()<.13);
    const top=Math.max(...Array.from({length:r.vertexCount},(_,i)=>p.getY(r.vertexStart+i))),tip=r.vertexStart+r.vertexCount-1;
-   if(top>p.getY(tip))bowed++;assert(p.getY(tip)>top*.85,'fine tips remain close to the top instead of a deep folded-paper hook');
+   const reach=Math.hypot(p.getX(tip)-root.x,p.getZ(tip)-root.z);
+   if(top>reach*(options.profile==='low'?2.8:options.profile==='middle'?8:4))upright++;assert(p.getY(tip)>top*.95,'fine upright tips retain their modeled height');
    for(let i=r.vertexStart;i<tip;i+=2){const w=new T.Vector3().fromBufferAttribute(p,i).distanceTo(new T.Vector3().fromBufferAttribute(p,i+1));assert(w>.004&&w<(options.profile==='middle'?.075:.049),'thin continuous ribbons replace broad paddles');}
    assert(Math.hypot(p.getX(tip),p.getZ(tip))<.60);
   }
-  assert(bowed>=ranges.length/2,'most leaves retain a gentle modeled bow');
+  assert.equal(upright,ranges.length,'every narrow leaf rises above its limited lateral deflection');
   for(let i=0;i<p.count;i++)assert(Math.abs(new T.Vector3().fromBufferAttribute(n,i).length()-1)<1e-6);
   for(let i=0;i<g.index.count;i+=3){const ids=[0,1,2].map(j=>g.index.array[i+j]),[a,b,c]=ids.map(j=>new T.Vector3().fromBufferAttribute(p,j)),f=b.sub(a).cross(c.sub(a));assert(f.length()>1e-8);f.normalize();for(const j of ids)assert(f.dot(new T.Vector3().fromBufferAttribute(n,j))>.18,'normal remains on the physical face side through the bend');}
  }finally{g.dispose();}

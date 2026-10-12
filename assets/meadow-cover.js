@@ -1,20 +1,20 @@
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=fine-meadows-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=field-grass-3';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=cliff-landscape-4';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
-// Middle-distance long blades match the nearby upright stand. Four/six/eight
-// three-triangle ribbons preserve the existing 12/18/24-triangle tier budgets.
+// Middle-distance grass uses six/ten/twelve upright blades within the retained
+// 12/18/24-triangle tiers; the public blade count still selects that tier.
 function createMiddleCoverGeometry(THREE,bladeCount) {
  return createLushMeadowGeometry(THREE,{leafCount:bladeCount,segments:2,profile:'middle'});
 }
 
-// Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
-// The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
-// retain two segments, where the extra curvature is smaller than a pixel.
+// The original factory options retain their triangle tiers. Nearby pasture
+// now uses twelve slender leaves at forty triangles; middle tufts combine
+// straight and bent leaves to retain coverage within their smaller tiers.
 export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='legacy'}={}) {
   if(profile==='middle-natural-v1'&&segments===2&&[4,6,8].includes(bladeCount))return createMiddleCoverGeometry(THREE,bladeCount);
   if(profile==='near-folded-v1'&&bladeCount===8&&segments===3)return createLushMeadowGeometry(THREE,{leafCount:8,segments:3,profile:'near'});
@@ -162,6 +162,10 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         // Inverse transpose of (sqrt(fade),fade,sqrt(fade)), up to a
         // common scalar. No division, including at the fully retired endpoint.
         objectNormal.xz*=max(sqrt(middleNormalFade),.0001);
+        vec2 middleGrassIP=instanceMatrix[3].xz;
+        float middleGrassSwayScale=abs(instanceMatrix[1].y)*inversesqrt(max(dot(instanceMatrix[0].xz,instanceMatrix[0].xz),.000001));
+        float middleGrassWind=sin(fieldTime*1.2+middleGrassIP.x*.3+middleGrassIP.y*.16)*.15*middleGrassSwayScale;
+        objectNormal.y-=middleGrassWind*objectNormal.x;
       #endif`);
     sh.vertexShader='uniform float fieldTime; uniform vec2 fieldRider;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
@@ -170,10 +174,10 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         // Height retires smoothly; square-root reach makes projected cover
         // linear in grow instead of disappearing quadratically at both LODs.
         transformed.xz*=sqrt(grow);transformed.y*=grow;
-        transformed.x+=sin(fieldTime*1.2+ip.x*.3+ip.y*.16)*transformed.y*.15;
+        transformed.x+=middleGrassWind*transformed.y;
       #endif`);
   };
-  mat.customProgramCacheKey=()=> 'middle-meadow-cover-2';
+  mat.customProgramCacheKey=()=> 'middle-meadow-cover-3';
   installPastureLighting(mat);
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);

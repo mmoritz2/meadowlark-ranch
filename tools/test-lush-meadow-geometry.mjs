@@ -7,15 +7,19 @@ import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
 test('long ordinary leaves retain useful height after established pasture scaling',()=>{
  for(const profile of ['meadow','near','middle']){
   const g=createLushMeadowGeometry(T,{profile,leafCount:profile==='meadow'?14:8,segments:profile==='middle'?2:3});
-  try{const p=g.attributes.position,ranges=g.userData.lushMeadow.leafRanges;let area=0;
+  try{const p=g.attributes.position,ranges=g.userData.lushMeadow.leafRanges;let area=0,taller=0;
    for(const r of ranges){
     const root=new T.Vector3().fromBufferAttribute(p,r.vertexStart).add(new T.Vector3().fromBufferAttribute(p,r.vertexStart+1)).multiplyScalar(.5);
     assert(root.length()<.13);assert.equal(root.y,0);
     const top=Math.max(...Array.from({length:r.vertexCount},(_,k)=>p.getY(r.vertexStart+k)));
-    assert(top*.3>.17&&top*.5<.60,'at existing .3–.5 Y scales an uncut leaf is upright, not a tiny flat fork');
+    if(top*.3>.17)taller++;
+    assert(top*.3>(profile==='middle'?.145:.17)&&top*.5<.60,'mixed fine leaves remain useful at their established vertical scales');
    }
+   assert(taller>=ranges.length/2,'at least half the stand retains longer upright blades alongside short growth');
    for(let i=0;i<g.index.count;i+=3){const [a,b,c]=Array.from(g.index.array.slice(i,i+3),j=>new T.Vector3().fromBufferAttribute(p,j));area+=b.sub(a).cross(c.sub(a)).length()*.5;}
-   assert(area>(profile==='meadow'?.30:profile==='middle'?.22:.18),'fine ribbon surfaces retain readable connected leaf mass');
+   // Readable stand mass now comes from more upright leaves rather than
+   // wide fan projections; their full 3D surface remains bounded and nonzero.
+   assert(area>(profile==='meadow'?.24:profile==='middle'?.12:.13),'extra narrow leaves retain connected surface mass');
    for(let i=0;i<p.count;i++)assert(Math.hypot(p.getX(i),p.getZ(i))<=.60,'authored reach stays inside the existing richest stand envelope');
   }finally{g.dispose();}
  }
