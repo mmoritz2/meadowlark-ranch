@@ -29,6 +29,7 @@ import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=col
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=cliff-landscape-4';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
+import {applyPineSprayCutout} from './pine-spray-surfaces.mjs?v=pine-spray-surfaces-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -142,6 +143,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(id==='pine_tree_01'&&/twig/.test(mat.name))mat.color.setRGB(1.7,2.1,1.5);
       mat.userData.hasCanopyShade=!!canopyShade&&/leaves/.test(mat.name);
       configureMaterial(mat,/leaves|twig/.test(mat.name));
+      if(id==='pine_tree_01'&&mat.name==='pine_tree_01_twig'){
+        applyPineSprayCutout(mat);applyPineSprayCutout(mat.userData.scanDepth);
+      }
     }
     loaded.set(id,asset.scene);state.assets.push(id);return asset.scene;
   }
@@ -174,7 +178,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=summer-canopy-surfaces-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=pine-photo-island-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -881,8 +885,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   let previousSelection=new Set(),previousMode=null;
   function updateTrees(){
     if(!treeMeshes.length)return;
-    const p=H.player.pos,tier=G.gfx.get(),enabled=tier!=='low'&&!renderer.xr.isPresenting;
-    const range=tier==='high'?58:40,budget=tier==='high'?12:6;
+    const p=H.player.pos,tier=G.gfx.get(),enabled=!renderer.xr.isPresenting;
+    const range=tier==='high'?58:tier==='low'?26:40,budget=tier==='high'?12:tier==='low'?4:6;
     // Keep an incumbent until a new tree is appreciably closer. Nearest-N
     // alone alternates equally distant trees at every scenery tick while riding.
     const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
