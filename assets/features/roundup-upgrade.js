@@ -48,7 +48,7 @@ export function install(G){
  fields.button.onclick=()=>{const s=round.state();if(s.pending)showResult(s.pending);else round.cancel();};
  document.body.append(hud);
  const THREE=G.THREE,marker=new THREE.Mesh(new THREE.RingGeometry(.8,1.08,40),new THREE.MeshBasicMaterial({color:0xe3c977,transparent:true,opacity:.72,depthWrite:false,side:THREE.DoubleSide}));
- marker.name='Roundup pressure position';marker.rotation.x=-Math.PI/2;marker.visible=false;G.scene.add(marker);
+ marker.name='Roundup approach position';marker.rotation.x=-Math.PI/2;marker.visible=false;G.scene.add(marker);
  const focus=new THREE.Mesh(new THREE.RingGeometry(1.3,1.42,40),new THREE.MeshBasicMaterial({color:0xe3c977,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide}));
  focus.name='Horse to guide home';focus.rotation.x=-Math.PI/2;focus.visible=false;G.scene.add(focus);
  const mini={x:0,z:0,col:'#efcd72',r:3,hidden:()=>{const s=round.state();return !s.active||!s.target;}};G.world.miniMarkers.push(mini);
@@ -61,13 +61,15 @@ export function install(G){
  function showResult(r){if(!r)return;receipt=r;clearTimeout(timer);paint();timer=setTimeout(()=>{const s=round.state();if(s.pending?.runId===r.runId||!s.active&&s.lastResult?.runId===r.runId){G.ui.open('roundupResultPanel');G.seFrame?.settle();}},0);}
  G.on('roundupSavePending',showResult);G.on('roundupFinish',showResult);
  function paint(){
-  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active&&!s.shared?'block':'none';hud.dataset.pending=String(pending);hud.dataset.pressure=s.target?.pressure||'';marker.visible=!!(s.active&&!s.shared&&!pending&&s.target&&!s.target.approachBlocked);focus.visible=!!(s.active&&!s.shared&&!pending&&s.target);if(!s.active)return;
+  const s=round.state(),pending=!!s.pending;document.body.classList.toggle('roundup-active',s.active);hud.style.display=s.active&&!s.shared?'block':'none';hud.dataset.pending=String(pending);hud.dataset.pressure=s.target?.pressure||'';hud.dataset.approach=s.target?.approachPhase||'';marker.visible=!!(s.active&&!s.shared&&!pending&&s.target&&!s.target.approachBlocked);focus.visible=!!(s.active&&!s.shared&&!pending&&s.target);if(!s.active)return;
   const t=s.target;
-  if(t){const color=t.pressure==='guiding'?0xa5d987:['too close','blocked'].includes(t.pressure)?0xf0a975:0xe3c977;if(!t.approachBlocked){marker.position.set(t.standX,G.world.groundH(t.standX,t.standZ)+.065,t.standZ);marker.material.color.set(color);}focus.position.set(t.x,G.world.groundH(t.x,t.z)+.07,t.z);focus.material.color.set(color);mini.x=t.x;mini.z=t.z;}
+  if(t){const color=t.pressure==='guiding'?0xa5d987:['too close','blocked'].includes(t.pressure)?0xf0a975:0xe3c977;if(!t.approachBlocked){const at=t.approachTarget||{x:t.standX,z:t.standZ};marker.position.set(at.x,G.world.groundH(at.x,at.z)+.065,at.z);marker.material.color.set(color);}focus.position.set(t.x,G.world.groundH(t.x,t.z)+.07,t.z);focus.material.color.set(color);mini.x=t.x;mini.z=t.z;}
   const pace=roundupPace(s);
   const gentle=s.mode==='beginner',horseName=t?.name||'the next horse';
-  const target=pending?'':t?`${gentle?'Guide':'Follow'} ${horseName}${gentle?' first':''} · ${{'guiding':'good spacing','too close':'give more room','turning':'turning','blocked':'path blocked'}[t.pressure]||'circle behind'}`:'';
-  let hint=s.countdown>0?`Starting in ${Math.ceil(s.countdown)}. ${gentle?'Bring them home one at a time. ':''}Ride to the gold ring.`:t?.pressure==='guiding'?`${gentle?'Stay in a walk':'Keep pace'} behind ${horseName} toward the green pen.`:t?.pressure==='too close'?`Ease back. ${horseName} needs more room. The gold ring shows a calmer distance.`:t?.pressure==='turning'?`Good position. Give ${horseName} time to turn toward the pen.`:t?.pressure==='blocked'?`Give ${horseName} room to turn around the obstacle.`:`Circle to the gold ring behind ${horseName}, then ${gentle?'walk':'ride'} forward.`;
+  const target=pending?'':t?`${gentle?'Guide':'Follow'} ${horseName}${gentle?' first':''} · ${t.approachPhase==='detour'?'follow the gold ring':t.approachPhase==='reposition'?'give room to turn':{'guiding':'good spacing','too close':'give more room','turning':'turning','blocked':'path blocked'}[t.pressure]||'circle behind'}`:'';
+  let hint=s.countdown>0?`Starting in ${Math.ceil(s.countdown)}. ${gentle?'Bring them home one at a time. ':''}Ride to the gold ring.`:t?.pressure==='guiding'?`${gentle?'Stay in a walk':'Keep a steady trot'} behind ${horseName} toward the green pen.`:t?.pressure==='too close'?`Ease back. ${horseName} needs more room. The gold ring shows a calmer distance.`:t?.pressure==='turning'?`Good position. Give ${horseName} time to turn toward the pen.`:t?.pressure==='blocked'?`Give ${horseName} room to turn around the obstacle.`:`Circle to the gold ring behind ${horseName}, then ${gentle?'walk':'ride'} forward.`;
+  if(t?.approachPhase==='detour'&&s.countdown<=0)hint=`Follow the gold ring around ${horseName}. It will lead you behind the horse toward the green pen.`;
+  if(t?.approachPhase==='reposition'&&t.pressure!=='too close'&&s.countdown<=0)hint=`Ride to the gold ring to help ${horseName} turn away from the fence. Then follow the ring behind the horse toward the green pen.`;
   if(t?.approachBlocked&&s.countdown<=0)hint=`Circle around ${t.name} to find a clear approach. The direct route is blocked.`;
   if(pending)hint='Your result is held. Keep this tab open and retry saving.';
   const values={name:s.name,time:pending?'Paused':Math.ceil(s.timeLeft)+'s',button:pending?'Result':'Leave',main:`${s.penned} of ${s.total} home`,target,note:!pending&&penNotice&&Date.now()<penNotice.until?penNotice.text:'',hint,pace:pace.label,detail:pace.detail};

@@ -1,0 +1,3793 @@
+{
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "rush": {
+    "definitions": [
+      {
+        "id": "rush-pasture",
+        "name": "Pasture Dash",
+        "subtitle": "Find your rhythm",
+        "description": "Follow the glowing gates and hold a clean chain around the home pasture.",
+        "route": "rush-pp",
+        "minutes": "30–60 sec",
+        "obstacles": 6,
+        "fences": 0,
+        "fenceLegs": [],
+        "targetTime": 30,
+        "reward": 150,
+        "town": "Home Ranch",
+        "medals": {
+          "bronze": 300,
+          "silver": 850,
+          "gold": 1200
+        }
+      },
+      {
+        "id": "rush-river",
+        "name": "River Run",
+        "subtitle": "Add a little airtime",
+        "description": "Chase the riverside gates and clear two low logs. Good jumps keep your chain alive.",
+        "route": "rr",
+        "minutes": "40–75 sec",
+        "obstacles": 8,
+        "fences": 2,
+        "fenceLegs": [
+          1,
+          3
+        ],
+        "targetTime": 40,
+        "reward": 210,
+        "town": "Loon Lake",
+        "medals": {
+          "bronze": 500,
+          "silver": 1350,
+          "gold": 1850
+        }
+      },
+      {
+        "id": "rush-trail",
+        "name": "Trailblazer",
+        "subtitle": "Put it all together",
+        "description": "Ride the open Barleyfold trail, link three log jumps, and beat your own best splits.",
+        "route": "xc1",
+        "minutes": "50–90 sec",
+        "obstacles": 10,
+        "fences": 3,
+        "fenceLegs": [
+          1,
+          3,
+          5
+        ],
+        "targetTime": 50,
+        "reward": 270,
+        "town": "Barleyfold",
+        "medals": {
+          "bronze": 600,
+          "silver": 1650,
+          "gold": 2350
+        }
+      }
+    ],
+    "records": {
+      "rush-pasture": {
+        "plays": 1,
+        "bestScore": 1350,
+        "bestTime": 17.51,
+        "medal": "gold",
+        "bestCombo": 6,
+        "splits": [
+          1.82,
+          6.01,
+          10.1,
+          13.06,
+          14.59,
+          17.51
+        ],
+        "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+        "lastRunId": "mv5cdncb-1-z0i3ei"
+      },
+      "rush-river": {
+        "plays": 2,
+        "bestScore": 2025,
+        "bestTime": 35.16,
+        "medal": "gold",
+        "bestCombo": 8,
+        "splits": [
+          1.82,
+          7.42,
+          12.19,
+          15.06,
+          20.8,
+          25.84,
+          28.91,
+          35.16
+        ],
+        "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+        "lastRunId": "mv5fhfzt-1-2kpj4n"
+      },
+      "rush-trail": {
+        "plays": 1,
+        "bestScore": 2525,
+        "bestTime": 47.84,
+        "medal": "gold",
+        "bestCombo": 10,
+        "splits": [
+          2.56,
+          9.37,
+          14.63,
+          17.63,
+          24.15,
+          30.32,
+          33.88,
+          40.73,
+          45.42,
+          47.84
+        ],
+        "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+        "lastRunId": "mv5dtgpp-2-ibhf53"
+      }
+    },
+    "lastResult": {
+      "id": "rush-river",
+      "name": "River Run",
+      "runId": "mv5fhfzt-1-2kpj4n",
+      "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+      "score": 2025,
+      "time": 35.23,
+      "timeBonus": 400,
+      "medal": "gold",
+      "bestCombo": 8,
+      "cleanJumps": 2,
+      "perfectJumps": 1,
+      "gates": 6,
+      "cleanGates": 6,
+      "penalties": 0,
+      "splits": [
+        1.95,
+        7.52,
+        12.34,
+        15.23,
+        20.82,
+        25.6,
+        28.97,
+        35.23
+      ],
+      "splitDelta": 0.07,
+      "newBestScore": false,
+      "newBestTime": false,
+      "previousBestScore": 2025,
+      "previousBestTime": 35.16,
+      "pay": 147
+    },
+    "active": null
+  },
+  "rushCourse": {
+    "id": "rush-river",
+    "name": "River Run",
+    "active": false,
+    "elapsed": 34.42580000000071,
+    "countdown": -0.03690000000037247,
+    "index": 8,
+    "total": 8,
+    "target": null,
+    "cue": null,
+    "recovery": null,
+    "player": {
+      "x": 57.656898517097794,
+      "z": 74.26541973018732,
+      "heading": 4.613303792281575,
+      "speed": 0,
+      "height": 0,
+      "jumpAge": null
+    },
+    "grades": [
+      "good",
+      "perfect"
+    ],
+    "lastGrade": "perfect",
+    "refusals": 0,
+    "lastJumpTiming": {
+      "fenceIndex": 5,
+      "lap": 1,
+      "grade": "perfect",
+      "frameAge": 0.968800000000745,
+      "railAge": 0.924761165009,
+      "interpolated": true
+    }
+  },
+  "rushTrace": [
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 0,
+      "countdown": 3,
+      "index": 0,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.999999999999998,
+        "across": -9.999999999999996,
+        "lateral": -1.7763568394002505e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.549305384178419,
+        "z": 58.44310917210183,
+        "heading": 0.714090698612158,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "off"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 0,
+      "countdown": 2.2095999999996274,
+      "index": 0,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.999999999999998,
+        "across": -9.999999999999996,
+        "lateral": -1.7763568394002505e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.549305384178419,
+        "z": 58.44310917210183,
+        "heading": 0.714090698612158,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": "driver started",
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 0.5117999999988825,
+      "countdown": -0.03690000000037247,
+      "index": 0,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 9.494377248870556,
+        "across": -9.494377248870556,
+        "lateral": 4.440892098500626e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -6.218157603544899,
+        "z": 58.825202765140496,
+        "heading": 0.714090698612158,
+        "speed": 2.127503926158509,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 1.02739999999851,
+      "countdown": -0.03690000000037247,
+      "index": 0,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 7.984157919565057,
+        "across": -7.984157919565057,
+        "lateral": 7.549516567451064e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -5.229068845073813,
+        "z": 59.96645902491482,
+        "heading": 0.714090698612158,
+        "speed": 3.4425336542153913,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 1.6126999999992546,
+      "countdown": -0.03690000000037247,
+      "index": 0,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 0,
+        "z": 66,
+        "heading": 0.714090698612158,
+        "distance": 5.754568802090476,
+        "across": -5.754568802090475,
+        "lateral": 1.7763568394002505e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -3.7688428439156296,
+        "z": 61.65133518009735,
+        "heading": 0.714090698612158,
+        "speed": 4.038944078891624,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 1.913799999998882,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 44.211613931498015,
+        "across": -44.09925894953042,
+        "lateral": 3.1499470678235966
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -2.9555361164777554,
+        "z": 62.589766019448746,
+        "heading": 0.714090698612158,
+        "speed": 4.180247493481891,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 2.4979999999999998,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 40.94683459509771,
+        "across": -40.84277639741032,
+        "lateral": 2.9173411712435815
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": -0.8173324278736643,
+        "z": 65.05692412168425,
+        "heading": 0.714090698612158,
+        "speed": 6.475301858843033,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 3.0041999999992544,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 37.42656926258911,
+        "across": -37.33145711578708,
+        "lateral": 2.666532651127632
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 1.488196841719855,
+        "z": 67.71715020198447,
+        "heading": 0.714090698612158,
+        "speed": 7.261909564948434,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 3.618099999999627,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 32.82604874997603,
+        "across": -32.74262790673142,
+        "lateral": 2.3387591361950673
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 4.501218218047844,
+        "z": 71.1937133285168,
+        "heading": 0.714090698612158,
+        "speed": 7.638852872590602,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 4.222799999998881,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 28.15725242082903,
+        "across": -28.085696390485943,
+        "lateral": 2.006121170748971
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 7.558955511659346,
+        "z": 74.72187174422236,
+        "heading": 0.714090698612158,
+        "speed": 7.771838731883945,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 4.829799999998882,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 23.340370525228284,
+        "across": -23.281055637661815,
+        "lateral": 1.6629325455472497
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 10.713678565040297,
+        "z": 78.36193680581576,
+        "heading": 0.714090698612158,
+        "speed": 8.38335471016148,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 5.412199999999254,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 18.19216915110557,
+        "across": -18.145937388562565,
+        "lateral": 1.2961383848973664
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 14.085392862878006,
+        "z": 82.25237638024379,
+        "heading": 0.714090698612158,
+        "speed": 9.126886029099536,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 6.016000000000001,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 12.99970316898108,
+        "across": -12.966667021117349,
+        "lateral": 0.9261905015084411
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 17.48609740426714,
+        "z": 86.17626623569276,
+        "heading": 0.714090698612158,
+        "speed": 7.099112628814981,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 6.623199999999256,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 9.262055348406966,
+        "across": -9.238517685582313,
+        "lateral": 0.6598941203987749
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 19.933997103812004,
+        "z": 89.00076588901379,
+        "heading": 0.714090698612158,
+        "speed": 5.678590396982617,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 7.2037999999988855,
+      "countdown": -0.03690000000037247,
+      "index": 1,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 26,
+        "z": 96,
+        "heading": 0.7853981633974483,
+        "distance": 6.062611683067254,
+        "across": -6.047204766970883,
+        "lateral": 0.43194319764083033
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 22.029410466190505,
+        "z": 91.41855053791204,
+        "heading": 0.714090698612158,
+        "speed": 5.423609387034717,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 7.491799999998887,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 25.710627364712032,
+        "across": -25.70862216102052,
+        "lateral": 0.32110133753035264
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 23.04831186819542,
+        "z": 92.59420600176385,
+        "heading": 0.714090698612158,
+        "speed": 5.389031744079281,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 8.02159999999963,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 22.56125380359849,
+        "across": -22.55983162314423,
+        "lateral": 0.25331862499394475
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 25.22691339438207,
+        "z": 94.86866675931392,
+        "heading": 0.7784204425117867,
+        "speed": 5.898543299802811,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 8.612500000000004,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 18.63167782052715,
+        "across": -18.630308317931615,
+        "lateral": 0.22589906314841102
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 27.986117412210344,
+        "z": 97.66664789337848,
+        "heading": 0.7784204425117867,
+        "speed": 7.126305267873776,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 8.948599999999631,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 16.174115635157072,
+        "across": -16.172768461231726,
+        "lateral": 0.2087507576531369
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 29.711734826817484,
+        "z": 99.41651667418876,
+        "heading": 0.7784204425117867,
+        "speed": 7.4377003123765695,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 9.300599999999632,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 13.758376457991824,
+        "across": -13.757038176102501,
+        "lateral": 0.19189419241345362
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 31.407994701361577,
+        "z": 101.13661533190984,
+        "heading": 0.7784204425117867,
+        "speed": 5.996381942505469,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 9.822899999998514,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 11.044719860009241,
+        "across": -11.043365524003358,
+        "lateral": 0.17295863475587225
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 33.31346157435614,
+        "z": 103.06886112735485,
+        "heading": 0.7784204425117867,
+        "speed": 4.765515734678497,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 10.01969999999926,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 10.126339156807163,
+        "across": -10.12496941937179,
+        "lateral": 0.16655021906935819
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 33.958334253567834,
+        "z": 103.72279667494374,
+        "heading": 0.7784204425117867,
+        "speed": 4.608283812302694,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 10.596500000000002,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 7.533454445673615,
+        "across": -7.531991532714722,
+        "lateral": 0.14845684946573456
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 35.779052556348574,
+        "z": 105.56910286640695,
+        "heading": 0.7784204425117867,
+        "speed": 4.4369211971222455,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.104899999998512,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 5.288616340826665,
+        "across": -5.286948956362898,
+        "lateral": 0.1327913147464308
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 37.35546018030853,
+        "z": 107.16766490202878,
+        "heading": 0.7784204425117867,
+        "speed": 4.404626128059249,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.20309999999963,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 4.856325628878647,
+        "across": -4.85459135459166,
+        "lateral": 0.12977439511513467
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 37.659049888088944,
+        "z": 107.47552117846836,
+        "heading": 0.7784204425117867,
+        "speed": 4.402162812369844,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.20309999999963,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 4.856325628878647,
+        "across": -4.85459135459166,
+        "lateral": 0.12977439511513467
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 37.659049888088944,
+        "z": 107.47552117846836,
+        "heading": 0.7784204425117867,
+        "speed": 4.402162812369844,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.307199999999257,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 4.398300226116388,
+        "across": -4.396478471445089,
+        "lateral": 0.12657775940235627
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 37.980724251521316,
+        "z": 107.8017162674797,
+        "heading": 0.7784204425117867,
+        "speed": 4.400194801301604,
+        "height": 0,
+        "jumpAge": 0.10409999999962746
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.415799999998885,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 3.9206805930077255,
+        "across": -3.9187430611510683,
+        "lateral": 0.12324420094985844
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 38.31617701796591,
+        "z": 108.14188339749879,
+        "heading": 0.7784204425117867,
+        "speed": 4.398669983296106,
+        "height": 0,
+        "jumpAge": 0.21269999999925493
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 11.559399999998512,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 3.2893912468128153,
+        "across": -3.2872438873024827,
+        "lateral": 0.11883770445960673
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 38.75959850255842,
+        "z": 108.59153660919036,
+        "heading": 0.7784204425117867,
+        "speed": 4.397249449504788,
+        "height": 0.2833827023508523,
+        "jumpAge": 0.35629999999888246
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 12.101399999998511,
+      "countdown": -0.03690000000037247,
+      "index": 2,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 41,
+        "z": 111,
+        "heading": 0.7853981633974483,
+        "distance": 0.910540879704366,
+        "across": -0.9047856838117586,
+        "lateral": 0.10221330628684816
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 40.432495629459126,
+        "z": 110.28794418545327,
+        "heading": 0.7784204425117867,
+        "speed": 4.39500853149093,
+        "height": 0.5766357565095311,
+        "jumpAge": 0.8982999999988824
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 12.307299999998884,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 21.213331412694092,
+        "across": -12.086358735373185,
+        "lateral": 17.43345525547538
+      },
+      "cue": "lineup",
+      "recovery": null,
+      "player": {
+        "x": 41.067873788667704,
+        "z": 110.93225177959106,
+        "heading": 0.7784204425117867,
+        "speed": 4.394732826717403,
+        "height": 0,
+        "jumpAge": 1.1041999999992549
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 12.40559999999963,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 20.75356804909099,
+        "across": -11.761894499938364,
+        "lateral": 17.098784300077302
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 41.445561736881864,
+        "z": 111.20544310858439,
+        "heading": 1.0253889601009465,
+        "speed": 4.9211449875890425,
+        "height": 0,
+        "jumpAge": 1.2025
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 12.893799999998883,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 17.63158314043762,
+        "across": -9.839885799610068,
+        "lateral": 14.630426223756993
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 43.76728873737062,
+        "z": 113.30222463565745,
+        "heading": 0.8302482112359325,
+        "speed": 7.471511797733702,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 13.416500000000001,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 13.998941225663383,
+        "across": -7.619731344531907,
+        "lateral": 11.743510960387265
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 46.455363875779824,
+        "z": 115.7593810394191,
+        "heading": 0.8302482112359325,
+        "speed": 6.144983003402744,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 14.015299999998884,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 10.58692779283155,
+        "across": -5.530870837999875,
+        "lateral": 9.027320082061546
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 48.98447349802722,
+        "z": 118.07122783838842,
+        "heading": 0.8302482112359325,
+        "speed": 5.507721834528557,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 14.626699999999255,
+      "countdown": -0.03690000000037247,
+      "index": 3,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 56,
+        "z": 126,
+        "heading": 1.7454685258031364,
+        "distance": 7.338697844058024,
+        "across": -3.3876612642729222,
+        "lateral": 6.510010538004272
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 51.53254252900115,
+        "z": 120.1777744984243,
+        "heading": 1.0024148685387666,
+        "speed": 5.387603020206974,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 15.1935,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 36.61082977788621,
+        "across": -7.0902248376198855,
+        "lateral": 35.91770550546565
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 53.45367081816327,
+        "z": 122.17225236981993,
+        "heading": 0.8788130785010234,
+        "speed": 4.618249223843368,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 15.714799999998883,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 34.61551013016214,
+        "across": -6.963775426110008,
+        "lateral": 33.907806968101966
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 55.46222390891706,
+        "z": 122.3185263107365,
+        "heading": 1.6204226763203073,
+        "speed": 4.958102197056923,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 16.2195,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 31.75404578279366,
+        "across": -6.05107718661495,
+        "lateral": 31.172165283428477
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 58.29609780314371,
+        "z": 121.78381867574215,
+        "heading": 1.7045082635681803,
+        "speed": 6.021203095142883,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 16.81589999999851,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 27.754841390027934,
+        "across": -4.983627328968592,
+        "lateral": 27.303748446533213
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 62.27326847886876,
+        "z": 121.24883134998878,
+        "heading": 1.7045082635681803,
+        "speed": 7.177902087933689,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 17.38359999999963,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 23.556980565326903,
+        "across": -3.8618039726577846,
+        "lateral": 23.238283142950852
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 66.45302729761137,
+        "z": 120.68659297123843,
+        "heading": 1.7045082635681803,
+        "speed": 7.589701174892617,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 17.907099999999623,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 19.562433309440248,
+        "across": -2.792220936335545,
+        "lateral": 19.362135709393907
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 70.43814590233296,
+        "z": 120.15053653338862,
+        "heading": 1.7045082635681803,
+        "speed": 7.740450897375207,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 18.420399999998505,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 15.843296390915192,
+        "across": -1.7931424914714609,
+        "lateral": 15.741495498702333
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 74.160574141186,
+        "z": 119.64981577202734,
+        "heading": 1.7045082635681803,
+        "speed": 6.165394468322601,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 18.958299999998875,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 13.052197320801213,
+        "across": -1.0396153967334862,
+        "lateral": 13.010728447247104
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 76.96811197829265,
+        "z": 119.27216108182444,
+        "heading": 1.7045082635681803,
+        "speed": 4.787135149354781,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 19.479299999998876,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 10.694890599154292,
+        "across": -0.7565354500256147,
+        "lateral": 10.668099129682542
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 79.32750761747609,
+        "z": 119.30819708525627,
+        "heading": 1.7332180780036068,
+        "speed": 4.4857009631354785,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 20.01209999999962,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 8.275212077864538,
+        "across": -0.2308347944901844,
+        "lateral": 8.271991914363056
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 81.77267203258305,
+        "z": 119.11106274113753,
+        "heading": 1.8542976074727027,
+        "speed": 4.891499648698897,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 20.59009999999962,
+      "countdown": -0.03690000000037247,
+      "index": 4,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 90,
+        "z": 120,
+        "heading": 3.0060649396042924,
+        "distance": 5.4438925767603665,
+        "across": 0.42978247236456635,
+        "lateral": 5.42690090325545
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 84.68093215324703,
+        "z": 118.84091258787556,
+        "heading": 1.7279833315969788,
+        "speed": 5.183602182724019,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 20.781999999999993,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 21.944912159810755,
+        "across": -21.485083117196737,
+        "lateral": 4.468822344752315
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 85.66923757126288,
+        "z": 118.68427160707445,
+        "heading": 1.7279833315969788,
+        "speed": 5.2326038628833285,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 21.346899999998506,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 19.89077595017779,
+        "across": -19.599589824934082,
+        "lateral": 3.3910244166787864
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 86.99190731467455,
+        "z": 116.96169270357238,
+        "heading": 3.109508162391281,
+        "speed": 4.465703382519826,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 21.89609999999962,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 17.2834893516582,
+        "across": -17.07251439044723,
+        "lateral": 2.692258634837023
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 88.02570679227678,
+        "z": 114.55220261030178,
+        "heading": 2.69097183140298,
+        "speed": 5.005825535778382,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 22.402599999999623,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 14.723890507964386,
+        "across": -14.602454164209348,
+        "lateral": 1.8871364743146637
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 89.15718387093463,
+        "z": 112.21357505656894,
+        "heading": 2.69097183140298,
+        "speed": 5.209644883559374,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 22.97609999999962,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 11.863262165504478,
+        "across": -11.80379527908094,
+        "lateral": 1.18634152630536
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 90.22968841796035,
+        "z": 109.53526605440494,
+        "heading": 2.8866630850283492,
+        "speed": 4.731264383461235,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 23.418099999999615,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 9.874759859665257,
+        "across": -9.827309686381701,
+        "lateral": 0.9668850055743801
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 90.71418186181346,
+        "z": 107.6065559762692,
+        "heading": 2.941868705571897,
+        "speed": 4.492102770003681,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 24.017799999998868,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 7.214733215235892,
+        "across": -7.170675914203123,
+        "lateral": 0.7961044532567607
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 91.24234268792682,
+        "z": 104.9973577970791,
+        "heading": 2.941868705571897,
+        "speed": 4.412607703867848,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 24.586099999999618,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 4.658107151756948,
+        "across": -4.615058895284865,
+        "lateral": 0.6318177192048919
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 91.75042054573193,
+        "z": 102.48737266390037,
+        "heading": 2.941868705571897,
+        "speed": 4.733783588486143,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 24.586099999999618,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 4.658107151756948,
+        "across": -4.615058895284865,
+        "lateral": 0.6318177192048919
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 91.75042054573193,
+        "z": 102.48737266390037,
+        "heading": 2.941868705571897,
+        "speed": 4.733783588486143,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 24.92629999999887,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 2.9800415238308835,
+        "across": -2.933658933334245,
+        "lateral": 0.5237296503201575
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 92.08469680248619,
+        "z": 100.83599498243161,
+        "heading": 2.941868705571897,
+        "speed": 5.007261065963398,
+        "height": 0.22856176862683866,
+        "jumpAge": 0.34019999999925493
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 25.463499999999986,
+      "countdown": -0.03690000000037247,
+      "index": 5,
+      "total": 8,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 93,
+        "z": 98,
+        "heading": 3.0060649396042924,
+        "distance": 0.24592292342640912,
+        "across": -0.2432809372595298,
+        "lateral": 0.03595093646507986
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 92.9315082604973,
+        "z": 98.23619264570787,
+        "heading": 2.7005250133828023,
+        "speed": 5.217854959275122,
+        "height": 0.6212187419044872,
+        "jumpAge": 0.8774000000003724
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1041999999992549,
+        "railAge": 1.104179795738,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 24.754900000000358,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 21.973508432111153,
+        "across": 1.9046610125734433,
+        "lateral": 21.890804901676013
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 93.05625539540175,
+        "z": 97.77543203977727,
+        "heading": 2.9352363742146865,
+        "speed": 5.238284781800865,
+        "height": 0.39310983850875225,
+        "jumpAge": 0.968800000000745
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 25.361400000000355,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 18.132171764853283,
+        "across": 1.6883545717650885,
+        "lateral": 18.05339612787972
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 93.45484392880357,
+        "z": 93.95265533238452,
+        "heading": 2.7353550217026177,
+        "speed": 6.270535215853245,
+        "height": 0,
+        "jumpAge": 1.5753000000007447
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 25.54169999999924,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 17.064499845655664,
+        "across": 1.614108286912339,
+        "lateral": 16.987990152472516
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 93.57968237149575,
+        "z": 92.8919867854416,
+        "heading": 3.213723766266192,
+        "speed": 5.910053982717572,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 26.138099999999614,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 14.261683644309782,
+        "across": 0.761800351285102,
+        "lateral": 14.241322993147618
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 94.56167124575128,
+        "z": 90.18896862936396,
+        "heading": 3.154392510310563,
+        "speed": 4.319082262034433,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 26.654499999999988,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 11.857663621191705,
+        "across": 0.9080128661887158,
+        "lateral": 11.822846492624734
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 94.53065941938263,
+        "z": 87.76627489103855,
+        "heading": 3.154392510310563,
+        "speed": 4.924177312236382,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 27.15480000000073,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 9.347918325789252,
+        "across": 1.0612922952798165,
+        "lateral": 9.287477358766814
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 94.49814869317021,
+        "z": 85.22648468691084,
+        "heading": 3.154392510310563,
+        "speed": 5.172877989194501,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 27.66119999999924,
+      "countdown": -0.03690000000037247,
+      "index": 6,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 96,
+        "z": 76,
+        "heading": -1.6183794300718801,
+        "distance": 6.829359150437935,
+        "across": 1.4418493023626848,
+        "lateral": 6.675418862883931
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 94.24226537684592,
+        "z": 82.59928143059801,
+        "heading": 3.449252554686049,
+        "speed": 5.28085811605147,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 28.17480000000073,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 40.58595419003865,
+        "across": -40.585910004618064,
+        "lateral": -0.059888337417543624
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 94.15649925501421,
+        "z": 79.88856901954614,
+        "heading": 3.0714120960298423,
+        "speed": 5.327318099125084,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 28.76299999999998,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 40.17298971011956,
+        "across": -40.16725459347976,
+        "lateral": -0.6787935414775053
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 93.8330636017793,
+        "z": 79.21499245886102,
+        "heading": 4.320408837175778,
+        "speed": 1.472400915403619,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 29.401800000000726,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 37.42524509501751,
+        "across": -37.421055852982825,
+        "lateral": -0.5599547035896846
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 91.09909862679001,
+        "z": 78.93009650025637,
+        "heading": 4.616614053553576,
+        "speed": 5.77010905866739,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 29.945999999999977,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 33.87262986561887,
+        "across": -33.86915712063817,
+        "lateral": -0.48502572173052805
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 87.5745673608561,
+        "z": 78.48369050499163,
+        "heading": 4.354861046345773,
+        "speed": 7.01597298392401,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 30.449599999999602,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 30.513741586205033,
+        "across": -30.507765669266444,
+        "lateral": -0.6038703990312659
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 84.26688382716851,
+        "z": 77.87352152212732,
+        "heading": 4.678605912940041,
+        "speed": 7.054512503501374,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 31.102599999999605,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 26.03788724324171,
+        "across": -26.029350099643633,
+        "lateral": -0.6667124432251712
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 79.84602905727489,
+        "z": 77.15505214889889,
+        "heading": 4.827446523521347,
+        "speed": 7.181662866701574,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 31.67349999999998,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 21.91260932049458,
+        "across": -21.902853078319627,
+        "lateral": -0.6538151590248074
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 75.76219383665699,
+        "z": 76.56307757362016,
+        "heading": 4.369726308880102,
+        "speed": 8.07215132451993,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 32.20649999999998,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 17.863404139864326,
+        "across": -17.85227739727723,
+        "lateral": -0.6303960618423838
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 71.75191831110746,
+        "z": 75.99263738293992,
+        "heading": 4.630242911654527,
+        "speed": 8.027970772963624,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 32.84049999999997,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 12.98378606909516,
+        "across": -12.970854067667744,
+        "lateral": -0.579349154911482
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 66.91571659637931,
+        "z": 75.32776710685329,
+        "heading": 4.194925586550507,
+        "speed": 6.551786110473385,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 33.37580000000072,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 9.82828480707506,
+        "across": -9.806693512016853,
+        "lateral": -0.6511102904646794
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 63.79623451761948,
+        "z": 74.79307725019889,
+        "heading": 4.5828593417559755,
+        "speed": 5.62711952939101,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": true,
+      "elapsed": 33.948699999999235,
+      "countdown": -0.03690000000037247,
+      "index": 7,
+      "total": 8,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 54,
+        "z": 74,
+        "heading": -1.717874682183299,
+        "distance": 6.695310552844343,
+        "across": -6.682206175561164,
+        "lateral": -0.41869323653609547
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 60.6714204182491,
+        "z": 74.56509556890657,
+        "heading": 4.613303792281575,
+        "speed": 5.414621728597168,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running River Run"
+    },
+    {
+      "id": "rush-river",
+      "name": "River Run",
+      "active": false,
+      "elapsed": 34.42580000000071,
+      "countdown": -0.03690000000037247,
+      "index": 8,
+      "total": 8,
+      "target": null,
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 57.99417081409828,
+        "z": 74.29894821722262,
+        "heading": 4.613303792281575,
+        "speed": 3.0107773693155826,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.968800000000745,
+        "railAge": 0.924761165009,
+        "interpolated": true
+      },
+      "event": "course ended",
+      "assistance": true,
+      "driverStatus": "running River Run"
+    }
+  ],
+  "journey": {
+    "chapters": [
+      {
+        "id": "first-partners",
+        "number": 1,
+        "name": "First Partners",
+        "description": "Find your stride and earn a lost horse’s trust.",
+        "goals": [
+          {
+            "id": "clover",
+            "label": "Bring Clover home",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rescue",
+              "id": "clover"
+            }
+          },
+          {
+            "id": "pasture",
+            "label": "Finish Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 150,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "pad",
+            "style": "western",
+            "name": "Leaping Silver Pad of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-first-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "steady-hands",
+        "number": 2,
+        "name": "Steady Hands",
+        "description": "Read the herd and keep a clean riding rhythm.",
+        "goals": [
+          {
+            "id": "three-home",
+            "label": "Pen all 3 horses in one beginner roundup",
+            "current": 3,
+            "target": 3,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "beginner"
+            }
+          },
+          {
+            "id": "clean-chain",
+            "label": "Build a 4-obstacle chain in any Ranch Rush",
+            "current": 4,
+            "target": 4,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 200,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "bridle",
+            "style": "western",
+            "name": "Leaping Silver Bridle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-steady-hands",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "river-rhythm",
+        "number": 3,
+        "name": "River Rhythm",
+        "description": "Take the river course and ride for a silver medal.",
+        "goals": [
+          {
+            "id": "river",
+            "label": "Finish River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "silver",
+            "label": "Earn silver or gold in any Ranch Rush",
+            "current": 2,
+            "target": 2,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 250,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "shoes",
+            "style": "western",
+            "name": "Leaping Silver Shoes of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-river-rhythm",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 5,
+            "target": 5,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-trail-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "meadowlark-champion",
+        "number": 5,
+        "name": "Meadowlark Champion",
+        "description": "Put everything together: four gold medals and a champion’s saddle.",
+        "goals": [
+          {
+            "id": "pasture-gold",
+            "label": "Earn gold in Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          },
+          {
+            "id": "river-gold",
+            "label": "Earn gold in River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "trail-gold",
+            "label": "Earn gold in Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "roundup-gold",
+            "label": "Earn gold in the 5-horse roundup",
+            "current": 0,
+            "target": 1,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 750,
+          "gear": {
+            "rarity": "Legendary",
+            "set": "Aurora",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Aurora Saddle of Agility",
+            "bonus": {
+              "jump": 5,
+              "agility": 5,
+              "stamina": 2
+            }
+          }
+        },
+        "status": "active",
+        "gearId": "journey-meadowlark-champion",
+        "owned": false,
+        "equipped": false
+      }
+    ],
+    "current": {
+      "id": "meadowlark-champion",
+      "number": 5,
+      "name": "Meadowlark Champion",
+      "description": "Put everything together: four gold medals and a champion’s saddle.",
+      "goals": [
+        {
+          "id": "pasture-gold",
+          "label": "Earn gold in Pasture Dash",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-pasture"
+          }
+        },
+        {
+          "id": "river-gold",
+          "label": "Earn gold in River Run",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-river"
+          }
+        },
+        {
+          "id": "trail-gold",
+          "label": "Earn gold in Trailblazer",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-trail"
+          }
+        },
+        {
+          "id": "roundup-gold",
+          "label": "Earn gold in the 5-horse roundup",
+          "current": 0,
+          "target": 1,
+          "done": false,
+          "action": {
+            "kind": "roundup",
+            "mode": "full"
+          }
+        }
+      ],
+      "reward": {
+        "coins": 750,
+        "gear": {
+          "rarity": "Legendary",
+          "set": "Aurora",
+          "slot": "saddle",
+          "style": "western",
+          "name": "Leaping Aurora Saddle of Agility",
+          "bonus": {
+            "jump": 5,
+            "agility": 5,
+            "stamina": 2
+          }
+        }
+      },
+      "status": "active",
+      "gearId": "journey-meadowlark-champion",
+      "owned": false,
+      "equipped": false
+    },
+    "claimedCount": 4,
+    "complete": false,
+    "title": null,
+    "lastClaim": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "coins": 350,
+      "gearId": "journey-trail-partners",
+      "gearName": "Leaping Silver Saddle of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "roundup",
+      "mode": "full"
+    }
+  },
+  "player": {
+    "x": 57.656898517097794,
+    "z": 74.26541973018732,
+    "heading": 4.613303792281575,
+    "speed": 0,
+    "rigReady": true,
+    "horseId": 2,
+    "horseName": "Clover",
+    "breed": "pinto",
+    "modelKey": "pinto",
+    "loadingBreed": false
+  },
+  "driver": {
+    "active": false,
+    "status": "course ended",
+    "steps": 329,
+    "target": {
+      "x": 52.02159307529226,
+      "z": 73.70690267782108,
+      "distance": 6.715365629481333,
+      "checkpoint": 8,
+      "total": 8,
+      "kind": "gate",
+      "gait": "trot",
+      "cue": null,
+      "recovery": null,
+      "jumpRequested": false
+    }
+  },
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false
+}

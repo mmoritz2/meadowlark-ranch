@@ -97,7 +97,7 @@ test('planning is cached, blocked forward checks are bounded, and snapshots are 
 const engine=fs.readFileSync(new URL('../assets/features/course-engine.js',import.meta.url),'utf8');
 const crossing=engine.slice(engine.indexOf('  const j=c.jumps[c.idx];',engine.indexOf("G.on('courseTick'")),engine.indexOf('  /* the line between obstacles */'));
 assert(crossing.includes('j.prevSide'));
-const tick=new Function('c','player','jumping','G','GRADE','document','flash','toast',`const S=c.ce,dt=.1,t=0,R={};const jumpingNow=()=>jumping;const gradeCrossing=()=>jumping?'good':'fault';const advance=(c)=>{c.idx++;return c.idx===c.jumps.length;};${crossing}`);
+const tick=new Function('c','player','jumping','G','GRADE','document','flash','toast',`const S=c.ce,dt=.1,t=0,R={},nativeCrossing={age:null};const rig=()=>({heroJumpAge:null});const jumpingNow=()=>jumping;const gradeCrossing=()=>jumping?'good':'fault';const advance=(c)=>{c.idx++;return c.idx===c.jumps.length;};${crossing}`);
 test('following recovery backward does not count; a real forward jump then advances exactly once',()=>{
  const j=fence(),c=course(j),p=rider(),r=make();c.faults=0;const G={beep(){},money:{statBump(){}},sChime(){}};const grade={good:{icon:'',text:''},fault:{icon:'',text:''}};
  const step=(jumping=false)=>tick(c,p,jumping,G,grade,{body:{classList:{contains:()=>false}}},()=>{},()=>{});

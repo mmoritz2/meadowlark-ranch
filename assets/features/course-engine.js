@@ -16,6 +16,7 @@
      difficulty   Novice / Open / Elite on every event; ribbons count at any of them
      event card   time allowed, laps, stat prerequisites and the full reward line before you enter
      first person KeyT rides from the saddle */
+import {createNativeJumpCrossingSampler} from '../native-jump-crossing.mjs';
 export const id='course-engine';
 export function install(G){
  const THREE=G.THREE, $=G.$, toast=G.toast, T=G.tables, W=G.world, player=G.horse.player;
@@ -278,6 +279,7 @@ export function install(G){
   g.position.set(x,W.groundH(x,z),z); g.rotation.y=rotY; G.scene.add(g); return g;
  }
  G.on('courseStart',c=>{
+  nativeCrossing.reset();
   if(!c||c.dressage||(c.ev.kind&&G.course.kinds[c.ev.kind])){ if(c&&c.dressage){c.ce={dressage:true,diff:DIFFS[pendingDi==null?1:pendingDi]}; c.rb={diff:c.ce.diff.k}; c.payMul=c.ce.diff.rewMul; } pendingDi=null; return; }
   const ev=c.ev, di=pendingDi==null?1:pendingDi, diff=DIFFS[di]; pendingDi=null;
   const S=c.ce={diff,di,lap:1,laps:ev.laps||1,timeAllowed:0,acc:1,grades:[],lineOff:0,refusals:0,insp:0,off:0,lastGrade:null,lineWarned:false,legIdx:-1,line:null,lineMesh:null,timeFaults:0,kind:ev.xc?'xc':ev.race?'race':'jump'};
@@ -313,9 +315,10 @@ export function install(G){
   return clamp(acc,0,1);
  }
  function raceAccuracy(c,S){ const base=c.t>0?clamp(c.par/c.t,0,1):1; return clamp(base-Math.min(0.2,S.lineOff*0.02),0,1); }
+ const nativeCrossing=createNativeJumpCrossingSampler();
  function gradeCrossing(){
   const Rg=rig();
-  if(Rg.heroMotion){ const a=Rg.heroJumpAge; if(a==null||a>1.25)return player.y>0.4?'good':'fault'; if(a>=0.58&&a<=0.96)return 'perfect'; if(a>=0.42&&a<=1.12)return 'good'; return a<0.42?'late':'early'; }
+  if(Rg.heroMotion){ const a=nativeCrossing.age??Rg.heroJumpAge; if(a==null||a>1.25)return player.y>0.4?'good':'fault'; if(a>=0.58&&a<=0.96)return 'perfect'; if(a>=0.42&&a<=1.12)return 'good'; return a<0.42?'late':'early'; }
   const y=player.y; if(y<=0.4)return 'fault'; if(y>0.85&&y<1.7)return 'perfect'; if(y>0.62)return 'good'; return player.vy<0?'early':'late';
  }
  function segDist(px,pz,L){const abx=L.x2-L.x1,abz=L.z2-L.z1;const l2=abx*abx+abz*abz||1;const tt=clamp(((px-L.x1)*abx+(pz-L.z1)*abz)/l2,0,1);return Math.hypot(px-(L.x1+abx*tt),pz-(L.z1+abz*tt));}
@@ -339,6 +342,7 @@ export function install(G){
  }
  G.on('courseTick',(c,dt,t)=>{
   const S=c.ce; if(!S||S.dressage)return false;
+  nativeCrossing.sample(c,player,rig(),dt,t);
   /* pickups and pads */
   for(const it of c.items){
    if(it.pad){ if(it.cd>0){it.cd-=dt;const k=1+0.15*Math.sin(it.cd*9);it.m.scale.set(k,1,k);if(it.cd<=0)it.m.scale.set(1,1,1);continue;}
@@ -365,6 +369,9 @@ export function install(G){
    else if(j.prevSide!==0&&side!==j.prevSide&&Math.abs(along)<1.8&&Math.abs(across)<1.3){
     if(side>0){
      const g=gradeCrossing(); S.lastGrade=g; S.grades.push(g);
+     const frameAge=rig().heroJumpAge;
+     S.lastJumpTiming=Object.freeze({fenceIndex:c.idx,lap:S.lap,grade:g,
+      frameAge:Number.isFinite(frameAge)?frameAge:null,railAge:nativeCrossing.age,interpolated:nativeCrossing.age!==null});
      const insp=g==='perfect', offline=!j.approached;
      if(g==='fault'){ c.faults=(c.faults||0)+1; G.beep(90,120,0.18,'square',0.09); flash('💥 Rails down'); }
      else{ G.sChime(); G.money.statBump('jumps',1); flash(GRADE[g].icon+' '+GRADE[g].text); }

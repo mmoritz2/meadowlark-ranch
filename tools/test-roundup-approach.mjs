@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as approach from '../assets/roundup-approach.mjs';
+import {updateRoundupGuidance} from '../assets/roundup-guidance.mjs';
 import * as pressure from '../assets/roundup-pressure.mjs';
 import {ROUNDUP_MODES} from '../assets/roundup-rewards.mjs';
 const {chooseRoundupApproach}=approach;
@@ -84,9 +85,9 @@ function stateFixture(o=captured){
  const pos={...o.horse,distanceTo(p){return Math.hypot(this.x-p.x,this.z-p.z);}},player={pos:{...o.rider}};
  const ROUND={on:true,mode:'beginner',horses:[{name:'Juniper',pos}],total:3,penned:0,t:63,elapsed:87,cd:0,runId:'captured',lastResult:null};
  const G={input:{blocked:()=>false},world:{colliders:o.colliders||[],walls:o.walls||[],solidWorld:{resolve(p){solidCalls++;if(o.solid)o.solid(p);}}}};
- const bindings={...approach,...pressure,G,ROUND,ROUND_PEN:o.pen,PAST:o.bounds,ROUND_MODES:ROUNDUP_MODES,player,Date:{now:()=>now},groundH:()=>0,freshSave:()=>({}),freeCam:false,document:{hidden:false}};
+ const bindings={...approach,...pressure,updateRoundupGuidance,G,ROUND,ROUND_PEN:o.pen,PAST:o.bounds,ROUND_MODES:ROUNDUP_MODES,player,performance:{now:()=>now},Date:{now:()=>now},groundH:()=>0,freshSave:()=>({}),freeCam:false,document:{hidden:false}};
  const state=Function(...Object.keys(bindings),source.slice(start,end)+'return roundupState;')(...Object.values(bindings));
- return {state,player,G,advance:n=>now+=n,get solidCalls(){return solidCalls;}};
+ return {state,player,G,horse:ROUND.horses[0],advance:n=>now+=n,get solidCalls(){return solidCalls;}};
 }
 
 test('actual target state marks a rider on the replacement marker as guiding',()=>{
@@ -98,5 +99,27 @@ test('actual state exposes blocked approach with null coordinates and bounded ca
  const f=stateFixture(input({walls:[{x1:-90,z1:-45,x2:-90,z2:25}]}));const t=f.state().target;
  assert.equal(t.approachBlocked,true);assert.equal(t.standX,null);assert.equal(t.standZ,null);
  f.G.world.walls=[];f.advance(200);assert.equal(f.state().target.approachBlocked,false,'a changed world is resampled after the short cache window');
- const calls=f.solidCalls;f.state();f.state();assert.equal(f.solidCalls,calls,'repeated HUD/state reads share geometry work');
+ const route=f.horse.guidanceCache.route,calls=f.solidCalls;f.state();f.state();assert.equal(f.horse.guidanceCache.route,route,'repeated HUD reads reuse the planned route');assert(f.solidCalls>calls,'the reused current leg still checks actual solid geometry');
+});
+
+
+test('actual solo state exposes a safe detour marker separately from the final pressure position',()=>{
+ const o={horse:{x:-75,z:0},rider:{x:-100,z:0},pen:{x:-44,z:-8},bounds:{x1:-110,x2:-33,z1:-45,z2:25},colliders:[],walls:[{x1:-90,z1:-6,x2:-90,z2:6}]};
+ const f=stateFixture(o),t=f.state().target;
+ assert.equal(t.approachBlocked,false);assert.equal(t.approachPhase,'detour');
+ assert(t.approachTarget&&Number.isFinite(t.approachTarget.x)&&Number.isFinite(t.approachTarget.z));
+ assert(Math.hypot(t.approachTarget.x-t.standX,t.approachTarget.z-t.standZ)>1,'the first gold ring is not the pressure destination across the fence');
+ assert(approach.roundupRiderLegClear({...o,from:f.player.pos,to:t.approachTarget}),'the public marker passes the production leg validator');
+ Object.assign(f.player.pos,{x:t.standX,z:t.standZ});
+ assert.equal(f.state().target.pressure,'guiding','the separate final position still guides the horse home');
+});
+
+
+test('actual solo corner state distinguishes a recovery position from guiding pressure',()=>{
+ const o={horse:{x:-108,z:23},rider:{x:-100,z:5},pen:{x:-44,z:-8},bounds:{x1:-110,x2:-33,z1:-45,z2:25},colliders:[],walls:[{x1:-110,z1:25,x2:-33,z2:25},{x1:-110,z1:-45,x2:-110,z2:25}]};
+ const f=stateFixture(o);f.horse.roundupAvoidSide=1;let t=f.state().target;
+ assert.equal(t.approachBlocked,false);
+ for(const p of f.horse.guidanceCache.route.waypoints){Object.assign(f.player.pos,p);f.advance(10);t=f.state().target;}
+ assert.equal(t.approachPhase,'reposition');assert.notEqual(t.pressure,'guiding','the public state cannot describe a side recovery as good guiding pressure');
+ assert(approach.roundupRepositionValid({...o,avoidSide:1},t.approachTarget),'the visible final recovery point predicts the same real escape helper');
 });

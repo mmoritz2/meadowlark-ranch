@@ -1,7 +1,7 @@
 // Visual late-winter deposits on the existing Hollowpeak terrain. These fields
 // never participate in height, collision, climate, planting, or water decisions.
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
-export const HOLLOWPEAK_SNOW_PROFILE='hollowpeak-snow-deposits-1';
+export const HOLLOWPEAK_SNOW_PROFILE='hollowpeak-snow-foothill-thaw-2';
 export const HOLLOWPEAK_SNOW_WIND=Object.freeze({x:.8574929257125441,z:.5144957554275265});
 // Match the existing winter-core and alpine envelopes exactly. The shader keeps
 // its existing ecological climate and outer thaw margin outside this support.
@@ -9,7 +9,17 @@ export function hollowpeakSnowWeight(x,z){
  return Math.max(1-smooth(66,112,Math.hypot(x+160,z+210)),
   1-smooth(.65,1.10,Math.hypot((x+150)/100,(z+333)/92)));
 }
+// The exposed southern foot has thawed before the high sheltered deposits.
+// A broad northward retreat keeps the distant winter country, while measured
+// elevation keeps the low foreground joined to its living meadow/forest floor.
+// This is a material-only field: it never alters the ecological climate masks.
+export function hollowpeakFoothillThaw(x,z,height){
+ return smooth(-356,-276,z)*(1-smooth(4,18,height));
+}
 export const HOLLOWPEAK_SNOW_GLSL=/* glsl */`
+float hollowpeakFoothillThaw(vec2 p,float height){
+ return smoothstep(-356.0,-276.0,p.y)*(1.0-smoothstep(4.0,18.0,height));
+}
 float hollowpeakSnowWeight(vec2 p){
  return max(1.0-smoothstep(66.0,112.0,length(p-vec2(-160.0,-210.0))),
   1.0-smoothstep(.65,1.10,length((p-vec2(-150.0,-333.0))/vec2(100.0,92.0))));

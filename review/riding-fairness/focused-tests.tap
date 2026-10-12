@@ -1,0 +1,1315 @@
+TAP version 13
+# Subtest: refused entry preserves the checkpoint and never overwrites an active course
+ok 1 - refused entry preserves the checkpoint and never overwrites an active course
+  ---
+  duration_ms: 3.836708
+  ...
+# Subtest: physical and presentation entry guards refuse before course construction or relocation
+ok 2 - physical and presentation entry guards refuse before course construction or relocation
+  ---
+  duration_ms: 5.280416
+  ...
+# Subtest: successful recovery preserves scoring, rematch identity, field and proof through countdown
+ok 3 - successful recovery preserves scoring, rematch identity, field and proof through countdown
+  ---
+  duration_ms: 6.406459
+  ...
+# Subtest: saved fatigue and event effects are restored with finite bounded values
+ok 4 - saved fatigue and event effects are restored with finite bounded values
+  ---
+  duration_ms: 1.195666
+  ...
+# Subtest: recovery countdown neither heals fatigue nor consumes effects, and releases the hold at GO
+ok 5 - recovery countdown neither heals fatigue nor consumes effects, and releases the hold at GO
+  ---
+  duration_ms: 2.985916
+  ...
+# Subtest: recovery retains fallback rival identity across a changed week
+ok 6 - recovery retains fallback rival identity across a changed week
+  ---
+  duration_ms: 0.259375
+  ...
+# Subtest: stale course cleanup cannot erase a new recovered run or field
+ok 7 - stale course cleanup cannot erase a new recovered run or field
+  ---
+  duration_ms: 0.376791
+  ...
+# Subtest: unavailable staging keeps proof and rolls back the relocation
+ok 8 - unavailable staging keeps proof and rolls back the relocation
+  ---
+  duration_ms: 0.319125
+  ...
+# Subtest: legacy checkpoints recover known progress without claiming unavailable exact field state
+ok 9 - legacy checkpoints recover known progress without claiming unavailable exact field state
+  ---
+  duration_ms: 1.371375
+  ...
+# Subtest: changed route layout or revision refuses without consuming the old checkpoint
+ok 10 - changed route layout or revision refuses without consuming the old checkpoint
+  ---
+  duration_ms: 2.030959
+  ...
+# Subtest: checkpoint writes and explicit drop require confirmation; refund and removal are atomic
+ok 11 - checkpoint writes and explicit drop require confirmation; refund and removal are atomic
+  ---
+  duration_ms: 5.117416
+  ...
+# Subtest: cleanup only removes the matching checkpoint
+ok 12 - cleanup only removes the matching checkpoint
+  ---
+  duration_ms: 0.215667
+  ...
+# Subtest: production recovery stages at the actual next gate and restores judges and native rivals
+ok 13 - production recovery stages at the actual next gate and restores judges and native rivals
+  ---
+  duration_ms: 2.144125
+  ...
+# Subtest: missing safe recovery line cannot teleport or claim a restored course
+ok 14 - missing safe recovery line cannot teleport or claim a restored course
+  ---
+  duration_ms: 0.457459
+  ...
+# Subtest: Cottonwood recovery leaves the horse rear inside the arena, without bypassing safety checks
+ok 15 - Cottonwood recovery leaves the horse rear inside the arena, without bypassing safety checks
+  ---
+  duration_ms: 26.524083
+  ...
+# Subtest: non-cardinal fence staging tolerates roundoff at four metres but not shorter approaches
+ok 16 - non-cardinal fence staging tolerates roundoff at four metres but not shorter approaches
+  ---
+  duration_ms: 31.16175
+  ...
+# Subtest: saved gate watch settles its measured approach instead of gaining teleport accuracy
+ok 17 - saved gate watch settles its measured approach instead of gaining teleport accuracy
+  ---
+  duration_ms: 22.969458
+  ...
+# Subtest: legacy judging does not replay every refusal at the resumed obstacle
+ok 18 - legacy judging does not replay every refusal at the resumed obstacle
+  ---
+  duration_ms: 21.828208
+  ...
+# Subtest: a saved fallback field never silently turns into a newly generated ghost field
+ok 19 - a saved fallback field never silently turns into a newly generated ghost field
+  ---
+  duration_ms: 1.108625
+  ...
+# Subtest: ticket refund hook distinguishes a new countdown from an already-started recovered round
+ok 20 - ticket refund hook distinguishes a new countdown from an already-started recovered round
+  ---
+  duration_ms: 0.525708
+  ...
+# Subtest: same real native rail time keeps its grade at fine, coarse and varying frame durations
+ok 21 - same real native rail time keeps its grade at fine, coarse and varying frame durations
+  ---
+  duration_ms: 8.222916
+  ...
+# Subtest: credited fences expose immutable timing evidence and distinguish fallback
+ok 22 - credited fences expose immutable timing evidence and distinguish fallback
+  ---
+  duration_ms: 0.285083
+  ...
+# Subtest: recorded Trailblazer boundary remains Early at the interpolated rail plane
+ok 23 - recorded Trailblazer boundary remains Early at the interpolated rail plane
+  ---
+  duration_ms: 0.154875
+  ...
+# Subtest: rotated fences and reference-motion horses use the same crossing plane
+ok 24 - rotated fences and reference-motion horses use the same crossing plane
+  ---
+  duration_ms: 8.229667
+  ...
+# Subtest: an exact-plane sample preserves its age on the following forward credit
+ok 25 - an exact-plane sample preserves its age on the following forward credit
+  ---
+  duration_ms: 0.204167
+  ...
+# Subtest: all native thresholds and height fallback retain their original inclusive meaning
+ok 26 - all native thresholds and height fallback retain their original inclusive meaning
+  ---
+  duration_ms: 0.121667
+  ...
+# Subtest: interpolated inclusive boundaries are stable at 30Hz without widening their windows
+ok 27 - interpolated inclusive boundaries are stable at 30Hz without widening their windows
+  ---
+  duration_ms: 2.6825
+  ...
+# Subtest: artist and procedural grading are unchanged
+ok 28 - artist and procedural grading are unchanged
+  ---
+  duration_ms: 0.124833
+  ...
+# Subtest: discontinuous samples fall back without interpolation: completed course
+ok 29 - discontinuous samples fall back without interpolation: completed course
+  ---
+  duration_ms: 0.363584
+  ...
+# Subtest: discontinuous samples fall back without interpolation: countdown restarted
+ok 30 - discontinuous samples fall back without interpolation: countdown restarted
+  ---
+  duration_ms: 0.358416
+  ...
+# Subtest: discontinuous samples fall back without interpolation: unready rig
+ok 31 - discontinuous samples fall back without interpolation: unready rig
+  ---
+  duration_ms: 0.118625
+  ...
+# Subtest: discontinuous samples fall back without interpolation: non-finite native age
+ok 32 - discontinuous samples fall back without interpolation: non-finite native age
+  ---
+  duration_ms: 0.05975
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new course state
+ok 33 - discontinuous samples fall back without interpolation: new course state
+  ---
+  duration_ms: 0.051958
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new target
+ok 34 - discontinuous samples fall back without interpolation: new target
+  ---
+  duration_ms: 0.051208
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new lap
+ok 35 - discontinuous samples fall back without interpolation: new lap
+  ---
+  duration_ms: 0.053166
+  ...
+# Subtest: discontinuous samples fall back without interpolation: resume resetting obstacle side
+ok 36 - discontinuous samples fall back without interpolation: resume resetting obstacle side
+  ---
+  duration_ms: 0.05075
+  ...
+# Subtest: discontinuous samples fall back without interpolation: refusal repositioning
+ok 37 - discontinuous samples fall back without interpolation: refusal repositioning
+  ---
+  duration_ms: 0.049125
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new mounted rig
+ok 38 - discontinuous samples fall back without interpolation: new mounted rig
+  ---
+  duration_ms: 0.0565
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new motion on reused rig
+ok 39 - discontinuous samples fall back without interpolation: new motion on reused rig
+  ---
+  duration_ms: 0.049666
+  ...
+# Subtest: discontinuous samples fall back without interpolation: new profile on reused rig
+ok 40 - discontinuous samples fall back without interpolation: new profile on reused rig
+  ---
+  duration_ms: 0.053542
+  ...
+# Subtest: discontinuous samples fall back without interpolation: edited obstacle pose
+ok 41 - discontinuous samples fall back without interpolation: edited obstacle pose
+  ---
+  duration_ms: 0.065458
+  ...
+# Subtest: discontinuous samples fall back without interpolation: clock reset
+ok 42 - discontinuous samples fall back without interpolation: clock reset
+  ---
+  duration_ms: 0.061208
+  ...
+# Subtest: discontinuous samples fall back without interpolation: missed or paused simulation sample
+ok 43 - discontinuous samples fall back without interpolation: missed or paused simulation sample
+  ---
+  duration_ms: 0.046917
+  ...
+# Subtest: discontinuous samples fall back without interpolation: non-finite time
+ok 44 - discontinuous samples fall back without interpolation: non-finite time
+  ---
+  duration_ms: 0.047541
+  ...
+# Subtest: discontinuous samples fall back without interpolation: zero dt
+ok 45 - discontinuous samples fall back without interpolation: zero dt
+  ---
+  duration_ms: 0.048333
+  ...
+# Subtest: discontinuous samples fall back without interpolation: negative dt
+ok 46 - discontinuous samples fall back without interpolation: negative dt
+  ---
+  duration_ms: 0.050708
+  ...
+# Subtest: discontinuous samples fall back without interpolation: unbounded dt
+ok 47 - discontinuous samples fall back without interpolation: unbounded dt
+  ---
+  duration_ms: 0.056791
+  ...
+# Subtest: discontinuous samples fall back without interpolation: jump age reset
+ok 48 - discontinuous samples fall back without interpolation: jump age reset
+  ---
+  duration_ms: 0.046959
+  ...
+# Subtest: discontinuous samples fall back without interpolation: accelerated jump clock
+ok 49 - discontinuous samples fall back without interpolation: accelerated jump clock
+  ---
+  duration_ms: 0.044834
+  ...
+# Subtest: discontinuous samples fall back without interpolation: landing or action interruption
+ok 50 - discontinuous samples fall back without interpolation: landing or action interruption
+  ---
+  duration_ms: 0.103041
+  ...
+# Subtest: discontinuous samples fall back without interpolation: teleported lateral distance
+ok 51 - discontinuous samples fall back without interpolation: teleported lateral distance
+  ---
+  duration_ms: 0.051417
+  ...
+# Subtest: discontinuous samples fall back without interpolation: mounted load pending
+ok 52 - discontinuous samples fall back without interpolation: mounted load pending
+  ---
+  duration_ms: 0.051
+  ...
+# Subtest: discontinuous samples fall back without interpolation: flying
+ok 53 - discontinuous samples fall back without interpolation: flying
+  ---
+  duration_ms: 0.044833
+  ...
+# Subtest: discontinuous samples fall back without interpolation: dismounted
+ok 54 - discontinuous samples fall back without interpolation: dismounted
+  ---
+  duration_ms: 0.0445
+  ...
+# Subtest: takeoff without a prior native age and a completed/reset course cannot reuse history
+ok 55 - takeoff without a prior native age and a completed/reset course cannot reuse history
+  ---
+  duration_ms: 0.092375
+  ...
+# Subtest: backward, lateral and grounded refusal paths keep actual course credit and penalties
+ok 56 - backward, lateral and grounded refusal paths keep actual course credit and penalties
+  ---
+  duration_ms: 0.145916
+  ...
+# Subtest: formal and Rush courses share timing correction with all existing perfect/offline effects intact
+ok 57 - formal and Rush courses share timing correction with all existing perfect/offline effects intact
+  ---
+  duration_ms: 0.11625
+  ...
+# Subtest: sampling is transient and leaves saved course/horse shapes unchanged
+ok 58 - sampling is transient and leaves saved course/horse shapes unchanged
+  ---
+  duration_ms: 0.087959
+  ...
+# Subtest: old rescue, Rush and roundup records retroactively credit every goal without mutating history
+ok 59 - old rescue, Rush and roundup records retroactively credit every goal without mutating history
+  ---
+  duration_ms: 9.94575
+  ...
+# Subtest: exact chapter rewards are fixed, sequential and once-only
+ok 60 - exact chapter rewards are fixed, sequential and once-only
+  ---
+  duration_ms: 2.303584
+  ...
+# Subtest: selling or merging a reward cannot reopen its permanent claim
+ok 61 - selling or merging a reward cannot reopen its permanent claim
+  ---
+  duration_ms: 0.837958
+  ...
+# Subtest: explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+ok 62 - explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+  ---
+  duration_ms: 11.880167
+  ...
+# Subtest: each unfinished goal routes to the real activity and medal quality matters
+ok 63 - each unfinished goal routes to the real activity and medal quality matters
+  ---
+  duration_ms: 0.188084
+  ...
+# Subtest: malformed saves cannot create earned progress, crash the journey, or forge a claim
+ok 64 - malformed saves cannot create earned progress, crash the journey, or forge a claim
+  ---
+  duration_ms: 0.150042
+  ...
+# Subtest: runtime verifies persisted claims and does not announce failed storage writes
+ok 65 - runtime verifies persisted claims and does not announce failed storage writes
+  ---
+  duration_ms: 4.724458
+  ...
+# Subtest: runtime claim and explicit equip survive reload and forged finish events award nothing
+ok 66 - runtime claim and explicit equip survive reload and forged finish events award nothing
+  ---
+  duration_ms: 24.216834
+  ...
+# Subtest: captured 87-second Juniper stall now has an unobstructed marker inside pressure range
+ok 67 - captured 87-second Juniper stall now has an unobstructed marker inside pressure range
+  ---
+  duration_ms: 44.009917
+  ...
+# Subtest: all later captured stall samples remain within the effective flight zone
+ok 68 - all later captured stall samples remain within the effective flight zone
+  ---
+  duration_ms: 13.411917
+  ...
+# Subtest: an open pasture retains the original nine-metre direct pressure position
+ok 69 - an open pasture retains the original nine-metre direct pressure position
+  ---
+  duration_ms: 8.789042
+  ...
+# Subtest: a blocked ideal position finds an angular alternative instead of jumping out of range
+ok 70 - a blocked ideal position finds an angular alternative instead of jumping out of range
+  ---
+  duration_ms: 0.130333
+  ...
+# Subtest: a thin wall between rider and all markers gives no misleading marker
+ok 71 - a thin wall between rider and all markers gives no misleading marker
+  ---
+  duration_ms: 0.326084
+  ...
+# Subtest: a point across an internal fence is rejected even when its endpoint is open
+ok 72 - a point across an internal fence is rejected even when its endpoint is open
+  ---
+  duration_ms: 0.115083
+  ...
+# Subtest: a pasture boundary does not clamp an impossible rear approach into a false marker
+ok 73 - a pasture boundary does not clamp an impossible rear approach into a false marker
+  ---
+  duration_ms: 0.064083
+  ...
+# Subtest: solid model callback rejects blocked endpoints and routes
+ok 74 - solid model callback rejects blocked endpoints and routes
+  ---
+  duration_ms: 0.200417
+  ...
+# Subtest: rider may retreat out from a collider contact margin without crossing through it
+ok 75 - rider may retreat out from a collider contact margin without crossing through it
+  ---
+  duration_ms: 1.226084
+  ...
+# Subtest: full herd uses the same safe range and never weakens its collider clearance
+ok 76 - full herd uses the same safe range and never weakens its collider clearance
+  ---
+  duration_ms: 0.494917
+  ...
+# Subtest: candidate and geometry sampling remains bounded for malformed or faraway positions
+ok 77 - candidate and geometry sampling remains bounded for malformed or faraway positions
+  ---
+  duration_ms: 0.195542
+  ...
+# Subtest: selection does not mutate input points, collider data, or bounds
+ok 78 - selection does not mutate input points, collider data, or bounds
+  ---
+  duration_ms: 15.643208
+  ...
+# Subtest: actual target state marks a rider on the replacement marker as guiding
+ok 79 - actual target state marks a rider on the replacement marker as guiding
+  ---
+  duration_ms: 12.768542
+  ...
+# Subtest: actual state exposes blocked approach with null coordinates and bounded cache lifetime
+ok 80 - actual state exposes blocked approach with null coordinates and bounded cache lifetime
+  ---
+  duration_ms: 89.512625
+  ...
+# Subtest: actual solo state exposes a safe detour marker separately from the final pressure position
+ok 81 - actual solo state exposes a safe detour marker separately from the final pressure position
+  ---
+  duration_ms: 19.162208
+  ...
+# Subtest: actual solo corner state distinguishes a recovery position from guiding pressure
+ok 82 - actual solo corner state distinguishes a recovery position from guiding pressure
+  ---
+  duration_ms: 21.200666
+  ...
+# Subtest: finish gate rejects an unfinished clock and herd without touching save or scene
+ok 83 - finish gate rejects an unfinished clock and herd without touching save or scene
+  ---
+  duration_ms: 4.446333
+  ...
+# Subtest: full gold saves rewards, bests, story, pass and week before one successful finish
+ok 84 - full gold saves rewards, bests, story, pass and week before one successful finish
+  ---
+  duration_ms: 4.389791
+  ...
+# Subtest: rejected write preserves earned run and actors without success, then retries exactly once
+ok 85 - rejected write preserves earned run and actors without success, then retries exactly once
+  ---
+  duration_ms: 2.158625
+  ...
+# Subtest: write wrapper failure after commit is acknowledged by durable readback
+ok 86 - write wrapper failure after commit is acknowledged by durable readback
+  ---
+  duration_ms: 0.409292
+  ...
+# Subtest: unreadable post-write confirmation retains scene and acknowledges same receipt without regrant
+ok 87 - unreadable post-write confirmation retains scene and acknowledges same receipt without regrant
+  ---
+  duration_ms: 2.422375
+  ...
+# Subtest: partial clock expiry pays only the penned horses and never grants a full-herd Journey goal
+ok 88 - partial clock expiry pays only the penned horses and never grants a full-herd Journey goal
+  ---
+  duration_ms: 1.147084
+  ...
+# Subtest: an explicit cancellation cleans up without paying or recording a result
+ok 89 - an explicit cancellation cleans up without paying or recording a result
+  ---
+  duration_ms: 0.849625
+  ...
+# Subtest: production pen crossing reaches completion but cannot dispose the final actor before save
+ok 90 - production pen crossing reaches completion but cannot dispose the final actor before save
+  ---
+  duration_ms: 4.693083
+  ...
+# Subtest: gold medal is retained independently of a tied legacy best score
+ok 91 - gold medal is retained independently of a tied legacy best score
+  ---
+  duration_ms: 1.6745
+  ...
+# Subtest: a later partial round never erases saved full gold or its Journey credit
+ok 92 - a later partial round never erases saved full gold or its Journey credit
+  ---
+  duration_ms: 2.863417
+  ...
+# Subtest: a recovered first write targets the current saved week, VIP and objective exactly once
+ok 93 - a recovered first write targets the current saved week, VIP and objective exactly once
+  ---
+  duration_ms: 0.636542
+  ...
+# Subtest: menus, background tabs and free camera freeze actual roundup countdown and horse movement
+ok 94 - menus, background tabs and free camera freeze actual roundup countdown and horse movement
+  ---
+  duration_ms: 3.92075
+  ...
+# Subtest: a committed but unreadable finish reconciles its story before an unrelated quest or stale save
+ok 95 - a committed but unreadable finish reconciles its story before an unrelated quest or stale save
+  ---
+  duration_ms: 3.471292
+  ...
+# Subtest: a claimed successor is never rewound or reannounced by the old pending roundup receipt
+ok 96 - a claimed successor is never rewound or reannounced by the old pending roundup receipt
+  ---
+  duration_ms: 1.983417
+  ...
+# Subtest: beginner production state exposes the new clock and preserves a real old best on completion
+ok 97 - beginner production state exposes the new clock and preserves a real old best on completion
+  ---
+  duration_ms: 4.356375
+  ...
+# Subtest: direct guidance keeps its 180ms refresh interval and samples the clock only while planning
+ok 98 - direct guidance keeps its 180ms refresh interval and samples the clock only while planning
+  ---
+  duration_ms: 4.824958
+  ...
+# Subtest: a safe detour keeps the same next marker while a rider makes tiny movements
+ok 99 - a safe detour keeps the same next marker while a rider makes tiny movements
+  ---
+  duration_ms: 5.512292
+  ...
+# Subtest: reaching a detour waypoint advances the cached route to its next leg
+ok 100 - reaching a detour waypoint advances the cached route to its next leg
+  ---
+  duration_ms: 30.107541
+  ...
+# Subtest: an obstacle added to the same collider array invalidates the next leg immediately
+ok 101 - an obstacle added to the same collider array invalidates the next leg immediately
+  ---
+  duration_ms: 7.954875
+  ...
+# Subtest: a changed solid callback result invalidates an unsafe cached leg even with the same callback
+ok 102 - a changed solid callback result invalidates an unsafe cached leg even with the same callback
+  ---
+  duration_ms: 13.576542
+  ...
+# Subtest: a changed key or scenery reference starts a new plan without waiting for its age
+ok 103 - a changed key or scenery reference starts a new plan without waiting for its age
+  ---
+  duration_ms: 101.563541
+  ...
+# Subtest: horse movement invalidates a cached leg entering its spook bubble
+ok 104 - horse movement invalidates a cached leg entering its spook bubble
+  ---
+  duration_ms: 0.823709
+  ...
+# Subtest: more than two metres of horse drift replans even when the current detour leg stays clear
+ok 105 - more than two metres of horse drift replans even when the current detour leg stays clear
+  ---
+  duration_ms: 1.384959
+  ...
+# Subtest: near the final leg a moving horse cannot leave a stale pressure point behind
+ok 106 - near the final leg a moving horse cannot leave a stale pressure point behind
+  ---
+  duration_ms: 4.862625
+  ...
+# Subtest: an unchanged blocked route retries after 250ms without spinning every frame
+ok 107 - an unchanged blocked route retries after 250ms without spinning every frame
+  ---
+  duration_ms: 23.140875
+  ...
+# Subtest: meaningful rider movement or a scenery replacement can retry blocked guidance immediately
+ok 108 - meaningful rider movement or a scenery replacement can retry blocked guidance immediately
+  ---
+  duration_ms: 115.454167
+  ...
+# Subtest: guidance snapshots expose no enumerable cache internals or mutable route data
+ok 109 - guidance snapshots expose no enumerable cache internals or mutable route data
+  ---
+  duration_ms: 0.781834
+  ...
+# Subtest: malformed guidance options fail closed with a frozen blocked snapshot
+ok 110 - malformed guidance options fail closed with a frozen blocked snapshot
+  ---
+  duration_ms: 0.148583
+  ...
+# Subtest: small horse drift refreshes pressure metadata without replacing a still safe detour
+ok 111 - small horse drift refreshes pressure metadata without replacing a still safe detour
+  ---
+  duration_ms: 1.198333
+  ...
+# Subtest: without an explicit timing callback planning exposes zero measured time
+ok 112 - without an explicit timing callback planning exposes zero measured time
+  ---
+  duration_ms: 0.536583
+  ...
+# Subtest: boundary guidance labels the final leg as reposition and keeps earlier legs as detours
+ok 113 - boundary guidance labels the final leg as reposition and keeps earlier legs as detours
+  ---
+  duration_ms: 24.257042
+  ...
+# Subtest: avoidance-side changes trigger immediate current-prediction validation of a reposition
+ok 114 - avoidance-side changes trigger immediate current-prediction validation of a reposition
+  ---
+  duration_ms: 9.224542
+  ...
+# Subtest: same-array geometry changes that seal horse escape invalidate cached reposition guidance
+ok 115 - same-array geometry changes that seal horse escape invalidate cached reposition guidance
+  ---
+  duration_ms: 5.136
+  ...
+# Subtest: reposition guidance periodically checks for newly reachable guiding pressure
+ok 116 - reposition guidance periodically checks for newly reachable guiding pressure
+  ---
+  duration_ms: 5.666709
+  ...
+# Subtest: elapsed and pressure updates preserve the focused HUD button and refresh real text
+ok 117 - elapsed and pressure updates preserve the focused HUD button and refresh real text
+  ---
+  duration_ms: 2.939375
+  ...
+# Subtest: pending state preserves button identity, focus and an explicit result reopening action
+ok 118 - pending state preserves button identity, focus and an explicit result reopening action
+  ---
+  duration_ms: 21.453333
+  ...
+# Subtest: the persistent button reads current state even before the next throttled paint
+ok 119 - the persistent button reads current state even before the next throttled paint
+  ---
+  duration_ms: 3.442791
+  ...
+# Subtest: a blocked approach hides the pressure ring and explains how to circle for a clear route
+ok 120 - a blocked approach hides the pressure ring and explains how to circle for a clear route
+  ---
+  duration_ms: 0.447125
+  ...
+# Subtest: pressure cue and both rings agree while beginner handoff stays explicit
+ok 121 - pressure cue and both rings agree while beginner handoff stays explicit
+  ---
+  duration_ms: 0.729792
+  ...
+# Subtest: a detour displays the published next waypoint instead of the final pressure point
+ok 122 - a detour displays the published next waypoint instead of the final pressure point
+  ---
+  duration_ms: 0.740208
+  ...
+# Subtest: pressure phase follows the current published target and restores the appropriate gait cue
+ok 123 - pressure phase follows the current published target and restores the appropriate gait cue
+  ---
+  duration_ms: 0.452125
+  ...
+# Subtest: blocked, pending and shared states cannot expose a stale detour ring
+ok 124 - blocked, pending and shared states cannot expose a stale detour ring
+  ---
+  duration_ms: 0.371833
+  ...
+# Subtest: boundary reposition shows a turn-away ring without claiming guiding, then returns to pressure
+ok 125 - boundary reposition shows a turn-away ring without claiming guiding, then returns to pressure
+  ---
+  duration_ms: 0.803333
+  ...
+# Subtest: actual too-close pressure overrides the reposition instruction with Ease back
+ok 126 - actual too-close pressure overrides the reposition instruction with Ease back
+  ---
+  duration_ms: 0.680791
+  ...
+# Subtest: beginner countdown states the explicit inclusive gold target before the clock starts
+ok 127 - beginner countdown states the explicit inclusive gold target before the clock starts
+  ---
+  duration_ms: 0.98475
+  ...
+# Subtest: full herd countdown keeps the half-second target accurate
+ok 128 - full herd countdown keeps the half-second target accurate
+  ---
+  duration_ms: 0.230125
+  ...
+# Subtest: active gold window counts down rather than claiming a medal
+ok 129 - active gold window counts down rather than claiming a medal
+  ---
+  duration_ms: 0.3235
+  ...
+# Subtest: 97.5 seconds exactly remains inside the actual production gold boundary
+ok 130 - 97.5 seconds exactly remains inside the actual production gold boundary
+  ---
+  duration_ms: 0.94125
+  ...
+# Subtest: 97.51 seconds is silver in production and in the live pace cue
+ok 131 - 97.51 seconds is silver in production and in the live pace cue
+  ---
+  duration_ms: 0.287917
+  ...
+# Subtest: 97.5 seconds is gold for the full herd but 97.51 is silver
+ok 132 - 97.5 seconds is gold for the full herd but 97.51 is silver
+  ---
+  duration_ms: 0.113542
+  ...
+# Subtest: tiny positive gold windows remain visibly positive
+ok 133 - tiny positive gold windows remain visibly positive
+  ---
+  duration_ms: 2.111125
+  ...
+# Subtest: pending save overrides countdown and apparent gold completion
+ok 134 - pending save overrides countdown and apparent gold completion
+  ---
+  duration_ms: 0.19575
+  ...
+# Subtest: a direct unsaved status is also pending
+ok 135 - a direct unsaved status is also pending
+  ---
+  duration_ms: 0.315166
+  ...
+# Subtest: unverified receipt cannot claim success or recommend another attempt
+ok 136 - unverified receipt cannot claim success or recommend another attempt
+  ---
+  duration_ms: 0.745083
+  ...
+# Subtest: silver target states exactly the integer improvement and gold time
+ok 137 - silver target states exactly the integer improvement and gold time
+  ---
+  duration_ms: 0.150083
+  ...
+# Subtest: a hundredth-second miss receives a useful tenth-second improvement
+ok 138 - a hundredth-second miss receives a useful tenth-second improvement
+  ---
+  duration_ms: 10.298625
+  ...
+# Subtest: full herd silver uses its own deadline and improvement
+ok 139 - full herd silver uses its own deadline and improvement
+  ---
+  duration_ms: 0.222042
+  ...
+# Subtest: partial bronze rounds target the whole herd without claiming silver or gold
+ok 140 - partial bronze rounds target the whole herd without claiming silver or gold
+  ---
+  duration_ms: 0.139208
+  ...
+# Subtest: zero-home rounds offer the full target without inventing a reward
+ok 141 - zero-home rounds offer the full target without inventing a reward
+  ---
+  duration_ms: 0.06275
+  ...
+# Subtest: beginner gold invites the larger herd and acknowledges only an actual new best
+ok 142 - beginner gold invites the larger herd and acknowledges only an actual new best
+  ---
+  duration_ms: 0.093917
+  ...
+# Subtest: full gold chases the newly saved faster time rather than the older slower record
+ok 143 - full gold chases the newly saved faster time rather than the older slower record
+  ---
+  duration_ms: 0.048958
+  ...
+# Subtest: full gold retains a faster previous record when this ride did not beat it
+ok 144 - full gold retains a faster previous record when this ride did not beat it
+  ---
+  duration_ms: 6.545084
+  ...
+# Subtest: score and time record flags remain distinct
+ok 145 - score and time record flags remain distinct
+  ---
+  duration_ms: 0.119292
+  ...
+# Subtest: pace handles the expired partial round without a saved success claim
+ok 146 - pace handles the expired partial round without a saved success claim
+  ---
+  duration_ms: 0.059834
+  ...
+# Subtest: default targets and time-left fallback use the production mode definitions
+ok 147 - default targets and time-left fallback use the production mode definitions
+  ---
+  duration_ms: 0.066791
+  ...
+# Subtest: presentation is pure and does not change live state or durable receipts
+ok 148 - presentation is pure and does not change live state or durable receipts
+  ---
+  duration_ms: 0.097458
+  ...
+# Subtest: paused world reports a stopped timer rather than a running gold countdown
+ok 149 - paused world reports a stopped timer rather than a running gold countdown
+  ---
+  duration_ms: 0.093375
+  ...
+# Subtest: explicit historical 120-second timing remains presentable without using new defaults
+ok 150 - explicit historical 120-second timing remains presentable without using new defaults
+  ---
+  duration_ms: 0.061875
+  ...
+# Subtest: a walking rider can keep a calm horse moving home from the safe pressure marker
+ok 151 - a walking rider can keep a calm horse moving home from the safe pressure marker
+  ---
+  duration_ms: 8.813333
+  ...
+# Subtest: closing too quickly produces the too-close warning before a faster escape
+ok 152 - closing too quickly produces the too-close warning before a faster escape
+  ---
+  duration_ms: 0.111333
+  ...
+# Subtest: the beginner response is smooth at6m and bounded throughout both bands
+ok 153 - the beginner response is smooth at6m and bounded throughout both bands
+  ---
+  duration_ms: 0.397666
+  ...
+# Subtest: a rider on the wrong side moves the horse away but never receives a guiding cue
+ok 154 - a rider on the wrong side moves the horse away but never receives a guiding cue
+  ---
+  duration_ms: 0.074167
+  ...
+# Subtest: guiding requires strictly greater than one-half directional alignment
+ok 155 - guiding requires strictly greater than one-half directional alignment
+  ---
+  duration_ms: 0.079625
+  ...
+# Subtest: the pressure radius is exclusive and a disabled target cannot guide or spook
+ok 156 - the pressure radius is exclusive and a disabled target cannot guide or spook
+  ---
+  duration_ms: 0.081458
+  ...
+# Subtest: full mode retains exact fourteen-metre pressure and6/4.8 movement speeds
+ok 157 - full mode retains exact fourteen-metre pressure and6/4.8 movement speeds
+  ---
+  duration_ms: 14.428084
+  ...
+# Subtest: invalid input cannot activate pressure or leak NaN into movement/HUD
+ok 158 - invalid input cannot activate pressure or leak NaN into movement/HUD
+  ---
+  duration_ms: 1.210958
+  ...
+# Subtest: large finite points retain a finite normalized alignment and inputs stay untouched
+ok 159 - large finite points retain a finite normalized alignment and inputs stay untouched
+  ---
+  duration_ms: 0.359667
+  ...
+# Subtest: gentle mode gains a learning margin while full mode and all payouts stay unchanged
+ok 160 - gentle mode gains a learning margin while full mode and all payouts stay unchanged
+  ---
+  duration_ms: 2.436708
+  ...
+# Subtest: expired partial and empty rounds earn only their real penned horses
+ok 161 - expired partial and empty rounds earn only their real penned horses
+  ---
+  duration_ms: 0.175167
+  ...
+# Subtest: unfinished, nonfinite, impossible and unknown result proofs are rejected
+ok 162 - unfinished, nonfinite, impossible and unknown result proofs are rejected
+  ---
+  duration_ms: 0.262125
+  ...
+# Subtest: time quantization leaves exact medal boundary authoritative
+ok 163 - time quantization leaves exact medal boundary authoritative
+  ---
+  duration_ms: 0.431041
+  ...
+# Subtest: one write saves rewards, receipt and best records together without changing unrelated data
+ok 164 - one write saves rewards, receipt and best records together without changing unrelated data
+  ---
+  duration_ms: 0.36825
+  ...
+# Subtest: a legacy saved score tie cannot suppress a newly earned better medal
+ok 165 - a legacy saved score tie cannot suppress a newly earned better medal
+  ---
+  duration_ms: 0.125459
+  ...
+# Subtest: later partial results preserve the full-herd medal, fastest time and score
+ok 166 - later partial results preserve the full-herd medal, fastest time and score
+  ---
+  duration_ms: 0.205917
+  ...
+# Subtest: a rejected write leaves every saved field unchanged and explicit retry pays once
+ok 167 - a rejected write leaves every saved field unchanged and explicit retry pays once
+  ---
+  duration_ms: 0.243041
+  ...
+# Subtest: a throwing storage wrapper after commit still confirms the durable receipt
+ok 168 - a throwing storage wrapper after commit still confirms the durable receipt
+  ---
+  duration_ms: 0.322917
+  ...
+# Subtest: unreadable confirmation stays pending then recovers without a second payment
+ok 169 - unreadable confirmation stays pending then recovers without a second payment
+  ---
+  duration_ms: 0.459625
+  ...
+# Subtest: failed first receipt read cannot bypass transaction-level duplicate protection
+ok 170 - failed first receipt read cannot bypass transaction-level duplicate protection
+  ---
+  duration_ms: 0.179709
+  ...
+# Subtest: old run receipts stay acknowledged after many later rounds
+ok 171 - old run receipts stay acknowledged after many later rounds
+  ---
+  duration_ms: 8.541
+  ...
+# Subtest: conflicting receipt identities reject payment rather than overwrite a completed run
+ok 172 - conflicting receipt identities reject payment rather than overwrite a completed run
+  ---
+  duration_ms: 0.19875
+  ...
+# Subtest: recomputed proof refuses mutated payout, count, medal and time fields
+ok 173 - recomputed proof refuses mutated payout, count, medal and time fields
+  ---
+  duration_ms: 0.107583
+  ...
+# Subtest: reward callback cannot replace proof identity and receipt is detached from live details
+ok 174 - reward callback cannot replace proof identity and receipt is detached from live details
+  ---
+  duration_ms: 0.117667
+  ...
+# Subtest: missing or throwing reward reducer rolls the whole draft back
+ok 175 - missing or throwing reward reducer rolls the whole draft back
+  ---
+  duration_ms: 0.144167
+  ...
+# Subtest: malformed legacy records normalize without losing separate claimed data
+ok 176 - malformed legacy records normalize without losing separate claimed data
+  ---
+  duration_ms: 0.105959
+  ...
+# Subtest: special run identifiers become own receipt keys without prototype mutation
+ok 177 - special run identifiers become own receipt keys without prototype mutation
+  ---
+  duration_ms: 0.0995
+  ...
+# Subtest: new budget preserves old 120-second bests, historical receipts and claimed progression
+ok 178 - new budget preserves old 120-second bests, historical receipts and claimed progression
+  ---
+  duration_ms: 0.368333
+  ...
+# Subtest: direct routing preserves the existing pressure selection exactly
+ok 179 - direct routing preserves the existing pressure selection exactly
+  ---
+  duration_ms: 14.732125
+  ...
+# Subtest: a finite fence blocking every direct approach is routed around an actual end
+ok 180 - a finite fence blocking every direct approach is routed around an actual end
+  ---
+  duration_ms: 35.500375
+  ...
+# Subtest: several overlapping circle footprints cannot be shortened into a straight crossing
+ok 181 - several overlapping circle footprints cannot be shortened into a straight crossing
+  ---
+  duration_ms: 40.589709
+  ...
+# Subtest: solid callback geometry alone can force a valid detour
+ok 182 - solid callback geometry alone can force a valid detour
+  ---
+  duration_ms: 27.749625
+  ...
+# Subtest: a wall sealing both pasture edges returns no route
+ok 183 - a wall sealing both pasture edges returns no route
+  ---
+  duration_ms: 27.504542
+  ...
+# Subtest: unreachable solid geometry and blocked pressure destinations return no route
+ok 184 - unreachable solid geometry and blocked pressure destinations return no route
+  ---
+  duration_ms: 2.022584
+  ...
+# Subtest: only the first segment may escape the rider contact margin
+ok 185 - only the first segment may escape the rider contact margin
+  ---
+  duration_ms: 3.390375
+  ...
+# Subtest: route selection is deterministic and never mutates caller geometry
+ok 186 - route selection is deterministic and never mutates caller geometry
+  ---
+  duration_ms: 12.975458
+  ...
+# Subtest: invalid positions, bounds and pressure radii cannot enter route search
+ok 187 - invalid positions, bounds and pressure radii cannot enter route search
+  ---
+  duration_ms: 0.367834
+  ...
+# Subtest: fallback work and solid callback probes have a fixed hard budget
+ok 188 - fallback work and solid callback probes have a fixed hard budget
+  ---
+  duration_ms: 27.970834
+  ...
+# Subtest: solid geometry is probed along every returned leg at intervals no larger than .75m
+ok 189 - solid geometry is probed along every returned leg at intervals no larger than .75m
+  ---
+  duration_ms: 46.602083
+  ...
+# Subtest: a rider in front circles the horse instead of cutting through its spook bubble
+ok 190 - a rider in front circles the horse instead of cutting through its spook bubble
+  ---
+  duration_ms: 1.315333
+  ...
+# Subtest: a rider already four metres away retreats monotonically before circling behind
+ok 191 - a rider already four metres away retreats monotonically before circling behind
+  ---
+  duration_ms: 0.735041
+  ...
+# Subtest: the shared leg validator accepts actual route first legs and every later segment
+ok 192 - the shared leg validator accepts actual route first legs and every later segment
+  ---
+  duration_ms: 15.095666
+  ...
+# Subtest: a previously valid next leg is rejected after a prop, rail or solid blocks it
+ok 193 - a previously valid next leg is rejected after a prop, rail or solid blocks it
+  ---
+  duration_ms: 0.617375
+  ...
+# Subtest: a horse drifting into a cached leg invalidates the leg immediately
+ok 194 - a horse drifting into a cached leg invalidates the leg immediately
+  ---
+  duration_ms: 0.117792
+  ...
+# Subtest: rider-leg endpoints require a full metre at props, rails and pasture bounds
+ok 195 - rider-leg endpoints require a full metre at props, rails and pasture bounds
+  ---
+  duration_ms: 0.084833
+  ...
+# Subtest: rider legs accept exact tangent clearances but reject paths just inside them
+ok 196 - rider legs accept exact tangent clearances but reject paths just inside them
+  ---
+  duration_ms: 0.104708
+  ...
+# Subtest: inside-bubble legs must retreat immediately and finish beyond six metres
+ok 197 - inside-bubble legs must retreat immediately and finish beyond six metres
+  ---
+  duration_ms: 0.786583
+  ...
+# Subtest: a rider at physical collider contact may leave but cannot move closer or cut through
+ok 198 - a rider at physical collider contact may leave but cannot move closer or cut through
+  ---
+  duration_ms: 4.975292
+  ...
+# Subtest: rider-leg solid checks cover the endpoint and every interval of at most .75m
+ok 199 - rider-leg solid checks cover the endpoint and every interval of at most .75m
+  ---
+  duration_ms: 1.510084
+  ...
+# Subtest: rider-leg validation rejects malformed coordinates and bounds without mutating inputs
+ok 200 - rider-leg validation rejects malformed coordinates and bounds without mutating inputs
+  ---
+  duration_ms: 0.186375
+  ...
+# Subtest: captured Willow boundary stall has a safe useful route with the real pasture geometry
+ok 201 - captured Willow boundary stall has a safe useful route with the real pasture geometry
+  ---
+  duration_ms: 2.598375
+  ...
+# Subtest: both avoidance-side preferences produce independently valid boundary reposition routes
+ok 202 - both avoidance-side preferences produce independently valid boundary reposition routes
+  ---
+  duration_ms: 16.759458
+  ...
+# Subtest: a horse in the northwest pasture corner can be repositioned toward home without crossing fences
+ok 203 - a horse in the northwest pasture corner can be repositioned toward home without crossing fences
+  ---
+  duration_ms: 22.029042
+  ...
+# Subtest: a sealed horse escape cannot be disguised as a reachable reposition marker
+ok 204 - a sealed horse escape cannot be disguised as a reachable reposition marker
+  ---
+  duration_ms: 4.787958
+  ...
+# Subtest: reposition prediction preserves the actual .7m horse footprint in solid callbacks
+ok 205 - reposition prediction preserves the actual .7m horse footprint in solid callbacks
+  ---
+  duration_ms: 7.450416
+  ...
+# Subtest: unreachable guiding goals across a sealed fence still allow useful rider-side recovery
+ok 206 - unreachable guiding goals across a sealed fence still allow useful rider-side recovery
+  ---
+  duration_ms: 18.6775
+  ...
+# Subtest: captured shelter position turns clear and physically escapes while rider holds pressure
+ok 207 - captured shelter position turns clear and physically escapes while rider holds pressure
+  ---
+  duration_ms: 17.549084
+  ...
+# Subtest: actual tick rides around the shelter/tree cluster with a walking rider continuing pressure
+ok 208 - actual tick rides around the shelter/tree cluster with a walking rider continuing pressure
+  ---
+  duration_ms: 225.073
+  ...
+# Subtest: gentle open-ground pressure uses the shared walkable speed and original turn integration
+ok 209 - gentle open-ground pressure uses the shared walkable speed and original turn integration
+  ---
+  duration_ms: 0.2395
+  ...
+# Subtest: candidate detours stay in the away-facing half plane and prefer a consistent bypass side
+ok 210 - candidate detours stay in the away-facing half plane and prefer a consistent bypass side
+  ---
+  duration_ms: 0.159333
+  ...
+# Subtest: blocked walls and actual solid geometry cannot be bypassed by weakened contacts
+ok 211 - blocked walls and actual solid geometry cannot be bypassed by weakened contacts
+  ---
+  duration_ms: 26.970792
+  ...
+# Subtest: actual state warning and actual tick speed agree across beginner pressure boundaries
+ok 212 - actual state warning and actual tick speed agree across beginner pressure boundaries
+  ---
+  duration_ms: 4.2705
+  ...
+# Subtest: beginner warning changes at six metres without a movement-speed discontinuity
+ok 213 - beginner warning changes at six metres without a movement-speed discontinuity
+  ---
+  duration_ms: 0.963833
+  ...
+# Subtest: being on the wrong side never shows guiding and actually sends the horse away from the pen
+ok 214 - being on the wrong side never shows guiding and actually sends the horse away from the pen
+  ---
+  duration_ms: 3.749667
+  ...
+# Subtest: turning and solid-blocked horses never show a false green guiding state
+ok 215 - turning and solid-blocked horses never show a false green guiding state
+  ---
+  duration_ms: 2.426041
+  ...
+# Subtest: full solo and shared herds retain their original open-ground speeds
+ok 216 - full solo and shared herds retain their original open-ground speeds
+  ---
+  duration_ms: 19.409333
+  ...
+# Subtest: beginner target stays identifiable until penned and then hands control to the next horse
+ok 217 - beginner target stays identifiable until penned and then hands control to the next horse
+  ---
+  duration_ms: 22.105916
+  ...
+# Subtest: walking behind a horse sustains gentle pressure without repeated sprint-and-release cycles
+ok 218 - walking behind a horse sustains gentle pressure without repeated sprint-and-release cycles
+  ---
+  duration_ms: 241.399375
+  ...
+# Subtest: actual horse tick can leave a pasture corner using the published recovery route
+ok 219 - actual horse tick can leave a pasture corner using the published recovery route
+  ---
+  duration_ms: 162.531958
+  ...
+# Subtest: wrong side gets a clear path around a log end, never backward through it
+ok 220 - wrong side gets a clear path around a log end, never backward through it
+  ---
+  duration_ms: 4.279041
+  ...
+# Subtest: sideways missed approaches and post-skimming positions remain recoverable
+ok 221 - sideways missed approaches and post-skimming positions remain recoverable
+  ---
+  duration_ms: 3.358125
+  ...
+# Subtest: gradual side-skimming accumulates movement and replaces a stale route across the log
+ok 222 - gradual side-skimming accumulates movement and replaces a stale route across the log
+  ---
+  duration_ms: 2.849666
+  ...
+# Subtest: recovery persists through corner waypoints, asks rider to face forward, then releases
+ok 223 - recovery persists through corner waypoints, asks rider to face forward, then releases
+  ---
+  duration_ms: 0.73925
+  ...
+# Subtest: changing to face-the-log guidance invalidates the cached chevron spine immediately
+ok 224 - changing to face-the-log guidance invalidates the cached chevron spine immediately
+  ---
+  duration_ms: 0.678334
+  ...
+# Subtest: a refusal near the correct side creates space to rebuild the approach
+ok 225 - a refusal near the correct side creates space to rebuild the approach
+  ---
+  duration_ms: 0.383625
+  ...
+# Subtest: ordinary forward jumps do not trigger recovery at or after the plane
+ok 226 - ordinary forward jumps do not trigger recovery at or after the plane
+  ---
+  duration_ms: 0.117667
+  ...
+# Subtest: formal fences and gates retain their current guide, course/target changes clear recovery
+ok 227 - formal fences and gates retain their current guide, course/target changes clear recovery
+  ---
+  duration_ms: 0.31725
+  ...
+# Subtest: rotated logs preserve the correct approach side
+ok 228 - rotated logs preserve the correct approach side
+  ---
+  duration_ms: 2.236916
+  ...
+# Subtest: collider or wall on one side chooses the other, a sealed approach gives no false arrow
+ok 229 - collider or wall on one side chooses the other, a sealed approach gives no false arrow
+  ---
+  duration_ms: 0.894792
+  ...
+# Subtest: world clearance respects precise solid parts, bounds, water and steep ground
+ok 230 - world clearance respects precise solid parts, bounds, water and steep ground
+  ---
+  duration_ms: 0.236417
+  ...
+# Subtest: planning is cached, blocked forward checks are bounded, and snapshots are read-only
+ok 231 - planning is cached, blocked forward checks are bounded, and snapshots are read-only
+  ---
+  duration_ms: 0.229958
+  ...
+# Subtest: following recovery backward does not count; a real forward jump then advances exactly once
+ok 232 - following recovery backward does not count; a real forward jump then advances exactly once
+  ---
+  duration_ms: 5.276792
+  ...
+# Subtest: Rush third and fourth refusals preserve the course while accumulating every penalty
+ok 233 - Rush third and fourth refusals preserve the course while accumulating every penalty
+  ---
+  duration_ms: 1.080833
+  ...
+# Subtest: observing the same Rush grades again cannot reprice or increment refusals
+ok 234 - observing the same Rush grades again cannot reprice or increment refusals
+  ---
+  duration_ms: 0.287041
+  ...
+# Subtest: formal third refusal eliminates once, pays exactly 60 coins and cancels asynchronously
+ok 235 - formal third refusal eliminates once, pays exactly 60 coins and cancels asynchronously
+  ---
+  duration_ms: 1.063666
+  ...
+# Subtest: an absent event or explicit false Rush flag keeps the formal elimination rule
+ok 236 - an absent event or explicit false Rush flag keeps the formal elimination rule
+  ---
+  duration_ms: 0.29625
+  ...
+# Subtest: Rush continues pricing scaled rail faults and counts refusals per obstacle and lap
+ok 237 - Rush continues pricing scaled rail faults and counts refusals per obstacle and lap
+  ---
+  duration_ms: 0.126792
+  ...
+# Subtest: previously observed grades and existing penalties survive a later Rush refusal
+ok 238 - previously observed grades and existing penalties survive a later Rush refusal
+  ---
+  duration_ms: 0.075875
+  ...
+# Subtest: a previous score cannot hide recovery or an imminent jump instruction
+ok 239 - a previous score cannot hide recovery or an imminent jump instruction
+  ---
+  duration_ms: 0.564958
+  ...
+# Subtest: keyboard and touch riders learn the actual jump input even with direct Journey entry
+ok 240 - keyboard and touch riders learn the actual jump input even with direct Journey entry
+  ---
+  duration_ms: 0.70575
+  ...
+# Subtest: airborne riders keep their line and cannot receive a second jump request
+ok 241 - airborne riders keep their line and cannot receive a second jump request
+  ---
+  duration_ms: 0.537333
+  ...
+# Subtest: brief earned feedback returns to the next action without adding a second overlay
+ok 242 - brief earned feedback returns to the next action without adding a second overlay
+  ---
+  duration_ms: 1.89375
+  ...
+# Subtest: shared startup reuses five actors in four distinct pasture slots without a solo start or write
+ok 243 - shared startup reuses five actors in four distinct pasture slots without a solo start or write
+  ---
+  duration_ms: 10.016042
+  ...
+# Subtest: a flank rider changes the same horse motion through production combined-pressure physics
+ok 244 - a flank rider changes the same horse motion through production combined-pressure physics
+  ---
+  duration_ms: 5.165166
+  ...
+# Subtest: remote roster is detached, deduplicated, finite, bounded and capped at three plus local
+ok 245 - remote roster is detached, deduplicated, finite, bounded and capped at three plus local
+  ---
+  duration_ms: 0.333916
+  ...
+# Subtest: guest never advances clock, runs avoidance, pens a horse or pays locally
+ok 246 - guest never advances clock, runs avoidance, pens a horse or pays locally
+  ---
+  duration_ms: 0.579167
+  ...
+# Subtest: valid guest snapshots interpolate detached host positions even while a local menu is open
+ok 247 - valid guest snapshots interpolate detached host positions even while a local menu is open
+  ---
+  duration_ms: 0.738708
+  ...
+# Subtest: malformed, cross-session, reverse-clock, impossible-pen and out-of-bounds snapshots are rejected atomically
+ok 248 - malformed, cross-session, reverse-clock, impossible-pen and out-of-bounds snapshots are rejected atomically
+  ---
+  duration_ms: 1.100292
+  ...
+# Subtest: host and guest finish exactly once, retain actors, and never touch solo rewards or records
+ok 249 - host and guest finish exactly once, retain actors, and never touch solo rewards or records
+  ---
+  duration_ms: 0.570167
+  ...
+# Subtest: host menu, free camera, photo pause and background freeze the shared stopwatch and physics
+ok 250 - host menu, free camera, photo pause and background freeze the shared stopwatch and physics
+  ---
+  duration_ms: 1.484708
+  ...
+# Subtest: shared completion has no solo deadline and cannot override a pending or active solo round
+ok 251 - shared completion has no solo deadline and cannot override a pending or active solo round
+  ---
+  duration_ms: 0.573042
+  ...
+# Subtest: normal cancellation of a shared session releases only shared actors and stop hook
+ok 252 - normal cancellation of a shared session releases only shared actors and stop hook
+  ---
+  duration_ms: 0.488958
+  ...
+# Subtest: source exposes the narrow shared interface alongside unchanged solo entry points
+ok 253 - source exposes the narrow shared interface alongside unchanged solo entry points
+  ---
+  duration_ms: 0.3075
+  ...
+# Subtest: a blocked shared spawn fails without moving the rider or constructing the herd
+ok 254 - a blocked shared spawn fails without moving the rider or constructing the herd
+  ---
+  duration_ms: 0.130667
+  ...
+# Subtest: guest final state retains authoritative pen coordinates and rejects horses leaving it
+ok 255 - guest final state retains authoritative pen coordinates and rejects horses leaving it
+  ---
+  duration_ms: 0.24975
+  ...
+# Subtest: startup rendezvous holds the real countdown, all horse physics and elapsed time until one-way host release
+ok 256 - startup rendezvous holds the real countdown, all horse physics and elapsed time until one-way host release
+  ---
+  duration_ms: 0.199459
+  ...
+# Subtest: observer notifications coalesce without synchronous drawing and use the latest layout
+ok 257 - observer notifications coalesce without synchronous drawing and use the latest layout
+  ---
+  duration_ms: 2.273375
+  ...
+# Subtest: unchanged observer boxes do not redraw, while real dimensions and DPR changes do
+ok 258 - unchanged observer boxes do not redraw, while real dimensions and DPR changes do
+  ---
+  duration_ms: 0.951625
+  ...
+# Subtest: zero-size layout waits for a usable stage instead of writing canvas dimensions
+ok 259 - zero-size layout waits for a usable stage instead of writing canvas dimensions
+  ---
+  duration_ms: 0.354208
+  ...
+# Subtest: production close cancels pending work and hidden observers cannot schedule redraws
+ok 260 - production close cancels pending work and hidden observers cannot schedule redraws
+  ---
+  duration_ms: 0.1635
+  ...
+# Subtest: close and reopen redraw the map and a stale callback cannot disturb the new frame
+ok 261 - close and reopen redraw the map and a stale callback cannot disturb the new frame
+  ---
+  duration_ms: 0.153375
+  ...
+1..261
+# tests 261
+# suites 0
+# pass 261
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1190.868209
