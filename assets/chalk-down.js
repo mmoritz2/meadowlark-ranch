@@ -1,5 +1,23 @@
 import {chalkDownlandLift,CHALK_MARE_PANEL,drawChalkMare} from './chalk-downland.mjs?v=landmark-fields-1';
 
+// Lower only this hill's sun caster; visible turf and hoof contact stay on the
+// shared surface. A private synchronous stream keeps its extra material UUID
+// out of the sequential world-layout random stream.
+let chalkShadowEpoch=0;
+function chalkSunDepth(T){
+ const prior=Math.random;let state=(0x6d2b79f5^Math.imul(++chalkShadowEpoch,0x9e3779b1))>>>0;
+ Math.random=()=>{state=(state+0x6d2b79f5)|0;let v=Math.imul(state^(state>>>15),1|state);v^=v+Math.imul(v^(v>>>7),61|v);return((v^(v>>>14))>>>0)/4294967296;};
+ let depth;try{depth=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking,side:T.DoubleSide});}finally{Math.random=prior;}
+ depth.name='Chalk Down | inward sun caster';depth.userData.chalkCasterInsetM=.10;
+ depth.onBeforeCompile=shader=>{
+  const token='#include <begin_vertex>';
+  if(!shader.vertexShader.includes(token))throw Error('Chalk sun depth requires the bundled begin_vertex chunk');
+  shader.vertexShader=shader.vertexShader.replace(token,token+'\ntransformed -= normal * 0.10;');
+ };
+ depth.customProgramCacheKey=()=> 'chalk-sun-caster-inset-2';
+ return depth;
+}
+
 // One sampled surface is shared by the visible down, the chalk cutting and hoof height.
 export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundColorAt}) {
  const {x,z,len,depth,h,crest}=site,face=Math.atan2(x,z),ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
@@ -44,6 +62,8 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  mat.shadowSide=T.DoubleSide;
  const root=new T.Group();root.name='Whitehorse Down';root.userData.walkable=true;
  const ground=new T.Mesh(geometry,mat);ground.name='vista:chalkscarp';ground.receiveShadow=true;ground.castShadow=true;root.add(ground);
+ const sunDepth=chalkSunDepth(T);ground.customDepthMaterial=sunDepth;
+ const releaseSunDepth=()=>{geometry.removeEventListener('dispose',releaseSunDepth);sunDepth.dispose();};geometry.addEventListener('dispose',releaseSunDepth);
  function sampleUV(u,t,field=heights){
   const fx=(u/len+.5)*nx,fz=t*nz;if(fx<0||fz<0||fx>nx||fz>nz)return -Infinity;
   const i=Math.min(nx-1,Math.floor(fx)),j=Math.min(nz-1,Math.floor(fz)),a=j*(nx+1)+i,dx=fx-i,dz=fz-j;

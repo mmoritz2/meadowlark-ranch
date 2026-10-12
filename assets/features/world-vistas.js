@@ -1,5 +1,6 @@
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=landmark-fields-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1';
+import {configureChalkGrazing} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -557,7 +558,7 @@ export function install(G){
   };
   const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH,groundMaterial:pasture.material,groundColorAt});
   scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;window.__chalkReliefAt=down.reliefAt;
-  P.SCARP=SCARP;
+  P.SCARP=SCARP;configureChalkGrazing(SCARP);
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
      of it: from the foot she is a white smear, and from here she is a horse. Its patch was checked with the mound's
      footprint, so it stands exactly there (fixed) instead of shuffling round whatever tree grew on it. */

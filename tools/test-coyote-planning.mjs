@@ -8,7 +8,16 @@ const original=JSON.parse(read('./fixtures/coyote-planning-11fb567.json'));
 const rawFlora=process.env.COYOTE_PLANNING_FLORA_RUNTIME?fs.readFileSync(process.env.COYOTE_PLANNING_FLORA_RUNTIME,'utf8'):read('../assets/features/world-flora.js'),html=read('../ranch3d.html'),{T,old,next}=f;
 // Approved ownership-only edits are separately exercised by the nine retirement
 // fixtures. Their exact declared literals may coexist with these planning tests.
-let flora=once(rawFlora,"import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';");if(flora.includes(' F.treeOwners=[];'))for(const [after,before]of original.approvedNonRandomOwnershipEdits)flora=once(flora,after,before);
+// Approved post-layout Chalk response is independently exercised against actual
+// native rows. Remove only these exact additions from the older layout guard.
+function withoutChalkRenderResponse(source){
+ for(const added of ["import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';\n"," // Keep original submitted plant sizes through the course-clear gather/mow.\n // Final cover readiness invokes this response after clearing; existing zero\n // rows, source counts/colours, planting decisions and outside bytes stay exact.\n F.refreshChalkGrazing=()=>F.chalkGrazing={\n  tuft:applyChalkGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n),\n  brack:applyChalkGrassMesh(BANK.brack.im,groundH,BANK.brack.n),\n  petal:applyChalkFlowerMesh(BANK.petal.im,BANK.petal.n)};\n\n"]){
+  assert.equal(source.split(added).length,2,'Exactly one declared Chalk render addition');
+  source=source.replace(added,added.startsWith(' //')?'\n':'');
+ }
+ return source;
+}
+let flora=once(withoutChalkRenderResponse(rawFlora),"import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';");if(flora.includes(' F.treeOwners=[];'))for(const [after,before]of original.approvedNonRandomOwnershipEdits)flora=once(flora,after,before);
 const plan=next.createCanyonPlacementPlan({rawHeightAt:f.oldRaw,heightAt:f.oldHeight,terrainStep:f.step});
 function build(module,height){const scene=new T.Scene(),material=new T.MeshStandardMaterial(),colliders=[];return module.createCanyonLandscape({THREE:T,scene,heightAt:height,terrainStep:f.step,material,colliders});}
 const prior=build(old,f.oldHeight),live=build(next,f.height);

@@ -6,7 +6,16 @@ import {fixture as terrain} from './contour-fixture.mjs';
 import {retireSteepFallsFloraTrees} from '../assets/hollowpeak-flora-roots.mjs';
 const read=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8');
 function exactCache(source,pairs){for(const [after,before]of pairs){assert.equal(source.split(after).length,2,'Final regional cache edge must occur exactly once: '+after);source=source.replace(after,before);}return source;}
-const source=exactCache(read('../assets/features/world-flora.js'),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
+// Approved post-layout Chalk response is independently exercised against actual
+// native rows. Remove only these exact additions from the older layout guard.
+function withoutChalkRenderResponse(source){
+ for(const added of ["import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';\n"," // Keep original submitted plant sizes through the course-clear gather/mow.\n // Final cover readiness invokes this response after clearing; existing zero\n // rows, source counts/colours, planting decisions and outside bytes stay exact.\n F.refreshChalkGrazing=()=>F.chalkGrazing={\n  tuft:applyChalkGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n),\n  brack:applyChalkGrassMesh(BANK.brack.im,groundH,BANK.brack.n),\n  petal:applyChalkFlowerMesh(BANK.petal.im,BANK.petal.n)};\n\n"]){
+  assert.equal(source.split(added).length,2,'Exactly one declared Chalk render addition');
+  source=source.replace(added,added.startsWith(' //')?'\n':'');
+ }
+ return source;
+}
+const source=exactCache(withoutChalkRenderResponse(read('../assets/features/world-flora.js')),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
 const photo=exactCache(read('../assets/world-photoscans.js'),[["import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';","import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=steep-flora-roots-1';"],["import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';","import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';"]]),oldPhoto=read('./fixtures/steep-flora-11fb567/world-photoscans.js');
 function fixture(body=source,{height=terrain.height,planned=terrain.oldHeight,capacity=40}={}){
  const geometry=new T.BoxGeometry(),material=new T.MeshBasicMaterial(),BANK={};for(const kind of ['pine','cold','oak','trunk'])BANK[kind]={im:new T.InstancedMesh(geometry,material,capacity),n:0,cap:capacity};

@@ -1,4 +1,5 @@
 import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1';
+import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollowpeak-cascades-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
@@ -1001,6 +1002,13 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   grazedTufts.maxLowestPointAfter=grazedTufts.maxLowestPointAfter===null?lowestAfter:Math.max(grazedTufts.maxLowestPointAfter,lowestAfter);
  }
  F.grazedTufts=grazedTufts;
+ // Keep original submitted plant sizes through the course-clear gather/mow.
+ // Final cover readiness invokes this response after clearing; existing zero
+ // rows, source counts/colours, planting decisions and outside bytes stay exact.
+ F.refreshChalkGrazing=()=>F.chalkGrazing={
+  tuft:applyChalkGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n),
+  brack:applyChalkGrassMesh(BANK.brack.im,groundH,BANK.brack.n),
+  petal:applyChalkFlowerMesh(BANK.petal.im,BANK.petal.n)};
 
  // Suppress live cutting cover only after every density/height policy. Earlier
  // zeroing would feed Matrix4.decompose a singular basis in the cleanup passes.

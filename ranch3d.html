@@ -669,10 +669,12 @@ import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} fro
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=hollowpeak-cascades-1';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=chalk-grazing-1';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=hollowpeak-cascades-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=chalk-grazing-1';
+import {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';
+import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';
 import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=landmark-fields-1';
 import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
 import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-cascades-1';
@@ -690,7 +692,7 @@ import {loadCascadeFoamTexture} from './assets/cascade-foam-texture.mjs?v=hollow
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
 import {hollowpeakSnowAttribute} from './assets/hollowpeak-snow.mjs?v=cold-landscape-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=hollowpeak-cascades-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=chalk-grazing-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=world-cohesion-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
@@ -713,7 +715,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=regional-landmarks-1';
+import {FEATURES} from './assets/features/index.js?v=chalk-grazing-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -3363,7 +3365,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58&&meadowGrazingAt(x,z)<.75;
    if(!meadow||coldWoodlandWeights(x,z).weight>.08||h3>0.6*(1-coyoteCoverDryWeight(x,z)*.95)||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
-   v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
+   v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc);respondChalkFlowerMatrix(m4.elements,0); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
   }
   const hide=(im,id)=>{sc.set(0,0,0);m4.compose(v.set(0,-40,0),q.identity(),sc);im.setMatrixAt(id,m4);};
@@ -3381,7 +3383,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     const oldHeight=sz*(0.85+h2*0.35)*LEGACY_LUPIN_HEIGHT;
     const topHeight=oldHeight+(meadowFlowerHeightAt(x,z,h2)-oldHeight)*bank;
     sc.set(sz,topHeight/MEADOW_LUPIN_HEIGHT,sz);
-    v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);m4.toArray(cell.matrices,cell.count*16);
+    v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);respondChalkFlowerMatrix(m4.elements,0);m4.toArray(cell.matrices,cell.count*16);
     bcol.setRGB(.87+h1*.13,.83+h2*.16,.93+h3*.07);bcol.toArray(cell.colors,cell.count*3);cell.count++;
    }
   }
@@ -3394,7 +3396,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    if(!okClutter(x,z)||h3>density*(B==='meadow'?1-.95*meadowGrazingAt(x,z)*(1-blend):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
    const sz=size*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
-   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
+   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH); fern.setMatrixAt(id,m4);
    bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10);
    if(winter)bcol.lerp(winterGrassTint,winter.tintAmount);fern.setColorAt(id,bcol);
   }
@@ -3405,7 +3407,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));
    if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62)continue;
    const sz=0.8+h3*0.7; e.set(0,h2*Math.PI*2,(h1-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.6),sz);
-   v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);m4.toArray(reedCell.matrices,reedCell.count*16);
+   v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,reed.geometry,groundH);m4.toArray(reedCell.matrices,reedCell.count*16);
    bcol.setRGB(.85+h2*.15,.88+h3*.12,.81+h1*.16);bcol.toArray(reedCell.colors,reedCell.count*3);reedCell.count++;
   }
   for(let k=0;k<NG_RK;k++){                                  // stones, everywhere, in the local rock colour
@@ -3433,6 +3435,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    near.instanceMatrix.array.set(cell.matrices.subarray(0,cell.count*16),grassDrawCount*16);
    near.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),grassDrawCount*3);grassDrawCount+=cell.count;
   }
+  applyChalkGrassMesh(near,groundH,grassDrawCount);
   near.count=grassVR?Math.floor(grassDrawCount*.5):grassDrawCount;
   let liveFlowers=0;
   for(const cell of lupinCells){
@@ -15139,6 +15142,7 @@ installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 installUndergrowth(G,{flowerShrubs:naturalFlowerShrubs,staticShrubs:STATIC_MERGE.filter(g=>/ shrub$/.test(g.name))});
 G.world.mixedSward=installMixedSward(G);
+installChalkCoverRefresh(G);
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

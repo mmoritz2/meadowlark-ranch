@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createChalkDown} from '../assets/chalk-down.js';
 import {chalkDownlandLift,CHALK_MARE_PANEL} from '../assets/chalk-downland.mjs';
+import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../assets/chalk-grazing.mjs?v=chalk-grazing-1';
 const site={x:0,z:0,len:112,depth:76,h:14,crest:.5};
 const THREE={...T,TextureLoader:class{load(){return new T.Texture();}}};
 const mat=new T.MeshStandardMaterial();
@@ -75,7 +76,7 @@ test('actual cleanup, dry, winter and grazed policies finish before live-cut sin
    const matrices=[new T.Matrix4().compose(new T.Vector3(10,4.95,20),new T.Quaternion(),new T.Vector3(.8,1.2,.8)),new T.Matrix4().compose(new T.Vector3(30,4.95,40),new T.Quaternion(),new T.Vector3(.8,1.2,.8))],colors=[new T.Color('#aabc90'),new T.Color('#aabc90')];
    rows[name]={matrices,colors};BANK[name]={n:2,im:{geometry:{attributes:{position:{count:2,getX:()=>0,getY:i=>i,getZ:()=>0}}},getMatrixAt(i,out){out.copy(matrices[i]);},setMatrixAt(i,m){matrices[i]=m.clone();},getColorAt(i,out){out.copy(colors[i]);},setColorAt(i,c){colors[i]=c.clone();}}};
   }
-  let grazed=0;const D={THREE:T,BANK,F:{},KEEP:[],inFarm:()=>false,pathDist:()=>100,onRace:()=>false,alpineSnowAt:()=>0,vn:()=>.5,hsh:()=>0,groundH:()=>5,biomeAt:()=> 'meadow',coyoteCoverDryWeight:()=>0,coldCoverProfile:()=>null,onWater:()=>false,
+  let grazed=0;const D={THREE:T,BANK,F:{},KEEP:[],inFarm:()=>false,pathDist:()=>100,onRace:()=>false,alpineSnowAt:()=>0,vn:()=>.5,hsh:()=>0,groundH:()=>5,biomeAt:()=> 'meadow',coyoteCoverDryWeight:()=>0,coldCoverProfile:()=>null,onWater:()=>false,applyChalkGrassMesh,applyChalkFlowerMesh,
    grazedTuftScale(x,z,height){grazed++;assert([x,z,height].every(Number.isFinite));assert(height>0,'hidden zero basis must never enter scale policy');return .8;},chalkPlanning:{isChalk:(x,z)=>live&&x===10&&z===20},_m:new T.Matrix4(),_q:new T.Quaternion(),_v:new T.Vector3(),_sc:new T.Vector3(),_col:new T.Color()};
   run(D);return{rows,BANK,F:D.F,grazed};
  };

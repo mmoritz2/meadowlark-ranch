@@ -1,4 +1,5 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=hollowpeak-cascades-1';
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=chalk-grazing-1';
+import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=field-grass-3';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
@@ -70,7 +71,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
  // Only the drawn prefix is uploaded; unused capacity cannot contribute vertices.
  function copy(rows,mesh,colors=true){
   const dst=mesh.instanceMatrix.array;
-  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);if(colors)mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);}
+  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);if(colors)mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);}
   mesh.count=rows.length;
   for(const [attribute,width] of [[mesh.instanceMatrix,16],...(colors?[[mesh.instanceColor,3]]:[])]){
    attribute.clearUpdateRanges();
@@ -98,6 +99,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   for(const r of plan.scans){const i=r.variant,mesh=state.meshes[i],row=counts[i]++,c=source.cells[r.cellIndex],offset=r.row*16,dst=row*16,scale=r.height/state.sources[i].sourceHeight;
    for(let col=0;col<3;col++){const start=offset+col*4,length=Math.hypot(c.matrices[start],c.matrices[start+1],c.matrices[start+2]);if(length<1e-8)throw Error('Zero scan root basis');for(let axis=0;axis<3;axis++)mesh.instanceMatrix.array[dst+col*4+axis]=c.matrices[start+axis]*scale/length;}
    mesh.instanceMatrix.array[dst+12]=r.x;mesh.instanceMatrix.array[dst+13]=r.y;mesh.instanceMatrix.array[dst+14]=r.z;mesh.instanceMatrix.array[dst+15]=1;
+   respondChalkGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH);
   }
   for(let i=0;i<5;i++){state.meshes[i].count=counts[i];state.meshes[i].instanceMatrix.needsUpdate=true;}
   const finished=now();timingSamples.push(finished-started);if(timingSamples.length>32)timingSamples.shift();const sorted=timingSamples.slice().sort((a,b)=>a-b);

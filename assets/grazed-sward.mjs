@@ -1,10 +1,11 @@
 import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';
 
 // A short turf stand uses the same seventy triangles as an existing rich root.
 // Only the already-counted rich rows inside grazed ground can use this shape.
 export const GRAZED_SWARD=Object.freeze({triangles:70,leaves:46,bentLeaves:12,maximumRadius:.60,maskStart:.45,maskFull:.92});
 export function grazedSwardWeight(x,z){
- const g=meadowSwardGrazingAt(x,z),t=Math.max(0,Math.min(1,(g-GRAZED_SWARD.maskStart)/(GRAZED_SWARD.maskFull-GRAZED_SWARD.maskStart)));
+ const g=Math.max(meadowSwardGrazingAt(x,z),chalkGrazingAt(x,z).cut),t=Math.max(0,Math.min(1,(g-GRAZED_SWARD.maskStart)/(GRAZED_SWARD.maskFull-GRAZED_SWARD.maskStart)));
  return t*t*(3-2*t);
 }
 export function selectsGrazedSward(x,z,sample){return sample<grazedSwardWeight(x,z);}

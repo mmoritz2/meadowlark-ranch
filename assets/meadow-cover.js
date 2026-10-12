@@ -1,4 +1,5 @@
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
+import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=field-grass-3';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
@@ -182,9 +183,10 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
-  let cx=Infinity,cz=Infinity;
+  let cx=Infinity,cz=Infinity,geometryKey=getQuality();
   return {mesh,invalidate(){cx=cz=Infinity;slots.fill(undefined);},tick(time,x,z){
-    mesh.geometry=geometries[getQuality()]||geometries.high;
+    const nextGeometryKey=getQuality();mesh.geometry=geometries[nextGeometryKey]||geometries.high;
+    if(nextGeometryKey!==geometryKey){geometryKey=nextGeometryKey;cx=cz=Infinity;slots.fill(undefined);}
     uniforms.fieldTime.value=time;uniforms.fieldRider.value.set(x,z);
     const nx=Math.floor(x/CELL),nz=Math.floor(z/CELL);if(nx===cx&&nz===cz)return;cx=nx;cz=nz;
     for(let dz=-W/2;dz<W/2;dz++)for(let dx=-W/2;dx<W/2;dx++){
@@ -196,7 +198,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
         if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
         else scale.setScalar(0);
-        matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
+        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

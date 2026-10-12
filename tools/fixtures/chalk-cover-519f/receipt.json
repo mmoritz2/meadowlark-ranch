@@ -1,0 +1,24 @@
+{
+  "base": "519f514d9aee9d0a2ca389c7c49677aee84b8365",
+  "nativeSite": {
+    "x": -68.98,
+    "z": 213.41,
+    "len": 112,
+    "depth": 76,
+    "h": 14,
+    "crest": 0.5,
+    "sited": true
+  },
+  "nativeRowLayout": "Float32 little endian interleaved original matrix16 then color3, stride19;9500rows",
+  "terrainGrid": "513x513Float32, origin-500, step1000/512, original production terrainH triangles",
+  "files": {
+    "terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "chalk-front-high-grass-seed.f32": "28cb95bb91c18e27f7fa0212c0a5cd235224f98e8875eedb4916fc3215e786c5",
+    "chalk-surface-source.json": "435a7efac2c4c0bb8f2f92c7f51b39b20b582bd588803833f420957958273399",
+    "ranch3d.html": "81c68cb5953211e25726ae6731753725ab58a7c6e07eeeaf0f0c24d19d65bad6",
+    "assets/features/world-flora.js": "b2bc59c5d2b0ec9b59f55d6344e06d9069100918c13a1b4c4b13fe12f128b6b3",
+    "assets/terrain-realism.js": "5cef3db06fdc2354c6656f2a585a07738a14088e7b50773d4d00464294e0d0bd",
+    "chalk-front-high-grass-near.f32": "5b4ec7b2944c6b2490fe13fb72715476c46d1f57d2ce7b10258c6b3307313a1a",
+    "near-source.json": "9f907f6eff0cdeb5a5b85bff446d8c7818527beba84ca910159285f3bc36ae39"
+  }
+}
