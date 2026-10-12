@@ -77,11 +77,13 @@ function makeBodyMaterial(THREE,rig,base,neutral){
 function prepareHair(THREE,rig){
  const entries=[];
  rig.scene.traverse(mesh=>{
-  if(!mesh.isSkinnedMesh||mesh.geometry?.attributes.position.count!==rig.profile.hairVertexCount)return;
+  if(!mesh.isSkinnedMesh||mesh.geometry?.attributes.position.count!==rig.profile.hairVertexCount&&!mesh.userData.nativeEquestrianGroom)return;
   const geometry=mesh.geometry,indices=geometry.attributes.skinIndex,weights=geometry.attributes.skinWeight;
   if(!geometry.attributes.nativeTailDye){
    const mask=new Float32Array(indices.count);
    for(let i=0;i<mask.length;i++)for(let j=0;j<4;j++)if(/tail/i.test(mesh.skeleton.bones[indices.getComponent(i,j)]?.name||''))mask[i]+=weights.getComponent(i,j);
+   // A negative sentinel keeps exact eyelash islands out of either hair dye.
+   const lashes=geometry.attributes.nativeEquestrianLash;if(lashes)for(let i=0;i<mask.length;i++)if(lashes.getX(i)>0)mask[i]=-1;
    geometry.setAttribute('nativeTailDye',new THREE.BufferAttribute(mask,1));
   }
   const originals=Array.isArray(mesh.material)?mesh.material:[mesh.material];
@@ -94,7 +96,7 @@ function prepareHair(THREE,rig){
     shader.fragmentShader='uniform vec3 nrMane,nrTail,nrHairBaseColor;uniform float nrManeOn,nrTailOn;varying float nrTailMask;\n'+shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
      float nrTailMix=smoothstep(.15,.70,nrTailMask);
      float nrHairDetail=clamp(dot(diffuseColor.rgb/max(nrHairBaseColor,vec3(.0001)),vec3(.299,.587,.114)),0.0,1.0);
-     diffuseColor.rgb=mix(diffuseColor.rgb,mix(nrMane,nrTail,nrTailMix)*nrHairDetail,mix(nrManeOn,nrTailOn,nrTailMix));`);
+     diffuseColor.rgb=mix(diffuseColor.rgb,mix(nrMane,nrTail,nrTailMix)*nrHairDetail,mix(nrManeOn,nrTailOn,nrTailMix)*step(-.5,nrTailMask));`);
    };
    material.customProgramCacheKey=()=>previousKey+'|native-roster-saved-hair-v1';material.needsUpdate=true;
    material.userData.nativeRosterHair=state;return material;

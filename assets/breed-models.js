@@ -2,11 +2,12 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-2';
+import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-5';
 import {applyNativeFjordGroom,prepareNativeFjordCrest} from './native-fjord-groom.js?v=fjord-brushed-crest-4';
+import {applyNativeEquestrianGroom,prepareNativeEquestrianGroom} from './native-equestrian-groom.js?v=equestrian-locks-2';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=draft-collar-1';
-import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=club-horses-1';
+import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=equestrian-style-20261012';
 import {dragonProfiles,dragonProfile,configureDragonAppearance,attachDragonBreath} from './dragon-roster.js?v=dragon-roster-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
@@ -89,7 +90,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
       // and the same shape, coat, then motion ordering as every approved breed.
       pending.set(key,Promise.all([source,roster,motion]).then(([source,roster,extra])=>{
         let g={...source,scene:clone(source.scene)};
-        if(roster){g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;const [binary,coat]=roster;applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});}
+        if(roster){g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;const [binary,coat]=roster;applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});prepareNativeEquestrianGroom({THREE,gltf:g,spec,binary});}
         if(extra){const replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}
         return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec);
       }).catch(e=>{pending.delete(key);throw e;}));
@@ -115,6 +116,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     configureDragonAppearance(THREE,inst);
     if(asset.profile.nativeRoster){inst.nativeFantasy=createNativeHorseFantasy({THREE,inst,key:inst.key});inst.fantasyAppearance=inst.nativeFantasy?.appearance;}
     inst.nativeFjordGroom=applyNativeFjordGroom({THREE,rig:inst});
+    inst.nativeEquestrianGroom=applyNativeEquestrianGroom({THREE,rig:inst});
     return inst;
   }
   function mountPoint(asset,point){if(!Array.isArray(point))return null;if(Array.isArray(point[0]))point=point[0];if(point.length!==3||!point.every(Number.isFinite))return null;return new THREE.Vector3(point[0]*asset.fitScale,point[1]*asset.fitScale+asset.fitY,point[2]*asset.fitScale);}

@@ -32,17 +32,43 @@ function verifiedFjordCrest(mesh,hair,profile){
  return true;
 }
 
+// Draft locks retain the same strict source-donor contract as the Fjord crest.
+function verifiedEquestrianGroom(mesh,hair,profile){
+ const groom=profile.nativeVariant?.groom?.equestrian,shell=groom?.shell,attrs=mesh.geometry?.attributes;
+ if(!['percheron','shire','clyde'].includes(profile.nativeVariant?.id)||shell?.version!==1||shell.space!=='native-source-mesh'||!attrs)return false;
+ const count=attrs.position?.count,index=mesh.geometry.index;
+ if(!Number.isInteger(count)||count<16||count>2048||count!==shell.vertexCount||!index||index.itemSize!==1||index.count!==shell.indexCount||index.count<3||index.count>15000||index.count%3)return false;
+ for(const[name,size]of [['position',3],['normal',3],['uv',2],['skinIndex',4],['skinWeight',4],['nativeTailDye',1],['nativeEquestrianSourceVertex',1]]){const a=attrs[name];if(!a||a.itemSize!==size||a.count!==count||a.normalized||!a.array.every(Number.isFinite))return false;}
+ if(index.array.some(i=>!Number.isInteger(i)||i<0||i>=count)||attrs.nativeTailDye.array.some(v=>v!==0&&v!==1))return false;
+ if(mesh.parent!==hair.parent||mesh.bindMode!==hair.bindMode||!mesh.position.equals(hair.position)||!mesh.quaternion.equals(hair.quaternion)||!mesh.scale.equals(hair.scale)||!mesh.bindMatrix.equals(hair.bindMatrix))return false;
+ const bones=mesh.skeleton?.bones,inverses=mesh.skeleton?.boneInverses;
+ if(bones?.length!==677||inverses?.length!==677||bones.some((b,i)=>b!==hair.skeleton.bones[i]||!inverses[i].equals(hair.skeleton.boneInverses[i])))return false;
+ const donorMask=new Uint8Array(23514),tailMask=new Uint8Array(23514);
+ if(!Array.isArray(groom.cards)||!groom.cards.length)return false;
+ for(const card of groom.cards){if(!['mane','forelock','tail'].includes(card.role)||!Number.isInteger(card.start)||!Number.isInteger(card.count)||card.start<0||card.count<1||card.start+card.count>donorMask.length)return false;for(let i=card.start;i<card.start+card.count;i++){if(donorMask[i])return false;donorMask[i]=1;tailMask[i]=card.role==='tail'?1:0;}}
+ hair.updateWorldMatrix(true,false);const sourceScale=hair.matrixWorld.getMaxScaleOnAxis();if(!Number.isFinite(sourceScale)||sourceScale<=0)return false;
+ const source=hair.geometry.attributes;
+ for(let i=0;i<count;i++){
+  const donor=attrs.nativeEquestrianSourceVertex.getX(i);if(!Number.isInteger(donor)||!donorMask[donor]||attrs.nativeTailDye.getX(i)!==tailMask[donor])return false;
+  let distanceSquared=0;for(let c=0;c<3;c++)distanceSquared+=(attrs.position.getComponent(i,c)-source.position.getComponent(donor,c))**2;
+  if(distanceSquared*sourceScale*sourceScale>.25)return false;
+  for(let c=0;c<4;c++)if(attrs.skinIndex.getComponent(i,c)!==source.skinIndex.getComponent(donor,c)||attrs.skinWeight.getComponent(i,c)!==source.skinWeight.getComponent(donor,c))return false;
+ }
+ return true;
+}
+
 /** One-time, fail-closed verification of the original skin and optional crest. */
 export function validateNativeGroomRig(rig){
  try{
   if(!rig?.profile?.nativeBreed||rig.profile.nativeKind!=='horse'||!(rig.profile.nativeRoster||NATIVE_GROOM_PROFILE_IDS.includes(rig.profile.id||rig.key)))return {eligible:false,reason:'Unverified native profile'};
   const root=rig.nativeRoot;if(!root)return {eligible:false,reason:'Missing original native root'};
   const meshes=[];root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
-  const crests=meshes.filter(m=>m.userData?.nativeFjordCrest===true),sourceMeshes=meshes.filter(m=>!crests.includes(m));
+  const crests=meshes.filter(m=>m.userData?.nativeFjordCrest===true),locks=meshes.filter(m=>m.userData?.nativeEquestrianGroom===true),sourceMeshes=meshes.filter(m=>!crests.includes(m)&&!locks.includes(m));
   const expectedCounts=[2028,5092,13895,16159,23514],counts=sourceMeshes.map(m=>m.geometry?.attributes?.position?.count).sort((a,b)=>a-b);
   if(counts.length!==5||counts.some((n,i)=>n!==expectedCounts[i]))return {eligible:false,reason:'Unverified five-mesh topology'};
   const hair=sourceMeshes.find(m=>m.geometry.attributes.position.count===23514);
   if(crests.length>1||crests.some(m=>!verifiedFjordCrest(m,hair,rig.profile)))return {eligible:false,reason:'Unverified additive Fjord crest'};
+  if(locks.length>1||locks.some(m=>!verifiedEquestrianGroom(m,hair,rig.profile)))return {eligible:false,reason:'Unverified additive equestrian locks'};
   const hierarchy=new Map(NATIVE_GROOM_HIERARCHY),safe=new Set(NATIVE_GROOM_AUDIT.controls.map(s=>s.name)),boneMap={};
   for(const mesh of meshes){
    const bones=mesh.skeleton?.bones;
@@ -55,7 +81,7 @@ export function validateNativeGroomRig(rig){
    const attrs=mesh.geometry.attributes,J=attrs.skinIndex,W=attrs.skinWeight;
    // These verified assets use one complete four-influence set. Fail closed on new sets.
    if(!J||!W||J.itemSize!==4||W.itemSize!==4||J.count!==W.count||W.count!==attrs.position.count||Object.keys(attrs).some(k=>/^(skinIndex|skinWeight|joints_|weights_)/i.test(k)&&k!=='skinIndex'&&k!=='skinWeight'))return {eligible:false,reason:'Unverified source influence attributes'};
-   const isHair=attrs.position.count===23514||crests.includes(mesh);
+   const isHair=attrs.position.count===23514||crests.includes(mesh)||locks.includes(mesh);
    for(let i=0;i<W.count;i++)for(let c=0;c<4;c++){
     const weight=W.getComponent(i,c),index=J.getComponent(i,c);
     if(!Number.isFinite(weight)||weight<0||!Number.isInteger(index)||index<0||index>=bones.length)return {eligible:false,reason:'Invalid source skin influence'};
@@ -65,7 +91,7 @@ export function validateNativeGroomRig(rig){
    }
   }
   for(const spec of NATIVE_GROOM_AUDIT.controls)if(!boneMap[spec.name]||boneMap[spec.name].parent?.name!==spec.parent)return {eligible:false,reason:'Missing audited groom control'};
-  return {eligible:true,reason:crests.length?'Verified WildMesh677 skin and donor-bound Fjord crest':'Verified WildMesh677 original skin',root,boneMap,controls:58};
+  return {eligible:true,reason:locks.length?'Verified WildMesh677 skin and donor-bound equestrian locks':crests.length?'Verified WildMesh677 skin and donor-bound Fjord crest':'Verified WildMesh677 original skin',root,boneMap,controls:58};
  }catch(error){return {eligible:false,reason:'Native groom validation failed: '+String(error?.message||error)};}
 }
 

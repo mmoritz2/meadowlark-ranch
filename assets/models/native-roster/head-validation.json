@@ -15,6 +15,7 @@
         0.0021227509511058673,
         0.0024783233861486783
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -49,6 +50,7 @@
         0.002161894132693512,
         0.0025240232654898634
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -83,6 +85,7 @@
         0.002153090085250123,
         0.002513744491778634
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -117,6 +120,7 @@
         0.00220228291662306,
         0.0024392356533235286
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -151,6 +155,7 @@
         0.004269794039460561,
         0.004966462049640218
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -185,6 +190,7 @@
         0.003464352242343735,
         0.003970914426999018
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -219,6 +225,7 @@
         0.0015461231806035887,
         0.0016830586455975228
       ],
+      "eyeOpenings": [],
       "meshes": [
         {
           "meshIndex": 0,
@@ -245,102 +252,144 @@
     {
       "id": "percheron",
       "family": "draft",
-      "maxDisplayedHeadDeltaM": 0.0036247947192951753,
-      "maxOutsideHeadQuantizationM": 9.652215959583956e-06,
-      "maxAnimatedAdditionalHeadDeltaM": 0.0036237861959961012,
+      "maxDisplayedHeadDeltaM": 0.009710492677568953,
+      "maxOutsideHeadQuantizationM": 6.628666248231891e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.009712063303418788,
       "nativeGaitFrames": 84,
       "displayedBitDeltaM": [
-        0.001322261284759505,
-        0.0014393699770962529
+        0.0025680622397909426,
+        0.0029631057199703305
+      ],
+      "eyeOpenings": [
+        {
+          "side": "l",
+          "verifiedLidVertices": 69,
+          "widthGain": 1.1823330172542272,
+          "heightGain": 1.1975069318891998
+        },
+        {
+          "side": "r",
+          "verifiedLidVertices": 64,
+          "widthGain": 1.1870230076073864,
+          "heightGain": 1.196713819720185
+        }
       ],
       "meshes": [
         {
           "meshIndex": 0,
-          "maxSharedFieldErrorM": 4.375763641302523e-06,
-          "maxOutsideHeadErrorM": 4.366343173285569e-06
+          "maxSharedFieldErrorM": 4.384775243870638e-06,
+          "maxOutsideHeadErrorM": 4.384775243870638e-06
         },
         {
           "meshIndex": 1,
-          "maxSharedFieldErrorM": 1.1701435894885983e-06,
+          "maxSharedFieldErrorM": 8.537794269402678e-07,
           "maxOutsideHeadErrorM": 0.0
         },
         {
           "meshIndex": 3,
-          "maxSharedFieldErrorM": 9.652215959583956e-06,
-          "maxOutsideHeadErrorM": 9.652215959583956e-06
+          "maxSharedFieldErrorM": 6.735562501970379e-06,
+          "maxOutsideHeadErrorM": 6.628666248231891e-06
         },
         {
           "meshIndex": 4,
-          "maxSharedFieldErrorM": 4.319500517091684e-06,
-          "maxOutsideHeadErrorM": 4.319500517091684e-06
+          "maxSharedFieldErrorM": 2.973356636014535e-06,
+          "maxOutsideHeadErrorM": 2.973356636014535e-06
         }
       ]
     },
     {
       "id": "shire",
       "family": "draft",
-      "maxDisplayedHeadDeltaM": 0.0043843526618127645,
-      "maxOutsideHeadQuantizationM": 1.0521839844626205e-05,
-      "maxAnimatedAdditionalHeadDeltaM": 0.004385130713242496,
+      "maxDisplayedHeadDeltaM": 0.010176090761535495,
+      "maxOutsideHeadQuantizationM": 7.646746489315958e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.010175756432113606,
       "nativeGaitFrames": 84,
       "displayedBitDeltaM": [
-        0.0017554768296710994,
-        0.0019786218386665766
+        0.002691195524378603,
+        0.003105180524165937
+      ],
+      "eyeOpenings": [
+        {
+          "side": "l",
+          "verifiedLidVertices": 69,
+          "widthGain": 1.1772334611287405,
+          "heightGain": 1.1898013595437704
+        },
+        {
+          "side": "r",
+          "verifiedLidVertices": 64,
+          "widthGain": 1.1785212778162948,
+          "heightGain": 1.1890354934380143
+        }
       ],
       "meshes": [
         {
           "meshIndex": 0,
-          "maxSharedFieldErrorM": 4.80342908639407e-06,
-          "maxOutsideHeadErrorM": 4.80342908639407e-06
+          "maxSharedFieldErrorM": 4.829062131641563e-06,
+          "maxOutsideHeadErrorM": 4.756480413769517e-06
         },
         {
           "meshIndex": 1,
-          "maxSharedFieldErrorM": 1.0566362465725214e-06,
+          "maxSharedFieldErrorM": 9.00959435436236e-07,
           "maxOutsideHeadErrorM": 0.0
         },
         {
           "meshIndex": 3,
-          "maxSharedFieldErrorM": 1.0578230727533283e-05,
-          "maxOutsideHeadErrorM": 1.0521839844626205e-05
+          "maxSharedFieldErrorM": 7.646746489315958e-06,
+          "maxOutsideHeadErrorM": 7.646746489315958e-06
         },
         {
           "meshIndex": 4,
-          "maxSharedFieldErrorM": 4.465522662956081e-06,
-          "maxOutsideHeadErrorM": 4.465522662956081e-06
+          "maxSharedFieldErrorM": 3.0470016009960816e-06,
+          "maxOutsideHeadErrorM": 3.0470016009960816e-06
         }
       ]
     },
     {
       "id": "clyde",
       "family": "draft",
-      "maxDisplayedHeadDeltaM": 0.0037463924882015893,
-      "maxOutsideHeadQuantizationM": 8.383244878039591e-06,
-      "maxAnimatedAdditionalHeadDeltaM": 0.0037460426164023825,
+      "maxDisplayedHeadDeltaM": 0.010014129144513167,
+      "maxOutsideHeadQuantizationM": 6.027084853097737e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.010012926279514717,
       "nativeGaitFrames": 84,
       "displayedBitDeltaM": [
-        0.001732515287783003,
-        0.0019527415721422063
+        0.0026483627323894477,
+        0.003055758789373522
+      ],
+      "eyeOpenings": [
+        {
+          "side": "l",
+          "verifiedLidVertices": 69,
+          "widthGain": 1.1791723795338434,
+          "heightGain": 1.1874162675927988
+        },
+        {
+          "side": "r",
+          "verifiedLidVertices": 64,
+          "widthGain": 1.18126440422163,
+          "heightGain": 1.1872211562933763
+        }
       ],
       "meshes": [
         {
           "meshIndex": 0,
-          "maxSharedFieldErrorM": 4.109562367048119e-06,
-          "maxOutsideHeadErrorM": 4.036416596983839e-06
+          "maxSharedFieldErrorM": 4.110650099541053e-06,
+          "maxOutsideHeadErrorM": 4.110650099541053e-06
         },
         {
           "meshIndex": 1,
-          "maxSharedFieldErrorM": 9.551775239121114e-07,
+          "maxSharedFieldErrorM": 8.615799817312797e-07,
           "maxOutsideHeadErrorM": 0.0
         },
         {
           "meshIndex": 3,
-          "maxSharedFieldErrorM": 8.412033820800613e-06,
-          "maxOutsideHeadErrorM": 8.383244878039591e-06
+          "maxSharedFieldErrorM": 6.027084853097737e-06,
+          "maxOutsideHeadErrorM": 6.027084853097737e-06
         },
         {
           "meshIndex": 4,
-          "maxSharedFieldErrorM": 3.6993679146588773e-06,
-          "maxOutsideHeadErrorM": 3.6993679146588773e-06
+          "maxSharedFieldErrorM": 2.5705758143679513e-06,
+          "maxOutsideHeadErrorM": 2.5705758143679513e-06
         }
       ]
     }

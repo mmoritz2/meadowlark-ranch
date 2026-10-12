@@ -6,13 +6,13 @@ let checks=0;function check(value,message){assert(value,message);checks++;}
 const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
 (async()=>{
  const THREE=await import(threeURL),{clone}=await load('assets/vendor/three/examples/jsm/utils/SkeletonUtils.js');
- const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish}=await load('assets/native-horse-materials.js');
+ const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish,NATIVE_COAT_SHADING:shading}=await load('assets/native-horse-materials.js');
  const {createBreedLibrary}=await load('assets/breed-models.js');
  const {NATIVE_BREED_PROFILES}=await load('assets/native-breed-profiles.js');
  const {configureNativeCustomization}=await load('assets/native-horse-customization.js');
  const {createEquineFantasyCoat}=await load('assets/equine-fantasy.js');
  const materialsOf=scene=>{const out={};scene.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])out[m.name]=m;});return out;};
- const snapshot=m=>JSON.stringify({name:m.name,color:m.color.toArray(),roughness:m.roughness,metalness:m.metalness,specularIntensity:m.specularIntensity,envMapIntensity:m.envMapIntensity,alphaTest:m.alphaTest,alphaToCoverage:m.alphaToCoverage,transparent:m.transparent,depthWrite:m.depthWrite,map:m.map?.uuid});
+ const snapshot=m=>JSON.stringify({name:m.name,color:m.color.toArray(),roughness:m.roughness,metalness:m.metalness,specularIntensity:m.specularIntensity,envMapIntensity:m.envMapIntensity,sheen:m.sheen,sheenColor:m.sheenColor?.toArray(),sheenRoughness:m.sheenRoughness,clearcoat:m.clearcoat,clearcoatRoughness:m.clearcoatRoughness,alphaTest:m.alphaTest,alphaToCoverage:m.alphaToCoverage,transparent:m.transparent,depthWrite:m.depthWrite,map:m.map?.uuid});
  function fixtureMaterial(def,index){const p=def.pbrMetallicRoughness,m=new THREE.MeshPhysicalMaterial({name:def.name,roughness:p.roughnessFactor,metalness:p.metallicFactor,specularIntensity:def.extensions.KHR_materials_specular.specularFactor,side:THREE.DoubleSide,alphaTest:def.alphaCutoff||0,map:new THREE.Texture({fixture:index})});m.color.fromArray(p.baseColorFactor);return m;}
  function fixtureAsset(key,defs,{nativeRoster=false,nativeDragon=false}={}){
   const scene=new THREE.Group(),normalization=new THREE.Group(),nativeRoot=new THREE.Group(),head=new THREE.Bone(),seat=new THREE.Bone();head.name='head_019';seat.name='saddle_0333';nativeRoot.add(head,seat);scene.add(normalization);normalization.add(nativeRoot);
@@ -23,7 +23,7 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(n*3).fill(.5),3));geo.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(n*2).fill(.5),2));geo.setAttribute('skinIndex',new THREE.BufferAttribute(ids,4));geo.setAttribute('skinWeight',new THREE.BufferAttribute(weights,4));
    const mesh=new THREE.SkinnedMesh(geo,materials[i]);mesh.name=materials[i].name+' mesh';nativeRoot.add(mesh);mesh.bind(skeleton);if(i===0)skin=mesh;
   }
-  return {key,scene,skin,profile:{...NATIVE_BREED_PROFILES[key],nativeRoster,nativeDragon,bodyVertexCount:3,hairVertexCount:5,tackVertexCount:6,nativeScale:1,nativeTranslation:[0,0,0],nativeSourceSeat:[0,0,0]},fitScale:1,fitY:0,baseMat:skin.material,nativeNeutralCoat:materials[0].map,animations:[]};
+  return {key,scene,skin,profile:{...NATIVE_BREED_PROFILES[key],nativeRoster,nativeDragon,bodyVertexCount:3,hairVertexCount:5,tackVertexCount:6,nativeScale:1,nativeTranslation:[0,0,0],nativeSourceSeat:[0,0,0]},fitScale:1,fitY:0,baseMat:skin.material,nativeNeutralCoat:nativeRoster?materials[0].map:undefined,animations:[]};
  }
  const previousFetch=global.fetch;
  global.fetch=async url=>{const u=new URL(url);return {ok:true,json:async()=>JSON.parse(fs.readFileSync(u,'utf8'))};};
@@ -42,6 +42,7 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
    check(m[name].map===sourceM[name].map&&m[name].map===untreated[name].map,key+' source map/UV sampling preserved: '+name);
   }
   for(const name of ['M_Saddle1','M_Saddle2'])check(snapshot(m[name])===before[name],key+' original tack finish is untouched');
+  check(m.M_Body.sheen===finish.body.sheen&&m.M_Body.sheenRoughness===finish.body.sheenRoughness&&m.M_Eye.clearcoat===finish.eye.clearcoat,key+' broad coat sheen and eye tear-film properties are applied');
   check(m.M_Body.color.equals(sourceM.M_Body.color)&&m.M_Body.roughness===finish.body.roughness&&m.M_Body.specularIntensity>0,key+' coat retains pigment with restored dielectric highlights');
   check(m.M_Eye.color.r>m.M_Eye.color.g&&m.M_Eye.color.g>m.M_Eye.color.b&&m.M_Eye.roughness<.25&&m.M_Eye.specularIntensity>0,key+' iris is warm dark with a controlled moist surface');
   check(m.M_Hair.alphaTest===finish.hair.alphaCutoff&&m.M_Hair.alphaToCoverage&&!m.M_Hair.transparent&&m.M_Hair.depthWrite,key+' hair keeps cutout depth with antialiased edges');
@@ -53,6 +54,7 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
  }
 
  for(const [file,name] of [['horse-roster.js','registerRosterPreviews'],['new-breeds.js','registerNewBreedPreviews'],['clubs-boards.js','registerClubHorsePreviews'],['market-summon-keys-pets.js','registerMarketHorsePreviews']]){const provider=await load('assets/features/'+file);provider[name](library);}
+ const {EXPANSION_HORSE_BREEDS}=await load('assets/expansion-horses.js');for(const row of EXPANSION_HORSE_BREEDS)library.alias(row[0],row[7].body,row);
  let equines=0;
  for(const profile of Object.values(library.manifest.breeds).filter(p=>p.nativeBreed&&p.nativeKind==='horse'&&!p.nativeDragon)){
   const horse=fixtureAsset('white-western',docs['white-western'].materials);horse.profile=profile;horse.materials=Object.values(materialsOf(horse.scene));
@@ -82,10 +84,31 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
  check(saved.material.userData.nativeRosterCoat.nrMarkColor.value.equals(new THREE.Color(custom.markCol)),'saved marking color stays exact');
  check(saved.hair.length>0&&saved.hair.every(entry=>entry.materials.every(m=>m.userData.nativeRosterHair.nrMane.value.equals(new THREE.Color(custom.colors.mane))&&m.userData.nativeRosterHair.nrTail.value.equals(new THREE.Color(custom.tailCol)))),'saved mane and tail dyes retain their exact selected colors');
  const shader=makeShader();saved.material.onBeforeCompile(shader);check(shader.uniforms.nrMark.value===3&&shader.fragmentShader.includes('nrSkin'),'saved coat shader compiles its existing pinto controls');
+ check(shader.uniforms.nativeCoatNeutral?.value===roster.nativeNeutralCoat,'saved alias recoloring retains the exact cached neutral atlas');
+ check(shader.fragmentShader.indexOf('float ncL=')<shader.fragmentShader.indexOf('#include <map_fragment>')&&shader.fragmentShader.indexOf('#include <map_fragment>')<shader.fragmentShader.indexOf('vec3 nrBefore='),'shadow compensation precedes map sampling and authored markings, preserving bright marking colors');
+ check(shader.fragmentShader.match(/uniform sampler2D nativeCoatNeutral/g)?.length===1&&shader.fragmentShader.match(/float ncL=/g)?.length===1,'saved customization includes the coat correction exactly once');
 
- const hookRig=fixtureAsset('white-western',defs);hookRig.materials=Object.values(materialsOf(hookRig.scene));const hookMaterial=hookRig.baseMat;
+ const hookRig=fixtureAsset('white-western',defs,{nativeRoster:true});hookRig.materials=Object.values(materialsOf(hookRig.scene));const hookMaterial=hookRig.baseMat;
  const hook=shader=>{shader.uniforms.fixture={value:3};},cache=()=> 'prior-artwork-v1';hookMaterial.onBeforeCompile=hook;hookMaterial.customProgramCacheKey=cache;
- apply({THREE,rig:hookRig});check(hookMaterial.onBeforeCompile===hook&&hookMaterial.customProgramCacheKey===cache,'surface helper never replaces existing shader hooks or program identity');
+ apply({THREE,rig:hookRig});const hookShader=makeShader();hookMaterial.onBeforeCompile(hookShader);
+ check(hookShader.uniforms.fixture.value===3&&hookShader.uniforms.nativeCoatNeutral.value===hookRig.nativeNeutralCoat,'surface helper chains existing artwork and supplies the untouched neutral atlas');
+ check(hookMaterial.customProgramCacheKey()==='prior-artwork-v1|native-coat-satin-3','composed program identity retains its prior key and explicit coat revision');
+ const installedHook=hookMaterial.onBeforeCompile;apply({THREE,rig:hookRig});check(hookMaterial.onBeforeCompile===installedHook,'repeated material application never stacks the coat hook');
+ const raw=fixtureAsset('white-western',defs);raw.materials=Object.values(materialsOf(raw.scene));const rawHook=raw.baseMat.onBeforeCompile;apply({THREE,rig:raw});check(raw.baseMat.onBeforeCompile===rawHook,'raw colored originals without a neutral atlas are never mistaken for grayscale shading');
+ const belgianProfile=library.manifest.breeds.belgian;check(belgianProfile?.nativeRosterAlias,'Belgian uses the actual registered alias path');
+ const belgianSource=fixtureAsset('white-western',defs,{nativeRoster:true});belgianSource.profile={...belgianProfile,bodyVertexCount:3,hairVertexCount:5,tackVertexCount:6};
+ const belgian=library.instantiate(belgianSource),belgianRow=['belgian','Belgian',0,0,0,'#ba753d','#f3dfb2',{}];
+ configureNativeCustomization({THREE,rig:belgian,horse:{id:'belgian',breed:'belgian',colors:{body:'#ba753d',mane:'#f3dfb2'},mark:'none',markCol:'#ffffff'},defaults:belgianRow});
+ const belgianShader=makeShader();belgian.skin.material.onBeforeCompile(belgianShader);
+ check(belgianShader.uniforms.nrRecolor.value===1&&belgianShader.uniforms.nrCoat.value.equals(new THREE.Color('#ba753d'))&&belgianShader.uniforms.nativeCoatNeutral.value===belgianSource.nativeNeutralCoat,'Belgian alias receives softer source shading with its exact warm golden saved pigment');
+ // Bound the authored tone curve: pigment ratios are multiplied equally, dark
+ // skin remains dark, highlights do not grow, and middle-shadow contrast drops.
+ const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+ const gain=x=>1+(Math.min(shading.maxGain,Math.pow(Math.max(x,.0001),shading.exponent)/Math.max(x,.0001))-1)*smooth(shading.skinStart,shading.skinEnd,x);
+ check(gain(0)===1&&gain(.01)===1&&gain(1)===1,'neutral black skin and white highlights are unchanged by the bounded coat curve');
+ check(Array.from({length:1001},(_,i)=>gain(i/1000)).every(x=>Number.isFinite(x)&&x>=1&&x<=1.55),'all atlas luminances have finite, bounded, positive gain');
+ check((.3*gain(.3))/(.1*gain(.1))<3&&gain(.2)>1.4,'middle-shadow anatomy contrast is reduced without erasing its direction');
+ check(belgianShader.fragmentShader.includes(shading.exponent.toFixed(4))&&belgianShader.fragmentShader.includes(shading.maxGain.toFixed(4)),'production shader uses the tested tone-curve bounds');
  const themed=Object.values(materialsOf(r.scene));check(themed.every(m=>Number.isFinite(m.roughness)&&Number.isFinite(m.specularIntensity)),'composed material properties remain finite');
  // Parse untouched GLB bytes with the actual vendored loader. Only image pixel
  // decoding is stubbed; KHR extensions, material classes, rigs and preparation
@@ -105,8 +128,11 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
   check(['M_Body','M_Eye','M_Hair'].every(name=>original[name].isMeshPhysicalMaterial&&original[name].specularIntensity===0),key+' KHR_materials_specular constructs physical source materials');
   check(actor.nativeMaterialPolish.body===1&&actor.nativeMaterialPolish.eye===1&&actor.nativeMaterialPolish.hair===1,key+' real load→prepare→private clone applies every intended surface');
   check(m.M_Body.roughness===finish.body.roughness&&m.M_Body.specularIntensity===finish.body.specularIntensity,key+' actual loaded coat restores its dielectric highlights');
-  check(m.M_Eye.color.getHexString()==='68472b'&&m.M_Eye.roughness===finish.eye.roughness,key+' actual loaded eye becomes dark warm iris');
+  check(m.M_Eye.color.getHexString()===finish.eye.color.slice(1)&&m.M_Eye.roughness===finish.eye.roughness,key+' actual loaded eye becomes dark warm iris');
   check(m.M_Hair.alphaTest===finish.hair.alphaCutoff&&m.M_Hair.alphaToCoverage,key+' actual loaded hair retains cutout and softer edges');
+  const eyeShader=makeShader();m.M_Eye.onBeforeCompile(eyeShader);
+  check(eyeShader.fragmentShader.includes('float neCatch=pow(max(0.0,dot(normal,neHalf)),96.0)')&&eyeShader.fragmentShader.includes('dot(normal,neView)')&&eyeShader.fragmentShader.indexOf('float neCatch=')>eyeShader.fragmentShader.indexOf('#include <lights_physical_fragment>'),key+' small corneal reflection uses actual view/normal direction and fades at grazing angles');
+  check(m.M_Eye.emissive.getHex()===original.M_Eye.emissive.getHex()&&m.M_Eye.clearcoat===finish.eye.clearcoat,key+' eye retains physical corneal reflection without changing emissive material pigment');
   for(const name of Object.keys(original)){
    check(snapshot(original[name])===before[name]&&snapshot(materialsOf(untreated.scene)[name])===before[name],key+' actual source/baseline isolated: '+name);
    check(m[name].map===original[name].map&&m[name]!==original[name],key+' actual map unchanged and material privately cloned: '+name);

@@ -47,7 +47,8 @@ Source hair cards keep all their original topology and skin influences, with
 whole-card mane/tail length changes. This preserves moving grooming controls.
 This buffer builder supplies no new fetlock feather geometry. The Fjord now
 uses shortened original cards around a small continuous skinned crest and
-forelock; see the grooming section below. Distinct upper-body shape,
+forelock. The three draft foundations use shortened cards under broader mane,
+forelock and tail locks; see the grooming section below. Distinct upper-body shape,
 height, coat pattern and grooming do not imply independently authored leg rigs,
 breed-specific gaits, or anatomically unique skeletons.
 
@@ -137,12 +138,11 @@ limb's actual named pastern and knee/hock joints, read from the asymmetric
 native rest pose. The added lateral gain keeps 35% at a hinge; the added depth
 gain reaches zero there. This changes the added draft shape, preserving the
 original limb surface, joints, weights, lengths and animation. The correction
-fades out by Y=1.10 m; upper-body positions/normals and all four non-body meshes
-remain exactly equal to the reviewed prior release. Coats and all 22 non-draft
-buffers are unchanged. The newer breastcollar attachment is retained byte for
-byte. Its builder accepts this explicitly reviewed body-only revision and
-checks the original non-body morph hash; unknown shape changes still require
-a new collar fit and review.
+fades out by Y=1.10 m. That body-only revision preserved upper-body and all four
+non-body meshes; the subsequent version 6 style pass below deliberately changes
+the shared upper-body cage and refits its tack. Coats and all 22 non-draft
+buffers remain unchanged. Unknown cage changes still require a new collar fit
+and review.
 
 `node tools/test-native-draft-leg-deformation.mjs` compares 81 production Trot
 poses with the identical source pose. It checks 5,694 lower-leg triangles for
@@ -164,13 +164,12 @@ The original horse surface is not narrowed, and no joints, weights or gait
 tracks change. The broad transition avoids the artificial waist produced by
 ending the correction directly above the stifle.
 
-`draftShape.upperLegContour` records that field. The 13,929 body vertices in
-its protected lower/front/upper regions retain their released positions and
-normals bit for bit; the independent validator pins these subsets to version 4.
-The front chest, head, coat, seat/actor scale, all four non-body morph blocks,
-and fitted collar append remain unchanged. Other breeds are unchanged. The
-builder accepts only the exact reviewed body-prefix hash plus the preserved
-non-body hash before reusing the collar data.
+`draftShape.upperLegContour` records that field. The original version 5 pass
+preserved its 13,929 lower/front/upper vertices and all non-body meshes. Version 6
+retains the field while restyling the shared upper-body cage, so the current
+validator instead pins the 3,054 vertices at or below source Y=0.65 m to the
+released version 5 positions and normals, bit for bit. Original body skin
+influences and animation tracks remain unchanged.
 
 `node tools/test-native-draft-thigh-deformation.mjs` samples 41 phases of the
 production Trot, left/right Canter and left/right Gallop, comparing all three
@@ -180,6 +179,22 @@ compression on nondegenerate source triangles rather than hiding inherited
 folds; the reported forearm and source-existing shoulder/thigh deformation
 remain separate limitations. This is a deformation regression, not a claim
 that all self-intersections or source gait artifacts are eliminated.
+
+Draft style version 6 gives the three foundations a lighter, rounded barrel,
+clearer neck-to-shoulder separation, broad forehead and a more tapered muzzle.
+Percheron uses barrel/hip/neck multipliers 1.34/1.38/1.32 and depth 1.16; Shire
+keeps a taller, longer frame and Clydesdale a slightly lighter one. These are
+regional cage coefficients, not overall body dimensions. The prior lower-leg
+and broad C2 thigh corrections remain active. Fixed body quantization scales
+preserve the released lower-leg positions and normals exactly. The existing
+native gaits and all 22 other foundations are unchanged.
+
+The same cage carries the eye and tack surfaces and supplies the updated seat
+point. The reviewed lower breastcollar route is retained: its original shoulder
+influences are inverse-solved onto the new standing surface, then the same
+60 mm upward/12 mm forward route is applied. This is an authored static refit,
+not a runtime solver. The independent collar gate checks target reconstruction,
+source provenance, route normals and unchanged influence records.
 
 For visual review, open `review/native-draft-legs/review.html`. The visible
 controls provide exact cycle phases, both side views, front/rear views, leg and
@@ -251,22 +266,44 @@ bridge and throatlatch each have their own compact region.
 | Refined | Arabian (`sunset`), Akhal-Teke | 10.83 mm / 8.97 mm |
 | Stock | Quarter (`bay`), Paint, Appaloosa | 5.04–5.13 mm |
 | Pony | Icelandic, Fjord | 9.86 mm / 6.93 mm |
-| Draft | Percheron, Shire, Clydesdale | 3.62–4.38 mm |
+| Draft | Percheron, Shire, Clydesdale | 9.71–10.18 mm |
 
 The Arabian has a modest dish and more refined muzzle; the Akhal keeps a
 straight narrow face. Stock heads gain a little forehead/jaw substance. Pony
-muzzles are shorter and broader. Draft heads retain their substantial existing
-shape with restrained cheek and bridge refinements. The source identity is
-preserved; these are not independently authored heads or new skeletons.
+muzzles are shorter and broader. The draft style adds forehead width, tapers
+the cheek/muzzle and enlarges the visible eye opening around the verified native
+eye centers. The compact eye field expands tangential directions by 20% and
+radial depth by 8%, fading to zero within 90 mm. It runs on body, eyes and bridle
+together. Actual strongly lid-weighted surface envelopes grow 17.7–19.8% against
+the same cage without this eye field. Their source influences and eyeball
+centers are unchanged. This is a regional appearance edit, not a new facial rig;
+draft blinking remains disabled by the existing conservative expression gate.
 
 Run `python3 tools/native-roster/qa-head-shapes.py` for the decoded field and
 contact checks. It samples 84 actual native walk/trot/left-canter/right-canter
 poses per revised foundation, checks shared eye/bridle deformation, seat and
 stirrup preservation, protected limbs, finite normals through the full decoder,
-and bounded head displacement. `head-validation.json` records the result.
+and bounded head displacement. Pass `--report assets/models/native-roster/head-validation.json`
+to save the result.
 Quantized nonfacial positions differ from the pre-head target by at most 20 µm.
 Front/side/quarter closeups and mounted runtime review still decide appearance;
 these numerical tests do not certify visual gait or perfect leather contact.
+
+## Draft mane and tail locks
+
+`equestrian_groom.py:shape_equestrian_groom` groups the draft mane into 12 swept,
+slightly irregular locks, with three forelock and five tail locks. One additive
+skin contains 1,892 vertices and 3,704 triangles. It copies each recorded source
+hair donor's four joint influences exactly and uses the original 677-bone rig;
+no new bones or clip tracks are introduced. Original fine cards are shortened
+under the volumes, while all 76 original eyelash islands remain untouched.
+
+`groom.equestrian.shell` stores the bounded skin after the collar append;
+`groom.equestrian.cards` records the original donor domains. The part marker is
+zero for mane/forelock and one for tail. The runtime owns color, material,
+Hair visibility, inertia and disposal. The binary validator checks exact donor
+weights/indices, finite bounds, unit normals and nondegenerate triangles. Actual
+standing and animated visual review remains necessary for overlapping locks.
 
 ## Native Fjord groom and runtime feathers
 
