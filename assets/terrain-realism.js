@@ -1,7 +1,7 @@
-import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=world-cohesion-1';
+import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=world-cohesion-1';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=cold-landscape-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its
@@ -320,6 +320,13 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         float hollowDeposit=clamp(terrainHollowSnow,0.0,1.0);
         snow=mix(snow,hollowDeposit,hollowWeight);
         thawLitter=max(thawLitter,snowRegion*hollowWeight*(1.0-hollowDeposit));
+        // The former climate-only annulus whitened level ground behind the
+        // riding fields. A continuous elevation/latitude thaw lets forest
+        // litter and mineral soil connect the meadow to the raised snowbanks.
+        // It only removes snow; no ridge or snow contour is introduced.
+        float foothillThaw=hollowpeakFoothillThaw(p,hgt);
+        snow*=1.0-foothillThaw;
+        thawLitter=max(thawLitter,snowRegion*foothillThaw);
       #endif
       float amber  = 1.0-smoothstep(86.0,132.0, length(p-vec2( 300.0,-300.0))+ecoA);
       float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);

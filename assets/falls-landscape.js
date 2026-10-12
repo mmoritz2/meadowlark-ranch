@@ -1,4 +1,4 @@
-import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=world-cohesion-1';
+import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=hollowpeak-ridges-1';
 // Hollowpeak's watercourse is cut into the same height field used by the horses.
 // Original landforms; the cliff material is Poly Haven / Amal Kumar, CC0.
@@ -27,6 +27,45 @@ const ALPINE_BUTTRESSES=[
  [[-379,-167,0,12,13],[-360,-167,38,12,13],[-341,-168,42,13,14],[-322,-163,30,11,12],[-304,-164,17,11,13],[-282,-169,0,9,12]],
  [[-365,-119,0,13,17],[-349,-118,27,13,17],[-330,-109,33,13,13],[-311,-98,31,13,14],[-295,-102,20,11,15],[-281,-88,17,11,13],[-259,-90,0,14,14]]
 ];
+// Connected weathered ridges retain their authored crests and support. A
+// monotone Hermite chain rounds each shoulder over its real length, while
+// unequal cross-sections separate exposed rock from the depositional toe.
+function ridgeTangent(points,i,k){
+ if(i===0||i===points.length-1)return k===2?0:
+  i===0?(points[1][k]-points[0][k])/(points[1][0]-points[0][0]):
+  (points[i][k]-points[i-1][k])/(points[i][0]-points[i-1][0]);
+ const a=points[i-1],p=points[i],b=points[i+1],ha=p[0]-a[0],hb=b[0]-p[0];
+ const da=(p[k]-a[k])/ha,db=(b[k]-p[k])/hb;
+ if(da*db<=0)return 0;
+ const wa=2*hb+ha,wb=hb+2*ha;
+ return (wa+wb)/(wa/da+wb/db);
+}
+function ridgeField(along,points,index,k){
+ const a=points[index-1],b=points[index],length=b[0]-a[0],t=(along-a[0])/length;
+ const t2=t*t,t3=t2*t;
+ return (2*t3-3*t2+1)*a[k]+(t3-2*t2+t)*length*ridgeTangent(points,index-1,k)
+  +(-2*t3+3*t2)*b[k]+(t3-t2)*length*ridgeTangent(points,index,k);
+}
+function organicRidgeSection(along,across,points){
+ if(along<=points[0][0]||along>=points[points.length-1][0])return 0;
+ let index=1;while(along>points[index][0])index++;
+ const crest=ridgeField(along,points,index,1),height=ridgeField(along,points,index,2);
+ const offset=across-crest;
+ // A modest, unequal apron joins the directional face to the lower landform;
+ // the original compact-support union still determines the outer terrain hem.
+ const width=ridgeField(along,points,index,offset<0?3:4)*1.18+1.8;
+ const absolute=Math.abs(offset);if(absolute>=width)return 0;
+ const rounding=Math.min(8.6,width*(offset<0?.31:.24));
+ const r=(Math.sqrt(offset*offset+rounding*rounding)-rounding)
+  /(Math.sqrt(width*width+rounding*rounding)-rounding);
+ const section=(1-r)**1.62;
+ // Recess a few long channels down the flanks. Their crest and foot weight
+ // vanishes, so they cannot turn the silhouette into random spikes or steps.
+ const seed=points[0][0]*.013+points[0][1]*.019;
+ const channel=.5+.5*Math.sin(along*.17+absolute*.035+seed);
+ const recess=.105*channel*channel*Math.sin(Math.PI*r)**2;
+ return Math.max(0,height)*(section-recess);
+}
 // Round only the few metres nearest a crest or authored bend. Long sloping
 // faces stay directional; a whole-segment ease would turn the chain into domes.
 function ridgeSection(along,across,points){
@@ -72,8 +111,8 @@ export function alpineRelief(x,z){
   if(r2<1)originalSum+=top*(1-r2)**2;
  }
  if(support<=0)return 0;
- let h=ridgeSection(x,z,ALPINE_DIVIDE);
- for(const spur of ALPINE_BUTTRESSES)h=joinDryRidges(h,ridgeSection(z,x,spur));
+ let h=organicRidgeSection(x,z,ALPINE_DIVIDE);
+ for(const spur of ALPINE_BUTTRESSES)h=joinDryRidges(h,organicRidgeSection(z,x,spur));
  const protectedTrail=smooth(12,24,nearest(x,z,trail).d);
  const settlement=smooth(65,88,Math.hypot(x+300,z+320));
  const catchment=smooth(12,24,nearest(x,z,HOLLOWPEAK.channel).d);
