@@ -12,7 +12,7 @@
  window.GameLoading={
   stage(label){if(failed||finished)return;const text=get('loadpct');if(text)text.textContent=label;},
   fail(message){if(finished)return;failed=true;get('load')?.classList.add('load-failed');const title=get('loadTitle');if(title)title.textContent='Let’s try that again';const text=get('loadpct');if(text)text.textContent=message;offerRetry('Your saved ranch is safe. Check your connection, then retry.');},
-  ready(){if(failed)return;finished=true;get('load')?.classList.add('load-ready');const text=get('loadpct');if(text)text.textContent='Your horse is ready';},
+  ready(){if(failed)return;finished=true;if(retry)retry.hidden=true;if(help){help.hidden=true;help.textContent='';}get('load')?.classList.add('load-ready');const text=get('loadpct');if(text)text.textContent='Your horse is ready';},
  };
  function tick(){
   if(finished||failed||window.__gameModuleBlocked||!get('load'))return;

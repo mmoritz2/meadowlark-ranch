@@ -83,3 +83,42 @@ test('startup settlement is sticky and later breed changes do not rerun scenery'
  f.gate.begin(2);assert.equal(f.gate.mounted(2,()=>true),false);assert.equal(f.gate.failed(2),false);
  await flush();assert.equal(loads,1);assert.deepEqual(f.outcome,{status:'ready'});
 });
+
+
+test('verified mounted UI completes without a frame while optional scenery remains deferred',async()=>{
+ const f=fixture();let revealed=0,scenery=0;
+ f.gate.ready.then(()=>scenery++);f.gate.begin(7);
+ assert.equal(f.gate.mounted(7,()=>true,()=>revealed++),true);
+ assert.equal(revealed,1,'attached current horse can dismiss the curtain without rAF');
+ await flush();assert.equal(scenery,0);assert.equal(f.gate.settled,false);
+ f.callbacks.shift()();await flush();assert.equal(scenery,1);
+ f.gate.mounted(7,()=>true,()=>revealed++);assert.equal(revealed,1,'settled startup does not reveal again');
+});
+
+test('pending, stale or invalid mounts cannot reveal ready UI',async()=>{
+ const f=fixture();let revealed=0;
+ f.gate.begin(2);await flush();assert.equal(revealed,0);
+ assert.equal(f.gate.mounted(1,()=>true,()=>revealed++),false);
+ assert.equal(f.gate.mounted(2,()=>false,()=>revealed++),false);
+ assert.equal(revealed,0);assert.equal(f.callbacks.length,0);
+ f.gate.failed(2);assert.equal(f.gate.mounted(2,()=>true,()=>revealed++),false);
+ assert.equal(revealed,0,'a failed load cannot become a successful curtain dismissal');
+});
+
+test('production mounted callback requires every current-selection and attachment condition',async()=>{
+ const html=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');
+ const mounted=html.match(/ HORSE_ARRIVAL\.mounted\(ticket,[\s\S]*?\n \}\);/);
+ assert.ok(mounted,'production must release the curtain from the verified mounted callback');
+ const invoke=new Function('HORSE_ARRIVAL','ticket','breedRequest','RIG','myHorses','rideIdx','BREED_MODELS','player','window','$',mounted[0]);
+ const cases=[null,'ticket','request','requestedBreed','modelKey','ready','loadingBreed','attachedTo'];
+ for(const bad of cases){
+  const f=fixture(),mesh={},rig={requestedBreed:'bay',modelKey:'approved-bay',ready:true,loadingBreed:false,attachedTo:mesh};
+  let ticket=3,request=3,shown=0,removed=0;f.gate.begin(3);
+  if(bad==='ticket')ticket=2;if(bad==='request')request=4;
+  if(bad==='requestedBreed')rig.requestedBreed='pinto';if(bad==='modelKey')rig.modelKey='approved-pinto';
+  if(bad==='ready')rig.ready=false;if(bad==='loadingBreed')rig.loadingBreed=true;if(bad==='attachedTo')rig.attachedTo={};
+  invoke(f.gate,ticket,request,rig,[{breed:'bay'}],0,{resolve:()=> 'approved-bay'},{mesh},{__setLoad:()=>shown++},()=>({remove:()=>removed++}));
+  assert.equal(shown,bad?0:1,bad||'valid mount');assert.equal(removed,bad?0:1,bad||'valid mount');
+  assert.equal(f.gate.settled,false,'revealing the mounted UI does not settle optional scenery');
+ }
+});

@@ -26,3 +26,12 @@ test('a real model/import failure keeps a retry action and cannot be overwritten
  const f=fixture();f.window.GameLoading.fail('Your horse could not finish loading.');f.window.GameLoading.stage('Loading');f.window.GameLoading.ready();f.advance(20000);
  assert(f.nodes.load.classList.has('load-failed'));assert(!f.nodes.load.classList.has('load-ready'));assert(!f.nodes.loadRetry.hidden);assert.match(f.nodes.loadpct.textContent,/could not finish/);
 });
+
+
+test('successful readiness clears obsolete slow-load advice and retry controls',()=>{
+ const f=fixture();f.advance(15000);
+ assert.equal(f.nodes.loadRetry.hidden,false);assert.equal(f.nodes.loadHelp.hidden,false);
+ f.window.GameLoading.ready();
+ assert.equal(f.nodes.loadRetry.hidden,true);assert.equal(f.nodes.loadHelp.hidden,true);assert.equal(f.nodes.loadHelp.textContent,'');
+ f.advance(60000);assert.equal(f.nodes.loadRetry.hidden,true);assert.equal(f.nodes.loadHelp.hidden,true);
+});

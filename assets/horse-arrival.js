@@ -8,9 +8,12 @@ export function createHorseArrival(schedule=fn=>requestAnimationFrame(()=>reques
   ready,
   get settled(){return settled;},
   begin(next){ticket=next;},
-  mounted(request,isCurrent){
+  mounted(request,isCurrent,onMounted){
    if(settled||request!==ticket||!isCurrent())return false;
-   // Let the curtain and current screen present before optional decode work.
+   // Mounted UI is independent of animation frames, which can be suspended in
+   // a background tab or offscreen embedded game. Scenery still waits below.
+   onMounted?.();
+   // Let the current screen present before optional decode work.
    // A breed switch during these frame opportunities invalidates the old signal.
    schedule(()=>{if(request===ticket&&isCurrent())finish({status:'ready'});});
    return true;
