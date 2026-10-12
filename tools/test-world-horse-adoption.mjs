@@ -11,7 +11,7 @@ function fixture(){
  const scene=new THREE.Group(),ready=new Map(),pending=[],calls={instances:0,disposed:0,custom:[],tack:0,tackIds:[]};let clock=10000;
  const model={key:'bay',profile:{nativeBreed:true,nativeKind:'horse'}};
  const BREED_MODELS={get:k=>ready.get(k),load(k){return new Promise((resolve,reject)=>pending.push({key:k,resolve(){ready.set(k,{...model,key:k});resolve(ready.get(k));},reject}));}};
- const bindings={...lifecycle,THREE,scene,performance:{now:()=>clock},BREED_MODELS,RIG:{ready:true,modelKey:'bay'},myHorses:[],BREEDS3:[],
+ const bindings={...lifecycle,THREE,scene,WORLD_HORSE_LOD:null,performance:{now:()=>clock},BREED_MODELS,RIG:{ready:true,modelKey:'bay'},myHorses:[],BREEDS3:[],
   instantiateArtistBreed(asset){calls.instances++;const group=new THREE.Group(),skin=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshBasicMaterial());group.add(skin);return {...asset,scene:group,skin,bones:[new THREE.Bone()]};},
   rigCalibrate(){},initGameHero(){},configureArtistCustomization(r,h){calls.custom.push(h);},syncCollectionTack(r,m,h,ids){calls.tack++;calls.tackIds.push(ids);r.collectionPieces=ids?.saddle?{saddle:{id:ids.saddle}}:{};},applyNativeRemoteMode(){},
   disposeMountedRig(){calls.disposed++;},console:{warn(){}},fitArtistFeatures(){}};

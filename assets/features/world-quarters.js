@@ -1,3 +1,4 @@
+import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
    Amberwood, Willowmere, Frostpine and Ochre Reach opened yesterday and received a biome colour
    and a scatter of trees and nothing else: each is a hundred and thirty metres of open country
@@ -52,7 +53,7 @@ export function install(G){
     therefore a second draw call. Each settlement keeps to about a dozen colours and gets about
     a dozen meshes out the other end. */
  const MAT={};
- function mt(c,o){const k=c+(o?JSON.stringify(o):'');if(!MAT[k]){const m=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.92},o||{}));m.envMapIntensity=0.6;MAT[k]=m;}return MAT[k];}
+ function mt(c,o){const k=c+(o?JSON.stringify(o):'');if(!MAT[k]){const m=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.92},o||{}));m.envMapIntensity=0.6;applyQuarterSurface(m,c,o,W.ranchBuilderArt.materials,W.ranchArchitecture,THREE);MAT[k]=m;}return MAT[k];}
  /* Unit primitives built once and scaled per mesh. ranch3d.html's box() allocates a fresh
     BoxGeometry on every call, which is right for a dozen fence posts and wrong for nine hundred
     leaves — and the bake throws the meshes away regardless, so there is nothing to be gained by
@@ -142,7 +143,7 @@ export function install(G){
   g.traverse(o=>{
    if(!o.isMesh||o.isInstancedMesh||Array.isArray(o.material))return;
    const geo=o.geometry;if(!geo.index||!geo.attributes.normal||!geo.attributes.uv)return;
-   const c=geo.clone().applyMatrix4(o.matrixWorld);
+   const c=geo.clone();setQuarterPrimitiveUV(c,o.scale,o.position,o.material.userData.quarterSurface);c.applyMatrix4(o.matrixWorld);
    for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')c.deleteAttribute(k);
    const e=byMat.get(o.material)||{list:[],cast:false};
    e.list.push(c);e.cast=e.cast||o.castShadow;byMat.set(o.material,e);n++;

@@ -921,8 +921,7 @@ export function install(G){
     /* draw */
     const A=G.anim;
     if(A){const gt=gait==='gallop'?A.GAITS.gallop:A.GAITS.walk;A.animateHorse(m.parts,m.phase,amp,gt,true,t,m.rest>0&&!m.follow&&m.flee<=0?1:0,dt);
-     if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});
-     A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}
+     if(H.worldLOD?.supportsBreed?.(m.wb.breed))H.worldLOD.update(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed,interacting:!!(m.follow||m.taming||m.pending||m.flee>0)},mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);else{if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}}
     m.parts.group.position.set(m.pos.x,groundH(m.pos.x,m.pos.z),m.pos.z);m.parts.group.rotation.y=m.heading;
     if(wd<20){const sc=effTrust(m)*10-wd+(m.follow?200:0);if(sc>focusScore){focusScore=sc;P.trustFocus=m;}}
    }
@@ -1005,7 +1004,7 @@ export function install(G){
    const far=hyp(player.pos.x,player.pos.z,sc.x,sc.z);if(far>220){for(const h of sc.horses)h.parts.group.visible=false;continue;}
    for(const h of sc.horses){h.parts.group.visible=true;let mv=0;h.phase+=dt*(h.rest>0?1.2:4);
     if(h.rest>0)h.rest-=dt;else{if(hyp(h.tx,h.tz,h.pos.x,h.pos.z)<0.6){h.rest=3+Math.random()*6;const a=Math.random()*Math.PI*2,r=Math.random()*(sc.r-3);h.tx=sc.x+Math.cos(a)*r;h.tz=sc.z+Math.sin(a)*r;}else mv=steer(h,h.tx,h.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2,pad:0.3});}
-    const A=G.anim;if(A){A.animateHorse(h.parts,h.phase,h.rest>0?0.05:0.4,A.GAITS.walk,true,t,h.rest>0?1:0,dt);if(far<50)H.dressWithRig(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'});A.tickRig(h,mv,dt,t,h.rest>0?1:0);}
+    const A=G.anim;if(A){A.animateHorse(h.parts,h.phase,h.rest>0?0.05:0.4,A.GAITS.walk,true,t,h.rest>0?1:0,dt);if(H.worldLOD?.supportsBreed?.(h.e.breed||'bay'))H.worldLOD.update(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'},mv,dt,t,h.rest>0?1:0);else{if(far<50)H.dressWithRig(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'});A.tickRig(h,mv,dt,t,h.rest>0?1:0);}}
     h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);h.parts.group.rotation.y=h.heading;}
   }
  }

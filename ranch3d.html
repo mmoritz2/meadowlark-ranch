@@ -651,9 +651,9 @@ import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=leg-contours-20261012';
+import {createBreedLibrary} from './assets/breed-models.js?v=world-presentations-1';
 import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-2';
-import {configureNativeCustomization} from './assets/native-horse-customization.js?v=equestrian-style-20261012';
+import {configureNativeCustomization} from './assets/native-horse-customization.js?v=world-presentations-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=equestrian-style-20261012';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
@@ -698,7 +698,7 @@ import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from '
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=timber-cladding-1';
-import {createWorldFinish} from './assets/world-rendering.js?v=character-polish-20261009';
+import {createWorldFinish} from './assets/world-rendering.js?v=world-presentations-1';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
@@ -712,9 +712,10 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=cotton-twin79d-20261012';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=cotton-twin79d-20261012';
+import {FEATURES} from './assets/features/index.js?v=world-presentations-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
+import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
 import {worldHorseCanDress,beginWorldHorseLoad,settleWorldHorseLoad,retireWorldHorse} from './assets/world-horse-lifecycle.mjs?v=ranch-actors-2';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
 import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-route-2';
@@ -5342,11 +5343,14 @@ const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?16:32;
 function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // read live: the tier can change mid-game
 const WORLD_RIDER_TACK=Object.freeze({saddle:'tc_classicwestern_saddle',pad:'tc_classicwestern_pad',bridle:'tc_classicwestern_bridle'});
 let worldRigCount=0;
+let WORLD_HORSE_LOD=null;
 function undressRig(ent){   // take a horse's rigged body off again (to put its own on in place of a borrowed one)
  const r=ent.rig; if(!r)return;
  try{ if(r.scene&&r.scene.parent)r.scene.parent.remove(r.scene); if(r.saddle&&r.saddle.parent)r.saddle.parent.remove(r.saddle); if(r.bridle&&r.bridle.parent)r.bridle.parent.remove(r.bridle); disposeMountedRig(r); r.skin?.material?.dispose?.(); }catch(e){}
  worldRigCount=Math.max(0,worldRigCount-1); ent.rig=null; ent.drg=null; ent.rigTried=false; ent.rigStandIn=null;
 }
+function loadWorldHorseBreed(ent,breed){return ent.worldHorseLOD&&WORLD_HORSE_LOD?WORLD_HORSE_LOD.loadFull(breed):BREED_MODELS.load(breed);}
+function resumeWorldHorseDress(ent,parts,colors,opts){if(WORLD_HORSE_LOD?.resumeFull(ent,parts,colors,opts))return;dressWithRig(ent,parts,colors,opts);}
 function dressWithRig(ent,parts,colors,opts){
  if(!worldHorseCanDress(ent,parts))return;
  opts=opts||{};
@@ -5354,7 +5358,7 @@ function dressWithRig(ent,parts,colors,opts){
     has not, the download is asked for again every few seconds, so one failed fetch is not the old body for good. */
  if(ent.rigStandIn){
   if(!ent.rigPending&&BREED_MODELS.get(ent.rigStandIn))undressRig(ent);
-  else{ if(!ent.rigPending&&performance.now()>(ent.rigRetryAt||0)){const b=ent.rigStandIn,request=beginWorldHorseLoad(ent,parts);BREED_MODELS.load(b).then(()=>{if(settleWorldHorseLoad(ent,request))dressWithRig(ent,parts,colors,opts);}).catch(()=>{if(settleWorldHorseLoad(ent,request))ent.rigRetryAt=performance.now()+6000;});} return; }
+  else{ if(!ent.rigPending&&performance.now()>(ent.rigRetryAt||0)){const b=ent.rigStandIn,request=beginWorldHorseLoad(ent,parts);loadWorldHorseBreed(ent,b).then(()=>{if(settleWorldHorseLoad(ent,request))resumeWorldHorseDress(ent,parts,colors,opts);}).catch(()=>{if(settleWorldHorseLoad(ent,request))ent.rigRetryAt=performance.now()+6000;});} return; }
  }
  if(ent.rig){const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed);if(owner)syncCollectionTack(ent.rig,parts.group,owner);return;}
  if(ent.rigPending||!RIG.ready)return;
@@ -5364,7 +5368,7 @@ function dressWithRig(ent,parts,colors,opts){
  let asset=BREED_MODELS.get(breed);
  if(!asset){
   const request=beginWorldHorseLoad(ent,parts);
-  BREED_MODELS.load(breed).then(()=>{if(settleWorldHorseLoad(ent,request))dressWithRig(ent,parts,colors,opts);})
+  loadWorldHorseBreed(ent,breed).then(()=>{if(settleWorldHorseLoad(ent,request))resumeWorldHorseDress(ent,parts,colors,opts);})
    .catch(e=>{if(!settleWorldHorseLoad(ent,request))return;ent.rigTried=true;ent.rigRetryAt=performance.now()+6000;console.warn('Breed model unavailable',breed,e);});
   /* Each breed is a separate six-megabyte model. Until this one arrives the horse used to stand there in the old
      procedural body — a foal taken along, the grey filly of the story, every horse whose breed was not loaded yet —
@@ -5391,6 +5395,7 @@ function dressWithRig(ent,parts,colors,opts){
   const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed&&h.breed===breed);
   rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);configureArtistCustomization(ent.rig,owner||{...opts,breed,colors});worldRigCount++;
   syncCollectionTack(ent.rig,parts.group,owner||{bareback:!!opts.bareback},opts.saddle&&!opts.mine?WORLD_RIDER_TACK:null);
+  WORLD_HORSE_LOD?.fullReady(ent);
   return;
  }
  if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.45*(opts.foal?.65:1));
@@ -8747,6 +8752,7 @@ function updateRein(mesh,handObj,bitObj){
 
 /* ================= player & herd ================= */
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(-7,0,10),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
+WORLD_HORSE_LOD=createWorldHorseLOD({THREE,models:BREED_MODELS,instantiate:instantiateArtistBreed,renderer,camera,player,fullDress:dressWithRig,fullTick:tickRig,undress:undressRig,getFallback:()=>BREED_MODELS.get('grey')||(RIG.profile?.nativeKind==='horse'?BREED_MODELS.get(RIG.modelKey):null),getDefinition:breed=>BREEDS3.find(row=>row[0]===breed)});
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
 /* ===== The barn row =========================================================
@@ -8780,6 +8786,7 @@ function buildBarnRow(){
 }
 function disposeHorseEnt(b){
  if(!b)return;
+ WORLD_HORSE_LOD?.release(b);
  retireWorldHorse(b); // A late model arrival must not dress this removed actor.
  b.parts?.group?.removeFromParent();
  undressRig(b);
@@ -15072,7 +15079,7 @@ function installFeatures(){
    setNativeRidingMode,applyNativeRemoteMode,
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
-   reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
+   reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */

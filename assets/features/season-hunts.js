@@ -444,8 +444,7 @@ export function install(G){
    if(b.parts){
     const A=G.anim, calm=b.rest>0&&!b.haltered&&b.spook<=0?1:0;
     if(A){A.animateHorse(b.parts,b.phase,amp,gait==='gallop'?A.GAITS.gallop:A.GAITS.walk,true,t,calm,dt);
-     if(d<60)H.dressWithRig(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed});
-     A.tickRig(b,mv,dt,t,calm);}
+     if(H.worldLOD?.supportsBreed?.(b.wb.breed))H.worldLOD.update(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed,interacting:!!(b.haltered||b.spook>0)},mv,dt,t,calm);else{if(d<60)H.dressWithRig(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed});A.tickRig(b,mv,dt,t,calm);}}
     b.parts.group.position.set(b.pos.x,groundH(b.pos.x,b.pos.z),b.pos.z);
     b.parts.group.rotation.y=b.heading;
    }
