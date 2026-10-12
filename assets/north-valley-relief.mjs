@@ -1,4 +1,4 @@
-import {fallsRelief} from './falls-landscape.js?v=cliff-landscape-4';
+import {fallsRelief} from './falls-landscape.js?v=hollowpeak-cascades-1';
 
 // Original connected field shoulders. The terrain grid and horse contact share
 // this height; vegetation and props retain their existing placement owners.

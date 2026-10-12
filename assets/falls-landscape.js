@@ -1,3 +1,4 @@
+import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=cliff-landscape-4';
 // Hollowpeak's watercourse is cut into the same height field used by the horses.
@@ -46,6 +47,7 @@ function ridgeField(along,points,index,k){
  return (2*t3-3*t2+1)*a[k]+(t3-2*t2+t)*length*ridgeTangent(points,index-1,k)
   +(-2*t3+3*t2)*b[k]+(t3-t2)*length*ridgeTangent(points,index,k);
 }
+const RIDGE_EROSION_STATIONS=Object.freeze([.29,.61,.84]);
 function organicRidgeSection(along,across,points){
  if(along<=points[0][0]||along>=points[points.length-1][0])return 0;
  let index=1;while(along>points[index][0])index++;
@@ -58,18 +60,33 @@ function organicRidgeSection(along,across,points){
  const rounding=Math.min(8.6,width*(offset<0?.31:.24));
  const r=(Math.sqrt(offset*offset+rounding*rounding)-rounding)
   /(Math.sqrt(width*width+rounding*rounding)-rounding);
- const section=(1-r)**1.62;
- // Recess a few long channels down the flanks. Their crest and foot weight
- // vanishes, so they cannot turn the silhouette into random spikes or steps.
+ // Unequal bedrock faces meet a broad inset bench. Its tilted crest and
+ // lower rounded toe follow the swept ridge rather than concentric height
+ // shelves. Each bench spans several existing terrain cells, so its shape
+ // survives the exact physical/rendered grid without adding triangles.
  const seed=points[0][0]*.013+points[0][1]*.019;
- const channel=.5+.5*Math.sin(along*.17+absolute*.035+seed);
- const recess=.105*channel*channel*Math.sin(Math.PI*r)**2;
- return Math.max(0,height)*(section-recess);
+ const bench=.48+.035*Math.sin(along*.052+seed);
+ const upperLoss=offset<0?.47:.58;
+ const section=1-upperLoss*smooth(.055,bench-.12,r)
+  -(1-upperLoss)*smooth(bench+.16,1,r);
+ // Three broad oblique gullies grow down each face, opening into the toe.
+ // Original ridge-local fractions are deterministic; no scene RNG or small
+ // surface noise supplies a summit. Both their crest and foot weights vanish.
+ const span=points[points.length-1][0]-points[0][0];let erosion=0;
+ for(const fraction of RIDGE_EROSION_STATIONS){
+  const station=points[0][0]+span*fraction+offset*.27;
+  erosion=Math.max(erosion,Math.exp(-(((along-station)/(3.8+5.2*r))**2)));
+ }
+ const recess=.075*erosion*Math.sin(Math.PI*r)**2;
+ return Math.max(0,height)*Math.max(0,section-recess);
 }
+// A harmonic-mean width vanishes at the foot without a derivative cusp
+// when two low toes cross; the fillet never introduces an unrelated floor.
 function joinDryRidges(a,b){
- // A shallow fillet joins intersecting rock faces without adding a new floor.
- const blend=Math.max(0,2.4-Math.abs(a-b));
- return Math.max(a,b)+blend*blend/9.6*smooth(0,2,Math.min(a,b));
+ const span=2.4*smooth(0,2,a+b>0?2*a*b/(a+b):0);
+ if(span===0)return Math.max(a,b);
+ const blend=Math.max(0,span-Math.abs(a-b));
+ return Math.max(a,b)+blend*blend/(4*span);
 }
 export function alpineRelief(x,z){
  if(!within(x,z)||z>=-253)return 0;
@@ -119,57 +136,53 @@ function dryRidgeWeight(x,z){
  }
  return weight;
 }
-// The waterfall sheet widens to 3.161 m at its foot. A 6.2 m dry-bank
-// guard retains every terrain cell that supports that full width, including
-// the 2.762 m cell diagonal. The broader alpine envelope remains unchanged.
-// This frees the old square ledges beside the lip while keeping all actual
-// water-contact triangles and the full irregular pool margins unchanged.
-function fallsDryRidgeWeight(x,z){
- let weight=smooth(6.2,12,nearest(x,z,HOLLOWPEAK.channel).d);
- for(const p of [HOLLOWPEAK.pool,HOLLOWPEAK.tarn]){
-  const radius=p.r*Math.min(1,p.aspect),edge=1.05+3/radius;
-  weight=Math.min(weight,smooth(edge,edge+6/radius,poolRadius(x,z,p)));
- }
- return weight;
+// Geological fronts are shaped in the direction seen from the basin as well
+// as across each ridge. Unequal inset benches separate two exposed faces from
+// a rounded toe; a single smooth longitudinal multiplier made V1 a dome.
+function bankFront(x,z,side){
+ const west=side<0;
+ const face=west?-267.0+.13*(x+179)+1.9*Math.sin((x+179)*.063+.7)
+  :-269.6+.11*(x+123)-3.1*Math.sin((x+123)*.056+.4);
+ const run=west?36:44,r=(z-face)/run;
+ return Math.max(0,1-(west?.42:.36)*smooth(.025,.33,r)
+  -(west?.46:.46)*smooth(.55,.81,r)-(west?.12:.18)*smooth(.79,1,r));
 }
 const FALLS_BUTTRESSES=[
- [[-313,-169,0,14,15],[-296,-175,20,12,13],[-278,-171,26,11,12],[-266,-179,32,12,13],[-253,-169,25,10,11],[-239,-174,17,11,10],[-224,-170,0,12,12]],
- [[-309,-130,0,12,15],[-288,-120,15,11,13],[-269,-123,29,14,12],[-257,-128,26,13,11],[-244,-119,18,11,11],[-225,-125,0,12,13]]
+ [[-313,-178,0,18,23],[-295,-184,19,18,23],[-279,-180,28,19,25],[-264,-177,31,18,26],[-249,-181,26,18,25],[-236,-176,16,18,22],[-223,-171,0,15,18]],
+ [[-311,-128,0,19,17],[-294,-124,17,22,18],[-278,-120,25,25,19],[-262,-126,29,25,20],[-248,-120,24,24,20],[-233,-124,13,20,17],[-222,-128,0,16,15]]
 ];
 export function fallsRelief(x,z){
- const alpine=alpineRelief(x,z);
- if(!withinFalls(x,z))return alpine;
- const keep=smooth(7,13,nearest(x,z,trail).d);
- if(!keep)return alpine;
- const dx=(x+146)/38,dz=(z+268)/45,r=Math.hypot(dx,dz);
- const edge=r+.042*Math.sin(x*.34+z*.16)+.027*Math.sin(z*.37-x*.18);
- const bulk=(1-smooth(.56,1.07,edge))*(20.7+1.6*Math.sin(x*.12+z*.07));
- const face=-241.5+Math.sin(x*.34)*1.8+Math.cos(x*.7)*.9;
- const front=1-.18*smooth(face-6,face-4,z)-.55*smooth(face-1,face+3,z)-.27*smooth(face+3,face+10,z);
- const shoulder=4.6*Math.exp(-(((x+168)/9)**2+((z+254)/15)**2))+6.5*Math.exp(-(((x+129)/12)**2+((z+260)/17)**2));
- const original=Math.max(0,(bulk+shoulder)*front*keep),weight=fallsDryRidgeWeight(x,z);
- if(weight===0)return alpine+original;
- // A single worn face replaces the former three level shelf cuts. The
- // exposed shoulders lean independently into the basin, with a continuous
- // front slope and broad erosion channels rather than repeated stair ramps.
- // Water-contact terrain keeps the original field through dryRidgeWeight.
- const dryEdge=r+.023*Math.sin(x*.11+z*.065)+.014*Math.sin(z*.09-x*.052);
- const dryBulk=(1-smooth(.48,1.07,dryEdge))*(19.9+1.1*Math.sin(x*.08+z*.043));
- const dryFace=-242.7+1.6*Math.sin((x+146)*.13)+2.2*Math.sin((x+146)*.052+.4);
- const wornFront=1-smooth(dryFace-8,dryFace+12,z);
- let banks=(dryBulk+shoulder)*.43;
- for(const spine of FALLS_BUTTRESSES)banks=joinDryRidges(banks,organicRidgeSection(z,x,spine));
- return alpine+mix(original,Math.max(0,banks*wornFront*keep),weight);
+ const alpine=alpineRelief(x,z);if(!withinFalls(x,z))return alpine;
+ const keep=smooth(7,13,nearest(x,z,trail).d);if(!keep)return alpine;
+ // A broad spillway mass holds the fixed high channel. Its open southern
+ // face is a worn headwall, not the former high-frequency shelf/shoulder field.
+ const dx=(x+146)/41,dz=(z+269)/47,r=Math.hypot(dx,dz);
+ const edge=r+.022*Math.sin(x*.10+z*.063)+.014*Math.sin(z*.09-x*.052);
+ const bulk=(1-smooth(.54,1.13,edge))*(19.7+.018*(x+150)-.012*(z+269)+.42*Math.sin((x+z)*.052));
+ const coreFace=-244.1+.045*(x+150)+1.5*Math.sin((x+150)*.070+.25);
+ const core=(z-coreFace)/17;
+ let banks=bulk*Math.max(0,1-.64*smooth(0,.38,core)-.18*smooth(.52,.70,core)-.18*smooth(.70,1,core));
+ for(let i=0;i<FALLS_BUTTRESSES.length;i++)banks=joinDryRidges(banks,organicRidgeSection(z,x,FALLS_BUTTRESSES[i])*bankFront(x,z,i?1:-1));
+ // Reentrant faults split exposed faces and cut through their ledges. They
+ // recess continuous bedrock; they never add tips or isolated tall noise.
+ const gate=smooth(-291,-275,z)*(1-smooth(-244,-226,z));
+ const westFault=-181+.20*(z+263),eastFault=-126-.18*(z+264);
+ const recess=gate*(3.8*Math.exp(-(((x-westFault)/4.1)**2))+3.2*Math.exp(-(((x-eastFault)/4.6)**2)));
+ const hem=smooth(0,3,Math.min(x+202,-100-x,z+321,-214-z));
+ // Do not pin rectangular legacy bank corners. The physical pool/channel
+ // beds and the full falling-water ravine are owned by fallsTerrainHeight.
+ return alpine+Math.max(0,banks-recess)*keep*hem;
 }
 export function fallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;
  let h=height+fallsRelief(x,z);
  const flow=nearest(x,z,HOLLOWPEAK.channel);
- // Recess the ravine under the airborne sheet, including one terrain cell of
- // clearance at its lip; this keeps interpolated ground out of falling water.
- if(z>HOLLOWPEAK.z-1.5&&z<HOLLOWPEAK.z+HOLLOWPEAK.run+2){
+ // Cut fully beneath the airborne flow. Feather only the dry approach and
+ // downstream hem, avoiding a straight height discontinuity at either end.
+ const ravineWeight=smooth(HOLLOWPEAK.z-5.5,HOLLOWPEAK.z-1.5,z)*(1-smooth(HOLLOWPEAK.z+HOLLOWPEAK.run+2,HOLLOWPEAK.z+HOLLOWPEAK.run+6,z));
+ if(ravineWeight>0){
   const u=Math.max(0,Math.min(1,(z-HOLLOWPEAK.z+1.5)/(HOLLOWPEAK.run+1.5))),fallY=HOLLOWPEAK.top-(HOLLOWPEAK.top-HOLLOWPEAK.level)*Math.pow(Math.sqrt(u),1.055)-1.6;
-  h=mix(h,Math.min(h,fallY),1-smooth(4.4,8.0,Math.abs(x-HOLLOWPEAK.x)));
+  h=mix(h,Math.min(h,fallY),ravineWeight*(1-smooth(4.4,8.0,Math.abs(x-HOLLOWPEAK.x))));
  }
  for(const p of[HOLLOWPEAK.pool,HOLLOWPEAK.tarn]){const r=poolRadius(x,z,p);if(r>=1.55)continue;
   const bed=p.level-1.5+1.36*smooth(.3,1.02,r)+.55*smooth(.91,1.3,r);
@@ -209,8 +222,8 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
  const shadow=new T.Mesh(shadowGeo,new T.MeshBasicMaterial({colorWrite:false,depthWrite:false}));shadow.name='Hollowpeak | mountain shadow';shadow.castShadow=true;group.add(shadow);
  const waters=[];
  function water(p,uv,col,index,name,flow=false){const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('color',new T.Float32BufferAttribute(col,3));g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();
-  const m=waterMaterial.clone();m.name='Hollowpeak | '+name;m.map=null;m.color.set(0xffffff);m.vertexColors=true;m.opacity=.96;m.roughness=.16;m.clearcoat=.36;
-  m.onBeforeCompile=(sh,r)=>{waterMaterial.userData.plainShader(sh,r);sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',(flow?'diffuseColor.a*=smoothstep(0.0,.025,waterBankUV.x)*smoothstep(0.0,.09,waterBankUV.y)*(1.0-smoothstep(.91,1.0,waterBankUV.y));':'diffuseColor.a*=1.0-smoothstep(.91,1.0,waterBankUV.y);')+'\n#include <alphatest_fragment>');};m.customProgramCacheKey=()=> 'hollowpeak-water-'+flow;
+  const m=waterMaterial.clone();m.name='Hollowpeak | '+name;m.map=null;m.color.set(0xffffff);m.vertexColors=true;m.opacity=name==='plunge pool'?.82:.96;m.roughness=name==='plunge pool'?.18:.16;m.clearcoat=.36;
+  m.onBeforeCompile=(sh,r)=>{waterMaterial.userData.plainShader(sh,r);if(name==='plunge pool')patchPlungePool(sh,{x:HOLLOWPEAK.x,z:HOLLOWPEAK.z+HOLLOWPEAK.run});sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',(flow?'diffuseColor.a*=smoothstep(0.0,.025,waterBankUV.x)*smoothstep(0.0,.09,waterBankUV.y)*(1.0-smoothstep(.91,1.0,waterBankUV.y));':'diffuseColor.a*=1.0-smoothstep(.91,1.0,waterBankUV.y);')+'\n#include <alphatest_fragment>');};m.customProgramCacheKey=()=> 'hollowpeak-water-'+flow+(name==='plunge pool'?'-impact-wave-1':'');
   const mesh=new T.Mesh(g,m);mesh.name='Hollowpeak | '+name;mesh.receiveShadow=true;mesh.renderOrder=2;group.add(mesh);waters.push(mesh);return mesh;
  }
  const deep=new T.Color('#244f53'),shallow=new T.Color('#507778'),tint=new T.Color();

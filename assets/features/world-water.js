@@ -710,7 +710,7 @@ export function install(G){
    const cliff=W.geology.makeWaterfallCliff({width:17.5,lip:lipY,foot:shelfY-1.1,seed:8723,notchWidth:3.5});
    cliff.position.set(FALL_X,shelfY-1.1,LIP_Z);cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;
    for(const side of[-1,1])for(let i=0;i<4;i++){const bx=FALL_X+side*(2.8+i*1.5),bz=LIP_Z+i*.24;if(claim(bx,bz,1.4,'falls-rock'))W.colliders.push({x:bx,z:bz,r:1.4});}
-   const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls'});scene.add(fall);P.fallSheet=fall;
+   const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls',footHeightAt:groundH,footWidth:1.35});scene.add(fall);P.fallSheet=fall;
   }
   /* below the shelf the water stops falling and starts running: a cascade down the rest of the
      natural face into the river. Tinted toward water rather than left pure white — the first
@@ -741,7 +741,7 @@ export function install(G){
   {
    const foam=W.waterfallArt.impact({x:FALL_X,y:lvl+.09,z:TOE_Z-.6,radius:2.4});scene.add(foam);P.plunge=foam;
    const shelf=groundH(FALL_X,SHELF_Z)+.09;
-   const upperFoam=W.waterfallArt.impact({x:FALL_X,y:shelf+.025,z:SHELF_Z,radius:1.7});scene.add(upperFoam);
+   const upperFoam=W.waterfallArt.impact({x:FALL_X,y:shelf+.025,z:SHELF_Z,radius:1.7,heightAt:groundH,surfaceOffset:.10});scene.add(upperFoam);
    P.fallEffects=W.waterfallArt.effects({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:shelf,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon upper',counts:{falling:40,spray:64,mist:18}});scene.add(P.fallEffects.group);
    P.toeEffects=W.waterfallArt.effects({x:FALL_X,z:TOE_Z-.6,top:lvl+.5,bottom:lvl+.09,width:1.7,run:0,name:'Ribbon toe',counts:{falling:0,spray:64,mist:18}});scene.add(P.toeEffects.group);
    // Retain the old package-local layout sequence (drops, mist sites, phases).
