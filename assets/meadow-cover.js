@@ -1,4 +1,4 @@
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=world-cohesion-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=fine-meadows-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';

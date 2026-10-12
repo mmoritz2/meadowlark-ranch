@@ -1,8 +1,8 @@
-// Original long grass stands. Source roots, per-instance growth and wind remain
-// owned by the established pasture pipeline. These shapes compensate for its
-// shorter Y scale with upright ribbons, rather than a flat radial leaf fan.
+// Original fine grass stands. Each small growth point carries an uneven fan
+// of slim leaves with a shared lean; neighboring stands retain their existing
+// rotation, growth and wind. Narrow ribbons leave light and ground between them.
 const ROOTS=[[-.075,-.040],[.065,-.060],[.015,.085],[-.060,.075],[.090,.025]];
-const HEADINGS=[.22,.48,1.08,1.36,2.04,2.27,3.08,3.40,4.14,4.36,5.12,5.40,5.93,6.15];
+const HEADINGS=[-.56,-.32,-.21,.08,.19,.46,.55,.83,1.02,1.26,1.70,2.05,2.77,3.10];
 const HEIGHTS=[.76,1.10,.86,.64,1.18,.82,.92,.68,1.03,.79,.98,.71,1.05,.88];
 
 export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='meadow',seeded=false}={}){
@@ -12,19 +12,24 @@ export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='mea
  const low=profile==='low',middle=profile==='middle',heightScale=low?.59:profile==='seeded'?.91:1;
  const emit=(p,u,v,shade,dry=0)=>{P.push(...p);U.push(u,v);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));};
  for(let leaf=0;leaf<leafCount;leaf++){
-  // Paired leaves share a small growth point, with uneven heading/height. Five
-  // offset growth points overlap through a stand without all meeting in a V.
+  // Paired leaves share a real growth point and a similar lean. Uneven leaf
+  // heights and several returning leaves break up the fan without radial spokes.
   const source=leafCount===14?leaf:Math.floor(leaf*14/leafCount),root=ROOTS[Math.floor(source/2)%ROOTS.length];
   const a=HEADINGS[source]+(low?.13:0),dx=Math.cos(a),dz=Math.sin(a),sx=-dz,sz=dx;
   const h=HEIGHTS[source]*heightScale,reach=(.32+(source%5)*.032)*(low?1.07:1);
-  const width=(middle?.052:.030)+(source%4)*.0023;
-  const curl=(source%2?-.030:.037),twist=(source%2?-1:1)*(.10+(source%3)*.025);
+  const width=(middle?.028:.018)+(source%4)*.0012;
+  const curl=(source%2?-.012:.015),twist=(source%2?-1:1)*(.055+(source%3)*.012);
   const tipHeight=source%4===0?.86:source%4===1?.99:.90;
   const samples=segments===3?[0,.33,.73,1]:[0,.66,1],start=P.length/3,indexStart=I.length;
+  // A fine grass leaf bends gently after its tallest shoulder. Retain the
+  // established shoulder/max height while replacing the old hooked paper tip.
+  const shoulder=samples[samples.length-2],sr=1-shoulder;
+  const shoulderHeight=.67*3*sr*sr*shoulder+1.18*3*sr*shoulder*shoulder+tipHeight*shoulder*shoulder*shoulder;
+  const fineTipHeight=tipHeight+Math.max(0,shoulderHeight-tipHeight)*.70;
   for(let ring=0;ring<samples.length;ring++){
    const t=samples[ring],r=1-t,b1=3*r*r*t,b2=3*r*t*t,b3=t*t*t;
    const lean=reach*(.025*b1+.23*b2+b3),cross=curl*(.10*b2+b3);
-   const x=root[0]+dx*lean+sx*cross,y=h*(.67*b1+1.18*b2+tipHeight*b3),z=root[1]+dz*lean+sz*cross;
+   const x=root[0]+dx*lean+sx*cross,y=h*(ring===samples.length-1?fineTipHeight:(.67*b1+1.18*b2+tipHeight*b3)),z=root[1]+dz*lean+sz*cross;
    const half=width*(.40+.78*Math.sin(Math.PI*t*.92))*Math.pow(r,.52),heading=a+twist*t*t;
    const last=ring===samples.length-1,shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);
    for(const side of last?[0]:[-1,1])emit([x-Math.sin(heading)*half*side,y,z+Math.cos(heading)*half*side],(side+1)/2,t,shade);
@@ -53,7 +58,7 @@ export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='mea
  geometry.setAttribute('position',new T.Float32BufferAttribute(P,3));geometry.setAttribute('color',new T.Float32BufferAttribute(C,3));
  geometry.setAttribute('uv',new T.Float32BufferAttribute(U,2));geometry.setIndex(I);
  geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
- geometry.userData.lushMeadow={profile:'lush-meadow-1',form:profile,leaves:leafCount,triangles:I.length/3,leafRanges};
- if(middle)geometry.userData.middleCover={profile:'lush-middle-1',leaves:leafCount,leafRanges};
+ geometry.userData.lushMeadow={profile:'lush-meadow-2',form:profile,leaves:leafCount,triangles:I.length/3,leafRanges};
+ if(middle)geometry.userData.middleCover={profile:'lush-middle-2',leaves:leafCount,leafRanges};
  return geometry;
 }

@@ -13,7 +13,7 @@ test('short turf keeps the rich-root triangle budget with finite grounded, narro
  for(let i=0;i<p.count;i++){assert(Math.hypot(p.getX(i),p.getZ(i))<GRAZED_SWARD.maximumRadius);assert(Math.abs(new T.Vector3().fromBufferAttribute(n,i).length()-1)<1e-6);}
  for(let i=0;i<g.index.count;i+=3){const ids=[0,1,2].map(j=>g.index.array[i+j]);assert(ids.every(j=>j<p.count));const[a,b,c]=ids.map(j=>new T.Vector3().fromBufferAttribute(p,j)),face=new T.Vector3().crossVectors(b.sub(a),c.sub(a));assert(face.length()>1e-6);face.normalize();for(const j of ids)assert(face.dot(new T.Vector3().fromBufferAttribute(n,j))>.75);}
  let at=0;const anchors=new Set();
- for(let leaf=0;leaf<46;leaf++){const stride=leaf<12?5:3,tip=at+stride-1;assert.equal(p.getY(at),0);assert.equal(p.getY(at+1),0);assert.equal(uv.getY(at),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(c.getY(at)<.30&&c.getY(at+2)>c.getY(at)*2);anchors.add(((p.getX(at)+p.getX(at+1))/2).toFixed(4)+','+((p.getZ(at)+p.getZ(at+1))/2).toFixed(4));const width=new T.Vector3().fromBufferAttribute(p,at).distanceTo(new T.Vector3().fromBufferAttribute(p,at+1));assert(width>.013&&width<.019);at+=stride;}
+ for(let leaf=0;leaf<46;leaf++){const stride=leaf<12?5:3,tip=at+stride-1;assert.equal(p.getY(at),0);assert.equal(p.getY(at+1),0);assert.equal(uv.getY(at),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(c.getY(at)<.30&&c.getY(at+2)>c.getY(at)*2);anchors.add(((p.getX(at)+p.getX(at+1))/2).toFixed(4)+','+((p.getZ(at)+p.getZ(at+1))/2).toFixed(4));const width=new T.Vector3().fromBufferAttribute(p,at).distanceTo(new T.Vector3().fromBufferAttribute(p,at+1));assert(width>.008&&width<.011);at+=stride;}
  assert.equal(anchors.size,7);g.dispose();
 });
 test('geometry is repeatable without changing global placement randomness or allocating new textures',()=>{
@@ -28,12 +28,12 @@ test('short turf is confined to grazed interiors and leaves uncut wild and golde
  assert(boundary>100);
 });
 
-test('grazed blades span a larger low turf footprint without becoming broad paddles',()=>{
+test('grazed blades leave ground between slim upright fans',()=>{
  const g=createGrazedSwardGeometry(T),p=g.attributes.position;let projection=0;
  for(let i=0;i<g.index.count;i+=3){const[a,b,c]=[0,1,2].map(j=>new T.Vector3().fromBufferAttribute(p,g.index.array[i+j]));projection+=Math.abs(new T.Vector3().crossVectors(b.sub(a),c.sub(a)).y)*.5;}
  // Sum of true triangle projections is a design-area measurement, not a claim
  // of pixel coverage: overlap, source scale, slope and view still affect that.
- assert(projection>.14&&projection<.18);let at=0;
+ assert(projection>.035&&projection<.055);let at=0;
  for(let leaf=0;leaf<46;leaf++){const stride=leaf<12?5:3,root=new T.Vector3().fromBufferAttribute(p,at).add(new T.Vector3().fromBufferAttribute(p,at+1)).multiplyScalar(.5),tip=new T.Vector3().fromBufferAttribute(p,at+stride-1);const width=new T.Vector3().fromBufferAttribute(p,at).distanceTo(new T.Vector3().fromBufferAttribute(p,at+1));assert(width/root.distanceTo(tip)<.06);at+=stride;}
  g.dispose();
 });

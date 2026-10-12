@@ -15,7 +15,7 @@ test('long ordinary leaves retain useful height after established pasture scalin
     assert(top*.3>.17&&top*.5<.60,'at existing .3–.5 Y scales an uncut leaf is upright, not a tiny flat fork');
    }
    for(let i=0;i<g.index.count;i+=3){const [a,b,c]=Array.from(g.index.array.slice(i,i+3),j=>new T.Vector3().fromBufferAttribute(p,j));area+=b.sub(a).cross(c.sub(a)).length()*.5;}
-   assert(area>(profile==='meadow'?.5:.30),'full ribbon surfaces provide connected leaf mass');
+   assert(area>(profile==='meadow'?.30:profile==='middle'?.22:.18),'fine ribbon surfaces retain readable connected leaf mass');
    for(let i=0;i<p.count;i++)assert(Math.hypot(p.getX(i),p.getZ(i))<=.60,'authored reach stays inside the existing richest stand envelope');
   }finally{g.dispose();}
  }

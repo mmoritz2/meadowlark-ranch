@@ -26,7 +26,8 @@ export function install(G){
  const THREE=G.THREE, T=G.tables, W=G.world;
  if(!THREE||!T||!W||!G.scene)return;
  const LOW=3.4, TALL=6.2, WALL=3.5, BIG=3.5;       // mown strip, cleared strip, a collider this small is cleared, bigger ones are routed round
- const stats={segments:0,instancesHidden:0,collidersCleared:0,objectsHidden:0,rerouted:[],arenas:0};
+ const stats={segments:0,instancesHidden:0,collidersCleared:0,objectsHidden:0,rerouted:[],arenas:0,startupComplete:false};
+ let resolveStartup,rejectStartup;const ready=new Promise((resolve,reject)=>{resolveStartup=resolve;rejectStartup=reject;});
 
  /* ---------------------------------------------------------------- where the courses are ---- */
  let SEG=[], ARENA=[], grid=new Map();
@@ -69,7 +70,13 @@ export function install(G){
  const nameChain=o=>{let s='';for(let e=o;e&&e!==G.scene;e=e.parent)s+=(e.name||'')+'|';return s;};
  const onCharacter=o=>{for(let e=o;e&&e!==G.scene;e=e.parent){if(e.isBone||e.isSkinnedMesh)return true;if(/rider|hair|horse|mane|tail|pet|foal/i.test(e.name||''))return true;}return false;};
  const _m=new THREE.Matrix4(), _p=new THREE.Vector3(), _q=new THREE.Quaternion(), _s=new THREE.Vector3(), _z=new THREE.Matrix4().makeScale(0,0,0);
- const instances=[];   // [{o,i,x,z,R}] for everything instanced, gathered once
+ // Soft cover can be mown but cannot identify the solid owner of a collider.
+ // Its render radius changes with leaf art and scaling, never physical ownership.
+ const SOLID_PLANT=/pine|tree|birch|oak|willow|stump|log|bush|shrub|hedge|boulder|geology|rock|stone|scrub|juniper|cactus|palm|copse|trunk|canopy|foliage|leaf/i;
+ const SEED_WOOD_SPECIES=new Set(['oak','birch','blossom','pine','snowpine']);
+ const SOFT_COVER=/grass|flower|lupin|turf|reed|bulrush|fern|petal|tuft|brack|flora_(?:sage|scrub|mush|moss)/i;
+ const fineCover=o=>{for(let e=o;e&&e!==G.scene;e=e.parent)if(e.userData?.fineGroundCover)return true;return false;};
+ const instances=[];   // [{o,i,x,z,R,canOwnCollider}] for everything instanced, gathered once
  function gatherInstances(){
   instances.length=0; G.scene.updateMatrixWorld(true);
   G.scene.traverse(o=>{
@@ -77,9 +84,13 @@ export function install(G){
    const nm=nameChain(o); if(/course|guide|chevron|marker|rain|firefl|mist|mote|drop|shoe|glint|cloud|bird|lil/i.test(nm)||onCharacter(o))return;
    if(!o.geometry.boundingSphere)o.geometry.computeBoundingSphere();
    const gr=(o.geometry.boundingSphere&&o.geometry.boundingSphere.radius)||0.5, ws=o.matrixWorld.getMaxScaleOnAxis()||1;
+   // Original seed wood is intentionally unnamed; its explicit species/layer
+   // metadata identifies the solid owner without using decorative leaf radius.
+   const seedWood=o.userData.treeLayer==='wood'&&Array.isArray(o.userData.treePoints)&&SEED_WOOD_SPECIES.has(o.userData.treeSpecies);
+   const canOwnCollider=(seedWood||SOLID_PLANT.test(nm))&&!SOFT_COVER.test(nm)&&!fineCover(o);
    for(let i=0;i<o.count;i++){
     o.getMatrixAt(i,_m); _m.decompose(_p,_q,_s); const sc=Math.max(_s.x,_s.y,_s.z); if(sc<1e-4)continue;
-    _p.applyMatrix4(o.matrixWorld); instances.push({o,i,x:_p.x,z:_p.z,R:gr*sc*ws});
+    _p.applyMatrix4(o.matrixWorld); instances.push({o,i,x:_p.x,z:_p.z,R:gr*sc*ws,canOwnCollider});
    }
   });
  }
@@ -94,7 +105,7 @@ export function install(G){
  function objectsNear(x,z,rad){
   const out=[];
   const visit=(o,depth)=>{
-   if(depth>4||!o.visible||o.isInstancedMesh||o.isSprite||o.isLight||o.isCamera||o.isSkinnedMesh||o.isBone)return;
+   if(depth>4||!o.visible||o.isInstancedMesh||o.isSprite||o.isLight||o.isCamera||o.isSkinnedMesh||o.isBone||fineCover(o)||SOFT_COVER.test(nameChain(o)))return;
    if(depth>0&&(o.isMesh||o.isGroup)){
     o.getWorldPosition(wp);
     if(Math.hypot(wp.x-x,wp.z-z)<rad+14){
@@ -161,17 +172,17 @@ export function install(G){
  function clearColliders(){
   for(let i=W.colliders.length-1;i>=0;i--){
    const c=W.colliders[i]; if(!c||c.keep||c.landform||c.r>=40)continue;   // landform: a mesa or the falls' rock face, never cleared (reroute rides round those)
-   if(c.r<=1.0&&inZone(c.x,c.z)){const pl=instances.filter(it=>it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));if(pl.length){pl.forEach(hideInst);W.colliders.splice(i,1);stats.collidersCleared++;stats.zoneCleared=(stats.zoneCleared||0)+1;continue;}}   // only with its tree: a visible bush keeps its body
+   if(c.r<=1.0&&inZone(c.x,c.z)){const pl=instances.filter(it=>it.canOwnCollider&&it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));if(pl.length){pl.forEach(hideInst);W.colliders.splice(i,1);stats.collidersCleared++;stats.zoneCleared=(stats.zoneCleared||0)+1;continue;}}   // only with its tree: a visible bush keeps its body
    let d=lineDist(c.x,c.z);
    /* a desert cactus from ranch3d.html's own planting says so on its collider; its model loads later, so it is taken
       here by the tag, and the model is laid without it when it arrives (or hidden now if it already has) */
-   if(c.plant&&(d<c.r+2.4||inTownArena(c.x,c.z,c.r))){instances.filter(it=>it.R>=0.45&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4)).forEach(hideInst);W.colliders.splice(i,1);stats.collidersCleared++;if(d>=c.r+2.4)stats.arenaCleared=(stats.arenaCleared||0)+1;continue;}
+   if(c.plant&&(d<c.r+2.4||inTownArena(c.x,c.z,c.r))){instances.filter(it=>it.canOwnCollider&&it.R>=0.45&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4)).forEach(hideInst);W.colliders.splice(i,1);stats.collidersCleared++;if(d>=c.r+2.4)stats.arenaCleared=(stats.arenaCleared||0)+1;continue;}
    /* off the lines, a town arena's ring: only what grows or lies there (a plant, a tree or bush, a cactus, a loose
       rock) goes; anything built, or anything in a ring that is somebody's, stays */
    if(d>=c.r+2.4){
     if(c.r>=BIG||!inTownArena(c.x,c.z,c.r)||builtNear(c.x,c.z,c.r))continue;
     const took=()=>{W.colliders.splice(i,1);stats.collidersCleared++;stats.arenaCleared=(stats.arenaCleared||0)+1;};
-    const plants=instances.filter(it=>it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));
+    const plants=instances.filter(it=>it.canOwnCollider&&it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));
     if(plants.length){plants.forEach(hideInst);took();continue;}
     if(c.climb&&treasureSpots.some(t=>Math.hypot(t.x-c.x,t.z-c.z)<c.r+1))continue;
     const objs=objectsNear(c.x,c.z,c.r), keep=objs.some(k=>KEEP_NAME.test(k.nm)), veg=objs.filter(k=>VEG.test(k.nm)&&!KEEP_NAME.test(k.nm));
@@ -185,7 +196,7 @@ export function install(G){
    /* anything built standing here keeps its collider, whatever grows round it */
    if(builtNear(c.x,c.z,c.r)){if(d<c.r+0.9){blockers.push(c);(stats.blockers=stats.blockers||[]).push({x:+c.x.toFixed(1),z:+c.z.toFixed(1),r:+c.r.toFixed(2),names:['(built)']});}continue;}
    /* a plant with a trunk, instanced (grass and flowers round a collider do not make it a plant) */
-   const plants=instances.filter(it=>it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));
+   const plants=instances.filter(it=>it.canOwnCollider&&it.R>=0.9&&Math.hypot(it.x-c.x,it.z-c.z)<Math.max(0.9,c.r+0.4));
    if(plants.length){plants.forEach(hideInst);W.colliders.splice(i,1);stats.collidersCleared++;continue;}
    /* a rock: cleared unless a golden horseshoe sits on it (then it is ridden round) */
    if(c.climb){
@@ -260,7 +271,8 @@ export function install(G){
   for(const o of dirty)o.instanceMatrix.needsUpdate=true; dirty.clear();
  }
  function clear(routes){
-  const t0=performance.now();
+  const t0=performance.now(),submission=W.grassSubmission||W.nearGroundCover?.submission;
+  submission?.restoreAll();
   // Detailed field walls keep legacy proxies for this pass's established clearing rules.
   const fieldWalls=G.worldPaths?.fieldWallArt;fieldWalls?.beforeCourseClear?.();
   try{gatherInstances();}catch(e){console.error('course-clear gather',e);}
@@ -270,13 +282,17 @@ export function install(G){
   try{if(routes&&W.colliders.some(c=>c&&c.landform)){reroute();build();}}catch(e){console.error('course-clear reroute',e);}
   try{mow();}catch(e){console.error('course-clear mow',e);}
   fieldWalls?.afterCourseClear?.();
+  submission?.captureAll();W.nearGroundCover?.invalidate?.();
   stats.ms=Math.round(performance.now()-t0);
  }
  clear(true);
  /* routes added late, and anything planted after install, get the same treatment when the game boots */
  let routesKey=JSON.stringify(Object.keys(T.RACE_ROUTES||{}));
- G.on('boot',()=>setTimeout(()=>{const k=JSON.stringify(Object.keys(T.RACE_ROUTES||{}));if(k!==routesKey){routesKey=k;build();}blockers.length=0;clear(false);},400));
+ G.on('boot',()=>setTimeout(()=>{
+  try{const k=JSON.stringify(Object.keys(T.RACE_ROUTES||{}));if(k!==routesKey){routesKey=k;build();}blockers.length=0;clear(false);stats.startupComplete=true;resolveStartup(stats);}
+  catch(error){stats.startupError=String(error?.message||error);rejectStartup(error);console.error('course-clear startup',error);}
+ },400));
 
  G.on('state',o=>{o.courseClear={segments:stats.segments,arenas:stats.arenas,instancesHidden:stats.instancesHidden,collidersCleared:stats.collidersCleared,arenaCleared:stats.arenaCleared||0,objectsHidden:stats.objectsHidden,rerouted:stats.rerouted.slice(),ms:stats.ms,blockers:stats.blockers||[],zoneCleared:stats.zoneCleared||0};});
- G.courseClear={courseDist,stats,rebuild:()=>{build();clear();}};
+ G.courseClear={courseDist,stats,ready,rebuild:()=>{build();clear();}};
 }
