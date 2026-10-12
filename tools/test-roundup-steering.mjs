@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as approach from '../assets/roundup-approach.mjs';
+import {updateRoundupGuidance} from '../assets/roundup-guidance.mjs';
 import * as pressure from '../assets/roundup-pressure.mjs';
 import {ROUNDUP_MODES} from '../assets/roundup-rewards.mjs';
 import {sharedHerdPressure} from '../assets/shared-herd-physics.mjs';
@@ -18,10 +19,11 @@ function fixture({colliders=circles,walls=[],horse={x:-63.09743935866264,z:-18.8
  const player={pos:clone(rider)},pos=vector(horse.x,horse.z),h={pos,heading,parts:{group:{position:vector(horse.x,horse.z),rotation:{}}},phase:0,rest:1,anchor:clone(horse),wb:{},penned:false,name:'Maple'};
  const W={colliders:clone(colliders),walls:clone(walls),solidWorld},G={input:{blocked:()=>false},world:W,run(){}};W.pushOut=Function('W',pushCode+'return pushOut;')(W);
  const ROUND={on:true,pending:null,cd:0,t:ROUNDUP_MODES[mode].time,elapsed:0,horses:[h],mode,penned:0,total:1,ring:null,shared};
- const trace={finished:0,motion:[]},bindings={...approach,...pressure,G,ROUND,PAST:bounds,ROUND_PEN:pen,player,sharedHerdPressure,freeCam:false,document:{hidden:false},Date,ROUND_MODES:ROUNDUP_MODES,freshSave:()=>({}),groundH:()=>0,GAITS:{walk:{},trot:{}},animateHorse(){},dressWithRig(){},tickRig:(h,s)=>trace.motion.push(s),$:()=>({}),sChime(){},endRoundup(){ROUND.on=false;trace.finished++;}};
+ let nowMs=0;
+ const trace={finished:0,motion:[]},bindings={...approach,...pressure,updateRoundupGuidance,performance:{now:()=>nowMs},G,ROUND,PAST:bounds,ROUND_PEN:pen,player,sharedHerdPressure,freeCam:false,document:{hidden:false},Date,ROUND_MODES:ROUNDUP_MODES,freshSave:()=>({}),groundH:()=>0,GAITS:{walk:{},trot:{}},animateHorse(){},dressWithRig(){},tickRig:(h,s)=>trace.motion.push(s),$:()=>({}),sChime(){},endRoundup(){ROUND.on=false;trace.finished++;}};
  const api=Function(...Object.keys(bindings),stateCode+tickCode+'return {tick:tickRoundup,state:roundupState};')(...Object.values(bindings));
  const {tick,state}=api;
- return {tick,state,ROUND,h,player,W,trace};
+ return {tick:(dt,t)=>{nowMs+=dt*1000;return tick(dt,t);},state,ROUND,h,player,W,trace};
 }
 function gap(p,c){return Math.hypot(p.x-c.x,p.z-c.z)-c.r;}
 
@@ -127,4 +129,24 @@ test('walking behind a horse sustains gentle pressure without repeated sprint-an
   f.tick(1/60,i/60);maxSpeed=Math.max(maxSpeed,f.trace.motion.at(-1));
  }
  assert.equal(released,0);assert(maxSpeed<=2.1);assert(f.h.pos.x> -72,'ordinary walking produces meaningful homeward progress');
+});
+
+
+test('actual horse tick can leave a pasture corner using the published recovery route',()=>{
+ const f=fixture({mode:'full',colliders:[],walls:[{x1:-110,z1:25,x2:-33,z2:25},{x1:-110,z1:-45,x2:-110,z2:25}],horse:{x:-108,z:23},rider:{x:-100,z:5},heading:Math.PI/2});
+ const initialDistance=Math.hypot(f.h.pos.x-pen.x,f.h.pos.z-pen.z);let sawRecovery=false,maxStep=0;
+ for(let i=0;i<1800&&f.ROUND.on;i++){
+  const target=f.state().target;if(target?.approachPhase==='reposition')sawRecovery=true;
+  if(target?.approachTarget){
+   // Synthetic rider inputs follow the public waypoint; production tick owns
+   // every loose-horse step, heading, clearance and pen crossing.
+   const next=target.approachTarget,dx=next.x-f.player.pos.x,dz=next.z-f.player.pos.z,d=Math.hypot(dx,dz),step=Math.min(d,2.1415/60);
+   if(d>.2){f.player.pos.x+=dx/d*step;f.player.pos.z+=dz/d*step;}
+  }
+  const before={x:f.h.pos.x,z:f.h.pos.z};f.tick(1/60,i/60);maxStep=Math.max(maxStep,Math.hypot(f.h.pos.x-before.x,f.h.pos.z-before.z));
+  assert(f.h.pos.x>=bounds.x1+2-1e-8&&f.h.pos.x<=bounds.x2-2+1e-8&&f.h.pos.z>=bounds.z1+2-1e-8&&f.h.pos.z<=bounds.z2-2+1e-8,'the horse remains inside the physical pasture');
+ }
+ assert(sawRecovery,'the test exercises the explicit recovery phase');
+ assert(maxStep<=6/60+.0002,'recovery cannot teleport or boost the existing horse step');
+ assert(Math.hypot(f.h.pos.x-pen.x,f.h.pos.z-pen.z)<initialDistance-10,'the real collision/turn integration makes meaningful homeward progress');
 });

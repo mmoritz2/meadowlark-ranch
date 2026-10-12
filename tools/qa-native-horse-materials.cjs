@@ -6,7 +6,7 @@ let checks=0;function check(value,message){assert(value,message);checks++;}
 const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
 (async()=>{
  const THREE=await import(threeURL),{clone}=await load('assets/vendor/three/examples/jsm/utils/SkeletonUtils.js');
- const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish,NATIVE_COAT_SHADING:shading}=await load('assets/native-horse-materials.js');
+ const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish,NATIVE_COAT_SHADING:shading,NATIVE_LEG_COAT_SHADING:legShading}=await load('assets/native-horse-materials.js');
  const {createBreedLibrary}=await load('assets/breed-models.js');
  const {NATIVE_BREED_PROFILES}=await load('assets/native-breed-profiles.js');
  const {configureNativeCustomization}=await load('assets/native-horse-customization.js');
@@ -141,6 +141,45 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
   check(actor.skin.geometry===asset.skin.geometry&&actor.skin.skeleton.bones.length===677&&asset.animations.length>0,key+' real geometry/677-joint rig/clips preserved');
   console.log('Real GLTFLoader:',key,'M_Body/M_Eye/M_Hair = MeshPhysicalMaterial; treatment applied.');
  }
+
+ // Decode the real unchanged RGB atlas without a browser/canvas or image package.
+ function neutralPixels(){
+  const bytes=fs.readFileSync(path.join(root,'assets/models/native-roster/neutralcoat.png')),chunks=[];let width,height,channels;
+  for(let at=8;at<bytes.length;){const length=bytes.readUInt32BE(at),type=bytes.toString('ascii',at+4,at+8),data=bytes.subarray(at+8,at+8+length);if(type==='IHDR'){width=data.readUInt32BE(0);height=data.readUInt32BE(4);assert.equal(data[8],8);assert([2,6].includes(data[9]));assert.equal(data[12],0);channels=data[9]===2?3:4;}else if(type==='IDAT')chunks.push(data);at+=length+12;}
+  const raw=require('node:zlib').inflateSync(Buffer.concat(chunks)),stride=width*channels,pixels=new Uint8Array(stride*height);
+  const paeth=(a,b,c)=>{const p=a+b-c,pa=Math.abs(p-a),pb=Math.abs(p-b),pc=Math.abs(p-c);return pa<=pb&&pa<=pc?a:pb<=pc?b:c;};
+  for(let y=0;y<height;y++){const filter=raw[y*(stride+1)];assert(filter<=4);for(let x=0;x<stride;x++){const at=y*stride+x,a=x>=channels?pixels[at-channels]:0,b=y?pixels[at-stride]:0,c=y&&x>=channels?pixels[at-stride-channels]:0;pixels[at]=(raw[y*(stride+1)+1+x]+(filter===0?0:filter===1?a:filter===2?b:filter===3?Math.floor((a+b)/2):paeth(a,b,c)))&255;}}
+  const linear=x=>(x/=255)<=.04045?x/12.92:((x+.055)/1.055)**2.4;
+  return (u,v)=>{const x=Math.max(0,Math.min(width-1,Math.round(u*(width-1)))),y=Math.max(0,Math.min(height-1,Math.round(v*(height-1)))),i=(y*width+x)*channels;return linear(pixels[i])*.2126+linear(pixels[i+1])*.7152+linear(pixels[i+2])*.0722;};
+ }
+ const neutralLuma=neutralPixels(),digest=x=>require('node:crypto').createHash('sha256').update(x).digest('hex');
+ const attributeHash=geometry=>digest(Buffer.concat(['position','normal','uv','skinIndex','skinWeight'].map(name=>{const a=geometry.attributes[name].array;return Buffer.from(a.buffer,a.byteOffset,a.byteLength);})));
+ const atlasHash=digest(fs.readFileSync(path.join(root,'assets/models/native-roster/neutralcoat.png')));
+ const draftTHREE={...THREE,TextureLoader:class{async loadAsync(){return new THREE.Texture();}}};
+ global.fetch=async url=>{const u=new URL(url);assert.equal(u.protocol,'file:');const bytes=fs.readFileSync(u);return {ok:true,json:async()=>JSON.parse(bytes),arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};};
+ try{
+  const draftLibrary=createBreedLibrary({THREE:draftTHREE,clone,GLTFLoader:FileLoader});await draftLibrary.manifestReady;
+  for(const key of ['percheron','shire','clyde']){
+   const asset=await draftLibrary.load(key),originalHash=attributeHash(asset.skin.geometry),actor=draftLibrary.instantiate(asset),mesh=actor.skin,geometry=mesh.geometry,mask=geometry.attributes.nativeLegCoat;
+   check(mask?.itemSize===1&&mask.count===16159&&mask.array.every(x=>Number.isFinite(x)&&Math.abs(x)<=1),key+' actual source body has one finite bounded leg appearance scalar');
+   check(actor.nativeMaterialPolish.legCoatVertices>3000&&actor.nativeMaterialPolish.legCoatVertices<4000,key+' leg-only support is bounded to the four intended limbs');
+   check(attributeHash(geometry)===originalHash,key+' leg appearance preserves exact positions, normals, UVs and all 677-joint skin weights');
+   const points=[],areas=new Float64Array(mask.count),luma=new Float64Array(mask.count),before=new Float64Array(mask.count),after=new Float64Array(mask.count),v=new THREE.Vector3();actor.scene.updateMatrixWorld(true);mesh.skeleton.update();
+   for(let i=0;i<mask.count;i++){mesh.getVertexPosition(i,v);mesh.localToWorld(v);actor.scene.worldToLocal(v);points.push(v.clone());const x=neutralLuma(geometry.attributes.uv.getX(i),geometry.attributes.uv.getY(i));luma[i]=x;before[i]=x*gain(x);const pivot=mask.getX(i)>=0?legShading.foreMean:legShading.hindMean;after[i]=before[i]+Math.max(-legShading.maxDelta,Math.min(legShading.maxDelta,(pivot-before[i])*legShading.strength))*Math.abs(mask.getX(i))*smooth(shading.skinStart,shading.skinEnd,x);}
+   const index=geometry.index.array,ab=new THREE.Vector3(),ac=new THREE.Vector3();for(let i=0;i<index.length;i+=3){const a=index[i],b=index[i+1],c=index[i+2],area=ab.subVectors(points[b],points[a]).cross(ac.subVectors(points[c],points[a])).length()/6;areas[a]+=area;areas[b]+=area;areas[c]+=area;}
+   check(points.every((p,i)=>p.y>.30&&p.y<1.35||mask.getX(i)===0),key+' hoof/pastern, chest, neck and head are outside mask support');
+   check(Array.from(mask.array).every((x,i)=>x!==0||before[i]===after[i]),key+' every vertex outside leg support has exactly unchanged neutral shading');
+   const changes=[];
+   for(const sign of [1,-1]){let weight=0,a=0,b=0,aa=0,bb=0;for(let i=0;i<mask.count;i++)if(mask.getX(i)*sign>.01){const w=areas[i];weight+=w;a+=w*before[i];b+=w*after[i];aa+=w*before[i]**2;bb+=w*after[i]**2;}a/=weight;b/=weight;const varianceRatio=(bb/weight-b*b)/(aa/weight-a*a),meanDrift=Math.abs(b-a)/a;check(meanDrift<.012,key+' '+(sign>0?'fore':'hind')+' mean leg brightness changes by less than 1.2%');check(varianceRatio<.88,key+' '+(sign>0?'fore':'hind')+' actual painted leg variance decreases at least 12%');changes.push({leg:sign>0?'fore':'hind',meanDriftPercent:+(meanDrift*100).toFixed(3),varianceReductionPercent:+((1-varianceRatio)*100).toFixed(2)});}
+   const cached=draftLibrary.instantiate(asset);check(cached.skin.geometry.attributes.nativeLegCoat===mask,key+' second actor reuses its prepared mask without per-frame or repeated skin sampling');
+   const row=[key,key,0,0,0,'#8a5a2b','#332214',{}];configureNativeCustomization({THREE,rig:actor,horse:{id:key,breed:key,colors:{body:'#ba753d',mane:'#332214'},mark:'pinto',markCol:'#fffaf0'},defaults:row});const shader=makeShader();actor.skin.material.onBeforeCompile(shader);
+   check(shader.vertexShader.includes('ncLegMask=nativeLegCoat')&&shader.fragmentShader.indexOf('ncSoft+=ncDelta')<shader.fragmentShader.indexOf('#include <map_fragment>')&&shader.fragmentShader.indexOf('#include <map_fragment>')<shader.fragmentShader.indexOf('vec3 nrBefore='),key+' leg compression composes before exact player pigment and white markings');
+   check(shader.uniforms.nrCoat.value.equals(new THREE.Color('#ba753d'))&&shader.uniforms.nrMarkColor.value.equals(new THREE.Color('#fffaf0')),key+' chosen dark/golden coat and white marking colors are not rewritten');
+   actor.nativeCustomization.dispose();for(const material of [...actor.materials,...cached.materials])material.dispose();console.log('Real neutral atlas leg contrast:',key,JSON.stringify(changes));
+  }
+  const other=draftLibrary.instantiate(await draftLibrary.load('vanner'));check(!other.skin.geometry.attributes.nativeLegCoat&&!other.baseMat.customProgramCacheKey().includes('native-leg-coat'), 'unapproved Vanner foundation receives no draft-leg material change');
+ }finally{global.fetch=previousFetch;}
+ check(digest(fs.readFileSync(path.join(root,'assets/models/native-roster/neutralcoat.png')))===atlasHash,'source neutral atlas bytes remain unchanged');
  // Real Fjord binary + its authored card metadata: no browser or texture fetch.
  const {applyNativeFjordGroom,fjordCardColorMask}=await load('assets/native-fjord-groom.js');
  check(fjordCardColorMask(3,[{start:0,count:2,outer:.5}])[1]===1.5,'card mask retains deterministic fractional layer pigment');

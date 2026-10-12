@@ -60,7 +60,7 @@ function readRush(){
   target:j?{kind:j.kind,label:j.fenceLabel||j.kind,x:j.x,z:j.z,heading:rot,distance:Math.hypot(dx,dz),across:dx*sn+dz*cs,lateral:dx*cs-dz*sn}:null,
   cue:current===c?G.courseGuide?.jumpCue?.()||null:null,recovery,
   player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,height:p.y,jumpAge:G.horse.RIG().heroJumpAge??null},
-  grades:[...(c.ce?.grades||[])],lastGrade:c.ce?.lastGrade||null,refusals:c.ce?.refusals||0};
+  grades:[...(c.ce?.grades||[])],lastGrade:c.ce?.lastGrade||null,refusals:c.ce?.refusals||0,lastJumpTiming:c.ce?.lastJumpTiming?{...c.ce.lastJumpTiming}:null};
 }
 function recordRush(event=null){
  const row=readRush();if(!row)return;
@@ -112,26 +112,36 @@ function startRushDriver(){
  }catch(e){stop();fail(e);}},100);
 }
 function startRoundupDriver(){
- if(networkStopped||!ready||!G.roundup?.state().active||G.roundup.state().shared||G.roundup.state().mode!=='beginner'){status('Start a solo beginner roundup through a visible production button first.');return;}
- stop();w.document.activeElement?.blur?.();driverStatus='running beginner roundup';status('Herding through ordinary riding keys; no horse position or pen-count injection.');
+ const initial=G?.roundup?.state();
+ if(networkStopped||!ready||!initial?.active||initial.shared||!['beginner','full'].includes(initial.mode)){status('Start a solo roundup through a visible production button first.');return;}
+ const runId=initial.runId,mode=initial.mode;let blockedSince=0;
+ stop();w.document.activeElement?.blur?.();driverStatus='running '+mode+' roundup';status('Herding through ordinary riding keys; no horse position or pen-count injection.');
  driver=setInterval(()=>{try{
   const s=G.roundup.state(),p=G.horse.player,h=s.target;
   if(!s.active){stop();status('Roundup ended. Inspect the saved result.');report();return;}
+  if(s.shared||s.runId!==runId||s.mode!==mode){stop();status('Stopped: the roundup changed. Inspect before resuming.');report();return;}
   if(blocked()||s.paused||s.pending||s.countdown>0){release();driverStatus='waiting for countdown, UI or save';return;}
   if(!h){release();driverStatus='waiting for a loose horse';return;}
+  if(h.approachBlocked||!Number.isFinite(h.standX)||!Number.isFinite(h.standZ)){
+   release();blockedSince=blockedSince||Date.now();driverStatus='waiting for a clear production herd route';driverTarget={horse:h.name,blocked:true};
+   if(Date.now()-blockedSince>2000){stop();status('Stopped: the production herd marker has no clear approach. Manual steering needed.');report();}return;
+  }
+  blockedSince=0;
   const dx=s.pen.x-h.x,dz=s.pen.z-h.z,len=Math.hypot(dx,dz),ux=dx/len,uz=dz/len;
   const px=p.pos.x-h.x,pz=p.pos.z-h.z,along=px*ux+pz*uz,side=px*(-uz)+pz*ux;
-  let x=h.standX,z=h.standZ;
+  const routed=!!h.approachTarget;
+  let x=routed?h.approachTarget.x:h.standX,z=routed?h.approachTarget.z:h.standZ;
   const spacing=Number($('herdSpacing').value),markerDistance=Math.hypot(x-h.x,z-h.z);
   // A skill comparison uses the same steering controls and real collision path.
   // Only the rider's aiming point changes; loose horses still own their motion.
-  if(spacing===7.5&&along<-6&&Math.abs(side)<5&&Number.isFinite(markerDistance)&&markerDistance>0){x=h.x+(x-h.x)*spacing/markerDistance;z=h.z+(z-h.z)*spacing/markerDistance;}
-  if(along>-5){const sign=Math.sign(side)||1;x=h.x-ux*8-uz*sign*17;z=h.z-uz*8+ux*sign*17;}
+  if(!routed&&spacing===7.5&&along<-6&&Math.abs(side)<5&&Number.isFinite(markerDistance)&&markerDistance>0){x=h.x+(x-h.x)*spacing/markerDistance;z=h.z+(z-h.z)*spacing/markerDistance;}
+  if(!routed&&along>-5){const sign=Math.sign(side)||1;x=h.x-ux*8-uz*sign*17;z=h.z-uz*8+ux*sign*17;}
   if(!Number.isFinite(x)||!Number.isFinite(z)){release();driverStatus='no clear marker: manual steering needed';driverTarget={horse:h.name,blocked:true};return;}
   const distance=Math.hypot(x-p.pos.x,z-p.pos.z),angle=Math.atan2(x-p.pos.x,z-p.pos.z),delta=Math.atan2(Math.sin(angle-p.heading),Math.cos(angle-p.heading));
-  G.riding.selectGait(distance>15?'trot':'walk');
+  const keepingFullPace=mode==='full'&&Math.abs(delta)<.35&&((h.pressure==='guiding'&&h.speed>2.2)||(h.approachPhase==='pressure'&&along<-6&&distance>1.4));
+  G.riding.selectGait(distance>(mode==='full'?8:15)||keepingFullPace?'trot':'walk');
   key('KeyA',delta>.035);key('KeyD',delta<-.035);key('KeyW',Math.abs(delta)<.6&&distance>.8);key('KeyS',Math.abs(delta)>1&&p.speed>1.2);
-  driverSteps++;driverStatus='running beginner roundup';driverTarget={x,z,distance,horse:h.name,pressure:h.pressure,spacing,approachBlocked:h.approachBlocked};
+  driverSteps++;driverStatus='running '+mode+' roundup';driverTarget={x,z,distance,horse:h.name,pressure:h.pressure,spacing,approachBlocked:h.approachBlocked,approachPhase:h.approachPhase,planMs:h.approachPlanMs};
  }catch(e){stop();fail(e);}},100);
 }
 async function boot(){
@@ -143,6 +153,11 @@ async function boot(){
  ready=true;loading=false;for(const id of ['gait','forward','left','right','back','jump','jumpAssist','stop','drive','driveRush','driveRoundup'])$(id).disabled=false;
  status('Ready. Inspect and complete the real onboarding before choosing an activity.');report();
 }
+function roundupGeometry(){
+ const bounds={x1:-110,x2:-33,z1:-45,z2:25},W=G?.world;if(!W)return null;
+ const near=c=>Number.isFinite(c.x)&&Number.isFinite(c.z)&&Number.isFinite(c.r)&&c.r>=0&&c.x+c.r>=bounds.x1-2&&c.x-c.r<=bounds.x2+2&&c.z+c.r>=bounds.z1-2&&c.z-c.r<=bounds.z2+2;
+ return {bounds,colliders:(W.colliders||[]).filter(near).map(c=>({x:c.x,z:c.z,r:c.r,precise:!!c.precise})),walls:(W.walls||[]).filter(w=>[w.x1,w.z1,w.x2,w.z2].every(Number.isFinite)&&Math.max(w.x1,w.x2)>=bounds.x1-2&&Math.min(w.x1,w.x2)<=bounds.x2+2&&Math.max(w.z1,w.z2)>=bounds.z1-2&&Math.min(w.z1,w.z2)<=bounds.z2+2).map(w=>({x1:w.x1,z1:w.z1,x2:w.x2,z2:w.z2}))};
+}
 function snapshot(){
  const controls=renderProxies(),base={ready,loading,status:$('status').textContent,controls,lastClick,errors:[...errors],method:'Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.'};
  if(!G)return base;
@@ -150,9 +165,9 @@ function snapshot(){
  const p=G.horse.player,s=storageOwned?readSave():null,roundState=G.roundup?.state();recordRush();
  if(roundState?.active){
   if(tracedRun!==roundState.runId){tracedRun=roundState.runId;roundupTrace.length=0;lastTraceElapsed=-1;}
-  if(roundState.elapsed-lastTraceElapsed>=.75){const h=roundState.target;roundupTrace.push({elapsed:roundState.elapsed,penned:roundState.penned,horse:h?.name,x:h?.x,z:h?.z,pressure:h?.pressure,distance:h?.distance,speed:h?.speed,approachBlocked:h?.approachBlocked,playerX:p.pos.x,playerZ:p.pos.z,playerSpeed:p.speed});if(roundupTrace.length>250)roundupTrace.shift();lastTraceElapsed=roundState.elapsed;}
+  if(roundState.elapsed-lastTraceElapsed>=.75){const h=roundState.target;roundupTrace.push({elapsed:roundState.elapsed,penned:roundState.penned,horse:h?.name,x:h?.x,z:h?.z,heading:h?.heading,avoidSide:h?.avoidSide,pressure:h?.pressure,distance:h?.distance,speed:h?.speed,approachBlocked:h?.approachBlocked,approachPhase:h?.approachPhase,approachTarget:h?.approachTarget,planMs:h?.approachPlanMs,playerX:p.pos.x,playerZ:p.pos.z,playerSpeed:p.speed});if(roundupTrace.length>250)roundupTrace.shift();lastTraceElapsed=roundState.elapsed;}
  }
- return {...base,rescue:G.rescueRide?.snapshot(),journey:G.riderJourney?.snapshot(),rush:G.ranchRush?.snapshot(),rushCourse:readRush(),rushTrace:[...rushTrace],roundup:roundState,roundupTrace:[...roundupTrace],scenery:{...scenery},adoptedMount:G.rescueRide?.adoptedMount?.()||null,player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,rigReady:G.horse.RIG().ready,horseId:G.horse.ridden?.()?.id,horseName:G.horse.ridden?.()?.name,breed:G.horse.ridden?.()?.breed,modelKey:G.horse.RIG().modelKey,loadingBreed:!!G.horse.RIG().loadingBreed},ui:{blocked:!!G.input?.blocked?.(),bodyClasses:w.document.body.className,dialogVisible:!!w.document.getElementById('dlg')?.getClientRects().length},driver:{active:!!driver,status:driverStatus,steps:driverSteps,target:driverTarget},networkConnected:!!G.net?.net.client?.connected,networkStopped,featureErrors:G.errors||[],saveSummary:s?{horseCount:s.horses?.length||0,riderCreated:!!s.rider?.made,ridingHorseId:s.ridingHorseId,horseNames:s.horses?.map(h=>({id:h.id,name:h.name,breed:h.breed})),totalRaces:s.totalRaces||0,rescue:{completions:s.rescueRides?.completions||0,adopted:!!s.rescueRides?.adopted},journey:s.riderJourney||null,rush:s.ranchRush?.records||null}:null};
+ return {...base,rescue:G.rescueRide?.snapshot(),journey:G.riderJourney?.snapshot(),rush:G.ranchRush?.snapshot(),rushCourse:readRush(),rushTrace:[...rushTrace],roundup:roundState,roundupGeometry:roundupGeometry(),roundupTrace:[...roundupTrace],scenery:{...scenery},adoptedMount:G.rescueRide?.adoptedMount?.()||null,player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,rigReady:G.horse.RIG().ready,horseId:G.horse.ridden?.()?.id,horseName:G.horse.ridden?.()?.name,breed:G.horse.ridden?.()?.breed,modelKey:G.horse.RIG().modelKey,loadingBreed:!!G.horse.RIG().loadingBreed},ui:{blocked:!!G.input?.blocked?.(),bodyClasses:w.document.body.className,dialogVisible:!!w.document.getElementById('dlg')?.getClientRects().length},driver:{active:!!driver,status:driverStatus,steps:driverSteps,target:driverTarget},networkConnected:!!G.net?.net.client?.connected,networkStopped,featureErrors:G.errors||[],saveSummary:s?{horseCount:s.horses?.length||0,riderCreated:!!s.rider?.made,ridingHorseId:s.ridingHorseId,horseNames:s.horses?.map(h=>({id:h.id,name:h.name,breed:h.breed})),totalRaces:s.totalRaces||0,rescue:{completions:s.rescueRides?.completions||0,adopted:!!s.rescueRides?.adopted},journey:s.riderJourney||null,rush:s.ranchRush?.records||null}:null};
 }
 function report(){try{$('report').textContent=JSON.stringify(snapshot(),null,2);}catch(e){$('report').textContent='Diagnostics unavailable: '+String(e);}}
 $('boot').onclick=()=>boot().catch(fail);$('reportNow').onclick=report;for(const [id,code]of Object.entries(KEYS))$(id).onclick=()=>manual(code);

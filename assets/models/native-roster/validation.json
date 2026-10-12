@@ -479,29 +479,29 @@
     },
     {
       "id": "percheron",
-      "bufferSha256": "f7f2cc1be0b2e6afb7eb23f086b72a2c2fdd80fa333f8460c69d0d51369b8910",
+      "bufferSha256": "09a1961425264c3615fd2625aafc619f16554250a0ea762a69d320dbe93d7764",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "4aac6f1e2f042002eb63a56b63f1b0d8f7d3da95dbc4815014731af1bc346009",
+      "bodyGeometrySha256": "1f57001509089f1b48d3129e863dc777d09fb1a465839eb07bb969f1733ad6ee",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 1.5497207641601562e-05,
-      "actorScale": 0.9291520366771882,
+      "maxNormalLengthError": 4.869699478149414e-05,
+      "actorScale": 0.930564036051734,
       "withersM": 1.73,
       "textureSize": [
         1024,
         1024
       ],
       "collarAttachment": {
-        "vertices": 962,
+        "vertices": 2404,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b",
+        "baseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
         "protectedTackOutsideSparseIdsPreserved": true,
-        "authoringSha256": "cc72cf4260bf1ef48559f148f9bd9a5067c629449771b8c6c658de6517977c1e",
-        "authoringBaseMorphSha256": "b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b",
+        "authoringSha256": "47c451c96979041bea8bcca8ed90509f9e95d7f4321852c6eab55dd4ba53f4c1",
+        "authoringBaseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
         "standingRoute": {
           "version": 1,
           "space": "source-standing-metres-before-actor-scale",
@@ -515,17 +515,18 @@
             0.3,
             0.69
           ],
-          "reroutedVertices": 865,
-          "unchangedUpperVertices": 97,
-          "maximumStandingDisplacementDisplayedM": 0.05685320911820079,
-          "maximumTargetReconstructionDisplayedM": 6.763344142956113e-08,
-          "maximumTargetNormalDirectionError": 4.10172434442877e-08,
-          "minimumRouteJacobianDeterminant": 0.4705906687628052,
-          "unchangedRegionMaxDisplayedM": 6.763344143995882e-08,
-          "skinInfluencesUnchanged": true
+          "reroutedVertices": 792,
+          "unchangedUpperVertices": 0,
+          "maximumStandingDisplacementDisplayedM": 0.09390562304700822,
+          "maximumTargetReconstructionDisplayedM": 7.741768309320741e-08,
+          "maximumTargetNormalDirectionError": 4.3322444927511994e-08,
+          "minimumRouteJacobianDeterminant": 0.47061487283004866,
+          "unchangedRegionMaxDisplayedM": 0.0,
+          "skinInfluencesUnchanged": true,
+          "sourceRestoredVertices": 2404
         },
-        "restReconstructionMaxDisplayedM": 6.763344142956113e-08,
-        "restNormalMaxDirectionError": 4.10172434442877e-08
+        "restReconstructionMaxDisplayedM": 7.741768309320741e-08,
+        "restNormalMaxDirectionError": 4.3322444927511994e-08
       },
       "additiveGroomShell": {
         "vertices": 1892,
@@ -550,7 +551,7 @@
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,
-        "maxLowerLegYDriftM": 2.9193277107375515e-06,
+        "maxLowerLegYDriftM": 0.008624114730343191,
         "hooves": [
           {
             "leg": "hind-left",
@@ -600,39 +601,46 @@
         "maxAnimatedHoofCenterDriftM": 5.921907010738262e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03149319840366591
       },
-      "draftStyleProtectedLowerLegs": {
-        "vertices": 3054,
-        "positionsAndNormalsBitExactToV5": true,
-        "sourceYAtOrBelowM": 0.65
+      "draftStyleProtectedHooves": {
+        "vertices": 1510,
+        "positionsBitExactToV6": true,
+        "sourceYAtOrBelowM": 0.18,
+        "maximumReviewedNormalRequantizationDegrees": 0.005
+      },
+      "draftStyleProtectedHead": {
+        "vertices": 8263,
+        "positionsBitExactToV6": true,
+        "minimumSourceY": 1.5,
+        "minimumSourceZ": 0.9
       },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"
     },
     {
       "id": "shire",
-      "bufferSha256": "6be8bb7e4aee5687db142321e4e11392d485335b7229113639356be4d0ed77f0",
+      "bufferSha256": "0809ad8b3fba95410c2b07bc259b0c14669396edcc7d53898768bf14cd00a03d",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "fb7465e1ab418baa889c5bfb59b0c0143375d80cde2c72225a3a91197b9df1aa",
+      "bodyGeometrySha256": "6370151caf730e5fc3bc3d9f7f6c524f8bd1035b23f30110767827c46a7e058b",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 1.6927719116210938e-05,
-      "actorScale": 0.973702959308522,
+      "maxNormalLengthError": 4.589557647705078e-05,
+      "actorScale": 0.9753195309718683,
       "withersM": 1.82,
       "textureSize": [
         1024,
         1024
       ],
       "collarAttachment": {
-        "vertices": 966,
+        "vertices": 2404,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c",
+        "baseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
         "protectedTackOutsideSparseIdsPreserved": true,
-        "authoringSha256": "ce97ee7ad2547e4cf14782ee56650cf108454005fa3a6fb16119150da2924e3a",
-        "authoringBaseMorphSha256": "abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c",
+        "authoringSha256": "c28cfb73d027d2f69050b9ea2be0a0d0543befe6c61725bc1096e5c8a35a7798",
+        "authoringBaseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
         "standingRoute": {
           "version": 1,
           "space": "source-standing-metres-before-actor-scale",
@@ -646,17 +654,18 @@
             0.3,
             0.69
           ],
-          "reroutedVertices": 888,
-          "unchangedUpperVertices": 78,
-          "maximumStandingDisplacementDisplayedM": 0.05957920282404847,
-          "maximumTargetReconstructionDisplayedM": 7.595876479955538e-08,
-          "maximumTargetNormalDirectionError": 4.110173616415969e-08,
-          "minimumRouteJacobianDeterminant": 0.4706024612973052,
-          "unchangedRegionMaxDisplayedM": 7.595876478138757e-08,
-          "skinInfluencesUnchanged": true
+          "reroutedVertices": 792,
+          "unchangedUpperVertices": 0,
+          "maximumStandingDisplacementDisplayedM": 0.106525227165467,
+          "maximumTargetReconstructionDisplayedM": 7.508369761627268e-08,
+          "maximumTargetNormalDirectionError": 4.0716989516357055e-08,
+          "minimumRouteJacobianDeterminant": 0.4705886757671657,
+          "unchangedRegionMaxDisplayedM": 0.0,
+          "skinInfluencesUnchanged": true,
+          "sourceRestoredVertices": 2404
         },
-        "restReconstructionMaxDisplayedM": 7.595876479955538e-08,
-        "restNormalMaxDirectionError": 4.110173616415969e-08
+        "restReconstructionMaxDisplayedM": 7.508369761627268e-08,
+        "restNormalMaxDirectionError": 4.0716989516357055e-08
       },
       "additiveGroomShell": {
         "vertices": 1892,
@@ -681,7 +690,7 @@
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,
-        "maxLowerLegYDriftM": 3.4855925278298727e-06,
+        "maxLowerLegYDriftM": 0.009495044194320235,
         "hooves": [
           {
             "leg": "hind-left",
@@ -731,39 +740,46 @@
         "maxAnimatedHoofCenterDriftM": 4.751425789241398e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03748872811658668
       },
-      "draftStyleProtectedLowerLegs": {
-        "vertices": 3054,
-        "positionsAndNormalsBitExactToV5": true,
-        "sourceYAtOrBelowM": 0.65
+      "draftStyleProtectedHooves": {
+        "vertices": 1510,
+        "positionsBitExactToV6": true,
+        "sourceYAtOrBelowM": 0.18,
+        "maximumReviewedNormalRequantizationDegrees": 0.005
+      },
+      "draftStyleProtectedHead": {
+        "vertices": 8263,
+        "positionsBitExactToV6": true,
+        "minimumSourceY": 1.5,
+        "minimumSourceZ": 0.9
       },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"
     },
     {
       "id": "clyde",
-      "bufferSha256": "03c1194550d6d2808d773e661bfa4fbe8e314d354eb2b8b127a4c5d5c6cddb35",
+      "bufferSha256": "049688ecb1dd9c96ebc95fb4f9de24b0e85e2a1088f7be81317224fa93ea06aa",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "d44649ad9c2b6dd60e2998e19765f36ea69e60970e5b2383aa1a30dacf5619e7",
+      "bodyGeometrySha256": "01003d8b49618d0a565069019e9f9a073932229233bebde2939d342040f0a3ce",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 1.4781951904296875e-05,
-      "actorScale": 0.958205602859508,
+      "maxNormalLengthError": 4.6372413635253906e-05,
+      "actorScale": 0.9595817748379818,
       "withersM": 1.78,
       "textureSize": [
         1024,
         1024
       ],
       "collarAttachment": {
-        "vertices": 966,
+        "vertices": 2404,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "baseMorphBytes": 728256,
-        "baseMorphSha256": "bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076",
+        "baseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
         "protectedTackOutsideSparseIdsPreserved": true,
-        "authoringSha256": "8830c45fa3570a78b8f3cd9b7a1920869cafbb9bcc0547fd7dd69f083ff51f8e",
-        "authoringBaseMorphSha256": "bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076",
+        "authoringSha256": "2c3a017250a366886581daf7bad6266717a86acb49827e42d301742116a7d3b7",
+        "authoringBaseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
         "standingRoute": {
           "version": 1,
           "space": "source-standing-metres-before-actor-scale",
@@ -777,17 +793,18 @@
             0.3,
             0.69
           ],
-          "reroutedVertices": 864,
-          "unchangedUpperVertices": 102,
-          "maximumStandingDisplacementDisplayedM": 0.05863094665238439,
-          "maximumTargetReconstructionDisplayedM": 7.517769227560354e-08,
-          "maximumTargetNormalDirectionError": 4.420363179468699e-08,
-          "minimumRouteJacobianDeterminant": 0.4705898323963412,
-          "unchangedRegionMaxDisplayedM": 7.51776924932739e-08,
-          "skinInfluencesUnchanged": true
+          "reroutedVertices": 791,
+          "unchangedUpperVertices": 0,
+          "maximumStandingDisplacementDisplayedM": 0.09049989326048155,
+          "maximumTargetReconstructionDisplayedM": 7.462730308785384e-08,
+          "maximumTargetNormalDirectionError": 4.482025801009231e-08,
+          "minimumRouteJacobianDeterminant": 0.47059096950113855,
+          "unchangedRegionMaxDisplayedM": 0.0,
+          "skinInfluencesUnchanged": true,
+          "sourceRestoredVertices": 2404
         },
-        "restReconstructionMaxDisplayedM": 7.517769227560354e-08,
-        "restNormalMaxDirectionError": 4.420363179468699e-08
+        "restReconstructionMaxDisplayedM": 7.462730308785384e-08,
+        "restNormalMaxDirectionError": 4.482025801009231e-08
       },
       "additiveGroomShell": {
         "vertices": 1892,
@@ -812,7 +829,7 @@
       "draftLowerLegValidation": {
         "soleAnchorVertices": 1,
         "soleAnchorsBitExact": true,
-        "maxLowerLegYDriftM": 2.8951334107296667e-06,
+        "maxLowerLegYDriftM": 0.009021837787246745,
         "hooves": [
           {
             "leg": "hind-left",
@@ -862,10 +879,17 @@
         "maxAnimatedHoofCenterDriftM": 5.708851321369127e-07,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.03449137152698355
       },
-      "draftStyleProtectedLowerLegs": {
-        "vertices": 3054,
-        "positionsAndNormalsBitExactToV5": true,
-        "sourceYAtOrBelowM": 0.65
+      "draftStyleProtectedHooves": {
+        "vertices": 1510,
+        "positionsBitExactToV6": true,
+        "sourceYAtOrBelowM": 0.18,
+        "maximumReviewedNormalRequantizationDegrees": 0.005
+      },
+      "draftStyleProtectedHead": {
+        "vertices": 8263,
+        "positionsBitExactToV6": true,
+        "minimumSourceY": 1.5,
+        "minimumSourceZ": 0.9
       },
       "approvedHeadRevisionPinned": true,
       "headFamily": "draft"

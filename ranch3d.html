@@ -645,13 +645,13 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';
-import {createTravelMap} from './assets/travel-map.js?v=travel-map-1';
+import {createTravelMap} from './assets/travel-map.js?v=travel-map-resize-2';
 import {createNPCCharacters} from './assets/npc-characters.js?v=character-polish-20261009';
 import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-1';
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=equestrian-style-20261012';
+import {createBreedLibrary} from './assets/breed-models.js?v=leg-contours-20261012';
 import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=equestrian-style-20261012';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=equestrian-style-20261012';
@@ -715,7 +715,8 @@ import {FEATURES} from './assets/features/index.js?v=cliff-landscape-4';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
-import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-approach-2';
+import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-route-2';
+import {updateRoundupGuidance} from './assets/roundup-guidance.mjs?v=roundup-route-2';
 import {roundupPressure} from './assets/roundup-pressure.mjs?v=gentle-herd-1';
 import {sharedHerdRiders,sharedHerdPressure,validateSharedHerdSnapshot} from './assets/shared-herd-physics.mjs?v=shared-herd-2';
 const HORSE_ARRIVAL=createHorseArrival();
@@ -9592,6 +9593,14 @@ function roundupPointClear(x,z,radius=.65){
  const p={x,z},y=groundH(x,z);solid.resolve(p,{bottom:y+.38,top:y+2.65,radius});return Math.hypot(p.x-x,p.z-z)<.001;
 }
 function roundupApproach(h){
+ // Solo gold rings lead along safe rider legs before reaching pressure position.
+ // Shared sessions retain their existing synchronized guidance contract.
+ if(!ROUND.shared){
+  const guide=updateRoundupGuidance(h.guidanceCache,{key:ROUND.runId+':'+ROUND.mode+':'+h.name,horse:h.pos,pen:ROUND_PEN,rider:player.pos,bounds:PAST,
+   colliders:G.world.colliders,walls:G.world.walls,pressureRadius:ROUND.mode==='beginner'?12:14,avoidSide:h.roundupAvoidSide||0,clearPoint:roundupPointClear,clock:()=>performance.now()},performance.now());
+  h.guidanceCache=guide;
+  return guide.blocked?null:{...guide.pressurePoint,approachTarget:guide.target,approachPhase:guide.phase,approachPlanMs:guide.planMs};
+ }
  const now=Date.now(),old=h.approachCache;
  if(old&&now-old.at<180&&Math.hypot(h.pos.x-old.hx,h.pos.z-old.hz)<.2&&Math.hypot(player.pos.x-old.px,player.pos.z-old.pz)<.4)return old.point;
  const point=chooseRoundupApproach({horse:h.pos,pen:ROUND_PEN,rider:player.pos,bounds:PAST,colliders:G.world.colliders,walls:G.world.walls,pressureRadius:ROUND.mode==='beginner'?12:14,
@@ -9609,7 +9618,7 @@ function roundupState(){
    if(h.roundupBlocked)pressure='blocked';
    else if(Number.isFinite(h.heading)&&(Math.sin(h.heading)*dx+Math.cos(h.heading)*dz)/len<.35)pressure='turning';
   }
-  target={name:h.name,x:h.pos.x,z:h.pos.z,standX:at?.x??null,standZ:at?.z??null,approachBlocked:!at,distance:response.distance,pressure,speed:h.roundupSpeed||0};
+  target={name:h.name,x:h.pos.x,z:h.pos.z,heading:h.heading,avoidSide:h.roundupAvoidSide||0,standX:at?.x??null,standZ:at?.z??null,approachBlocked:!at,approachTarget:at?.approachTarget??null,approachPhase:at?.approachPhase??null,approachPlanMs:at?.approachPlanMs??null,distance:response.distance,pressure,speed:h.roundupSpeed||0};
  }
  return {active:ROUND.on,runId:ROUND.runId,shared:ROUND.shared?{sessionId:ROUND.shared.sessionId,host:ROUND.shared.host}:null,paused:ROUND.on&&(ROUND.shared&&!ROUND.shared.host?ROUND.shared.startupWaiting||ROUND.shared.remotePaused:ROUND.shared?.startupWaiting||roundupPaused()),mode:ROUND.mode,name:ROUND_MODES[ROUND.mode].name,timeLimit:ROUND_MODES[ROUND.mode].time,goldTimeLimit:ROUND_MODES[ROUND.mode].time*.65,pending:ROUND.pending?{...ROUND.pending.proof,saved:false,reason:ROUND.pending.reason}:null,countdown:ROUND.cd,timeLeft:Math.max(0,ROUND.t),elapsed:ROUND.elapsed,total:ROUND.total,penned:ROUND.penned,pen:{...ROUND_PEN},target,
   horses:ROUND.horses.map(h=>({name:h.name,x:h.pos.x,z:h.pos.z,penned:h.penned})),records:freshSave()?.roundupBest||{},lastResult:ROUND.lastResult};

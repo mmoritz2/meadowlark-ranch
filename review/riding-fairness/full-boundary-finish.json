@@ -1,0 +1,3971 @@
+{
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "roundup": {
+    "active": false,
+    "runId": "mv5f1nk9-dqbk7g",
+    "shared": null,
+    "paused": false,
+    "mode": "full",
+    "name": "Full Herd",
+    "timeLimit": 150,
+    "goldTimeLimit": 97.5,
+    "pending": null,
+    "countdown": 0,
+    "timeLeft": 1.2713000000024703,
+    "elapsed": 148.72869999999727,
+    "total": 5,
+    "penned": 5,
+    "pen": {
+      "x": -44,
+      "z": -8,
+      "r": 7.5
+    },
+    "target": null,
+    "horses": [],
+    "records": {
+      "beginner": {
+        "plays": 2,
+        "score": 1040,
+        "penned": 3,
+        "time": 121.9,
+        "medal": "silver",
+        "lastRunId": "mv5e219s-ewxa56"
+      },
+      "full": {
+        "plays": 3,
+        "score": 1506,
+        "penned": 5,
+        "time": 148.73,
+        "medal": "silver",
+        "lastRunId": "mv5f1nk9-dqbk7g"
+      }
+    },
+    "lastResult": {
+      "passPoints": 30,
+      "starPoints": 20,
+      "progress": {
+        "rounded": 5,
+        "dailyDone": [],
+        "story": null,
+        "modules": {
+          "side-quests": {
+            "updates": []
+          },
+          "season-challenges": {
+            "updates": [],
+            "completed": [],
+            "banked": false
+          },
+          "season-almanac": {
+            "updates": []
+          }
+        }
+      },
+      "runId": "mv5f1nk9-dqbk7g",
+      "mode": "full",
+      "name": "Full Herd",
+      "total": 5,
+      "penned": 5,
+      "time": 148.73,
+      "remaining": 1.2713000000024703,
+      "at": 1791819701885,
+      "score": 1506,
+      "medal": "silver",
+      "pay": 900,
+      "gems": 2,
+      "keys": 1,
+      "previousBestScore": 900,
+      "previousBestTime": null,
+      "previousBestMedal": "bronze",
+      "newBestScore": true,
+      "newBestTime": true,
+      "newBestMedal": true,
+      "saved": true
+    }
+  },
+  "roundupGeometry": {
+    "bounds": {
+      "x1": -110,
+      "x2": -33,
+      "z1": -45,
+      "z2": 25
+    },
+    "colliders": [
+      {
+        "x": -106.35752841901038,
+        "z": 7.301268699756604,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -50.34107031391584,
+        "z": -0.09170838401810508,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -30.9271077665565,
+        "z": -13.830483590627818,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -60.72361367481282,
+        "z": -43.58885454887765,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -50.87510196415701,
+        "z": -20.45948332168336,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -46.95870091408429,
+        "z": -13.211696528946042,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -111.46990744075997,
+        "z": 11.609029868100661,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -34.18736107494328,
+        "z": -34.90393884740936,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -30.26861344512098,
+        "z": 24.49797599896581,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -100.02408156086163,
+        "z": 22.322272891127813,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -93.60167053782166,
+        "z": 23.377070452829805,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -103.53908049352843,
+        "z": 9.010660497408097,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -60.58175158877653,
+        "z": 5.997846901138735,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -51.51762792735973,
+        "z": 7.716657636485419,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -37.80496966180995,
+        "z": 9.449816456075968,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -110.56903064098044,
+        "z": 0.7364881018285308,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -72.6213133776776,
+        "z": -5.947048555710378,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -73.15459104714087,
+        "z": -18.58704509841541,
+        "r": 0.9013265229261747,
+        "precise": false
+      },
+      {
+        "x": -108.32169281390463,
+        "z": -36.82237607610202,
+        "r": 0.9896669003541304,
+        "precise": false
+      },
+      {
+        "x": -50.955629069711854,
+        "z": -46.66768060684998,
+        "r": 0.75,
+        "precise": false
+      },
+      {
+        "x": -33.30620756744365,
+        "z": 27.584031506242052,
+        "r": 0.9466916208903049,
+        "precise": false
+      },
+      {
+        "x": -59,
+        "z": -19,
+        "r": 3.4,
+        "precise": true
+      },
+      {
+        "x": -30,
+        "z": 3.2,
+        "r": 2.6,
+        "precise": true
+      },
+      {
+        "x": -30,
+        "z": 7.5,
+        "r": 2.6,
+        "precise": true
+      },
+      {
+        "x": -30,
+        "z": 11.8,
+        "r": 2.6,
+        "precise": true
+      },
+      {
+        "x": -46,
+        "z": -6,
+        "r": 1.1,
+        "precise": false
+      },
+      {
+        "x": -36,
+        "z": -1,
+        "r": 1.1,
+        "precise": false
+      },
+      {
+        "x": -37,
+        "z": 10,
+        "r": 1.14,
+        "precise": false
+      },
+      {
+        "x": -38.8,
+        "z": 12.2,
+        "r": 1.212,
+        "precise": false
+      },
+      {
+        "x": -37.4,
+        "z": 14.4,
+        "r": 1.2839999999999998,
+        "precise": false
+      },
+      {
+        "x": -39.4,
+        "z": 9.2,
+        "r": 1.14,
+        "precise": false
+      },
+      {
+        "x": -38.7,
+        "z": 16.1,
+        "r": 1.212,
+        "precise": false
+      },
+      {
+        "x": -36.5,
+        "z": -9.5,
+        "r": 1.1,
+        "precise": false
+      },
+      {
+        "x": -50.7,
+        "z": -17.5,
+        "r": 1.4,
+        "precise": false
+      },
+      {
+        "x": -46,
+        "z": -4,
+        "r": 0.8,
+        "precise": false
+      },
+      {
+        "x": -31,
+        "z": -38,
+        "r": 2.6,
+        "precise": true
+      }
+    ],
+    "walls": [
+      {
+        "x1": -110,
+        "z1": -45,
+        "x2": -33,
+        "z2": -45
+      },
+      {
+        "x1": -110,
+        "z1": 25,
+        "x2": -33,
+        "z2": 25
+      },
+      {
+        "x1": -110,
+        "z1": -45,
+        "x2": -110,
+        "z2": 25
+      },
+      {
+        "x1": -33,
+        "z1": -45,
+        "x2": -33,
+        "z2": -11.2
+      },
+      {
+        "x1": -33,
+        "z1": -6.8,
+        "x2": -33,
+        "z2": 25
+      }
+    ]
+  },
+  "roundupTrace": [
+    {
+      "elapsed": 0,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -83,
+      "z": 8,
+      "heading": 1.5707963267948966,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 20.6155281280883,
+      "speed": 0,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -91.32651756537271,
+        "z": 11.416007206306753
+      },
+      "planMs": 3.199999999254942,
+      "playerX": -102,
+      "playerZ": 16,
+      "playerSpeed": 0
+    },
+    {
+      "elapsed": 1.426300000000745,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -82.50079499999974,
+      "z": 8,
+      "heading": 1.5707963267948966,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 16.84788157838228,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -90.81170234623481,
+        "z": 11.453812253481054
+      },
+      "planMs": 1.400000000372529,
+      "playerX": -98.10254658681197,
+      "playerZ": 14.358966983920835,
+      "playerSpeed": 4.096510380473232
+    },
+    {
+      "elapsed": 2.204700000001118,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -81.93980738205937,
+      "z": 7.72130470728267,
+      "heading": 2.1517137386280725,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.167707539801413,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -90.58660524792813,
+        "z": 11.404109307506252
+      },
+      "planMs": 1.5,
+      "playerX": -95.03292934705776,
+      "playerZ": 13.13370659027533,
+      "playerSpeed": 4.325812194712205
+    },
+    {
+      "elapsed": 3.2087000000011177,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -78.34178819802335,
+      "z": 6.035416715994766,
+      "heading": 1.9783966736214953,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.167466724159896,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -86.98556930178682,
+        "z": 9.577082932983327
+      },
+      "planMs": 1.599999999627471,
+      "playerX": -91.37052321936613,
+      "playerZ": 11.600412414448993,
+      "playerSpeed": 4.232402791827301
+    },
+    {
+      "elapsed": 3.982299999998883,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -76.02708141851977,
+      "z": 4.964177699288967,
+      "heading": 2.021249519368072,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.146528333373777,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -84.3695270719456,
+        "z": 8.341099451363865
+      },
+      "planMs": 1.6000000014901161,
+      "playerX": -88.71348742572725,
+      "playerZ": 11.223520037525223,
+      "playerSpeed": 2.9914026365741826
+    },
+    {
+      "elapsed": 4.826099999999628,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -73.48849020148337,
+      "z": 3.7787620308733945,
+      "heading": 1.9823569739822264,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.53703387927716,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -81.8464051497856,
+        "z": 7.117213425898672
+      },
+      "planMs": 1.900000000372529,
+      "playerX": -86.92985221812462,
+      "playerZ": 9.315470542692111,
+      "playerSpeed": 2.4371231954641965
+    },
+    {
+      "elapsed": 5.828599999999629,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -71.7813587333571,
+      "z": 3.089786973856877,
+      "heading": 1.9403037756699513,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.033153255522945,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -80.1400078366636,
+        "z": 6.426399802429197
+      },
+      "planMs": 3.900000000372529,
+      "playerX": -84.92815345287748,
+      "playerZ": 7.998063544689574,
+      "playerSpeed": 2.714267270105238
+    },
+    {
+      "elapsed": 6.6508999999985114,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -68.37607736444214,
+      "z": 1.7876032608239518,
+      "heading": 1.9385951240312054,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.681743197279474,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -76.72796856864447,
+        "z": 5.141095964434282
+      },
+      "planMs": 2.400000000372529,
+      "playerX": -82.07592136180072,
+      "playerZ": 7.066604848141393,
+      "playerSpeed": 4.038377534310293
+    },
+    {
+      "elapsed": 7.4722999999970225,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -66.05527614510753,
+      "z": 0.9317116231633763,
+      "heading": 1.9107355727571835,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.239733751590661,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -74.39719539238267,
+        "z": 4.309933532976353
+      },
+      "planMs": 2.200000001117587,
+      "playerX": -79.50264381494992,
+      "playerZ": 5.615547665155856,
+      "playerSpeed": 3.1043408018181835
+    },
+    {
+      "elapsed": 8.514199999997395,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -62.44371757222611,
+      "z": -0.3103843126932284,
+      "heading": 1.904175300747745,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.439138400333015,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -70.75065280145961,
+        "z": 3.1529705777734334
+      },
+      "planMs": 2,
+      "playerX": -76.08935260614058,
+      "playerZ": 4.410353157785041,
+      "playerSpeed": 4.003677434582277
+    },
+    {
+      "elapsed": 9.45549999999814,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -59.395570474021994,
+      "z": -1.3772836365204453,
+      "heading": 1.9178330753899784,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.226646472475517,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -67.66308228654168,
+        "z": 2.1791539672970828
+      },
+      "planMs": 2,
+      "playerX": -72.7529619193779,
+      "playerZ": 3.519405411023117,
+      "playerSpeed": 3.4677632405940395
+    },
+    {
+      "elapsed": 10.54309999999777,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -55.566021546063006,
+      "z": -2.865167269386191,
+      "heading": 1.960944701925625,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.395305671148156,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -63.79180855428722,
+        "z": 0.7867401904667681
+      },
+      "planMs": 1.799999998882413,
+      "playerX": -68.86584629848856,
+      "playerZ": 2.642961897632197,
+      "playerSpeed": 3.8452684765622696
+    },
+    {
+      "elapsed": 11.34649999999814,
+      "penned": 0,
+      "horse": "Juniper",
+      "x": -52.804540763348314,
+      "z": -4.027497532518596,
+      "heading": 1.9725902715245736,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.054620676049268,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -61.00818341786792,
+        "z": -0.32611303520593404
+      },
+      "planMs": 2.100000001490116,
+      "playerX": -65.72066719319584,
+      "playerZ": 1.513805599040425,
+      "playerSpeed": 4.2738027777751215
+    },
+    {
+      "elapsed": 12.407699999997396,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -64.16110963994292,
+      "z": 15.922052589068377,
+      "heading": -1.9745881006812014,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 15.151930302941052,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.12853365136408,
+        "z": 16.687105920142198
+      },
+      "planMs": 2.099999999627471,
+      "playerX": -62.36315599801217,
+      "playerZ": 0.8771745700663208,
+      "playerSpeed": 0.7590948642315927
+    },
+    {
+      "elapsed": 13.84249999999628,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -64.78507047056772,
+      "z": 17.209837623250497,
+      "heading": -0.22270893070618497,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.197386301811418,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.73897082846132,
+        "z": 18.046749874255994
+      },
+      "planMs": 1.5,
+      "playerX": -63.221145085869686,
+      "playerZ": 3.098852002325231,
+      "playerSpeed": 2.741388820310427
+    },
+    {
+      "elapsed": 14.871099999997767,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -65.05913344130047,
+      "z": 20.52249677421014,
+      "heading": 0.1124443504341711,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.16518246612214,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.95887167501834,
+        "z": 21.86214574737451
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -65.02434995159184,
+      "playerZ": 6.357357014667427,
+      "playerSpeed": 4.157067901342997
+    },
+    {
+      "elapsed": 15.948299999997023,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -60.9472565309315,
+      "z": 22.539071629536718,
+      "heading": 1.459968225961668,
+      "avoidSide": 1,
+      "pressure": "circle behind",
+      "distance": 13.409235686084159,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -70.5153383495894,
+        "z": 22.956537595458773
+      },
+      "planMs": 0.5,
+      "playerX": -66.90509029321704,
+      "playerZ": 10.526086215996775,
+      "playerSpeed": 4.363295174593494
+    },
+    {
+      "elapsed": 16.92359999999777,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -56.271139147862264,
+      "z": 22.615567199208186,
+      "heading": 1.646339466917014,
+      "avoidSide": 1,
+      "pressure": "circle behind",
+      "distance": 13.38376933506915,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -65.78142087281493,
+        "z": 23.024478902426733
+      },
+      "planMs": 43.09999999962747,
+      "playerX": -67.03566511114956,
+      "playerZ": 14.662563841981992,
+      "playerSpeed": 4.389444515894272
+    },
+    {
+      "elapsed": 17.906899999996654,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -52.10455583243232,
+      "z": 22.623256886265914,
+      "heading": 1.5135716952984286,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.216906344563062,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -60.721904513769665,
+        "z": 23.933879081891778
+      },
+      "planMs": 37.40000000037253,
+      "playerX": -65.5576328887506,
+      "playerZ": 18.02595944898388,
+      "playerSpeed": 3.2920254379021108
+    },
+    {
+      "elapsed": 18.903999999996277,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -50.85051106320503,
+      "z": 22.68184576972437,
+      "heading": 1.5343352003570694,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.168135386584904,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -64.60401593136288,
+      "playerZ": 19.279322562726694,
+      "playerSpeed": 0.3779346391081866
+    },
+    {
+      "elapsed": 19.93159999999777,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -50.834335148756736,
+      "z": 22.610739389738733,
+      "heading": -2.0155405619093356,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.090794809846406,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -64.5472325269449,
+      "playerZ": 19.369297755453964,
+      "playerSpeed": 0
+    },
+    {
+      "elapsed": 20.913399999996653,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -49.814266268166435,
+      "z": 21.524379985558816,
+      "heading": -4.5032338279177875,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.364124676145902,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -59.04929297247365,
+        "z": 23.652443913065007
+      },
+      "planMs": 41,
+      "playerX": -64.06184041073115,
+      "playerZ": 19.698261488860187,
+      "playerSpeed": 1.4426928763155251
+    },
+    {
+      "elapsed": 21.97159999999777,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -48.24155662563289,
+      "z": 21.460778905133456,
+      "heading": -4.727715094871407,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.22944582076264,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -56.17763053840112,
+        "z": 23.836357912433638
+      },
+      "planMs": 37.80000000074506,
+      "playerX": -62.45180297846747,
+      "playerZ": 20.721842535903473,
+      "playerSpeed": 2.004331574111554
+    },
+    {
+      "elapsed": 22.906099999997767,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -46.623859153633425,
+      "z": 21.492188297174664,
+      "heading": -4.72504377432347,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.157217029340714,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -60.78053982692253,
+      "playerZ": 21.615421127124808,
+      "playerSpeed": 2.077433592552674
+    },
+    {
+      "elapsed": 23.901599999997767,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -46.06540588697819,
+      "z": 21.495619746183685,
+      "heading": -4.717878265351213,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.227775673694705,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -60.28411458467829,
+      "playerZ": 22.00348152947342,
+      "playerSpeed": 0.12793068082132747
+    },
+    {
+      "elapsed": 24.93459999999777,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -46.42081781593693,
+      "z": 21.19906506748804,
+      "heading": -2.541677180337355,
+      "avoidSide": 0,
+      "pressure": "circle behind",
+      "distance": 13.868163958600048,
+      "speed": 4.8,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -60.26474411499799,
+      "playerZ": 22.01862361254686,
+      "playerSpeed": 0
+    },
+    {
+      "elapsed": 25.907399999996652,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -45.318666809573635,
+      "z": 19.9963981762197,
+      "heading": -4.256030405360481,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.118454132753577,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -51.834657084134726,
+        "z": 23.79028822735781
+      },
+      "planMs": 1.700000001117587,
+      "playerX": -59.25203021870116,
+      "playerZ": 22.275023026398603,
+      "playerSpeed": 1.7155853382128148
+    },
+    {
+      "elapsed": 26.849599999997764,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -43.78586765171228,
+      "z": 19.505175150862712,
+      "heading": -4.455148356631734,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.038904974627851,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -50.06633691023961,
+        "z": 23.639495559845887
+      },
+      "planMs": 0.5,
+      "playerX": -57.489480879679824,
+      "playerZ": 22.555066523502653,
+      "playerSpeed": 2.0288573491225472
+    },
+    {
+      "elapsed": 27.932799999997016,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -41.60634655306516,
+      "z": 18.946992072042754,
+      "heading": -4.450537862714229,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.224776780113409,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -47.51028431992309,
+        "z": 23.57230490957803
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -55.29168689946554,
+      "playerZ": 22.827163981538458,
+      "playerSpeed": 2.0843112409151803
+    },
+    {
+      "elapsed": 28.909799999997023,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -39.73110005393456,
+      "z": 18.520252738708884,
+      "heading": -4.45740208328384,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.248793448876654,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -45.619583721943094,
+        "z": 23.565190255511748
+      },
+      "planMs": 0.30000000074505806,
+      "playerX": -53.257915782475216,
+      "playerZ": 22.998351776789153,
+      "playerSpeed": 2.0912559759330933
+    },
+    {
+      "elapsed": 29.8811999999974,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -37.94804167448708,
+      "z": 17.95425943561062,
+      "heading": -4.375763851339558,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.072963515819705,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -44.02428995254959,
+        "z": 23.936879996303347
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -51.098337766706415,
+      "playerZ": 22.96604702134821,
+      "playerSpeed": 2.2652630938720324
+    },
+    {
+      "elapsed": 30.83479999999703,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -35.794117562189705,
+      "z": 16.90815285103003,
+      "heading": -4.2163104914389065,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.383239165729814,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -39.17169768839932,
+        "z": 23.60456625605767
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -48.80756300514596,
+      "playerZ": 23.03414718679179,
+      "playerSpeed": 3.234486501769282
+    },
+    {
+      "elapsed": 31.933799999997035,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -35.10508501684563,
+      "z": 13.580196476253157,
+      "heading": -3.089701588521452,
+      "avoidSide": 1,
+      "pressure": "circle behind",
+      "distance": 13.449784881635816,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -36.32804863906153,
+        "z": 23.046687539528214
+      },
+      "planMs": 1,
+      "playerX": -44.53891374136098,
+      "playerZ": 23.166623806535718,
+      "playerSpeed": 4.248574321944112
+    },
+    {
+      "elapsed": 32.94779999999704,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -35.11594446351731,
+      "z": 9.004924092486958,
+      "heading": -3.0906751840351974,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.152155351935349,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.495277543395105,
+        "z": 17.996926450944745
+      },
+      "planMs": 0.6999999992549419,
+      "playerX": -40.618385282857226,
+      "playerZ": 22.043583768043117,
+      "playerSpeed": 3.8686715083096503
+    },
+    {
+      "elapsed": 33.943599999997794,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -35.272195192514964,
+      "z": 5.5469934025883205,
+      "heading": -3.119207611182277,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.179801044720792,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.913679759018216,
+        "z": 14.841961059406254
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -38.32916784675821,
+      "playerZ": 19.393353063491034,
+      "playerSpeed": 3.572557446023839
+    },
+    {
+      "elapsed": 34.84389999999668,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -35.4139934747543,
+      "z": 3.240139743084845,
+      "heading": -3.073931038704424,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.56471579194364,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -34,
+        "z": 16
+      },
+      "planMs": 3.200000001117587,
+      "playerX": -37.7912010648747,
+      "playerZ": 17.609545791128944,
+      "playerSpeed": 0.7277749949158306
+    },
+    {
+      "elapsed": 35.95339999999668,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -36.4390569880579,
+      "z": 2.8066419889568213,
+      "heading": -2.138693266054853,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.110971323288426,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -34,
+        "z": 16
+      },
+      "planMs": 3.200000001117587,
+      "playerX": -36.160822951757766,
+      "playerZ": 16.91486999631878,
+      "playerSpeed": 2.446719581605428
+    },
+    {
+      "elapsed": 36.90369999999743,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -37.07928310090903,
+      "z": 2.2018364315722865,
+      "heading": -2.40162586770414,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.141945845545836,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.12658025963614,
+        "z": 10.703691872071087
+      },
+      "planMs": 0.5,
+      "playerX": -34.41373492025381,
+      "playerZ": 16.09030233659422,
+      "playerSpeed": 0.5436193720888944
+    },
+    {
+      "elapsed": 37.92119999999743,
+      "penned": 1,
+      "horse": "Willow",
+      "x": -37.82286229382814,
+      "z": 0.9596526953764054,
+      "heading": -2.741078099041041,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.058006640674884,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.8061792000201,
+        "z": 9.43901724182284
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -34.236085605572605,
+      "playerZ": 14.552392805370628,
+      "playerSpeed": 2.7430484915859914
+    },
+    {
+      "elapsed": 38.91359999999779,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -62.992737095714595,
+      "z": -27.616607344415005,
+      "heading": 9.270796326794898,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 47.87756690353427,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -36.5,
+        "z": 6
+      },
+      "planMs": 12.700000001117587,
+      "playerX": -34.55932184332519,
+      "playerZ": 10.903547246235199,
+      "playerSpeed": 4.140545925312548
+    },
+    {
+      "elapsed": 39.94059999999779,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -63.08917790577036,
+      "z": -27.941707239902087,
+      "heading": 9.970796326794897,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 45.53126703318456,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -36.5,
+        "z": 6
+      },
+      "planMs": 12.700000001117587,
+      "playerX": -35.56809728147401,
+      "playerZ": 8.330684450171768,
+      "playerSpeed": 2.20803163230104
+    },
+    {
+      "elapsed": 40.90969999999741,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -63.26531282791685,
+      "z": -28.231574370541903,
+      "heading": 9.970796326794897,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 43.07987253016684,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.58618180880786,
+        "z": -26.300340702835772
+      },
+      "planMs": 1.5,
+      "playerX": -37.52654127050154,
+      "playerZ": 6.313918185370677,
+      "playerSpeed": 3.8197061576870386
+    },
+    {
+      "elapsed": 41.86929999999703,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -63.43972111528842,
+      "z": -28.51859995981232,
+      "heading": 9.970796326794897,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 39.53913206034528,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.73054905136061,
+        "z": -26.55257524805673
+      },
+      "planMs": 1.5,
+      "playerX": -40.44929546694746,
+      "playerZ": 3.6494477365203024,
+      "playerSpeed": 4.300403587071573
+    },
+    {
+      "elapsed": 42.903799999997034,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -63.71228522835951,
+      "z": -28.72235853676758,
+      "heading": 10.670796326794896,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 35.54543359091464,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.29687304373554,
+        "z": -26.93401393648905
+      },
+      "planMs": 1.400000000372529,
+      "playerX": -43.92246623896912,
+      "playerZ": 0.8045937870549116,
+      "playerSpeed": 4.381037046934278
+    },
+    {
+      "elapsed": 43.926999999996276,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -64.05168328851444,
+      "z": -28.836634042292047,
+      "heading": 10.670796326794896,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 31.479898486200586,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.62577419940803,
+        "z": -26.99291952264844
+      },
+      "planMs": 1.400000000372529,
+      "playerX": -47.17877765994662,
+      "playerZ": -2.2605345476156637,
+      "playerSpeed": 4.392444188964594
+    },
+    {
+      "elapsed": 44.90719999999739,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -64.37681813855794,
+      "z": -28.946107117463367,
+      "heading": 10.670796326794896,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 27.626814331621453,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.89161224907089,
+        "z": -27.041466364805544
+      },
+      "planMs": 1.300000000745058,
+      "playerX": -50.405882922977014,
+      "playerZ": -5.1122270448456195,
+      "playerSpeed": 4.394074904569662
+    },
+    {
+      "elapsed": 45.915399999996644,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -64.70780719138486,
+      "z": -28.922606512952985,
+      "heading": 11.370796326794895,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 23.620229976338187,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -75.20766742749191,
+        "z": -28.97678235828996
+      },
+      "planMs": 0.7999999988824129,
+      "playerX": -53.700444114317214,
+      "playerZ": -8.023964877078344,
+      "playerSpeed": 4.394333870628121
+    },
+    {
+      "elapsed": 46.848799999997006,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -65.01176815021888,
+      "z": -28.802881446217626,
+      "heading": 11.370796326794895,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 19.831949401557612,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -74.01165585298553,
+        "z": -28.757922158080174
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -56.65258341499397,
+      "playerZ": -10.818714864795954,
+      "playerSpeed": 4.3943714809957175
+    },
+    {
+      "elapsed": 47.93369999999739,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -65.36506496213127,
+      "z": -28.663723823653687,
+      "heading": 11.370796326794895,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 15.414984133277407,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -75.07223879581554,
+        "z": -28.53084860171838
+      },
+      "planMs": 0.8000000007450581,
+      "playerX": -59.8753407467362,
+      "playerZ": -14.259395867511506,
+      "playerSpeed": 4.39437827644077
+    },
+    {
+      "elapsed": 48.90049999999627,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -67.26305384608122,
+      "z": -30.480294827906672,
+      "heading": 9.827178597095445,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.065596612494504,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -76.13931767518997,
+        "z": -30.006216435230694
+      },
+      "planMs": 2.799999998882413,
+      "playerX": -62.98454924845115,
+      "playerZ": -17.081212528231248,
+      "playerSpeed": 4.394379121236849
+    },
+    {
+      "elapsed": 49.89999999999626,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -68.41272608392491,
+      "z": -34.377090425925005,
+      "heading": 9.637448385522813,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.257833584890536,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -77.29388439777082,
+        "z": -34.14030832570304
+      },
+      "planMs": 2.5,
+      "playerX": -65.843682713914,
+      "playerZ": -20.35261771935113,
+      "playerSpeed": 4.394379259089901
+    },
+    {
+      "elapsed": 50.91979999999701,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -68.93637727072924,
+      "z": -38.175915865991634,
+      "heading": 9.499798595139566,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.105561978420672,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -77.86090240718354,
+        "z": -38.43553173037199
+      },
+      "planMs": 1.699999999254942,
+      "playerX": -68.22694778562088,
+      "playerZ": -24.08820531627044,
+      "playerSpeed": 4.3943792801383825
+    },
+    {
+      "elapsed": 51.90249999999626,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -68.03995094604583,
+      "z": -41.8698262756102,
+      "heading": 8.514816087987477,
+      "avoidSide": -1,
+      "pressure": "circle behind",
+      "distance": 13.982386376595286,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -76.91302763800175,
+        "z": -43.37598364410417
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -69.91914258034517,
+      "playerZ": -28.01429425457337,
+      "playerSpeed": 4.3943792831727215
+    },
+    {
+      "elapsed": 52.85749999999626,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -63.59318798996006,
+      "z": -42.482729658759034,
+      "heading": 7.641120246924327,
+      "avoidSide": -1,
+      "pressure": "circle behind",
+      "distance": 13.317736391235144,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -73.3629199524065,
+        "z": -43.00687978287897
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -71.53147643660209,
+      "playerZ": -31.789475751536102,
+      "playerSpeed": 4.394379283643028
+    },
+    {
+      "elapsed": 53.93499999999626,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -58.505864729744005,
+      "z": -42.33131305572634,
+      "heading": 8.052713565949619,
+      "avoidSide": -1,
+      "pressure": "circle behind",
+      "distance": 13.80971738741269,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -68.03119392939595,
+        "z": -43.62857369990469
+      },
+      "planMs": 0.3999999985098839,
+      "playerX": -70.9812309529489,
+      "playerZ": -36.40902195201262,
+      "playerSpeed": 4.3943792837237705
+    },
+    {
+      "elapsed": 54.90379999999701,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -55.394832838705916,
+      "z": -42.69640225394258,
+      "heading": 7.90622436497914,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.463674786153296,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -64.84099520991616,
+        "z": -43.62193936919872
+      },
+      "planMs": 38.20000000111759,
+      "playerX": -69.30127692794349,
+      "playerZ": -38.72038652050843,
+      "playerSpeed": 2.5815587499711414
+    },
+    {
+      "elapsed": 55.90529999999701,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -53.817907985885164,
+      "z": -42.71047097449803,
+      "heading": 7.836199242585619,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.077814869313732,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -67.65259915727131,
+      "playerZ": -40.10543898102059,
+      "playerSpeed": 1.6533136722946338
+    },
+    {
+      "elapsed": 56.88909999999775,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -53.196273649384636,
+      "z": -42.68885635477092,
+      "heading": 7.81922500278169,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.232680416933338,
+      "speed": 0.35,
+      "approachBlocked": true,
+      "approachPhase": null,
+      "approachTarget": null,
+      "planMs": null,
+      "playerX": -67.24250171460841,
+      "playerZ": -40.39262705649129,
+      "playerSpeed": 0.10520352835325582
+    },
+    {
+      "elapsed": 57.95929999999699,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -53.00116552217737,
+      "z": -41.78362251025781,
+      "heading": 0.828148849577988,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.295707418217791,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "reposition",
+      "approachTarget": {
+        "x": -62.6006399478812,
+        "z": -43.490253914591534
+      },
+      "planMs": 42.69999999925494,
+      "playerX": -67.22989902155031,
+      "playerZ": -40.40145262521857,
+      "playerSpeed": 0
+    },
+    {
+      "elapsed": 58.89399999999624,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -51.86178237742666,
+      "z": -41.380850710862696,
+      "heading": 1.3909592926543752,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.362052923330525,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -59,
+        "z": -41.5
+      },
+      "planMs": 3.099999999627471,
+      "playerX": -66.21260779300266,
+      "playerZ": -40.813070767394535,
+      "playerSpeed": 1.7339049858120597
+    },
+    {
+      "elapsed": 59.71279999999698,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -50.45793008124526,
+      "z": -41.27914945892454,
+      "heading": 1.5466909051709767,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.196925765892725,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -59,
+        "z": -41.5
+      },
+      "planMs": 42.09999999962747,
+      "playerX": -64.65033836986709,
+      "playerZ": -40.92103192050008,
+      "playerSpeed": 0
+    },
+    {
+      "elapsed": 61.39079999999696,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -49.59626606330359,
+      "z": -40.03667721806651,
+      "heading": 1.0468572705747303,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.245866291928603,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -59,
+        "z": -41.5
+      },
+      "planMs": 42.09999999962747,
+      "playerX": -63.80848876772124,
+      "playerZ": -41.01516186666511,
+      "playerSpeed": 1.6237829476102856
+    },
+    {
+      "elapsed": 62.366799999996964,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -47.9654945566399,
+      "z": -39.55944041265246,
+      "heading": 1.3787243148728858,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.178198198444662,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -56.08912825760437,
+        "z": -43.480838844395244
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -62.022642977192604,
+      "playerZ": -41.40819200140958,
+      "playerSpeed": 2.0182387001875846
+    },
+    {
+      "elapsed": 63.34479999999695,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -46.07095355343465,
+      "z": -39.23289557705707,
+      "heading": 1.396482209355635,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.26454708156107,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -54.23420581064112,
+        "z": -43.605194896058165
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -60.08485145914233,
+      "playerZ": -41.89521954879198,
+      "playerSpeed": 2.0808223759621858
+    },
+    {
+      "elapsed": 64.33219999999733,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -44.23269062910932,
+      "z": -38.86846284353561,
+      "heading": 1.3559726552366351,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.249036078510942,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -52.15278827638732,
+        "z": -43.7050496622597
+      },
+      "planMs": 0.5,
+      "playerX": -58.07472584158241,
+      "playerZ": -42.24974815290562,
+      "playerSpeed": 2.0907399753651563
+    },
+    {
+      "elapsed": 65.3593999999966,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -42.340885471265906,
+      "z": -38.387896406134004,
+      "heading": 1.297283649069187,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.251338394056054,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -49.97013117118664,
+        "z": -43.70529626508331
+      },
+      "planMs": 0.6999999992549419,
+      "playerX": -55.9656863916673,
+      "playerZ": -42.56706449336447,
+      "playerSpeed": 2.0922993557833887
+    },
+    {
+      "elapsed": 66.39639999999662,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -40.39103578777359,
+      "z": -37.763645918202386,
+      "heading": 1.2332155174005035,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.35015826266058,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -47.294151873111865,
+        "z": -43.53833104488626
+      },
+      "planMs": 0.6000000014901161,
+      "playerX": -53.82608083969338,
+      "playerZ": -42.80612612305111,
+      "playerSpeed": 2.092524511818252
+    },
+    {
+      "elapsed": 67.35139999999662,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -38.64110680998886,
+      "z": -37.08300684149365,
+      "heading": 1.1722344225926942,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.275114749699881,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.41932545685369,
+        "z": -43.855755538484445
+      },
+      "planMs": 0.5,
+      "playerX": -51.63614160481649,
+      "playerZ": -42.99130370254578,
+      "playerSpeed": 2.7005788043553154
+    },
+    {
+      "elapsed": 68.34479999999698,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -36.44656846709532,
+      "z": -35.11168443141189,
+      "heading": 0.5644841403641028,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.106085178354897,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.45953123059019,
+        "z": -43.33303323675875
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -48.065691175698916,
+      "playerZ": -43.11028596801914,
+      "playerSpeed": 4.134508560897764
+    },
+    {
+      "elapsed": 69.37079999999699,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.418361684512,
+      "z": -31.721416113545587,
+      "heading": 0.1701738218074174,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.113905124407085,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.65141245823755,
+        "z": -40.68867817530764
+      },
+      "planMs": 1.200000001117587,
+      "playerX": -43.72464361053164,
+      "playerZ": -43.13228805333371,
+      "playerSpeed": 4.356887482044718
+    },
+    {
+      "elapsed": 70.39769999999737,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.35853556016069,
+      "z": -27.354935172302643,
+      "heading": -0.00559153449691429,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.262403086284463,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -36.342951803190985,
+        "z": -36.627609231969934
+      },
+      "planMs": 1,
+      "playerX": -39.981406843789024,
+      "playerZ": -40.84734796211385,
+      "playerSpeed": 4.388979483348986
+    },
+    {
+      "elapsed": 71.384799999997,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.333339053708066,
+      "z": -23.581028221195535,
+      "heading": -0.04373093591932373,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.22703992316341,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.53610458952537,
+        "z": -32.9083311715041
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -37.887769290118946,
+      "playerZ": -37.57686871552082,
+      "playerSpeed": 3.853795953308922
+    },
+    {
+      "elapsed": 72.34319999999737,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.3049653753417,
+      "z": -20.186832975026853,
+      "heading": 0.07068274058294712,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.262534076367746,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.58185251123765,
+        "z": -29.470485828424074
+      },
+      "planMs": 1,
+      "playerX": -36.26492727290921,
+      "playerZ": -34.4170245209889,
+      "playerSpeed": 3.8702007142714536
+    },
+    {
+      "elapsed": 73.38089999999663,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.17314813586565,
+      "z": -16.996707194207946,
+      "heading": 0.01430835045374567,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.159947811679016,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.404370614363046,
+        "z": -26.277010724266773
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -35.192015760259295,
+      "playerZ": -31.156642435663787,
+      "playerSpeed": 2.9573144067126025
+    },
+    {
+      "elapsed": 74.30059999999776,
+      "penned": 2,
+      "horse": "Comet",
+      "x": -35.172160812623176,
+      "z": -14.019988475015698,
+      "heading": -0.006742345150251776,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.27011542252102,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.374986749028984,
+        "z": -23.017702720284944
+      },
+      "planMs": 0.7999999988824129,
+      "playerX": -35.054180128684045,
+      "playerZ": -28.289616176195903,
+      "playerSpeed": 3.39199838010309
+    },
+    {
+      "elapsed": 75.383799999997,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -80.0032570498476,
+      "z": -11.68571114223768,
+      "heading": 18.37079632679489,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 46.52739172250974,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -76.5,
+        "z": -24
+      },
+      "planMs": 19.299999998882413,
+      "playerX": -35.224440711958756,
+      "playerZ": -24.32120827838104,
+      "playerSpeed": 1.7153573593737947
+    },
+    {
+      "elapsed": 76.34809999999773,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.99422790087426,
+      "z": -11.364852686153673,
+      "heading": 19.070796326794888,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 44.182296745316286,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -76.5,
+        "z": -24
+      },
+      "planMs": 19.299999998882413,
+      "playerX": -37.66613602947835,
+      "playerZ": -24.030080051576412,
+      "playerSpeed": 3.7234102150636446
+    },
+    {
+      "elapsed": 77.37039999999661,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.91571118483748,
+      "z": -11.015768823267514,
+      "heading": 19.070796326794888,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 40.25038972522747,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -76.5,
+        "z": -24
+      },
+      "planMs": 19.299999998882413,
+      "playerX": -41.87008807221898,
+      "playerZ": -24.15443066552855,
+      "playerSpeed": 4.296899701944167
+    },
+    {
+      "elapsed": 78.36309999999771,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.83946786681939,
+      "z": -10.676792445797247,
+      "heading": 19.070796326794888,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 36.228733867161154,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -46.119923602405144,
+      "playerZ": -23.9249429664472,
+      "playerSpeed": 4.379403746205416
+    },
+    {
+      "elapsed": 79.33169999999737,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.6313241292495,
+      "z": -10.432010165244725,
+      "heading": 19.770796326794887,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 32.320138321886574,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -50.29600527705109,
+      "playerZ": -23.997790975273062,
+      "playerSpeed": 4.39197158878347
+    },
+    {
+      "elapsed": 80.38009999999775,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.33911055380052,
+      "z": -10.210072809390883,
+      "heading": 19.770796326794887,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 28.11311949155899,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -54.90075098422769,
+      "playerZ": -24.106621628969865,
+      "playerSpeed": 4.394046299776972
+    },
+    {
+      "elapsed": 81.37349999999626,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -79.06222676340514,
+      "z": -9.99977848536875,
+      "heading": 19.770796326794887,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 24.198665087182302,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -59.19308019850192,
+      "playerZ": -23.812540945644766,
+      "playerSpeed": 4.394328195793071
+    },
+    {
+      "elapsed": 82.336799999997,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -78.74872625951654,
+      "z": -9.941578348046576,
+      "heading": 20.470796326794886,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 20.69488369673714,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -63.4190901467093,
+      "playerZ": -23.844112932444947,
+      "playerSpeed": 4.394370987504084
+    },
+    {
+      "elapsed": 83.33699999999624,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -78.39910156002388,
+      "z": -9.95922981836709,
+      "heading": 20.470796326794886,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 17.653553061752294,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -24
+      },
+      "planMs": 11.299999998882413,
+      "playerX": -67.6231736262945,
+      "playerZ": -23.942337944644837,
+      "playerSpeed": 3.2520492493183535
+    },
+    {
+      "elapsed": 84.35259999999774,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -78.04409371678697,
+      "z": -9.977153066974925,
+      "heading": 20.470796326794886,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 16.005874202046567,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -86.63515087152483,
+        "z": -12.802987040667183
+      },
+      "planMs": 2.400000000372529,
+      "playerX": -70.00520502105358,
+      "playerZ": -23.81782781603791,
+      "playerSpeed": 2.2371256816927887
+    },
+    {
+      "elapsed": 85.39109999999775,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -76.98105016420818,
+      "z": -8.748806307798242,
+      "heading": 18.870209940130003,
+      "avoidSide": 0,
+      "pressure": "circle behind",
+      "distance": 13.731333881420763,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -85.98274699780124,
+        "z": -9.339613400329814
+      },
+      "planMs": 2.199999999254942,
+      "playerX": -73.06440617921268,
+      "playerZ": -21.9097116739899,
+      "playerSpeed": 4.090405423657392
+    },
+    {
+      "elapsed": 86.38799999999627,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -77.65202898220521,
+      "z": -4.831783196359845,
+      "heading": 18.699835851488906,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.176060272325484,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -86.5768002875306,
+        "z": -4.340660416214998
+      },
+      "planMs": 2.200000001117587,
+      "playerX": -76.02244250226163,
+      "playerZ": -18.91386872191287,
+      "playerSpeed": 4.34804920443282
+    },
+    {
+      "elapsed": 87.36869999999735,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -77.91140405701486,
+      "z": -1.2598266491767225,
+      "heading": 18.8488501303591,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.153698666624894,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -86.75410137088316,
+        "z": 0.09414241748287222
+      },
+      "planMs": 2.200000001117587,
+      "playerX": -78.39805426331843,
+      "playerZ": -15.405156533004954,
+      "playerSpeed": 4.387098703868721
+    },
+    {
+      "elapsed": 88.37639999999661,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -77.56837398544184,
+      "z": 2.498598144887055,
+      "heading": 19.014848860715926,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.242230874180606,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -86.15807569669381,
+        "z": 5.1850501753009475
+      },
+      "planMs": 2.199999999254942,
+      "playerX": -80.29394401113602,
+      "playerZ": -11.480400685805387,
+      "playerSpeed": 4.3932920021632205
+    },
+    {
+      "elapsed": 89.38669999999735,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -76.69580749135892,
+      "z": 5.864834984638625,
+      "heading": 19.177380719114964,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.198633046153834,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -84.98160045766782,
+        "z": 9.378470554737756
+      },
+      "planMs": 2.200000001117587,
+      "playerX": -81.798671086567,
+      "playerZ": -7.385144770365977,
+      "playerSpeed": 4.394217703830609
+    },
+    {
+      "elapsed": 90.3715999999977,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -75.37396693724742,
+      "z": 8.909057936708939,
+      "heading": 19.324248550417852,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.091336245106882,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -83.30825305639347,
+        "z": 13.156477445459242
+      },
+      "planMs": 2.099999999627471,
+      "playerX": -82.53420918677675,
+      "playerZ": -3.2275267600135296,
+      "playerSpeed": 4.394354092567096
+    },
+    {
+      "elapsed": 91.3599999999962,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -73.39245482056552,
+      "z": 11.956173622939305,
+      "heading": 19.49979250812247,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.147278312664417,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -81.10391767757177,
+        "z": 16.653828216847124
+      },
+      "planMs": 2.099999999627471,
+      "playerX": -82.41888896614387,
+      "playerZ": 1.0626447974612092,
+      "playerSpeed": 4.394375382151677
+    },
+    {
+      "elapsed": 92.33619999999733,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -71.09459663385371,
+      "z": 14.4042346891212,
+      "heading": 19.691320012154,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.32990718808308,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -78.03051880389943,
+        "z": 20.139475194197544
+      },
+      "planMs": 2,
+      "playerX": -82.1598580601622,
+      "playerZ": 5.298948884352374,
+      "playerSpeed": 4.394378665389687
+    },
+    {
+      "elapsed": 93.3928999999966,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -68.22625916321613,
+      "z": 16.49794224919555,
+      "heading": 19.869437782771147,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.15390670669625,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -74.9284837260236,
+        "z": 22.64257976762318
+      },
+      "planMs": 1.6000000014901161,
+      "playerX": -80.5992753972409,
+      "playerZ": 9.624693793449135,
+      "playerSpeed": 4.394379199547657
+    },
+    {
+      "elapsed": 94.27739999999662,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -65.38766368683234,
+      "z": 17.942961699282513,
+      "heading": 20.008653075821133,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.058948642866174,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -72.71493560178574,
+        "z": 23.168962683241
+      },
+      "planMs": 1,
+      "playerX": -78.48423815805401,
+      "playerZ": 12.830841389421508,
+      "playerSpeed": 4.394379267872697
+    },
+    {
+      "elapsed": 95.35729999999698,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -62.015753959822476,
+      "z": 18.986346432014486,
+      "heading": 20.212350055666008,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.13572587837426,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -70.0859813855268,
+        "z": 22.970242677828367
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -75.9671964792588,
+      "playerZ": 16.711264513620364,
+      "playerSpeed": 4.394379281668654
+    },
+    {
+      "elapsed": 96.35039999999661,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -58.64859723332438,
+      "z": 19.336270407654798,
+      "heading": 20.398626250835395,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.134973629488584,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -67.26380845896172,
+        "z": 21.939755675070842
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -72.7813285026697,
+      "playerZ": 19.588036916163908,
+      "playerSpeed": 4.394379283418582
+    },
+    {
+      "elapsed": 97.35469999999737,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -55.25227920230377,
+      "z": 19.14480829643214,
+      "heading": 20.526819990080575,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.096257741487639,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -63.884707653844615,
+        "z": 22.54586058814962
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -69.22724733542714,
+      "playerZ": 20.99000421899337,
+      "playerSpeed": 4.149127223209931
+    },
+    {
+      "elapsed": 98.37219999999736,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -51.47166923942889,
+      "z": 18.494509445613225,
+      "heading": 20.64772203509612,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.089662123726706,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -59.32404793447645,
+        "z": 22.892253052232796
+      },
+      "planMs": 0.5,
+      "playerX": -65.0811154394167,
+      "playerZ": 22.141638849735894,
+      "playerSpeed": 4.358424433179246
+    },
+    {
+      "elapsed": 99.33899999999628,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -47.83939697001686,
+      "z": 17.408953922216757,
+      "heading": 20.74953262235975,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.120637462241339,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -55.082753491424874,
+        "z": 22.750656488232195
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -61.11599681951393,
+      "playerZ": 22.217727027322447,
+      "playerSpeed": 3.6693982961539597
+    },
+    {
+      "elapsed": 100.34209999999777,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -44.70570065191044,
+      "z": 16.16728593289608,
+      "heading": 20.83239618146714,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.216252609799659,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -49.43128298506249,
+        "z": 23.826846730526793
+      },
+      "planMs": 2.799999998882413,
+      "playerX": -57.57115756685066,
+      "playerZ": 22.215579629092765,
+      "playerSpeed": 2.7729729448099527
+    },
+    {
+      "elapsed": 101.39479999999702,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -42.04994329793622,
+      "z": 14.712913262853107,
+      "heading": 21.091166168693807,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.241730081150102,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -41.28006495554409,
+        "z": 23.67992432217023
+      },
+      "planMs": 1.900000000372529,
+      "playerX": -53.79599528824043,
+      "playerZ": 22.76630623385646,
+      "playerSpeed": 4.171951103935369
+    },
+    {
+      "elapsed": 102.35529999999703,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -41.080555017137826,
+      "z": 11.775710618302107,
+      "heading": 21.964967732318982,
+      "avoidSide": 1,
+      "pressure": "out of range",
+      "distance": 14.118335778159983,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -39.79969045289229,
+        "z": 20.99684757022805
+      },
+      "planMs": 2.099999999627471,
+      "playerX": -49.76576803312701,
+      "playerZ": 22.90650034822533,
+      "playerSpeed": 4.35806755618632
+    },
+    {
+      "elapsed": 103.38419999999743,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -40.99144916684032,
+      "z": 7.450255557257532,
+      "heading": 21.68834537822722,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.289485551959672,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -41.616275699226016,
+        "z": 16.42854001501598
+      },
+      "planMs": 1.099999999627471,
+      "playerX": -45.93819558296465,
+      "playerZ": 20.856190706818165,
+      "playerSpeed": 4.389169145115161
+    },
+    {
+      "elapsed": 104.36269999999743,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -39.979924462644135,
+      "z": 4.029389150393109,
+      "heading": 21.7491677180963,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.212585746318329,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -41.777468045938,
+        "z": 12.848053282003917
+      },
+      "planMs": 0.900000000372529,
+      "playerX": -42.93584320378448,
+      "playerZ": 17.931192558304836,
+      "playerSpeed": 3.674713745731635
+    },
+    {
+      "elapsed": 105.34499999999632,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -39.48540144850188,
+      "z": 1.6482725405953969,
+      "heading": 21.80323785309365,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.044196339814473,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -42.5799844888267,
+        "z": 10.14408905763682
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -42.13930920959474,
+      "playerZ": 15.439437263956123,
+      "playerSpeed": 2.8496651001006343
+    },
+    {
+      "elapsed": 106.30649999999632,
+      "penned": 3,
+      "horse": "Maple",
+      "x": -38.869504850219265,
+      "z": -1.416639011578129,
+      "heading": 21.786741497278133,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.2180704151727,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -41.810052646845975,
+        "z": 7.089428155788575
+      },
+      "planMs": 0.8000000007450581,
+      "playerX": -41.85375511365158,
+      "playerZ": 12.484719795963434,
+      "playerSpeed": 2.650496282673856
+    },
+    {
+      "elapsed": 107.34389999999667,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -90.06853339788202,
+      "z": -22.150730138412843,
+      "heading": 27.375163683800633,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 55.98900101052884,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -69,
+        "z": -4
+      },
+      "planMs": 34.5,
+      "playerX": -44.12965377051623,
+      "playerZ": 9.855325112732926,
+      "playerSpeed": 4.148141981137471
+    },
+    {
+      "elapsed": 108.34839999999669,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.79331668133756,
+      "z": -22.36950111354316,
+      "heading": 27.375163683800633,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 51.61055010439481,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -69,
+        "z": -4
+      },
+      "planMs": 34.5,
+      "playerX": -47.911759381529855,
+      "playerZ": 7.7898098902110755,
+      "playerSpeed": 4.357383490284806
+    },
+    {
+      "elapsed": 109.33649999999633,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.52259329894085,
+      "z": -22.584700317650857,
+      "heading": 27.375163683800633,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 47.23151052916364,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -69,
+        "z": -4
+      },
+      "planMs": 34.5,
+      "playerX": -51.70884542586605,
+      "playerZ": 5.716113427858787,
+      "playerSpeed": 4.388646165854236
+    },
+    {
+      "elapsed": 110.36969999999742,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.45104461157692,
+      "z": -22.939171486770128,
+      "heading": 28.075163683800632,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 42.90589923100378,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -69,
+        "z": -4
+      },
+      "planMs": 34.5,
+      "playerX": -55.69143775601148,
+      "playerZ": 3.5411067175597895,
+      "playerSpeed": 4.39356332287061
+    },
+    {
+      "elapsed": 111.34019999999742,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.38383787417214,
+      "z": -23.27213148447616,
+      "heading": 28.075163683800632,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 39.05473635060718,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -4
+      },
+      "planMs": 21.899999998509884,
+      "playerX": -59.640369593793714,
+      "playerZ": 2.0379164425736778,
+      "playerSpeed": 4.394248566969442
+    },
+    {
+      "elapsed": 112.36669999999742,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.3127531591325,
+      "z": -23.62430401167374,
+      "heading": 28.075163683800632,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 35.06911162639612,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -4
+      },
+      "planMs": 21.899999998509884,
+      "playerX": -63.70771971457441,
+      "playerZ": 0.33868521270503493,
+      "playerSpeed": 4.3943604428857475
+    },
+    {
+      "elapsed": 113.37879999999704,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.48284036707126,
+      "z": -23.93503343886162,
+      "heading": 28.77516368380063,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 31.3548563426619,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -74,
+        "z": -4
+      },
+      "planMs": 13.400000000372529,
+      "playerX": -67.53673320384492,
+      "playerZ": -1.5409405425384795,
+      "playerSpeed": 3.5358692205228315
+    },
+    {
+      "elapsed": 114.335299999997,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.64358378609458,
+      "z": -24.22869285700737,
+      "heading": 28.77516368380063,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 29.230705753436453,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -97.75244175417257,
+        "z": -20.32858382040801
+      },
+      "planMs": 1,
+      "playerX": -70.14717616487927,
+      "playerZ": -2.4497064547112255,
+      "playerSpeed": 3.533408482292748
+    },
+    {
+      "elapsed": 115.36239999999664,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -89.81619180039546,
+      "z": -24.54402750246204,
+      "heading": 28.77516368380063,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 25.6323911037484,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -98.6556359588902,
+        "z": -22.919258432312077
+      },
+      "planMs": 4.199999999254942,
+      "playerX": -73.56795983895896,
+      "playerZ": -4.71943590962277,
+      "playerSpeed": 4.270423751352746
+    },
+    {
+      "elapsed": 116.35129999999701,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -90.12977240226742,
+      "z": -24.679571725814466,
+      "heading": 29.47516368380063,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 21.785657556583274,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -98.95386202227193,
+        "z": -23.083959324484457
+      },
+      "planMs": 2.900000000372529,
+      "playerX": -77.00620534404004,
+      "playerZ": -7.290297363699095,
+      "playerSpeed": 4.3751992737235845
+    },
+    {
+      "elapsed": 117.36849999999627,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -90.46170389327432,
+      "z": -24.80830294066838,
+      "heading": 29.47516368380063,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 17.83441067333525,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -99.2640775665699,
+        "z": -23.20554812760746
+      },
+      "planMs": 2.900000000372529,
+      "playerX": -80.57950835814754,
+      "playerZ": -9.96214466754282,
+      "playerSpeed": 4.391565831757506
+    },
+    {
+      "elapsed": 118.38149999999628,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -90.99674287511539,
+      "z": -25.063297144376573,
+      "heading": 29.30349026251761,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.199408441683513,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -99.85877275156797,
+        "z": -23.493447957715027
+      },
+      "planMs": 4.800000000745058,
+      "playerX": -84.1436389163846,
+      "playerZ": -12.627133498598125,
+      "playerSpeed": 4.393963304031995
+    },
+    {
+      "elapsed": 119.3441999999974,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -92.92022095831277,
+      "z": -28.109436723126613,
+      "heading": 28.689093964955056,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.211803949454405,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -101.8400328128352,
+        "z": -26.910705527269517
+      },
+      "planMs": 2.799999998882413,
+      "playerX": -87.6665996702409,
+      "playerZ": -14.904330329793545,
+      "playerSpeed": 4.3943116557716415
+    },
+    {
+      "elapsed": 120.34179999999704,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -94.16601315983199,
+      "z": -31.66641465163248,
+      "heading": 28.54376953653792,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.167827501455287,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -103.05856768398334,
+        "z": -30.621075518682908
+      },
+      "planMs": 4.599999999627471,
+      "playerX": -90.84576356284889,
+      "playerZ": -17.893133316934986,
+      "playerSpeed": 4.394368989847423
+    },
+    {
+      "elapsed": 121.35279999999705,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -94.89758625931839,
+      "z": -35.43231872934314,
+      "heading": 28.402992087132997,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.096935170314854,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -103.62850851179701,
+        "z": -37.20498476856251
+      },
+      "planMs": 2.600000001490116,
+      "playerX": -93.4673967371253,
+      "playerZ": -21.408120387667097,
+      "playerSpeed": 4.394377755990049
+    },
+    {
+      "elapsed": 122.28969999999741,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -95.12095477319632,
+      "z": -39.16997325442477,
+      "heading": 28.271145978933852,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.24095242154157,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -103.76592619635952,
+        "z": -41.42363978150626
+      },
+      "planMs": 1.799999998882413,
+      "playerX": -95.49255239475973,
+      "playerZ": -24.933869817028032,
+      "playerSpeed": 4.394379022971264
+    },
+    {
+      "elapsed": 123.37229999999705,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -92.61484445312729,
+      "z": -42.45495403547851,
+      "heading": 26.97148154819492,
+      "avoidSide": -1,
+      "pressure": "circle behind",
+      "distance": 13.916022472670592,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -101.84225397958863,
+        "z": -43.186432355847614
+      },
+      "planMs": 0.8999999985098839,
+      "playerX": -97.19330493586443,
+      "playerZ": -29.31366866958346,
+      "playerSpeed": 4.394379249926083
+    },
+    {
+      "elapsed": 124.34829999999707,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -87.96312337010896,
+      "z": -42.71438495715207,
+      "heading": 26.67837910116066,
+      "avoidSide": -1,
+      "pressure": "circle behind",
+      "distance": 13.418062973510658,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -97.3499460550022,
+        "z": -43.9804483209438
+      },
+      "planMs": 0.7000000011175871,
+      "playerX": -97.73095465172862,
+      "playerZ": -33.514717244951264,
+      "playerSpeed": 4.394379278375523
+    },
+    {
+      "elapsed": 125.34029999999706,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -83.98279765287072,
+      "z": -42.63148119260008,
+      "heading": 26.680588344943594,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.209341366503207,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -93.21254127398902,
+        "z": -41.96604890421247
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -96.77136689776377,
+      "playerZ": -36.43810741586137,
+      "playerSpeed": 2.3166709806355597
+    },
+    {
+      "elapsed": 126.35429999999701,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -81.1750453589086,
+      "z": -42.63206060532842,
+      "heading": 26.748043974461297,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.204810450969653,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -90.4414508372467,
+        "z": -42.26693344445805
+      },
+      "planMs": 0.6000000014901161,
+      "playerX": -94.76137583609619,
+      "playerZ": -38.486187462958966,
+      "playerSpeed": 3.757460882097436
+    },
+    {
+      "elapsed": 127.27659999999776,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -77.74733073808932,
+      "z": -42.59028289194523,
+      "heading": 26.630198942798458,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.130961760763942,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -87.02513391802644,
+        "z": -42.68745684893626
+      },
+      "planMs": 0.5,
+      "playerX": -91.71322571461681,
+      "playerZ": -40.436714274794426,
+      "playerSpeed": 4.187889648323469
+    },
+    {
+      "elapsed": 128.28239999999664,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -74.0383918276877,
+      "z": -42.76013886107333,
+      "heading": 26.778437753452206,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.155463209797798,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -83.63845827890921,
+        "z": -43.27052527474674
+      },
+      "planMs": 0.599999999627471,
+      "playerX": -88.16077589381351,
+      "playerZ": -41.7929744630649,
+      "playerSpeed": 3.6130719709940804
+    },
+    {
+      "elapsed": 129.33439999999666,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -70.01898719333683,
+      "z": -42.93132123626414,
+      "heading": 26.710850326984275,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.068656141075364,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -77.73665672282492,
+        "z": -43.97450830793111
+      },
+      "planMs": 0.30000000074505806,
+      "playerX": -84.08690701853529,
+      "playerZ": -43.0752566648623,
+      "playerSpeed": 4.287056114195548
+    },
+    {
+      "elapsed": 130.29309999999776,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -65.93531969871287,
+      "z": -42.903650591992104,
+      "heading": 26.69716019265372,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.02325796596806,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -74.95587092283826,
+        "z": -43.0337461692117
+      },
+      "planMs": 0.3999999985098839,
+      "playerX": -79.95856076324763,
+      "playerZ": -42.88187845308243,
+      "playerSpeed": 4.376799006560255
+    },
+    {
+      "elapsed": 131.28709999999774,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -61.49966412638401,
+      "z": -42.169401381794465,
+      "heading": 26.408421582630226,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.194855360552529,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -70.98561111337784,
+        "z": -43.15837978619175
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -75.6751229374517,
+      "playerZ": -42.91121416324963,
+      "playerSpeed": 4.044047685823938
+    },
+    {
+      "elapsed": 132.33479999999702,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -57.769120539011965,
+      "z": -41.592812330515,
+      "heading": 26.595561150944995,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.152561233565836,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -67.17458392038364,
+        "z": -43.208315745954714
+      },
+      "planMs": 1.900000000372529,
+      "playerX": -71.83673324690831,
+      "playerZ": -43.14112178616778,
+      "playerSpeed": 4.042488389748682
+    },
+    {
+      "elapsed": 133.35309999999777,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -53.648133680902156,
+      "z": -41.069312190843746,
+      "heading": 26.55168946936238,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.07926891059782,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -62.98518306654757,
+        "z": -43.87680373491267
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -67.53843364490449,
+      "playerZ": -43.36830761645103,
+      "playerSpeed": 4.342868608759506
+    },
+    {
+      "elapsed": 134.36059999999776,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -50.566552640698454,
+      "z": -40.540085707316635,
+      "heading": 26.52837324418335,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.192762123982904,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -61.5,
+        "z": -41.5
+      },
+      "planMs": 39.79999999888241,
+      "playerX": -64.54823379580336,
+      "playerZ": -42.97875107692932,
+      "playerSpeed": 2.167179852436571
+    },
+    {
+      "elapsed": 135.31949999999634,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -48.62819168763947,
+      "z": -40.22782066090813,
+      "heading": 26.55542409078476,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.240799335370921,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "detour",
+      "approachTarget": {
+        "x": -61.5,
+        "z": -41.5
+      },
+      "planMs": 1.900000000372529,
+      "playerX": -62.73014382156009,
+      "playerZ": -42.211582673578135,
+      "playerSpeed": 2.0976525196966667
+    },
+    {
+      "elapsed": 136.3508999999967,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -46.62154804196831,
+      "z": -39.947199643029116,
+      "heading": 26.56225852826244,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.247684275809286,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -54.28878713278488,
+        "z": -43.83028680949453
+      },
+      "planMs": 0.19999999925494194,
+      "playerX": -60.69990780478251,
+      "playerZ": -42.137243846217096,
+      "playerSpeed": 2.0928450888570085
+    },
+    {
+      "elapsed": 137.3944999999963,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -44.43691784264567,
+      "z": -39.55578447991943,
+      "heading": 26.49666080181705,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.53320825741213,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -51.41749428125422,
+        "z": -43.952834921379385
+      },
+      "planMs": 0.2000000011175871,
+      "playerX": -58.62786557948906,
+      "playerZ": -42.69125008864353,
+      "playerSpeed": 2.0925768234684266
+    },
+    {
+      "elapsed": 138.3820999999978,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -42.92124193649255,
+      "z": -39.20599799481737,
+      "heading": 26.45940572605527,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.175233215208204,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -49.98424785820508,
+        "z": -43.94353112273958
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -56.583725781712,
+      "playerZ": -42.984062563437064,
+      "playerSpeed": 2.092562524416448
+    },
+    {
+      "elapsed": 139.332799999997,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -41.17627465113787,
+      "z": -38.717053503678706,
+      "heading": 26.408356168084346,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.190506946259509,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -47.9869072175196,
+        "z": -43.85004250963602
+      },
+      "planMs": 0.5,
+      "playerX": -54.62393166251015,
+      "playerZ": -43.248169072314006,
+      "playerSpeed": 2.092561630753733
+    },
+    {
+      "elapsed": 140.37019999999737,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -39.333660920772815,
+      "z": -38.087939232054794,
+      "heading": 26.351041417868558,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.139989857731374,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -45.80607247513865,
+        "z": -43.63118111951057
+      },
+      "planMs": 0.40000000037252903,
+      "playerX": -52.476569740139304,
+      "playerZ": -43.30361377544462,
+      "playerSpeed": 2.092561567356804
+    },
+    {
+      "elapsed": 141.3805999999977,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -37.20376600581235,
+      "z": -37.10999632521186,
+      "heading": 26.054806240462725,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.181616785048957,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -41.43743389758206,
+        "z": -43.61188919535752
+      },
+      "planMs": 0.5,
+      "playerX": -49.916867202377645,
+      "playerZ": -43.39452594992303,
+      "playerSpeed": 3.500562063649539
+    },
+    {
+      "elapsed": 142.3665999999977,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.797242507358355,
+      "z": -33.72733115588683,
+      "heading": 25.26631614217873,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.137656572765023,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.3757840915853,
+        "z": -42.71745756232707
+      },
+      "planMs": 1.199999999254942,
+      "playerX": -45.97045991329153,
+      "playerZ": -43.54461086979253,
+      "playerSpeed": 4.25531736361076
+    },
+    {
+      "elapsed": 143.3411999999973,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.366447003946234,
+      "z": -30.405000793568934,
+      "heading": 25.16445287770481,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.148664812723858,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.414179560828465,
+        "z": -39.35448048329269
+      },
+      "planMs": 1,
+      "playerX": -41.91515745322087,
+      "playerZ": -42.946894886343415,
+      "playerSpeed": 4.372273282905246
+    },
+    {
+      "elapsed": 144.34429999999688,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.305006399212196,
+      "z": -26.896698231739467,
+      "heading": 25.158784515605028,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.21619406204801,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -36.195962977182056,
+        "z": -36.138248287693195
+      },
+      "planMs": 1,
+      "playerX": -38.94556153654209,
+      "playerZ": -40.6388426023197,
+      "playerSpeed": 3.566292694594161
+    },
+    {
+      "elapsed": 145.45469999999725,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.52915549098679,
+      "z": -23.01892057040428,
+      "heading": 25.001127013221794,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.163964822685177,
+      "speed": 0.35,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.619710390939275,
+        "z": -32.01846499276781
+      },
+      "planMs": 1,
+      "playerX": -36.70305273825861,
+      "playerZ": -37.1341557703969,
+      "playerSpeed": 4.011904344517154
+    },
+    {
+      "elapsed": 146.3704999999961,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.527611931469075,
+      "z": -20.27646123950124,
+      "heading": 25.155878247038256,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.20008006865885,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.01883428060653,
+        "z": -29.84669593454591
+      },
+      "planMs": 1,
+      "playerX": -35.79619338969304,
+      "playerZ": -34.474001095286845,
+      "playerSpeed": 3.8227825836062896
+    },
+    {
+      "elapsed": 147.33249999999612,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -35.544520398113185,
+      "z": -16.75257380456596,
+      "heading": 25.108662122390598,
+      "avoidSide": 0,
+      "pressure": "out of range",
+      "distance": 14.227059692844888,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -35.97026521286175,
+        "z": -26.32872617918877
+      },
+      "planMs": 0.8000000007450581,
+      "playerX": -35.13389860133603,
+      "playerZ": -30.973706573926602,
+      "playerSpeed": 4.111351832119303
+    },
+    {
+      "elapsed": 148.39279999999687,
+      "penned": 4,
+      "horse": "Pepper",
+      "x": -36.416151357116085,
+      "z": -12.432035469168875,
+      "heading": 24.422774322474183,
+      "avoidSide": -1,
+      "pressure": "out of range",
+      "distance": 14.168403250804808,
+      "speed": 4.8,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "approachTarget": {
+        "x": -34.13823717590188,
+        "z": -20.90765537805723
+      },
+      "planMs": 0.6000000014901161,
+      "playerX": -34.80813918138635,
+      "playerZ": -26.508894050547077,
+      "playerSpeed": 4.356105782036115
+    }
+  ],
+  "journey": {
+    "chapters": [
+      {
+        "id": "first-partners",
+        "number": 1,
+        "name": "First Partners",
+        "description": "Find your stride and earn a lost horse’s trust.",
+        "goals": [
+          {
+            "id": "clover",
+            "label": "Bring Clover home",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rescue",
+              "id": "clover"
+            }
+          },
+          {
+            "id": "pasture",
+            "label": "Finish Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 150,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "pad",
+            "style": "western",
+            "name": "Leaping Silver Pad of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-first-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "steady-hands",
+        "number": 2,
+        "name": "Steady Hands",
+        "description": "Read the herd and keep a clean riding rhythm.",
+        "goals": [
+          {
+            "id": "three-home",
+            "label": "Pen all 3 horses in one beginner roundup",
+            "current": 3,
+            "target": 3,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "beginner"
+            }
+          },
+          {
+            "id": "clean-chain",
+            "label": "Build a 4-obstacle chain in any Ranch Rush",
+            "current": 4,
+            "target": 4,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 200,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "bridle",
+            "style": "western",
+            "name": "Leaping Silver Bridle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-steady-hands",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "river-rhythm",
+        "number": 3,
+        "name": "River Rhythm",
+        "description": "Take the river course and ride for a silver medal.",
+        "goals": [
+          {
+            "id": "river",
+            "label": "Finish River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "silver",
+            "label": "Earn silver or gold in any Ranch Rush",
+            "current": 2,
+            "target": 2,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 250,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "shoes",
+            "style": "western",
+            "name": "Leaping Silver Shoes of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-river-rhythm",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 5,
+            "target": 5,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "ready",
+        "gearId": "journey-trail-partners",
+        "owned": false,
+        "equipped": false
+      },
+      {
+        "id": "meadowlark-champion",
+        "number": 5,
+        "name": "Meadowlark Champion",
+        "description": "Put everything together: four gold medals and a champion’s saddle.",
+        "goals": [
+          {
+            "id": "pasture-gold",
+            "label": "Earn gold in Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          },
+          {
+            "id": "river-gold",
+            "label": "Earn gold in River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "trail-gold",
+            "label": "Earn gold in Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "roundup-gold",
+            "label": "Earn gold in the 5-horse roundup",
+            "current": 0,
+            "target": 1,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 750,
+          "gear": {
+            "rarity": "Legendary",
+            "set": "Aurora",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Aurora Saddle of Agility",
+            "bonus": {
+              "jump": 5,
+              "agility": 5,
+              "stamina": 2
+            }
+          }
+        },
+        "status": "locked",
+        "gearId": "journey-meadowlark-champion",
+        "owned": false,
+        "equipped": false
+      }
+    ],
+    "current": {
+      "id": "trail-partners",
+      "number": 4,
+      "name": "Trail Partners",
+      "description": "Ride the longer trail and bring the whole herd home.",
+      "goals": [
+        {
+          "id": "trail",
+          "label": "Finish Trailblazer",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-trail"
+          }
+        },
+        {
+          "id": "five-home",
+          "label": "Pen all 5 horses in one full roundup",
+          "current": 5,
+          "target": 5,
+          "done": true,
+          "action": {
+            "kind": "roundup",
+            "mode": "full"
+          }
+        }
+      ],
+      "reward": {
+        "coins": 350,
+        "gear": {
+          "rarity": "Rare",
+          "set": "Silver",
+          "slot": "saddle",
+          "style": "western",
+          "name": "Leaping Silver Saddle of Stamina",
+          "bonus": {
+            "jump": 3,
+            "stamina": 1
+          }
+        }
+      },
+      "status": "ready",
+      "gearId": "journey-trail-partners",
+      "owned": false,
+      "equipped": false
+    },
+    "claimedCount": 3,
+    "complete": false,
+    "title": null,
+    "lastClaim": {
+      "id": "river-rhythm",
+      "name": "River Rhythm",
+      "coins": 250,
+      "gearId": "journey-river-rhythm",
+      "gearName": "Leaping Silver Shoes of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "claim",
+      "id": "trail-partners"
+    }
+  },
+  "player": {
+    "x": -34.69656569833824,
+    "z": -24.78151638524126,
+    "heading": -0.04697714011132767,
+    "speed": 0,
+    "rigReady": true,
+    "horseId": 2,
+    "horseName": "Clover",
+    "breed": "pinto",
+    "modelKey": "pinto",
+    "loadingBreed": false
+  },
+  "driver": {
+    "active": false,
+    "status": "off",
+    "steps": 950,
+    "target": {
+      "x": -34.66412379863903,
+      "z": -20.07637931455221,
+      "distance": 5.232034044456584,
+      "horse": "Pepper",
+      "pressure": "out of range",
+      "spacing": 9,
+      "approachBlocked": false,
+      "approachPhase": "pressure",
+      "planMs": 0.6999999992549419
+    }
+  },
+  "status": "Roundup ended. Inspect the saved result.",
+  "errors": [
+    "ResizeObserver loop completed with undelivered notifications."
+  ],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false
+}

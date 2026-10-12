@@ -5997,6 +5997,289 @@
           "fixedLowerVertices": 0
         }
       ],
+      "boneFrameLegContour": {
+        "version": 7,
+        "space": "native standing joint frames",
+        "bodyOnly": true,
+        "sourceShoulderRestoration": {
+          "heightM": [
+            0.77,
+            0.9,
+            1.48,
+            1.85
+          ],
+          "forwardM": [
+            0.02,
+            0.28,
+            0.65,
+            0.9
+          ]
+        },
+        "sourceSurfaceMayShrink": true,
+        "sourceWeightsAndJointsUnchanged": true,
+        "protectedSourceYAtOrBelowM": 0.18,
+        "normalMethod": "authored normals transported by welded surface shortest-arc rotation",
+        "limbs": [
+          {
+            "id": "foreLeft",
+            "jointNames": [
+              "fingers_01_l_0187",
+              "hand_l_0206",
+              "lowerarm_l_0205",
+              "upperarm_l_0204"
+            ],
+            "jointPointsM": [
+              [
+                0.11379374462739439,
+                0.197314764180875,
+                0.4502556709761125
+              ],
+              [
+                0.13044966536003996,
+                0.559417302517547,
+                0.4854906735894444
+              ],
+              [
+                0.13896976160150787,
+                1.006402563486024,
+                0.45333458541380645
+              ],
+              [
+                0.13069025364462536,
+                1.297116107325211,
+                0.6043743402337938
+              ]
+            ],
+            "vertices": 891,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.08673873614748363,
+            "radiusGuideY": [
+              0.197314764180875,
+              0.35,
+              0.559417302517547,
+              0.7,
+              0.85,
+              1.006402563486024,
+              1.297116107325211,
+              1.497116107325211
+            ],
+            "lateralRadiiM": [
+              0.041,
+              0.039,
+              0.059,
+              0.052,
+              0.068,
+              0.095,
+              0.145,
+              0.18
+            ],
+            "depthRadiiM": [
+              0.052,
+              0.054,
+              0.075,
+              0.087,
+              0.113,
+              0.159,
+              0.218,
+              0.255
+            ]
+          },
+          {
+            "id": "foreRight",
+            "jointNames": [
+              "fingers_01_r_0273",
+              "hand_r_0272",
+              "lowerarm_r_0271",
+              "upperarm_r_0270"
+            ],
+            "jointPointsM": [
+              [
+                -0.15439335944685112,
+                0.20319671432516834,
+                0.3014318124149533
+              ],
+              [
+                -0.16136835853107126,
+                0.5597299118043054,
+                0.3754078134880665
+              ],
+              [
+                -0.15872147626311783,
+                1.0070368454252079,
+                0.40397742680968096
+              ],
+              [
+                -0.1912228290762117,
+                1.2846164506603879,
+                0.5751178325047144
+              ]
+            ],
+            "vertices": 866,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.08844301773061045,
+            "radiusGuideY": [
+              0.20319671432516834,
+              0.35,
+              0.5597299118043054,
+              0.7,
+              0.85,
+              1.0070368454252079,
+              1.2846164506603879,
+              1.4846164506603878
+            ],
+            "lateralRadiiM": [
+              0.041,
+              0.039,
+              0.059,
+              0.052,
+              0.068,
+              0.095,
+              0.145,
+              0.18
+            ],
+            "depthRadiiM": [
+              0.052,
+              0.054,
+              0.075,
+              0.087,
+              0.113,
+              0.159,
+              0.218,
+              0.255
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "jointNames": [
+              "toes_01_l_0408",
+              "foot_l_0407",
+              "lowerleg_l_0406",
+              "upperleg_l_0405"
+            ],
+            "jointPointsM": [
+              [
+                0.21826616436416896,
+                0.20275865957023587,
+                -0.9133200608541439
+              ],
+              [
+                0.18569753913277537,
+                0.6324522714888349,
+                -0.9055907695166663
+              ],
+              [
+                0.2428945313640744,
+                0.9478614153320541,
+                -0.6914175255676629
+              ],
+              [
+                0.1863372082146599,
+                1.3762356617854956,
+                -0.7763653890052935
+              ]
+            ],
+            "vertices": 1009,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.05937575067364241,
+            "radiusGuideY": [
+              0.20275865957023587,
+              0.39,
+              0.6324522714888349,
+              0.8,
+              0.9478614153320541,
+              1.12,
+              1.3762356617854956,
+              1.5962356617854956
+            ],
+            "lateralRadiiM": [
+              0.042,
+              0.044,
+              0.065,
+              0.077,
+              0.098,
+              0.126,
+              0.22,
+              0.25
+            ],
+            "depthRadiiM": [
+              0.054,
+              0.061,
+              0.089,
+              0.116,
+              0.146,
+              0.19,
+              0.286,
+              0.31
+            ]
+          },
+          {
+            "id": "hindRight",
+            "jointNames": [
+              "toes_01_r_0477",
+              "foot_r_0476",
+              "lowerleg_r_0475",
+              "upperleg_r_0474"
+            ],
+            "jointPointsM": [
+              [
+                -0.24478011555577092,
+                0.19477616786355684,
+                -0.7213193558141554
+              ],
+              [
+                -0.2123169418791324,
+                0.6159620857562415,
+                -0.8067946742891855
+              ],
+              [
+                -0.2496663832502982,
+                0.9639496675140752,
+                -0.6451338802692366
+              ],
+              [
+                -0.19615683770899026,
+                1.3840674470771763,
+                -0.7657888664923478
+              ]
+            ],
+            "vertices": 1004,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.054592926787829635,
+            "radiusGuideY": [
+              0.19477616786355684,
+              0.39,
+              0.6159620857562415,
+              0.8,
+              0.9639496675140752,
+              1.12,
+              1.3840674470771763,
+              1.6040674470771763
+            ],
+            "lateralRadiiM": [
+              0.042,
+              0.044,
+              0.065,
+              0.077,
+              0.098,
+              0.126,
+              0.22,
+              0.25
+            ],
+            "depthRadiiM": [
+              0.054,
+              0.061,
+              0.089,
+              0.116,
+              0.146,
+              0.19,
+              0.286,
+              0.31
+            ]
+          }
+        ],
+        "changedVertices": 4793,
+        "maximumSurfaceMoveM": 0.09602093716299599
+      },
       "draftStirrups": {
         "displayedLiftM": 0.04,
         "sourceLiftM": 0.04305000518865251,
@@ -6159,9 +6442,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 962,
-        "baseMorphSha256": "b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b",
-        "method": "Original four-influence shoulder attachment at70% strength, inverse-solved onto the reviewed v6 shared draft cage, then the unchanged bounded static lower-V route6cm upward/1.2cm forward before actor scale. Original shoulder influences and hard tack endpoints are preserved.",
+        "vertices": 2404,
+        "baseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
         "preservedBaseMorphBytes": 728256
       },
       "groom": {
@@ -8957,49 +9240,49 @@
           "sourceMeshIndex": 2,
           "originalSourceWeightsCopied": true,
           "position": {
-            "byteOffset": 776356,
+            "byteOffset": 848456,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "normal": {
-            "byteOffset": 799060,
+            "byteOffset": 871160,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "uv": {
-            "byteOffset": 821764,
+            "byteOffset": 893864,
             "count": 3784,
             "itemSize": 2,
             "componentType": "float32"
           },
           "skinIndex": {
-            "byteOffset": 836900,
+            "byteOffset": 909000,
             "count": 7568,
             "itemSize": 4,
             "componentType": "uint16"
           },
           "skinWeight": {
-            "byteOffset": 852036,
+            "byteOffset": 924136,
             "count": 7568,
             "itemSize": 4,
             "componentType": "float32"
           },
           "outer": {
-            "byteOffset": 882308,
+            "byteOffset": 954408,
             "count": 1892,
             "itemSize": 1,
             "componentType": "float32"
           },
           "index": {
-            "byteOffset": 889876,
+            "byteOffset": 961976,
             "count": 11112,
             "itemSize": 1,
             "componentType": "uint16"
           },
           "sourceVertex": {
-            "byteOffset": 912100,
+            "byteOffset": 984200,
             "count": 1892,
             "itemSize": 1,
             "componentType": "uint16"
@@ -9022,7 +9305,7 @@
       "headShape": {
         "family": "draft",
         "affectedBodyVertices": 7671,
-        "maxAdditionalDisplayedDeltaM": 0.009710492677568953,
+        "maxAdditionalDisplayedDeltaM": 0.00972524936866581,
         "sourceSeatUnchangedByHeadPass": true
       },
       "draftWidths": {
@@ -9032,17 +9315,17 @@
           "newM": 0.8633069477502802,
           "gainOverPreviousPercent": 10.717205518004636,
           "previousDisplayedM": 0.738431779889891,
-          "newDisplayedM": 0.8021434087797397,
-          "displayedGainPercent": 8.627964102431896
+          "newDisplayedM": 0.8033623976500042,
+          "displayedGainPercent": 8.79304216427348
         },
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.6294390496534226,
-          "newM": 0.6761909035110627,
-          "gainOverPreviousPercent": 7.427542648232954,
+          "newM": 0.520620693945136,
+          "gainOverPreviousPercent": -17.28814819611262,
           "previousDisplayedM": 0.5960928894858921,
-          "newDisplayedM": 0.6282841551798919,
-          "displayedGainPercent": 5.4003774012073125
+          "newDisplayedM": 0.4844708942096403,
+          "displayedGainPercent": -18.725604221268544
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -9050,17 +9333,17 @@
           "newM": 0.8086819834593382,
           "gainOverPreviousPercent": 1.533615044230907,
           "previousDisplayedM": 0.7542723317437485,
-          "newDisplayedM": 0.7513885119553922,
-          "displayedGainPercent": -0.38233137647901705
+          "newDisplayedM": 0.7525303704102433,
+          "displayedGainPercent": -0.23094594090149467
         },
         "neck": {
           "sourceM": 0.4076406539898484,
           "previousM": 0.4789700578458588,
-          "newM": 0.540529291751224,
-          "gainOverPreviousPercent": 12.852417995025501,
+          "newM": 0.4076406539898484,
+          "gainOverPreviousPercent": -14.892246955229393,
           "previousDisplayedM": 0.4535953813411621,
-          "newDisplayedM": 0.5022338923143278,
-          "displayedGainPercent": 10.722884970599655
+          "newDisplayedM": 0.3793357322355617,
+          "displayedGainPercent": -16.371341543653763
         },
         "head": {
           "sourceM": 0.25141452600577285,
@@ -9068,8 +9351,8 @@
           "newM": 0.3055005819520637,
           "gainOverPreviousPercent": 6.105178289437463,
           "previousDisplayedM": 0.27266897229109305,
-          "newDisplayedM": 0.2838564879268262,
-          "displayedGainPercent": 4.102966150394893
+          "newDisplayedM": 0.2842878545574659,
+          "displayedGainPercent": 4.261167733440874
         }
       },
       "draftRearProfile": {
@@ -9080,58 +9363,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.47470768265749924,
-            "newDisplayedWidthM": 0.474604188718549,
-            "previousDisplayedMeanYM": 0.6094752121710428,
-            "newDisplayedMeanYM": 0.609507534202706
+            "previousDisplayedWidthM": 0.47542907907546494,
+            "newDisplayedWidthM": 0.47602799759198966,
+            "previousDisplayedMeanYM": 0.6104014100207127,
+            "newDisplayedMeanYM": 0.611527452125063
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6011493483358764,
-            "newDisplayedWidthM": 0.5756278409785939,
-            "previousDisplayedMeanYM": 0.7287374887096741,
-            "newDisplayedMeanYM": 0.7391279298043999
+            "previousDisplayedWidthM": 0.6020628936657606,
+            "newDisplayedWidthM": 0.5571211987451208,
+            "previousDisplayedMeanYM": 0.7298449252083832,
+            "newDisplayedMeanYM": 0.743038947095876
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.6575217521638849,
-            "newDisplayedWidthM": 0.6119730069768738,
-            "previousDisplayedMeanYM": 0.8692153509378122,
-            "newDisplayedMeanYM": 0.8880561322969277
+            "previousDisplayedWidthM": 0.6585209646352108,
+            "newDisplayedWidthM": 0.6111264952052897,
+            "previousDisplayedMeanYM": 0.8705362666581921,
+            "newDisplayedMeanYM": 0.8925098929224893
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.7064965677894236,
-            "newDisplayedWidthM": 0.6717228108445915,
-            "previousDisplayedMeanYM": 0.9854477717243189,
-            "newDisplayedMeanYM": 1.0029032067137988
+            "previousDisplayedWidthM": 0.7075702055499401,
+            "newDisplayedWidthM": 0.6483469245911548,
+            "previousDisplayedMeanYM": 0.986945321729481,
+            "newDisplayedMeanYM": 1.0082524871189549
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.6951606203792777,
-            "newDisplayedWidthM": 0.6696850181671913,
-            "previousDisplayedMeanYM": 1.133097467664134,
-            "newDisplayedMeanYM": 1.1415288123047398
+            "previousDisplayedWidthM": 0.6962170313028276,
+            "newDisplayedWidthM": 0.6590478983685533,
+            "previousDisplayedMeanYM": 1.1348193956721304,
+            "newDisplayedMeanYM": 1.1478614723331297
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.7414062487776827,
-            "newDisplayedWidthM": 0.7408144674807444,
-            "previousDisplayedMeanYM": 1.299039410345189,
-            "newDisplayedMeanYM": 1.3001337974782723
+            "previousDisplayedWidthM": 0.742532937541453,
+            "newDisplayedWidthM": 0.74194025693548,
+            "previousDisplayedMeanYM": 1.3010135144342005,
+            "newDisplayedMeanYM": 1.30210956466857
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.7513859620125701,
-            "newDisplayedWidthM": 0.7513885119553922,
-            "previousDisplayedMeanYM": 1.4303160019798298,
-            "newDisplayedMeanYM": 1.43031684821392
+            "previousDisplayedWidthM": 0.7525278165923636,
+            "newDisplayedWidthM": 0.7525303704102433,
+            "previousDisplayedMeanYM": 1.432489602446144,
+            "newDisplayedMeanYM": 1.432490449966226
           }
         ]
       },
@@ -9146,58 +9429,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.3614784981843851,
-            "newDisplayedWidthM": 0.3614191796281024,
-            "previousDisplayedMeanYM": 0.6041945069557244,
-            "newDisplayedMeanYM": 0.6042127730019727
+            "previousDisplayedWidthM": 0.36202782422920915,
+            "newDisplayedWidthM": 0.35681440018989463,
+            "previousDisplayedMeanYM": 0.6051126799050907,
+            "newDisplayedMeanYM": 0.6051999557251279
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5083783511427357,
-            "newDisplayedWidthM": 0.4889297031661754,
-            "previousDisplayedMeanYM": 0.7281878909175481,
-            "newDisplayedMeanYM": 0.738519643881574
+            "previousDisplayedWidthM": 0.5091509156806269,
+            "newDisplayedWidthM": 0.40211084209877046,
+            "previousDisplayedMeanYM": 0.7292944922119977,
+            "newDisplayedMeanYM": 0.7466960033757625
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.5962314613585993,
-            "newDisplayedWidthM": 0.5477319583035654,
-            "previousDisplayedMeanYM": 0.8286993301825376,
-            "newDisplayedMeanYM": 0.8594739826535938
+            "previousDisplayedWidthM": 0.5971375331501799,
+            "newDisplayedWidthM": 0.4421121470424103,
+            "previousDisplayedMeanYM": 0.8299586751440886,
+            "newDisplayedMeanYM": 0.8845056828279847
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 216,
-            "previousDisplayedWidthM": 0.6449170593851885,
-            "newDisplayedWidthM": 0.6041057665880468,
-            "previousDisplayedMeanYM": 0.9458375822849115,
-            "newDisplayedMeanYM": 0.971198882495479
+            "previousDisplayedWidthM": 0.6458971169522391,
+            "newDisplayedWidthM": 0.48241328137948675,
+            "previousDisplayedMeanYM": 0.9472749380909476,
+            "newDisplayedMeanYM": 1.011234533897518
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 62,
-            "previousDisplayedWidthM": 0.6435279566039467,
-            "newDisplayedWidthM": 0.6290045437727605,
-            "previousDisplayedMeanYM": 1.1160318056713228,
-            "newDisplayedMeanYM": 1.121303778430613
+            "previousDisplayedWidthM": 0.6445059032007997,
+            "newDisplayedWidthM": 0.4813028235872795,
+            "previousDisplayedMeanYM": 1.1177277995984487,
+            "newDisplayedMeanYM": 1.1613772045282325
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 67,
-            "previousDisplayedWidthM": 0.624375447188619,
-            "newDisplayedWidthM": 0.6237926068656396,
-            "previousDisplayedMeanYM": 1.2626684053756894,
-            "newDisplayedMeanYM": 1.2627054383514897
+            "previousDisplayedWidthM": 0.6253242883966359,
+            "newDisplayedWidthM": 0.47342465742681805,
+            "previousDisplayedMeanYM": 1.2645872377392553,
+            "newDisplayedMeanYM": 1.3049146976846913
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 89,
-            "previousDisplayedWidthM": 0.5654210499950219,
-            "newDisplayedWidthM": 0.5654208493761093,
-            "previousDisplayedMeanYM": 1.415860834777424,
-            "newDisplayedMeanYM": 1.415860777018464
+            "previousDisplayedWidthM": 0.5662803002979143,
+            "newDisplayedWidthM": 0.4268037169872476,
+            "previousDisplayedMeanYM": 1.4180124682391544,
+            "newDisplayedMeanYM": 1.4416361095167296
           }
         ]
       },
@@ -9260,12 +9543,13 @@
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 2.9193277107930626e-06,
-      "sha256": "f7f2cc1be0b2e6afb7eb23f086b72a2c2fdd80fa333f8460c69d0d51369b8910",
-      "byteLength": 915884,
-      "actorScale": 0.9291520366771882,
+      "maxLowerLimbYChangeM": 0.008624114730343191,
+      "maxHoofYChangeM": 2.678651204485183e-06,
+      "sha256": "09a1961425264c3615fd2625aafc619f16554250a0ea762a69d320dbe93d7764",
+      "byteLength": 987984,
+      "actorScale": 0.930564036051734,
       "withersM": 1.73,
-      "sourceWithersM": 1.861912724409221,
+      "sourceWithersM": 1.8590875350611786,
       "unchangedRigJoints": 677,
       "bodyBelow065mExactlyPreserved": false
     },
@@ -9313,6 +9597,289 @@
           "fixedLowerVertices": 0
         }
       ],
+      "boneFrameLegContour": {
+        "version": 7,
+        "space": "native standing joint frames",
+        "bodyOnly": true,
+        "sourceShoulderRestoration": {
+          "heightM": [
+            0.77,
+            0.9,
+            1.48,
+            1.85
+          ],
+          "forwardM": [
+            0.02,
+            0.28,
+            0.65,
+            0.9
+          ]
+        },
+        "sourceSurfaceMayShrink": true,
+        "sourceWeightsAndJointsUnchanged": true,
+        "protectedSourceYAtOrBelowM": 0.18,
+        "normalMethod": "authored normals transported by welded surface shortest-arc rotation",
+        "limbs": [
+          {
+            "id": "foreLeft",
+            "jointNames": [
+              "fingers_01_l_0187",
+              "hand_l_0206",
+              "lowerarm_l_0205",
+              "upperarm_l_0204"
+            ],
+            "jointPointsM": [
+              [
+                0.11379374462739439,
+                0.197314764180875,
+                0.4502556709761125
+              ],
+              [
+                0.13044966536003996,
+                0.559417302517547,
+                0.4854906735894444
+              ],
+              [
+                0.13896976160150787,
+                1.006402563486024,
+                0.45333458541380645
+              ],
+              [
+                0.13069025364462536,
+                1.297116107325211,
+                0.6043743402337938
+              ]
+            ],
+            "vertices": 891,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.09578182706476342,
+            "radiusGuideY": [
+              0.197314764180875,
+              0.35,
+              0.559417302517547,
+              0.7,
+              0.85,
+              1.006402563486024,
+              1.297116107325211,
+              1.497116107325211
+            ],
+            "lateralRadiiM": [
+              0.043255,
+              0.041144999999999994,
+              0.062244999999999995,
+              0.05485999999999999,
+              0.07174,
+              0.100225,
+              0.15297499999999997,
+              0.18989999999999999
+            ],
+            "depthRadiiM": [
+              0.05485999999999999,
+              0.05696999999999999,
+              0.07912499999999999,
+              0.09178499999999999,
+              0.119215,
+              0.167745,
+              0.22998999999999997,
+              0.269025
+            ]
+          },
+          {
+            "id": "foreRight",
+            "jointNames": [
+              "fingers_01_r_0273",
+              "hand_r_0272",
+              "lowerarm_r_0271",
+              "upperarm_r_0270"
+            ],
+            "jointPointsM": [
+              [
+                -0.15439335944685112,
+                0.20319671432516834,
+                0.3014318124149533
+              ],
+              [
+                -0.16136835853107126,
+                0.5597299118043054,
+                0.3754078134880665
+              ],
+              [
+                -0.15872147626311783,
+                1.0070368454252079,
+                0.40397742680968096
+              ],
+              [
+                -0.1912228290762117,
+                1.2846164506603879,
+                0.5751178325047144
+              ]
+            ],
+            "vertices": 866,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.096034662420433,
+            "radiusGuideY": [
+              0.20319671432516834,
+              0.35,
+              0.5597299118043054,
+              0.7,
+              0.85,
+              1.0070368454252079,
+              1.2846164506603879,
+              1.4846164506603878
+            ],
+            "lateralRadiiM": [
+              0.043255,
+              0.041144999999999994,
+              0.062244999999999995,
+              0.05485999999999999,
+              0.07174,
+              0.100225,
+              0.15297499999999997,
+              0.18989999999999999
+            ],
+            "depthRadiiM": [
+              0.05485999999999999,
+              0.05696999999999999,
+              0.07912499999999999,
+              0.09178499999999999,
+              0.119215,
+              0.167745,
+              0.22998999999999997,
+              0.269025
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "jointNames": [
+              "toes_01_l_0408",
+              "foot_l_0407",
+              "lowerleg_l_0406",
+              "upperleg_l_0405"
+            ],
+            "jointPointsM": [
+              [
+                0.21826616436416896,
+                0.20275865957023587,
+                -0.9133200608541439
+              ],
+              [
+                0.18569753913277537,
+                0.6324522714888349,
+                -0.9055907695166663
+              ],
+              [
+                0.2428945313640744,
+                0.9478614153320541,
+                -0.6914175255676629
+              ],
+              [
+                0.1863372082146599,
+                1.3762356617854956,
+                -0.7763653890052935
+              ]
+            ],
+            "vertices": 1009,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.057028247999325474,
+            "radiusGuideY": [
+              0.20275865957023587,
+              0.39,
+              0.6324522714888349,
+              0.8,
+              0.9478614153320541,
+              1.12,
+              1.3762356617854956,
+              1.5962356617854956
+            ],
+            "lateralRadiiM": [
+              0.04431,
+              0.046419999999999996,
+              0.068575,
+              0.08123499999999999,
+              0.10339,
+              0.13293,
+              0.2321,
+              0.26375
+            ],
+            "depthRadiiM": [
+              0.05696999999999999,
+              0.064355,
+              0.09389499999999999,
+              0.12238,
+              0.15402999999999997,
+              0.20045,
+              0.30172999999999994,
+              0.32704999999999995
+            ]
+          },
+          {
+            "id": "hindRight",
+            "jointNames": [
+              "toes_01_r_0477",
+              "foot_r_0476",
+              "lowerleg_r_0475",
+              "upperleg_r_0474"
+            ],
+            "jointPointsM": [
+              [
+                -0.24478011555577092,
+                0.19477616786355684,
+                -0.7213193558141554
+              ],
+              [
+                -0.2123169418791324,
+                0.6159620857562415,
+                -0.8067946742891855
+              ],
+              [
+                -0.2496663832502982,
+                0.9639496675140752,
+                -0.6451338802692366
+              ],
+              [
+                -0.19615683770899026,
+                1.3840674470771763,
+                -0.7657888664923478
+              ]
+            ],
+            "vertices": 1004,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.05224830610367717,
+            "radiusGuideY": [
+              0.19477616786355684,
+              0.39,
+              0.6159620857562415,
+              0.8,
+              0.9639496675140752,
+              1.12,
+              1.3840674470771763,
+              1.6040674470771763
+            ],
+            "lateralRadiiM": [
+              0.04431,
+              0.046419999999999996,
+              0.068575,
+              0.08123499999999999,
+              0.10339,
+              0.13293,
+              0.2321,
+              0.26375
+            ],
+            "depthRadiiM": [
+              0.05696999999999999,
+              0.064355,
+              0.09389499999999999,
+              0.12238,
+              0.15402999999999997,
+              0.20045,
+              0.30172999999999994,
+              0.32704999999999995
+            ]
+          }
+        ],
+        "changedVertices": 4793,
+        "maximumSurfaceMoveM": 0.1037903743729714
+      },
       "draftStirrups": {
         "displayedLiftM": 0.12,
         "sourceLiftM": 0.12324087017792197,
@@ -9475,9 +10042,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 966,
-        "baseMorphSha256": "abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c",
-        "method": "Original four-influence shoulder attachment at70% strength, inverse-solved onto the reviewed v6 shared draft cage, then the unchanged bounded static lower-V route6cm upward/1.2cm forward before actor scale. Original shoulder influences and hard tack endpoints are preserved.",
+        "vertices": 2404,
+        "baseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
         "preservedBaseMorphBytes": 728256
       },
       "groom": {
@@ -12273,49 +12840,49 @@
           "sourceMeshIndex": 2,
           "originalSourceWeightsCopied": true,
           "position": {
-            "byteOffset": 776556,
+            "byteOffset": 848456,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "normal": {
-            "byteOffset": 799260,
+            "byteOffset": 871160,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "uv": {
-            "byteOffset": 821964,
+            "byteOffset": 893864,
             "count": 3784,
             "itemSize": 2,
             "componentType": "float32"
           },
           "skinIndex": {
-            "byteOffset": 837100,
+            "byteOffset": 909000,
             "count": 7568,
             "itemSize": 4,
             "componentType": "uint16"
           },
           "skinWeight": {
-            "byteOffset": 852236,
+            "byteOffset": 924136,
             "count": 7568,
             "itemSize": 4,
             "componentType": "float32"
           },
           "outer": {
-            "byteOffset": 882508,
+            "byteOffset": 954408,
             "count": 1892,
             "itemSize": 1,
             "componentType": "float32"
           },
           "index": {
-            "byteOffset": 890076,
+            "byteOffset": 961976,
             "count": 11112,
             "itemSize": 1,
             "componentType": "uint16"
           },
           "sourceVertex": {
-            "byteOffset": 912300,
+            "byteOffset": 984200,
             "count": 1892,
             "itemSize": 1,
             "componentType": "uint16"
@@ -12338,7 +12905,7 @@
       "headShape": {
         "family": "draft",
         "affectedBodyVertices": 7719,
-        "maxAdditionalDisplayedDeltaM": 0.010176090761535495,
+        "maxAdditionalDisplayedDeltaM": 0.010192985421053034,
         "sourceSeatUnchangedByHeadPass": true
       },
       "draftWidths": {
@@ -12348,17 +12915,17 @@
           "newM": 0.8761841622724319,
           "gainOverPreviousPercent": 10.541546778110344,
           "previousDisplayedM": 0.7856134355841596,
-          "newDisplayedM": 0.8531431117039252,
-          "displayedGainPercent": 8.595789361666451
+          "newDisplayedM": 0.8545595261925276,
+          "displayedGainPercent": 8.776083438173599
         },
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.6398415042133067,
-          "newM": 0.6861383969654256,
-          "gainOverPreviousPercent": 7.2356814066073305,
+          "newM": 0.520620693945136,
+          "gainOverPreviousPercent": -18.63286602746319,
           "previousDisplayedM": 0.6341784037196465,
-          "newDisplayedM": 0.6680949876204403,
-          "displayedGainPercent": 5.348113985254432
+          "newDisplayedM": 0.5077715310328186,
+          "displayedGainPercent": -19.932383686579946
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -12366,17 +12933,17 @@
           "newM": 0.8196377380187255,
           "gainOverPreviousPercent": 0.6120320719721573,
           "previousDisplayedM": 0.807441498527912,
-          "newDisplayedM": 0.7980836910697762,
-          "displayedGainPercent": -1.1589455675979687
+          "newDisplayedM": 0.7994086942112665,
+          "displayedGainPercent": -0.9948466026691194
         },
         "neck": {
           "sourceM": 0.4076406539898484,
           "previousM": 0.48712287092565576,
-          "newM": 0.548682099864858,
-          "gainOverPreviousPercent": 12.63731034065887,
+          "newM": 0.4076406539898484,
+          "gainOverPreviousPercent": -16.31666704229493,
           "previousDisplayedM": 0.4828114504369146,
-          "newDisplayedM": 0.5342533843580263,
-          "displayedGainPercent": 10.654663197105197
+          "newDisplayedM": 0.3975798914544446,
+          "displayedGainPercent": -17.65317680542594
         },
         "head": {
           "sourceM": 0.25141452600577285,
@@ -12384,8 +12951,8 @@
           "newM": 0.30299099902891313,
           "gainOverPreviousPercent": 6.159410499993245,
           "previousDisplayedM": 0.2828852279757742,
-          "newDisplayedM": 0.29502323239829825,
-          "displayedGainPercent": 4.290787648891836
+          "newDisplayedM": 0.2955130390615774,
+          "displayedGainPercent": 4.463934428871852
         }
       },
       "draftRearProfile": {
@@ -12396,58 +12963,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.5010109156488433,
-            "newDisplayedWidthM": 0.5009021318735398,
-            "previousDisplayedMeanYM": 0.6386934791024538,
-            "newDisplayedMeanYM": 0.6387316024293707
+            "previousDisplayedWidthM": 0.5018427094125597,
+            "newDisplayedWidthM": 0.501325107951978,
+            "previousDisplayedMeanYM": 0.6397538577015024,
+            "newDisplayedMeanYM": 0.6408968073944115
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6381780108419866,
-            "newDisplayedWidthM": 0.6101496819967018,
-            "previousDisplayedMeanYM": 0.7621250592231289,
-            "newDisplayedMeanYM": 0.7743746522845487
+            "previousDisplayedWidthM": 0.639237533644742,
+            "newDisplayedWidthM": 0.5873870713273829,
+            "previousDisplayedMeanYM": 0.7633903627357537,
+            "newDisplayedMeanYM": 0.7789937315599867
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.6950704999200797,
-            "newDisplayedWidthM": 0.6447802840679766,
-            "previousDisplayedMeanYM": 0.9079232727250045,
-            "newDisplayedMeanYM": 0.9301355178516483
+            "previousDisplayedWidthM": 0.6962244773866746,
+            "newDisplayedWidthM": 0.64495925988481,
+            "previousDisplayedMeanYM": 0.9094306349253024,
+            "newDisplayedMeanYM": 0.9355768360659531
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.7455263783110703,
-            "newDisplayedWidthM": 0.7073828832272204,
-            "previousDisplayedMeanYM": 1.0293398281769506,
-            "newDisplayedMeanYM": 1.049918561837518
+            "previousDisplayedWidthM": 0.7467641241820603,
+            "newDisplayedWidthM": 0.6855165030764468,
+            "previousDisplayedMeanYM": 1.031048769884765,
+            "newDisplayedMeanYM": 1.0561050974186659
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.7336063431399632,
-            "newDisplayedWidthM": 0.70545377822785,
-            "previousDisplayedMeanYM": 1.1849357041258028,
-            "newDisplayedMeanYM": 1.1948758411563019
+            "previousDisplayedWidthM": 0.7348242990011772,
+            "newDisplayedWidthM": 0.6959662685146131,
+            "previousDisplayedMeanYM": 1.1869029709024566,
+            "newDisplayedMeanYM": 1.202327648417149
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.7867249609031609,
-            "newDisplayedWidthM": 0.7860729490544849,
-            "previousDisplayedMeanYM": 1.3596046477146786,
-            "newDisplayedMeanYM": 1.360894871306269
+            "previousDisplayedWidthM": 0.7880311059307434,
+            "newDisplayedWidthM": 0.7873780115919007,
+            "previousDisplayedMeanYM": 1.3618619052549146,
+            "newDisplayedMeanYM": 1.3631542709154776
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.7980813022187659,
-            "newDisplayedWidthM": 0.7980836910697762,
-            "previousDisplayedMeanYM": 1.4989612786618836,
-            "newDisplayedMeanYM": 1.4989622101483735
+            "previousDisplayedWidthM": 0.7994063013942122,
+            "newDisplayedWidthM": 0.7994086942112665,
+            "previousDisplayedMeanYM": 1.5014499003759008,
+            "newDisplayedMeanYM": 1.5014508334088734
           }
         ]
       },
@@ -12462,58 +13029,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.38268507384641776,
-            "newDisplayedWidthM": 0.3826184692765225,
-            "previousDisplayedMeanYM": 0.6331603179248618,
-            "newDisplayedMeanYM": 0.6331819548676342
+            "previousDisplayedWidthM": 0.38332041940067696,
+            "newDisplayedWidthM": 0.37650330088803513,
+            "previousDisplayedMeanYM": 0.634211510199187,
+            "newDisplayedMeanYM": 0.6342929030019946
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5461245998368401,
-            "newDisplayedWidthM": 0.5245450547447527,
-            "previousDisplayedMeanYM": 0.7608307199530492,
-            "newDisplayedMeanYM": 0.7730114074681483
+            "previousDisplayedWidthM": 0.5470312927294853,
+            "newDisplayedWidthM": 0.42275899406725426,
+            "previousDisplayedMeanYM": 0.7620938745637252,
+            "newDisplayedMeanYM": 0.7826260276054503
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.6392451686781413,
-            "newDisplayedWidthM": 0.5867305148760914,
-            "previousDisplayedMeanYM": 0.8612955656566331,
-            "newDisplayedMeanYM": 0.8975771321797785
+            "previousDisplayedWidthM": 0.640306463209227,
+            "newDisplayedWidthM": 0.4633755391191553,
+            "previousDisplayedMeanYM": 0.862725515100553,
+            "newDisplayedMeanYM": 0.9270422444921539
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 216,
-            "previousDisplayedWidthM": 0.6859253422455757,
-            "newDisplayedWidthM": 0.6406482615774187,
-            "previousDisplayedMeanYM": 0.9827987676351257,
-            "newDisplayedMeanYM": 1.0126981356773814
+            "previousDisplayedWidthM": 0.6870641366395381,
+            "newDisplayedWidthM": 0.5056149572746689,
+            "previousDisplayedMeanYM": 0.9844304404397959,
+            "newDisplayedMeanYM": 1.059844558531468
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 62,
-            "previousDisplayedWidthM": 0.6844492238112653,
-            "newDisplayedWidthM": 0.6688326659686261,
-            "previousDisplayedMeanYM": 1.1637604470004352,
-            "newDisplayedMeanYM": 1.1699757310210337
+            "previousDisplayedWidthM": 0.685585567507908,
+            "newDisplayedWidthM": 0.5047819194294008,
+            "previousDisplayedMeanYM": 1.165692557962571,
+            "newDisplayedMeanYM": 1.2172087914521748
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 67,
-            "previousDisplayedWidthM": 0.6640951862217283,
-            "newDisplayedWidthM": 0.6634493288992926,
-            "previousDisplayedMeanYM": 1.3166047905969032,
-            "newDisplayedMeanYM": 1.3166481520696178
+            "previousDisplayedWidthM": 0.6651977375178372,
+            "newDisplayedWidthM": 0.4965747927444153,
+            "previousDisplayedMeanYM": 1.3187906584490625,
+            "newDisplayedMeanYM": 1.3676412051790567
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 89,
-            "previousDisplayedWidthM": 0.6014579185549102,
-            "newDisplayedWidthM": 0.6014623651334806,
-            "previousDisplayedMeanYM": 1.4775154980349456,
-            "newDisplayedMeanYM": 1.4775153324123627
+            "previousDisplayedWidthM": 0.6024564775287081,
+            "newDisplayedWidthM": 0.44735404432463416,
+            "previousDisplayedMeanYM": 1.47996851480299,
+            "newDisplayedMeanYM": 1.5105622183442071
           }
         ]
       },
@@ -12576,12 +13143,13 @@
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 3.4855925278298727e-06,
-      "sha256": "6be8bb7e4aee5687db142321e4e11392d485335b7229113639356be4d0ed77f0",
-      "byteLength": 916084,
-      "actorScale": 0.973702959308522,
+      "maxLowerLimbYChangeM": 0.009495044194320235,
+      "maxHoofYChangeM": 2.941735106148924e-06,
+      "sha256": "0809ad8b3fba95410c2b07bc259b0c14669396edcc7d53898768bf14cd00a03d",
+      "byteLength": 987984,
+      "actorScale": 0.9753195309718683,
       "withersM": 1.82,
-      "sourceWithersM": 1.8691531976984832,
+      "sourceWithersM": 1.8660551154824514,
       "unchangedRigJoints": 677,
       "bodyBelow065mExactlyPreserved": false
     },
@@ -12629,6 +13197,289 @@
           "fixedLowerVertices": 0
         }
       ],
+      "boneFrameLegContour": {
+        "version": 7,
+        "space": "native standing joint frames",
+        "bodyOnly": true,
+        "sourceShoulderRestoration": {
+          "heightM": [
+            0.77,
+            0.9,
+            1.48,
+            1.85
+          ],
+          "forwardM": [
+            0.02,
+            0.28,
+            0.65,
+            0.9
+          ]
+        },
+        "sourceSurfaceMayShrink": true,
+        "sourceWeightsAndJointsUnchanged": true,
+        "protectedSourceYAtOrBelowM": 0.18,
+        "normalMethod": "authored normals transported by welded surface shortest-arc rotation",
+        "limbs": [
+          {
+            "id": "foreLeft",
+            "jointNames": [
+              "fingers_01_l_0187",
+              "hand_l_0206",
+              "lowerarm_l_0205",
+              "upperarm_l_0204"
+            ],
+            "jointPointsM": [
+              [
+                0.11379374462739439,
+                0.197314764180875,
+                0.4502556709761125
+              ],
+              [
+                0.13044966536003996,
+                0.559417302517547,
+                0.4854906735894444
+              ],
+              [
+                0.13896976160150787,
+                1.006402563486024,
+                0.45333458541380645
+              ],
+              [
+                0.13069025364462536,
+                1.297116107325211,
+                0.6043743402337938
+              ]
+            ],
+            "vertices": 891,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.091185215948152,
+            "radiusGuideY": [
+              0.197314764180875,
+              0.35,
+              0.559417302517547,
+              0.7,
+              0.85,
+              1.006402563486024,
+              1.297116107325211,
+              1.497116107325211
+            ],
+            "lateralRadiiM": [
+              0.042025,
+              0.039975,
+              0.060474999999999994,
+              0.05329999999999999,
+              0.0697,
+              0.09737499999999999,
+              0.14862499999999998,
+              0.18449999999999997
+            ],
+            "depthRadiiM": [
+              0.05329999999999999,
+              0.055349999999999996,
+              0.07687499999999999,
+              0.08917499999999999,
+              0.115825,
+              0.16297499999999998,
+              0.22344999999999998,
+              0.26137499999999997
+            ]
+          },
+          {
+            "id": "foreRight",
+            "jointNames": [
+              "fingers_01_r_0273",
+              "hand_r_0272",
+              "lowerarm_r_0271",
+              "upperarm_r_0270"
+            ],
+            "jointPointsM": [
+              [
+                -0.15439335944685112,
+                0.20319671432516834,
+                0.3014318124149533
+              ],
+              [
+                -0.16136835853107126,
+                0.5597299118043054,
+                0.3754078134880665
+              ],
+              [
+                -0.15872147626311783,
+                1.0070368454252079,
+                0.40397742680968096
+              ],
+              [
+                -0.1912228290762117,
+                1.2846164506603879,
+                0.5751178325047144
+              ]
+            ],
+            "vertices": 866,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.09119956521241607,
+            "radiusGuideY": [
+              0.20319671432516834,
+              0.35,
+              0.5597299118043054,
+              0.7,
+              0.85,
+              1.0070368454252079,
+              1.2846164506603879,
+              1.4846164506603878
+            ],
+            "lateralRadiiM": [
+              0.042025,
+              0.039975,
+              0.060474999999999994,
+              0.05329999999999999,
+              0.0697,
+              0.09737499999999999,
+              0.14862499999999998,
+              0.18449999999999997
+            ],
+            "depthRadiiM": [
+              0.05329999999999999,
+              0.055349999999999996,
+              0.07687499999999999,
+              0.08917499999999999,
+              0.115825,
+              0.16297499999999998,
+              0.22344999999999998,
+              0.26137499999999997
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "jointNames": [
+              "toes_01_l_0408",
+              "foot_l_0407",
+              "lowerleg_l_0406",
+              "upperleg_l_0405"
+            ],
+            "jointPointsM": [
+              [
+                0.21826616436416896,
+                0.20275865957023587,
+                -0.9133200608541439
+              ],
+              [
+                0.18569753913277537,
+                0.6324522714888349,
+                -0.9055907695166663
+              ],
+              [
+                0.2428945313640744,
+                0.9478614153320541,
+                -0.6914175255676629
+              ],
+              [
+                0.1863372082146599,
+                1.3762356617854956,
+                -0.7763653890052935
+              ]
+            ],
+            "vertices": 1009,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.06026275987876412,
+            "radiusGuideY": [
+              0.20275865957023587,
+              0.39,
+              0.6324522714888349,
+              0.8,
+              0.9478614153320541,
+              1.12,
+              1.3762356617854956,
+              1.5962356617854956
+            ],
+            "lateralRadiiM": [
+              0.04305,
+              0.045099999999999994,
+              0.06662499999999999,
+              0.078925,
+              0.10045,
+              0.12915,
+              0.22549999999999998,
+              0.25625
+            ],
+            "depthRadiiM": [
+              0.055349999999999996,
+              0.062525,
+              0.09122499999999999,
+              0.11889999999999999,
+              0.14964999999999998,
+              0.19474999999999998,
+              0.29314999999999997,
+              0.31775
+            ]
+          },
+          {
+            "id": "hindRight",
+            "jointNames": [
+              "toes_01_r_0477",
+              "foot_r_0476",
+              "lowerleg_r_0475",
+              "upperleg_r_0474"
+            ],
+            "jointPointsM": [
+              [
+                -0.24478011555577092,
+                0.19477616786355684,
+                -0.7213193558141554
+              ],
+              [
+                -0.2123169418791324,
+                0.6159620857562415,
+                -0.8067946742891855
+              ],
+              [
+                -0.2496663832502982,
+                0.9639496675140752,
+                -0.6451338802692366
+              ],
+              [
+                -0.19615683770899026,
+                1.3840674470771763,
+                -0.7657888664923478
+              ]
+            ],
+            "vertices": 1004,
+            "maxBlend": 1.0,
+            "maxSurfaceMoveM": 0.055414920961198946,
+            "radiusGuideY": [
+              0.19477616786355684,
+              0.39,
+              0.6159620857562415,
+              0.8,
+              0.9639496675140752,
+              1.12,
+              1.3840674470771763,
+              1.6040674470771763
+            ],
+            "lateralRadiiM": [
+              0.04305,
+              0.045099999999999994,
+              0.06662499999999999,
+              0.078925,
+              0.10045,
+              0.12915,
+              0.22549999999999998,
+              0.25625
+            ],
+            "depthRadiiM": [
+              0.055349999999999996,
+              0.062525,
+              0.09122499999999999,
+              0.11889999999999999,
+              0.14964999999999998,
+              0.19474999999999998,
+              0.29314999999999997,
+              0.31775
+            ]
+          }
+        ],
+        "changedVertices": 4792,
+        "maximumSurfaceMoveM": 0.08777487553908365
+      },
       "draftStirrups": {
         "displayedLiftM": 0.05,
         "sourceLiftM": 0.052180867916852496,
@@ -12791,9 +13642,9 @@
         "previousUnselectedQuantizedCoefficientsExact": true
       },
       "tackAttachment": {
-        "vertices": 966,
-        "baseMorphSha256": "bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076",
-        "method": "Original four-influence shoulder attachment at70% strength, inverse-solved onto the reviewed v6 shared draft cage, then the unchanged bounded static lower-V route6cm upward/1.2cm forward before actor scale. Original shoulder influences and hard tack endpoints are preserved.",
+        "vertices": 2404,
+        "baseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
         "preservedBaseMorphBytes": 728256
       },
       "groom": {
@@ -15589,49 +16440,49 @@
           "sourceMeshIndex": 2,
           "originalSourceWeightsCopied": true,
           "position": {
-            "byteOffset": 776556,
+            "byteOffset": 848456,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "normal": {
-            "byteOffset": 799260,
+            "byteOffset": 871160,
             "count": 5676,
             "itemSize": 3,
             "componentType": "float32"
           },
           "uv": {
-            "byteOffset": 821964,
+            "byteOffset": 893864,
             "count": 3784,
             "itemSize": 2,
             "componentType": "float32"
           },
           "skinIndex": {
-            "byteOffset": 837100,
+            "byteOffset": 909000,
             "count": 7568,
             "itemSize": 4,
             "componentType": "uint16"
           },
           "skinWeight": {
-            "byteOffset": 852236,
+            "byteOffset": 924136,
             "count": 7568,
             "itemSize": 4,
             "componentType": "float32"
           },
           "outer": {
-            "byteOffset": 882508,
+            "byteOffset": 954408,
             "count": 1892,
             "itemSize": 1,
             "componentType": "float32"
           },
           "index": {
-            "byteOffset": 890076,
+            "byteOffset": 961976,
             "count": 11112,
             "itemSize": 1,
             "componentType": "uint16"
           },
           "sourceVertex": {
-            "byteOffset": 912300,
+            "byteOffset": 984200,
             "count": 1892,
             "itemSize": 1,
             "componentType": "uint16"
@@ -15654,7 +16505,7 @@
       "headShape": {
         "family": "draft",
         "affectedBodyVertices": 7717,
-        "maxAdditionalDisplayedDeltaM": 0.010014129144513167,
+        "maxAdditionalDisplayedDeltaM": 0.010028511406395555,
         "sourceSeatUnchangedByHeadPass": true
       },
       "draftWidths": {
@@ -15664,17 +16515,17 @@
           "newM": 0.8375525397483689,
           "gainOverPreviousPercent": 13.018481931791403,
           "previousDisplayedM": 0.7232253077890238,
-          "newDisplayedM": 0.8025475362760978,
-          "displayedGainPercent": 10.967844685851812
+          "newDisplayedM": 0.8037001526117991,
+          "displayedGainPercent": 11.127216367579184
         },
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.5982316859737704,
-          "newM": 0.656285208359892,
-          "gainOverPreviousPercent": 9.704187148098843,
+          "newM": 0.520620693945136,
+          "gainOverPreviousPercent": -12.973400414640912,
           "previousDisplayedM": 0.5838219737045826,
-          "newDisplayedM": 0.6288561637242681,
-          "displayedGainPercent": 7.7136853438259045
+          "newDisplayedM": 0.4995781295132553,
+          "displayedGainPercent": -14.429714533827253
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -15682,17 +16533,17 @@
           "newM": 0.7837522303559405,
           "gainOverPreviousPercent": 2.8935031093014096,
           "previousDisplayedM": 0.7433645748831608,
-          "newDisplayedM": 0.750995778380698,
-          "displayedGainPercent": 1.0265761586415012
+          "newDisplayedM": 0.7520743562381802,
+          "displayedGainPercent": 1.1716702206838958
         },
         "neck": {
           "sourceM": 0.4076406539898484,
           "previousM": 0.46307669869558254,
-          "newM": 0.5242227497666472,
-          "gainOverPreviousPercent": 13.20430314099239,
+          "newM": 0.4076406539898484,
+          "gainOverPreviousPercent": -11.971244690542449,
           "previousDisplayedM": 0.45192248847365635,
-          "newDisplayedM": 0.5023131759728191,
-          "displayedGainPercent": 11.150294305856434
+          "newDisplayedM": 0.39116454225169434,
+          "displayedGainPercent": -13.444329010306323
         },
         "head": {
           "sourceM": 0.25141452600577285,
@@ -15700,8 +16551,8 @@
           "newM": 0.3004768611945462,
           "gainOverPreviousPercent": 5.278528258383641,
           "previousDisplayedM": 0.2785365893929789,
-          "newDisplayedM": 0.28791861192625284,
-          "displayedGainPercent": 3.3683267802339545
+          "newDisplayedM": 0.28833211976280854,
+          "displayedGainPercent": 3.516784057411382
         }
       },
       "draftRearProfile": {
@@ -15712,58 +16563,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 351,
-            "previousDisplayedWidthM": 0.49137410471831766,
-            "newDisplayedWidthM": 0.49128411167976366,
-            "previousDisplayedMeanYM": 0.6285375694097571,
-            "newDisplayedMeanYM": 0.6285667599925813
+            "previousDisplayedWidthM": 0.4920798147160917,
+            "newDisplayedWidthM": 0.491952477265355,
+            "previousDisplayedMeanYM": 0.6294402731592015,
+            "newDisplayedMeanYM": 0.6305785237196198
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 246,
-            "previousDisplayedWidthM": 0.6183939191014571,
-            "newDisplayedWidthM": 0.5956036294086753,
-            "previousDisplayedMeanYM": 0.7530534681785298,
-            "newDisplayedMeanYM": 0.7624293248451869
+            "previousDisplayedWidthM": 0.6192820545711166,
+            "newDisplayedWidthM": 0.5760528324677706,
+            "previousDisplayedMeanYM": 0.7541350012838542,
+            "newDisplayedMeanYM": 0.7663090999664287
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 313,
-            "previousDisplayedWidthM": 0.669821080105776,
-            "newDisplayedWidthM": 0.6289251840488493,
-            "previousDisplayedMeanYM": 0.8993166662286174,
-            "newDisplayedMeanYM": 0.9163177028396823
+            "previousDisplayedWidthM": 0.6707830751079779,
+            "newDisplayedWidthM": 0.6321833343893588,
+            "previousDisplayedMeanYM": 0.9006082620950421,
+            "newDisplayedMeanYM": 0.9204069834052313
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 370,
-            "previousDisplayedWidthM": 0.7165454048048168,
-            "newDisplayedWidthM": 0.6848654569167645,
-            "previousDisplayedMeanYM": 1.0195663266963284,
-            "newDisplayedMeanYM": 1.0353172770041996
+            "previousDisplayedWidthM": 0.7175745051403333,
+            "newDisplayedWidthM": 0.6712588804758844,
+            "previousDisplayedMeanYM": 1.0210306247601342,
+            "newDisplayedMeanYM": 1.040272814358421
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 126,
-            "previousDisplayedWidthM": 0.7052205675615459,
-            "newDisplayedWidthM": 0.6822905970316582,
-            "previousDisplayedMeanYM": 1.17097997907858,
-            "newDisplayedMeanYM": 1.1785880616972606
+            "previousDisplayedWidthM": 0.706233403200187,
+            "newDisplayedWidthM": 0.6731080066757038,
+            "previousDisplayedMeanYM": 1.1726617369703651,
+            "newDisplayedMeanYM": 1.1846463265640212
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 190,
-            "previousDisplayedWidthM": 0.742671286782116,
-            "newDisplayedWidthM": 0.7421401916721484,
-            "previousDisplayedMeanYM": 1.3413525793201582,
-            "newDisplayedMeanYM": 1.3423401591630169
+            "previousDisplayedWidthM": 0.7437379090300309,
+            "newDisplayedWidthM": 0.7432060511628783,
+            "previousDisplayedMeanYM": 1.343279025823294,
+            "newDisplayedMeanYM": 1.3442680240253257
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 213,
-            "previousDisplayedWidthM": 0.7509922879763323,
-            "newDisplayedWidthM": 0.750995778380698,
-            "previousDisplayedMeanYM": 1.4749768678699666,
-            "newDisplayedMeanYM": 1.4749776200824416
+            "previousDisplayedWidthM": 0.7520708608209064,
+            "newDisplayedWidthM": 0.7520743562381802,
+            "previousDisplayedMeanYM": 1.4770952251707403,
+            "newDisplayedMeanYM": 1.4770959784635407
           }
         ]
       },
@@ -15778,58 +16629,58 @@
           {
             "sourceYCenterM": 0.65,
             "vertices": 150,
-            "previousDisplayedWidthM": 0.3748388318090959,
-            "newDisplayedWidthM": 0.3747869294282295,
-            "previousDisplayedMeanYM": 0.6230910111980309,
-            "newDisplayedMeanYM": 0.6231073792337107
+            "previousDisplayedWidthM": 0.37537717420162636,
+            "newDisplayedWidthM": 0.36910102232863273,
+            "previousDisplayedMeanYM": 0.6239858926171029,
+            "newDisplayedMeanYM": 0.6240583890237832
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
-            "previousDisplayedWidthM": 0.5249612442259667,
-            "newDisplayedWidthM": 0.507265788859624,
-            "previousDisplayedMeanYM": 0.7531936406516563,
-            "newDisplayedMeanYM": 0.7625164416393564
+            "previousDisplayedWidthM": 0.5257151919715576,
+            "newDisplayedWidthM": 0.4152393110434782,
+            "previousDisplayedMeanYM": 0.7542753750722612,
+            "newDisplayedMeanYM": 0.7699803425097732
           },
           {
             "sourceYCenterM": 0.95,
             "vertices": 465,
-            "previousDisplayedWidthM": 0.6061168917911883,
-            "newDisplayedWidthM": 0.5638286081465237,
-            "previousDisplayedMeanYM": 0.861636426825223,
-            "newDisplayedMeanYM": 0.8894062853534555
+            "previousDisplayedWidthM": 0.6069873950314882,
+            "newDisplayedWidthM": 0.4558985113334011,
+            "previousDisplayedMeanYM": 0.8628739064461839,
+            "newDisplayedMeanYM": 0.9120909453956592
           },
           {
             "sourceYCenterM": 1.1,
             "vertices": 216,
-            "previousDisplayedWidthM": 0.6452322780523803,
-            "newDisplayedWidthM": 0.608098705075855,
-            "previousDisplayedMeanYM": 0.9836691311609395,
-            "newDisplayedMeanYM": 1.0065542352729104
+            "previousDisplayedWidthM": 0.6461589586917051,
+            "newDisplayedWidthM": 0.4974563542296698,
+            "previousDisplayedMeanYM": 0.9850818737814727,
+            "newDisplayedMeanYM": 1.0427914174408899
           },
           {
             "sourceYCenterM": 1.25,
             "vertices": 62,
-            "previousDisplayedWidthM": 0.6438399119119298,
-            "newDisplayedWidthM": 0.6296409473039482,
-            "previousDisplayedMeanYM": 1.1563884200946681,
-            "newDisplayedMeanYM": 1.161145601179435
+            "previousDisplayedWidthM": 0.6447645928392298,
+            "newDisplayedWidthM": 0.49597276372248444,
+            "previousDisplayedMeanYM": 1.1580492216337293,
+            "newDisplayedMeanYM": 1.1976163541090414
           },
           {
             "sourceYCenterM": 1.4,
             "vertices": 67,
-            "previousDisplayedWidthM": 0.6246459193388043,
-            "newDisplayedWidthM": 0.6241133180480655,
-            "previousDisplayedMeanYM": 1.3031792633590245,
-            "newDisplayedMeanYM": 1.3032124932705254
+            "previousDisplayedWidthM": 0.6255430339122285,
+            "newDisplayedWidthM": 0.4874640842552349,
+            "previousDisplayedMeanYM": 1.305050885461641,
+            "newDisplayedMeanYM": 1.3456187525384002
           },
           {
             "sourceYCenterM": 1.55,
             "vertices": 89,
-            "previousDisplayedWidthM": 0.5655330882093933,
-            "newDisplayedWidthM": 0.5655344950201252,
-            "previousDisplayedMeanYM": 1.4569590395965928,
-            "newDisplayedMeanYM": 1.4569590505242718
+            "previousDisplayedWidthM": 0.5663453051141693,
+            "newDisplayedWidthM": 0.440082745856355,
+            "previousDisplayedMeanYM": 1.4590515197470881,
+            "newDisplayedMeanYM": 1.4862833604944892
           }
         ]
       },
@@ -15892,12 +16743,13 @@
         }
       ],
       "standingBodyFloorM": 0.0,
-      "maxLowerLimbYChangeM": 2.8951334106741555e-06,
-      "sha256": "03c1194550d6d2808d773e661bfa4fbe8e314d354eb2b8b127a4c5d5c6cddb35",
-      "byteLength": 916084,
-      "actorScale": 0.958205602859508,
+      "maxLowerLimbYChangeM": 0.009021837787246745,
+      "maxHoofYChangeM": 2.5585878128953077e-06,
+      "sha256": "049688ecb1dd9c96ebc95fb4f9de24b0e85e2a1088f7be81317224fa93ea06aa",
+      "byteLength": 987984,
+      "actorScale": 0.9595817748379818,
       "withersM": 1.78,
-      "sourceWithersM": 1.8576388978399487,
+      "sourceWithersM": 1.854974788678682,
       "unchangedRigJoints": 677,
       "bodyBelow065mExactlyPreserved": false
     },

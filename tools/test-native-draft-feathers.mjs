@@ -63,7 +63,7 @@ function clipsFrom(file){
  return d.animations.map(a=>new THREE.AnimationClip(a.name,-1,a.channels.map(c=>{const s=a.samplers[c.sampler],kind=c.target.path,name=d.nodes[c.target.node].name,Track=kind==='rotation'?THREE.QuaternionKeyframeTrack:THREE.VectorKeyframeTrack;assert(['LINEAR','STEP','CUBICSPLINE',undefined].includes(s.interpolation));const track=new Track(name+'.'+({rotation:'quaternion',translation:'position',scale:'scale'}[kind]),array(s.input),array(s.output),s.interpolation==='STEP'?THREE.InterpolateDiscrete:THREE.InterpolateLinear);if(s.interpolation==='CUBICSPLINE'){track.createInterpolant=function(result){return new cubic[kind==='rotation'?1:0](this.times,this.values,this.getValueSize()/3,result);};track.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline=true;}return track;})));}
 
 // The unchanged helper fits its roots to the corrected draft leg surface.
-const approved={shire:'e05e3ab5fb92930fb981ff3a917297da9903c0ebcdd3caaab7f8b0c70f875cf7',clyde:'f2fd87adc9e99191eab69adfdd223bc3ad16c3964b12c0797cba2ad7bccf6cde'};
+const approved={shire:'629cab8c491dc3e8f887f3a79c10d7d8c18028428ff06a0f2591ee42d16f5a7d',clyde:'6b9a7dab36006fb4c9ae6ea73bbcc857cfa074186b4716fd8fba3dfb97ea9513'};
 for(const id of ['shire','clyde','tempest']){
  const f=fixture(id),before=sourceState(f),kit=add(f);
  assert.equal(geometryHash(kit.meshes),approved[f.profile.nativeVariant.id],id+' reviewed feather fit preserved exactly');

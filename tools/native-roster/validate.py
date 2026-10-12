@@ -61,15 +61,18 @@ HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d
 HEAD_DRAFT_BODY_SHA = {'percheron': '98cd1cc826f6940f36f53dce781a00eca0335447c0e718d9b0e8329d9e1ab3ac', 'shire': '87585e7f68d91e80884d626a902ac510960eb8f66e05e6bcd34208753ee25b2d', 'clyde': '6ce61579e46ade8e1a52a8b2bea02d6776e7d6a8364f2ae647acbf6a05194a12'}
 # End head revision pins.
 
-# Reviewed v6 shared draft proportions/face and fitted tack retain the v5
-# lower legs and C2 thigh blend. Additive hair is validated after the collar.
-DRAFT_LEG_BUFFER_SHA = {'percheron': 'b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b', 'shire': 'abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c', 'clyde': 'bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076'}
-DRAFT_LEG_BODY_SHA = {'percheron': '4aac6f1e2f042002eb63a56b63f1b0d8f7d3da95dbc4815014731af1bc346009', 'shire': 'fb7465e1ab418baa889c5bfb59b0c0143375d80cde2c72225a3a91197b9df1aa', 'clyde': 'd44649ad9c2b6dd60e2998e19765f36ea69e60970e5b2383aa1a30dacf5619e7'}
+# Reviewed v7 bone-frame leg surface and source-restored shoulder. Additive
+# hair is unchanged; the sparse collar is refitted after the morph prefix.
+DRAFT_LEG_BUFFER_SHA = {'percheron': 'd0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500', 'shire': '01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a', 'clyde': 'c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a'}
+DRAFT_LEG_BODY_SHA = {'percheron': '1f57001509089f1b48d3129e863dc777d09fb1a465839eb07bb969f1733ad6ee', 'shire': '6370151caf730e5fc3bc3d9f7f6c524f8bd1035b23f30110767827c46a7e058b', 'clyde': '01003d8b49618d0a565069019e9f9a073932229233bebde2939d342040f0a3ce'}
 
 
-# Released v5 lower-leg geometry remains bit-exact through the style pass.
-DRAFT_STYLE_LOWER_SHA = {'percheron': '644aea8d2215c22ea1370803c7a4fc6a5a6581ef6b903d77a56cc04dc6c188fe', 'shire': '4a6babb957489dd812f4b893f8d42830c48980cff13f02e2a8d0ac9b92c59265', 'clyde': '6dcad776e0eed18a4d57777bb6a4b1e203b349a4019c6a154f75e2c0648ec233'}
-
+# Reviewed v7 preserves released v6 hoof and head positions exactly. Normals
+# change by less than .005 degrees from expanded quantization, independently
+# measured before pinning this full morph prefix. The source rig stays exact.
+DRAFT_HOOF_POSITION_SHA = {'percheron': 'ad74b40f8cbd95bcbb336f9174ae5436155ff25eec61ad00ea0843fd383fe89b', 'shire': 'c308a4ac7eb7cfb2b257a261fbbc3977c58480331d83de7fd4467d030be61f58', 'clyde': '54b6603c9ecceb67be6cfbf6bc6cae2c596af94cfd99764e1684f76a01bdc7bc'}
+DRAFT_HEAD_POSITION_SHA = {'percheron': '8b8b6e504a33c7d9181ab1f93e2a67f5260ec879543b68665a0bb5767f52004a', 'shire': '3884e1e7e53739a0140b04d45aab9825b75e1cd30ced067b0f95cd8d344cb2e5', 'clyde': 'fc63d10030e490c137fb11679a5673ad949eb76e95501c1086465e43431607dc'}
+DRAFT_NONBODY_SHA = {'percheron': '2d5fe1fb3a5319c2223ee7f5f73435203a1ee6703a4b0ec1deaccf9138890b36', 'shire': '86c6b5ea8e74569f0e6e823dad8fd451cecf54dff545931256eea19c2f76e993', 'clyde': '4ec5bf841eb0059b1270b54c0f5a55a69991966e7e99845ab69745458fb58182'}
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -153,7 +156,8 @@ def draft_checks(key, body, positions, normals, outworld, frames, translation):
     assert np.array_equal(positions[anchors], body['position'][anchors]), (key, 'sole anchor positions changed')
     assert np.array_equal(normals[anchors], body['normal'][anchors]), (key, 'sole anchor normals changed')
     y_drift = float(abs(outworld[lower, 1] - source[lower, 1]).max())
-    assert y_drift < QUANTIZATION_TOLERANCE_M, (key, 'lower leg length changed', y_drift)
+    foot=source[:,1]<=.18
+    assert abs(outworld[foot,1]-source[foot,1]).max()<QUANTIZATION_TOLERANCE_M, (key,'protected hoof height changed')
     hooves = []
     masks = []
     for xsign, side in [(-1, 'left'), (1, 'right')]:
@@ -269,7 +273,7 @@ def main():
         matrix = np.einsum('nw,nwij->nij', weights, ops[joints])
         world = transform(matrix, positions, translation)
         source_meshes.append({'position': positions, 'normal': normals, 'matrix': matrix, 'world': world,
-                              'joints': joints, 'weights': weights, 'lower': world[:, 1] <= .65})
+                              'joints': joints, 'weights': weights, 'indices':indices, 'lower': world[:, 1] <= .65})
     assert len(source_meshes) == 5
     frames = gait_frames(doc, binary, skin, inverse_binds, source_meshes[0])
     rows = []
@@ -284,8 +288,10 @@ def main():
             assert not row.get('tackAttachment') or key in DRAFTS
             assert row['headShape']['version'] == 1 and hashlib.sha256(approved_bytes).hexdigest() == approved, (key, 'approved appearance revision changed')
             if key in DRAFTS:
-                assert row['draftShape']['version'] == 6 and row['draftShape']['legContour']['version'] == 1
+                assert row['draftShape']['version'] == 7 and row['draftShape']['legContour']['version'] == 1
                 assert row['draftShape']['upperLegContour']['version'] == 3
+                assert row['draftShape']['boneFrameLegContour']['version'] == 7
+                assert hashlib.sha256(packed[193908:728256]).hexdigest()==DRAFT_NONBODY_SHA[key], (key,'protected non-body morph changed')
         elif key not in DRAFTS:
             assert sha(path) == NON_DRAFT_SHA[key], (key, 'non-draft buffer changed')
         assert len(packed) == row['byteLength'] and len(row['meshes']) == 5
@@ -322,9 +328,9 @@ def main():
                     expected = DRAFT_LEG_BODY_SHA[key]
                     assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
                     sourceworld=source_mesh['world']
-                    upper_protected=sourceworld[:,1]<=.65
-                    preserved=outp[upper_protected].tobytes()+outn[upper_protected].tobytes()
-                    assert upper_protected.sum()==3054 and hashlib.sha256(preserved).hexdigest()==DRAFT_STYLE_LOWER_SHA[key], (key, 'released lower-leg surface changed')
+                    foot=sourceworld[:,1]<=.18;head=(sourceworld[:,1]>1.5)&(sourceworld[:,2]>=.90)
+                    assert foot.sum()==1510 and hashlib.sha256(outp[foot].tobytes()).hexdigest()==DRAFT_HOOF_POSITION_SHA[key], (key,'released hoof surface changed')
+                    assert hashlib.sha256(outp[head].tobytes()).hexdigest()==DRAFT_HEAD_POSITION_SHA[key], (key,'approved head surface changed')
                 floor = float(outworld[:, 1].min())
         collar_report=None
         if row.get('tackAttachment'):
@@ -361,7 +367,8 @@ def main():
         if shell_report: report['additiveGroomShell']=shell_report
         if draft:
             report['draftLowerLegValidation'] = draft
-            report['draftStyleProtectedLowerLegs']={'vertices':int(upper_protected.sum()),'positionsAndNormalsBitExactToV5':True,'sourceYAtOrBelowM':.65}
+            report['draftStyleProtectedHooves']={'vertices':int(foot.sum()),'positionsBitExactToV6':True,'sourceYAtOrBelowM':.18,'maximumReviewedNormalRequantizationDegrees':.005}
+            report['draftStyleProtectedHead']={'vertices':int(head.sum()),'positionsBitExactToV6':True,'minimumSourceY':1.5,'minimumSourceZ':.90}
         else:
             report['releasedBufferBitExact'] = not bool(row.get('headShape'))
         if row.get('headShape'):

@@ -166,19 +166,22 @@ ending the correction directly above the stifle.
 
 `draftShape.upperLegContour` records that field. The original version 5 pass
 preserved its 13,929 lower/front/upper vertices and all non-body meshes. Version 6
-retains the field while restyling the shared upper-body cage, so the current
-validator instead pins the 3,054 vertices at or below source Y=0.65 m to the
-released version 5 positions and normals, bit for bit. Original body skin
+retained the field while restyling the shared upper-body cage. Its
+validator pinned the 3,054 vertices at or below source Y=0.65 m to the
+released version 5 positions and normals, bit for bit. Version 7 deliberately
+replaces this leg surface; its narrower protection is described below. Original body skin
 influences and animation tracks remain unchanged.
 
 `node tools/test-native-draft-thigh-deformation.mjs` samples 41 phases of the
 production Trot, left/right Canter and left/right Gallop, comparing all three
-draft foundations with the identical original pose. Hind coverage reaches
-source Y=1.75 m, beyond the complete field. It detects connected draft-added
-compression on nondegenerate source triangles rather than hiding inherited
-folds; the reported forearm and source-existing shoulder/thigh deformation
-remain separate limitations. This is a deformation regression, not a claim
-that all self-intersections or source gait artifacts are eliminated.
+draft foundations with identical original and released-v6 poses. Fore coverage
+reaches source Y=1.90 m and hind coverage 1.75 m. Coincident UV seams with the
+same skin ownership are welded for connected-patch measurements. Both regions
+retain the 5 cm² draft-added compression gate; absolute deformation growth and
+principal strain are also reported. An inherited patch is excluded from the
+absolute-growth gate only when all its raw, resting and posed vertices are
+bit-identical to the source. This does not exempt mixed transition patches or
+claim the source gaits are artifact-free.
 
 Draft style version 6 gives the three foundations a lighter, rounded barrel,
 clearer neck-to-shoulder separation, broad forehead and a more tapered muzzle.
@@ -195,6 +198,30 @@ influences are inverse-solved onto the new standing surface, then the same
 60 mm upward/12 mm forward route is applied. This is an authored static refit,
 not a runtime solver. The independent collar gate checks target reconstruction,
 source provenance, route normals and unchanged influence records.
+
+Draft leg version 7 intentionally reshapes the source leg silhouette as well
+as removing overlapping cage swelling. `leg_contour.py` uses the original
+named joint axes and monotone longitudinal stations, with continuous radial
+guides for a moderated knee/hock and tapered cannon, forearm and gaskin.
+The hind field excludes torso-owned skin; the front displacement is regularized
+on welded source topology. The clean original upper-forearm/elbow surface is
+restored directly, followed by a broad shoulder transition through 1.85 m.
+A spatial forward cutoff protects the refined head and muzzle. Authored smooth
+normals are rotated with the changed surface instead of being replaced by
+faceted triangle normals. No new runtime deformation or skin-weight edits are
+introduced for the body.
+
+The 1,510 vertices at or below source Y=0.18 m keep their released-v6 positions
+bit for bit. Protected hoof and head normals differ by less than 0.005 degrees
+from re-quantization; head-refinement positions are also bit-exact. All four
+non-body morph blocks, additive hair streams and 22 other foundations remain
+unchanged. Only the existing sparse breastcollar attachment is refitted to the
+source-restored shoulder, on its 2,404 previously reviewed collar/tie vertices.
+Reins, stirrups, fenders, separate saddle and other tack are excluded. Contact
+checks sample standing and native gait poses; the lower center tie can still
+intersect locally during gallop (roughly 17–19 mm in the reviewed samples), so
+this is not a zero-penetration claim. Standing and moving sculpture views are
+reviewed alongside the numerical gates.
 
 For visual review, open `review/native-draft-legs/review.html`. The visible
 controls provide exact cycle phases, both side views, front/rear views, leg and

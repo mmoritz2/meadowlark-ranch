@@ -17,6 +17,8 @@ primitive=doc['meshes'][3]['primitives'][0];attributes=primitive['attributes']
 source={k:v.glb.accessor(doc,binary,attributes[a]) for k,a in [('position','POSITION'),('normal','NORMAL'),('joints','JOINTS_0'),('weights','WEIGHTS_0')]}
 source['matrix']=np.einsum('nw,nwij->nij',source['weights'],ops[source['joints']])
 translation=np.array(manifest['sourceTranslation']);cases=[]
+source['world']=v.transform(source['matrix'],source['position'],translation)
+source['indices']=v.glb.accessor(doc,binary,primitive['indices'])
 base_index=json.loads((cv.AUTHORING/'index.json').read_text())
 with tempfile.TemporaryDirectory(prefix='collar-validation-') as scratch:
     authoring=Path(scratch);cv.AUTHORING=authoring
@@ -34,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix='collar-validation-') as scratch:
         data=copy.deepcopy(sources[key]);meta=copy.deepcopy(metas[key]);route=meta['standingRoute']
         if mutate:mutate(data,route)
         path=authoring/(key+'.npz');np.savez_compressed(path,**data);sha=hashlib.sha256(path.read_bytes()).hexdigest()
-        index['breeds'][key]={'file':path.name,'sha256':sha,'baseMorphSha256':meta['baseMorphSha256'],'standingRoute':route}
+        index['breeds'][key]={'file':path.name,'sha256':sha,'baseMorphSha256':meta['baseMorphSha256'],'standingRoute':route,**({'sourceRestoration':meta['sourceRestoration']} if meta.get('sourceRestoration') else {})}
         (authoring/'index.json').write_text(json.dumps(index))
         packed=bytearray((ROOT/'assets'/manifest['breeds'][key]['file']).read_bytes()[:728256]);count=len(data['ids'])
         record={'version':1,'meshIndex':3,'sourceSha256':cv.SOURCE_SHA,'vertexCount':count,'authoringSha256':sha,'baseMorphSha256':meta['baseMorphSha256']}
@@ -60,6 +62,7 @@ with tempfile.TemporaryDirectory(prefix='collar-validation-') as scratch:
     def wrong_target_normal(d,r):
         n=d['standingNormal'][0].copy();n=np.roll(n,1);d['standingNormal'][0]=n
     reject('incorrect target normal field',wrong_target_normal,'inverse-transpose')
+    reject('wrong source restoration mask',lambda d,r:d['sourceRestoreMask'].__setitem__(0,d['sourceRestoreMask'][0]+.1),'Source restoration region mismatch')
     reject('wrong route region mask',lambda d,r:d['routeMask'].__setitem__(0,1-int(d['routeMask'][0])),'region mismatch')
     def wrong_prior(d,r):d['priorSkinIndex'][0,0]=(int(d['priorSkinIndex'][0,0])+1)%677
     reject('changed prior influences',wrong_prior,'animated skin influences')

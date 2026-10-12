@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './breed-models.js?v=equestrian-style-20261012';
+import {createBreedLibrary} from './breed-models.js?v=leg-contours-20261012';
 import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=equestrian-style-20261012';
 import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';

@@ -1,6 +1,6 @@
 """Author the reviewed static lower breastcollar route on the prior70% attachment.
 
-Run from a repository checkout (only NumPy and the repository GLB reader needed):
+Run from a repository checkout (NumPy, SciPy and the repository GLB reader needed):
   python3 tools/native-roster/author-lower-route.py --out /tmp/lower-route
 
 The three pinned 514-vertex NPZs are the previously reviewed attachment basis.
@@ -14,14 +14,15 @@ No production file is changed. The outputNPZs are inputs to collar_attachment.py
 from pathlib import Path
 import argparse,hashlib,json,sys
 import numpy as np
+from leg_contour import fore_source_restoration,transport_authored_normals
 
 SOURCE_SHA='b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 MOTION_SHA='87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157'
 TRANSLATION=np.array([-6.225790382362317e-9,.0047147771075021355,-1.6744842715166992])
 BASE_BYTES=728256
-# Reviewed v6 shared draft cage. Rebase the original70% shoulder weights onto
-# the new standing cage before applying the unchanged lower-V route.
-PREFIX_SHA={'percheron': 'b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b', 'shire': 'abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c', 'clyde': 'bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076'}
+# Reviewed v7 body/collar source-restoration field. Rebase the original70%
+# shoulder weights onto that surface before the unchanged lower-V route.
+PREFIX_SHA={'percheron': 'd0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500', 'shire': '01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a', 'clyde': 'c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a'}
 PRIOR_SHA={'percheron':'f6a89548f5e6bc3974514fdb290800fc770e0048bf23eeda4537a883efd003ae','shire':'eab7751b1dfff6a61a7c134be33a6ed7b117541b4937347c4602b63b66952acf','clyde':'291d3a17599e9e8c0e6e899f2638cdd2e09e553a8efbe18ee5ab7cd1a8bd45bf'}
 MESH_DESCRIPTOR_SHA={'percheron': 'c9e5002103f868ea8d48168fd1683b591bdc34d67a52bbed12aac7b77cbfe197', 'shire': '1065b7b0cc3685f5b2ae3645f62d0aa78eb6c5414b2f568bca21296bfc38b1f4', 'clyde': '961fd759760be4dd6ec11db0d2dc7cff465bf7a2d98110928850a41c82b6afa9'}
 RANGES=((0,43),(76,196),(426,531),(754,976),(3348,3428),(3601,3823),(4053,4158),(5369,5393),(5517,5690),(5826,5999),(7416,7646),(8356,8586),(9508,9738),(9782,9802),(9810,9855),(9892,10064),(11392,11412),(11522,11542),(12073,12224))
@@ -54,20 +55,27 @@ def author(root,basis,out,breed,glb,morph_dir=None):
  normal=unit((rawn+delta('normalDelta')).astype('<f4').astype(float))
  priorfile=basis/(breed+'.npz');assert sha(priorfile.read_bytes())==PRIOR_SHA[breed]
  prior=np.load(priorfile);priorids=prior['ids'].astype(int);assert len(priorids)==514
- # Preserve the fitted shoulder skin influences, not their obsolete positions.
- # The new shared cage supplies independent desired standing surface targets.
- source_mat=np.einsum('nw,nwij->nij',weights,ops[joints])
- desired=transform(source_mat,position)
- desired_normal=np.einsum('nij,nj->ni',source_mat[:,:3,:3],normal)
- joints[priorids]=prior['skinIndex'];weights[priorids]=prior['skinWeight']
- fitted_mat=np.einsum('nw,nwij->nij',weights[priorids],ops[joints[priorids]])
- position[priorids]=np.linalg.solve(fitted_mat[:,:3,:3],(desired[priorids]-TRANSLATION-fitted_mat[:,:3,3])[...,None])[...,0]
- normal[priorids]=unit(np.linalg.solve(fitted_mat[:,:3,:3],desired_normal[priorids][...,None])[...,0])
- assert np.linalg.norm(transform(fitted_mat,position[priorids])-desired[priorids],axis=1).max()<2e-5
-
+ # Only reviewed breastcollar/center-tie islands may follow the changed chest.
+ # Every other tack vertex, and all source influences, remain untouched.
  allowed=np.zeros(len(position),bool)
  for lo,hi in RANGES:allowed[lo:hi+1]=True
  ids=np.where(allowed)[0];assert len(ids)==2404
+ source_mat=np.einsum('nw,nwij->nij',weights,ops[joints])
+ source_standing=transform(source_mat,rawp)
+ desired=transform(source_mat,position)
+ desired_normal=np.einsum('nij,nj->ni',source_mat[:,:3,:3],normal)
+ restore=fore_source_restoration(source_standing)*allowed
+ restored=desired+(source_standing-desired)*restore[:,None]
+ restored_normal=transport_authored_normals(source_standing,desired,restored,unit(desired_normal),glb.accessor(doc,binary,prim['indices']))
+ desired_normal[restore>0]=restored_normal[restore>0]
+ desired=restored
+ # Preserve the fitted shoulder influences, not obsolete cage-space positions.
+ joints[priorids]=prior['skinIndex'];weights[priorids]=prior['skinWeight']
+ fitted_mat=np.einsum('nw,nwij->nij',weights,ops[joints])
+ refit=allowed & (restore>0);refit[priorids]=True
+ position[refit]=np.linalg.solve(fitted_mat[refit,:3,:3],(desired[refit]-TRANSLATION-fitted_mat[refit,:3,3])[...,None])[...,0]
+ normal[refit]=unit(np.linalg.solve(fitted_mat[refit,:3,:3],desired_normal[refit][...,None])[...,0])
+ assert np.linalg.norm(transform(fitted_mat[refit],position[refit])-desired[refit],axis=1).max()<2e-5
  oldsupport=np.zeros(len(ids));oldsupport[np.searchsorted(ids,priorids)]=prior['support']
  mat=np.einsum('nw,nwij->nij',weights,ops[joints]);standing=transform(mat,position)
  y,z=standing[ids,1],standing[ids,2];lo,hi=ROUTE['heightFade'];za,zb=ROUTE['frontRise'];fy=1-smooth(lo,hi,y);fz=smooth(za,zb,z);field=fy*fz
@@ -79,12 +87,12 @@ def author(root,basis,out,breed,glb,morph_dir=None):
  rawtarget=np.linalg.solve(mat[ids,:3,:3],(target-TRANSLATION-mat[ids,:3,3])[...,None])[...,0]
  rawnormal=unit(np.linalg.solve(mat[ids,:3,:3],normal_target[...,None])[...,0])
  chosen=field>0;position[ids[chosen]]=rawtarget[chosen];normal[ids[chosen]]=rawnormal[chosen]
- support=np.maximum(oldsupport,field);keep=support>0;exportids=ids[keep]
+ support=np.maximum(np.maximum(oldsupport,field),restore[ids]);keep=support>0;exportids=ids[keep]
  arrays={'ids':exportids.astype('<u2'),'position':position[exportids].astype('<f4'),'normal':normal[exportids].astype('<f4'),'skinIndex':joints[exportids].astype('<u2'),'skinWeight':weights[exportids].astype('<f4'),'support':support[keep],
- 'standingTarget':target[keep],'standingNormal':unit(normal_target)[keep],'routeMask':chosen[keep].astype('u1'),'priorSkinIndex':joints[exportids].astype('<u2'),'priorSkinWeight':weights[exportids].astype('<f4')}
+ 'standingTarget':target[keep],'standingNormal':unit(normal_target)[keep],'routeMask':chosen[keep].astype('u1'),'priorSkinIndex':joints[exportids].astype('<u2'),'priorSkinWeight':weights[exportids].astype('<f4'),'sourceRestoreMask':restore[exportids]}
  out.mkdir(parents=True,exist_ok=True);file=out/(breed+'.npz');np.savez_compressed(file,**arrays)
  # Independent provenance for the reviewed route; installed metadata is index-only.
- details={'breed':breed,'sourceSha256':SOURCE_SHA,'motionSha256':MOTION_SHA,'meshDescriptorSha256':MESH_DESCRIPTOR_SHA[breed],'priorAttachmentSha256':PRIOR_SHA[breed],'baselineSha256':sha(data),'baseMorphSha256':PREFIX_SHA[breed],'npzSha256':sha(file.read_bytes()),'standingRoute':ROUTE,'allowedVertices':2404,'vertexCount':len(exportids),'routeVertices':int(chosen.sum()),'newVertices':int(((oldsupport==0)&chosen).sum()),'minimumRouteJacobianDeterminant':float(np.linalg.det(jac).min()),'maximumUnscaledStandingDisplacementM':float(np.linalg.norm(target-standing[ids],axis=1).max()),'unchangedRegionVertices':ids[~chosen].tolist(),'routeVerticesIds':ids[chosen].tolist()}
+ details={'breed':breed,'sourceSha256':SOURCE_SHA,'motionSha256':MOTION_SHA,'meshDescriptorSha256':MESH_DESCRIPTOR_SHA[breed],'priorAttachmentSha256':PRIOR_SHA[breed],'baselineSha256':sha(data),'baseMorphSha256':PREFIX_SHA[breed],'npzSha256':sha(file.read_bytes()),'standingRoute':ROUTE,'sourceRestoration':{'version':7,'sourceHeightM':[.77,.90,1.48,1.85],'sourceForwardM':[.02,.28,.65,.90],'vertices':int((restore>0).sum()),'normalMethod':'authored surface-normal rotation'},'allowedVertices':2404,'vertexCount':len(exportids),'routeVertices':int(chosen.sum()),'newVertices':int(((oldsupport==0)&chosen).sum()),'minimumRouteJacobianDeterminant':float(np.linalg.det(jac).min()),'maximumUnscaledStandingDisplacementM':float(np.linalg.norm(target-standing[ids],axis=1).max()),'unchangedRegionVertices':ids[~chosen].tolist(),'routeVerticesIds':ids[chosen].tolist()}
  (out/(breed+'-authoring.json')).write_text(json.dumps(details,indent=2)+'\n');print(json.dumps({k:v for k,v in details.items() if not k.endswith('Ids') and k!='unchangedRegionVertices'}),flush=True)
 
 if __name__=='__main__':

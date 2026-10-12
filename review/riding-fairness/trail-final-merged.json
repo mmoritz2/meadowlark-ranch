@@ -1,0 +1,5247 @@
+{
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "rush": {
+    "definitions": [
+      {
+        "id": "rush-pasture",
+        "name": "Pasture Dash",
+        "subtitle": "Find your rhythm",
+        "description": "Follow the glowing gates and hold a clean chain around the home pasture.",
+        "route": "rush-pp",
+        "minutes": "30–60 sec",
+        "obstacles": 6,
+        "fences": 0,
+        "fenceLegs": [],
+        "targetTime": 30,
+        "reward": 150,
+        "town": "Home Ranch",
+        "medals": {
+          "bronze": 300,
+          "silver": 850,
+          "gold": 1200
+        }
+      },
+      {
+        "id": "rush-river",
+        "name": "River Run",
+        "subtitle": "Add a little airtime",
+        "description": "Chase the riverside gates and clear two low logs. Good jumps keep your chain alive.",
+        "route": "rr",
+        "minutes": "40–75 sec",
+        "obstacles": 8,
+        "fences": 2,
+        "fenceLegs": [
+          1,
+          3
+        ],
+        "targetTime": 40,
+        "reward": 210,
+        "town": "Loon Lake",
+        "medals": {
+          "bronze": 500,
+          "silver": 1350,
+          "gold": 1850
+        }
+      },
+      {
+        "id": "rush-trail",
+        "name": "Trailblazer",
+        "subtitle": "Put it all together",
+        "description": "Ride the open Barleyfold trail, link three log jumps, and beat your own best splits.",
+        "route": "xc1",
+        "minutes": "50–90 sec",
+        "obstacles": 10,
+        "fences": 3,
+        "fenceLegs": [
+          1,
+          3,
+          5
+        ],
+        "targetTime": 50,
+        "reward": 270,
+        "town": "Barleyfold",
+        "medals": {
+          "bronze": 600,
+          "silver": 1650,
+          "gold": 2350
+        }
+      }
+    ],
+    "records": {
+      "rush-pasture": {
+        "plays": 1,
+        "bestScore": 1350,
+        "bestTime": 17.51,
+        "medal": "gold",
+        "bestCombo": 6,
+        "splits": [
+          1.82,
+          6.01,
+          10.1,
+          13.06,
+          14.59,
+          17.51
+        ],
+        "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+        "lastRunId": "mv5cdncb-1-z0i3ei"
+      },
+      "rush-river": {
+        "plays": 2,
+        "bestScore": 2025,
+        "bestTime": 35.16,
+        "medal": "gold",
+        "bestCombo": 8,
+        "splits": [
+          1.82,
+          7.42,
+          12.19,
+          15.06,
+          20.8,
+          25.84,
+          28.91,
+          35.16
+        ],
+        "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+        "lastRunId": "mv5fhfzt-1-2kpj4n"
+      },
+      "rush-trail": {
+        "plays": 2,
+        "bestScore": 2525,
+        "bestTime": 47.84,
+        "medal": "gold",
+        "bestCombo": 10,
+        "splits": [
+          2.56,
+          9.37,
+          14.63,
+          17.63,
+          24.15,
+          30.32,
+          33.88,
+          40.73,
+          45.42,
+          47.84
+        ],
+        "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+        "lastRunId": "mv5fjcp8-2-bw9c5p"
+      }
+    },
+    "lastResult": {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "runId": "mv5fjcp8-2-bw9c5p",
+      "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+      "score": 2525,
+      "time": 48.42,
+      "timeBonus": 400,
+      "medal": "gold",
+      "bestCombo": 10,
+      "cleanJumps": 3,
+      "perfectJumps": 1,
+      "gates": 7,
+      "cleanGates": 7,
+      "penalties": 0,
+      "splits": [
+        1.84,
+        8.83,
+        14.33,
+        17.27,
+        24.27,
+        30.55,
+        34.1,
+        41.33,
+        46.12,
+        48.42
+      ],
+      "splitDelta": 0.58,
+      "newBestScore": false,
+      "newBestTime": false,
+      "previousBestScore": 2525,
+      "previousBestTime": 47.84,
+      "pay": 189
+    },
+    "active": null
+  },
+  "rushCourse": {
+    "id": "rush-trail",
+    "name": "Trailblazer",
+    "active": false,
+    "elapsed": 47.62469999999924,
+    "countdown": -0.039200000001117084,
+    "index": 10,
+    "total": 10,
+    "target": null,
+    "cue": null,
+    "recovery": null,
+    "player": {
+      "x": 335,
+      "z": 73.57435654700802,
+      "heading": 6.536985183298436,
+      "speed": 0,
+      "height": 0,
+      "jumpAge": null
+    },
+    "grades": [
+      "good",
+      "perfect",
+      "good"
+    ],
+    "lastGrade": "good",
+    "refusals": 0,
+    "lastJumpTiming": {
+      "fenceIndex": 8,
+      "lap": 1,
+      "grade": "good",
+      "frameAge": 1.1291000000014901,
+      "railAge": 1.081834124374,
+      "interpolated": true
+    }
+  },
+  "rushTrace": [
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 0,
+      "countdown": 3,
+      "index": 0,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 10.000000000000021,
+        "across": -10.00000000000002,
+        "lateral": -4.440892098500626e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 262.4332611957114,
+        "z": -62.91161615782696,
+        "heading": 1.2753554896511765,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "course ended"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 0,
+      "countdown": 2.309699999999256,
+      "index": 0,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 10.000000000000021,
+        "across": -10.00000000000002,
+        "lateral": -4.440892098500626e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 262.4332611957114,
+        "z": -62.91161615782696,
+        "heading": 1.2753554896511765,
+        "speed": 0,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": "driver started",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 0.5382999999988823,
+      "countdown": -0.039200000001117084,
+      "index": 0,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 9.136413961104157,
+        "across": -9.136413961104157,
+        "lateral": 7.993605777301127e-15
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 263.2594314026261,
+        "z": -62.66017305137468,
+        "heading": 1.2753554896511765,
+        "speed": 2.6183726339793743,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 1.0843999999985097,
+      "countdown": -0.039200000001117084,
+      "index": 0,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 7.348465963445679,
+        "across": -7.348465963445679,
+        "lateral": -1.7763568394002505e-14
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 264.969914551551,
+        "z": -62.13959122344097,
+        "heading": 1.2753554896511765,
+        "speed": 3.6859598294805602,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 1.6164999999999994,
+      "countdown": -0.039200000001117084,
+      "index": 0,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 272,
+        "z": -60,
+        "heading": 1.2753554896511765,
+        "distance": 5.250635655831008,
+        "across": -5.250635655831008,
+        "lateral": -3.241851231905457e-14
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 266.976854012418,
+        "z": -61.52878356143796,
+        "heading": 1.2753554896511765,
+        "speed": 4.105065438723613,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 1.7949999999999993,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 52.59243153679033,
+        "across": -11.95685762574902,
+        "lateral": 51.21520683029158
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 267.6861944405097,
+        "z": -61.31289734419267,
+        "heading": 1.2753554896511765,
+        "speed": 4.180139351043133,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 2.321799999998882,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 49.69609549384085,
+        "across": -11.298377371272737,
+        "lateral": 48.3947164069515
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.45704348174417,
+        "z": -60.46959546207784,
+        "heading": 1.2753554896511765,
+        "speed": 6.33612297774396,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 2.9207999999988816,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 45.63925404210752,
+        "across": -10.370659252607666,
+        "lateral": 44.445370244676
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 274.3397318873313,
+        "z": -59.29370143526298,
+        "heading": 1.4119377005350453,
+        "speed": 6.356766321387973,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 3.4532999999988823,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 42.1457169154936,
+        "across": -9.326218986903134,
+        "lateral": 41.100889208498295
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 277.75743614286483,
+        "z": -58.52188118955464,
+        "heading": 1.3298490822367133,
+        "speed": 6.82558530248172,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 4.027,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 38.01518548822825,
+        "across": -8.16708615417511,
+        "lateral": 37.12752390686296
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 281.7768585082912,
+        "z": -57.53422507913049,
+        "heading": 1.3298490822367133,
+        "speed": 7.458132665378659,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 4.590999999999998,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 33.737198315004356,
+        "across": -6.965959769252635,
+        "lateral": 33.01020985451451
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 285.94189819912515,
+        "z": -56.5107877473897,
+        "heading": 1.3298490822367133,
+        "speed": 7.6965553839061105,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 5.1145999999996254,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 29.6874345110511,
+        "across": -5.8280930937609,
+        "lateral": 29.10974233376868
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 289.88757779270605,
+        "z": -55.54125177776973,
+        "heading": 1.3298490822367133,
+        "speed": 7.902552828991485,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 5.627199999999254,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 25.354033847933064,
+        "across": -4.609207272107592,
+        "lateral": 24.931551108683266
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 294.1142003109589,
+        "z": -54.502682257801894,
+        "heading": 1.3298490822367133,
+        "speed": 8.868311322191225,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 6.2291999999992544,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 19.884448750681045,
+        "across": -3.0674025201006936,
+        "lateral": 19.646433363288644
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 299.46058023253516,
+        "z": -53.18896493274207,
+        "heading": 1.3298490822367133,
+        "speed": 9.31744913182889,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 6.825799999998883,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 14.77378378250995,
+        "across": -1.619938042180161,
+        "lateral": 14.684702516287196
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 304.47982473277165,
+        "z": -51.955631620221375,
+        "heading": 1.3298490822367133,
+        "speed": 7.108046047800543,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 7.333299999998883,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 11.680872798635269,
+        "across": -0.7607891721589679,
+        "lateral": 11.656070914910522
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 307.53134687531735,
+        "z": -51.181707353080604,
+        "heading": 1.227365663523276,
+        "speed": 5.782971705199019,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 7.903099999999628,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 8.609636802515446,
+        "across": -0.005388369561032835,
+        "lateral": 8.60963511635086
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 310.54629569331945,
+        "z": -50.309076232767325,
+        "heading": 1.2280713415851383,
+        "speed": 5.44669777107193,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 8.432499999999997,
+      "countdown": -0.039200000001117084,
+      "index": 1,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 318,
+        "z": -46,
+        "heading": 2.616796881939686,
+        "distance": 6.017414762469835,
+        "across": 0.7954610901902099,
+        "lateral": 5.964605777214729
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 313.23662823585573,
+        "z": -49.67689677039525,
+        "heading": 1.1495644898068993,
+        "speed": 4.893621453400317,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 8.826299999998877,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 21.125465353808274,
+        "across": -20.706763927992807,
+        "lateral": 4.185118163843135
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 315.00324895969663,
+        "z": -49.17671820605092,
+        "heading": 1.1704074717931816,
+        "speed": 4.560124420522035,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 9.395999999999994,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 20.20944639126747,
+        "across": -19.92059417792578,
+        "lateral": 3.4046513830204947
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 316.07258498635167,
+        "z": -49.46604800746399,
+        "heading": 2.4273363163981787,
+        "speed": 2.543949989294254,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 9.9093999999985,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 18.58706966071028,
+        "across": -18.351500436754787,
+        "lateral": 2.9498458081543006
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 317.2523585618309,
+        "z": -50.59610888640475,
+        "heading": 2.319801248210119,
+        "speed": 3.6145143504738653,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 10.418999999999992,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 16.626761906675565,
+        "across": -16.456979008637838,
+        "lateral": 2.370032364869993
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 318.7033683071295,
+        "z": -51.94516996347129,
+        "heading": 2.319801248210119,
+        "speed": 4.063595830251456,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 10.925299999998874,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 14.539579187858392,
+        "across": -14.433777528376204,
+        "lateral": 1.7508367203560127
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 320.25293381797206,
+        "z": -53.385862228851074,
+        "heading": 2.319801248210119,
+        "speed": 4.253294495845829,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 11.442899999998502,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 12.344081441921887,
+        "across": -12.289063899937616,
+        "lateral": 1.1641542458155714
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 321.8352435704433,
+        "z": -54.94800457869551,
+        "heading": 2.4200394750181093,
+        "speed": 4.335337804062076,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 12.0138999999985,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 9.885532706581504,
+        "across": -9.843520673668095,
+        "lateral": 0.9104161905202668
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 323.28014101066134,
+        "z": -56.93731000006981,
+        "heading": 2.558180442140537,
+        "speed": 4.371795158366074,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 12.132299999998873,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 9.367891699545465,
+        "across": -9.32646053152997,
+        "lateral": 0.8800732061746785
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 323.5654665121566,
+        "z": -57.36958450253713,
+        "heading": 2.558180442140537,
+        "speed": 4.375875411093437,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 12.700299999998872,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 6.880552719918314,
+        "across": -6.841265079351586,
+        "lateral": 0.7342328279366588
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 324.93685366989496,
+        "z": -59.44726665220369,
+        "heading": 2.558180442140537,
+        "speed": 4.387265487416242,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 13.23449999999999,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.539641484986385,
+        "across": -4.500234639297531,
+        "lateral": 0.5968525810248426
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 326.2286873075876,
+        "z": -61.40442344357912,
+        "heading": 2.558180442140537,
+        "speed": 4.391484305937087,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 13.23449999999999,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.539641484986385,
+        "across": -4.500234639297531,
+        "lateral": 0.5968525810248426
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 326.2286873075876,
+        "z": -61.40442344357912,
+        "heading": 2.558180442140537,
+        "speed": 4.391484305937087,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 13.3118999999985,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 4.200704793319329,
+        "across": -4.160896797487949,
+        "lateral": 0.5769389926764572
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 326.4159416170965,
+        "z": -61.68811790150039,
+        "heading": 2.558180442140537,
+        "speed": 4.391837888483474,
+        "height": 0,
+        "jumpAge": 0.07739999999850988
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 13.595799999998873,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 2.9580928851473502,
+        "across": -2.9231003196724785,
+        "lateral": 0.4536496867518265
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 327.1428203540967,
+        "z": -62.6975670954397,
+        "heading": 2.3629823030055417,
+        "speed": 4.392803252923619,
+        "height": 0.29985467715217123,
+        "jumpAge": 0.36129999999888235
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 14.123099999999615,
+      "countdown": -0.039200000001117084,
+      "index": 2,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 329,
+        "z": -65,
+        "heading": 2.616796881939686,
+        "distance": 0.6990038934031535,
+        "across": -0.6307106975902121,
+        "lateral": 0.30134773756913324
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 328.42319681112605,
+        "z": -64.60515253033911,
+        "heading": 2.27821980585581,
+        "speed": 4.393730422474393,
+        "height": 0.5978670939728123,
+        "jumpAge": 0.8885999999996272
+      },
+      "grades": [],
+      "lastGrade": null,
+      "refusals": 0,
+      "lastJumpTiming": null,
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 14.332199999999242,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 21.677519972499447,
+        "across": -20.284218571723585,
+        "lateral": 7.64626373418132
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 328.991289249643,
+        "z": -65.32586923647887,
+        "heading": 2.4966547709185005,
+        "speed": 4.393922913855879,
+        "height": 0,
+        "jumpAge": 1.0976999999992547
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 14.914499999999986,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 18.215024986627792,
+        "across": -17.046906477897473,
+        "lateral": 6.41795253934555
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 330.7561207345644,
+        "z": -68.30484688225297,
+        "heading": 2.6666833511088583,
+        "speed": 7.20671177560924,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 15.439199999999241,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 14.255279193065649,
+        "across": -13.25925109715345,
+        "lateral": 5.235001930743241
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 332.57055890202,
+        "z": -71.83380133961735,
+        "heading": 2.6666833511088583,
+        "speed": 6.853208310849276,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 15.997699999999242,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 10.881527285125648,
+        "across": -10.027526163581774,
+        "lateral": 4.22567806341384
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 334.1186841871241,
+        "z": -74.84479599538331,
+        "heading": 2.6666833511088583,
+        "speed": 5.673490347130011,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 16.53059999999962,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 7.962161211135443,
+        "across": -7.250111330245561,
+        "lateral": 3.291184718479771
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 335.51524353566924,
+        "z": -77.42102054967845,
+        "heading": 2.7804822228258264,
+        "speed": 5.43138826044762,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 17.10219999999925,
+      "countdown": -0.039200000001117084,
+      "index": 3,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 340,
+        "z": -84,
+        "heading": 2.969401839066854,
+        "distance": 5.162485860536123,
+        "across": -4.486177167728483,
+        "lateral": 2.5545008670945966
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 336.71460885198053,
+        "z": -80.01785669962133,
+        "heading": 2.6227230170697036,
+        "speed": 4.678893024849019,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 17.227599999999622,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 50.686574339940755,
+        "across": -16.897476897024838,
+        "lateral": 47.787070352061264
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 337.00193511819236,
+        "z": -80.52100054392884,
+        "heading": 2.6227230170697036,
+        "speed": 4.594648301503894,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 17.729399999998506,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 47.991355054089354,
+        "across": -15.946801487990705,
+        "lateral": 45.26444169798502
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 337.53275449635413,
+        "z": -83.1640423232953,
+        "heading": 2.7589869240367917,
+        "speed": 6.227820734116392,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 18.231499999999997,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 44.79785056983562,
+        "across": -14.733160586031062,
+        "lateral": 42.30580805071027
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 338.0716617667345,
+        "z": -86.3161870299398,
+        "heading": 2.980969433117388,
+        "speed": 6.856544041809698,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 18.817499999999995,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 40.567531697963666,
+        "across": -13.090102452649994,
+        "lateral": 38.397576041260905
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 338.74971007854026,
+        "z": -90.50118021466683,
+        "heading": 2.980969433117388,
+        "speed": 7.477648893740671,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 19.405499999999996,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 36.0999187854517,
+        "across": -11.353963553736657,
+        "lateral": 34.26793906753991
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 339.46617045541456,
+        "z": -94.92325714066129,
+        "heading": 2.980969433117388,
+        "speed": 7.709769891120855,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 20.02459999999962,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 31.310002331249976,
+        "across": -9.491077724807093,
+        "lateral": 29.83681768561369
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 340.2349360673735,
+        "z": -99.66816807205502,
+        "heading": 2.980969433117388,
+        "speed": 7.79865815831301,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 20.530399999998505,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 27.375302971451276,
+        "across": -7.959077915939369,
+        "lateral": 26.192752652341742
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 340.86715343265433,
+        "z": -103.57028731473885,
+        "heading": 2.980969433117388,
+        "speed": 7.826424694751067,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 21.11179999999888,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 22.84938340316749,
+        "across": -6.193831791711902,
+        "lateral": 21.993880277043544
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 341.59562562127456,
+        "z": -108.06650254241082,
+        "heading": 2.980969433117388,
+        "speed": 7.839332310443214,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 21.621899999998508,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 19.118561649300887,
+        "across": -5.03883939830243,
+        "lateral": 18.442600062253526
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 342.49836878001753,
+        "z": -111.69012688581833,
+        "heading": 2.9525393955832233,
+        "speed": 7.3397982573347615,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 22.20139999999851,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 15.12513048593221,
+        "across": -3.5867374998103054,
+        "lateral": 14.6937022674318
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 343.2539006902894,
+        "z": -115.638798324693,
+        "heading": 2.9525393955832233,
+        "speed": 5.77205461904293,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 22.816199999999256,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 11.893064364244204,
+        "across": -2.406632868389119,
+        "lateral": 11.647021001476922
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 343.86791180577933,
+        "z": -118.84783307481288,
+        "heading": 2.9525393955832233,
+        "speed": 5.294842414306985,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 23.417299999998885,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 8.754688385026085,
+        "across": -1.2514871674289174,
+        "lateral": 8.664776314981905
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 344.4689367331588,
+        "z": -121.98899750814698,
+        "heading": 2.9525393955832233,
+        "speed": 5.337034736640152,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 23.924799999998896,
+      "countdown": -0.039200000001117084,
+      "index": 4,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 348,
+        "z": -130,
+        "heading": -2.129395642138459,
+        "distance": 6.141149972385348,
+        "across": -0.2716547456782208,
+        "lateral": 6.13513868486109
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 344.9787457638612,
+        "z": -124.6534360731455,
+        "heading": 2.9525393955832233,
+        "speed": 5.350881002732511,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 24.294500000000017,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 28.186997678195645,
+        "across": -27.85870009862861,
+        "lateral": 4.289483293507168
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 345.3507088367033,
+        "z": -126.59744391990812,
+        "heading": 2.9525393955832233,
+        "speed": 5.355634648384624,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 24.80939999999853,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 26.59833502909911,
+        "across": -26.392126202916575,
+        "lateral": 3.3056165551263206
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 344.6285049888876,
+        "z": -128.2090438555858,
+        "heading": 3.941529999702123,
+        "speed": 4.39614687364693,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 25.309599999999648,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 23.82969760492512,
+        "across": -23.673972360559418,
+        "lateral": 2.7198383432922455
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 342.6339769718928,
+        "z": -130.1464014409591,
+        "heading": 3.941529999702123,
+        "speed": 5.604980236991789,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 25.901099999999644,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 20.843559591546462,
+        "across": -20.720887751094235,
+        "lateral": 2.2580494354423664
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 340.3745138631485,
+        "z": -132.1031293643804,
+        "heading": 3.7868716837394905,
+        "speed": 4.681600158133259,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 26.41719999999927,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 18.518276310557425,
+        "across": -18.430102354402862,
+        "lateral": 1.804961140962984
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 338.6720680477165,
+        "z": -133.70146130168467,
+        "heading": 4.072147564454197,
+        "speed": 4.462085061301248,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 26.918699999999262,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 16.328871044529972,
+        "across": -16.278539113282893,
+        "lateral": 1.2810909125461416
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 337.1251967340472,
+        "z": -135.2860286040443,
+        "heading": 3.796595814337377,
+        "speed": 4.41100534661337,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 27.446799999998888,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 14.010129099034328,
+        "across": -13.975982312278251,
+        "lateral": 0.9775662527388755
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 335.3335002198826,
+        "z": -136.76376966461416,
+        "heading": 4.117506412013107,
+        "speed": 4.398169001383424,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 27.994699999999263,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 11.619069417316284,
+        "across": -11.59216181697644,
+        "lateral": 0.7902901577573145
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 333.41128061464224,
+        "z": -138.18600181120703,
+        "heading": 4.138509568286484,
+        "speed": 4.395196518821545,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 28.530000000000015,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 9.296995578690249,
+        "across": -9.283259047373921,
+        "lateral": 0.5052011970851478
+      },
+      "cue": "lineup",
+      "recovery": null,
+      "player": {
+        "x": 331.6044318288695,
+        "z": -139.65147278680735,
+        "heading": 3.7942863950479016,
+        "speed": 4.394561845179959,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 28.6242999999989,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 8.888259880510475,
+        "across": -8.878266291906893,
+        "lateral": 0.4213684296217526
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 331.30542993699225,
+        "z": -139.93720856254285,
+        "heading": 4.027308157818757,
+        "speed": 4.394519480486325,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.164099999999642,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 6.519904133310692,
+        "across": -6.5102931096444605,
+        "lateral": 0.3538835035399259
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 329.33315963379374,
+        "z": -141.2494589419612,
+        "heading": 4.000549690300185,
+        "speed": 4.494300415618032,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.420599999999645,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 5.334552252276862,
+        "across": -5.317446097868355,
+        "lateral": 0.4268661716940718
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 328.28294665410976,
+        "z": -141.819777414972,
+        "heading": 4.098881400929162,
+        "speed": 4.798205805267677,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.508099999999647,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 4.914781846356491,
+        "across": -4.9034223332672005,
+        "lateral": 0.333961103860553
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 327.9810947913829,
+        "z": -142.11799291130305,
+        "heading": 3.8779918145973333,
+        "speed": 4.875290225710044,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.605899999998528,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 4.434596547283821,
+        "across": -4.425684699794028,
+        "lateral": 0.2810008455336608
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 327.60404296921376,
+        "z": -142.41610355988433,
+        "heading": 4.125658863455821,
+        "speed": 4.949025564937785,
+        "height": 0,
+        "jumpAge": 0.09779999999888242
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.803199999999272,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 3.4449227078877587,
+        "across": -3.4356093564552563,
+        "lateral": 0.2531418834523995
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 326.7792259775979,
+        "z": -142.96446679497342,
+        "heading": 4.125658863455821,
+        "speed": 5.065470415996166,
+        "height": 0.060752669801665805,
+        "jumpAge": 0.2950999999996275
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 30.323000000000018,
+      "countdown": -0.039200000001117084,
+      "index": 5,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 324,
+        "z": -145,
+        "heading": -2.129395642138459,
+        "distance": 0.7701134829433741,
+        "across": -0.749365552494473,
+        "lateral": 0.17755575278156366
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 324.54135635682945,
+        "z": -144.45227007427792,
+        "heading": 4.125658863455821,
+        "speed": 5.237866401104214,
+        "height": 0.7278431238049415,
+        "jumpAge": 0.8149000000003724
+      },
+      "grades": [
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 2,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.0566999999992548,
+        "railAge": 1.034051161526,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 29.699500000000018,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 28.13028708498604,
+        "across": -5.3461399742517735,
+        "lateral": 27.61760016473987
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 323.80451181839044,
+        "z": -145.0113953760918,
+        "heading": 3.932002965220934,
+        "speed": 5.269547525035431,
+        "height": 0.3235368482664467,
+        "jumpAge": 0.9914000000003724
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 30.38269999999927,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 23.486540324324356,
+        "across": -4.221014144837273,
+        "lateral": 23.104125518945693
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 319.7422443144373,
+        "z": -147.27752516861668,
+        "heading": 4.215072756380068,
+        "speed": 7.939147502774612,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 31.01259999999964,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 18.085250379907546,
+        "across": -2.8491707341589194,
+        "lateral": 17.85940949280122
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 314.9777687172674,
+        "z": -149.86379136185565,
+        "heading": 4.215072756380068,
+        "speed": 9.007317826698506,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 31.613399999998524,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 13.515912474600356,
+        "across": -1.6854604858560611,
+        "lateral": 13.410410619055458
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 310.9361492167775,
+        "z": -152.05767475298106,
+        "heading": 4.215072756380068,
+        "speed": 6.3307358134645675,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 32.1407999999989,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 10.46807771186429,
+        "across": -0.9055791169024667,
+        "lateral": 10.42883394462967
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 308.227585161912,
+        "z": -153.52794519606672,
+        "heading": 4.215072756380068,
+        "speed": 5.582583792046655,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 32.719399999998515,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 7.370356041135256,
+        "across": -0.10538585832247982,
+        "lateral": 7.36960256689359
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 305.44847697518435,
+        "z": -155.03650860542854,
+        "heading": 4.215072756380068,
+        "speed": 5.404962119329292,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 33.23129999999889,
+      "countdown": -0.039200000001117084,
+      "index": 6,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 300,
+        "z": -160,
+        "heading": -0.7531512809621944,
+        "distance": 4.740701289658717,
+        "across": 0.5919521335436393,
+        "lateral": 4.703598770023326
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 303.02658988562,
+        "z": -156.35116424293523,
+        "heading": 4.215072756380068,
+        "speed": 5.371594340885431,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 33.33569999999926,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 43.32988742433615,
+        "across": -28.618610826892308,
+        "lateral": 32.533893996024005
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 302.533893996024,
+        "z": -156.6186108268923,
+        "heading": 4.215072756380068,
+        "speed": 5.368945166006234,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 33.94679999999889,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 42.320220442668166,
+        "across": -28.37918458425264,
+        "lateral": 31.394632354097496
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 301.3946323540975,
+        "z": -156.37918458425264,
+        "heading": 5.563517513782111,
+        "speed": 2.8026735607954225,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 34.45000000000001,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 39.943987718447424,
+        "across": -26.75371929639823,
+        "lateral": 29.660759576602345
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 299.66075957660235,
+        "z": -154.75371929639823,
+        "heading": 5.522827717587558,
+        "speed": 5.799731282229243,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 35.02059999999963,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 36.35841483764874,
+        "across": -24.357471009472135,
+        "lateral": 26.993479500228943
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 296.99347950022894,
+        "z": -152.35747100947214,
+        "heading": 5.513653608383733,
+        "speed": 6.614102483409478,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 35.611199999999265,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 32.17838434803084,
+        "across": -21.347553142354172,
+        "lateral": 24.07759111879676
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 294.07759111879676,
+        "z": -149.34755314235417,
+        "heading": 5.513653608383733,
+        "speed": 7.390770290722649,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 36.22459999999964,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 27.547059144815154,
+        "across": -18.009939931350004,
+        "lateral": 20.84424455808147
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 290.84424455808147,
+        "z": -146.00993993135,
+        "heading": 5.513653608383733,
+        "speed": 7.684573646133233,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 36.82479999999888,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 22.946715309530905,
+        "across": -14.972354140127209,
+        "lateral": 17.389087238819513
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 287.3890872388195,
+        "z": -142.9723541401272,
+        "heading": 5.0264905756358305,
+        "speed": 7.787916631144276,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 37.33179999999888,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 19.385412137132,
+        "across": -12.502693388401582,
+        "lateral": 14.814751491742413
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 284.8147514917424,
+        "z": -140.50269338840158,
+        "heading": 5.838916434943674,
+        "speed": 7.354267830353313,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 37.93509999999962,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 15.756729423162039,
+        "across": -9.863636719867799,
+        "lateral": 12.287521832054495
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 282.2875218320545,
+        "z": -137.8636367198678,
+        "heading": 5.6830498134668135,
+        "speed": 5.211819619612324,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 38.51649999999999,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 13.053744905128532,
+        "across": -7.824163987724091,
+        "lateral": 10.44905325574382
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 280.4490532557438,
+        "z": -135.8241639877241,
+        "heading": 5.4284482008363355,
+        "speed": 4.554873501650943,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 39.139099999999615,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 10.311802123609846,
+        "across": -5.896541839916466,
+        "lateral": 8.459554206138705
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 278.4595542061387,
+        "z": -133.89654183991647,
+        "heading": 5.440886461606044,
+        "speed": 4.422457046896777,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 39.66269999999924,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 8.025087611488905,
+        "across": -4.3600006627069945,
+        "lateral": 6.7373901025001715
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 276.73739010250017,
+        "z": -132.360000662707,
+        "heading": 5.440886461606044,
+        "speed": 4.400860433429487,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 40.17859999999961,
+      "countdown": -0.039200000001117084,
+      "index": 7,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -128,
+        "heading": 0,
+        "distance": 5.793772835127118,
+        "across": -2.849620974490364,
+        "lateral": 5.044547944742078
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 275.0445479447421,
+        "z": -130.84962097449036,
+        "heading": 5.440886461606044,
+        "speed": 4.395907922918494,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 40.53049999999998,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 20.143000342289596,
+        "across": -19.747365942873643,
+        "lateral": 3.9726566813296245
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 273.9726566813296,
+        "z": -129.74736594287364,
+        "heading": 5.728030900193204,
+        "speed": 4.39494995492653,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 41.123299999998856,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 17.635916981497726,
+        "across": -17.39285438411507,
+        "lateral": 2.917907495320776
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 272.9179074953208,
+        "z": -127.39285438411507,
+        "heading": 5.846644236412089,
+        "speed": 4.394487807936569,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 41.62899999999997,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 15.47084003348615,
+        "across": -15.312966365406723,
+        "lateral": 2.2045299802089744
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 272.204529980209,
+        "z": -125.31296636540672,
+        "heading": 6.133039637149804,
+        "speed": 4.394405621747315,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 42.166999999999966,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 13.21236242193274,
+        "across": -13.146896354700502,
+        "lateral": 1.3136350357930837
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 271.3136350357931,
+        "z": -123.1468963547005,
+        "heading": 5.9872474088282805,
+        "speed": 4.394385123049181,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 42.72079999999885,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 10.811601102127272,
+        "across": -10.782609525898138,
+        "lateral": 0.7912333432877858
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.7912333432878,
+        "z": -120.78260952589814,
+        "heading": 6.187155440417219,
+        "speed": 4.394380522325387,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 43.02349999999998,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 9.481815808522025,
+        "across": -9.458559248172563,
+        "lateral": 0.663692681553357
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 270.66369268155336,
+        "z": -119.45855924817256,
+        "heading": 6.187155440417219,
+        "speed": 4.394379814420853,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 43.32779999999885,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 8.172402649134506,
+        "across": -8.139658120027548,
+        "lateral": 0.7308424923677421
+      },
+      "cue": "lineup",
+      "recovery": null,
+      "player": {
+        "x": 270.73084249236774,
+        "z": -118.13965812002755,
+        "heading": 6.594384618514481,
+        "speed": 4.394379510096345,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 43.41629999999885,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 7.795410844253097,
+        "across": -7.755503237168156,
+        "lateral": 0.7877815490178932
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 270.7877815490179,
+        "z": -117.75550323716816,
+        "heading": 6.375696620146166,
+        "speed": 4.394379460413863,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 43.6355999999996,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 6.84668287056159,
+        "across": -6.798048859080168,
+        "lateral": 0.8146152709103376
+      },
+      "cue": "lineup",
+      "recovery": null,
+      "player": {
+        "x": 270.81461527091034,
+        "z": -116.79804885908017,
+        "heading": 6.4846699609133305,
+        "speed": 4.39437937934699,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 43.72589999999848,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 6.45540828858953,
+        "across": -6.402069296961741,
+        "lateral": 0.828133376510209
+      },
+      "cue": "early",
+      "recovery": null,
+      "player": {
+        "x": 270.8281333765102,
+        "z": -116.40206929696174,
+        "heading": 6.261534072192935,
+        "speed": 4.394379357986726,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 44.14589999999847,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 4.616209367093224,
+        "across": -4.572607419605021,
+        "lateral": 0.6329694360807139
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 270.6329694360807,
+        "z": -114.57260741960502,
+        "heading": 6.228669096221834,
+        "speed": 4.394379306643068,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 44.14589999999847,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 4.616209367093224,
+        "across": -4.572607419605021,
+        "lateral": 0.6329694360807139
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 270.6329694360807,
+        "z": -114.57260741960502,
+        "heading": 6.228669096221834,
+        "speed": 4.394379306643068,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": "Space from good cue",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 44.249899999998476,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 4.163501271907566,
+        "across": -4.130792909562373,
+        "lateral": 0.5208577344008063
+      },
+      "cue": "good",
+      "recovery": null,
+      "player": {
+        "x": 270.5208577344008,
+        "z": -114.13079290956237,
+        "heading": 5.971679812043981,
+        "speed": 4.394379300855951,
+        "height": 0,
+        "jumpAge": 0.104
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 44.40369999999922,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 3.4929515861562526,
+        "across": -3.4594146914087816,
+        "lateral": 0.48286724479567056
+      },
+      "cue": "perfect",
+      "recovery": null,
+      "player": {
+        "x": 270.48286724479567,
+        "z": -113.45941469140878,
+        "heading": 6.351727426433483,
+        "speed": 4.394379294865535,
+        "height": 0,
+        "jumpAge": 0.25780000000074504
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 44.537299999998844,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 2.908236897633551,
+        "across": -2.8813458911055534,
+        "lateral": 0.39457281782500786
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 270.394572817825,
+        "z": -112.88134589110555,
+        "heading": 6.0215950384484245,
+        "speed": 4.39437929139223,
+        "height": 0.3937594776844837,
+        "jumpAge": 0.3914000000003725
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 45.123799999998845,
+      "countdown": -0.039200000001117084,
+      "index": 8,
+      "total": 10,
+      "target": {
+        "kind": "fence",
+        "label": "low log",
+        "x": 270,
+        "z": -110,
+        "heading": 0,
+        "distance": 0.5283056143927094,
+        "across": -0.44661653716941885,
+        "lateral": -0.28220646861058185
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.7177935313894,
+        "z": -110.44661653716942,
+        "heading": 6.331217704626376,
+        "speed": 4.3943792852178385,
+        "height": 0.3656906736688824,
+        "jumpAge": 0.9779000000003726
+      },
+      "grades": [
+        "good",
+        "perfect"
+      ],
+      "lastGrade": "perfect",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 5,
+        "lap": 1,
+        "grade": "perfect",
+        "frameAge": 0.9914000000003724,
+        "railAge": 0.957976400152,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 45.32369999999923,
+      "countdown": -0.039200000001117084,
+      "index": 9,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 17.580523741692723,
+        "across": -17.555928370332083,
+        "lateral": 0.929620399943225
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.8327013135692,
+        "z": -109.57972770499418,
+        "heading": 6.280561163082999,
+        "speed": 4.394379284582647,
+        "height": 0,
+        "jumpAge": 1.1778000000007451
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 45.82069999999923,
+      "countdown": -0.039200000001117084,
+      "index": 9,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 14.546613004795079,
+        "across": -14.528163313684543,
+        "lateral": 0.7324074290883911
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.8247391946115,
+        "z": -106.54555717603722,
+        "heading": 6.280561163082999,
+        "speed": 6.424685151406498,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 46.40539999999849,
+      "countdown": -0.039200000001117084,
+      "index": 9,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 11.12707956858552,
+        "across": -11.115380380411036,
+        "lateral": 0.5101163831977205
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.8157645934839,
+        "z": -103.1255542352109,
+        "heading": 6.280561163082999,
+        "speed": 5.568035472618339,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 46.93179999999886,
+      "countdown": -0.039200000001117084,
+      "index": 9,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 8.252516771868498,
+        "across": -8.246184226173703,
+        "lateral": 0.32323177129551417
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.8082194634405,
+        "z": -100.2502880735019,
+        "heading": 6.280561163082999,
+        "speed": 5.408526532214163,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": true,
+      "elapsed": 47.520599999999604,
+      "countdown": -0.039200000001117084,
+      "index": 9,
+      "total": 10,
+      "target": {
+        "kind": "gate",
+        "label": "gate",
+        "x": 270,
+        "z": -92,
+        "heading": 0.06241880999595735,
+        "distance": 5.090982708047652,
+        "across": -5.086021880828047,
+        "lateral": 0.22469170295886454
+      },
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.906996805228,
+        "z": -97.09013313572468,
+        "heading": 6.268705280538741,
+        "speed": 5.370255166276235,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": null,
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    },
+    {
+      "id": "rush-trail",
+      "name": "Trailblazer",
+      "active": false,
+      "elapsed": 47.62469999999924,
+      "countdown": -0.039200000001117084,
+      "index": 10,
+      "total": 10,
+      "target": null,
+      "cue": null,
+      "recovery": null,
+      "player": {
+        "x": 269.9985056234171,
+        "z": -96.5466485202297,
+        "heading": 6.536985183298436,
+        "speed": 5.24684470261959,
+        "height": 0,
+        "jumpAge": null
+      },
+      "grades": [
+        "good",
+        "perfect",
+        "good"
+      ],
+      "lastGrade": "good",
+      "refusals": 0,
+      "lastJumpTiming": {
+        "fenceIndex": 8,
+        "lap": 1,
+        "grade": "good",
+        "frameAge": 1.1291000000014901,
+        "railAge": 1.081834124374,
+        "interpolated": true
+      },
+      "event": "course ended",
+      "assistance": true,
+      "driverStatus": "running Trailblazer"
+    }
+  ],
+  "journey": {
+    "chapters": [
+      {
+        "id": "first-partners",
+        "number": 1,
+        "name": "First Partners",
+        "description": "Find your stride and earn a lost horse’s trust.",
+        "goals": [
+          {
+            "id": "clover",
+            "label": "Bring Clover home",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rescue",
+              "id": "clover"
+            }
+          },
+          {
+            "id": "pasture",
+            "label": "Finish Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 150,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "pad",
+            "style": "western",
+            "name": "Leaping Silver Pad of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-first-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "steady-hands",
+        "number": 2,
+        "name": "Steady Hands",
+        "description": "Read the herd and keep a clean riding rhythm.",
+        "goals": [
+          {
+            "id": "three-home",
+            "label": "Pen all 3 horses in one beginner roundup",
+            "current": 3,
+            "target": 3,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "beginner"
+            }
+          },
+          {
+            "id": "clean-chain",
+            "label": "Build a 4-obstacle chain in any Ranch Rush",
+            "current": 4,
+            "target": 4,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 200,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "bridle",
+            "style": "western",
+            "name": "Leaping Silver Bridle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-steady-hands",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "river-rhythm",
+        "number": 3,
+        "name": "River Rhythm",
+        "description": "Take the river course and ride for a silver medal.",
+        "goals": [
+          {
+            "id": "river",
+            "label": "Finish River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "silver",
+            "label": "Earn silver or gold in any Ranch Rush",
+            "current": 2,
+            "target": 2,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 250,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "shoes",
+            "style": "western",
+            "name": "Leaping Silver Shoes of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-river-rhythm",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 5,
+            "target": 5,
+            "done": true,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "claimed",
+        "gearId": "journey-trail-partners",
+        "owned": true,
+        "equipped": true
+      },
+      {
+        "id": "meadowlark-champion",
+        "number": 5,
+        "name": "Meadowlark Champion",
+        "description": "Put everything together: four gold medals and a champion’s saddle.",
+        "goals": [
+          {
+            "id": "pasture-gold",
+            "label": "Earn gold in Pasture Dash",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-pasture"
+            }
+          },
+          {
+            "id": "river-gold",
+            "label": "Earn gold in River Run",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-river"
+            }
+          },
+          {
+            "id": "trail-gold",
+            "label": "Earn gold in Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "roundup-gold",
+            "label": "Earn gold in the 5-horse roundup",
+            "current": 0,
+            "target": 1,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 750,
+          "gear": {
+            "rarity": "Legendary",
+            "set": "Aurora",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Aurora Saddle of Agility",
+            "bonus": {
+              "jump": 5,
+              "agility": 5,
+              "stamina": 2
+            }
+          }
+        },
+        "status": "active",
+        "gearId": "journey-meadowlark-champion",
+        "owned": false,
+        "equipped": false
+      }
+    ],
+    "current": {
+      "id": "meadowlark-champion",
+      "number": 5,
+      "name": "Meadowlark Champion",
+      "description": "Put everything together: four gold medals and a champion’s saddle.",
+      "goals": [
+        {
+          "id": "pasture-gold",
+          "label": "Earn gold in Pasture Dash",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-pasture"
+          }
+        },
+        {
+          "id": "river-gold",
+          "label": "Earn gold in River Run",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-river"
+          }
+        },
+        {
+          "id": "trail-gold",
+          "label": "Earn gold in Trailblazer",
+          "current": 1,
+          "target": 1,
+          "done": true,
+          "action": {
+            "kind": "rush",
+            "id": "rush-trail"
+          }
+        },
+        {
+          "id": "roundup-gold",
+          "label": "Earn gold in the 5-horse roundup",
+          "current": 0,
+          "target": 1,
+          "done": false,
+          "action": {
+            "kind": "roundup",
+            "mode": "full"
+          }
+        }
+      ],
+      "reward": {
+        "coins": 750,
+        "gear": {
+          "rarity": "Legendary",
+          "set": "Aurora",
+          "slot": "saddle",
+          "style": "western",
+          "name": "Leaping Aurora Saddle of Agility",
+          "bonus": {
+            "jump": 5,
+            "agility": 5,
+            "stamina": 2
+          }
+        }
+      },
+      "status": "active",
+      "gearId": "journey-meadowlark-champion",
+      "owned": false,
+      "equipped": false
+    },
+    "claimedCount": 4,
+    "complete": false,
+    "title": null,
+    "lastClaim": {
+      "id": "trail-partners",
+      "name": "Trail Partners",
+      "coins": 350,
+      "gearId": "journey-trail-partners",
+      "gearName": "Leaping Silver Saddle of Stamina",
+      "bonus": {
+        "jump": 3,
+        "stamina": 1
+      }
+    },
+    "nextAction": {
+      "kind": "roundup",
+      "mode": "full"
+    }
+  },
+  "player": {
+    "x": 335,
+    "z": 73.57435654700802,
+    "heading": 6.536985183298436,
+    "speed": 0,
+    "rigReady": true,
+    "horseId": 2,
+    "horseName": "Clover",
+    "breed": "pinto",
+    "modelKey": "pinto",
+    "loadingBreed": false
+  },
+  "driver": {
+    "active": false,
+    "status": "course ended",
+    "steps": 788,
+    "target": {
+      "x": 270.1247565723104,
+      "z": -90.00389484303422,
+      "distance": 7.089583376824938,
+      "checkpoint": 10,
+      "total": 10,
+      "kind": "gate",
+      "gait": "trot",
+      "cue": null,
+      "recovery": null,
+      "jumpRequested": false
+    }
+  },
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "networkStopped": false
+}

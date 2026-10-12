@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as rewards from '../assets/roundup-rewards.mjs';
 import * as approach from '../assets/roundup-approach.mjs';
+import {updateRoundupGuidance} from '../assets/roundup-guidance.mjs';
 import * as pressure from '../assets/roundup-pressure.mjs';
 import {journeyMetrics} from '../assets/features/rider-journey-rules.mjs';
 
@@ -37,7 +38,7 @@ function fixture(options={}){
   trace.events.push({name,result:args[0]&&typeof args[0]==='object'?copy(args[0]):args[0]});for(const fn of hooks.get(name)||[])fn(...args);
  },trainingProgress:{apply(){return {};},confirmed:r=>trace.confirmed.push(copy(r))}};
  const STORY=[{type:'roundup',label:'Pen five runaways',goal:5,npc:'wren'},{type:'photo',goal:1,npc:'wren'}];
- const bindings={...rewards,...approach,...pressure,G,player,scene:{remove:g=>trace.removed.push(g)},nameSprites:[],$:()=>hud,undressRig:h=>trace.undressed.push(h),
+ const bindings={...rewards,...approach,...pressure,updateRoundupGuidance,G,player,scene:{remove:g=>trace.removed.push(g)},nameSprites:[],$:()=>hud,undressRig:h=>trace.undressed.push(h),
   freshSave,syncSave,localStorage,SAVE_KEY:key,VIPON:!vip,VIP_PASS:1.5,isVIP:s=>s.vip===true,weekKey:()=>week,
   DAILYQ:[{type:'photo',goal:2,label:'Take photographs'}],DAILY_N:1,QUEST_TYPES:{},STORY,storyIdx:0,storyProg:0,NPC_DEFS:[{id:'wren',name:'Wren'}],_dailyMemo:{key:'cached'},
   payReward:()=>trace.claims++,refreshTack(){},reloadHorses(){},sGem(){},mulOf:()=>1,

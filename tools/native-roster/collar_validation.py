@@ -66,6 +66,31 @@ def _route_targets(route,world,normal):
     target_normal=_unit(np.linalg.solve(jac.transpose(0,2,1),normal[...,None])[...,0])
     return target,target_normal,field,float(determinant.min())
 
+def _restored_shoulder(spec,source,decoded):
+    # Independent reconstruction of the reviewed v7 spatial contact field.
+    assert spec['version']==7 and spec['sourceHeightM']==[.77,.90,1.48,1.85] and spec['sourceForwardM']==[.02,.28,.65,.90]
+    sourceworld=source['world'];matrix=source['matrix']
+    before=np.einsum('nij,nj->ni',matrix,np.c_[decoded['position'],np.ones(len(sourceworld))])[:,:3]+np.array([-6.225790382362317e-9,.0047147771075021355,-1.6744842715166992])
+    oldnormal=_unit(np.einsum('nij,nj->ni',matrix[:,:3,:3],_unit(decoded['normal'])))
+    def ease(a,b,x):
+        t=np.clip((x-a)/(b-a),0,1);return t**3*(10-15*t+6*t*t)
+    y,z=sourceworld[:,1],sourceworld[:,2]
+    allowed=np.zeros(len(y),bool)
+    for lo,hi in RANGES:allowed[lo:hi+1]=True
+    field=ease(.77,.90,y)*(1-ease(1.48,1.85,y))*ease(.02,.28,z)*(1-ease(.65,.90,z))*allowed
+    after=before+(sourceworld-before)*field[:,None]
+    tri=source['indices'].reshape(-1,3);_,weld=np.unique(np.round(sourceworld,7),axis=0,return_inverse=True)
+    def geometric(points):
+        a,b,c=points[tri].transpose(1,0,2);faces=np.cross(b-a,c-a);acc=np.zeros((weld.max()+1,3))
+        for corner in range(3):np.add.at(acc,weld[tri[:,corner]],faces)
+        return acc[weld]/np.maximum(np.linalg.norm(acc[weld],axis=1)[:,None],1e-20)
+    oldgeo,newgeo=geometric(before),geometric(after);cross=np.cross(oldgeo,newgeo);sine=np.linalg.norm(cross,axis=1);cosine=np.clip((oldgeo*newgeo).sum(1),-1,1)
+    assert cosine[field>0].min()>-.999, 'Reflected collar surface during source fit'
+    axis=cross/np.maximum(sine[:,None],1e-20)
+    rotated=oldnormal*cosine[:,None]+np.cross(axis,oldnormal)*sine[:,None]+axis*(axis*oldnormal).sum(1)[:,None]*(1-cosine[:,None])
+    normals=oldnormal.copy();change=(field>0)&(sine>1e-10);normals[change]=_unit(rotated[change])
+    return after,normals,field
+
 def check_collar_attachment(record,packed,used,source,decoded,ops,translation,actor_scale,breed=None):
     assert record['version']==1 and record['meshIndex']==3 and record['sourceSha256']==SOURCE_SHA
     count=record['vertexCount'];assert isinstance(count,int) and 0<count<=2404
@@ -102,7 +127,14 @@ def check_collar_attachment(record,packed,used,source,decoded,ops,translation,ac
     route=spec.get('standingRoute') if spec else None
     if route:
         assert spec['baseMorphSha256']==report['baseMorphSha256']==record['baseMorphSha256'], 'Route authored against a different immutable morph'
-        expected,expected_normal,field,min_det=_route_targets(route,oldworld,oldnormal)
+        preworld,prenormal=oldworld,oldnormal
+        restoration=spec.get('sourceRestoration')
+        restore=np.zeros(count)
+        if restoration:
+            allworld,allnormal,allfield=_restored_shoulder(restoration,source,decoded)
+            preworld,prenormal,restore=allworld[ids],allnormal[ids],allfield[ids]
+            assert np.max(abs(restore-data['sourceRestoreMask']))<1e-12, 'Source restoration region mismatch'
+        expected,expected_normal,field,min_det=_route_targets(route,preworld,prenormal)
         targets=np.asarray(data['standingTarget'],dtype=float);normals=np.asarray(data['standingNormal'],dtype=float)
         mask=np.asarray(data['routeMask']).reshape(-1)
         assert targets.shape==normals.shape==(count,3) and mask.shape==(count,)
@@ -116,14 +148,14 @@ def check_collar_attachment(record,packed,used,source,decoded,ops,translation,ac
         target_normal_error=np.linalg.norm(newnormal-normals,axis=1)
         assert target_error.max()<POSITION_TOLERANCE, ('Incorrect inverse standing position solve',target_error.max())
         assert target_normal_error.max()<DIRECTION_TOLERANCE, ('Incorrect inverse standing normal solve',target_normal_error.max())
-        fixed=mask==0
-        assert fixed.any() and error[fixed].max()<POSITION_TOLERANCE, 'Unrouted shoulder/saddle anchor moved'
-        assert normal_error[fixed].max()<DIRECTION_TOLERANCE, 'Unrouted shoulder/saddle normal changed'
+        fixed=(mask==0)&(restore==0)
+        assert error[fixed].max(initial=0)<POSITION_TOLERANCE, 'Unrouted shoulder/saddle anchor moved'
+        assert normal_error[fixed].max(initial=0)<DIRECTION_TOLERANCE, 'Unrouted shoulder/saddle normal changed'
         assert np.linalg.cond(newmat[:,:3,:3]).max()<10, 'Ill-conditioned standing skin operator'
         report.update(standingRoute={**route,'reroutedVertices':int(mask.sum()),'unchangedUpperVertices':int(fixed.sum()),
             'maximumStandingDisplacementDisplayedM':float(error.max()),'maximumTargetReconstructionDisplayedM':float(target_error.max()*actor_scale),
             'maximumTargetNormalDirectionError':float(target_normal_error.max()),'minimumRouteJacobianDeterminant':min_det,
-            'unchangedRegionMaxDisplayedM':float(error[fixed].max()),'skinInfluencesUnchanged':True},
+            'unchangedRegionMaxDisplayedM':float(error[fixed].max(initial=0)),'skinInfluencesUnchanged':True,'sourceRestoredVertices':int((restore>0).sum())},
             restReconstructionMaxDisplayedM=float(target_error.max()*actor_scale),restNormalMaxDirectionError=float(target_normal_error.max()))
     else:
         assert error.max()<POSITION_TOLERANCE,('Standing collar moved',error.max())
