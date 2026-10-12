@@ -2,12 +2,12 @@
   "version": 1,
   "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
   "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
-  "method": "Original four-influence shoulder attachment at70% strength, inverse-solved onto the reviewed v6 shared draft cage, then the unchanged bounded static lower-V route6cm upward/1.2cm forward before actor scale. Original shoulder influences and hard tack endpoints are preserved.",
+  "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
   "breeds": {
     "shire": {
       "file": "shire.npz",
-      "sha256": "ce97ee7ad2547e4cf14782ee56650cf108454005fa3a6fb16119150da2924e3a",
-      "baseMorphSha256": "abb3c85f5d632de8f0d24a78832e224217eb7c5817783447a850e832f5fdd03c",
+      "sha256": "c28cfb73d027d2f69050b9ea2be0a0d0543befe6c61725bc1096e5c8a35a7798",
+      "baseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
       "standingRoute": {
         "version": 1,
         "space": "source-standing-metres-before-actor-scale",
@@ -22,12 +22,29 @@
           0.69
         ]
       },
-      "standingSurfaceRebased": true
+      "standingSurfaceRebased": true,
+      "sourceRestoration": {
+        "version": 7,
+        "sourceHeightM": [
+          0.77,
+          0.9,
+          1.48,
+          1.85
+        ],
+        "sourceForwardM": [
+          0.02,
+          0.28,
+          0.65,
+          0.9
+        ],
+        "vertices": 2404,
+        "normalMethod": "authored surface-normal rotation"
+      }
     },
     "percheron": {
       "file": "percheron.npz",
-      "sha256": "cc72cf4260bf1ef48559f148f9bd9a5067c629449771b8c6c658de6517977c1e",
-      "baseMorphSha256": "b95f23d106510c6c991f245dc44eb90320bb3162837608b7ab6901f26613870b",
+      "sha256": "47c451c96979041bea8bcca8ed90509f9e95d7f4321852c6eab55dd4ba53f4c1",
+      "baseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
       "standingRoute": {
         "version": 1,
         "space": "source-standing-metres-before-actor-scale",
@@ -42,12 +59,29 @@
           0.69
         ]
       },
-      "standingSurfaceRebased": true
+      "standingSurfaceRebased": true,
+      "sourceRestoration": {
+        "version": 7,
+        "sourceHeightM": [
+          0.77,
+          0.9,
+          1.48,
+          1.85
+        ],
+        "sourceForwardM": [
+          0.02,
+          0.28,
+          0.65,
+          0.9
+        ],
+        "vertices": 2404,
+        "normalMethod": "authored surface-normal rotation"
+      }
     },
     "clyde": {
       "file": "clyde.npz",
-      "sha256": "8830c45fa3570a78b8f3cd9b7a1920869cafbb9bcc0547fd7dd69f083ff51f8e",
-      "baseMorphSha256": "bf649c008952f8a2ff49fb56dff0cf1b949dd4bdcaecde008b47d2855449f076",
+      "sha256": "2c3a017250a366886581daf7bad6266717a86acb49827e42d301742116a7d3b7",
+      "baseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
       "standingRoute": {
         "version": 1,
         "space": "source-standing-metres-before-actor-scale",
@@ -62,7 +96,24 @@
           0.69
         ]
       },
-      "standingSurfaceRebased": true
+      "standingSurfaceRebased": true,
+      "sourceRestoration": {
+        "version": 7,
+        "sourceHeightM": [
+          0.77,
+          0.9,
+          1.48,
+          1.85
+        ],
+        "sourceForwardM": [
+          0.02,
+          0.28,
+          0.65,
+          0.9
+        ],
+        "vertices": 2404,
+        "normalMethod": "authored surface-normal rotation"
+      }
     }
   }
 }

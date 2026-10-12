@@ -1,0 +1,1024 @@
+{
+  "schema": "native-draft-leg-quality-v1",
+  "baselineCommit": "661a81c",
+  "source": "Original White body geometry under the current approved runtime gait clips and hoof-flex layer, not an assumption of ideal anatomy.",
+  "scope": {
+    "drafts": [
+      "percheron",
+      "shire",
+      "clyde"
+    ],
+    "aliases": {
+      "belgian": "percheron",
+      "suffolk": "percheron"
+    },
+    "gaits": [
+      "trot",
+      "canterLeft",
+      "canterRight",
+      "gallopLeft",
+      "gallopRight"
+    ],
+    "phasesPerGait": 41,
+    "totalBodyPoses": 1435
+  },
+  "thresholds": {
+    "foreSourceY": [
+      0.7,
+      1.9
+    ],
+    "foreSourceZ": [
+      0.1,
+      0.9
+    ],
+    "hindSourceY": [
+      0.7,
+      1.75
+    ],
+    "minimumSourceTriangleAreaCm2": 0.1,
+    "sourceStrainMinimum": 0.35,
+    "variantStrainMaximum": 0.25,
+    "relativeStrainMaximum": 0.5,
+    "maximumAddedPatchCm2": 5,
+    "principalAxisRatio": 8,
+    "absolutePriorBudget": {
+      "relativeGrowth": 1.1,
+      "additiveAreaCm2": 1,
+      "exception": "Only complete connected patches whose every vertex exactly matches original raw geometry, standing and same-phase posed source; original skin/binds unchanged. Inherited source patches remain reported."
+    }
+  },
+  "seams": {
+    "sourceVertices": 16159,
+    "weldedVertices": 14216
+  },
+  "triangles": {
+    "fore": 3591,
+    "hind": 3969
+  },
+  "assetHashes": {
+    "percheron": "09a1961425264c3615fd2625aafc619f16554250a0ea762a69d320dbe93d7764",
+    "shire": "0809ad8b3fba95410c2b07bc259b0c14669396edcc7d53898768bf14cd00a03d",
+    "clyde": "049688ecb1dd9c96ebc95fb4f9de24b0e85e2a1088f7be81317224fa93ea06aa"
+  },
+  "baselineHashes": {
+    "percheron": "f7f2cc1be0b2e6afb7eb23f086b72a2c2fdd80fa333f8460c69d0d51369b8910",
+    "shire": "6be8bb7e4aee5687db142321e4e11392d485335b7229113639356be4d0ed77f0",
+    "clyde": "03c1194550d6d2808d773e661bfa4fbe8e314d354eb2b8b127a4c5d5c6cddb35"
+  },
+  "results": {
+    "sourceRelativeGatesPassed": 30,
+    "absolutePriorGatesPassed": 60,
+    "failures": 0,
+    "exactSourceExemptions": [
+      {
+        "id": "percheron",
+        "gait": "gallopLeft",
+        "region": "fore",
+        "metric": "compression",
+        "phase": 0.05,
+        "areaCm2": 34.2092,
+        "priorBudgetCm2": 26.7099,
+        "sourceMeanStrain": 0.1874,
+        "triangleIds": [
+          10452,
+          10455,
+          10454,
+          10453,
+          12180,
+          12188,
+          12189,
+          12195,
+          12187,
+          12182,
+          12179
+        ],
+        "exactSourceRestoration": true
+      },
+      {
+        "id": "shire",
+        "gait": "gallopLeft",
+        "region": "fore",
+        "metric": "compression",
+        "phase": 0.05,
+        "areaCm2": 37.579,
+        "priorBudgetCm2": 34.2349,
+        "sourceMeanStrain": 0.1874,
+        "triangleIds": [
+          10452,
+          10455,
+          10454,
+          10453,
+          12180,
+          12188,
+          12189,
+          12195,
+          12187,
+          12182,
+          12179
+        ],
+        "exactSourceRestoration": true
+      },
+      {
+        "id": "clyde",
+        "gait": "gallopLeft",
+        "region": "fore",
+        "metric": "compression",
+        "phase": 0.05,
+        "areaCm2": 36.376,
+        "priorBudgetCm2": 29.8819,
+        "sourceMeanStrain": 0.1874,
+        "triangleIds": [
+          10452,
+          10455,
+          10454,
+          10453,
+          12180,
+          12188,
+          12189,
+          12195,
+          12187,
+          12182,
+          12179
+        ],
+        "exactSourceRestoration": true
+      },
+      {
+        "id": "clyde",
+        "gait": "gallopLeft",
+        "region": "fore",
+        "metric": "stretch",
+        "phase": 0.225,
+        "areaCm2": 51.1389,
+        "priorBudgetCm2": 48.7356,
+        "sourceMeanStrain": 4.841,
+        "triangleIds": [
+          4816,
+          4908,
+          4909,
+          4913,
+          4915,
+          4918,
+          4926,
+          4930,
+          4933,
+          4939,
+          4948,
+          4950,
+          4954,
+          4955,
+          4957,
+          4956,
+          4968,
+          4969,
+          4974,
+          4975,
+          4952,
+          4949,
+          4940,
+          4936,
+          4937,
+          4921,
+          4900,
+          4893,
+          4888
+        ],
+        "exactSourceRestoration": true
+      },
+      {
+        "id": "shire",
+        "gait": "gallopRight",
+        "region": "fore",
+        "metric": "compression",
+        "phase": 0.2,
+        "areaCm2": 42.612,
+        "priorBudgetCm2": 39.5169,
+        "sourceMeanStrain": 0.1493,
+        "triangleIds": [
+          12176,
+          12179,
+          12182,
+          12187,
+          12191,
+          12197,
+          12198,
+          12208,
+          12195,
+          12196,
+          12202,
+          12192,
+          12181,
+          12178
+        ],
+        "exactSourceRestoration": true
+      },
+      {
+        "id": "clyde",
+        "gait": "gallopRight",
+        "region": "fore",
+        "metric": "compression",
+        "phase": 0.2,
+        "areaCm2": 41.2479,
+        "priorBudgetCm2": 37.139,
+        "sourceMeanStrain": 0.1493,
+        "triangleIds": [
+          12176,
+          12179,
+          12182,
+          12187,
+          12191,
+          12197,
+          12198,
+          12208,
+          12195,
+          12196,
+          12202,
+          12192,
+          12181,
+          12178
+        ],
+        "exactSourceRestoration": true
+      }
+    ]
+  },
+  "peaks": {
+    "source": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 44.7959,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "stretch": {
+          "areaCm2": 59.3247,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        },
+        "anisotropy": {
+          "areaCm2": 30.6819,
+          "gait": "canterRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 5.8029,
+          "variantMeanStrain": 5.8029
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 20.4619,
+          "gait": "gallopLeft",
+          "phase": 0.825,
+          "sourceMeanStrain": 0.289,
+          "variantMeanStrain": 0.289
+        },
+        "nonSourceCompression": {
+          "areaCm2": 0
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 44.7959,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 59.3247,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 9.1814,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.1712,
+          "variantMeanStrain": 0.1712
+        },
+        "stretch": {
+          "areaCm2": 0
+        },
+        "anisotropy": {
+          "areaCm2": 19.7585,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.3891,
+          "variantMeanStrain": 0.3891
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 15.1595,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.4161,
+          "variantMeanStrain": 0.4161
+        },
+        "nonSourceCompression": {
+          "areaCm2": 0
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 9.1814,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.1712,
+          "variantMeanStrain": 0.1712
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "percheron": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 38.791,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "stretch": {
+          "areaCm2": 51.3722,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        },
+        "anisotropy": {
+          "areaCm2": 26.5689,
+          "gait": "canterRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 5.8029,
+          "variantMeanStrain": 5.8029
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 17.7123,
+          "gait": "gallopLeft",
+          "phase": 0.825,
+          "sourceMeanStrain": 0.289,
+          "variantMeanStrain": 0.2891
+        },
+        "nonSourceCompression": {
+          "areaCm2": 17.7123,
+          "gait": "gallopRight",
+          "phase": 0.125,
+          "sourceMeanStrain": 0.2218,
+          "variantMeanStrain": 0.2217
+        },
+        "nonSourceStretch": {
+          "areaCm2": 27.8877,
+          "gait": "canterRight",
+          "phase": 0.175,
+          "sourceMeanStrain": 6.0904,
+          "variantMeanStrain": 6.0905
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 38.791,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 51.3722,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 3.6545,
+          "gait": "gallopLeft",
+          "phase": 0.925,
+          "sourceMeanStrain": 0.8159,
+          "variantMeanStrain": 0.2229
+        },
+        "compression": {
+          "areaCm2": 8.3673,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1545,
+          "variantMeanStrain": 0.2037
+        },
+        "stretch": {
+          "areaCm2": 0.2623,
+          "gait": "trot",
+          "phase": 0.7,
+          "sourceMeanStrain": 0.7176,
+          "variantMeanStrain": 3.1704
+        },
+        "anisotropy": {
+          "areaCm2": 26.0368,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4209,
+          "variantMeanStrain": 0.376
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 9.4572,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.3839,
+          "variantMeanStrain": 0.3324
+        },
+        "nonSourceCompression": {
+          "areaCm2": 8.3673,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1545,
+          "variantMeanStrain": 0.2037
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0.2623,
+          "gait": "trot",
+          "phase": 0.7,
+          "sourceMeanStrain": 0.7176,
+          "variantMeanStrain": 3.1704
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "shire": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 42.612,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "stretch": {
+          "areaCm2": 56.4325,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        },
+        "anisotropy": {
+          "areaCm2": 29.1861,
+          "gait": "canterRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 5.8029,
+          "variantMeanStrain": 5.8029
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 19.4562,
+          "gait": "gallopLeft",
+          "phase": 0.825,
+          "sourceMeanStrain": 0.289,
+          "variantMeanStrain": 0.2891
+        },
+        "nonSourceCompression": {
+          "areaCm2": 19.4562,
+          "gait": "gallopRight",
+          "phase": 0.125,
+          "sourceMeanStrain": 0.2218,
+          "variantMeanStrain": 0.2216
+        },
+        "nonSourceStretch": {
+          "areaCm2": 30.6346,
+          "gait": "canterRight",
+          "phase": 0.175,
+          "sourceMeanStrain": 6.0904,
+          "variantMeanStrain": 6.0905
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 42.612,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 56.4325,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 1.8267,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.8032,
+          "variantMeanStrain": 0.2281
+        },
+        "compression": {
+          "areaCm2": 9.2691,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.2112
+        },
+        "stretch": {
+          "areaCm2": 0.5205,
+          "gait": "trot",
+          "phase": 0.175,
+          "sourceMeanStrain": 0.7397,
+          "variantMeanStrain": 3.5132
+        },
+        "anisotropy": {
+          "areaCm2": 28.502,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4205,
+          "variantMeanStrain": 0.3719
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 10.3677,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.384,
+          "variantMeanStrain": 0.3297
+        },
+        "nonSourceCompression": {
+          "areaCm2": 9.2691,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.2112
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0.5205,
+          "gait": "trot",
+          "phase": 0.175,
+          "sourceMeanStrain": 0.7397,
+          "variantMeanStrain": 3.5132
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "clyde": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 41.2479,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "stretch": {
+          "areaCm2": 54.626,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        },
+        "anisotropy": {
+          "areaCm2": 28.2518,
+          "gait": "canterRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 5.8029,
+          "variantMeanStrain": 5.8029
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 18.8346,
+          "gait": "gallopLeft",
+          "phase": 0.825,
+          "sourceMeanStrain": 0.289,
+          "variantMeanStrain": 0.2891
+        },
+        "nonSourceCompression": {
+          "areaCm2": 18.8346,
+          "gait": "gallopRight",
+          "phase": 0.125,
+          "sourceMeanStrain": 0.2218,
+          "variantMeanStrain": 0.2217
+        },
+        "nonSourceStretch": {
+          "areaCm2": 29.6542,
+          "gait": "canterRight",
+          "phase": 0.175,
+          "sourceMeanStrain": 6.0904,
+          "variantMeanStrain": 6.0905
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 41.2479,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.1493,
+          "variantMeanStrain": 0.1493
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 54.626,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 4.9277,
+          "variantMeanStrain": 4.9277
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 0.3883,
+          "gait": "trot",
+          "phase": 0.1,
+          "sourceMeanStrain": 0.8512,
+          "variantMeanStrain": 0.1811
+        },
+        "compression": {
+          "areaCm2": 8.9143,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.196
+        },
+        "stretch": {
+          "areaCm2": 0.3883,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.5507,
+          "variantMeanStrain": 3.2191
+        },
+        "anisotropy": {
+          "areaCm2": 27.5624,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4206,
+          "variantMeanStrain": 0.3818
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 10.0205,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.3839,
+          "variantMeanStrain": 0.3444
+        },
+        "nonSourceCompression": {
+          "areaCm2": 8.9143,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.196
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0.3883,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.5507,
+          "variantMeanStrain": 3.2191
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "baseline:percheron": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 14.1377,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 0.4132,
+          "variantMeanStrain": 0.1424
+        },
+        "compression": {
+          "areaCm2": 36.6579,
+          "gait": "gallopRight",
+          "phase": 0.225,
+          "sourceMeanStrain": 0.2765,
+          "variantMeanStrain": 0.1879
+        },
+        "stretch": {
+          "areaCm2": 59.2762,
+          "gait": "gallopLeft",
+          "phase": 0.225,
+          "sourceMeanStrain": 4.7282,
+          "variantMeanStrain": 4.7011
+        },
+        "anisotropy": {
+          "areaCm2": 20.3955,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2434,
+          "variantMeanStrain": 0.3387
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 20.3955,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2434,
+          "variantMeanStrain": 0.3387
+        },
+        "nonSourceCompression": {
+          "areaCm2": 36.6579,
+          "gait": "gallopRight",
+          "phase": 0.225,
+          "sourceMeanStrain": 0.2765,
+          "variantMeanStrain": 0.1879
+        },
+        "nonSourceStretch": {
+          "areaCm2": 59.2762,
+          "gait": "gallopLeft",
+          "phase": 0.225,
+          "sourceMeanStrain": 4.7282,
+          "variantMeanStrain": 4.7011
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 8.4056,
+          "gait": "gallopRight",
+          "phase": 0.6,
+          "sourceMeanStrain": 0.21,
+          "variantMeanStrain": 0.1363
+        },
+        "stretch": {
+          "areaCm2": 0
+        },
+        "anisotropy": {
+          "areaCm2": 25.9578,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4209,
+          "variantMeanStrain": 0.376
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 9.4286,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.3839,
+          "variantMeanStrain": 0.3324
+        },
+        "nonSourceCompression": {
+          "areaCm2": 8.4056,
+          "gait": "gallopRight",
+          "phase": 0.6,
+          "sourceMeanStrain": 0.21,
+          "variantMeanStrain": 0.1363
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "baseline:shire": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 22.2979,
+          "gait": "canterLeft",
+          "phase": 0.125,
+          "sourceMeanStrain": 0.5726,
+          "variantMeanStrain": 0.2251
+        },
+        "compression": {
+          "areaCm2": 35.0154,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.245,
+          "variantMeanStrain": 0.1978
+        },
+        "stretch": {
+          "areaCm2": 65.9921,
+          "gait": "gallopLeft",
+          "phase": 0.225,
+          "sourceMeanStrain": 4.7322,
+          "variantMeanStrain": 4.6987
+        },
+        "anisotropy": {
+          "areaCm2": 22.5891,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2433,
+          "variantMeanStrain": 0.3457
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 22.5891,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2433,
+          "variantMeanStrain": 0.3457
+        },
+        "nonSourceCompression": {
+          "areaCm2": 35.0154,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.245,
+          "variantMeanStrain": 0.1978
+        },
+        "nonSourceStretch": {
+          "areaCm2": 65.9921,
+          "gait": "gallopLeft",
+          "phase": 0.225,
+          "sourceMeanStrain": 4.7322,
+          "variantMeanStrain": 4.6987
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 9.5241,
+          "gait": "gallopLeft",
+          "phase": 0.725,
+          "sourceMeanStrain": 0.3585,
+          "variantMeanStrain": 0.2387
+        },
+        "stretch": {
+          "areaCm2": 0
+        },
+        "anisotropy": {
+          "areaCm2": 28.4076,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4205,
+          "variantMeanStrain": 0.3719
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 10.3334,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.384,
+          "variantMeanStrain": 0.3297
+        },
+        "nonSourceCompression": {
+          "areaCm2": 9.5241,
+          "gait": "gallopLeft",
+          "phase": 0.725,
+          "sourceMeanStrain": 0.3585,
+          "variantMeanStrain": 0.2387
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    },
+    "baseline:clyde": {
+      "fore": {
+        "extraCompression": {
+          "areaCm2": 15.324,
+          "gait": "gallopRight",
+          "phase": 0.075,
+          "sourceMeanStrain": 0.4133,
+          "variantMeanStrain": 0.1482
+        },
+        "compression": {
+          "areaCm2": 32.8536,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.2464,
+          "variantMeanStrain": 0.1992
+        },
+        "stretch": {
+          "areaCm2": 63.387,
+          "gait": "gallopRight",
+          "phase": 0.05,
+          "sourceMeanStrain": 4.8635,
+          "variantMeanStrain": 4.7519
+        },
+        "anisotropy": {
+          "areaCm2": 21.098,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2433,
+          "variantMeanStrain": 0.3244
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 21.098,
+          "gait": "gallopRight",
+          "phase": 0,
+          "sourceMeanStrain": 0.2433,
+          "variantMeanStrain": 0.3244
+        },
+        "nonSourceCompression": {
+          "areaCm2": 32.8536,
+          "gait": "gallopRight",
+          "phase": 0.2,
+          "sourceMeanStrain": 0.2464,
+          "variantMeanStrain": 0.1992
+        },
+        "nonSourceStretch": {
+          "areaCm2": 63.387,
+          "gait": "gallopRight",
+          "phase": 0.05,
+          "sourceMeanStrain": 4.8635,
+          "variantMeanStrain": 4.7519
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      },
+      "hind": {
+        "extraCompression": {
+          "areaCm2": 0
+        },
+        "compression": {
+          "areaCm2": 8.9112,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.1789
+        },
+        "stretch": {
+          "areaCm2": 0
+        },
+        "anisotropy": {
+          "areaCm2": 27.4834,
+          "gait": "gallopRight",
+          "phase": 0.65,
+          "sourceMeanStrain": 0.4206,
+          "variantMeanStrain": 0.3818
+        },
+        "areaHiddenAnisotropy": {
+          "areaCm2": 9.9918,
+          "gait": "gallopRight",
+          "phase": 0.625,
+          "sourceMeanStrain": 0.3839,
+          "variantMeanStrain": 0.3444
+        },
+        "nonSourceCompression": {
+          "areaCm2": 8.9112,
+          "gait": "gallopRight",
+          "phase": 0.775,
+          "sourceMeanStrain": 0.1547,
+          "variantMeanStrain": 0.1789
+        },
+        "nonSourceStretch": {
+          "areaCm2": 0
+        },
+        "inheritedSourceCompression": {
+          "areaCm2": 0
+        },
+        "inheritedSourceStretch": {
+          "areaCm2": 0
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Original source geometry retains connected compression/stretch and directional distortion; inherited patch measurements above are not erased by a passing result.",
+    "Only whole connected patches with exact original raw/rest/posed coordinates and unchanged source skin/binds qualify for the absolute-growth exception. Mixed patches remain fully gated.",
+    "Checks sample 41 phases per gait and reject source triangles smaller than 0.1 square centimetre. They do not prove every frame or every tiny triangle ideal.",
+    "Bone-axis cross-sections are independent diagnostics in the full temporary report; visual review, not an invented scalar threshold, judges anatomical taper and silhouette.",
+    "These gates cover the three draft foundations and their stated aliases. They do not certify other roster horses or change original clip/skin behavior."
+  ]
+}

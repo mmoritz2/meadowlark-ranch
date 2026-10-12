@@ -3,7 +3,7 @@
 No source skeleton, bind, index, UV or animation data is changed. Reviewed draft
 breastcollars append sparse skin/geometry overrides; body skin stays original. Regional
 body/groom appearance changes are encoded as quantized geometry deltas. Drafts
-also widen limb crosssections without moving their centers or ground contacts;
+use bone-aligned surface contours while preserving joint pivots and ground contacts;
 other breeds retain exact source positions and normals below 0.65 m.
 """
 from pathlib import Path
@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / 'tools/asset-gen'))
 import rig_hero_horse as glb
 from groom import shape_fjord_groom
 from equestrian_groom import shape_equestrian_groom
+from leg_contour import shape_bone_frame_legs
 from collar_attachment import pack_collar_attachment
 
 SOURCE = ROOT / 'review/native-trot-reference-kit/white/model.glb'
@@ -593,7 +594,7 @@ def main():
                   neutralCoatFile='./models/native-roster/neutralcoat.png',neutralCoatSha256=sha(neutral),
                   license='CC BY-NC 4.0',artist='WildMesh 3D',
                   sourceUrl='https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4',
-                  method='Original native677 skeleton and approved clips unchanged; breed body/groom geometry and original-UV coats. Drafts also widen limb crosssections around unchanged centers; limb lengths and floor contacts remain fixed.',breeds={})
+                  method='Original native677 skeleton and approved clips unchanged; breed body/groom geometry and original-UV coats. Drafts use authored bone-aligned leg contours with source shoulder restoration; original joints and floor contacts remain fixed.',breeds={})
     if args.only:
         manifest={**previous,'method':manifest['method'],'breeds':copy.deepcopy(previous['breeds'])}
     reports=[]
@@ -614,6 +615,9 @@ def main():
             det=np.linalg.det(jac);assert np.isfinite(det).all() and det.min()>.3,(key,m['index'],'cage inversion')
             worldnormal=np.einsum('nij,nj->ni',m['linear'],m['normal'])
             targetnormal=np.linalg.solve(jac.transpose(0,2,1),worldnormal[...,None])[...,0]
+            if m['index']==0 and key in DRAFT_SHAPES:
+                q,targetnormal,leg_report=shape_bone_frame_legs(p,q,targetnormal,m['joints'],m['weights'],m['indices'],[doc['nodes'][i]['name'] for i in skin['joints']],{doc['nodes'][i]['name']:worlds[i][:3,3]+TRANSLATION for i in skin['joints']},key)
+                report['boneFrameLegContour']=leg_report
             if m['index']==2 and key=='fjord':
                 q,targetnormal,groom_report=shape_fjord_groom(p,q,hairgroups,targetnormal)
             elif m['index']==2 and key in DRAFT_SHAPES:
@@ -730,11 +734,11 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':6,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
-                'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
+            row['draftShape']={'version':7,'boneFrameLegContour':leg_report,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+                'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':False,'releasedHoofSurfaceBelow018mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,
-                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour, upper-limb support and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.',
+                'sharedBodyAndTackCageDescription':'The upper-body/head cage is shared. The v7 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.',
                 'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR),
                 'frontContour':{**copy.deepcopy(DRAFT_FRONT_CONTOUR),'collarComponentIds':collar_components,
                     'collarVertexCount':int(collar_mask.sum()),'boundary':collar_boundary}}
@@ -743,7 +747,7 @@ def main():
                 'componentIds':stirrup_components,'shorteningSourceYRangeM':[1.20,1.60],
                 'treadVertexRanges':{'left':[2792,2845],'right':[2716,2769]},
                 'reason':'Shorter Western fenders keep the existing human rider feet within reach on the broad draft body.'}
-            row['limitations']='Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.'
+            row['limitations']='Original joint centers, body weights and gait clips retained. The authored leg surface can reduce original bulges; native source folds remain in some poses. Additive groom copies original hair weights. Sparse collar refit preserves prior shoulder influences but does not eliminate every local intersection.'
             regions={
                 'barrel':(body[:,1]>.95)&(body[:,1]<1.60)&(body[:,2]>-.55)&(body[:,2]<.25),
                 'chest':(body[:,1]>.90)&(body[:,1]<1.55)&(body[:,2]>.25)&(body[:,2]<.65),
@@ -794,7 +798,8 @@ def main():
             report['standingBodyFloorM']=float(bodydecoded[:,1].min())
             report['maxLowerLimbYChangeM']=float(abs(bodydecoded[body[:,1]<=.65,1]-body[body[:,1]<=.65,1]).max())
             assert max(foot['centerShiftM'] for foot in report['draftFeet'])<2e-5
-            assert report['maxLowerLimbYChangeM']<2e-5
+            report['maxHoofYChangeM']=float(abs(bodydecoded[body[:,1]<=.18,1]-body[body[:,1]<=.18,1]).max())
+            assert report['maxHoofYChangeM']<2e-5
         manifest['breeds'][key]=row;report.update(sha256=row['sha256'],byteLength=len(packed),actorScale=actor,withersM=height,
                                                  sourceWithersM=withers,unchangedRigJoints=677,bodyBelow065mExactlyPreserved=key not in DRAFT_SHAPES)
         reports.append(report);print(json.dumps({'id':key,'bytes':len(packed),'actorScale':round(actor,4),'sha256':row['sha256']}),flush=True)

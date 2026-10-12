@@ -2,7 +2,7 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-5';
+import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-6';
 import {applyNativeFjordGroom,prepareNativeFjordCrest} from './native-fjord-groom.js?v=fjord-brushed-crest-4';
 import {applyNativeEquestrianGroom,prepareNativeEquestrianGroom} from './native-equestrian-groom.js?v=equestrian-locks-2';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';

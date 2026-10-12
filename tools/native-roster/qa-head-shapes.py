@@ -71,12 +71,18 @@ def main():
             actual=validate.transform(source['matrix'],raw,build.TRANSLATION)
             limb=limbs if key in build.DRAFT_SHAPES and index==0 else None
             mask=tack_mask if key in build.DRAFT_SHAPES and index==3 else None
-            lift=build.DRAFT_STIRRUP_LIFT_M.get(key,0)/row['actorScale']
+            lift=row.get('draftShape',{}).get('stirrupTailoring',{}).get('sourceLiftM',0)
             old=build.cage(p,s,key,limb,mask,lift,collar_mask=collar_mask if mask is not None else None,refine_head=False)
             expected=build.head_refinement(p,key)
             error=np.linalg.norm(actual-old-expected,axis=1)
-            assert np.isfinite(actual).all() and error.max()<TOLERANCE,(key,index,'decoded shared cage',error.max())
-            outside=np.linalg.norm(expected,axis=1)==0
+            # Draft v7 intentionally replaces the leg/shoulder body surface.
+            # Keep this facial gate exact over the head and protected hooves;
+            # the separate motion/contour gate owns the edited body region.
+            scope=np.ones(len(p),dtype=bool)
+            if key in build.DRAFT_SHAPES and index==0:scope=(p[:,2]>=.90)|(p[:,1]>=1.85)|(p[:,1]<=.18)
+            assert np.isfinite(actual).all() and error[scope].max()<TOLERANCE,(key,index,'decoded shared cage in protected scope',error[scope].max())
+            assert np.all(scope[np.linalg.norm(expected,axis=1)>0]), (key,'facial field excluded from gate')
+            outside=(np.linalg.norm(expected,axis=1)==0)&scope
             unchanged=np.linalg.norm(actual[outside]-old[outside],axis=1).max(initial=0)
             assert unchanged<TOLERANCE,(key,index,'nonfacial geometry changed',unchanged)
             if baseline_manifest:
@@ -85,13 +91,15 @@ def main():
                 oldworld=validate.transform(source['matrix'],oldraw,build.TRANSLATION)
                 assert np.linalg.norm(actual[outside]-oldworld[outside],axis=1).max(initial=0)<TOLERANCE*2
             outside_max=max(outside_max,float(unchanged));field_max=max(field_max,float(np.linalg.norm(expected,axis=1).max()*row['actorScale']))
-            mesh_rows.append({'meshIndex':index,'maxSharedFieldErrorM':float(error.max()),'maxOutsideHeadErrorM':float(unchanged)})
+            mesh_rows.append({'meshIndex':index,'maxSharedFieldErrorM':float(error[scope].max()),'protectedScopeVertices':int(scope.sum()),'maxOutsideHeadErrorM':float(unchanged)})
             if index==0:
                 body_out=raw
                 floor=actual[:,1].min();assert abs(floor)<1e-8
                 lower=p[:,1]<=.65
                 if key not in build.DRAFT_SHAPES:assert np.array_equal(raw[lower],source['position'][lower])
-                else:assert abs(actual[lower,1]-p[lower,1]).max()<TOLERANCE
+                else:
+                    foot=p[:,1]<=.18
+                    assert abs(actual[foot,1]-p[foot,1]).max()<TOLERANCE
             if index==3:
                 for a,b in [(2792,2845),(2716,2769)]:
                     assert np.array_equal(expected[a:b+1],np.zeros_like(expected[a:b+1])),(key,'tread drift')
