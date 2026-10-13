@@ -1,3 +1,4 @@
+import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';
 import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';
 import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';
 import {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';
@@ -8,7 +9,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');
+const root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');
 const contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));
 const git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});
 const names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\n');

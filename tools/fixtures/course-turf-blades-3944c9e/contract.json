@@ -1,0 +1,129 @@
+{
+  "state": "Exact5E composition draft; original826-test DC evidence retained; focused new guard audit pending",
+  "baseCommit": "5e173bf0e0077058c96e9b6c147b25cdcdcd0ffa",
+  "files": {
+    "assets/features/course-clear.js": {
+      "candidateSHA256": "e4ffadb134ee1aa647e440ff1ef58e897714716f0146a466fcefbffe1360a1b5",
+      "rawSHA256": "a46cbfa2e904df7282afd8e3e58dafa6ae771c940cff2c13328d612eb181db1f",
+      "priorProjectionSHA256": "a46cbfa2e904df7282afd8e3e58dafa6ae771c940cff2c13328d612eb181db1f"
+    },
+    "assets/features/index.js": {
+      "candidateSHA256": "b94e0886c7206af03649ba9e2701991fc2609dcb98d4938430cd0d186983f2c2",
+      "rawSHA256": "85b9e78f297f851d6adfd06283124e0ddd5d48c22958e8a8d483ec0f6938b567",
+      "priorProjectionSHA256": "0d3ddc41324096d90ee2f81fcb4673b6fec6fddcca75745b47f20de8dacc78bb"
+    },
+    "assets/grass-families.mjs": {
+      "candidateSHA256": "4dfebe46d09537f51b3718e637d8efaf13f304dc2b0ea542b07b426d70f3f573",
+      "rawSHA256": "c66969987ab9fb1efff5326af74d913a1c3adb3d6b02f2f75440423db1499be8",
+      "priorProjectionSHA256": "c5c5cfa2e78e70af806a8159521fa0316fc6d9fb7dc4034d6c04117d32725839"
+    },
+    "assets/grazed-sward.mjs": {
+      "candidateSHA256": "bdecab433537c54ad48f77bf6b34b99ba7ffbd85ec432243aa11ae9e44993c1c",
+      "rawSHA256": "d039f7b7386b48a58057b399eedfe8c07006f29eeaa5b3e97c12c37aa751f055",
+      "priorProjectionSHA256": "8e675b259c7819c1c8da5525a9a5ebb62e5d036cc738be5bf4953326c66ea958"
+    },
+    "assets/lush-meadow-geometry.mjs": {
+      "candidateSHA256": "adcd253788150cf6fcd9d780696a32156035827543098a60cdb3a449804ac6c2",
+      "rawSHA256": "938c0678ba75d98836f046e8666fdb3d50355ba7019e0dc7302e9ae53a3a5257",
+      "priorProjectionSHA256": "c9f876d0c1a3759bf8b4d6f424e97437718db92a51b72c677b9c8f9afe5c517c"
+    },
+    "assets/meadow-cover.js": {
+      "candidateSHA256": "58d74d61c5a991dcdc65c448cadd3c4901104bc13f3e0c700d27fb96ad18ccf3",
+      "rawSHA256": "a0a07cde4a10ad360abfc81858eecf7c8a3058f7fe9f9ab255b29033e59354cd",
+      "priorProjectionSHA256": "39e89cb5439ac3f597c26d6494fdfc30e2d518baa11d16a6cc9847a71dad90c2"
+    },
+    "assets/mixed-sward.mjs": {
+      "candidateSHA256": "b45cb2198a9b2aef1bde19dd0acb7211b02134ca8247293bb13a75ab55960570",
+      "rawSHA256": "0aa975c46ea169f750e8a98a601212d83666a7b691fcfe4407a93fcc5eb365b5",
+      "priorProjectionSHA256": "dfd2a4779f8612e23ce7c09454636616968f73cf54f43cf0a40ecb8e12690fe3"
+    },
+    "ranch3d.html": {
+      "candidateSHA256": "b76c6787cb6af63d747b9f5692f55e62a574d04f1d6e0367a8f349987f870c76",
+      "rawSHA256": "020b6ee5aa528b437e054305769aad0b2b4397b4572b878a590f2e84aea96182",
+      "priorProjectionSHA256": "82885eea7f96108d3949e75efb3569423d3eadbcc2b2ad88698284b2263d26ad"
+    },
+    "assets/course-turf.mjs": {
+      "candidateSHA256": "2a81ec6fa237eaa58ad448195e8f2851f1e79d8d314cf72c02d78de94715658e",
+      "new": true
+    }
+  },
+  "dependencySHA256": {
+    "tools/grass-arch-source-guard.cjs": "d0554531c3cd91bfa822230b4c7fc89378181cbfd80472596ab5a8a89f7c4228",
+    "tools/grass-ribbon-source-guard.cjs": "500368512ee4097a6686cbed76520705c8ba3f946544f7cb11557fe71158ecea",
+    "tools/meadow-relief-wall-source-guard.cjs": "7b41b6cd85aa7d2a52145f9489e1ae6653eedd2e6177237274c0f91e09f06e10",
+    "tools/reviewed-riding-source-guard.cjs": "3108eeaba13177937ba1dc44043bb6d51b4193998f3954f680d8783d7da1b3c7",
+    "tools/lash-cache-source-guard.cjs": "9e97fe515b8e523be963cbc2b890fdf285adb47283487b10fdbbb9882b9f90e2",
+    "tools/progression-grass-source-guard.cjs": "df22ca782ba3842da696f6e52eb03b9e3b1d228d6f2a3d632480d43cf0b02b9b",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/contract.json": "3cff1eb7dc27bc01dda44374df346821396b31238958e527cb42df333e321b51",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/source-changes.json": "e669420b69e14252a6439dcc851cd3a6f9b4930a6e9399a4bd7e6e22be60f463",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/test-adapter-changes.json": "f0ee89033b05672748c24c2acb5aa6d0fa36b648145e8bf33fc84347cb16240d",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/prior-projection-functions.json": "e7adfb03c6167c869c041f0ac3e58a3ee73ba5a871374537207e5a0a47fcb87b",
+    "tools/fixtures/grass-ribbon-d9b168e/contract.json": "127fc737b1c66aea9adfbc630703a1c6750519d9d248dbfc24f4771f92902f8e",
+    "tools/fixtures/grass-ribbon-d9b168e/source-changes.json": "4407e3d4bc8027a5998e2a52282b59f71262e9ecda6001a7f4ba895e4d68b405",
+    "tools/fixtures/grass-ribbon-d9b168e/test-adapter-changes.json": "a93761c1efb10043174e1817d27ea579427b87e399338c1619532236ec22b54a",
+    "tools/activity-landscape-source-guard.cjs": "2d136f4a83448a5737abafbb6565e28f491b6df4f94d731bf29d3460b3949cdb",
+    "tools/activity-runtime-source-guard.cjs": "f3afb4ff7eda24f720842b530341baaef7ad013807850b6ec5abe470b28fe069",
+    "tools/fixtures/activity-landscape-6a82f3f/contract.json": "911a10260ea29868b7a627e19f28144b2a477cdbd724d19a432aa6c8e8e4cabe",
+    "tools/fixtures/activity-runtime-df065bd/contract.json": "cb5d05e979ef6866d6725292a46358939e344d872e23be9b620c7a9b75912a4e",
+    "tools/fixtures/lash-cache-df065bd/contract.json": "58698c4725ad04d8a12dea7381daf30183ab576a2ca7c2b1a59bbe7f2179ab51",
+    "tools/fixtures/lash-cache-df065bd/observer-changes.json": "ecd0fd1269c4d8b09d5be04c2dcc242381b0dc77ac8d9dfca0754b8ca0ff658b",
+    "tools/horse-training-source-guard.cjs": "c1821010b13fc8bff333f37b409cd043150cd5995e23a17f0de43c3398e51a41",
+    "tools/programme-regroup-source-guard.cjs": "1f0a94b95cc09df9cae6573115d73e7ea704aca85fcdcb23b883326bd98b0fec",
+    "tools/fixtures/horse-training-dc405f3/contract.json": "cae6f4a87d97ad87174a47a874e08365f510c32cf58673d0cde87d785fffd822",
+    "tools/fixtures/programme-regroup-05421c6/contract.json": "671c6d08f0ce12c2c0aa300807b3d1e41ef6b49dccba566bc73bd732e35d9996"
+  },
+  "testAdapterPreimages": {
+    "tools/grass-ribbon-source-guard.cjs": "500368512ee4097a6686cbed76520705c8ba3f946544f7cb11557fe71158ecea",
+    "tools/meadow-relief-wall-source-guard.cjs": "7b41b6cd85aa7d2a52145f9489e1ae6653eedd2e6177237274c0f91e09f06e10",
+    "tools/test-lupin-independent.mjs": "9effbff04533ae4db1b20e2e3d727dcecb7e533f92487349c73d42d2c7138f99",
+    "tools/test-meadow-relief-wall-source-guard.mjs": "fb3cd92b0385b2e24fa3217e5a09050c70b60eb64622568e79ed2ebc2f85dc8e",
+    "tools/test-activity-landscape-composition.mjs": "6bf041e3bbcd8b46f24ba9f4ac39dbce4baba989208c3c5b67cf0e148b6f1319",
+    "tools/test-activity-runtime-source-guard.mjs": "c6e38eb94376cc6ca094aa73143f02f06689c4187a7702608df00513a99e25a0",
+    "tools/test-ribbon-grass-model.mjs": "984fad23549a9fb5ffd1c08833e46c734d3cf8504641c7b1935fd80d0dbb79b0",
+    "tools/test-pastoral-preservation-independent.mjs": "7488e8545170a1dc2db93a953334fca75a8517aa917afa0a7bef22d8b2f15f8f",
+    "tools/test-progression-grass-composition.mjs": "7de03b54e97e6b8a594b582a0e8a4bd0328d6bffef2874f816e75a82cc1ba67c",
+    "tools/test-progression-loop-cache-guard.mjs": "32ebca10f8969f75a63a668903d15740ee5f38432f834a16e6259f7fe41e8d79",
+    "tools/test-horse-training-source-guard.mjs": "5e74aab9e2405219177f372fd8ebce06f7eae702392ec2eeaee2c82b57f502d3",
+    "tools/test-programme-regroup-source-guard.mjs": "dfc300ea9257a7d067bb90e4fa1ea92d75bcbe48f55a6e2e597a52a542ea1feb"
+  },
+  "historicalTestSHA256": {
+    "tools/grass-ribbon-source-guard.cjs": [
+      "2b232663ae9f62b716f70019cae060a7607f1e4ea049e2d50e0ae24f43ae96cb",
+      "ccc7a399cc8a5f811d4effcb08c960f8d14aeb51c3cb4416f354a85ce9a29095"
+    ],
+    "tools/meadow-relief-wall-source-guard.cjs": [],
+    "tools/test-lupin-independent.mjs": [
+      "28c62714ac6d674ad3332d664af406c525dc9159412e77a6f0bb26e60fb79d27",
+      "d61b96d3c9a64875b100ffa0ac82ec92b64f8a714bcbe5485c950584fd337991"
+    ],
+    "tools/test-meadow-relief-wall-source-guard.mjs": [],
+    "tools/test-activity-landscape-composition.mjs": [
+      "497e32f6c476ee6ee774bef84d0228720a205b0e4adfdbaafa67d26bc2d1245f"
+    ],
+    "tools/test-activity-runtime-source-guard.mjs": [],
+    "tools/test-ribbon-grass-model.mjs": [],
+    "tools/test-pastoral-preservation-independent.mjs": [
+      "7488e8545170a1dc2db93a953334fca75a8517aa917afa0a7bef22d8b2f15f8f"
+    ],
+    "tools/test-progression-grass-composition.mjs": [
+      "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e",
+      "d3e217211ce9b8f3dc4915c94ab69f5d2924bc391a859eeafc0446c1c85e4263",
+      "ef9fd427577131f2a835505e70643943cbbec7970922de9e9908f52fdd303860"
+    ],
+    "tools/test-progression-loop-cache-guard.mjs": [
+      "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548",
+      "1492f0eaee5ef446120de264d416ec1655a2bf5244e64911bff94746570dd115",
+      "2ec1d72dc660286502cb1f612ce2aa929775b305a67025f174df4a0d70445c0f"
+    ],
+    "tools/test-horse-training-source-guard.mjs": [],
+    "tools/test-programme-regroup-source-guard.mjs": []
+  },
+  "fixtureDiffBaseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "approvedAddedFixtureSHA256": {
+    "tools/fixtures/course-turf-blades-3944c9e/source-changes.json": "71870c47af215bf79226adddb641f52182129f62c91daac7eb9e087098f42ae1",
+    "tools/fixtures/course-turf-blades-3944c9e/test-adapter-changes.json": "a2aa5816276df177c758a851d73f9db384bd8d1ca855c76fd7da012de5b55588",
+    "tools/fixtures/course-turf-density3.mjs": "8c924367ce0be49b16f1cba6bbe11d48a9506157de3afbd40f14b618e7cf1903",
+    "tools/fixtures/course-turf-v1/course-turf.mjs": "0b2cb504cfce3c70f4ac881f11e024f37f3e515301e8571e60755d9e6afca045",
+    "tools/fixtures/grass-ribbon-3944-model.json": "d2d96833e3d279c1bc5f042edb912bfea5c7d73fbe3eab38dd90651df9181e58"
+  }
+}

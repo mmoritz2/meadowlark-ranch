@@ -1,3 +1,4 @@
+import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';
 import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';
 import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';
 import test from 'node:test';
@@ -11,7 +12,7 @@ import {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normal
 import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
+const root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);
 const fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});

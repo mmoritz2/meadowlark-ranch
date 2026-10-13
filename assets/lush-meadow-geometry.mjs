@@ -70,29 +70,46 @@ function createRetainedMeadowGeometry(T,{leafCount=14,segments=3,profile='meadow
 }
 
 
-// A continuous original ribbon spends the same five triangles on three
-// successive bend stages rather than a broad lower fan and a hard hanging tip.
-// Seven real vertices are shared across adjoining surfaces; computed normals
-// follow their physical curvature. Authored roots and individual height caps are retained.
+// Selected blades spend seven triangles on four progressively rising stations.
+// Physical transverse roll and narrowing break the old broad shoulder fan.
+// Exact authored upright root/tip pairs use one triangle, balancing each tier.
+// Every drawn point belongs to a connected physical surface; no extent proxy.
 export function appendArchedMeadowLeaf(P,C,U,I,leaf){
- const {root,heading,height,reach,width,upright=false,sourceLeaf=0,dry=0}=leaf;
+ const {root,heading,height,reach,width,upright=false,sourceLeaf=0,dry=0,progressive=false,preserveNearMinX=false}=leaf;
  const dx=Math.cos(heading),dz=Math.sin(heading),rise=upright?.77:.82+(sourceLeaf%3)*.025,tipRise=upright?.97:.56+(sourceLeaf%4)*.035;
- const direction=sourceLeaf%2?-1:1,base=P.length/3,indexStart=I.length;
- const samples=[0,.29,.68,1],peak=height*rise;
- const heights=upright?[0,height*.42,peak,height*tipRise]:[0,peak*.78,peak,peak*(.950+(sourceLeaf%3)*.008)];
- const halfWidths=[width*.40,width*(upright?.50:.58),width*(upright?.38:.46),0];
- for(let ring=0;ring<samples.length;ring++){
-  const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*(ring===1?.021:ring===2?-.011:0);
-  const headingAt=heading+direction*(ring===1?-.10:ring===2?.15:0),sx=-Math.sin(headingAt),sz=Math.cos(headingAt);
-  const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep;
-  for(const side of ring===3?[0]:[-1,1]){
-   P.push(x+sx*halfWidths[ring]*side,heights[ring],z+sz*halfWidths[ring]*side);U.push((side+1)/2,t);
-   const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));
-  }
+ const direction=sourceLeaf%2?-1:1,base=P.length/3,indexStart=I.length,peak=height*rise,tipY=upright?height*tipRise:peak*(.950+(sourceLeaf%3)*.008);
+ const emit=(x,y,z,side,t)=>{P.push(x,y,z);U.push((side+1)/2,t);const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));};
+ const rootHalf=width*.40,sx=-Math.sin(heading),sz=Math.cos(heading);
+ emit(root[0]-sx*rootHalf,0,root[1]-sz*rootHalf,-1,0);emit(root[0]+sx*rootHalf,0,root[1]+sz*rootHalf,1,0);
+ if(upright){
+  emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);I.push(base,base+1,base+2);
+  return{vertexStart:base,vertexCount:3,indexStart,indexCount:3,segments:1,bent:false,creased:false,ribbon:false,sourceLeaf,upright:true,slenderStem:true};
  }
- for(const k of [0,1,2,1,3,2,2,3,4,3,5,4,4,5,6])I.push(base+k);
- return{vertexStart:base,vertexCount:7,indexStart,indexCount:15,segments:3,bent:!upright,creased:false,ribbon:true,sourceLeaf,upright};
+ if(progressive){
+  const samples=[.29,.55,.72],heights=[peak*.45,peak*.84,peak],widths=[width*.30,width*.225,width*.18];
+  for(let ring=0;ring<3;ring++){
+   const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*[.021,.005,-.011][ring],a=heading+direction*[-.10,.02,.15][ring],sx=-Math.sin(a),sz=Math.cos(a);
+   const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep,roll=widths[ring]*[.10,-.09,.08][ring];
+   for(const side of[-1,1]){
+    const xx=preserveNearMinX&&ring===0&&side===1?x+sx*(width*.58):x+sx*widths[ring]*side;
+    emit(xx,heights[ring]+(ring<2?direction*side*roll:-Math.abs(roll)*(1-direction*side)),z+sz*widths[ring]*side,side,t);
+   }
+  }
+  emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);
+  for(const k of[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6,5,7,6,6,7,8])I.push(base+k);
+  return{vertexStart:base,vertexCount:9,indexStart,indexCount:21,segments:4,bent:true,creased:false,ribbon:true,sourceLeaf,upright:false,progressive:true,transverseRoll:true};
+ }
+ const samples=[.29,.68],heights=[peak*.765,peak],widths=[width*.26,width*.205];
+ for(let ring=0;ring<2;ring++){
+  const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*(ring===0?.021:-.011),a=heading+direction*(ring===0?-.10:.15),sx=-Math.sin(a),sz=Math.cos(a);
+  const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep,roll=widths[ring]*(.035+(sourceLeaf%3)*.005);
+  for(const side of[-1,1])emit(x+sx*widths[ring]*side,heights[ring]+(ring===0?direction*side*roll:-roll*(1-direction*side)),z+sz*widths[ring]*side,side,t);
+ }
+ emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);
+ for(const k of[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6])I.push(base+k);
+ return{vertexStart:base,vertexCount:7,indexStart,indexCount:15,segments:3,bent:true,creased:false,ribbon:true,sourceLeaf,upright:false};
 }
+
 
 export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='meadow',seeded=false}={}){
  if(!Number.isInteger(leafCount)||leafCount<4||leafCount>14||![2,3].includes(segments)||!['meadow','low','seeded','near','middle'].includes(profile))throw Error('Invalid lush meadow geometry');
@@ -107,7 +124,7 @@ export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='mea
   const root=ROOTS[Math.floor(sourceLeaf/2)%ROOTS.length],upright=[1,4,14].includes(sourceLeaf),height=HEIGHTS[sourceLeaf]*heightScale;
   const reach=(upright?.082+(sourceLeaf%5)*.009:.23+(sourceLeaf%5)*.018)*(low?.72:1);
   const width=(near?.033:low?.034:.030)+(sourceLeaf%3)*.003;
-  leafRanges.push(appendArchedMeadowLeaf(P,C,U,I,{root,heading:HEADINGS[sourceLeaf]+(low?.13:0),height,reach,width,upright,sourceLeaf,dry:sourceLeaf%17===0?.15:0}));
+  leafRanges.push(appendArchedMeadowLeaf(P,C,U,I,{root,heading:HEADINGS[sourceLeaf]+(low?.13:0),height,reach,width,upright,sourceLeaf,dry:sourceLeaf%17===0?.15:0,progressive:[0,2,5,6,8,12,16].includes(sourceLeaf),preserveNearMinX:near&&sourceLeaf===8}));
  }
  if(seeded)for(const sourceLeaf of [14,17]){
   const root=ROOTS[Math.floor(sourceLeaf/2)%ROOTS.length],a=HEADINGS[sourceLeaf],h=HEIGHTS[sourceLeaf]*heightScale*.82,reach=.082+(sourceLeaf%5)*.009,width=.0135+(sourceLeaf%4)*.0007,start=P.length/3,indexStart=I.length;
@@ -134,6 +151,6 @@ export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='mea
  }
 
  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(P,3));geometry.setAttribute('color',new T.Float32BufferAttribute(C,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(U,2));geometry.setIndex(I);geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
- geometry.userData.lushMeadow={profile:'lush-meadow-ribbon-3',form:profile,leaves:leafRanges.length,requestedLeaves:leafCount,triangles:I.length/3,seedTriangles:seeded?28:0,leafRanges,shape:'Tapered three-stage curved ribbons with unequal upright stems'};
+ geometry.userData.lushMeadow={profile:'lush-meadow-progressive-4',form:profile,leaves:leafRanges.length,requestedLeaves:leafCount,triangles:I.length/3,seedTriangles:seeded?28:0,leafRanges,shape:'Slender stems and original progressive four-stage twisted ribbons'};
  return geometry;
 }

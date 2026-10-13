@@ -1,6 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');
 const {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');
+const {undoCourseTurfBladesSource}=require('./course-turf-blades-source-guard.cjs');
 const directory=path.join(__dirname,'fixtures/grass-ribbon-d9b168e');
 const contract=JSON.parse(fs.readFileSync(path.join(directory,'contract.json')));
 const changes=JSON.parse(fs.readFileSync(path.join(directory,'source-changes.json')));
@@ -35,6 +36,7 @@ function reverseExactGroup(source,file,group,label){
 // Reviewed itself imports Grass, so eager loading here would create a cycle.
 const reviewedRuntime=(source,file)=>require('./reviewed-riding-source-guard.cjs').normalizeReviewedRuntimeSource(source,file);
 function normalizeGrassRibbonOwnSource(source,file){
+ source=undoCourseTurfBladesSource(source,file);
  const row=contract.files[file];if(!row)return source;
  source=reverseExactGroup(source,file,changes,'ribbon/verge source');
  const projected=normalizeAuthoredCameraSource(normalizePublishedCacheSource(normalizeFieldstoneWallCacheSource(reviewedRuntime(source,file),file),file),file);

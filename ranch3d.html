@@ -672,10 +672,11 @@ import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-3';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-5';
+import {installCourseTurf} from './assets/course-turf.mjs?v=mown-course-turf-4';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-ribbon-3';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-ribbon-5';
 import {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';
 import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';
 import {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';
@@ -721,7 +722,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lash
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';
+import {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -3299,7 +3300,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const lupinCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_LU*16),colors:new Float32Array(NG_LU*3)}));
  for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
- const okGrass=(x,z,shortVerge=false)=>{
+ const okGrass=(x,z,shortVerge=false,mownCourse=false)=>{
   if(G.photoscans?.excludesGroundCover?.(x,z))return false;
   if(alpineSnowAt(x,z)>.35)return false;
   const winterCover=coldPastureCover(x,z);
@@ -3318,7 +3319,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(G.quartersPkg?.pondContains(x,z))return false;
   if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
-  if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
+  if(!mownCourse&&window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
   return true;};
  /* Which country you are standing in, and therefore what grows here. */
  const biomeAt=(x,z)=>{
@@ -3470,6 +3471,16 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  };
  let swardAccentColliders=null;
  const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,
+  canCourseTurf:(x,z,r)=>{
+   if(!Number.isFinite(x+z+r)||!(r>0&&r<=.5))return false;
+   if(pathDist(x,z)<PATH_W*.92+r||(G.worldPaths?.trackDist(x,z)??Infinity)<2.6+r)return false;
+   const d=r/Math.sqrt(2);
+   return [[0,0],[r,0],[-r,0],[0,r],[0,-r],[d,d],[-d,d],[d,-d],[-d,-d]].every(([dx,dz])=>{
+    const a=x+dx,b=z+dz;
+    return biomeAt(a,b)==='meadow'&&coldWoodlandWeights(a,b).weight<=.08&&coyoteCoverDryWeight(a,b)<.35&&okGrass(a,b,true,true);
+   });
+  },
+  courseTurfColor:(x,z,sample,color)=>meadowBladeColor(color,x,z,sample),
   canBasal:(x,z)=>biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35&&managedGrass(x,z)<.58,
   beginAccentQuery:(x,z,r)=>{swardAccentColliders=G.world.colliders.filter(c=>Math.abs(c.x-x)<=r+c.r+.77&&Math.abs(c.z-z)<=r+c.r+.77);},
   canAccent:(x,z,r)=>{
@@ -15265,6 +15276,7 @@ installUndergrowth(G,{flowerShrubs:naturalFlowerShrubs,staticShrubs:STATIC_MERGE
 G.world.mixedSward=installMixedSward(G);
 installChalkCoverRefresh(G);
 installPastoralCoverRefresh(G);
+G.world.courseTurf=installCourseTurf(G);
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

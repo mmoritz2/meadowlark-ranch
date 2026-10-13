@@ -1,4 +1,4 @@
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=grass-ribbon-3';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=grass-ribbon-5';
 // Three ordinary pasture forms share the existing seventy-triangle budget.
 export const GRASS_FAMILIES=Object.freeze([
  Object.freeze({id:0,name:'Long arching meadow',triangles:70,leaves:14,seedStems:0}),

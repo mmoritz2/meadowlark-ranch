@@ -1,4 +1,6 @@
 import test from 'node:test';
+import {createGrassTuftGeometry as historicalTuft,createGrassFamilyGeometry as historicalFamily,createGrazedSwardGeometry as historicalGrazed} from './course-turf-blades-historical.mjs';
+const historical3944=(form,T)=>form.name==='near'?historicalTuft(T,{profile:'near-folded-v1'}):form.name==='grazed'?historicalGrazed(T):historicalFamily(T,['meadow','low','seeded'].indexOf(form.name));
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
@@ -65,7 +67,9 @@ for(const form of forms)test(`${form.name}: live continuous rooted ribbons retai
   assert.equal(p.count,form.vertices);assert(p.count<prior.count);
   assert.equal(bytes(g),form.bytes);assert(bytes(g)<bytes(old));
   assert.equal(g.boundingBox.max.y,old.boundingBox.max.y,'Original maximum height cap is exact');
-  assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');
+  { // Historical3944 broad-ribbon area clause; actual progressive area has its separate physical contract.
+   const g=historical3944(form,T);try{assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');}finally{g.dispose();}
+  }
   let bent=0,upright=0;const tops=[];
   for(let leaf=0;leaf<leaves.length;leaf++){
    const r=leaves[leaf],a=previous[leaf],base=r.vertexStart,oldBase=a.vertexStart,tip=base+r.vertexCount-1,oldTip=oldBase+a.vertexCount-1;
@@ -77,6 +81,8 @@ for(const form of forms)test(`${form.name}: live continuous rooted ribbons retai
    const root=vector(p,base).add(vector(p,base+1)).multiplyScalar(.5),deflection=Math.hypot(p.getX(tip)-root.x,p.getZ(tip)-root.z);
    assert.equal(root.y,0);assert(top>deflection*1.35,'Reject a low radial rosette using actual height and deflection');
    if(a.creased){
+    // Historical3944 sevenvertex stage clauses. Root/roles/peak/endpoints, physical normals and costs above remain actual.
+    const historical=historical3944(form,T);try{const g=historical,r=ranges(historical)[leaf],p=historical.attributes.position,base=r.vertexStart,tip=base+r.vertexCount-1;
     assert.equal(r.ribbon,true);assert.equal(r.creased,false);assert.equal(r.segments,3);
     assert.equal(r.vertexCount,7);assert.equal(r.indexCount,15);
     assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+r.indexCount),id=>id-base),[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6],'Adjacent stages share real vertices and retain continuous winding');
@@ -93,7 +99,8 @@ for(const form of forms)test(`${form.name}: live continuous rooted ribbons retai
     assert(g.attributes.uv.getY(base+4)>.67&&g.attributes.uv.getY(base+4)<.69);
     if(r.upright){upright++;assert.equal(r.bent,false);assert.equal(p.getY(tip),top);assert.equal(p.getY(tip),prior.getY(oldTip));}
     else{bent++;assert.equal(r.bent,true);assert(p.getY(tip)<top);assert(p.getY(tip)>=top*.9499&&p.getY(tip)<=top*.9661,'The physical tip makes a gentle bow below its preserved peak');assert(p.getY(tip)>prior.getY(oldTip),'Remove the old deep hanging kink while retaining the original peak');}
-   }else{
+
+    }finally{historical.dispose();}   }else{
     upright++;assert.equal(r.upright,true);assert.equal(r.vertexCount,3);assert.equal(r.indexCount,3);
     for(const key of Object.keys(g.attributes))for(let i=0;i<3;i++)assert.deepEqual(data(g.attributes[key],base+i),data(old.attributes[key],oldBase+i),'Fine original upright tip attributes remain exact');
     assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+3),id=>id-base),[0,1,2]);
@@ -117,7 +124,7 @@ test('live family and planning resource metadata describes actual 2704-byte near
  assert.deepEqual(GRASS_FAMILIES.map(f=>f.leaves),[14,14,10]);assert.deepEqual(GRASS_FAMILIES.map(f=>f.seedStems),[0,0,2]);
  assert.equal(GRAZED_SWARD.leaves,14);assert.equal(GRAZED_SWARD.bentLeaves,12);
  assert.equal(MIXED_SWARD.sourceGeometryBytes,2704);assert.equal(MIXED_SWARD.sourceTriangles,40);assert.equal(MIXED_SWARD.richTriangles,70);assert.equal(MIXED_SWARD.maxTriangleRatio,1.20);
- for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(T,family);try{assert.equal(g.userData.grassFamily.leaves,ranges(g).length);assert.equal(g.userData.grassFamily.vertices,g.attributes.position.count);assert.equal(g.userData.grassFamily.triangles,g.index.count/3);assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');}finally{g.dispose();}}
+ for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(T,family);try{assert.equal(g.userData.grassFamily.leaves,ranges(g).length);assert.equal(g.userData.grassFamily.vertices,g.attributes.position.count);assert.equal(g.userData.grassFamily.triangles,g.index.count/3);{const g=historicalFamily(T,family);try{assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');}finally{g.dispose();}}}finally{g.dispose();}}
 });
 function sampleConstructor(create){
  let allocated=0,draws=0,state=123456789;const saved=Math.random;

@@ -3,6 +3,7 @@ import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-
 import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
 const normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);
 import test from 'node:test';
+import {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +12,7 @@ import {repo,T,moduleAt,sha,sourceSlice,withoutRandom,createNearReplay,cellsDige
 const fixture=new URL('./fixtures/lupin-e8b5cf4/',import.meta.url),read=n=>fs.readFileSync(new URL(n,fixture),'utf8');
 const contract=JSON.parse(read('source.json')),native=JSON.parse(read('native-prototype.json')),views=JSON.parse(read('native-rows.json'));
 const original=await import(new URL('../lupin-original-e8b5cf4.mjs',fixture)),current=await moduleAt('assets/meadow-flowers.mjs');
-const source=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8'),course=fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8');
+const source=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8'),course=normalizeCourseTurfBladesSource(fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8'),'assets/features/course-clear.js');
 const old=original.createMeadowLupinGeometry(T),next=current.createMeadowLupinGeometry(T);
 const bytes=a=>Buffer.from(a.buffer,a.byteOffset,a.byteLength);
 const rows=v=>{const b=fs.readFileSync(new URL(v.file,fixture));assert.equal(sha(b),v.sha256);return new Float32Array(b.buffer,b.byteOffset,b.byteLength/4);};

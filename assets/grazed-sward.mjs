@@ -1,4 +1,4 @@
-import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-ribbon-3';
+import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-ribbon-5';
 import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1';
@@ -22,8 +22,8 @@ export function createGrazedSwardGeometry(T){
  for(let leaf=0;leaf<GRAZED_SWARD.leaves;leaf++){
   const root=roots[leaf%roots.length],sourceLeaf=leaf,upright=leaf%7===6,heading=headings[leaf%roots.length]+offsets[Math.floor(leaf/roots.length)],height=(.38+(leaf%7)*.045)*(upright?.8/.97:.96);
   const reach=upright?.13+(leaf%5)*.019:(.38+(leaf%7)*.045)*(.46+(leaf%5)*.030),width=upright?.020:.043+(leaf%3)*.004;
-  leafRanges.push(appendArchedMeadowLeaf(P,C,U,I,{root,heading,height,reach,width,upright,sourceLeaf}));
+  leafRanges.push(appendArchedMeadowLeaf(P,C,U,I,{root,heading,height,reach,width,upright,sourceLeaf,progressive:[0,2,5,8].includes(sourceLeaf)}));
  }
  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(P,3));g.setAttribute('color',new T.Float32BufferAttribute(C,3));g.setAttribute('uv',new T.Float32BufferAttribute(U,2));g.setIndex(I);g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();
- g.userData.grazedSward={profile:'grazed-sward-arch-2',triangles:I.length/3,leaves:GRAZED_SWARD.leaves,broadLeaves:GRAZED_SWARD.bentLeaves,leafRanges};return g;
+ g.userData.grazedSward={profile:'grazed-sward-progressive-4',triangles:I.length/3,leaves:GRAZED_SWARD.leaves,broadLeaves:GRAZED_SWARD.bentLeaves,leafRanges};return g;
 }

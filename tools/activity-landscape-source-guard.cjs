@@ -1,4 +1,5 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {normalizeFormalTurfFormalSource,normalizeFormalTurfFormalObserver,normalizeFormalTurfFormalFixtures}=require('./formal-turf-composition-source-guard.cjs');
 const {normalizeFormalApproachResumeSource,normalizeFormalApproachResumeObserverSource,normalizeFormalApproachResumeFixtureChanges}=require('./formal-approach-resume-source-guard.cjs');
 const {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');
 const {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');
@@ -17,6 +18,7 @@ function reverse(source,file,changes,label){
  return source;
 }
 function normalizeActivityIncomingSource(source,file){
+ source=normalizeFormalTurfFormalSource(source,file);
  source=normalizeFormalApproachResumeSource(source,file);
  source=normalizeProgrammeRegroupSource(source,file);
  source=normalizeHorseTrainingSource(source,file);
@@ -30,6 +32,7 @@ function normalizeActivityIncomingSource(source,file){
  assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;
 }
 function normalizeActivityParentSource(source,file){
+ source=normalizeFormalTurfFormalSource(source,file);
  source=normalizeFormalApproachResumeSource(source,file);
  source=normalizeProgrammeRegroupSource(source,file);
  source=normalizeHorseTrainingSource(source,file);
@@ -47,6 +50,7 @@ function observer(source,file,view){
  source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;
 }
 function normalizeActivityIncomingObserverSource(source,file){
+ source=normalizeFormalTurfFormalObserver(source,file);
  source=normalizeFormalApproachResumeObserverSource(source,file);
  source=normalizeProgrammeRegroupObserverSource(source,file);
  source=normalizeHorseTrainingObserverSource(source,file);
@@ -58,6 +62,7 @@ function normalizeActivityIncomingObserverSource(source,file){
  return observer(source,file,'incoming');
 }
 function normalizeActivityParentObserverSource(source,file){
+ source=normalizeFormalTurfFormalObserver(source,file);
  source=normalizeFormalApproachResumeObserverSource(source,file);
  source=normalizeProgrammeRegroupObserverSource(source,file);
  source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}
@@ -65,6 +70,7 @@ function normalizeActivityParentObserverSource(source,file){
 // added files omitted from its diff are the exact new parent declarations and
 // this explicitly named new composition contract; unknown additions remain.
 function normalizeActivityFixtureChanges(diff,baseline){
+ diff=normalizeFormalTurfFormalFixtures(diff,baseline);
  diff=normalizeFormalApproachResumeFixtureChanges(diff);
  diff=normalizeProgrammeRegroupFixtureChanges(diff);
  diff=normalizeHorseTrainingFixtureChanges(diff);
