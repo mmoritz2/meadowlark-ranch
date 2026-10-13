@@ -2,7 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
+const normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);
 const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/fieldstone-wall-a78ed79/contract.json',import.meta.url),'utf8'));
 const file='assets/features/world-paths.js',row=contract.files[file],sha=s=>createHash('sha256').update(s).digest('hex');
 test('actual fieldstone lifecycle owner call is present exactly once and restores the complete original route owner',()=>{

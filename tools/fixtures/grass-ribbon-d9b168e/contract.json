@@ -1,0 +1,74 @@
+{
+  "baseCommit": "243dbfb43dccf9cd2df44016d5ea018298e589ef",
+  "files": {
+    "ranch3d.html": {
+      "rawSHA256": "9608a35733e071d4f90a563c5322488c6c06ca0340cfba24f5758d77a295861a",
+      "candidateSHA256": "77671855023b014a6a8119fe16a7647306e900b3be61387318318ff0aba59932",
+      "priorPublishedCameraWallProjectionSHA256": "d448c22a28b4da2521a05b23bf0753b3f9b7382dae82ee4888b3ad62473dd297",
+      "beforeGrass243SHA256": "23139ff6e2451b76f987fb9f27d20e6ddb1acc8086ad4babbe426f6dd478eb6c"
+    },
+    "assets/lush-meadow-geometry.mjs": {
+      "rawSHA256": "ed67addef9b20fe9ba896cd95b712b6adb651116cbc481f7f321724732958d21",
+      "candidateSHA256": "938c0678ba75d98836f046e8666fdb3d50355ba7019e0dc7302e9ae53a3a5257",
+      "priorPublishedCameraWallProjectionSHA256": "ed67addef9b20fe9ba896cd95b712b6adb651116cbc481f7f321724732958d21",
+      "beforeGrass243SHA256": "ed67addef9b20fe9ba896cd95b712b6adb651116cbc481f7f321724732958d21"
+    },
+    "assets/meadow-cover.js": {
+      "rawSHA256": "d8b2642510adacf6f0782bfb11f794e1e584c362cd6000f93884d8df7d5e485f",
+      "candidateSHA256": "a0a07cde4a10ad360abfc81858eecf7c8a3058f7fe9f9ab255b29033e59354cd",
+      "priorPublishedCameraWallProjectionSHA256": "d8b2642510adacf6f0782bfb11f794e1e584c362cd6000f93884d8df7d5e485f",
+      "beforeGrass243SHA256": "d8b2642510adacf6f0782bfb11f794e1e584c362cd6000f93884d8df7d5e485f"
+    },
+    "assets/grass-families.mjs": {
+      "rawSHA256": "09b6ce59624bfa28af2afad14a8d89aca014565c6ac098f33612b692354e2cfc",
+      "candidateSHA256": "c66969987ab9fb1efff5326af74d913a1c3adb3d6b02f2f75440423db1499be8",
+      "priorPublishedCameraWallProjectionSHA256": "09b6ce59624bfa28af2afad14a8d89aca014565c6ac098f33612b692354e2cfc",
+      "beforeGrass243SHA256": "09b6ce59624bfa28af2afad14a8d89aca014565c6ac098f33612b692354e2cfc"
+    },
+    "assets/grazed-sward.mjs": {
+      "rawSHA256": "d8c3a044047e273f307774475dbaf7a112b3c8263aac174a7e83c4dcf9bfffa8",
+      "candidateSHA256": "d039f7b7386b48a58057b399eedfe8c07006f29eeaa5b3e97c12c37aa751f055",
+      "priorPublishedCameraWallProjectionSHA256": "d8c3a044047e273f307774475dbaf7a112b3c8263aac174a7e83c4dcf9bfffa8",
+      "beforeGrass243SHA256": "d8c3a044047e273f307774475dbaf7a112b3c8263aac174a7e83c4dcf9bfffa8"
+    },
+    "assets/mixed-sward.mjs": {
+      "rawSHA256": "692d775784906b33b9cfd440a0e6aafcb4151968602ea85220b9b2c2d4d93948",
+      "candidateSHA256": "0aa975c46ea169f750e8a98a601212d83666a7b691fcfe4407a93fcc5eb365b5",
+      "priorPublishedCameraWallProjectionSHA256": "692d775784906b33b9cfd440a0e6aafcb4151968602ea85220b9b2c2d4d93948",
+      "beforeGrass243SHA256": "692d775784906b33b9cfd440a0e6aafcb4151968602ea85220b9b2c2d4d93948"
+    }
+  },
+  "dependencySHA256": {
+    "tools/fieldstone-wall-cache-source-guard.cjs": "bc1c151cae52c7cdb75ba9a4548439643ec7e22a9819b621cd9b66e5f3441615",
+    "tools/published-world-import-source-guard.cjs": "1fd68937f868b264f314ec2ac01da704567fe018ed05c76f3e7a95abf051c804",
+    "tools/authored-camera-source-guard.cjs": "eeff7e2e7979d63ffa8d424aa113c1242c83f058f90a320b3a98b2488859f065",
+    "tools/fixtures/published-world-885e882/import-changes.json": "570482ee64edda384401be849e1dcaa1b2ba7c0b2c2b64823509c9e82c1db3d2",
+    "tools/reviewed-riding-source-guard.cjs": "82322d25fd68e7277ee85a4e88ecfb43c971db1c864d05c29dcfc67d74c98ed4",
+    "tools/riding-distance-source-guard.cjs": "97fe92b9a2a7a0a48c7c33f7f86029812214b6460273db7643488f6937d80284",
+    "tools/ribbon-award-source-guard.cjs": "31923a641233d1c2e2eef74f7f4d081d9d203d4a686380834f26a86f4495dd77",
+    "tools/fixtures/reviewed-riding-4e346b2/contract.json": "fad6b15aebd17a4308b86000be9cec078ba61407eebe611489c778a86e9a20c1",
+    "tools/fixtures/reviewed-riding-4e346b2/cache-changes.json": "b4bbecb268eece3397c81b1ec345e512c81b173e8e9bb9a7f08f6bda80f0cca9",
+    "tools/fixtures/reviewed-riding-4e346b2/observer-changes.json": "a489678b6a9fc7aa3d74f8b0267865b83037d951ac515304c1aecb1864dbe667",
+    "tools/fixtures/reviewed-riding-4e346b2/guide-changes.json": "3b49f51ab669ac09f0564005e17becdc3ec72c97859656a30a0fbe0d518f02e0",
+    "tools/fixtures/riding-distance-8733008/source-changes.json": "e0f1e8a335f43a126f03eacf758c4ccdc92441c621f64864c59fde793e62ceb8",
+    "tools/fixtures/ribbon-award-8733008/source-changes.json": "1da057b475b663c8f25095ebb2e2b452ca820f42b6597813ccf349106cb080f2"
+  },
+  "testAdapterPreimages": {
+    "tools/grass-arch-source-guard.cjs": "ddd5bb23be376c6af3f0e89a34acc7f3237cfe9bb456b52b4de63cb9ce604859",
+    "tools/reviewed-riding-source-guard.cjs": "8cfd67b53de131997d919869f5616f407c016047bb7892459c9ee91e2f325fca",
+    "tools/test-arched-grass-model.mjs": "ddb7c7083ad134e29d4a9f6b65490896eeaf82499c8d555f8ae803a13264370d",
+    "tools/test-arched-grass-wind.mjs": "f49ffa983a24155e030600a659c790fbbdbf1929e523ba1a3f7b05b1dc632f60",
+    "tools/test-basic-riding-tack.mjs": "97c2d5308b342b1d83701341bd813f61083ecb6901b8f9502b1c5f4582d2729a",
+    "tools/test-coyote-crag-composition.mjs": "9cf78610f34569a78414540675f3ca1d120ad6cf0b909b5ee75a6632e3ddd9dd",
+    "tools/test-field-grass.mjs": "0770e2c2eb751071f768715391c09cbd2510c1e7de4b2f9f82f60e0753382c71",
+    "tools/test-fieldstone-wall-cache-guard.mjs": "5cd362f808e45612486b9b6093ab30045e730ddd67eecbf3302d002b2fc7cd5f",
+    "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs": "715e70103601c9a8789144cc3b70d58e643b9506669fed9682742c03d94a0f73",
+    "tools/test-fine-hair-cache-guard.mjs": "ba6a83edf4c040ecbc81c5a75f8001e5c050350fe0bbd7e6125af0e5b3f86ac6",
+    "tools/test-lupin-independent.mjs": "28c62714ac6d674ad3332d664af406c525dc9159412e77a6f0bb26e60fb79d27",
+    "tools/test-reviewed-riding-source-guard.mjs": "7229b619468e64ee5af8392b02b9d951391be7a5b08b7c5549983c84a4a6976c",
+    "tools/test-starter-tack-catalog-preservation.mjs": "23fe01c5b327a6c9936a45bb5bbf905035176e829b83d485563d1839391137ad",
+    "tools/test-follow-camera-authored-parts.mjs": "fc8ac80768a5a806467b6af20d6f7843146b944cbec5dc93b7393c71f2d52a62"
+  },
+  "geometryHistoricalBaseCommit": "d9b168ebd17e3c406525578ec2e0002cce17c088",
+  "historicalProjectedWorldCommit": "04ba300a897696a09e2c39d772334dd25060dd6e"
+}

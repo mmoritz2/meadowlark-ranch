@@ -1,10 +1,10 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grass-arch-2';
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grass-ribbon-3';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-arch-2';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-ribbon-3';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
-export const MIXED_SWARD = Object.freeze({high:96,medium:48,low:0,radius:18,partingRadius:1.75,fadeZeroRadius:39.48,retireRadius:40.98,sourceTriangles:40,sourceGeometryBytes:3056,richTriangles:70,maxTriangleRatio:1.20,variantTriangles:Object.freeze([450,649,595,633,626]),variantVertices:Object.freeze([432,716,614,743,710]),assetSha256:'357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902'});
+export const MIXED_SWARD = Object.freeze({high:96,medium:48,low:0,radius:18,partingRadius:1.75,fadeZeroRadius:39.48,retireRadius:40.98,sourceTriangles:40,sourceGeometryBytes:2704,richTriangles:70,maxTriangleRatio:1.20,variantTriangles:Object.freeze([450,649,595,633,626]),variantVertices:Object.freeze([432,716,614,743,710]),assetSha256:'357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902'});
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const now=()=>globalThis.performance?.now()??Date.now();
 export function swardHash(x,z,salt=0){let h=(Math.imul(Math.round(x*1000),374761393)^Math.imul(Math.round(z*1000),668265263)^Math.imul(salt+1,1274126177))|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}

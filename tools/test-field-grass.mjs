@@ -7,7 +7,7 @@ import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
 import {createMeadowDistance} from '../assets/meadow-cover.js';
 import {createGrassTuftGeometry} from './grass-arch-historical-factories.mjs';
 import {createGrassFamilyGeometry} from './grass-arch-historical-factories.mjs';
-import {MIXED_SWARD} from '../assets/mixed-sward.mjs';
+import {MIXED_SWARD} from './grass-ribbon-historical-factories.mjs';
 const budgets=[
  {name:'near',create:()=>createGrassTuftGeometry(T,{profile:'near-folded-v1'}),leaves:12,triangles:40,vertices:64,bytes:3056},
  ...[0,1,2].map(f=>({name:'rich '+f,create:()=>createGrassFamilyGeometry(T,f),leaves:22,triangles:70,vertices:f===2?138:114,bytes:f===2?6492:5436})),

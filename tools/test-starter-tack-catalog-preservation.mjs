@@ -4,7 +4,9 @@ import {T,ROOT,nativeActor,stream} from './native-starter-tack-fixture.mjs';
 import {createTackCollection} from '../assets/tack-collection-models.js';
 import {TACK_PIECES,getTackPiece} from '../assets/tack-collection.mjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
-import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
+const normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);
 const fixture=new URL('./fixtures/starter-tack-2986289/',import.meta.url),originalText=fs.readFileSync(new URL('tack-collection-models.js',fixture),'utf8'),sha=x=>createHash('sha256').update(x).digest('hex'),original=await import('data:text/javascript;base64,'+Buffer.from(originalText.replace("'./native-rider.js?v=tack-store-live-20261007'",JSON.stringify(new URL('../assets/native-rider.js?v=tack-store-live-20261007',import.meta.url).href))).toString('base64'));
 const snapshot=kit=>{const rows=[];kit.group.traverse(m=>{if(!m.isMesh)return;rows.push({name:m.name,uuid:m.uuid,geometryUUID:m.geometry.uuid,attributes:Object.fromEntries(Object.entries(m.geometry.attributes).map(([key,a])=>[key,sha(Buffer.from(a.array.buffer,a.array.byteOffset,a.array.byteLength))])),index:sha(Buffer.from(m.geometry.index.array.buffer)),material:{uuid:m.material.uuid,color:m.material.color.toArray(),roughness:m.material.roughness,metalness:m.material.metalness,key:m.material.customProgramCacheKey(),maps:['map','bumpMap'].map(k=>m.material[k]?sha(m.material[k].image.data):null)}});});return{rows,stats:structuredClone(kit.stats)};};
 test('already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream',()=>{

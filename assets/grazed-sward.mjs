@@ -1,4 +1,4 @@
-import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-arch-2';
+import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-ribbon-3';
 import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1';
