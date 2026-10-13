@@ -6,6 +6,8 @@ import * as T from '../assets/vendor/three/build/three.module.js';
 import {createRanchArchitecture} from '../assets/ranch-architecture.js';
 import {createSolidWorld} from '../assets/solid-collisions.js';
 import {flatRaceEligible,flatRaceSegmentClear,planFlatRaceRoute,createFlatRaceGuidance} from '../assets/flat-race-guidance.mjs';
+import {createFormalFenceGuidance} from '../assets/formal-fence-guidance.mjs';
+import {rushRecoverySegmentClear} from '../assets/features/course-guide.js';
 
 const threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;
 register('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);
@@ -106,8 +108,10 @@ const courseGuideSource=readFileSync(new URL('../assets/features/course-guide.js
 function sourceSection(start,end){const a=courseGuideSource.indexOf(start),b=courseGuideSource.indexOf(end,a+start.length);assert(a>=0&&b>a,`missing actual course-guide boundary: ${start}`);return courseGuideSource.slice(a,b);}
 const actualPlanSource=sourceSection(' const PL={',' /* ---------------------------------------------------------------- per frame');
 function actualPlanFixture(world,player){
- let now=1000;const flatGuide=createFlatRaceGuidance({world}),G={course:{ARENA_LETTERS:{A:[0,-18],X:[0,0]}}},fenceRecovery={update:()=>null,reset(){},snapshot:()=>null};
- const api=Function('G','player','flatGuide','fenceRecovery','performance','CIRC','"use strict";\n'+actualPlanSource+'\nreturn {plan,PL};')(G,player,flatGuide,fenceRecovery,{now:()=>now},{r:6.5,inset:3.7});
+ let now=1000;const flatGuide=createFlatRaceGuidance({world}),G={course:{ARENA_LETTERS:{A:[0,-18],X:[0,0]}},horse:{RIG:()=>({heroJumpAge:null,heroJumpGrace:0})}},fenceRecovery={update:()=>null,reset(){},snapshot:()=>null};
+ const binding=courseGuideSource.split('\n').find(line=>line.trim().startsWith('const formalGuide=createFormalFenceGuidance'));if(!binding)throw Error('The real formal-guide installation binding is missing');
+ const formalGuide=Function('createFormalFenceGuidance','rushRecoverySegmentClear','flatRaceSegmentClear','W','G',binding+'return formalGuide;')(createFormalFenceGuidance,rushRecoverySegmentClear,flatRaceSegmentClear,world,G);
+ const api=Function('G','player','flatGuide','fenceRecovery','formalGuide','performance','CIRC','"use strict";\n'+actualPlanSource+'\nreturn {plan,PL};')(G,player,flatGuide,fenceRecovery,formalGuide,{now:()=>now},{r:6.5,inset:3.7});
  return {...api,flatGuide,G,setNow:value=>{now=value;}};
 }
 const plannedPoints=plan=>plan.pts.slice(0,plan.n).map(([x,z])=>point(x,z));
