@@ -1,4 +1,6 @@
-import {normalizeCoyoteCragCompositionSource} from './coyote-crag-composition-source-guard.cjs';
+import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';
+import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
+const normalizeCoyoteCragCompositionSource=(source,file)=>normalizeCragSource(normalizeGrassArchSource(source,file),file);
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

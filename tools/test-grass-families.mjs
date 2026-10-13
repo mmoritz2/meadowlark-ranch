@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as THREE from '../assets/vendor/three/build/three.module.js';
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
-import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-arch-historical-factories.mjs';
+import {createGrassTuftGeometry} from './grass-arch-historical-factories.mjs';
 const evidence=[];
 const faces=(g,cb)=>{const p=g.attributes.position;for(let i=0;i<g.index.count;i+=3){const ids=Array.from(g.index.array.subarray(i,i+3));cb(ids,ids.map(j=>new THREE.Vector3().fromBufferAttribute(p,j)));}};
-for(let family=0;family<3;family++)test(`${GRASS_FAMILIES[family].name}: finite rooted geometry, valid normal/UV contract and budget`,()=>{
+for(let family=0;family<3;family++)test(`Historical d5 morphology: ${GRASS_FAMILIES[family].name}: finite rooted geometry, valid normal/UV contract and budget`,()=>{
  const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,n=g.attributes.normal,c=g.attributes.color,uv=g.attributes.uv;
  assert.equal(g.index.count/3,70);assert.equal(n.count,p.count);assert.equal(c.count,p.count);assert.equal(uv.count,p.count);
  assert(Object.values(g.attributes).every(a=>a.array instanceof Float32Array));
@@ -21,7 +21,7 @@ for(let family=0;family<3;family++)test(`${GRASS_FAMILIES[family].name}: finite 
  const before=n.array.slice();g.computeVertexNormals();assert.deepEqual(n.array,before);
  evidence.push({...g.userData.grassFamily,area,minArea,minFaceNormalDot:minDot,geometryBytes:Object.values(g.attributes).reduce((s,a)=>s+a.array.byteLength,0)+g.index.array.byteLength});g.dispose();
 });
-test('families have different physical silhouettes and repeat deterministically',()=>{
+test('Historical d5 morphology: families have different physical silhouettes and repeat deterministically',()=>{
  const geometries=GRASS_FAMILIES.map((_,i)=>createGrassFamilyGeometry(THREE,i));
  try{const hashes=geometries.map(g=>crypto.createHash('sha256').update(Buffer.from(g.attributes.position.array.buffer)).digest('hex'));assert.equal(new Set(hashes).size,3);
   assert(geometries[0].boundingBox.max.y>geometries[1].boundingBox.max.y*1.6);assert(geometries[2].boundingBox.max.y>geometries[0].boundingBox.max.y*1.3);
@@ -29,7 +29,7 @@ test('families have different physical silhouettes and repeat deterministically'
   assert.throws(()=>createGrassFamilyGeometry(THREE,-1));assert.throws(()=>createGrassFamilyGeometry(THREE,3));assert.throws(()=>createGrassFamilyGeometry(THREE,.5));
  }finally{geometries.forEach(g=>g.dispose());}
 });
-test('each narrow leaf is grounded, tapers to one point, and the stand has uneven upright tops',()=>{
+test('Historical d5 morphology: each narrow leaf is grounded, tapers to one point, and the stand has uneven upright tops',()=>{
  for(let family=0;family<3;family++){
   const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,uv=g.attributes.uv,ranges=g.userData.grassFamily.leafRanges;
   assert.equal(ranges.length,GRASS_FAMILIES[family].leaves);let upright=0;const tops=[];
@@ -51,11 +51,11 @@ test('each narrow leaf is grounded, tapers to one point, and the stand has uneve
   assert(Math.max(...tops)>Math.min(...tops)*1.4,'Unequal tops form an irregular stand');g.dispose();
  }
 });
-test('original geometry adds no texture/material allocation or import-time resources',()=>{
+test('Historical d5 morphology: original geometry adds no texture/material allocation or import-time resources',()=>{
  const source=fs.readFileSync(new URL('../assets/grass-families.mjs',import.meta.url),'utf8');assert(!source.includes('Math.random'));assert(!source.includes('new T.Texture'));assert(!source.includes('Material('));assert(!source.includes('fetch('));
 });
 
-test('ordinary sward retains dark connected roots and lighter leaf shoulders',()=>{
+test('Historical d5 morphology: ordinary sward retains dark connected roots and lighter leaf shoulders',()=>{
  for(let family=0;family<3;family++){
   const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,c=g.attributes.color;
   for(const r of g.userData.grassFamily.leafRanges){const k=r.vertexStart;assert(c.getY(k)<.30);assert(c.getY(k+2)>c.getY(k)*2);assert(Math.hypot(p.getX(k),p.getZ(k))<.14);}
@@ -63,7 +63,7 @@ test('ordinary sward retains dark connected roots and lighter leaf shoulders',()
  }
 });
 
-test('near and middle leaves retain their budgets and unequal upright curved forms',()=>{
+test('Historical d5 morphology: near and middle leaves retain their budgets and unequal upright curved forms',()=>{
  for(const [profile,bladeCount,segments] of [['near-folded-v1',8,3],['middle-natural-v1',4,2],['middle-natural-v1',6,2],['middle-natural-v1',8,2]]){
   const g=createGrassTuftGeometry(THREE,{profile,bladeCount,segments}),p=g.attributes.position;
   assert.equal(g.index.count/3,bladeCount*(segments===3?5:3));let curved=0;const tops=[];

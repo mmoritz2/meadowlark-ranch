@@ -1,5 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
-import {normalizeCoyoteCragCompositionSource} from './coyote-crag-composition-source-guard.cjs';
+import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';
+import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
+const normalizeCoyoteCragCompositionSource=(source,file)=>normalizeCragSource(normalizeGrassArchSource(source,file),file);
 const ROOT=path.resolve(process.env.COYOTE_CRAG_SOURCE_ROOT||path.join(path.dirname(fileURLToPath(import.meta.url)),'..'));
 const DEPENDENCIES=path.resolve(process.env.COYOTE_CRAG_DEPENDENCY_ROOT||ROOT);
 const T=await import(pathToFileURL(path.join(DEPENDENCIES,'assets/vendor/three/build/three.module.js')));

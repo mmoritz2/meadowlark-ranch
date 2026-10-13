@@ -8,8 +8,10 @@ import * as THREE from '../assets/vendor/three/build/three.module.js';
 import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
 import {
   MIXED_SWARD, prepareSwardRows, planMixedSward, readSwardSpecimens,
-  createBasalSwardGeometry, installMixedSward, swardFamilyAt,
+  installMixedSward, swardFamilyAt,
 } from '../assets/mixed-sward.mjs';
+
+import {createGrassFamilyGeometry as createBasalSwardGeometry} from './grass-arch-historical-factories.mjs';
 
 const asset = fs.readFileSync(new URL('../assets/models/world/grass_medium_02_specimens.glb',import.meta.url));
 const assetBuffer = asset.buffer.slice(asset.byteOffset, asset.byteOffset + asset.byteLength);
@@ -70,7 +72,7 @@ test('installed CC0 specimen library matches its declared source contract and re
   assert.throws(() => readSwardSpecimens(assetBuffer.slice(0, assetBuffer.byteLength - 4)));
 });
 
-test('three rich families have grounded tapered leaves, valid actual normals and the shared triangle budget', () => {
+test('Historical d5 morphology: three rich families have grounded tapered leaves, valid actual normals and the shared triangle budget', () => {
   const heights=[], hashes=[];
   for(let family=0;family<3;family++){
     const g=createBasalSwardGeometry(THREE,family),again=createBasalSwardGeometry(THREE,family);
