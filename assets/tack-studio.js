@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import {createBreedLibrary} from './breed-models.js?v=world-presentations-1';
-import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=draft-feathers-20261013d';
+import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=full-groom-20261013c';
 import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';
 import {premiumTackSet} from './premium-tack.mjs';
@@ -170,7 +170,7 @@ function render(){
 function gait(name){
  const cap=getNativeHorseCapabilities(state.rig);
  if(!state.rig||!studioSupportsGait(name,cap))return;state.gait=name;state.rig.heroJumpAge=null;mount.position.y=0;
- state.rig.heroMotion.reset();
+ state.rig.heroMotion.reset();state.rig.groom?.reset?.();
  if(name==='jump')startGameHeroJump(state.rig);else tickGameHero(state.rig,studioGaitSpeed(name,cap),0);
  finishNativeHorseGrooms();
  for(const b of document.querySelectorAll('[data-gait]'))b.setAttribute('aria-pressed',String(b.dataset.gait===name));

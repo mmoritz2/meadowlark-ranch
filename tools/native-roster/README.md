@@ -244,23 +244,53 @@ report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
 hair meshes to Percheron, Shire, Clydesdale and Vanner instances, including
-Belgian, Suffolk, Tempest and Rosebloom aliases. Two staggered layers of rounded
-locks give the fetlocks a fuller silhouette. Narrow embedded roots with a
-fiber-alpha fade blend into the leg, and varied fine tips leave the hoof toes
-visible. Percheron uses a shorter, lighter 64 locks per leg; Shire, Clydesdale
-and Vanner use 88, 92 and 96 respectively. All retain four draw calls, with
-6,144–9,216 triangles per horse and no per-frame geometry work.
+Belgian, Suffolk, Tempest and Rosebloom aliases. Shire, Clydesdale and Vanner now
+have long front/back/side locks fitted outside the actual hoof envelope. Their
+fine fibers remain visible through the final texture row, covering the hoof
+top and toe and brushing the common ground plane. Percheron keeps lighter
+fetlock hair and a visible hoof. Heavy standing tips measure 0.66–0.79 mm above
+ground; alpha-aware front/side coverage with opaque hoof occlusion is 78–93%,
+and every hoof has visible fibers in the lowest 1–3 mm band. Feather roots
+remain exact; independent leg-driven springs move the loose ends and settle
+on stopping. A floor response keeps long fibers above the ground while allowing
+outward flex at contact. Four draw calls are retained.
 
-Roots fit sampled lower-leg skin after refreshing world and skin-bind matrices,
-including horses already translated, rotated or scaled within the ranch.
-`node tools/test-native-draft-feathers.mjs` checks all four foundations across
-production idle, walk, trot, both canter/gallop leads and jump clips with hoof
-flex, plus alpha-aware collar coverage, standing sole and moving hoof/tack
-clearance, alias inheritance, transformed-parent fitting and private resource
-lifecycle. These numerical checks complement the standing and moving visual
-review; they are not a claim of newly simulated hair dynamics. The groom facade
-owns Hair visibility and idempotent disposal. Source meshes, weights, binds and
-animation clips are unchanged.
+`assets/native-flowing-groom.js` makes actor-private copies of the existing
+native mane, forelock and tail surfaces. Mane length/reach is increased roughly
+21–30%, with more breadth; tails are fuller and extend farther toward the ground.
+The Fjord's upright mane/crest and eyelashes keep their established shapes.
+Original indices, UVs, skin weights, binds, materials and dye shaders are reused;
+no body, eye, tack, bone or animation data is changed, and no draw calls are
+added. Only private hair geometry is owned/disposed by this controller.
+
+Independent neck/head/tail motion drives bounded loose-end springs after the
+source hair pose. Attached roots stay fixed. A posed skin-space floor response
+bends loose hair upward when grazing or getting up would otherwise push it
+through the ground. Pause holds arrays, reset returns exact enlarged rest arrays,
+long frame gaps safely reseed, and complete-actor motion alone does not excite
+the hair. Static unchanged poses reuse the previous geometry/normals. This is
+secondary hair motion with a floor response, not a full strand simulation.
+
+The native groom facade combines flowing hair and feathers in one final-pose
+update. Ranch and Tack Studio flush after actor travel and source grooming;
+standalone Breed Studio and the phase review update directly. Reinitialization
+restores old private geometry and disposes the old motion controller before
+new action-fitting inspects the horse. Hair visibility, reset and disposal own
+both layers.
+
+`node tools/test-native-draft-feathers.mjs` checks 1,312 production gait/jump
+checkpoints with actual intermediate frames, hoof flex, source preservation,
+alpha-aware hoof/ground contact, leg independence, damping, exact pause/reset,
+30/60/120 Hz consistency, aliases and transformed parents. Heavy tips must brush
+ground without penetration; lighter Percheron keeps its 20 mm standing gap.
+`node tools/test-native-flowing-groom.mjs` uses the actual loader and motion
+controller to verify privacy, roots, volume/length gains, hair-only deformation,
+source grooming eligibility, dyes, Fjord/eyelash preservation, real gait/action
+floor clearance, deterministic replay and frame-rate consistency.
+`node tools/test-native-feather-integration.mjs` checks final flush ordering,
+multiple actors, authoritative motion state, combined layers, repeated init,
+pause/reset/disposal and immediate previews. Visual checks cover standing
+front/side views and walking/running mane, tail and feather motion.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat

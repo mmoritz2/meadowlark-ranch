@@ -1,0 +1,91 @@
+{
+  "sourceCommit": "e138d34",
+  "claimedJourney": 3,
+  "errors": [],
+  "featureErrors": [],
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "networkConnected": false,
+  "networkStopped": false,
+  "player": {
+    "blown": false,
+    "breed": "bay-sporthorse",
+    "exhaustT": 0,
+    "heading": 3.141592653589793,
+    "horseId": 1,
+    "horseName": "Bramble",
+    "landT": 0,
+    "loadingBreed": false,
+    "modelKey": "bay-sporthorse",
+    "rigReady": true,
+    "speed": 0,
+    "stam": 1,
+    "x": -7,
+    "z": 10
+  },
+  "ready": true,
+  "saveSummary": {
+    "horseNames": [
+      {
+        "breed": "bay-sporthorse",
+        "id": 1,
+        "name": "Bramble"
+      },
+      {
+        "breed": "pinto",
+        "id": 2,
+        "name": "Clover"
+      }
+    ],
+    "journey": {
+      "claimed": {
+        "first-partners": {
+          "at": 1791650619995,
+          "gearId": "journey-first-partners"
+        },
+        "river-rhythm": {
+          "at": 1791656399494,
+          "gearId": "journey-river-rhythm"
+        },
+        "steady-hands": {
+          "at": 1791654968498,
+          "gearId": "journey-steady-hands"
+        }
+      },
+      "lastClaimId": "river-rhythm",
+      "version": 1
+    },
+    "rescue": {
+      "adopted": true,
+      "completions": 1
+    },
+    "ridingHorseId": 1
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Follow the south gate marker. Tap for Gallop. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (270/300)\nFollow the south gate marker. Tap for Gallop."
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 270.0890688828615,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 270.0890688828615
+    },
+    "target": {
+      "id": "prologue:south-gate",
+      "x": 0,
+      "z": 16
+    }
+  },
+  "eventPreparation": "Pasture Pony Dash\nMeadowlark Ranch · Flat Racing\n3,988\n49\nEvent\nBoard\nFull card\nFlat Racing\nLv 1 · 6 gates\nS\n1\n2\n3\n4\n5\n🌱\nNovice\nlower rails, a slower clock, 70% of the purse\n126\n🏇\nOpen\nthe course as set\n180\n🔥\nElite\nOpens at Lv 3\n270\n1 of 4 ribbons earned\nBramble · Open\n\nYour horse is ready for this event.\n\nHorse readiness\n1 / 1 requirements met\n\nFavoured stats · Acceleration 3\n\nAt 7 or higher, a favoured stat also boosts your race rewards.\n\nAloof\n\nAt 80 bond, pace gains 6%.\n\nStops briefly when exhausted.\n\nBond 29 / 100 · 2% less gallop stamina used from bond.\n\nBonds especially well through ribbons and treats.\n\nIn Bond & feed: Groom gives +2 bond.\n\nChoose horse\nBond & feed\nEntry\nFree\nListed purse\n180 coins\nCourse format\n0:41 allowed\nPersonal best\n7:21.1\nRewards & riding tips\nReady to enter\nFlat Racing · Open\nPrepare horse\nEnter event"
+}

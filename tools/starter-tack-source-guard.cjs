@@ -1,5 +1,6 @@
 const {normalizeCoyoteCragCompositionSource}=require('./coyote-crag-composition-source-guard.cjs');
 const {normalizeGrassArchSource}=require('./grass-arch-source-guard.cjs');
+const {normalizePublishedCacheSource}=require('./published-world-import-source-guard.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture=path.join(__dirname,'fixtures/starter-tack-2986289');
 const changes=JSON.parse(fs.readFileSync(path.join(fixture,'source-changes.json'))),preimage=JSON.parse(fs.readFileSync(path.join(fixture,'preimage-SHA.json')));
@@ -12,4 +13,4 @@ function normalizeStarterTackSource(source,file){
  assert.equal(crypto.createHash('sha256').update(source).digest('hex'),preimage[file],'Entire original298 body restored '+file);
  return source;
 }
-module.exports={normalizeStarterTackSource};
+module.exports={normalizeStarterTackSource,normalizePublishedCacheSource};

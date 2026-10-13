@@ -1,6 +1,7 @@
 import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 const normalizeCoyoteCragCompositionSource=(source,file)=>normalizeCragSource(normalizeGrassArchSource(source,file),file);
+import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,7 +30,7 @@ test('private synchronous basic construction restores global randomness on succe
  const previous=Math.random;let count=0;Math.random=()=>{count++;return .2;};try{const ids=new Set();for(let i=0;i<12;i++)withBasicTackConstruction(BASIC_RIDING_TACK.saddle,()=>ids.add(new T.BufferGeometry().uuid));assert.equal(count,0);assert.equal(ids.size,12);assert.throws(()=>withBasicTackConstruction(BASIC_RIDING_TACK.pad,()=>{new T.MeshStandardMaterial();throw Error('stop');}),/stop/);assert.equal(Math.random(),.2);assert.equal(count,1);withBasicTackConstruction({slot:'saddle'},()=>new T.BufferGeometry());assert.equal(count,5);}finally{Math.random=previous;}
 });
 test('whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved',()=>{
- const changes=JSON.parse(read('source-changes.json'));for(const name of ['ranch3d.html','assets/tack-collection-models.js']){let body=normalizeCoyoteCragCompositionSource(fs.readFileSync(ROOT+'/'+name,'utf8'),name);for(const c of changes.toReversed().filter(c=>c.file===name)){assert.equal(body.split(c.after).length-1,c.occurrences);body=body.replace(c.after,c.before);}assert.equal(body,read(name.split('/').at(-1)));}
+ const changes=JSON.parse(read('source-changes.json'));for(const name of ['ranch3d.html','assets/tack-collection-models.js']){let body=normalizeCoyoteCragCompositionSource(normalizePublishedCacheSource(fs.readFileSync(ROOT+'/'+name,'utf8'),name),name);for(const c of changes.toReversed().filter(c=>c.file===name)){assert.equal(body.split(c.after).length-1,c.occurrences);body=body.replace(c.after,c.before);}assert.equal(body,read(name.split('/').at(-1)));}
  const html=fs.readFileSync(ROOT+'/ranch3d.html','utf8'),old=read('ranch3d.html');const block=(s,a,b)=>s.slice(s.indexOf(a),s.indexOf(b,s.indexOf(a)));assert.equal(block(html,'function collectionPieces(','// Only the current local'),block(old,'function collectionPieces(','function disposeCollectionTack('));assert.equal(html.split('\n').find(s=>s.includes('payload.tc=Object.fromEntries')),old.split('\n').find(s=>s.includes('payload.tc=Object.fromEntries')));
 });
 test('actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers',()=>{

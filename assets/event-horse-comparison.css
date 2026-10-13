@@ -1,0 +1,33 @@
+#seEv .sev-horse-heading{display:flex;align-items:center;gap:14px;width:min(1060px,100%);margin:18px 0;color:#fffaf0}
+#seEv .sev-horse-heading h2{margin:0;font:28px/1.2 Georgia,serif}
+#seEv .sev-horse-heading p{margin:7px 0 0;font:14px/1.5 Nunito,system-ui,sans-serif;color:#dbe2d2}
+#seEv .sev-horse-heading button{flex:none;min-height:44px!important}
+#seEv .sev-horse-notice{width:min(1060px,100%);box-sizing:border-box;padding:13px 16px;margin:0 0 16px;border:1px solid #d9bd7c;border-radius:8px;color:#fff0c9;font:700 14px/1.5 Nunito,system-ui,sans-serif}
+#seEv .sev-horse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:min(1060px,100%);padding-bottom:24px}
+#seEv .sev-horse-card{min-width:0;padding:20px;border:1px solid var(--menu-border);border-radius:12px;background:var(--menu-paper);color:var(--menu-ink);box-sizing:border-box}
+#seEv .sev-horse-card.current{border-color:#c4a24e;box-shadow:inset 0 4px 0 #c4a24e}
+#seEv .sev-horse-title{display:flex;align-items:center;gap:15px;margin-bottom:14px}
+#seEv .sev-horse-picture{display:flex;align-items:center;justify-content:center;flex:none;width:72px;height:72px;border-radius:10px;overflow:hidden;background:#e3e8d8}
+#seEv .sev-horse-fallback{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:44px;line-height:1}
+#seEv .sev-horse-picture svg,#seEv .sev-horse-picture img{display:block;width:100%;height:100%;object-fit:cover}
+#seEv .sev-horse-title h3{margin:0;font:25px/1.2 Georgia,serif;overflow-wrap:anywhere}
+#seEv .sev-horse-title p,#seEv .sev-horse-card p{margin:6px 0;font:14px/1.5 Nunito,system-ui,sans-serif;overflow-wrap:anywhere}
+#seEv .sev-horse-current{color:#7b6127;font-weight:800}
+#seEv .sev-horse-entry{padding:10px 12px;border-radius:7px;background:#e4eedb;color:#315b38;font-weight:800!important}
+#seEv .sev-horse-entry.locked{background:#faeadd;color:#925331}
+#seEv .sev-horse-stats{width:100%;border-collapse:collapse;margin:15px 0;font:14px/1.4 Nunito,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+#seEv .sev-horse-stats th,#seEv .sev-horse-stats td{text-align:left;padding:8px 6px;border-bottom:1px solid #d9decf;vertical-align:top}
+#seEv .sev-horse-stats th:first-child{padding-left:0}
+#seEv .sev-horse-stats td:last-child{text-align:right}
+#seEv .sev-horse-stats small{display:block;font:12px/1.4 Nunito,system-ui,sans-serif;color:var(--menu-muted)}
+#seEv .sev-horse-stats .bad{color:#925331;font-weight:800}
+#seEv .sev-horse-effects{padding-top:12px;border-top:1px solid #d9decf}
+#seEv .sev-horse-effects strong{font-weight:850}
+#seEv .sev-horse-train{color:var(--menu-muted)}
+#seEv .sev-horse-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+#seEv .sev-horse-actions button{flex:1;min-height:44px!important;min-width:105px!important;padding:11px 10px!important;white-space:normal;font:800 14px/1.3 Nunito,system-ui,sans-serif!important;text-transform:none;letter-spacing:0}
+#seEv .sev-horse-actions button:focus-visible{outline:3px solid #b99030;outline-offset:3px}
+#seEv .sev-partnership{padding-top:15px;margin-top:15px;border-top:1px solid var(--menu-border)}
+#seEv .sev-partnership .sev-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#seEv .sev-partnership button{min-height:44px!important}
+@media(max-width:760px){#seEv .sev-horse-grid{grid-template-columns:1fr;gap:14px}#seEv .sev-horse-card{padding:16px}#seEv .sev-horse-heading{align-items:flex-start}#seEv .sev-horse-heading h2{font-size:24px}#seEv .sev-horse-title h3{font-size:23px}}

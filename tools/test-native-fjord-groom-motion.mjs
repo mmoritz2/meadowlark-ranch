@@ -79,7 +79,7 @@ const skeleton=live.crest.skeleton,foreign=skeleton.clone();foreign.bones[0]=for
 // The production Hair facade must control the added shell and original cards
 // together without hiding any body, eyes or tack. Extract only its real function.
 const hero=fs.readFileSync('assets/game-hero-horse.js','utf8'),facadeStart=hero.indexOf('export function nativeGroomFacade('),facadeEnd=hero.indexOf('// The approved groom',facadeStart);assert(facadeStart>=0&&facadeEnd>facadeStart);
-const nativeGroomFacade=new Function('createNativeDraftFeathers',hero.slice(facadeStart,facadeEnd).replace('export function','function')+';return nativeGroomFacade;')(createNativeDraftFeathers);
+const nativeGroomFacade=new Function('createNativeDraftFeathers','createNativeFlowingGroom',hero.slice(facadeStart,facadeEnd).replace('export function','function')+';return nativeGroomFacade;')(createNativeDraftFeathers,()=>null);
 const facade=nativeGroomFacade({THREE,scene:live.scene,skin:live.body,profile});assert.equal(facade.meshes.length,2);assert(facade.meshes.includes(live.crest)&&facade.meshes.includes(live.hair));
 facade.mane.visible=false;assert(!live.crest.visible&&!live.hair.visible);assert(live.meshes.filter(m=>m!==live.crest&&m!==live.hair).every(m=>m.visible),'Hair toggle preserves body/eye/tack visibility');facade.tail.visible=true;assert(live.crest.visible&&live.hair.visible);facade.dispose();
 const beforeLive=geometryState(live.meshes),beforePlain=geometryState(plain.meshes);

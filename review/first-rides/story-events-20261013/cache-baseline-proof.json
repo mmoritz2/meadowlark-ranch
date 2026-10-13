@@ -1,0 +1,78 @@
+{
+  "head": "e138d34cbc51eeb6bc356fac9729ccfa6ad2c80b",
+  "originMain": "a59b76e935cc3ba5507c5f47c063d8e20c0616c4",
+  "staleOriginMainError": "Exactly declared crag composition or published native cache ranch3d.html: './assets/game-hero-horse.js?v=draft-feathers-20261013d'\n\n0 !== 1\n",
+  "publishedNativeCacheCommit": "80dfb836171e9becc206cd4e9fb2c99a8d32fe9a",
+  "approvedStoryEventCommit": "1780193c61e5e9e2be998f1e6f3f03e610595969",
+  "checks": [
+    {
+      "ref": "a59b76e935cc3ba5507c5f47c063d8e20c0616c4",
+      "file": "ranch3d.html",
+      "sourceSha256": "c207266f55aebaaa57518cfd2bac42af293b537053b16a3a2499d78664427ba9",
+      "restoredSha256": "b4ccde61598e4e4af76eed64dbcc7496459e14e9a9ca890ecc38337ced3251df",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "a59b76e935cc3ba5507c5f47c063d8e20c0616c4",
+      "file": "assets/tack-collection-models.js",
+      "sourceSha256": "aeb95f4c8ceef882d48e7ce7d05b9a5af219e96cfee60e0721708e238825409c",
+      "restoredSha256": "0a61dc61c419bbbee32e2c6153add85eef951b82f4409f072de3ca1dff34c21f",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "a59b76e935cc3ba5507c5f47c063d8e20c0616c4",
+      "file": "assets/features/on-foot.js",
+      "sourceSha256": "57e4eb96f8c6c0bbd35b3764453459f42ad1e671f8fa8fa065c293f97f4d807b",
+      "restoredSha256": "9d7abef0dd1a0b32ceae8c66e5ad4425ad2a8e2c370ab41e5d52222f185513ad",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "a59b76e935cc3ba5507c5f47c063d8e20c0616c4",
+      "file": "assets/features/index.js",
+      "sourceSha256": "0d3ddc41324096d90ee2f81fcb4673b6fec6fddcca75745b47f20de8dacc78bb",
+      "restoredSha256": "b64ba748f2bac5bf6c0ded32fd05fb980e70d23c7b99256b53893eaaaa07f4da",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "e138d34cbc51eeb6bc356fac9729ccfa6ad2c80b",
+      "file": "ranch3d.html",
+      "sourceSha256": "f4ca5806c7c077c66be5dd54918ba8b715edc58fbebed765b30a595695cccd1f",
+      "restoredSha256": "b4ccde61598e4e4af76eed64dbcc7496459e14e9a9ca890ecc38337ced3251df",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "e138d34cbc51eeb6bc356fac9729ccfa6ad2c80b",
+      "file": "assets/tack-collection-models.js",
+      "sourceSha256": "aeb95f4c8ceef882d48e7ce7d05b9a5af219e96cfee60e0721708e238825409c",
+      "restoredSha256": "0a61dc61c419bbbee32e2c6153add85eef951b82f4409f072de3ca1dff34c21f",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "e138d34cbc51eeb6bc356fac9729ccfa6ad2c80b",
+      "file": "assets/features/on-foot.js",
+      "sourceSha256": "57e4eb96f8c6c0bbd35b3764453459f42ad1e671f8fa8fa065c293f97f4d807b",
+      "restoredSha256": "9d7abef0dd1a0b32ceae8c66e5ad4425ad2a8e2c370ab41e5d52222f185513ad",
+      "exactOriginalFixture": true
+    },
+    {
+      "ref": "e138d34cbc51eeb6bc356fac9729ccfa6ad2c80b",
+      "file": "assets/features/index.js",
+      "sourceSha256": "6222be7a1a97c17f96d6ea73685a05d4288011cea4b86f2428335476cc55f804",
+      "restoredSha256": "b64ba748f2bac5bf6c0ded32fd05fb980e70d23c7b99256b53893eaaaa07f4da",
+      "exactOriginalFixture": true
+    }
+  ],
+  "guardAndFixturesUnchanged": true,
+  "tests": {
+    "focused": {
+      "passes": 19,
+      "failures": 0,
+      "tap": "/private/tmp/published-cache-preimage-validation.tap"
+    },
+    "dependent": {
+      "passes": 23,
+      "failures": 0,
+      "tap": "/private/tmp/published-cache-dependent-guards-validation.tap"
+    }
+  }
+}

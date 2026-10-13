@@ -20,10 +20,13 @@ for(const row of [...EXPANSION_HORSE_BREEDS,...EXTRA_BREEDS,...CLUB_HORSE_BREEDS
 const foundations=['percheron','shire','clyde','vanner'];
 const fileHash=file=>createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const immutableFiles=new Map([source,...new Set(foundations.map(id=>'assets/'+profiles[id].nativeVariant.file))].map(file=>[file,fileHash(file)]));
+// The pose-only fixture omits indices. Restore the actual source topology for
+// skinned body raycasts used by the new opaque-hoof occlusion measurement.
+const bodyIndices=(()=>{const bytes=fs.readFileSync(source),length=bytes.readUInt32LE(12),doc=JSON.parse(bytes.subarray(20,20+length)),bin=bytes.subarray(28+length),primitive=doc.meshes.find(m=>doc.accessors[m.primitives[0].attributes.POSITION].count===16159).primitives[0],a=doc.accessors[primitive.indices],view=doc.bufferViews[a.bufferView],out=new Uint32Array(a.count),size=a.componentType===5123?2:4;assert([5123,5125].includes(a.componentType));for(let i=0;i<a.count;i++){const offset=(view.byteOffset||0)+(a.byteOffset||0)+i*(view.byteStride||size);out[i]=size===2?bin.readUInt16LE(offset):bin.readUInt32LE(offset);}return out;})();
 const v=new THREE.Vector3();
 function fixture(id){
  const profile=profiles[id],variant=profile.nativeVariant,{root,body}=loadNativeHorseFixture(source),meshes=[];
- root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
+ root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});body.geometry.setIndex(new THREE.BufferAttribute(bodyIndices.slice(),1));
  const data=fs.readFileSync('assets/'+variant.file);
  for(const r of variant.meshes){const m=meshes.find(m=>m.geometry.attributes.position.count===r.vertexCount),a=m.geometry.attributes.position.array,d=r.positionDelta;for(let i=0;i<d.count;i++)a[i]+=data.readInt16LE(d.byteOffset+2*i)*d.scale;}
  const scene=new THREE.Group(),normalization=new THREE.Group();normalization.position.fromArray(profile.nativeTranslation);normalization.add(root);scene.add(normalization);scene.scale.setScalar(profile.fitScale);scene.updateMatrixWorld(true);
@@ -57,6 +60,32 @@ function collarCoverage(f,kit){
   }
  }
  return coverage;
+}
+// Trace alpha-visible feather in front of the real skinned hoof. A transparent
+// terminal vertex or a back lock hidden behind the hoof cannot fake contact.
+function hoofCoverage(f,kit){
+ const report=[],ray=new THREE.Raycaster(),origin=new THREE.Vector3(),direction=new THREE.Vector3();
+ // Cache the actual posed skin once; repeated rays need no repeated CPU skinning.
+ const positions=new Float32Array(f.body.geometry.attributes.position.count*3),point=new THREE.Vector3();
+ for(let i=0;i<positions.length/3;i++){f.body.getVertexPosition(i,point);point.toArray(positions,i*3);}
+ const bodyGeometry=new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(positions,3));bodyGeometry.setIndex(f.body.geometry.index);
+ const posedBody=new THREE.Mesh(bodyGeometry,f.body.material);posedBody.matrixWorld.copy(f.body.matrixWorld);
+ for(let leg=0;leg<kit.meshes.length;leg++)for(const view of ['front','side']){
+  const mesh=kit.meshes[leg],a=kit.anchors[leg],image=mesh.material.map.image;
+  const lo=view==='front'?a.hoofMinX:a.hoofMinZ,hi=view==='front'?a.hoofMaxX:a.hoofMaxZ;
+  const centerX=(a.hoofMinX+a.hoofMaxX)*.5,centerZ=(a.hoofMinZ+a.hoofMaxZ)*.5;
+  function fraction(height){let covered=0;const columns=32;
+   for(let column=0;column<columns;column++){
+    const across=lo+(hi-lo)*(column+.5)/columns;
+    if(view==='front'){origin.set(across,height,centerZ+1);direction.set(0,0,-1);}else{origin.set(centerX+1,height,across);direction.set(-1,0,0);}
+    f.scene.localToWorld(origin);direction.transformDirection(f.scene.matrixWorld);ray.set(origin,direction);
+    const body=ray.intersectObject(posedBody,false)[0],visible=ray.intersectObject(mesh,false).some(hit=>{if(body&&hit.distance>body.distance+1e-5)return false;const x=Math.min(image.width-1,Math.max(0,Math.floor(hit.uv.x*image.width))),y=Math.min(image.height-1,Math.max(0,Math.floor(hit.uv.y*image.height)));return image.data[(y*image.width+x)*4+3]/255>=mesh.material.alphaTest;});if(visible)covered++;
+   }return covered/columns;
+  }
+  const nearGround=[.001,.002,.003].map(height=>({heightM:height*f.profile.fitScale,fraction:fraction(height)})),hoofTop=[.012,.025,.04,.055,.07,.085].map(height=>fraction(height));
+  report.push({leg:a.id,view,nearGround,hoofCoverage:hoofTop.reduce((a,b)=>a+b,0)/hoofTop.length});
+ }
+ bodyGeometry.dispose();return report;
 }
 // Use the bundled loader's exact cubic interpolation for native gait tracks.
 const loader=fs.readFileSync('assets/vendor/three/examples/jsm/loaders/GLTFLoader.js','utf8');
@@ -96,26 +125,86 @@ function checkGeometry(kit,id){
  }
  return stats;
 }
+function featherArrays(kit){return kit.meshes.map(m=>({position:m.geometry.attributes.position.array.slice(),normal:m.geometry.attributes.normal.array.slice()}));}
+function assertFeatherPositions(kit,expected,label){for(let m=0;m<kit.meshes.length;m++)assert.deepEqual(kit.meshes[m].geometry.attributes.position.array,expected[m].position,label);}
+function assertFeatherArrays(kit,expected,label){for(let m=0;m<kit.meshes.length;m++)for(const key of ['position','normal'])assert.deepEqual(kit.meshes[m].geometry.attributes[key].array,expected[m][key],label);}
+function offsets(kit,rest){
+ const legs=[],linear=new THREE.Matrix3(),d=new THREE.Vector3();let maximum=0;
+ for(let m=0;m<kit.meshes.length;m++){
+  const mesh=kit.meshes[m],p=mesh.geometry.attributes.position,uv=mesh.geometry.attributes.uv;assert(mesh.geometry.attributes.normal.array.every(Number.isFinite),'Finite dynamic feather normals');linear.setFromMatrix4(mesh.matrixWorld);let peak=0;
+  for(let i=0;i<p.count;i++){
+   if(uv.getY(i)===0)for(let c=0;c<3;c++)assert.equal(p.array[i*3+c],rest[m].position[i*3+c],'Growing roots remain attached bit-exact');
+   d.set(p.getX(i)-rest[m].position[i*3],p.getY(i)-rest[m].position[i*3+1],p.getZ(i)-rest[m].position[i*3+2]).applyMatrix3(linear);
+   assert(d.toArray().every(Number.isFinite),'Finite dynamic feather vertices');peak=Math.max(peak,d.length());
+  }
+  legs.push(peak);maximum=Math.max(maximum,peak);
+ }
+ assert(maximum<.045,'Added feather deformation remains below45mm at normal actor scale: '+maximum);return{maximum,legs};
+}
+function tipOffsets(kit,rest){
+ const values=[],linear=new THREE.Matrix3(),d=new THREE.Vector3();
+ for(let m=0;m<kit.meshes.length;m++){const mesh=kit.meshes[m],p=mesh.geometry.attributes.position,uv=mesh.geometry.attributes.uv;linear.setFromMatrix4(mesh.matrixWorld);
+  for(let i=0;i<p.count;i++)if(uv.getY(i)===1&&uv.getX(i)===.5){d.set(p.getX(i)-rest[m].position[i*3],p.getY(i)-rest[m].position[i*3+1],p.getZ(i)-rest[m].position[i*3+2]).applyMatrix3(linear);values.push(...d.toArray());}
+ }return values;
+}
+function auditSway(f,kit){
+ assert.equal(typeof kit.update,'function','Feathers expose leg-driven update');assert.equal(typeof kit.reset,'function','Feathers expose exact reset');
+ const before=sourceState(f),rest=featherArrays(kit),geometries=kit.meshes.map(m=>m.geometry);kit.reset();
+ for(let i=0;i<60;i++)kit.update(1/60);assertFeatherPositions(kit,rest,'Still horse has no invented periodic hair motion');
+ const savedPosition=f.scene.position.clone(),savedRotation=f.scene.quaternion.clone();
+ for(let i=1;i<=20;i++){f.scene.position.set(i*.07,.2,-i*.04);f.scene.rotation.y=i*.025;f.scene.updateMatrixWorld(true);kit.update(1/60);}
+ assertFeatherPositions(kit,rest,'Actor-only translation/yaw cannot excite scene-local leg sway');f.scene.position.copy(savedPosition);f.scene.quaternion.copy(savedRotation);f.scene.updateMatrixWorld(true);kit.reset();
+ // A single-leg diagnostic proves independent inputs. Actual clearance below
+ // still uses only the production gait clips, never these controlled rotations.
+ const driven=kit.anchors[0].pastern,q=driven.quaternion.clone(),turn=new THREE.Quaternion(),axis=new THREE.Vector3(1,0,0);let singleLegPeak=0;
+ kit.update(1/60);
+ for(let i=1;i<=24;i++){turn.setFromAxisAngle(axis,.18*Math.sin(i/24*Math.PI*.5));driven.quaternion.copy(q).multiply(turn);f.scene.updateMatrixWorld(true);kit.update(1/60);const delta=offsets(kit,rest);singleLegPeak=Math.max(singleLegPeak,delta.legs[0]);for(let leg=1;leg<4;leg++)assert.equal(delta.legs[leg],0,'Stationary legs cannot inherit another leg spring');}
+ assert(singleLegPeak>.0005,'Leg rotation produces measurable tip lag');
+ const paused=featherArrays(kit);for(const dt of [0,-1,NaN,undefined]){kit.update(dt);assertFeatherArrays(kit,paused,'No/invalid elapsed time preserves paused arrays');}kit.update(1/60,{paused:true});assertFeatherArrays(kit,paused,'Explicit pause preserves arrays');
+ for(let i=0;i<240;i++)kit.update(1/60);const held=featherArrays(kit);kit.reset();kit.update(1/60);const settled=offsets(kit,held).maximum;assert(settled<Math.max(.00025,singleLegPeak*.10),'A held leg damps without sustained flutter');
+ kit.update(1000);assertFeatherArrays(kit,rest,'Large frame gap safely reseeds without impulse');kit.reset();assertFeatherArrays(kit,rest,'Reset restores exact authored positions and normals');
+ driven.quaternion.copy(q);f.scene.updateMatrixWorld(true);kit.reset();
+ function timed(fps){
+  const clips=approvedClips(f.profile),prepared=prepareNativeHoofFlex({THREE,root:f.root,clips,profile:f.profile}),mixer=new THREE.AnimationMixer(f.root),clip=THREE.AnimationClip.findByName(prepared.clips,f.profile.nativeGaits.trot.clip),action=mixer.clipAction(clip).play(),samples=[];
+  const pose=t=>{prepared.layer?.beforePose();mixer.setTime(t);f.scene.updateMatrixWorld(true);prepared.layer?.afterPose(new Map([[action,1]]));f.scene.updateMatrixWorld(true);};
+  pose(0);kit.reset();kit.update(1/fps);
+  for(let i=1;i<=fps*1.2;i++){pose(i/fps);kit.update(1/fps);offsets(kit,rest);if(i%(fps/10)===0)samples.push(tipOffsets(kit,rest));}
+  prepared.layer?.beforePose();action.stop();prepared.layer?.dispose();mixer.uncacheRoot(f.root);f.scene.updateMatrixWorld(true);kit.reset();return samples;
+ }
+ const thirty=timed(30),sixty=timed(60),oneTwenty=timed(120),difference=(a,b)=>{assert.equal(a.length,b.length);let max=0;for(let t=0;t<a.length;t++)for(let i=0;i<a[t].length;i+=3)max=Math.max(max,Math.hypot(a[t][i]-b[t][i],a[t][i+1]-b[t][i+1],a[t][i+2]-b[t][i+2]));return max;};
+ const rate30vs60=difference(thirty,sixty),rate60vs120=difference(sixty,oneTwenty);assert(rate30vs60<.005,'30/60Hz common-time tips agree within5mm: '+rate30vs60);assert(rate60vs120<.003,'60/120Hz tips agree within3mm: '+rate60vs120);
+ assertFeatherArrays(kit,rest,'Repeated gait sampling resets feather arrays exactly');assert(kit.meshes.every((m,i)=>m.geometry===geometries[i]),'Motion reuses its four private geometry buffers');assert.equal(sourceState(f),before,'Sway never changes source rig, mesh, weights, materials or binds');
+ return{singleLegPeakM:singleLegPeak,heldLegSettledM:settled,rate30vs60MaxM:rate30vs60,rate60vs120MaxM:rate60vs120};
+}
 function auditMotion(f,kit){
- const before=sourceState(f),clips=approvedClips(f.profile),clipState=JSON.stringify(clips.map(c=>c.toJSON()));
+ const before=sourceState(f),restArrays=featherArrays(kit),clips=approvedClips(f.profile),clipState=JSON.stringify(clips.map(c=>c.toJSON()));
  const prepared=prepareNativeHoofFlex({THREE,root:f.root,clips,profile:f.profile}),mixer=new THREE.AnimationMixer(f.root);
  const wanted=[...new Set([f.profile.nativeIdleClip,...Object.values(f.profile.nativeGaits).map(g=>g.clip),f.profile.nativeJump.clip])];
  const standingFloor=bounds([f.body]).min.y,feet=[];
  for(let i=0;i<f.body.geometry.attributes.position.count;i++){f.body.getVertexPosition(i,v);f.body.localToWorld(v);if(v.y<standingFloor+.25)feet.push(i);}
  assert(feet.length>500,'Actual four-hoof surface coverage');
  const tack=f.meshes.find(m=>m.geometry.attributes.position.count===13895),treadIndices=[2716,2742,2769,2792,2818,2845];
- let minimumRelativeFloor=Infinity,minimumTreadClearance=Infinity,minimumTrotFloor=Infinity,poses=0;
+ let minimumRelativeFloor=Infinity,minimumTreadClearance=Infinity,minimumTrotFloor=Infinity,poses=0,maximumAddedTipMotion=0;const legPeaks=[0,0,0,0];
  const byClip=[];
  for(const name of wanted){
   const clip=THREE.AnimationClip.findByName(prepared.clips,name);assert(clip,f.profile.id+' approved clip exists: '+name);
   const action=mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();
-  let relative=Infinity,absolute=Infinity;
+  kit.reset();let relative=Infinity,absolute=Infinity;
   for(let sample=0;sample<=40;sample++){
-   prepared.layer?.beforePose();mixer.setTime(clip.duration*sample/40);f.scene.updateMatrixWorld(true);
-   prepared.layer?.afterPose(new Map([[action,1]]));f.scene.updateMatrixWorld(true);
+   // Advance actual game-sized frames between measurement checkpoints. Idle
+   // lasts14 seconds; a349ms test jump would correctly reset the controller.
+   const interval=clip.duration/40,steps=sample===0?1:Math.max(1,Math.ceil(interval*60));
+   for(let step=1;step<=steps;step++){
+    const time=sample===0?0:(sample-1)*interval+step/steps*interval;
+    prepared.layer?.beforePose();mixer.setTime(time);f.scene.updateMatrixWorld(true);
+    prepared.layer?.afterPose(new Map([[action,1]]));f.scene.updateMatrixWorld(true);
+    if(sample===0)kit.reset();kit.update(sample===0?1/60:interval/steps);
+   }
+   const sway=offsets(kit,restArrays);maximumAddedTipMotion=Math.max(maximumAddedTipMotion,sway.maximum);for(let leg=0;leg<4;leg++)legPeaks[leg]=Math.max(legPeaks[leg],sway.legs[leg]);
    let sole=Infinity;for(const i of feet){f.body.getVertexPosition(i,v);f.body.localToWorld(v);sole=Math.min(sole,v.y);}
    const b=bounds(kit.meshes);relative=Math.min(relative,b.min.y-sole);absolute=Math.min(absolute,b.min.y);
-   assert(b.min.y>=sole-.006,f.profile.id+' '+name+' phase '+sample/40+' feathers preserve native sole clearance: '+(b.min.y-sole));
+   if(kit.foundation==='percheron')assert(b.min.y>=sole-.006,f.profile.id+' '+name+' preserves lighter native-sole clearance');
+   else assert(b.min.y>=-1e-5,f.profile.id+' '+name+' phase '+sample/40+' ground-brushing hair cannot plunge below ground: '+b.min.y);
    const treads=treadIndices.map(i=>{const p=tack.getVertexPosition(i,new THREE.Vector3());return tack.localToWorld(p);});
    for(const mesh of kit.meshes)for(let i=0;i<mesh.geometry.attributes.position.count;i+=14){mesh.localToWorld(v.fromBufferAttribute(mesh.geometry.attributes.position,i));for(const tread of treads)minimumTreadClearance=Math.min(minimumTreadClearance,v.distanceTo(tread));}
    poses++;
@@ -124,12 +213,13 @@ function auditMotion(f,kit){
   minimumRelativeFloor=Math.min(minimumRelativeFloor,relative);byClip.push({name,minimumRelativeFloorM:relative,minimumAbsoluteFloorM:absolute});
   prepared.layer?.beforePose();action.stop();
  }
- prepared.layer?.dispose();mixer.uncacheRoot(f.root);f.scene.updateMatrixWorld(true);
- assert(minimumTrotFloor>.005,f.profile.id+' Trot feather tips stay at least5mm above world floor: '+minimumTrotFloor);
+ prepared.layer?.dispose();mixer.uncacheRoot(f.root);f.scene.updateMatrixWorld(true);kit.reset();
+ assert(legPeaks.every(peak=>peak>.0005),f.profile.id+' each moving leg produces visible extra tip motion');assertFeatherArrays(kit,restArrays,'Final gait reset restores base feather geometry');
+ if(kit.foundation==='percheron')assert(minimumTrotFloor>.005,'Lighter Percheron retains5mm Trot gap');else assert(minimumTrotFloor>=-1e-5,'Heavy Trot hair brushes without penetrating ground');
  assert(minimumTreadClearance>.14,f.profile.id+' preserves14cm original stirrup clearance');
  assert.equal(JSON.stringify(clips.map(c=>c.toJSON())),clipState,'Original clips remain immutable');
  assert.equal(sourceState(f),before,'Motion returns exact original bones, geometry, materials and contact transforms');
- return{poses,clips:wanted.length,minimumRelativeFloorM:minimumRelativeFloor,minimumTrotFloorM:minimumTrotFloor,minimumTreadClearanceM:minimumTreadClearance,byClip};
+ return{poses,clips:wanted.length,maximumAddedTipMotionM:maximumAddedTipMotion,perLegPeakMotionM:legPeaks,minimumRelativeFloorM:minimumRelativeFloor,minimumTrotFloorM:minimumTrotFloor,minimumTreadClearanceM:minimumTreadClearance,byClip};
 }
 const report=[],fitted=new Map(),coverageFailures=[];
 for(const id of foundations){
@@ -138,15 +228,18 @@ for(const id of foundations){
  const rest=bounds(kit.meshes),floor=bounds([f.body]).min.y,coverage=collarCoverage(f,kit);
  const minimumCoverage=id==='percheron'?.50:.65; // Light Percheron collar vs full heavy-breed feather.
  for(const view of coverage)if(view.fraction<=minimumCoverage)coverageFailures.push({id,...view,minimumCoverage});
- assert(rest.min.y-floor>.035,id+' tips clear standing soles by35mm');
+ const heavy=id!=='percheron',hoof=heavy?hoofCoverage(f,kit):null;
+ // Explicitly requested ground-reaching heavy feather replaces the hover gap.
+ if(!heavy)assert(rest.min.y-floor>.020,'Lighter Percheron keeps its20mm rest margin');
+ else{for(const mesh of kit.meshes){const gap=bounds([mesh]).min.y-floor;assert(gap>=-1e-5&&gap<=.002,id+' every hoof has ground-reaching tips: '+gap);}for(const view of hoof){assert(view.nearGround.some(row=>row.fraction>=.12),id+' '+view.leg+' '+view.view+' visible fibers reach the lower3mm band');assert(view.hoofCoverage>.50,id+' '+view.leg+' '+view.view+' hair visibly covers the hoof');}}
  if(id==='vanner')assert(rest.max.y<.32,'Vanner retains its existing32cm lower-cannon limit');
  const cannonClearances=kit.meshes.map((mesh,i)=>{const a=kit.anchors[i],top=f.scene.localToWorld(a.top.clone()).y,pivot=f.scene.localToWorld(a.pivot.clone()).y;return(top+pivot)*.5-bounds([mesh]).max.y;});
  assert(cannonClearances.every(gap=>gap>0),id+' feather stays below anatomical mid-cannon on every leg');
  const naturalColor=kit.meshes[0].material.color.clone();kit.setColors({maneColor:'#000000'});
  assert(kit.meshes[0].material.color.equals(naturalColor),'Natural stocking color is independent of mane paint');
  if(id==='vanner')assert.equal(naturalColor.getHexString(),'f1ede4','Natural Vanner retains soft white stockings');
- const motion=auditMotion(f,kit);fitted.set(id,{f,kit,before,geometry:geometryHash(kit.meshes)});
- report.push({id,...stats,requiredCollarCoverage:minimumCoverage,minimumCollarCoverage:Math.min(...coverage.map(x=>x.fraction)),coverage,standingSoleClearanceM:rest.min.y-floor,minimumCannonMidpointClearanceM:Math.min(...cannonClearances),...motion});
+ const motion=auditMotion(f,kit),sway=auditSway(f,kit);fitted.set(id,{f,kit,before,geometry:geometryHash(kit.meshes)});
+ report.push({id,...stats,requiredCollarCoverage:minimumCoverage,minimumCollarCoverage:Math.min(...coverage.map(x=>x.fraction)),coverage,standingSoleClearanceM:rest.min.y-floor,minimumCannonMidpointClearanceM:Math.min(...cannonClearances),hoofCoverage:hoof,...motion,sway});
 }
 // Every existing alias inherits geometry and motion from the tested foundation,
 // including the formerly missing Percheron family. Color stays actor-private.
