@@ -1,3 +1,4 @@
+import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -164,7 +165,7 @@ test('actual cached terrain redraw refreshes late blue while preserving original
 });
 
 test('original seed constructor stream, sequential flora admissions and full ground shader remain byte-exact',()=>{
- const oldHTML=read('ranch3d.html').toString(),html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),oldFlora=read('assets/features/world-flora.js').toString(),flora=fs.readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8'),oldTerrain=read('assets/terrain-realism.js').toString(),terrainSource=fs.readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');
+ const oldHTML=read('ranch3d.html').toString(),html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),oldFlora=read('assets/features/world-flora.js').toString(),flora=normalizePastoralSource(fs.readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8'),'assets/features/world-flora.js'),oldTerrain=read('assets/terrain-realism.js').toString(),terrainSource=fs.readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');
  const between=(s,a,b)=>{const start=s.indexOf(a),end=s.indexOf(b,start);assert(start>=0&&end>start,a+' actual source block');return s.slice(start,end);};
  assert.equal(between(html,'function meadowBladeTexture('," /* ===== near grass:"),between(oldHTML,'function meadowBladeTexture('," /* ===== near grass:"));
  const riverPlanning='W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt';

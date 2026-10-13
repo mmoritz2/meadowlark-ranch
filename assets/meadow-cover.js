@@ -1,6 +1,7 @@
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=field-grass-3';
+import {respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=pastoral-cover-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
@@ -198,7 +199,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
         if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
         else scale.setScalar(0);
-        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
+        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

@@ -1,3 +1,4 @@
+import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -21,7 +22,7 @@ function withoutChalkRenderResponse(source){
  assert.equal(source.split(river).length,2,'Exactly one original-planning River adapter');
  return source.replace(river,'W.canyonPlacement?.heightAt');
 }
-let flora=once(withoutChalkRenderResponse(rawFlora),"import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';");if(flora.includes(' F.treeOwners=[];'))for(const [after,before]of original.approvedNonRandomOwnershipEdits)flora=once(flora,after,before);
+let flora=once(withoutChalkRenderResponse(normalizePastoralSource(rawFlora,'assets/features/world-flora.js')),"import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';");if(flora.includes(' F.treeOwners=[];'))for(const [after,before]of original.approvedNonRandomOwnershipEdits)flora=once(flora,after,before);
 const plan=next.createCanyonPlacementPlan({rawHeightAt:f.oldRaw,heightAt:f.oldHeight,terrainStep:f.step});
 function build(module,height){const scene=new T.Scene(),material=new T.MeshStandardMaterial(),colliders=[];return module.createCanyonLandscape({THREE:T,scene,heightAt:height,terrainStep:f.step,material,colliders});}
 const prior=build(old,f.oldHeight),live=build(next,f.height);

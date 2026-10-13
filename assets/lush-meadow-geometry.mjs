@@ -36,7 +36,7 @@ export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='mea
    const height=localSegments===3?[0,.36,.87,.97][ring]:localSegments===2?[0,.77,.97][ring]:[0,.96][ring];
    const lean=reach*(.10*t+.90*t*t),cross=(leaf%2?-.005:.006)*t*t;
    const x=root[0]+dx*lean-dz*cross,y=h*height,z=root[1]+dz*lean+dx*cross;
-   const half=width*(short?.78:.40+.75*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.58),heading=a+twist*t*t;
+   const half=(width+(profile==='near'&&leaf%2===0?(.008+(leaf%4)*.001)*Math.sin(Math.PI*t):0))*(short?.78:.40+.75*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.58),heading=a+twist*t*t;
    const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);
    for(const side of last?[0]:[-1,1])emit([x-Math.sin(heading)*half*side,y,z+Math.cos(heading)*half*side],(side+1)/2,t,shade,leaf%17===0?.15:0);
    if(ring<samples.length-2){const k=start+ring*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}

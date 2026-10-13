@@ -1,3 +1,4 @@
+import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -19,7 +20,7 @@ function withoutChalkRenderResponse(source){
  assert.equal(source.split(river).length,2,'Exactly one original-planning River adapter');
  return source.replace(river,'W.canyonPlacement?.heightAt');
 }
-const source=exactCache(withoutChalkRenderResponse(read('../assets/features/world-flora.js')),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
+const source=exactCache(withoutChalkRenderResponse(normalizePastoralSource(read('../assets/features/world-flora.js'),'assets/features/world-flora.js')),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
 const photo=exactCache(read('../assets/world-photoscans.js'),[["import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';","import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=steep-flora-roots-1';"],["import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';","import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';"]]),oldPhoto=read('./fixtures/steep-flora-11fb567/world-photoscans.js');
 function fixture(body=source,{height=terrain.height,planned=terrain.oldHeight,capacity=40}={}){
  const geometry=new T.BoxGeometry(),material=new T.MeshBasicMaterial(),BANK={};for(const kind of ['pine','cold','oak','trunk'])BANK[kind]={im:new T.InstancedMesh(geometry,material,capacity),n:0,cap:capacity};

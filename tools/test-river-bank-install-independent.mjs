@@ -1,3 +1,4 @@
+import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
 import {T,repo,baseline,oldWater,runWater,sha} from './river-preservation-fixture.mjs';
 const pkg=process.env.RIVER_BANK_PACKAGE||repo,load=p=>import(pathToFileURL(path.join(pkg,p)));
@@ -10,8 +11,8 @@ const proof={waterSHA:sha(newWater),surfaceSHA:sha(fs.readFileSync(path.join(pkg
 const {exactSweptClearance}=await import(pathToFileURL(path.join(repo,'tools/terrain-water-contact.mjs')));
 function restored(source,edits){for(const p of edits){assert.equal(source.split(p.after).length,2,'Exactly one approved source addition at '+p.newLine);source=source.replace(p.after,p.before);}return source;}
 test('whole old source bodies survive only individually reviewed River owner and planning additions',()=>{
- for(const [file,edits]of Object.entries(approved)){let next=fs.readFileSync(path.join(pkg,file),'utf8');const old=fs.readFileSync(new URL(file,baseline),'utf8');for(const [name,before,after]of cacheEdges)if(name===file&&next.includes(after))next=restored(next,[{before,after}]);if(file==='assets/features/world-water.js'&&hasRushes){next=restored(next,[{after:reedChanges.import,before:''}]);for(const name of ['geometry','comment','material'])next=restored(next,[reedChanges[name]]);}assert.equal(restored(next,edits),old,file);}
- if(cacheEdges.length){let index=fs.readFileSync(path.join(pkg,'assets/features/index.js'),'utf8');for(const [name,before,after]of cacheEdges)if(name==='assets/features/index.js')index=restored(index,[{before,after}]);assert.equal(index,fs.readFileSync(new URL('assets/features/index.js',baseline),'utf8'));}
+ for(const [file,edits]of Object.entries(approved)){let next=normalizePastoralSource(fs.readFileSync(path.join(pkg,file),'utf8'),file);const old=fs.readFileSync(new URL(file,baseline),'utf8');for(const [name,before,after]of cacheEdges)if(name===file&&next.includes(after))next=restored(next,[{before,after}]);if(file==='assets/features/world-water.js'&&hasRushes){next=restored(next,[{after:reedChanges.import,before:''}]);for(const name of ['geometry','comment','material'])next=restored(next,[reedChanges[name]]);}assert.equal(restored(next,edits),old,file);}
+ if(cacheEdges.length){let index=normalizePastoralSource(fs.readFileSync(path.join(pkg,'assets/features/index.js'),'utf8'),'assets/features/index.js');for(const [name,before,after]of cacheEdges)if(name==='assets/features/index.js')index=restored(index,[{before,after}]);assert.equal(index,fs.readFileSync(new URL('assets/features/index.js',baseline),'utf8'));}
 });
 test('complete Water bank and grounded-bed installation preserves all original RNG, layouts, materials and unrelated owners',()=>{
  proof.installers=[];for(const seed of [928471,91,0x9e3779b9]){

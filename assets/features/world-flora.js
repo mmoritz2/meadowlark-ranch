@@ -1,3 +1,4 @@
+import {dressBotanicalPetals} from '../botanical-petals.mjs?v=botanical-petals-1';
 import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1';
 import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollowpeak-cascades-1';
@@ -33,6 +34,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollo
 import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
 import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
+import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
@@ -417,6 +419,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0;i<n;i++){const a=i/n*Math.PI+0.3;w.card(0,0,0,a,lean*(hsh(i,17)-0.4),wid,1,0.70+i*0.09);}
   return w.finish();};
  const reedGeo=crossGeo(3,0.46,0.16), tuftGeo=crossGeo(3,1.15,0.24), petalGeo=crossGeo(2,0.52,0.10);
+ dressBotanicalPetals({THREE,geometry:petalGeo,material:M.petal});
  const desertArt=W.desertArt||createDesertArt({THREE});
  const succGeo=desertArt.geometry('agave'),ocoGeo=desertArt.geometry('ocotillo');
  M.succ=desertArt.material;M.oco=desertArt.material;
@@ -1005,6 +1008,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  // Keep original submitted plant sizes through the course-clear gather/mow.
  // Final cover readiness invokes this response after clearing; existing zero
  // rows, source counts/colours, planting decisions and outside bytes stay exact.
+ F.refreshPastoralCover=()=>F.pastoralCover={tuft:applyPastoralGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n)};
  F.refreshChalkGrazing=()=>F.chalkGrazing={
   tuft:applyChalkGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n),
   brack:applyChalkGrassMesh(BANK.brack.im,groundH,BANK.brack.n),

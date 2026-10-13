@@ -1,5 +1,6 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=chalk-grazing-1';
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=pastoral-cover-1';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
+import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=field-grass-3';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
@@ -21,7 +22,7 @@ export function swardFamilyAt(x,z){
 export function prepareSwardRows(cells,{canBasal=()=>true,cellCache=new WeakMap()}={}){
  const start=now(),rows=[];let classified=0,reused=0,index=0;
  for(let cellIndex=0;cellIndex<cells.length;cellIndex++){const c=cells[cellIndex];if(!Number.isInteger(c.count)||c.count<0||c.count*16>c.matrices.length||c.count*3>c.colors.length)throw Error('Invalid source cell count');let cached=cellCache.get(c);
-  if(!cached||cached.version!==c.version||cached.count!==c.count){const list=[];for(let row=0;row<c.count;row++){const o=row*16,x=c.matrices[o+12],y=c.matrices[o+13],z=c.matrices[o+14];if(!Number.isFinite(x+y+z))throw Error('Nonfinite source root');const warm=!!canBasal(x,z),basal=warm&&swardHash(x,z,19)<.75,variant=Math.min(4,Math.floor(swardHash(x,z,2)*5)),scaleY=Math.hypot(c.matrices[o+4],c.matrices[o+5],c.matrices[o+6]);list.push({cellIndex,row,x,y,z,richEligible:basal,basal,family:basal?swardFamilyAt(x,z):0,grazed:basal&&selectsGrazedSward(x,z,swardHash(x,z,37)),variant,height:(.32+.20*swardHash(x,z,3))*clamp(scaleY,.65,1.25),accent:null,accentCandidate:basal&&swardHash(x,z,1)<.045*swardPatchAt(x,z)});classified++;}cached={version:c.version,count:c.count,rows:list};cellCache.set(c,cached);}else reused+=cached.count;
+  if(!cached||cached.version!==c.version||cached.count!==c.count){const list=[],pastoral=pastoralSourceRows(c);for(let row=0;row<c.count;row++){const o=row*16,x=c.matrices[o+12],y=c.matrices[o+13],z=c.matrices[o+14];if(!Number.isFinite(x+y+z))throw Error('Nonfinite source root');const warm=!!canBasal(x,z),basal=warm&&swardHash(x,z,19)<.75,variant=Math.min(4,Math.floor(swardHash(x,z,2)*5)),scaleY=Math.hypot(c.matrices[o+4],c.matrices[o+5],c.matrices[o+6]);list.push({cellIndex,row,x,y,z,richEligible:basal,basal,family:basal?swardFamilyAt(x,z):0,grazed:basal&&selectsGrazedSward(x,z,swardHash(x,z,37),pastoral.cuts[row]),pastoralCut:pastoral.cuts[row],pastoralCap:pastoral.caps[row],variant,height:(.32+.20*swardHash(x,z,3))*clamp(scaleY,.65,1.25),accent:null,accentCandidate:basal&&swardHash(x,z,1)<.045*swardPatchAt(x,z)});classified++;}cached={version:c.version,count:c.count,rows:list};cellCache.set(c,cached);}else reused+=cached.count;
   for(const r of cached.rows){r.sourceIndex=index++;rows.push(r);}
  }
  return {rows,classifiedRoots:classified,reusedRoots:reused,eligibilityMs:now()-start};
@@ -71,7 +72,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
  // Only the drawn prefix is uploaded; unused capacity cannot contribute vertices.
  function copy(rows,mesh,colors=true){
   const dst=mesh.instanceMatrix.array;
-  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);if(colors)mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);}
+  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});if(colors)mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);}
   mesh.count=rows.length;
   for(const [attribute,width] of [[mesh.instanceMatrix,16],...(colors?[[mesh.instanceColor,3]]:[])]){
    attribute.clearUpdateRanges();
@@ -100,6 +101,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
    for(let col=0;col<3;col++){const start=offset+col*4,length=Math.hypot(c.matrices[start],c.matrices[start+1],c.matrices[start+2]);if(length<1e-8)throw Error('Zero scan root basis');for(let axis=0;axis<3;axis++)mesh.instanceMatrix.array[dst+col*4+axis]=c.matrices[start+axis]*scale/length;}
    mesh.instanceMatrix.array[dst+12]=r.x;mesh.instanceMatrix.array[dst+13]=r.y;mesh.instanceMatrix.array[dst+14]=r.z;mesh.instanceMatrix.array[dst+15]=1;
    respondChalkGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH);
+   respondPastoralGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH,0,0,0,{cut:r.pastoralCut,cap:r.pastoralCap});
   }
   for(let i=0;i<5;i++){state.meshes[i].count=counts[i];state.meshes[i].instanceMatrix.needsUpdate=true;}
   const finished=now();timingSamples.push(finished-started);if(timingSamples.length>32)timingSamples.shift();const sorted=timingSamples.slice().sort((a,b)=>a-b);
