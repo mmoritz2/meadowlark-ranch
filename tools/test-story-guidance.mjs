@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 // The web project uses ES modules without a root package.json.
 const source=await readFile(new URL('../assets/features/story-guidance.js',import.meta.url),'utf8');
-const {nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,install}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {missionPersonId,nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,install}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const pickup=(x,z,item='lettuce',visible=true)=>({item,g:{visible,position:{x,y:0,z}}});
 const here={x:0,z:0};
 
@@ -113,4 +113,65 @@ test('active story card exposes action and reward, escapes text, and preserves e
  assert.match(html,/data-fx="story-guide"/);assert.match(html,/200 coins &amp; hay/);
  assert.match(html,/aria-valuenow="1"/);assert.match(html,/aria-valuemax="2"/);
  assert.match(html,/✓ Lantern post/);assert.match(html,/○ Water trough/);
+});
+
+// Exercise the actual HUD delegator as well as the guidance module. Its fallback
+// still owns ordinary doors/places/turn-ins; witness text and marker share one rule.
+const hudSource=await readFile(new URL('../assets/features/se-hud.js',import.meta.url),'utf8');
+const wayTargetSource=hudSource.slice(hudSource.indexOf(' function wayTarget(){'),hudSource.indexOf(' const _wv='));
+function witnessFixture(){
+ const mission={type:'clues',npc:'wren',label:'Ask Mia and Theo about the grey mare',goal:3,reward:{c:200},clues:[{npc:'mia'},{npc:'theo'}]};
+ const save={story:{idx:0,prog:0,name:'Silverleaf',clues:[]}},calls=[];
+ const defs=[{id:'wren',name:'Grandpa Wren'},{id:'mia',name:'Mia'},{id:'theo',name:'Theo'}];
+ const npcs=defs.map((def,i)=>({def,g:{visible:true,position:{x:i*8,y:0,z:3}}}));
+ const G={quest:{STORY:[mission],storyIdx:()=>save.story.idx,storyProg:()=>save.story.prog,NPC_DEFS:defs},
+  horse:{ridden:()=>({}),player:{pos:here}},world:{npcList:npcs},save:{fresh:()=>structuredClone(save)},
+  money:{rewardLabel:()=> '200 coins'},tables:{DECOR_CAT:{}},ui:{action(){}},$:()=>null,on(){},hidePanels:()=>calls.push('world')};
+ install(G);
+ const wayTarget=new Function('G',"let wayKey='',wayNpc=null;const wayPlace={position:{set(){}}};"+wayTargetSource+'return wayTarget;')(G);
+ return {G,save,mission,npcs,calls,wayTarget};
+}
+
+test('witness instructions, quest pill and actual HUD target advance together without a cache delay',()=>{
+ const f=witnessFixture(),g=f.G.storyGuidance;
+ for(const [clues,expected] of [[[],'mia'],[['mia'],'theo'],[['mia','theo'],'wren']]){
+  f.save.story.clues=clues;f.save.story.prog=clues.length;
+  const before=structuredClone(f.save),plan=g.describe(),target=f.wayTarget();
+  const who=f.npcs.find(n=>n.def.id===expected);
+  assert.equal(missionPersonId(f.mission,false,f.save),expected);
+  assert.equal(target.position,who.g.position,'the marker uses the live actor, not fixed authored coordinates');
+  assert.match(plan.label,new RegExp(who.def.name.replace('Grandpa ','')));
+  assert.match(g.pill(f.mission,f.save,f.save.story.prog),new RegExp(who.def.name.replace('Grandpa ','')));
+  assert.equal(plan.complete,false);
+  g.activateCurrent();assert.deepEqual(f.save,before,'navigation never notes a clue or credits the story');
+ }
+ assert.match(g.describe().label,/Compare clues with Wren/);
+ assert.match(g.describe().hint,/compare the clues/);
+ assert.doesNotMatch(g.pill(f.mission,f.save,2),/reward ready/);
+ f.save.story.prog=3;
+ assert.equal(g.describe().label,'Return to Wren');assert.equal(g.describe().complete,true);
+ assert.equal(f.wayTarget(),f.npcs[0].g,'completed mission uses the established giver fallback');
+ assert.match(g.pill(f.mission,f.save,3),/reward ready/);
+});
+
+test('witness resolver tolerates old and malformed clue ledgers without inventing discovered clues',()=>{
+ const m={npc:'wren',clues:[{npc:'mia'},{npc:'theo'}]};
+ for(const story of [{},{clues:null},{clues:'mia'},{clues:4}])assert.equal(missionPersonId(m,false,{story}),'mia');
+ assert.equal(missionPersonId(m,false,{story:{clues:['unknown','mia','mia']}}),'theo');
+ assert.equal(missionPersonId(m,true,{story:{clues:[]}}),'wren');
+ assert.equal(missionPersonId(null,false),null);
+});
+
+test('moving or unavailable witnesses never produce a stale marker to another person',()=>{
+ const f=witnessFixture(),target=f.wayTarget();f.npcs[1].g.position.x=37;
+ assert.equal(target.position.x,37);assert.equal(f.wayTarget().position.x,37);
+ f.G.world.npcList=f.npcs.filter(n=>n.def.id!=='mia');
+ assert.equal(f.wayTarget(),null,'do not fall through to a wrong giver while the witness is unavailable');
+ assert.equal(f.G.storyGuidance.describe().label,'Find Mia');
+});
+
+test('talk tasks describe and target their named conversation partner before returning to the giver',()=>{
+ const f=witnessFixture();Object.assign(f.mission,{type:'talk',talk:'theo',goal:1,label:'Ask Theo'});delete f.mission.clues;
+ assert.equal(f.G.storyGuidance.describe().label,'Find Theo');assert.equal(f.wayTarget().position,f.npcs[2].g.position);
+ f.save.story.prog=1;assert.equal(f.G.storyGuidance.describe().label,'Return to Wren');assert.equal(f.wayTarget(),f.npcs[0].g);
 });

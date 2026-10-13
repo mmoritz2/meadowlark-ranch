@@ -1,0 +1,36 @@
+{
+  "buttons": [
+    {
+      "height": 44,
+      "label": "All activities",
+      "top": 61
+    },
+    {
+      "height": 44,
+      "label": "Back to riding ×",
+      "top": 61
+    },
+    {
+      "height": 44,
+      "label": "Ride next goal",
+      "top": 686.359375
+    },
+    {
+      "height": 44,
+      "label": "Pick any activity",
+      "top": 738.359375
+    },
+    {
+      "height": 44,
+      "label": "Follow the marker",
+      "top": 987.828125
+    },
+    {
+      "height": 44,
+      "label": "Equip",
+      "top": 1197.515625
+    }
+  ],
+  "scrollWidth": 364,
+  "width": 364
+}

@@ -1,0 +1,195 @@
+{
+  "sourceCommit": "e138d34",
+  "driver": {
+    "active": false,
+    "status": "Flat race ended. Inspect the production result",
+    "steps": 191,
+    "target": {
+      "checkpoint": 6,
+      "distance": 5.221921915243498,
+      "gait": "trot",
+      "kind": "gate",
+      "lap": 1,
+      "total": 6,
+      "x": -40,
+      "z": 2
+    }
+  },
+  "errors": [],
+  "eventCourse": {
+    "accuracy": 0.06640411193144186,
+    "active": false,
+    "countdown": -0.0027999999970203596,
+    "difficulty": "open",
+    "elapsed": 441.12329999999656,
+    "faults": 101,
+    "horse": {
+      "breed": "bay-sporthorse",
+      "id": 1,
+      "name": "Bramble"
+    },
+    "id": "pp",
+    "index": 6,
+    "lap": 1,
+    "laps": 1,
+    "lineOff": 0,
+    "name": "Pasture Pony Dash",
+    "player": {
+      "heading": -6.191447034411122,
+      "speed": 0,
+      "x": -40.22607666571136,
+      "z": -0.482974141409533
+    },
+    "raceAccuracy": 0.3729643600867805,
+    "resultText": null,
+    "started": true,
+    "target": null,
+    "timeAllowed": 41.00936138427348,
+    "total": 6
+  },
+  "featureErrors": [],
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "networkConnected": false,
+  "networkStopped": false,
+  "player": {
+    "breed": "bay-sporthorse",
+    "heading": -6.191447034411122,
+    "horseId": 1,
+    "horseName": "Bramble",
+    "loadingBreed": false,
+    "modelKey": "bay-sporthorse",
+    "rigReady": true,
+    "speed": 0,
+    "x": -40.22607666571136,
+    "z": -0.482974141409533
+  },
+  "ready": true,
+  "saveSummary": {
+    "horseCount": 2,
+    "horseNames": [
+      {
+        "breed": "bay-sporthorse",
+        "id": 1,
+        "name": "Bramble"
+      },
+      {
+        "breed": "pinto",
+        "id": 2,
+        "name": "Clover"
+      }
+    ],
+    "journey": {
+      "claimed": {
+        "first-partners": {
+          "at": 1791650619995,
+          "gearId": "journey-first-partners"
+        },
+        "river-rhythm": {
+          "at": 1791656399494,
+          "gearId": "journey-river-rhythm"
+        },
+        "steady-hands": {
+          "at": 1791654968498,
+          "gearId": "journey-steady-hands"
+        }
+      },
+      "lastClaimId": "river-rhythm",
+      "version": 1
+    },
+    "rescue": {
+      "adopted": true,
+      "completions": 1
+    },
+    "riderCreated": true,
+    "ridingHorseId": 1,
+    "rush": {
+      "rush-pasture": {
+        "bestCombo": 6,
+        "bestScore": 1271,
+        "bestTime": 35.9,
+        "lastRunId": "mv2mggc9-1-febb42",
+        "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+        "medal": "gold",
+        "plays": 1,
+        "splits": [
+          5.54,
+          11.68,
+          20.1,
+          25.65,
+          29.88,
+          35.9
+        ]
+      },
+      "rush-river": {
+        "bestCombo": 6,
+        "bestScore": 1400,
+        "bestTime": 95.46,
+        "lastRunId": "mv2r8fvw-1-zqlzum",
+        "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+        "medal": "silver",
+        "plays": 3,
+        "splits": [
+          1.87,
+          7.44,
+          72.12,
+          75.16,
+          80.86,
+          85.56,
+          88.83,
+          95.46
+        ]
+      },
+      "rush-trail": {
+        "bestCombo": 7,
+        "bestScore": 2034,
+        "bestTime": 50.77,
+        "lastRunId": "mv2req07-1-o7t2pz",
+        "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+        "medal": "silver",
+        "plays": 1,
+        "splits": [
+          2.15,
+          9.47,
+          14.82,
+          17.77,
+          24.95,
+          32.11,
+          35.89,
+          43.72,
+          48.33,
+          50.77
+        ]
+      }
+    },
+    "totalRaces": 0
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Tap here for Gallop, then ride forward. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (270/300)\nTap here for Gallop, then ride forward."
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 270.0890688828615,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 270.0890688828615
+    },
+    "target": null
+  },
+  "visibleResult": "⚡ Speed pad!\nPasture Pony Dash\n🎀\n441.1s\nMeadowlark Ranch · Race · 🏇 Open · allowance 41.0s\n1 ribbon\n⭐\n🏁 The field — you finished P4 of 4\n👑 Fernmere\n26.8s\n🥈 Hollypark\n33.8s\n🥉 Silverbirch\n37.8s\n#4 You\n441.1s\n📋 The score\n🏁 Race — the sheet\nPlacing\nP4/4 — Hollypark, Fernmere, Silverbirch\nGates\n47% through the middle\nLine\nclean\nHazards hit\n0\n🎯 Accuracy 37%\n⏱ Time faults 101\n💰 What the round paid\nPurse 180🪙\n+180🪙 in the hand\n+4💎\n🎀 1 ribbons won all told\n🥉\nRacing rank up — Bronze Bit\n🥉 Bronze Bit\n100 racing points (+15 just now)\nNext: Silver Stirrup at 300 — 200 to go, and it pays 5💎 Rare tack.\n🥉 Claim Bronze Bit — 300🪙 3🎫\n📝 Also this round\n🎀 +2 bond for the ribbon\n🏇 +15 racing points\n🥉 Racing rank up — Bronze Bit! Claim it in 🏁 Race Club.\n🏁 Gates 47% · P4/4 of the field · line clean · 0 hazards\n➡️ Next on the ladder\nCottonwood Welcome Jump is featured this week and still wants a gold ribbon from you — 1d 14h left. 🎫 Cottonwood is the next venue to sign off — ride Cottonwood Welcome Jump\nRide Cottonwood Welcome Jump\nWhat it pays\nRide it again\n🎟️ Rematch · faster field, double points\n🏅 The ladder\nClose\nEvent Card\n3,988\n49",
+  "operatorNotes": [
+    "One driver stop after five seconds without physical progress near the permanent haybales.",
+    "Operator used ordinary S, D and W controls to steer clear, then explicitly restarted the driver.",
+    "Race took 441.1 seconds with P4/4 and 101 time faults; this is completion evidence, not a successful competitive time."
+  ]
+}

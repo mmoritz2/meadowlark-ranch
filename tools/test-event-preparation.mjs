@@ -84,7 +84,7 @@ test('each missing stat uses its own breed ceiling and met stats do not offer tr
 const source=readFileSync(new URL('../assets/features/se-events.js',import.meta.url),'utf8');
 const start=source.indexOf(' function eventReturn('),end=source.indexOf(' function ride(ev,di){',start);
 assert(start>0&&end>start);
-const navigate=new Function('G','evById','st','$','root','paintPage','setTimeout','clamp','DIFFS','preparationFor',source.slice(start,end)+'return {prepareHorse,trainForEvent};');
+const navigate=new Function('G','evById','st','$','root','paintPage','setTimeout','clamp','DIFFS','preparationFor','mountSelection',source.slice(start,end)+'return {prepareHorse,trainForEvent};');
 const prepStart=source.indexOf(' function preparationFor('),prepEnd=source.indexOf(' function ribbonsOf(',prepStart);
 assert(prepStart>0&&prepEnd>prepStart);
 const freshPlan=new Function('G','ridden','S','DIFFS','clamp','gate','townLock','needText','featured','eventPreparation',source.slice(prepStart,prepEnd)+'return preparationFor;');
@@ -99,7 +99,7 @@ function navigationFixture(){
   trainingDrills:{startForEvent(stat,context){trace.starts.push({stat,context});if(trace.accept){st.on=false;st.page=null;}return trace.accept;}}};
  const gate=()=>({ok:horse.level>=ev.lvl&&horse.stats.jump+horse.tackBonus>=3,missing:[['jump',3,horse.stats.jump+horse.tackBonus]]});
  const preparationFor=freshPlan(G,()=>horse,()=>save,()=>diffs,clamp,gate,()=>'',()=>'',()=>[],eventPreparation);
- const api=navigate(G,id=>id===ev.id?ev:null,st,id=>id==='eventsBtn'?button:page,root,()=>{trace.painted++;main.scrollTop=0;},fn=>fn(),clamp,()=>diffs,preparationFor);
+ const api=navigate(G,id=>id===ev.id?ev:null,st,id=>id==='eventsBtn'?button:page,root,()=>{trace.painted++;main.scrollTop=0;},fn=>fn(),clamp,()=>diffs,preparationFor,{state:()=>({blocked:false})});
  return {api,G,st,horse,save,trace,main,preparationFor,ev};
 }
 test('Prepare horse returns to the same event and difficulty with freshly painted horse stats',()=>{
