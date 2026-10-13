@@ -1,0 +1,66 @@
+{
+  "baseline": "dc405f3fe1e0b408ab97bc623b2e4fc3d4a7cf3d",
+  "productOwners": [
+    "ranch3d.html",
+    "assets/features/index.js",
+    "assets/features/event-preparation.js",
+    "assets/features/se-events.js",
+    "assets/features/training-drills.js",
+    "assets/features/story-quests.js",
+    "assets/features/season-quests.js",
+    "assets/features/story-guidance.js"
+  ],
+  "cacheEdges": 7,
+  "runtimeGroups": 28,
+  "observerPreimages": [
+    "tools/activity-landscape-source-guard.cjs",
+    "tools/run-reviewed-world-guards.mjs",
+    "tools/test-activity-landscape-composition.mjs",
+    "tools/test-drill-rewards.mjs",
+    "tools/test-event-horse-comparison.mjs",
+    "tools/test-story-guidance.mjs",
+    "tools/test-training-destination.mjs",
+    "tools/test-training-growth-presentation.mjs"
+  ],
+  "oldFixtureBlobsExact": 164,
+  "approvedFixtureExclusion": [
+    "tools/fixtures/horse-training-dc405f3/contract.json"
+  ],
+  "addedBehavioralTests": {
+    "tools/test-event-horse-xp-preparation.mjs": "215580dea15d2d4ea813f33356715097443fc3d223f723c05241f05f64af6f74",
+    "tools/test-training-quest-claims.mjs": "624e7dc4f32a3777e1df5ce0deb37e10c65ac069755d4f35b330f6c82d4543a4"
+  },
+  "hashes": {
+    "tools/horse-training-source-guard.cjs": "c1821010b13fc8bff333f37b409cd043150cd5995e23a17f0de43c3398e51a41",
+    "tools/fixtures/horse-training-dc405f3/contract.json": "cae6f4a87d97ad87174a47a874e08365f510c32cf58673d0cde87d785fffd822",
+    "tools/test-horse-training-source-guard.mjs": "2a1d4eb658e244edadcf92773c1d124cb98051daa436d0ab157ef70d50d9c88c",
+    "tools/activity-landscape-source-guard.cjs": "679efdca89884183cb700da186186615166287057fdf1f8efbf4590fd3d801f3",
+    "tools/test-activity-landscape-composition.mjs": "97036d86ed5f96e4b90af5838c7b9bfa7196999cef75b8a984d213644272f4aa",
+    "tools/run-reviewed-world-guards.mjs": "4a4f8e1c289337ee6a205feba3aa497e9abe1402120c1f147e1048ca0a2b9971"
+  },
+  "checks": {
+    "deepPreservation": {
+      "pass": 78,
+      "fail": 0,
+      "tap": "/private/tmp/horse-training-deep-preservation.tap"
+    },
+    "release": {
+      "pass": 601,
+      "fail": 0,
+      "tap": "/private/tmp/horse-training-release.tap"
+    },
+    "historical": {
+      "pass": 105,
+      "fail": 0,
+      "tap": "/private/tmp/horse-training-historical.tap"
+    },
+    "syntaxAndDiffCheck": true,
+    "independentRawAudit": "Passed complete8+8 map/fixture audit, then scoped contact-correction owner/observer recheck"
+  },
+  "limits": [
+    "The leaf passes old no-marker subjects unchanged; prior complete-source guards still decide those subjects. Every actual current owner is independently checked against exact after SHA.",
+    "New behavioral tests execute live source and are not mapped to older behavior.",
+    "Only the single new named/hash-verified fixture is filtered before the unchanged previous fixture assertion. Unknown additions remain.",
+    "No product/source/cache edits in this guard task; no staging, commits, browser or native device installation."
+  ]
+}

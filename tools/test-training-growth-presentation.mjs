@@ -11,9 +11,9 @@ assert(start>0&&end>start);
 const labels={speed:'Speed',stamina:'Stamina',jump:'Jump',accel:'Acceleration',agility:'Agility'};
 const finite=(n,f=0)=>Number.isFinite(n)?n:f,fmt=n=>Math.max(0,Math.round(finite(n))).toLocaleString();
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const render=new Function('receipt','G','trainingReceiptView','finite','selectedCap','fmt','esc','canRepeat','eventTarget','LABELS',source.slice(start,end)+'return resultMarkup();');
+const render=new Function('receipt','G','trainingReceiptView','finite','selectedCap','fmt','esc','canRepeat','eventTarget','LABELS','getState',source.slice(start,end)+'return resultMarkup();');
 const statNeed=v=>20+10*v;
-function markup(r,target=null){return render(r,{xp:{statNeed}},trainingReceiptView,finite,()=>({atCap:true,horse:{id:'willow'}}),fmt,esc,()=>true,target,labels);}
+function markup(r,target=null,state={saving:false}){return render(r,{xp:{statNeed}},trainingReceiptView,finite,()=>({atCap:true,horse:{id:'willow'}}),fmt,esc,()=>true,target,labels,()=>state);}
 function receipt(overrides={}){return {runId:'growth-run',horseId:'willow',horseName:'Willow',activity:'jump',unit:'jumps',stat:'jump',saved:true,completed:true,cleared:8,total:8,elapsed:60,
  before:{value:4,xp:0,cap:4},after:{value:4,xp:0,cap:4},statXp:0,statRaised:0,coins:64,passPoints:12,clinic:{misses:0},
  growth:{before:{level:4,xp:125},after:{level:4,xp:149},horseXp:24,levels:0,statGains:{},maxLevel:50,nextTrainingLevel:5,breedCap:8,nextLevelXp:250},...overrides};}
@@ -80,4 +80,15 @@ test('invalid or absent growth data does not render nonfinite progress or fabric
  for(const growth of [null,{}, {before:{level:4},after:{level:NaN,xp:1}}, {before:{level:4},after:{level:3,xp:10}}, {before:{level:4},after:{level:5,xp:Infinity}}]){
   const r=receipt({growth});assert.equal(view(r).growth,null);assert.doesNotMatch(markup(r),/Horse level progress|NaN|Infinity/);
  }
+});
+
+test('in-flight native confirmation is distinct from retry and never exposes proposed horse growth',()=>{
+ const r=receipt({saved:false,progress:{cleanJumps:8}}),state={saving:true},before=structuredClone(r);
+ const saving=markup(r,{eventName:'Farm Derby'},state);
+ assert.match(saving,/Saving your training…/);assert.match(saving,/Confirming your horse XP, stat XP and coins on this device/);
+ assert.match(saving,/data-fx="training:retry-save" disabled>Saving…/);
+ assert.doesNotMatch(saving,/horse XP saved|stat XP saved|clean jumps recorded|class="td-growth"|data-fx="training:event"/);
+ state.saving=false;const retry=markup(r,null,state);assert.match(retry,/data-fx="training:retry-save">Retry save/);
+ assert.match(retry,/Retry saving to confirm/);assert.deepEqual(r,before);
+ const confirmed=markup({...r,saved:true},null,state);assert.match(confirmed,/24 horse XP saved/);assert.match(confirmed,/8 clean jumps recorded/);
 });

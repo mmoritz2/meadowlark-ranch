@@ -9,6 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';
+import {normalizeHorseTrainingSource} from './horse-training-source-guard.cjs';
 const root=path.resolve(fileURLToPath(new URL('../',import.meta.url)));
 const projection=mkdtempSync(path.join(tmpdir(),'meadowlark-reviewed-world-'));
 const observers=new Set(['tools/test-basic-riding-tack.mjs','tools/test-coyote-crag-composition.mjs','tools/test-starter-tack-catalog-preservation.mjs']);
@@ -29,7 +30,7 @@ function tree(relative=''){
   if(ent.isDirectory()){
    if(['assets','tools','assets/features'].includes(name))tree(name);else symlinkSync(src,dest,'dir');
   }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));
-  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));
+  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(normalizeHorseTrainingSource(readFileSync(src,'utf8'),name),name));
   else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(readFileSync(src,'utf8'),name));
   // Incoming live observers now perform their own complete historical adapter
   // reversal; pre-projecting these copies would incorrectly reverse twice.

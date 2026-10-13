@@ -131,3 +131,17 @@ test('event destination names are escaped in the production result markup',()=>{
  const f=fixture();start(f,'speed',f.target({eventName:'Cup <img src=x onerror=bad()> & Friends'}));f.finish();f.flush();
  assert.match(f.markup(),/Cup &lt;img src=x onerror=bad\(\)&gt; &amp; Friends/);assert.doesNotMatch(f.markup(),/<img src=x/);
 });
+
+test('native verification renders a disabled saving action and preserves the event destination',()=>{
+ const f=fixture();start(f,'jump');f.state.saving=true;f.finish(false);f.flush();
+ assert.match(f.markup(),/Saving your training/);assert.match(f.markup(),/data-fx="training:retry-save" disabled/);
+ assert.match(f.markup(),/Confirming your horse XP/);assert.doesNotMatch(f.markup(),/horse XP saved|class="td-growth"|data-fx="training:event"/);
+ assert.equal(f.nodes.get('trainingHudTime').textContent,'Saving…');
+ assert.match(f.nodes.get('trainingHudCue').textContent,/confirmed on this device/);
+ f.action('retry-save');assert.equal(f.trace.retries,0);f.action('event');f.action('again');assert.equal(f.trace.backs,0);
+ f.state.saving=false;f.G.trainingDrills.refresh();assert.match(f.markup(),/>Retry save</);
+ f.action('retry-save');assert.equal(f.trace.retries,1);
+ f.finish(true,{growth:{before:{level:4,xp:240},after:{level:5,xp:14},levels:1,horseXp:24,maxLevel:50,nextLevelXp:300,statGains:{},breedCap:10}});f.flush();
+ assert.match(f.markup(),/24 horse XP saved/);assert.match(f.markup(),/data-fx="training:event"/);
+ assert.equal(f.G.trainingDrills.returnToEvent(),true);assert.equal(f.trace.backs,1);
+});

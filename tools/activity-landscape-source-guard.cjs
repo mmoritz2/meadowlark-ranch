@@ -1,4 +1,5 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');
 const fixture='tools/fixtures/activity-landscape-6a82f3f/contract.json';
 const text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8'),contract=JSON.parse(text);
 const activity=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/activity-runtime-df065bd/contract.json'),'utf8'));
@@ -14,6 +15,7 @@ function reverse(source,file,changes,label){
  return source;
 }
 function normalizeActivityIncomingSource(source,file){
+ source=normalizeHorseTrainingSource(source,file);
  const row=contract.files[file];if(!row)return source;
  let group=contract.toIncoming.filter(c=>c.file===file);
  // The activity parent is also an exact supported historical subject. Its
@@ -24,6 +26,7 @@ function normalizeActivityIncomingSource(source,file){
  assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;
 }
 function normalizeActivityParentSource(source,file){
+ source=normalizeHorseTrainingSource(source,file);
  const row=contract.files[file],group=contract.toActivity.filter(c=>c.file===file);if(!row||!group.length||sha(source)===row.activitySHA256)return source;
  if(!group.some(c=>source.includes(c.after)))return source;
  source=reverse(source,file,group,'incoming wall/lash');
@@ -38,6 +41,7 @@ function observer(source,file,view){
  source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;
 }
 function normalizeActivityIncomingObserverSource(source,file){
+ source=normalizeHorseTrainingObserverSource(source,file);
  const prior=activity.observers[file];
  if(prior&&sha(source)===prior.afterSHA256){
   source=reverse(source,file,activity.observerChanges.filter(c=>c.file===file),'original activity observer');
@@ -45,11 +49,13 @@ function normalizeActivityIncomingObserverSource(source,file){
  }
  return observer(source,file,'incoming');
 }
-function normalizeActivityParentObserverSource(source,file){return observer(source,file,'activity');}
+function normalizeActivityParentObserverSource(source,file){
+ source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}
 // The original assertion still rejects any original fixture drift. The only
 // added files omitted from its diff are the exact new parent declarations and
 // this explicitly named new composition contract; unknown additions remain.
 function normalizeActivityFixtureChanges(diff,baseline){
+ diff=normalizeHorseTrainingFixtureChanges(diff);
  assert.equal(baseline,contract.baseline,'Exact original fixture baseline');
  const lines=diff.trim()?diff.trim().split('\n'):[];assert.equal(new Set(lines).size,lines.length,'No duplicate fixture diff rows');
  const allowed={...contract.approvedAddedFixtures,[fixture]:sha(text)};

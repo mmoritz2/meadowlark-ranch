@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+ok 1 - only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+  ---
+  duration_ms: 6.636917
+  ...
+# Subtest: start admission respects the offline owned-origin and visible unblocked game guards
+ok 2 - start admission respects the offline owned-origin and visible unblocked game guards
+  ---
+  duration_ms: 0.952959
+  ...
+# Subtest: countdown releases keys while production alone owns the clock and gate index
+ok 3 - countdown releases keys while production alone owns the clock and gate index
+  ---
+  duration_ms: 3.051166
+  ...
+# Subtest: real numbered gate centres select ordinary gaits and steering without writing game observations
+ok 4 - real numbered gate centres select ordinary gaits and steering without writing game observations
+  ---
+  duration_ms: 4.107041
+  ...
+# Subtest: UI, background, flight, unmounted state and rig loading stop an already running driver
+ok 5 - UI, background, flight, unmounted state and rig loading stop an already running driver
+  ---
+  duration_ms: 5.073291
+  ...
+# Subtest: course, event and mount identity changes halt rather than adopting another run
+ok 6 - course, event and mount identity changes halt rather than adopting another run
+  ---
+  duration_ms: 0.923541
+  ...
+# Subtest: a missing originally ridden horse cannot provide a valid mounted-race identity
+ok 7 - a missing originally ridden horse cannot provide a valid mounted-race identity
+  ---
+  duration_ms: 0.292708
+  ...
+# Subtest: missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+ok 8 - missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+  ---
+  duration_ms: 2.095333
+  ...
+# Subtest: five seconds of held-forward physical stall stops input; observed movement resets that deadline
+ok 9 - five seconds of held-forward physical stall stops input; observed movement resets that deadline
+  ---
+  duration_ms: 2.805959
+  ...
+# Subtest: diagnostics preserve the course horse and actual result data after the course ends
+ok 10 - diagnostics preserve the course horse and actual result data after the course ends
+  ---
+  duration_ms: 2.958916
+  ...
+# Subtest: a real window keyup clears intent so the next forward request dispatches another keydown
+ok 11 - a real window keyup clears intent so the next forward request dispatches another keydown
+  ---
+  duration_ms: 1.005791
+  ...
+# Subtest: stamina diagnostics report actual raw exhaustion and landing values without changing them
+ok 12 - stamina diagnostics report actual raw exhaustion and landing values without changing them
+  ---
+  duration_ms: 2.754417
+  ...
+# Subtest: the driver follows the published detour waypoint rather than the numbered gate centre
+ok 13 - the driver follows the published detour waypoint rather than the numbered gate centre
+  ---
+  duration_ms: 0.745542
+  ...
+# Subtest: missing, blocked, stale and malformed guide targets stop input without inventing a path
+ok 14 - missing, blocked, stale and malformed guide targets stop input without inventing a path
+  ---
+  duration_ms: 0.786125
+  ...
+# Subtest: a gate crossing can wait for its next normal guide publication without steering toward a stale target
+ok 15 - a gate crossing can wait for its next normal guide publication without steering toward a stale target
+  ---
+  duration_ms: 0.263166
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 131.836041

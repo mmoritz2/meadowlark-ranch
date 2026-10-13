@@ -211,3 +211,44 @@ test('outside, completed, unrelated and invalid stall actions preserve establish
  const input={story:{idx:4,prog:0},keys:1,doors:{}},before=structuredClone(input);
  nextAction(m,false,{x:9,z:-9},{save:input});resolveTarget(m,false,{},here,input);assert.deepEqual(input,before);
 });
+
+
+test('practice guidance rejects a nearer barn-obstructed takeoff and landing lane',()=>{
+ const near={x:-13,z:-10,rotY:.8,g:{visible:true}},open={x:0,z:10,rotY:0,g:{visible:true}};
+ const original={x:-9,z:-17},world={groundH:()=>0,colliders:[],walls:[],solidWorld:{resolve(p){if(p.x>-22&&p.x< -12&&p.z>-20&&p.z< -12)p.x=-22;}}};
+ const before=JSON.stringify([near,open,original]);
+ const target=practiceTarget([near,open],original,world);
+ assert.equal(target.id,'practice:0:10');assert.deepEqual(target.position,{x:0,z:2,y:0});
+ assert.equal(resolveTarget({type:'cleanjump'},false,{...world,practiceJumps:[near,open]},original).id,target.id);
+ assert.equal(JSON.stringify([near,open,original]),before,'guide checks must not move the rider or fence');
+});
+
+test('practice guidance rejects blocked airborne space, rails and alternate-fence shortcuts',()=>{
+ const j={x:0,z:0,rotY:0,g:{visible:true}},here={x:0,z:-8};
+ const world={groundH:()=>0,colliders:[],walls:[],solidWorld:{resolve(p,shape){if(Math.abs(p.z)<1&&shape.bottom>1)p.x+=1;}}};
+ assert.equal(practiceTarget([j],here,world),null,'a low roof or wall is not a jump lane');
+ world.solidWorld.resolve=(p,shape)=>shape.bottom>1?1:0;
+ assert.equal(practiceTarget([j],here,world),null,'opposing contact corrections must not appear to be clear airspace');
+ world.solidWorld.resolve=()=>{};world.walls=[{x1:-4,z1:-5,x2:4,z2:-5}];
+ assert.equal(practiceTarget([j],here,world),null,'takeoff must not cross a yard rail');
+ world.walls=[];world.colliders=[{x:3,z:-8,r:1}];
+ assert.equal(practiceTarget([j],{x:6,z:-8},world),null,'do not draw a shortcut through a prop');
+ world.colliders=[];assert.equal(practiceTarget([j],here,world).id,'practice:0:0');
+});
+
+test('a rider too close to a practice rail gets a full approach instead of a stationary jump target',()=>{
+ const j={x:0,z:10,rotY:0,g:{visible:true}};
+ assert.deepEqual(practiceTarget([j],{x:0,z:9}).position,{x:0,z:2,y:0});
+ assert.deepEqual(practiceTarget([j],{x:0,z:7}).position,{x:0,z:10,y:0});
+ assert.equal(practiceTarget([j],{x:NaN,z:0}),null);
+ assert.equal(practiceTarget([{...j,g:{visible:false}}],{x:0,z:0}),null);
+});
+
+
+test('practice guidance fails closed for unavailable or invalid collision results',()=>{
+ const j={x:0,z:10,rotY:0,g:{visible:true}},p={x:0,z:2};
+ assert.equal(practiceTarget([null],p),null);assert.equal(practiceTarget({},p),null);
+ assert.equal(practiceTarget([j],p,{solidWorld:{}}),null);
+ assert.equal(practiceTarget([j],p,{groundH:()=>0,solidWorld:{resolve(){throw Error('unavailable');}}}),null);
+ assert.equal(practiceTarget([j],p,{groundH:()=>0,solidWorld:{resolve(q,shape){if(shape.bottom>1)q.x=NaN;}}}),null);
+});

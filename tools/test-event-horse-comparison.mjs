@@ -23,10 +23,12 @@ function preparationFixture({horses=[horse(1),horse(2)],inventory=[],venue='',ch
  const eventOk=new Function('G','ridden',courseSource.slice(courseSource.indexOf(' function eventOk('),courseSource.indexOf(' const missingText=',courseSource.indexOf(' function eventOk(')))+'return eventOk;')(G,()=>horses[0]);
  G.course.eventOk=(ev,h)=>{calls.push({kind:'gate',id:h.id});return eventOk(ev,h);};
  const begin=source.indexOf(' function gate('),end=source.indexOf(' function ribbonsOf(',begin);
- const adapters=new Function('G','ridden','S','DIFFS','clamp','townLock','needText','featured','eventPreparation',source.slice(begin,end)+'return {gate,preparationFor};')(G,()=>horses[0],()=>save,()=>diffs,(v,a,b)=>Math.max(a,Math.min(b,v)),()=>venue,m=>m.map(([k,n])=>k+' '+n).join(', '),()=>[],eventPreparation);
+ const adapters=new Function('G','ridden','S','DIFFS','clamp','townLock','needText','featured','eventPreparation','eventHorseById',source.slice(begin,end)+'return {gate,preparationFor};')(G,()=>horses[0],()=>save,()=>diffs,(v,a,b)=>Math.max(a,Math.min(b,v)),()=>venue,m=>m.map(([k,n])=>k+' '+n).join(', '),()=>[],eventPreparation,eventHorseById);
  const traitStart=racingSource.indexOf(' function traitMatches('),traitEnd=racingSource.indexOf(' /* ================================================================= race tickets',traitStart);
  const races=new Function('G','TRAIT_MATCH_AT',racingSource.slice(traitStart,traitEnd)+'return {traitMatches,raceTraitMul};')(G,Number(racingSource.match(/const TRAIT_MATCH_AT=(\d+)/)[1]));
- function plan(h,ev={id:'a1',lvl:3,req:{jump:5},reward:100},di=1){const p=adapters.preparationFor(ev,di,h,save);return eventHorseComparison({horse:h,event:ev,preparation:p,stats:stats(h),personality:{...fill.PERS_DEFAULT,...personality.PERS[h.pers]},personalityMultipliers:personality.persMul(h),bondLevel:bondLevel(h),bondGain,racePace:races.raceTraitMul(ev,h),raceMatches:races.traitMatches(ev,h)});}
+ // Candidate-only checks keep their exact gate-call assertions; the normal
+ // ready-alternative scan is covered in test-event-horse-xp-preparation.mjs.
+ function plan(h,ev={id:'a1',lvl:3,req:{jump:5},reward:100},di=1){const p=adapters.preparationFor(ev,di,h,save,false);return eventHorseComparison({horse:h,event:ev,preparation:p,stats:stats(h),personality:{...fill.PERS_DEFAULT,...personality.PERS[h.pers]},personalityMultipliers:personality.persMul(h),bondLevel:bondLevel(h),bondGain,racePace:races.raceTraitMul(ev,h),raceMatches:races.traitMatches(ev,h)});}
  return {G,save,calls,stats,plan,...adapters};
 }
 

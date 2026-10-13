@@ -721,7 +721,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lash
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';
+import {FEATURES} from './assets/features/index.js?v=horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -770,6 +770,7 @@ const G={
    the general-purpose event bus. Confirmation callbacks only refresh/notify. */
 const TRAINING_PROGRESS=new Map();
 G.trainingProgress={
+ pending(){return nativeTrainingSavePending();},
  register(id,reduce,confirmed){
   if(!id||typeof reduce!=='function'||TRAINING_PROGRESS.has(id))throw Error('Invalid training progress reducer: '+id);
   TRAINING_PROGRESS.set(id,{reduce,confirmed});
@@ -9917,12 +9918,12 @@ function tickRoundup(dt,t){
    Jump uses the coached low-rail clinic instead; it owns crossing/landing proof
    and feeds the same durable partial/full reward path. */
 const DRILL_N=8, DRILL_TIME=55, DRILL_R=3.6;
-const DRILL={on:false,t:0,idx:0,stat:null,cones:[],grp:null,best:0,countdown:0,elapsed:0,horseId:null,horseName:'',runId:null,pending:null,lastResult:null};
+const DRILL={on:false,t:0,idx:0,stat:null,cones:[],grp:null,best:0,countdown:0,elapsed:0,horseId:null,horseName:'',runId:null,pending:null,lastResult:null,saving:false,savePromise:null,saveReceipt:null,saveStaged:false};
 let drillSerial=0;
 function drillPaused(){return !!(G.input?.blocked()||G.photoPause||freeCam||document.hidden);}
 function drillState(){
  const clinic=DRILL.stat==='jump'&&DRILL.on?G.jumpTraining?.snapshot():null;
- return {active:DRILL.on,activity:DRILL.stat==='jump'?'jump':'slalom',unit:DRILL.stat==='jump'?'jumps':'cones',countdown:DRILL.countdown,elapsed:DRILL.elapsed,timeRemaining:Math.max(0,DRILL.t),cleared:DRILL.idx,total:DRILL_N,stat:DRILL.stat,horseId:DRILL.horseId,horseName:DRILL.horseName,paused:DRILL.on&&drillPaused(),next:clinic?.guide||(DRILL.cones[DRILL.idx]?{x:DRILL.cones[DRILL.idx].x,z:DRILL.cones[DRILL.idx].z}:null),points:DRILL.cones.map((c,i)=>({x:c.x,z:c.z,cleared:i<DRILL.idx})),clinic,pending:DRILL.pending,lastResult:DRILL.lastResult};
+ return {active:DRILL.on,activity:DRILL.stat==='jump'?'jump':'slalom',unit:DRILL.stat==='jump'?'jumps':'cones',countdown:DRILL.countdown,elapsed:DRILL.elapsed,timeRemaining:Math.max(0,DRILL.t),cleared:DRILL.idx,total:DRILL_N,stat:DRILL.stat,horseId:DRILL.horseId,horseName:DRILL.horseName,paused:DRILL.on&&drillPaused(),next:clinic?.guide||(DRILL.cones[DRILL.idx]?{x:DRILL.cones[DRILL.idx].x,z:DRILL.cones[DRILL.idx].z}:null),points:DRILL.cones.map((c,i)=>({x:c.x,z:c.z,cleared:i<DRILL.idx})),clinic,pending:DRILL.pending,lastResult:DRILL.lastResult,saving:DRILL.saving===true};
 }
 function cancelDrill(){if(!DRILL.on)return false;G.riding?.lock('training-countdown',false);endDrill(false);return true;}
 function trainingHorseId(){return DRILL.pending?.horseId??(DRILL.on?DRILL.horseId:null);}
@@ -9998,6 +9999,7 @@ function endDrill(done){
   baseXp:Math.round(cleared*3+(done?18+left*DRILL_TIME/(DRILL.timeLimit||DRILL_TIME)*.42:0)),coins:cleared*8,
   passPoints:VIPON?Math.round((done?12:4)*VIP_PASS):(done?12:4),
   statXp:0,before:null,after:null,statRaised:0,saved:false};
+ DRILL.saveReceipt=null;DRILL.saveStaged=false;
  return retryDrillSave();
 }
 function trainingGrowth(s,h,stat,cleared){
@@ -10067,16 +10069,70 @@ function confirmTrainingProgress(receipt,verifiedSave){
  if(story&&story.before<story.goal&&story.after>=story.goal&&s?.story?.idx===story.idx&&(s.story.prog||0)>=story.goal){const giver=NPC_DEFS.find(n=>n.id===story.npc)||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+giver.name);}
  G.trainingProgress?.confirmed(receipt,s);
 }
+// A proposed receipt is not a device acknowledgement. Keep its exact earned
+// proof and after-state separate from the pending result shown to the player.
+function trainingReceiptKey(value){
+ if(Array.isArray(value))return '['+value.map(trainingReceiptKey).join(',')+']';
+ if(value&&typeof value==='object')return '{'+Object.keys(value).sort().filter(k=>value[k]!==undefined).map(k=>JSON.stringify(k)+':'+trainingReceiptKey(value[k])).join(',')+'}';
+ return JSON.stringify(value);
+}
+function sameTrainingProof(receipt,pending){
+ if(receipt?.saved!==true||!receipt.before||!receipt.after||!receipt.growth?.before||!receipt.growth?.after||!receipt.progress)return false;
+ return ['runId','horseId','stat','activity','unit','completed','cleared','total','timeRemaining','elapsed','baseXp','coins','passPoints','clinic'].every(k=>trainingReceiptKey(receipt[k])===trainingReceiptKey(pending[k]));
+}
+function nativeTrainingSavePending(){return typeof G.save?.awaitConfirmedFresh==='function'&&!!DRILL.pending?.runId;}
+function pendingDrillSave(receipt,error){
+ if(DRILL.pending?.runId!==receipt.runId)return false;
+ DRILL.saving=false;DRILL.savePromise=null;
+ const result={...receipt,saved:false,reason:error?.message||'Your training could not be saved.'};
+ DRILL.pending=result;DRILL.lastResult=result;G.run('drillSavePending',result);
+ if(!G.trainingDrills)toast('Training rewards are waiting to save. Retry from your training result.');
+ return false;
+}
+function finishDrillSave(receipt,verifiedSave){
+ if(DRILL.pending?.runId!==receipt.runId)return false;
+ DRILL.saving=false;DRILL.savePromise=null;DRILL.pending=null;DRILL.saveReceipt=null;DRILL.saveStaged=false;DRILL.lastResult=receipt;
+ trainingStorySyncedRunId=receipt.runId;
+ refreshWallet();reloadHorses();confirmTrainingProgress(receipt,verifiedSave);
+ if(receipt.statRaised)sChime();else sCoin();
+ const label=STAT_LBL[receipt.stat],short=label.slice(label.indexOf(' ')+1);
+ if(!G.trainingDrills)toast((receipt.completed?'🎯 Clear round! ':'🎯 '+receipt.cleared+'/'+receipt.total+' · ')
+  +'+'+receipt.statXp+' '+short+' XP · +'+receipt.coins+' coins'
+  +(receipt.statRaised?' · '+label+' → '+receipt.after.value+'!':''));
+ G.run('drillFinish',receipt);
+ return true;
+}
+async function confirmNativeDrillSave(expected){
+ // Ordinary story credit can arrive after the first captured checkpoint. Give
+ // that newer cursor one further barrier; never resync live story to an older
+ // acknowledgement or fall back to the working mirror for confirmation.
+ for(let check=0;check<2;check++){
+  const verifiedSave=await G.save.awaitConfirmedFresh(),actual=verifiedSave?.lastTraining;
+  if(!sameTrainingProof(actual,expected)||trainingReceiptKey(actual)!==trainingReceiptKey(expected)||!verifiedSave.horses?.some(h=>h.id===expected.horseId))throw Error('The confirmed training save does not match your ride. Retry saving.');
+  const working=freshSave();
+  if(!working||trainingReceiptKey(working.lastTraining)!==trainingReceiptKey(expected))throw Error('Your pending training receipt could not be checked. Retry saving.');
+  if((working.story?.idx||0)!==(verifiedSave.story?.idx||0)||(working.story?.prog||0)!==(verifiedSave.story?.prog||0)){
+   if(check===0)continue;
+   throw Error('Your latest story progress is still waiting to save. Retry saving your training.');
+  }
+  return finishDrillSave(JSON.parse(JSON.stringify(actual)),verifiedSave);
+ }
+}
 function retryDrillSave(){
  const pending=DRILL.pending;if(!pending)return false;
+ if(DRILL.saving)return DRILL.savePromise||false;
+ const native=typeof G.save?.awaitConfirmedFresh==='function';
  let receipt={...pending};
  try{
   const sv=freshSave();if(!sv)throw Error('Your ranch save is unavailable.');
   if(sv.lastTraining?.runId===pending.runId){
-   // A native/storage wrapper may report failure after the underlying write.
-   // A confirmed receipt acknowledges that write without paying a second time.
+   // Reuse the staged reward on retry; even an ambiguous device write cannot
+   // apply horse XP, coins, or quest counters a second time.
    receipt=sv.lastTraining;
+   if(!sameTrainingProof(receipt,pending)||DRILL.saveReceipt&&trainingReceiptKey(receipt)!==trainingReceiptKey(DRILL.saveReceipt))throw Error('The saved training receipt does not match your ride.');
+   DRILL.saveReceipt=JSON.parse(JSON.stringify(receipt));DRILL.saveStaged=true;
   }else{
+   if(DRILL.saveStaged)throw Error('Your pending training receipt is unavailable. Retry saving before starting another ride.');
    const h=sv.horses?.find(h=>h.id===pending.horseId);
    if(!h)throw Error('The horse that earned this training is unavailable.');
    ensureStats(h);
@@ -10097,26 +10153,19 @@ function retryDrillSave(){
    sv.pass=sv.pass||{pts:0};sv.pass.pts=(sv.pass.pts||0)+pending.passPoints;
    receipt.progress=creditTrainingProgress(sv,receipt);
    sv.lastTraining=receipt;
-   // Unlike syncSave, this boundary must report failures to the pending UI.
+   DRILL.saveReceipt=JSON.parse(JSON.stringify(receipt));
+   // Unlike syncSave, this boundary reports failures to the pending UI.
    localStorage.setItem(SAVE_KEY,JSON.stringify(sv));
-   if(freshSave()?.lastTraining?.runId!==pending.runId)throw Error('The training save could not be confirmed.');
+   if(!native&&freshSave()?.lastTraining?.runId!==pending.runId)throw Error('The training save could not be confirmed.');
+   DRILL.saveStaged=true;
   }
- }catch(e){
-  receipt={...receipt,saved:false,reason:e?.message||'Your training could not be saved.'};
-  DRILL.pending=receipt;DRILL.lastResult=receipt;
-  G.run('drillSavePending',receipt);
-  if(!G.trainingDrills)toast('Training rewards are waiting to save. Retry from your training result.');
-  return false;
- }
- DRILL.pending=null;DRILL.lastResult=receipt;
- refreshWallet();reloadHorses();confirmTrainingProgress(receipt);
- if(receipt.statRaised)sChime();else sCoin();
- const label=STAT_LBL[receipt.stat],short=label.slice(label.indexOf(' ')+1);
- if(!G.trainingDrills)toast((receipt.completed?'🎯 Clear round! ':'🎯 '+receipt.cleared+'/'+receipt.total+' · ')
-  +'+'+receipt.statXp+' '+short+' XP · +'+receipt.coins+' coins'
-  +(receipt.statRaised?' · '+label+' → '+receipt.after.value+'!':''));
- G.run('drillFinish',receipt);
- return true;
+ }catch(e){return pendingDrillSave(receipt,e);}
+ if(!native)return finishDrillSave(receipt);
+ const expected=JSON.parse(JSON.stringify(DRILL.saveReceipt));
+ DRILL.pending={...receipt,saved:false};delete DRILL.pending.reason;DRILL.lastResult=DRILL.pending;DRILL.saving=true;
+ DRILL.savePromise=Promise.resolve().then(()=>confirmNativeDrillSave(expected)).catch(error=>pendingDrillSave(expected,error));
+ G.run('drillSavePending',DRILL.pending);
+ return DRILL.savePromise;
 }
 function tickDrill(dt,t){
  if(!DRILL.on)return;
@@ -12878,11 +12927,13 @@ const UMBRELLA_R={k:1,g:4,sp:40,p:30};   // the meta-quest: every daily done pay
    label keeps its star, and payReward is handed everything except it. */
 const UMBRELLA_PAY={k:UMBRELLA_R.k,g:UMBRELLA_R.g,p:UMBRELLA_R.p};
 function claimUmbrella(){
+ if(nativeTrainingSavePending()){toast('Save your completed training before claiming quest rewards.');return false;}
  let ok=false;
  syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<DAILY_N)return; s.dq.umbrella=true; payReward(s,UMBRELLA_PAY); ok=true;});
  if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +'+rewardLabel(UMBRELLA_R));renderQuests();}
 }
 function claimDaily(type){
+ if(nativeTrainingSavePending()){toast('Save your completed training before claiming quest rewards.');return false;}
  const q=todayDaily().find(q=>q.type===type);if(!q)return;
  let ok=false;
  syncSave(s=>{
@@ -13185,6 +13236,9 @@ function pendingStorySync(){return !!(DRILL.pending?.runId&&trainingStorySyncedR
 function syncPendingTrainingStory(s){
  const runId=DRILL.pending?.runId,training=runId&&trainingStorySyncedRunId!==runId,wild=pendingTamingStoryRuns(),roundup=pendingRoundupStoryRun();
  if(!training&&!wild.length&&!roundup)return false;
+ // Native freshSave reads the staged mirror; only finishDrillSave may promote
+ // its training cursor after the exact device acknowledgement arrives.
+ if(nativeTrainingSavePending())return false;
  s=s||freshSave();if(!s?.story)return false;
  let recovered=false;
  if(training&&s.lastTraining?.runId===runId&&s.lastTraining.saved===true){trainingStorySyncedRunId=runId;recovered=true;}
@@ -13203,6 +13257,20 @@ function syncPendingTrainingStory(s){
  return true;
 }
 function saveStory(change){syncSave(s=>{
+ if(nativeTrainingSavePending()){
+  // Preserve the staged training cursor without exposing it as claimable. New
+  // ordinary riding credit can join the draft, but a stale cursor cannot erase it.
+  if(change&&change.idx===(s.story?.idx||0)){
+   const m=STORY[change.idx],before=s.story?.prog||0;
+   const prog=m&&['cleanjump','tame'].includes(m.type)?Math.min(m.goal,before+Math.max(0,change.after-change.before)):Math.max(before,change.after);
+   s.story=Object.assign(s.story||{},{idx:change.idx,prog});
+  }else if(!change&&storyIdx===(s.story?.idx||0)){
+   // Talking or solving a clue calls saveStory without a typed counter delta.
+   // Its observed live progress can advance this same cursor, never rewind it.
+   s.story=Object.assign(s.story||{},{prog:Math.max(s.story?.prog||0,storyProg)});
+  }
+  return;
+ }
  if(syncPendingTrainingStory(s)){
   // Storage can recover after questEvt's entry read. Preserve its new counter
   // on the recovered cursor, but never rewind a successor or replay a stale claim.
@@ -13212,7 +13280,7 @@ function saveStory(change){syncSave(s=>{
  }
  s.story=Object.assign(s.story||{},{idx:storyIdx,prog:storyProg});
 });}   // keeps era, name, clues and v beside the cursor
-function missionDone(){syncPendingTrainingStory();const m=STORY[storyIdx];return m&&storyProg>=m.goal;}
+function missionDone(){if(nativeTrainingSavePending())return false;syncPendingTrainingStory();const m=STORY[storyIdx];return m&&storyProg>=m.goal;}
 function storyText(t){const s=freshSave();return String(t==null?'':t).replace(/\{name\}/g,(s&&s.story&&s.story.name)||'the grey mare');}   // the prologue horse's name, wherever the story says it
 /* Story missions from packages: append at the end, or insert a chapter before an index —
    once per save (s.mig[tag]), moving the player's position so nobody replays a mission. */
@@ -13237,7 +13305,7 @@ function questEvt(type,val){
  else if(type==='forage'){if(val===m.item)storyProg=Math.min(m.goal,storyProg+1);}
  else storyProg=Math.min(m.goal,storyProg+(typeof val==='number'?val:1));   // any other type is a counter
  change.after=storyProg;saveStory(change);
- if(storyIdx===change.idx&&storyProg>=m.goal){const g=NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+g.name);}
+ if(!nativeTrainingSavePending()&&storyIdx===change.idx&&storyProg>=m.goal){const g=NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+g.name);}
 }
 function npcShort(def){return def.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','');}
 function openDlg(){
@@ -13282,6 +13350,7 @@ function openDlg(){
  $('dlgBtn').onclick=()=>{
   syncPendingTrainingStory();
   if(m&&mine&&pendingStorySync()){
+   if(nativeTrainingSavePending()){toast('Save your completed training before claiming this mission.');return;}
    // An unreadable pending save cannot authorize a claim from this old dialog.
    // Keep it available for a later click once storage can establish its cursor.
    const s=freshSave();if(!s)return;syncPendingTrainingStory(s);

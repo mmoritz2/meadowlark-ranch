@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {createSaveStore} from '../mobile/src/save-store.mjs';
+import {confirmGameSave} from '../mobile/src/save-confirmation.mjs';
 
 // Execute the actual completion/save functions and shared stat-XP calculation.
 // No browser, live player save, WebGL scene, or replacement reward implementation.
@@ -19,6 +21,8 @@ const levelCap=Function(section('function statCap(h){','function statCeil(h,k){'
 const storyCursor=section('let trainingStorySyncedRunId=null;','function storyText(t){');
 const storyEvent=section('function questEvt(type,val){','function npcShort(def){');
 const dialogueClaim=section(" $('dlgBtn').onclick=()=>{\n  syncPendingTrainingStory();",'\n };\n}\nfunction makeNPC(def){');
+const claims=section('function claimUmbrella(){','/* ---- achievements ---- */');
+const talk=section(' const talkNow=!!('," if(m&&m.type==='guess'");
 const keys=['speed','stamina','jump','accel','agility'];
 function fixture(options={}){
  const horse={id:'trained',name:'Willow',level:1,xp:0,stats:{speed:2,jump:2},sxp:{speed:0,jump:0},...options.horse};
@@ -27,6 +31,8 @@ function fixture(options={}){
   dq:{date:new Date().toDateString(),roll:dailyRows.map(row=>row.type),prog:{},claimed:{}},
   story:{idx:0,prog:options.storyBefore??0},
   horses:[horse,{id:'other',name:'Fern',level:1,xp:0,stats:{speed:1},sxp:{speed:0}}]});
+ const saveKey=options.storage?'starRanchFable_v1':'isolated-fixture';
+ if(options.storage)options.storage.setItem(saveKey,stored);
  const trace={reads:0,claims:0,events:[],toasts:[],writes:0,refresh:0,reload:0,chime:0,coin:0,removed:0,geometry:0,material:0,texture:0,sharedGeometry:0,unrelatedMaterial:0,cleared:0,practice:[],clinicCalls:[],multiplied:[],draftApplications:0,confirmations:[]};
  const clinic={misses:2,cleared:8,...options.clinic};
  let failure=options.failure,readsFail=false,readFailures=0,moduleFailure=options.moduleFailure;
@@ -41,29 +47,33 @@ function fixture(options={}){
  const hud={style:{display:'block'}},arrow={visible:true};
  const localStorage={setItem(key,value){
   if(failure==='write')throw Error('storage full');
+  if(options.storage)options.storage.setItem(saveKey,value);
   stored=value;trace.writes++;
   if(failure==='readback')readsFail=true;
   if(failure==='after-write')throw Error('wrapper failed after write');
- },getItem(){trace.reads++;if(readFailures>0){readFailures--;throw Error('read unavailable');}if(readsFail)throw Error('read unavailable');return stored;}};
+ },getItem(){trace.reads++;if(readFailures>0){readFailures--;throw Error('read unavailable');}if(readsFail)throw Error('read unavailable');return options.storage?.getItem(saveKey)??stored;}};
  const freshSave=()=>{try{return JSON.parse(localStorage.getItem());}catch{return null;}};
- const bindings={QUEST_TYPES:{},syncSave(fn){try{const draft=JSON.parse(localStorage.getItem());fn(draft);localStorage.setItem('isolated-fixture',JSON.stringify(draft));}catch{}},payReward:()=>trace.claims++,setPracticeJumps:on=>trace.practice.push(on),DRILL,DRILL_N:8,DRILL_TIME:55,nameSprites,scene:{remove(){trace.removed++;}},$:()=>hud,course:null,arrow,
+ const bindings={QUEST_TYPES:{},syncSave(fn){try{const draft=JSON.parse(localStorage.getItem());fn(draft);localStorage.setItem(saveKey,JSON.stringify(draft));}catch{}},payReward:()=>trace.claims++,setPracticeJumps:on=>trace.practice.push(on),DRILL,DRILL_N:8,DRILL_TIME:55,nameSprites,scene:{remove(){trace.removed++;}},$:()=>hud,course:null,arrow,
   myHorses:JSON.parse(stored).horses,rideIdx:options.rideIdx??0,STAT_LBL:{speed:'💨 Speed',jump:'⤴️ Jump'},
-  VIPON:!!options.vip,VIP_PASS:1.5,freshSave,localStorage,SAVE_KEY:'isolated-fixture',
+  VIPON:!!options.vip,VIP_PASS:1.5,freshSave,localStorage,SAVE_KEY:saveKey,
   MAX_LEVEL:50,STAT_KEYS:keys,Math:Object.assign(Object.create(Math),{random:()=>options.random??0}),
   ensureStats:h=>{h.sxp??={};},statCap:options.dynamicCaps?levelCap:()=>options.cap??4,statCeil:()=>options.breedCap??options.cap??4,
-  DAILYQ:dailyRows,DAILY_N:3,STORY:[{type:options.storyType??'cleanjump',label:'A clean jumping partnership',goal:options.storyGoal??100,npc:'wren'},{type:'photo',goal:1,npc:'wren'}],
-  NPC_DEFS:[{id:'wren',name:'Wren'}],storyIdx:0,storyProg:options.storyBefore??0,_dailyMemo:{key:'cached',list:null},
+  DAILYQ:dailyRows,DAILY_N:3,STORY:[{type:options.storyType??'cleanjump',label:'A clean jumping partnership',goal:options.storyGoal??100,npc:'wren',talk:'wren',reward:{c:300}},{type:'photo',goal:1,npc:'wren'}],
+  todayDaily:()=>dailyRows,UMBRELLA_PAY:{c:20},UMBRELLA_R:{c:20},rewardLabel:()=>'+20 coins',renderQuests:()=>{},refreshTack:()=>{},sGem:()=>{},
+  npcShort:def=>def.name,NPC_DEFS:[{id:'wren',name:'Wren'}],storyIdx:0,storyProg:options.storyBefore??0,_dailyMemo:{key:'cached',list:null},
   statNeed:v=>20+10*v,mulOf:(type,s,h)=>{trace.multiplied.push({type,horseId:h?.id});return type==='xp'?options.horseMultiplier??1:options.multiplier??1;},addSP:(s,n)=>{s.starPoints=(s.starPoints||0)+n;},
   logEarn:(s,n)=>{s.stats.earned+=n;},refreshWallet:()=>trace.refresh++,reloadHorses:()=>trace.reload++,
   sChime:()=>trace.chime++,sCoin:()=>trace.coin++,toast:m=>trace.toasts.push(m),
-  G:{trainingProgress:{apply(s,events){
+  G:{...(options.native?{save:{awaitConfirmedFresh:()=>options.confirm?options.confirm(freshSave):options.storage?confirmGameSave({native:true,storage:options.storage},saveKey):Promise.resolve(freshSave())}}:{}),trainingProgress:{apply(s,events){
    trace.draftApplications++;s.moduleProgress??={};
    for(const event of events)s.moduleProgress[event.type]=(s.moduleProgress[event.type]||0)+event.value;
    if(moduleFailure)throw Error('draft progress unavailable');
    return {fixture:{events:structuredClone(events)}};
   },confirmed(receipt){trace.confirmations.push(structuredClone(receipt));}},jumpTraining:{snapshot(){trace.clinicCalls.push('snapshot');return structuredClone(clinic);},stop(){trace.clinicCalls.push('stop');Object.assign(clinic,{misses:0,cleared:0});}},run:(name,result)=>trace.events.push({name,result:structuredClone(result)})}};
- const api=new Function(...Object.keys(bindings),grant+levelLoop+daily+completion+storyCursor+storyEvent+'return {endDrill,retryDrillSave,questEvt,saveStory,missionDone,makeClaimCallback(m,openedIdx,mine,def){'+dialogueClaim+'\n };return $(\'dlgBtn\').onclick;},liveProgress(){return {storyIdx,storyProg,dailyKey:_dailyMemo.key};}};')(...Object.values(bindings));
- return {api,DRILL,trace,clinic,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},set moduleFailure(v){moduleFailure=v;},failNextReads(n){readFailures=n;},persistStory(story){const s=JSON.parse(stored);s.story=story;stored=JSON.stringify(s);},reorder(){const s=JSON.parse(stored);s.horses.reverse();stored=JSON.stringify(s);},
+ const api=new Function(...Object.keys(bindings),grant+levelLoop+daily+completion+storyCursor+storyEvent+claims+'return {endDrill,retryDrillSave,questEvt,saveStory,missionDone,nativeTrainingSavePending,claimDaily,claimUmbrella,mission:()=>STORY[0],talkTo(def){const m=STORY[storyIdx];'+talk+'return talkNow;},makeClaimCallback(m,openedIdx,mine,def){const d=$(\'dlg\');'+dialogueClaim+'\n };return $(\'dlgBtn\').onclick;},liveProgress(){return {storyIdx,storyProg,dailyKey:_dailyMemo.key};}};')(...Object.values(bindings));
+ bindings.G.trainingProgress.pending=()=>api.nativeTrainingSavePending();
+ const mutateSave=fn=>{const s=JSON.parse(options.storage?.getItem(saveKey)??stored);fn(s);stored=JSON.stringify(s);if(options.storage)options.storage.setItem(saveKey,stored);};
+ return {api,G:bindings.G,mutateSave,DRILL,trace,clinic,hud,arrow,nameSprites,numberSprite,unrelatedSprite,group,get save(){return JSON.parse(options.storage?.getItem(saveKey)??stored);},set failure(v){failure=v;},set readsFail(v){readsFail=v;},set moduleFailure(v){moduleFailure=v;},failNextReads(n){readFailures=n;},persistStory(story){const s=JSON.parse(stored);s.story=story;stored=JSON.stringify(s);},reorder(){const s=JSON.parse(stored);s.horses.reverse();stored=JSON.stringify(s);},
   removeHorse(){const s=JSON.parse(stored);s.horses=s.horses.filter(h=>h.id!==horse.id);stored=JSON.stringify(s);}};
 }
 
@@ -352,4 +362,175 @@ test('an old dialogue cannot claim while all cursor reads fail or recover to a c
  const callback=f.api.makeClaimCallback({type:'cleanjump',goal:5,npc:'wren',reward:{c:999}},0,true,{id:'wren'});
  f.failNextReads(2);callback();assert.equal(f.trace.claims,0);assert.deepEqual(f.save.story,{idx:1,prog:1});
  callback();assert.equal(f.trace.claims,0);assert.equal(f.api.liveProgress().storyIdx,1);assert.deepEqual(f.save.story,{idx:1,prog:1});
+});
+
+function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};}
+const nextTurn=()=>new Promise(resolve=>setImmediate(resolve));
+const clinicDrill={stat:'jump',timeLimit:120,t:60,elapsed:60,grp:null,cones:[]};
+function nativeDisk(){return {files:{},async read(name){return this.files[name]??null;},async write(name,value){this.files[name]=value;}};}
+async function nativeFixture(t,options={}){
+ const disk=nativeDisk(),storage=await createSaveStore({backend:disk,delay:60_000});
+ t.after(()=>storage.dispose());const f=fixture({...options,native:true,storage});
+ await storage.whenDurable();return {f,disk,storage};
+}
+
+test('native completion waits for the exact disk receipt and shares duplicate pending clicks',async()=>{
+ const gate=deferred();let calls=0;
+ const f=fixture({native:true,confirm:()=>{calls++;return gate.promise;},drill:clinicDrill,storyGoal:8,dailyGoals:{cleanjump:8}});
+ const pending=f.api.endDrill(true);assert.equal(typeof pending.then,'function');
+ assert.equal(f.DRILL.saving,true);assert.equal(f.DRILL.pending.saved,false);assert.equal(f.DRILL.lastResult.saved,false);
+ assert.equal(f.G.trainingProgress.pending(),true);assert.equal(f.api.retryDrillSave(),pending);
+ assert.equal(f.save.lastTraining.saved,true,'the mirror receipt is staged, not confirmation');
+ assert.equal(f.save.horses[0].xp,24);assert.equal(f.save.story.prog,8);
+ assert.equal(f.trace.confirmations.length,0);assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,0);
+ assert.equal(f.trace.refresh+f.trace.reload+f.trace.chime+f.trace.coin,0);
+ assert.equal(f.api.missionDone(),false);assert.equal(f.api.liveProgress().storyProg,0);
+ const callback=f.api.makeClaimCallback(f.api.mission(),0,true,{id:'wren'});
+ callback();f.api.claimDaily('cleanjump');f.api.claimUmbrella();assert.equal(f.trace.claims,0);
+ f.api.saveStory();assert.equal(f.save.story.prog,8,'a stale live cursor cannot erase staged progress');
+ await nextTurn();assert.equal(calls,1);gate.resolve(f.save);assert.equal(await pending,true);
+ assert.equal(f.DRILL.saving,false);assert.equal(f.DRILL.pending,null);assert.equal(f.G.trainingProgress.pending(),false);
+ assert.equal(f.api.missionDone(),true);assert.equal(f.api.liveProgress().storyProg,8);
+ assert.equal(f.trace.confirmations.length,1);assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,1);
+ assert.equal(f.DRILL.lastResult.growth.horseXp,24);assert.equal(f.api.retryDrillSave(),false);
+ f.api.claimDaily('cleanjump');assert.equal(f.trace.claims,1,'confirmed daily progress is claimable again');
+ callback();assert.equal(f.trace.claims,2,'confirmed main-story progress is claimable again');assert.equal(f.save.story.idx,1);
+});
+
+test('real device write failure retains proof and retry pays once on the original horse',async t=>{
+ const {f,disk,storage}=await nativeFixture(t,{rideIdx:1,drill:clinicDrill,storyGoal:8});
+ const write=disk.write.bind(disk);let fail=true;disk.write=async(name,value)=>{if(fail)throw Error('device full');await write(name,value);};
+ assert.equal(await f.api.endDrill(true),false);assert.equal(f.DRILL.saving,false);assert.equal(f.DRILL.pending.runId,'run-one');
+ assert.equal(f.DRILL.pending.saved,false);assert.match(f.DRILL.pending.reason,/device full/);
+ assert.equal(f.trace.writes,1);assert.equal(f.trace.draftApplications,1);assert.equal(f.trace.confirmations.length,0);
+ assert.equal(f.api.missionDone(),false);assert.equal(f.api.liveProgress().storyProg,0);
+ const old=await createSaveStore({backend:disk});assert.equal(JSON.parse(old.getItem('starRanchFable_v1')).coins,100);old.dispose();
+ fail=false;assert.equal(await f.api.retryDrillSave(),true);assert.equal(f.trace.writes,1);assert.equal(f.trace.draftApplications,1);
+ const reopened=await createSaveStore({backend:disk});t.after(()=>reopened.dispose());
+ const saved=JSON.parse(reopened.getItem('starRanchFable_v1'));
+ assert.equal(saved.coins,164);assert.equal(saved.pass.pts,17);assert.equal(saved.stats.drills,3);assert.equal(saved.stats.jumps,8);
+ assert.equal(saved.horses.find(h=>h.id==='trained').xp,24);assert.equal(saved.horses.find(h=>h.id==='other').xp,0);
+ assert.equal(saved.story.prog,8);assert.equal(saved.life.cleanjump,8);assert.equal(saved.moduleProgress.cleanjump,8);
+ assert.deepEqual(saved.lastTraining,f.DRILL.lastResult);assert.equal(storage.status().pending,false);
+ assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,1);assert.equal(f.trace.confirmations.length,1);
+ assert.equal(f.api.retryDrillSave(),false);
+});
+
+test('ambiguous device write/readback failure re-verifies the staged receipt without paying again',async t=>{
+ const {f,disk}=await nativeFixture(t,{drill:clinicDrill});
+ const read=disk.read.bind(disk);let fail=true;disk.read=async name=>{if(fail&&name==='b')throw Error('device readback unavailable');return read(name);};
+ assert.equal(await f.api.endDrill(true),false);assert.match(f.DRILL.pending.reason,/readback unavailable/);
+ assert.ok(disk.files.b,'the rejected acknowledgement can still follow a real disk write');
+ assert.equal(f.trace.confirmations.length,0);assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,0);
+ fail=false;assert.equal(await f.api.retryDrillSave(),true);
+ assert.equal(f.trace.writes,1);assert.equal(f.trace.draftApplications,1);assert.equal(f.save.horses[0].xp,24);assert.equal(f.save.coins,164);
+ assert.equal(f.save.stats.jumps,8);assert.equal(f.trace.confirmations.length,1);
+ const reopened=await createSaveStore({backend:disk});t.after(()=>reopened.dispose());
+ assert.deepEqual(JSON.parse(reopened.getItem('starRanchFable_v1')).lastTraining,f.DRILL.lastResult);
+});
+
+test('native storage slow write and slow readback both suppress final training effects',async t=>{
+ const {f,disk}=await nativeFixture(t,{drill:clinicDrill}),writeGate=deferred(),readGate=deferred(),readStarted=deferred();
+ const write=disk.write.bind(disk),read=disk.read.bind(disk);let verifying=false;
+ disk.write=async(name,value)=>{await writeGate.promise;await write(name,value);verifying=true;};
+ disk.read=async name=>{if(verifying){readStarted.resolve();await readGate.promise;}return read(name);};
+ const pending=f.api.endDrill(true);await nextTurn();assert.equal(f.DRILL.saving,true);assert.equal(f.trace.confirmations.length,0);
+ writeGate.resolve();await readStarted.promise;await nextTurn();assert.equal(f.DRILL.saving,true);assert.equal(f.DRILL.lastResult.saved,false);
+ assert.equal(f.api.retryDrillSave(),pending);readGate.resolve();assert.equal(await pending,true);
+ assert.equal(f.trace.confirmations.length,1);assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,1);
+});
+
+test('missing, stale, altered and unsaved native acknowledgements never become paid results',async()=>{
+ const changes=[s=>{delete s.lastTraining;},s=>{s.lastTraining.runId='old-run';},s=>{s.lastTraining.saved=false;},
+  s=>{s.lastTraining.growth.horseXp++;},s=>{s.lastTraining.progress.cleanJumps++;},s=>{s.lastTraining.horseId='other';},
+  s=>{s.lastTraining.after.value++;},s=>{s.horses=s.horses.filter(h=>h.id!=='trained');}];
+ for(const change of changes){
+  let bad=true;const f=fixture({native:true,drill:clinicDrill,confirm:fresh=>{const s=fresh();if(bad)change(s);return Promise.resolve(s);}});
+  assert.equal(await f.api.endDrill(true),false);assert.equal(f.DRILL.pending.saved,false);assert.equal(f.DRILL.saving,false);
+  assert.equal(f.trace.confirmations.length,0);assert.equal(f.trace.events.filter(e=>e.name==='drillFinish').length,0);
+  assert.equal(f.trace.writes,1);bad=false;assert.equal(await f.api.retryDrillSave(),true);assert.equal(f.trace.writes,1);
+  assert.equal(f.trace.confirmations.length,1);assert.equal(f.save.horses[0].xp,24);
+ }
+});
+
+test('a conflicting staged same-run receipt cannot be used to recalculate or finalize rewards',async()=>{
+ const gate=deferred();const f=fixture({native:true,drill:clinicDrill,confirm:()=>gate.promise});
+ const pending=f.api.endDrill(true);gate.reject(Error('offline'));assert.equal(await pending,false);
+ f.mutateSave(s=>{s.lastTraining.growth.horseXp=999;});
+ assert.equal(f.api.retryDrillSave(),false);assert.match(f.DRILL.pending.reason,/does not match/);
+ assert.equal(f.trace.writes,1);assert.equal(f.trace.draftApplications,1);assert.equal(f.trace.confirmations.length,0);
+ assert.equal(f.save.horses[0].xp,24);assert.equal(f.save.coins,164);
+});
+
+test('native pre-write failure never asks for acknowledgement and remains retryable',async()=>{
+ let calls=0;const f=fixture({native:true,failure:'write',drill:clinicDrill,confirm:fresh=>{calls++;return Promise.resolve(fresh());}});
+ assert.equal(f.api.endDrill(true),false);assert.equal(calls,0);assert.equal(f.trace.writes,0);assert.equal(f.save.horses[0].xp,0);
+ f.failure=null;assert.equal(await f.api.retryDrillSave(),true);assert.equal(calls,1);assert.equal(f.trace.writes,1);assert.equal(f.save.horses[0].xp,24);
+});
+
+test('native pending clean-jump credit rebases actual new riding without becoming claimable',async()=>{
+ const gate=deferred();const f=fixture({native:true,drill:clinicDrill,storyGoal:20,confirm:()=>gate.promise});
+ const pending=f.api.endDrill(true);f.api.questEvt('cleanjump',1);assert.equal(f.api.liveProgress().storyProg,1);
+ assert.equal(f.save.story.prog,9);assert.equal(f.api.missionDone(),false);f.api.saveStory();assert.equal(f.save.story.prog,9);
+ assert.equal(f.trace.toasts.some(m=>/Daily quest done|Ride back and tell/.test(m)),false);
+ gate.resolve(f.save);assert.equal(await pending,true);assert.equal(f.api.liveProgress().storyProg,9);
+ f.api.questEvt('cleanjump',1);assert.equal(f.save.story.prog,10);assert.equal(f.save.horses[0].xp,24);assert.equal(f.trace.draftApplications,1);
+});
+
+test('capped native clinic keeps actual horse XP and newly opened cap hidden until durable',async t=>{
+ const {f,disk}=await nativeFixture(t,{dynamicCaps:true,breedCap:10,drill:clinicDrill,
+  horse:{level:4,xp:240,stats:{speed:4,stamina:4,jump:4,accel:4,agility:4},sxp:{jump:0}}});
+ const gate=deferred(),write=disk.write.bind(disk);disk.write=async(name,value)=>{await gate.promise;await write(name,value);};
+ const pending=f.api.endDrill(true);assert.equal(f.DRILL.lastResult.saved,false);assert.equal(f.DRILL.pending.statXp,0);
+ assert.equal(f.DRILL.pending.growth.before.level,4);assert.equal(f.DRILL.pending.growth.after.level,5);
+ gate.resolve();assert.equal(await pending,true);assert.equal(f.DRILL.lastResult.growth.horseXp,24);
+ assert.equal(f.DRILL.lastResult.after.cap,5);assert.equal(f.save.horses[0].level,5);assert.equal(f.save.horses[0].xp,14);
+});
+
+test('native partial and MAX_LEVEL receipts preserve only actual earned and retained rewards',async()=>{
+ const partial=fixture({native:true,drill:{...clinicDrill,idx:3,t:0}});assert.equal(await partial.api.endDrill(false),true);
+ assert.equal(partial.DRILL.lastResult.growth.horseXp,9);assert.equal(partial.save.coins,124);assert.equal(partial.save.stats.drills,2);
+ const capped=fixture({native:true,dynamicCaps:true,breedCap:10,drill:clinicDrill,
+  horse:{level:50,xp:0,stats:{speed:10,stamina:10,jump:10,accel:10,agility:10},sxp:{jump:0}}});
+ assert.equal(await capped.api.endDrill(true),true);assert.equal(capped.DRILL.lastResult.growth.horseXp,0);
+ assert.equal(capped.DRILL.lastResult.statXp,0);assert.equal(capped.save.horses[0].xp,0);assert.equal(capped.save.stats.jumps,8);
+});
+
+test('a story write after the device checkpoint gets a second barrier without lost or doubled credit',async t=>{
+ const {f,disk}=await nativeFixture(t,{drill:clinicDrill,storyGoal:20});
+ const writeGate=deferred(),writeStarted=deferred(),write=disk.write.bind(disk);
+ let count=0;disk.write=async(name,value)=>{count++;if(count===1){writeStarted.resolve();await writeGate.promise;}await write(name,value);};
+ const pending=f.api.endDrill(true);await writeStarted.promise;
+ f.api.questEvt('cleanjump',1);assert.equal(f.save.story.prog,9);assert.equal(f.api.liveProgress().storyProg,1);
+ assert.equal(f.api.missionDone(),false);writeGate.resolve();assert.equal(await pending,true);
+ assert.equal(count,2,'the newer legitimate cursor reaches its own backend checkpoint');
+ assert.equal(f.api.liveProgress().storyProg,9);assert.equal(f.save.horses[0].xp,24);assert.equal(f.trace.draftApplications,1);
+ f.api.questEvt('cleanjump',1);assert.equal(f.save.story.prog,10,'future riding cannot rewind the later saved cursor');
+});
+
+test('a continuously changing story cursor keeps confirmation bounded and retryable',async()=>{
+ let moving=true,calls=0,f;
+ f=fixture({native:true,drill:clinicDrill,storyGoal:20,confirm:fresh=>{
+  calls++;const snapshot=fresh();if(moving)f.api.questEvt('cleanjump',1);return Promise.resolve(snapshot);
+ }});
+ assert.equal(await f.api.endDrill(true),false);assert.equal(calls,2);assert.match(f.DRILL.pending.reason,/latest story progress/);
+ assert.equal(f.api.liveProgress().storyProg,2);assert.equal(f.save.story.prog,10);assert.equal(f.trace.confirmations.length,0);
+ moving=false;assert.equal(await f.api.retryDrillSave(),true);assert.equal(calls,3);
+ assert.equal(f.api.liveProgress().storyProg,10);assert.equal(f.save.horses[0].xp,24);assert.equal(f.trace.draftApplications,1);
+});
+
+test('normal talkNow progress without a counter delta survives a pending native training result',async()=>{
+ const gate=deferred();const f=fixture({native:true,drill:clinicDrill,storyType:'talk',storyGoal:1,confirm:()=>gate.promise});
+ const pending=f.api.endDrill(true);assert.equal(f.save.story.prog,0);
+ assert.equal(f.api.talkTo({id:'wren'}),true,'executes the real openDlg talk assignment and saveStory call');
+ assert.equal(f.api.liveProgress().storyProg,1);assert.equal(f.save.story.prog,1);assert.equal(f.api.missionDone(),false);
+ const callback=f.api.makeClaimCallback(f.api.mission(),0,true,{id:'wren'});callback();assert.equal(f.trace.claims,0);
+ gate.resolve(f.save);assert.equal(await pending,true);assert.equal(f.api.liveProgress().storyProg,1);assert.equal(f.api.missionDone(),true);
+ callback();assert.equal(f.trace.claims,1);assert.equal(f.save.story.idx,1);
+});
+
+test('semantically equal native receipts accept reordered object keys but not altered proof',async()=>{
+ const reverse=value=>Array.isArray(value)?value.map(reverse):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).reverse().map(k=>[k,reverse(value[k])])):value;
+ const f=fixture({native:true,drill:clinicDrill,confirm:fresh=>Promise.resolve(reverse(fresh()))});
+ assert.equal(await f.api.endDrill(true),true);assert.equal(f.trace.confirmations.length,1);assert.equal(f.DRILL.lastResult.growth.horseXp,24);
 });

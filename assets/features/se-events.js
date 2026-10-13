@@ -24,7 +24,7 @@
    from above the venue on the frame the screen opens (se-frame's snap). Nothing runs at import
    time. */
 import {eventRibbonProgress} from '../event-ribbon-progress.mjs?v=final-ribbon-1';
-import {eventPreparation} from './event-preparation.js?v=event-training-1';
+import {eventPreparation} from './event-preparation.js?v=horse-training-plan-1';
 import {eventHorseComparison,eventHorseById,createEventHorseSelection} from './event-horse-comparison.mjs?v=horse-choice-1';
 export const id='se-events';
 export function install(G){
@@ -181,7 +181,7 @@ export function install(G){
   out.push({id:'__roundup',special:'roundup',town:'Meadowlark Ranch',name:'The Runaway Roundup',lvl:1,reward:650,
    blurb:'Five loose horses in the pasture and two and a half minutes to pen them. They run from whoever is closest: get on the far side and push.'});
   out.push({id:'__drill',special:'drill',town:'Meadowlark Ranch',name:'Training Drills',lvl:1,reward:0,
-   blurb:'Jump clinic: eight low fences in two minutes, with takeoff cues and retry coaching. Other stats: eight numbered circles in 55 seconds. Every cleared target earns XP and coins; a full round earns extra XP. Free to enter. Jump practice stays open at your current stat ceiling.'});
+   blurb:'Jump clinic: eight low fences in two minutes, with takeoff cues and retry coaching. Until your horse reaches its maximum level, clean jumps earn horse XP even at the Jump stat ceiling. Other stats: eight numbered circles in 55 seconds. Cleared targets earn coins and training XP while that stat can still grow. Free to enter. Jump practice stays open at your current stat ceiling.'});
   return out;
  }
  function towns(){
@@ -199,12 +199,37 @@ export function install(G){
   try{if(G.course&&G.course.eventOk)return G.course.eventOk(ev,h);}catch(e){}
   const lvl=h.level||1; return {ok:lvl>=(ev.lvl||1),missing:lvl>=(ev.lvl||1)?[]:[['level',ev.lvl,lvl]]};
  }
- function preparationFor(ev,di,h=ridden(),s=S()){
+ function preparationFor(ev,di,h=ridden(),s=S(),lookForAlternative=true){
   const DF=DIFFS(),d=DF[clamp(di==null?1:di,0,DF.length-1)],g=gate(ev,h),lk=townLock(ev.town),lvl=h.level||1;
   const stats=G.xp.statBreakdown?G.xp.statBreakdown(h,s.tack):{total:G.xp.effStats(h,s.tack),base:h.stats||{},tack:{}};
   const entryLock=G.ladder?.entryLock?.(ev,{...s,evDiff:di},h)||(!g.ok?'Needs '+needText(g.missing):d.lvlAdd&&lvl<ev.lvl+d.lvlAdd?d.label+' opens at Lv '+(ev.lvl+d.lvlAdd):'');
   const trainingCaps=Object.fromEntries(Object.keys(ev.req||{}).map(k=>[k,{level:G.xp.statCap?.(h),breed:G.xp.statCeil?.(h,k)}]));
-  return eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id),trainingCaps});
+  const hasReadyAlternative=lookForAlternative&&(s.horses||[]).some(other=>other&&other.id!==h.id&&eventHorseById(s,other.id)&&preparationFor(ev,di,other,s,false).ready);
+  return eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id),trainingCaps,hasReadyAlternative,
+   maxLevel:G.xp.MAX_LEVEL||50,statCapAtLevel:level=>G.xp.statCap?.({...h,level})});
+ }
+ function xpClinicReady(h,s){
+  const H=G.horse,P=H.player||{},rig=H.RIG?.(),model=H.breedModels?.resolve?.(h.breed);
+  return !!(G.trainingDrills?.startForEvent&&G.jumpTraining?.canStart?.()===true&&eventHorseById(s,h.id)&&s.ridingHorseId===h.id&&ridden().id===h.id&&ridden().breed===h.breed&&
+   rig?.ready&&!rig.loadingBreed&&P.mesh&&rig.attachedTo===P.mesh&&(!model||rig.modelKey===model&&rig.requestedBreed===h.breed)&&
+   !mountSelection.state().blocked&&!P.flying&&!P.landing&&!(P.y>.15)&&rig.heroJumpAge==null&&!rig.emote&&!rig.heroMotion?.state?.action&&!rig.heroMotion?.state?.transitioning&&
+   !G.course?.get?.()&&!G.course?.drillActive?.()&&!G.course?.drillState?.()?.pending&&!G.course?.drillState?.()?.saving&&!G.trail?.ride&&!G.worldPkg?.vehicle?.()&&!G.roundup?.state?.()?.active&&!G.rescueRide?.snapshot?.()?.active&&!G.photoPause&&!G.cam?.isFree?.()&&!G.social?.spectate&&!G.social?.tour);
+ }
+ function drillProgressLabel(stat,at,cap,xp,need,h){
+  if(at<cap)return Math.min(xp,need)+' / '+need+' XP to '+(at+1);
+  return stat==='jump'?(h.level<(G.xp.MAX_LEVEL||50)?'Jump stat at ceiling · clean jumps still earn horse XP':'Jump stat at ceiling · maximum horse level · practice only'):'At stat ceiling';
+ }
+ function horseGrowthMarkup(prep,h){
+  const g=prep.growth;if(!g)return '';
+  const target=g.targetLevel===g.nextLevel?'':` With your current tack, ${fmt(g.targetXp)} horse XP to Lv ${g.targetLevel} covers the event’s level requirement and opens room for its trainable stat gaps.`;
+  return '<section class="sev-prep-step" aria-label="Horse level preparation"><p class="sev-prep-note"><strong>'+esc(h.name||'Your horse')+' · '+fmt(g.xp)+' / '+fmt(g.xpNeed)+' horse XP</strong></p>'
+   +'<p class="sev-prep-note">'+fmt(g.nextXp)+' horse XP to Lv '+g.nextLevel+'.'+esc(target)+'</p>'
+   +(g.capStats.length?'<p class="sev-prep-note">Higher levels open training room for '+esc(g.capStats.join(', '))+'. The missing stats may still need training or tack.</p>':'')
+   +(g.breedBlocked.length?'<p class="sev-prep-note">Leveling cannot cover this breed’s '+esc(g.breedBlocked.join(', '))+' ceiling. Compare tack for the remaining gap.</p>':'')
+   +'<p class="sev-prep-note">Jump clinic · free entry · clean jumps earn horse XP, including at the Jump stat ceiling. Repeat as needed, then return to check this event. A clinic does not qualify you automatically.</p></section>';
+ }
+ function horseXpButton(ev,di,h,enabled){
+  return '<button class="se-cream" data-sev="xp" data-event-id="'+esc(ev.id)+'" data-difficulty="'+di+'" data-horse-id="'+esc(JSON.stringify(h.id))+'"'+(enabled?'':' disabled title="Finish your current activity and use a ready, mounted horse with a ground jump."')+'>Jump clinic · horse XP</button>';
  }
  function ribbonsOf(ev,s){return eventRibbonProgress(s,ev.id,DIFFS());}
  const statLbl=k=>(T.STAT_LBL&&T.STAT_LBL[k])||k;
@@ -428,7 +453,7 @@ export function install(G){
    const P=$('eventsPanel'), btns=P?[...P.querySelectorAll('button[data-drill]')]:[];
    main+='<div class="sev-plaque">'+esc(h.name||'Your horse')+' · Lv '+lvl+'</div><div class="sev-blurb">'+esc(ev.blurb)+'</div><div class="sev-stats">'
     +(T.STAT_KEYS||[]).map(k=>{const b=btns.find(x=>x.dataset.drill===k),at=(h.stats&&h.stats[k])||0,cap=Math.min(G.xp.statCap(h),G.xp.statCeil(h,k)),xp=h.sxp?.[k]||0,need=G.xp.statNeed(at);
-     return b&&(at<cap||k==='jump')?'<button class="se-cream" data-sev="drill:'+k+'" style="min-height:80px;display:flex;flex-direction:column;align-items:flex-start;gap:7px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+'</b><small>'+(at>=cap?'Practice · current XP ceiling':Math.min(xp,need)+' / '+need+' XP to '+(at+1))+'</small>'+(k==='jump'?'<small>Low fences · takeoff coaching · 2 min</small>':'')+'</button>'
+     return b&&(at<cap||k==='jump')?'<button class="se-cream" data-sev="drill:'+k+'" style="min-height:80px;display:flex;flex-direction:column;align-items:flex-start;gap:7px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+'</b><small>'+esc(drillProgressLabel(k,at,cap,xp,need,h))+'</small>'+(k==='jump'?'<small>Low fences · takeoff coaching · 2 min</small>':'')+'</button>'
       :'<button class="se-cream" disabled style="min-height:80px"><span>'+esc(statLbl(k))+'</span><b>'+at+' / '+cap+' · At ceiling</b></button>';}).join('')+'</div></div>';
   }else if(ev.special==='roundup'){
    const ready=roundupReady();
@@ -460,13 +485,13 @@ export function install(G){
    const selection=mountSelection.state(),why=selection.blocked?(selection.pending?'Preparing your selected horse…':selection.reason||'Your selected horse is not ready. Choose it again.'):prep.reason,entryReady=prep.ready&&!selection.blocked;
    const scoring=G.events2?.allowedLine?.(ev,di)||(prep.judged?'Judged on percentage':(tA?tSec(tA)+' allowed':'See full card'));
    const met=prep.requirements.filter(r=>r.met).length;
-   const firstTraining=prep.training.find(plan=>plan.canTrain),chooseHorse=!firstTraining&&met<prep.requirements.length;
+   const firstTraining=prep.training.find(plan=>plan.canTrain),chooseHorse=!firstTraining&&met<prep.requirements.length&&prep.hasReadyAlternative,clinicReady=!!prep.growth&&xpClinicReady(h,s);
    main+='<section class="sev-preparation" aria-label="Event preparation"><h3>'+esc(h.name||'Your horse')+' · '+esc(d.label)+'</h3>'
     +'<p class="pb-lock" role="status">'+esc(why||'Your horse is ready for this event.')+'</p>'
     +'<details class="sev-requirements"'+(prep.ready?'':' open')+'><summary>Horse readiness <span>'+met+' / '+prep.requirements.length+' requirements met</span></summary><div class="pb-req">'+req+'</div><p class="sev-prep-note">Current / required, including tack. '+esc(prep.prepareHint)+'</p>'
-    +(prep.levelHint?'<p class="sev-prep-note">'+esc(prep.levelHint)+'</p>':'')
-    +prep.training.map(plan=>'<div class="sev-prep-step"><p class="sev-prep-note"><strong>'+esc(plan.label)+'</strong> · '+esc(plan.hint)+'</p>'+(plan.canTrain&&plan!==firstTraining?'<button class="se-cream" style="min-height:44px;margin-top:8px" data-sev="train:'+esc(plan.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(plan.label)+'</button>':'')+'</div>').join('')
-    +(prep.training.length?'<div class="sev-stats" aria-label="Other ways to prepare"><button class="se-cream" data-sev="prepare:equipment"'+(G.seCare?.open?'':' disabled')+'>Compare tack</button>'+(!chooseHorse?'<button class="se-cream" data-sev="prepare:myhorses"'+(G.seCare?.open?'':' disabled')+'>Choose horse</button>':'')+'</div>':'')+'</details>'
+    +(prep.levelHint?'<p class="sev-prep-note">'+esc(prep.levelHint)+'</p>':'')+horseGrowthMarkup(prep,h)
+    +prep.training.map(plan=>'<div class="sev-prep-step"><p class="sev-prep-note"><strong>'+esc(plan.label)+'</strong> · '+esc(plan.hint)+'</p>'+(plan.canTrain&&(prep.growth||plan!==firstTraining)?'<button class="se-cream" style="min-height:44px;margin-top:8px" data-sev="train:'+esc(plan.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(plan.label)+'</button>':'')+'</div>').join('')
+    +(prep.training.length?'<div class="sev-stats" aria-label="Other ways to prepare"><button class="se-cream" data-sev="prepare:equipment"'+(G.seCare?.open?'':' disabled')+'>Compare tack</button>'+(prep.hasReadyAlternative?'<button class="se-cream" data-sev="prepare:myhorses"'+(G.seCare?.open?'':' disabled')+'>Choose a ready horse</button>':'')+'</div>':'')+'</details>'
     +'<div class="sev-partnership">'+favourLine(comparison)+partnership(comparison)+'<div class="sev-stats"><button class="se-cream" data-sev="prepare:myhorses">Choose horse</button><button class="se-cream" data-sev="prepare:feeding"'+(G.seCare?.open&&!selection.blocked?'':' disabled')+'>Bond & feed</button></div></div>'
     +'<div class="sev-entry-facts"><div><span>Entry</span><b>Free</b></div><div><span>Listed purse'+(prep.featured?' · Featured ×1.5':'')+'</span><b>'+fmt(prep.purse)+' coins</b></div>'
     +'<div><span>'+(prep.judged?'Scoring':'Course format')+'</span><b>'+esc(scoring)+'</b></div>'
@@ -474,7 +499,7 @@ export function install(G){
     +'<details class="sev-scoring"><summary>Rewards & riding tips</summary><p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
    if(disc==='jump'||disc==='xc')main+='<p class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' when the ring turns green.</p>';
    main+='</details></section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(entryReady?'':' locked')+'">'+(entryReady?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
-    +(firstTraining?'<button class="se-cream" data-sev="train:'+esc(firstTraining.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(firstTraining.label)+'</button>':'<button class="se-cream" data-sev="prepare:'+(chooseHorse?'myhorses':prep.prepareTab)+'"'+(G.seCare?.open?'':' disabled')+'>'+(chooseHorse?'Choose horse':'Prepare horse')+'</button>')
+    +(prep.growth?horseXpButton(ev,di,h,clinicReady):firstTraining?'<button class="se-cream" data-sev="train:'+esc(firstTraining.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(firstTraining.label)+'</button>':'<button class="se-cream" data-sev="prepare:'+(chooseHorse?'myhorses':prep.prepareTab)+'"'+(G.seCare?.open?'':' disabled')+'>'+(chooseHorse?'Choose horse':'Prepare horse')+'</button>')
     +'<button class="se-gold" data-sev="ride"'+(!entryReady?' disabled title="'+esc(why)+'"':'')+'>'+(entryReady?'Enter event':'Locked')+'</button></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
@@ -569,16 +594,19 @@ export function install(G){
   else if(k==='horse'){try{const id=JSON.parse(b.dataset.horseId);if(['select','bond','tack','train'].includes(a))selectEventHorse(id,a,b.dataset.stat);}catch{G.toast('Reopen your horse comparison and try again.');}}
   else if(k==='prepare')prepareHorse(a);
   else if(k==='train')trainForEvent(a);
+  else if(k==='xp')growForEvent(b);
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}
   else if(k==='round'){if(!via('button[data-round="go"]'))G.toast('🐎 The roundup is not ready yet.');}
   else if(k==='drill'){G.course.startDrill(a);}
  });
- function eventReturn(ev,diff,focus='[data-sev^="prepare:"]'){
+ function eventReturn(ev,diff,focus='[data-sev^="prepare:"]',horseId=null){
   const scroll=$('sevPage').querySelector('.sev-main')?.scrollTop||0;
   return ()=>{
    const button=$('eventsBtn');if(!button||!evById(ev.id))return;
    if(!st.on)button.click();
-   setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;st.compare=false;root.classList.add('page');paintPage();
+   setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;st.compare=false;
+    if(horseId!==null&&(S().ridingHorseId!==horseId||ridden().id!==horseId)){st.compare=true;const h=eventHorseById(S(),horseId);G.toast(h?'Choose '+h.name+' to continue preparing this horse.':'Your trained horse is no longer available. Compare your horses before entering.');}
+    root.classList.add('page');paintPage();
     const page=$('sevPage'),main=page.querySelector('.sev-main');if(main)main.scrollTop=scroll;
     (page.querySelector(focus)||page.querySelector('[data-sev="ride"]:not(:disabled)')||page.querySelector('[data-sev^="prepare:"]'))?.focus({preventScroll:true});
    },40);
@@ -596,6 +624,15 @@ export function install(G){
   const plan=prep.training.find(plan=>plan.key===stat);
   if(!plan?.canTrain||mountSelection.state().blocked){paintPage();return false;}
   return G.trainingDrills.startForEvent(stat,{eventId:ev.id,eventName:ev.name,difficulty:diff,onBack:eventReturn(ev,diff,'[data-sev="train:'+stat+'"]')});
+ }
+ function growForEvent(button){
+  const ev=evById(st.page);if(!ev||ev.special||!st.on||!G.trainingDrills?.startForEvent)return false;
+  let id;try{id=JSON.parse(button?.dataset?.horseId);}catch{return false;}
+  const diff=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1),s=S(),h=eventHorseById(s,id);
+  if(button.dataset.eventId!==ev.id||Number(button.dataset.difficulty)!==diff||!h||ridden().id!==id||s.ridingHorseId!==id){paintPage();return false;}
+  const prep=preparationFor(ev,diff,h,s);
+  if(!prep.growth||!xpClinicReady(h,s)){paintPage();return false;}
+  return G.trainingDrills.startForEvent('jump',{eventId:ev.id,eventName:ev.name,difficulty:diff,onBack:eventReturn(ev,diff,'[data-sev="xp"]',id)});
  }
  function ride(ev,di){
   if(mountSelection.state().blocked){paintPage();return;}

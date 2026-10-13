@@ -353,11 +353,14 @@ export function install(G){
   syncCur(verifiedSave);notifyBookProgress(summary?.updates);
  });
  function claimEntry(){
+  // Check before flushing or reading the native working mirror: a staged training
+  // completion must not unlock an almanac reward until its save is confirmed.
+  if(G.trainingProgress?.pending?.()===true){toast('Retry saving your training before turning in a quest.');return false;}
   flushQ();
   const st=bookState(); if(st.done||!st.cur)return false;
   if(st.prog<st.cur.goal){ toast('🗓️ '+st.cur.label+' — '+Math.floor(st.prog)+'/'+st.cur.goal+' so far.'); return false; }
   const B=st.B, was=st.i; let opened=false, paid=null;
-  S.sync(s=>{ const c=B.entries[s.seasonQ.idx||0]; if(!c||(s.seasonQ.prog||0)<c.goal)return;
+  S.sync(s=>{ if(G.trainingProgress?.pending?.()===true)return; const c=B.entries[s.seasonQ.idx||0]; if(!c||(s.seasonQ.prog||0)<c.goal)return;
    const r=Object.assign({},c.reward); M.payReward(s,r); paid=r;
    s.seasonQ.claimed[String(s.seasonQ.idx||0)]=1; s.seasonQ.idx=(s.seasonQ.idx||0)+1; s.seasonQ.prog=0;
    if(s.seasonQ.idx>=B.entries.length&&!s.seasonQ.unlocked){ s.seasonQ.unlocked=true; opened=true; }

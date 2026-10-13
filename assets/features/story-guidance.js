@@ -1,4 +1,5 @@
 import {COTTONWOOD_ROUTES} from '../cottonwood-routes.mjs?v=cottonwood-post-1';
+import {flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1';
 /* Resolve the next playable action, without changing quest progress or rewards. */
 export const id='story-guidance';
 
@@ -41,15 +42,40 @@ export function trainingFood(foods,items,horse,xp,gain=(f)=>f.sxp){
  return choices[0]||null;
 }
 
-export function practiceTarget(rows,position){
- const fences=(rows||[]).filter(j=>j.g?.visible!==false&&Number.isFinite(j.x)&&Number.isFinite(j.z));
- const j=fences.sort((a,b)=>Math.hypot(a.x-position.x,a.z-position.z)-Math.hypot(b.x-position.x,b.z-position.z))[0];
- if(!j)return null;
- const sn=Math.sin(j.rotY||0),cs=Math.cos(j.rotY||0),dx=position.x-j.x,dz=position.z-j.z;
- const along=dx*cs-dz*sn,across=dx*sn+dz*cs,side=across>0?1:-1;
- // First line up eight metres out. Once on that line, point to the fence itself.
- const lined=Math.abs(along)<2&&Math.abs(across)<11;
- return {id:'practice:'+j.x+':'+j.z,position:{x:j.x+(lined?0:sn*side*8),z:j.z+(lined?0:cs*side*8),y:0},arrivalDistance:1};
+export function practiceTarget(rows,position,world=null){
+ if(!position||![position.x,position.z].every(Number.isFinite))return null;
+ const fences=(Array.isArray(rows)?rows:[]).filter(j=>j?.g?.visible!==false&&Number.isFinite(j?.x)&&Number.isFinite(j.z)&&Number.isFinite(j.rotY||0));
+ const groundClear=(a,b)=>{if(!world)return true;try{return flatRaceSegmentClear(a,b,{world})===true;}catch{return false;}};
+ const candidates=[];
+ for(const j of fences){
+  const sn=Math.sin(j.rotY||0),cs=Math.cos(j.rotY||0),at=d=>({x:j.x+sn*d,z:j.z+cs*d});
+  // Both takeoff and landing need ground clearance. The centre is an airborne
+  // crossing: a practice rail is allowed there, a barn wall or low roof is not.
+  if(!groundClear(at(-8),at(-2))||!groundClear(at(2),at(8)))continue;
+  if(world?.solidWorld){
+   if(typeof world.solidWorld.resolve!=='function')continue;
+   let clear=true;
+   for(let d=-2;d<=2;d+=.4){
+    const p=at(d),y=world.groundH?.(p.x,p.z)??0,q={...p};
+    if(!Number.isFinite(y)){clear=false;break;}
+    try{const contacts=world.solidWorld.resolve(q,{bottom:y+1.45,top:y+3.1,radius:.75});if(contacts>0){clear=false;break;}}catch{clear=false;break;}
+    if(![q.x,q.z].every(Number.isFinite)||Math.hypot(q.x-p.x,q.z-p.z)>.001){clear=false;break;}
+   }
+   if(!clear)continue;
+  }
+  const dx=position.x-j.x,dz=position.z-j.z,along=dx*cs-dz*sn,across=dx*sn+dz*cs,side=across>0?1:-1;
+  const lined=Math.abs(along)<1.7&&Math.abs(across)>=3&&Math.abs(across)<11;
+  const approach=at(side*8),aim=lined?{x:j.x,z:j.z}:approach;
+  // Guide to the clear takeoff area first. Do not draw a shortcut through a
+  // building, another fence or the yard rail on the way to that area.
+  const laneStart=lined?at(side*2):aim;
+  if(!groundClear(position,laneStart))continue;
+  candidates.push({j,aim,distance:Math.hypot(aim.x-position.x,aim.z-position.z)});
+ }
+ candidates.sort((a,b)=>a.distance-b.distance);
+ const selected=candidates[0];if(!selected)return null;
+ const y=world?.groundH?.(selected.aim.x,selected.aim.z)??0;
+ return {id:'practice:'+selected.j.x+':'+selected.j.z,position:{...selected.aim,y:Number.isFinite(y)?y:0},arrivalDistance:1};
 }
 
 export function nearestPickup(rows,item,position){
@@ -111,7 +137,7 @@ export function resolveTarget(m,done,world,position,save={}){
   const group=nearestPickup(m.type==='carrots'?world.carrots:world.forage,m.type==='forage'?m.item:null,position);
   return group?{id:'gather:'+m.type+':'+(m.item||'carrot'),position:group.position,arrivalDistance:1}:null;
  }
- if(m.type==='cleanjump')return practiceTarget(world.practiceJumps,position);
+ if(m.type==='cleanjump')return practiceTarget(world.practiceJumps,position,world);
  if(ACTIONS[m.type])return null;
  return undefined;
 }

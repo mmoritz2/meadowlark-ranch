@@ -654,7 +654,11 @@ export function install(G){
   if(q.type==='ribbons'||q.type==='ranchlvl')sideEvt(q.type,0);
  }
  function dropSide(qid){S.sync(s=>{delete s.side.active[qid];});toast('Dropped.');$('dlg').style.display='none';}
- function turnInSide(qid){const q=SIDE_BY[qid];if(!q)return;let ok=false;S.sync(s=>{const a=s.side.active[qid];if(!a||a.p<q.goal)return;delete s.side.active[qid];s.side.done[qid]=q.repeat==='weekly'?G.time.weekKey():true;s.side.n=(s.side.n||0)+1;s.stats=s.stats||{};s.stats.side=(s.stats.side||0)+1;M.payReward(s,q.reward);ok=true;});
+ function turnInSide(qid){const q=SIDE_BY[qid];if(!q)return;
+  // Native storage exposes a working mirror before its training write is verified.
+  // Keep the earned objective intact, but do not turn that staged progress into another reward.
+  if(G.trainingProgress?.pending?.()===true){toast('Retry saving your training before turning in a quest.');return false;}
+  let ok=false;S.sync(s=>{if(G.trainingProgress?.pending?.()===true)return;const a=s.side.active[qid];if(!a||a.p<q.goal)return;delete s.side.active[qid];s.side.done[qid]=q.repeat==='weekly'?G.time.weekKey():true;s.side.n=(s.side.n||0)+1;s.stats=s.stats||{};s.stats.side=(s.stats.side||0)+1;M.payReward(s,q.reward);ok=true;});
   if(!ok)return;M.refreshWallet();try{H.refreshTack();}catch(e){}G.sGem();toast('📌 Side quest done! +'+M.rewardLabel(q.reward));$('dlg').style.display='none';Q.dailyEvt('side',1);}   // the dailyEvt bridge also counts it for a 'side' story mission
  const pend={gallop:0,t:0};
  // This reducer never opens storage: training includes these counters in its reward save.

@@ -1,0 +1,406 @@
+TAP version 13
+# fatal: path 'tools/meadow-relief-wall-source-guard.cjs' exists on disk, but not in 'df065bd26a6a0e097306262e689678cb9e439c7d'
+# fatal: path 'tools/meadow-relief-wall-source-guard.cjs' exists on disk, but not in '6a82f3f82f5a6ff86c8635a68e712d9d609b4b2d'
+# fatal: path 'tools/test-activity-runtime-source-guard.mjs' exists on disk, but not in 'df065bd26a6a0e097306262e689678cb9e439c7d'
+# fatal: path 'tools/test-activity-runtime-source-guard.mjs' exists on disk, but not in '3944c9e87ce0ca4c5f13cd0bda067f57b31d6ef2'
+# fatal: path 'tools/test-meadow-relief-wall-source-guard.mjs' exists on disk, but not in 'df065bd26a6a0e097306262e689678cb9e439c7d'
+# fatal: path 'tools/test-meadow-relief-wall-source-guard.mjs' exists on disk, but not in '6a82f3f82f5a6ff86c8635a68e712d9d609b4b2d'
+# Subtest: all merged owners are independently reproducible from BOTH full Git parents, including the exact combined FEATURES edge
+ok 1 - all merged owners are independently reproducible from BOTH full Git parents, including the exact combined FEATURES edge
+  ---
+  duration_ms: 1393.546583
+  ...
+# Subtest: incoming wall, relief and rider bodies remain direct byte-exact production sources
+ok 2 - incoming wall, relief and rider bodies remain direct byte-exact production sources
+  ---
+  duration_ms: 1618.042708
+  ...
+# Subtest: unknown, duplicate, deleted, extended, mixed or changed activity imports cannot pass the combined original source chain
+ok 3 - unknown, duplicate, deleted, extended, mixed or changed activity imports cannot pass the combined original source chain
+  ---
+  duration_ms: 371.040584
+  ...
+# Subtest: both observer maps independently reconstruct complete parent assertions; changed or partial adapters cannot pass
+ok 4 - both observer maps independently reconstruct complete parent assertions; changed or partial adapters cannot pass
+  ---
+  duration_ms: 3699.89775
+  ...
+# Subtest: every allowed historical observer SHA comes from an existing fixed contract or complete Git parent
+ok 5 - every allowed historical observer SHA comes from an existing fixed contract or complete Git parent
+  ---
+  duration_ms: 10001.668416
+  ...
+# Subtest: all original155 and incoming8 fixture bytes remain exactly pinned; only declared added fixture rows leave the old assertion input
+ok 6 - all original155 and incoming8 fixture bytes remain exactly pinned; only declared added fixture rows leave the old assertion input
+  ---
+  duration_ms: 587.603916
+  ...
+# Subtest: incoming raw dependency pins are unchanged and the outer layer remains leaf-only
+ok 7 - incoming raw dependency pins are unchanged and the outer layer remains leaf-only
+  ---
+  duration_ms: 10.8615
+  ...
+# Subtest: all four complete current owners reconstruct independently pinned df065bd bytes through exactly eleven literals
+ok 8 - all four complete current owners reconstruct independently pinned df065bd bytes through exactly eleven literals
+  ---
+  duration_ms: 2572.039458
+  ...
+# Subtest: all six activity cache edges reject unknown, duplicate, deleted, renamed and mixed imports through the original complete-source chain
+ok 9 - all six activity cache edges reject unknown, duplicate, deleted, renamed and mixed imports through the original complete-source chain
+  ---
+  duration_ms: 458.268416
+  ...
+# Subtest: region import, gate and fallback reversals require the complete reviewed group and retain every other world/story byte
+ok 10 - region import, gate and fallback reversals require the complete reviewed group and retain every other world/story byte
+  ---
+  duration_ms: 53.917958
+  ...
+# Subtest: activity compatibility cannot erase rider, authorization, gear, XP, terrain or grass body drift
+ok 11 - activity compatibility cannot erase rider, authorization, gear, XP, terrain or grass body drift
+  ---
+  duration_ms: 185.203875
+  ...
+# Subtest: every outer observer adapter restores its exact df body with all old assertions and fixture references intact
+ok 12 - every outer observer adapter restores its exact df body with all old assertions and fixture references intact
+  ---
+  duration_ms: 519.434708
+  ...
+# Subtest: the historical runner projects only the reviewed world/story seams and all older fixture pins remain byte exact
+ok 13 - the historical runner projects only the reviewed world/story seams and all older fixture pins remain byte exact
+  ---
+  duration_ms: 893.526166
+  ...
+# Subtest: basic appearance is visual-only, absent slots only, and retains exact selected object identity
+ok 14 - basic appearance is visual-only, absent slots only, and retains exact selected object identity
+  ---
+  duration_ms: 4.154916
+  ...
+# Subtest: private synchronous basic construction restores global randomness on success, throw and nested calls
+ok 15 - private synchronous basic construction restores global randomness on success, throw and nested calls
+  ---
+  duration_ms: 1.807
+  ...
+# Subtest: whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+ok 16 - whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+  ---
+  duration_ms: 704.779625
+  ...
+# Subtest: actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+ok 17 - actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+  ---
+  duration_ms: 9865.655708
+  ...
+# Subtest: actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+ok 18 - actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+  ---
+  duration_ms: 6325.769792
+  ...
+# Subtest: invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+ok 19 - invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+  ---
+  duration_ms: 737.513708
+  ...
+# Subtest: new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+ok 20 - new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+  ---
+  duration_ms: 4487.271917
+  ...
+# Subtest: actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+ok 21 - actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+  ---
+  duration_ms: 4794.668208
+  ...
+# Subtest: only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+ok 22 - only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+  ---
+  duration_ms: 7146.425959
+  ...
+# Subtest: conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+ok 23 - conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+  ---
+  duration_ms: 3860.555208
+  ...
+# Subtest: real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+ok 24 - real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+  ---
+  duration_ms: 528.453667
+  ...
+# Subtest: exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+ok 25 - exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+  ---
+  duration_ms: 4436.204167
+  ...
+# Subtest: exact published caches and the original five crag reversals restore the full original7009 bodies
+ok 26 - exact published caches and the original five crag reversals restore the full original7009 bodies
+  ---
+  duration_ms: 739.809417
+  ...
+# Subtest: the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+ok 27 - the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+  ---
+  duration_ms: 3151.929917
+  ...
+# Subtest: both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+ok 28 - both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+  ---
+  duration_ms: 1.577125
+  ...
+# Subtest: late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+ok 29 - late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+  ---
+  duration_ms: 14.806542
+  ...
+# Subtest: all eight current product owners are independently authored from complete dc405f3 sources
+ok 30 - all eight current product owners are independently authored from complete dc405f3 sources
+  ---
+  duration_ms: 1369.039709
+  ...
+# Subtest: all seven cache imports have one exact owner and reject unknown, mixed, deleted and duplicated current states
+ok 31 - all seven cache imports have one exact owner and reject unknown, mixed, deleted and duplicated current states
+  ---
+  duration_ms: 236.124083
+  ...
+# Subtest: partial runtime groups and unrelated reward, identity, model, geography or authorization drift cannot be stripped
+ok 32 - partial runtime groups and unrelated reward, identity, model, geography or authorization drift cannot be stripped
+  ---
+  duration_ms: 868.12125
+  ...
+# Subtest: the old complete-source and both landscape parent views receive exact dc405f3 inputs
+ok 33 - the old complete-source and both landscape parent views receive exact dc405f3 inputs
+  ---
+  duration_ms: 3781.860625
+  ...
+# Subtest: each declared observer restores its complete dc405f3 assertions, not just selected pin literals
+ok 34 - each declared observer restores its complete dc405f3 assertions, not just selected pin literals
+  ---
+  duration_ms: 1595.360417
+  ...
+# Subtest: all164 existing fixture blobs remain byte-exact and only the named, verified new contract leaves old fixture assertions
+ok 35 - all164 existing fixture blobs remain byte-exact and only the named, verified new contract leaves old fixture assertions
+  ---
+  duration_ms: 319.410083
+  ...
+# Subtest: the exact new fixture pin rejects edits or absence without repinning any earlier contract
+ok 36 - the exact new fixture pin rejects edits or absence without repinning any earlier contract
+  ---
+  duration_ms: 2.9765
+  ...
+# Subtest: historical runner composes training before region copies and only the new layer leaf dependency is added
+ok 37 - historical runner composes training before region copies and only the new layer leaf dependency is added
+  ---
+  duration_ms: 94.708834
+  ...
+# Subtest: new behavioral tests remain live files and are explicitly named/hash-pinned
+ok 38 - new behavioral tests remain live files and are explicitly named/hash-pinned
+  ---
+  duration_ms: 2.759292
+  ...
+# Subtest: live lash cache owners retain every independently pinned df065bd byte after three exact import reversals
+ok 39 - live lash cache owners retain every independently pinned df065bd byte after three exact import reversals
+  ---
+  duration_ms: 1800.222334
+  ...
+# Subtest: unknown, renamed, missing, duplicate, mixed and extended cache declarations cannot pass complete body preservation
+ok 40 - unknown, renamed, missing, duplicate, mixed and extended cache declarations cannot pass complete body preservation
+  ---
+  duration_ms: 1117.497375
+  ...
+# Subtest: new compatibility seams preserve complete old guards and all old assertions
+ok 41 - new compatibility seams preserve complete old guards and all old assertions
+  ---
+  duration_ms: 677.758833
+  ...
+# Subtest: assets/coursed-field-wall.mjs: actual new owner is exact and only approved blocks restore the full228 body
+ok 42 - assets/coursed-field-wall.mjs: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 15.826375
+  ...
+# Subtest: assets/features/index.js: actual new owner is exact and only approved blocks restore the full228 body
+ok 43 - assets/features/index.js: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 31.12675
+  ...
+# Subtest: assets/features/world-paths.js: actual new owner is exact and only approved blocks restore the full228 body
+ok 44 - assets/features/world-paths.js: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 19.7505
+  ...
+# Subtest: assets/pasture-mesosurface.mjs: actual new owner is exact and only approved blocks restore the full228 body
+ok 45 - assets/pasture-mesosurface.mjs: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 316.662291
+  ...
+# Subtest: assets/terrain-realism.js: actual new owner is exact and only approved blocks restore the full228 body
+ok 46 - assets/terrain-realism.js: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 13.826458
+  ...
+# Subtest: ranch3d.html: actual new owner is exact and only approved blocks restore the full228 body
+ok 47 - ranch3d.html: actual new owner is exact and only approved blocks restore the full228 body
+  ---
+  duration_ms: 732.422167
+  ...
+# Subtest: five actual parent/child cache edges are live once and reject unknown versions or changed owners
+ok 48 - five actual parent/child cache edges are live once and reject unknown versions or changed owners
+  ---
+  duration_ms: 417.6595
+  ...
+# Subtest: new observer reversals retain all complete228 bodies and previous14/38 fixture bytes
+ok 49 - new observer reversals retain all complete228 bodies and previous14/38 fixture bytes
+  ---
+  duration_ms: 135.409125
+  ...
+# Subtest: pure compatibility functions retain actual preceding cache/literal code without eager module cycles
+ok 50 - pure compatibility functions retain actual preceding cache/literal code without eager module cycles
+  ---
+  duration_ms: 728.398875
+  ...
+# Subtest: merged runtime preserves every incoming grass/verge owner byte except the declared progression hint and five cache imports
+ok 51 - merged runtime preserves every incoming grass/verge owner byte except the declared progression hint and five cache imports
+  ---
+  duration_ms: 2338.357791
+  ...
+# Subtest: every compatibility observer reconstructs its exact incoming complete body and preserves all original assertions
+ok 52 - every compatibility observer reconstructs its exact incoming complete body and preserves all original assertions
+  ---
+  duration_ms: 330.36725
+  ...
+# Subtest: all fixed incoming dependency SHA and old fixture bytes remain authoritative through exact observer projection
+ok 53 - all fixed incoming dependency SHA and old fixture bytes remain authoritative through exact observer projection
+  ---
+  duration_ms: 529.249917
+  ...
+# Subtest: unknown, duplicate, mixed cache declarations and changed import owners cannot pass the combined whole-body guards
+ok 54 - unknown, duplicate, mixed cache declarations and changed import owners cannot pass the combined whole-body guards
+  ---
+  duration_ms: 403.781083
+  ...
+# Subtest: approved progression compatibility cannot normalize body drift, wrong hint logic or malformed grass literals
+ok 55 - approved progression compatibility cannot normalize body drift, wrong hint logic or malformed grass literals
+  ---
+  duration_ms: 1158.683291
+  ...
+# Subtest: five exact live cache imports preserve the complete independently pinned243dbfb owners
+ok 56 - five exact live cache imports preserve the complete independently pinned243dbfb owners
+  ---
+  duration_ms: 805.525792
+  ...
+# Subtest: unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+ok 57 - unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+  ---
+  duration_ms: 992.760333
+  ...
+# Subtest: cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+ok 58 - cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+  ---
+  duration_ms: 1372.163459
+  ...
+# Subtest: existing cache fixtures and source pins retain their original bytes
+ok 59 - existing cache fixtures and source pins retain their original bytes
+  ---
+  duration_ms: 529.506708
+  ...
+# Subtest: merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+ok 60 - merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+  ---
+  duration_ms: 2010.14975
+  ...
+# Subtest: original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+ok 61 - original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+  ---
+  duration_ms: 1814.251
+  ...
+# Subtest: each exact new cache edge and its original subject retain the same complete old source body
+ok 62 - each exact new cache edge and its original subject retain the same complete old source body
+  ---
+  duration_ms: 2786.369458
+  ...
+# Subtest: unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+ok 63 - unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+  ---
+  duration_ms: 997.981833
+  ...
+# Subtest: merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+ok 64 - merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+  ---
+  duration_ms: 343.268958
+  ...
+# Subtest: camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+ok 65 - camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+  ---
+  duration_ms: 173.512958
+  ...
+# Subtest: ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 66 - ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 3668.154542
+  ...
+# Subtest: assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 67 - assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 4.380292
+  ...
+# Subtest: assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 68 - assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 3.140333
+  ...
+# Subtest: assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 69 - assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 4.010542
+  ...
+# Subtest: assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 70 - assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 2.14425
+  ...
+# Subtest: assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 71 - assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 2.798292
+  ...
+# Subtest: actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+ok 72 - actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+  ---
+  duration_ms: 467.637875
+  ...
+# Subtest: all previously accepted native and camera states preserve every original d5 body hash
+ok 73 - all previously accepted native and camera states preserve every original d5 body hash
+  ---
+  duration_ms: 1681.2615
+  ...
+# Subtest: every observer adapter preserves its full d9 source, every old assertion and all old hashes
+ok 74 - every observer adapter preserves its full d9 source, every old assertion and all old hashes
+  ---
+  duration_ms: 49.8185
+  ...
+# Subtest: already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+ok 75 - already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+  ---
+  duration_ms: 27132.062916
+  ...
+# Subtest: source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+ok 76 - source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+  ---
+  duration_ms: 357.297958
+  ...
+# Subtest: only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+ok 77 - only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+  ---
+  duration_ms: 1108.131041
+  ...
+# Subtest: published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+ok 78 - published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+  ---
+  duration_ms: 1382.798083
+  ...
+1..78
+# tests 78
+# suites 0
+# pass 78
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39397.335
