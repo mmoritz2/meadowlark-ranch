@@ -146,5 +146,9 @@
     "routeRadius": 9.363755862531251,
     "baselineHighestWorldY": 17.038963112456432
   },
-  "normalizerSHA256": "f434d5bf536a7d77433646f6eec67e3c972af5f1066a8703225f926ec262cb16"
+  "normalizerSHA256": "cdda5b83bdd8101ca716a4cbb523df4357785afa7acf55e52a1e85f4de017403",
+  "approvedSourceLiterals": 5,
+  "integrationCommit": "080924aeca255339e299ae7ea553302bd68b142c",
+  "integrationMainSHA256": "d47079b38fed164dc0dd32d21d5b9be5a3cd22263dda93987bc2704d5594cf58",
+  "integrationScope": "Only separately released game-hero import cache is reversed for old whole-source preimages; native horse runtime files are preserved by Git merge and not edited by this supplement."
 }

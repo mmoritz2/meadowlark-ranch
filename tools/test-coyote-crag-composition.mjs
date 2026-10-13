@@ -33,8 +33,13 @@ test('exact production installer uses the same constructor stream, circle identi
   for(let i=0;i<a.group.children.length;i++){const x=a.group.children[i],y=b.group.children[i];assert.equal(x.uuid,y.uuid);if(x.name.includes('1116'))continue;assert.equal(x.name,y.name);assert.equal(x.geometry.uuid,y.geometry.uuid);assert.equal(x.material.uuid,y.material.uuid);assert.deepEqual(x.matrix.elements,y.matrix.elements);assert.deepEqual(x.geometry.index.array,y.geometry.index.array);for(const key of Object.keys(x.geometry.attributes))assert.deepEqual(x.geometry.attributes[key].array,y.geometry.attributes[key].array);}
  }
 });
-test('exact four composition/material/cache reversals restore the full original7009 bodies',()=>{
+test('exact five approved crag/native-cache reversals restore the full original7009 bodies',()=>{
  for(const file of Object.keys(contract.baselineSHA256)){const s=fs.readFileSync(path.join(ROOT,file),'utf8');assert.equal(sha(normalizeCoyoteCragCompositionSource(s,file)),contract.baselineSHA256[file]);}
+ const approved=JSON.parse(fs.readFileSync(new URL('./fixtures/coyote-crag-7009c41/source-changes.json',import.meta.url)));assert.equal(approved.length,5);assert.equal(contract.approvedSourceLiterals,5);
+ const main=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),nativeCache="'./assets/game-hero-horse.js?v=draft-feathers-20261013d'";assert.equal(main.split(nativeCache).length,2);
+ assert.throws(()=>normalizeCoyoteCragCompositionSource(main+'\n// duplicate '+nativeCache,'ranch3d.html'));
+ assert.throws(()=>normalizeCoyoteCragCompositionSource(main.replace(nativeCache,"'./assets/game-hero-horse.js?v=draft-feathers-unreviewed'"),'ranch3d.html'));
+
  const source=fs.readFileSync(path.join(ROOT,'assets/world-photoscans.js'),'utf8');assert.throws(()=>normalizeCoyoteCragCompositionSource(source.replace('shoulderReach:.55','shoulderReach:.60'),'assets/world-photoscans.js'));
  assert.throws(()=>normalizeCoyoteCragCompositionSource(source+source.slice(source.indexOf('{seed:1116,'),source.indexOf('{seed:1122,')),'assets/world-photoscans.js'));
  const drift=normalizeCoyoteCragCompositionSource(source+'\n// unreviewed owner drift','assets/world-photoscans.js');assert.throws(()=>assert.equal(sha(drift),contract.baselineSHA256['assets/world-photoscans.js']));
