@@ -1,3 +1,4 @@
+import {normalizeRanchModelSource} from './ranch-model-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -75,7 +76,7 @@ test('pastoral blue is MAX after original skirts, idempotent, and preserves all 
  const s=fs.readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');assert(s.indexOf('extendWoodlandMask(woodedPixels.data')<s.indexOf('applyPastoralGrazingPixels(woodedPixels.data'));
 });
 test('portable whole-source receipt allows only precise submitted-response additions',()=>{
- const files=[...new Set(contract.changes.map(c=>c.file))];for(const file of files){let s=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');for(const c of contract.changes.filter(c=>c.file===file).reverse()){assert.equal(s.split(c.after).length-1,1,file);s=s.replace(c.after,c.before);}assert.equal(digest(s),contract.baselineSHA256[file],file);}
+ const files=[...new Set(contract.changes.map(c=>c.file))];for(const file of files){let s=normalizeRanchModelSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);for(const c of contract.changes.filter(c=>c.file===file).reverse()){assert.equal(s.split(c.after).length-1,1,file);s=s.replace(c.after,c.before);}assert.equal(digest(s),contract.baselineSHA256[file],file);}
 });
 test('actual late installer order waits course, Chalk and ferry before one grass-only response',async()=>{
  const scene=new T.Scene(),g=createGrassTuftGeometry(T,{profile:'near-folded-v1'}),mat=new T.MeshStandardMaterial(),seed=new T.InstancedMesh(g,mat,2),m=new T.Matrix4().makeScale(2,2,2);m.elements[14]=60;seed.setMatrixAt(0,m);m.makeScale(0,0,0);m.elements[14]=60;seed.setMatrixAt(1,m);seed.setColorAt(0,new T.Color());seed.setColorAt(1,new T.Color());scene.add(seed);

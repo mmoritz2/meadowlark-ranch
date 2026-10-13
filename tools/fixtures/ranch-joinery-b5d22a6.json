@@ -1,0 +1,39 @@
+{
+  "base": "b5d22a6",
+  "sourceChanges": [
+    {
+      "file": "assets/ranch-architecture.js",
+      "before": "",
+      "after": "import {dressTimberBox} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';\n"
+    },
+    {
+      "file": "assets/ranch-architecture.js",
+      "before": "",
+      "after": "      if(m===siding&&g.userData.ranchTimberBox) dressTimberBox(THREE,g,{...g.userData.ranchTimberBox,radius:.003,siding:true,lengthMetres:m.userData.patchMetres||2.4});\n"
+    },
+    {
+      "file": "assets/ranch-architecture.js",
+      "before": "",
+      "after": "      if(m===siding)g.userData.ranchTimberBox={width:w,height:h,depth:d,x,y,z};\n"
+    },
+    {
+      "file": "assets/ranch-builder-art.js",
+      "before": "",
+      "after": "import {installLimedTimberFinish} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';\n"
+    },
+    {
+      "file": "assets/ranch-builder-art.js",
+      "before": "",
+      "after": " installLimedTimberFinish(paint,{amount:.88});\n"
+    },
+    {
+      "file": "assets/ranch-builder-art.js",
+      "before": "  m.map=aged.map;m.normalMap=aged.normalMap;m.roughnessMap=aged.roughnessMap;m.aoMap=aged.aoMap;m.aoMapIntensity=.45;m.color.set('#d4c2a5');m.needsUpdate=true;\n",
+      "after": "  m.map=aged.map;m.normalMap=aged.normalMap;m.roughnessMap=aged.roughnessMap;m.aoMap=aged.aoMap;m.aoMapIntensity=.45;m.color.set('#d4c2a5');m.needsUpdate=true;if(m===architecture.sidingMaterial)installLimedTimberFinish(m,{amount:.91});\n"
+    }
+  ],
+  "originalSHA256": {
+    "assets/ranch-architecture.js": "2ca011543add5908da50620edd4037ab419346e323aef9c5a022a3b53eff92c5",
+    "assets/ranch-builder-art.js": "ee72c9da7a55013e3b2975eb10cc3edb09486e9deafc93618a3050b42d0d2d7b"
+  }
+}

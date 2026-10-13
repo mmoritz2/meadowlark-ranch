@@ -682,7 +682,7 @@ import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN
 import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
 import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-cascades-1';
 import {canyonRelief,canyonPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=regional-landmarks-1';
-import {createGeology} from './assets/geology.js?v=countryside-banks-1';
+import {createGeology} from './assets/geology.js?v=ranch-models-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
 import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1';
 import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=hollowpeak-cascades-1';
@@ -696,14 +696,14 @@ import {installRiparian} from './assets/riparian.js?v=river-ecotone-1';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
 import {hollowpeakSnowAttribute} from './assets/hollowpeak-snow.mjs?v=cold-landscape-1';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=pastoral-cover-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=world-cohesion-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=ranch-models-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=timber-cladding-1';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=ranch-models-1';
 import {createWorldFinish} from './assets/world-rendering.js?v=world-presentations-1';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
@@ -4734,9 +4734,11 @@ let waterMat=null;   // hoisted: the pond reuses it
     if(Math.hypot(x-CANYON.x,z-CANYON.z)<18||pathDist(x,z)<radius+4||Math.abs(z-riverZ(x))<radius*1.3+9)continue;
     const height=kind==='mesa'?7+rnd()*11:3.5+rnd()*6.5;
     if(canyonReplacesFormation(x,z,radius)){placed++;continue;}
+    let placedFormation;
     if(kind==='mesa')geology.placeMesa(x,z,radius,height,i+1107);
-    else geology.placeHoodoo(x,z,radius,height,i+3527);
-    colliders.push({x,z,r:radius*.95,height,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it
+    else placedFormation=geology.placeHoodoo(x,z,radius,height,i+3527);
+    const colliderHeight=placedFormation?.userData.geology.fieldstone?placedFormation.userData.geology.collisionHeight:height;
+    colliders.push({x,z,r:radius*.95,height:colliderHeight,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it
    }
   }
  }

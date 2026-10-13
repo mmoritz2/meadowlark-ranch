@@ -1,5 +1,6 @@
 import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
+import {installLimedTimberFinish} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';
 /* Placed ranch catalogue: measured joinery, PBR surfaces and CC0 scanned props.
  * Templates share geometry/textures. Preview clones share the exact silhouette,
  * with separate cached translucent materials; loading upgrades both in place.
@@ -23,6 +24,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  const endgrain=oak;
  const paint=material('limed timber','#e1dfcb',.88,0,'coated_pine',.74);
  for(const m of [oak,aged,paint])m.userData.grain=true;
+ installLimedTimberFinish(paint,{amount:.88});
  const iron=material('forged iron','#363e3d',.54,.8);
  const steel=material('brushed galvanized steel','#b2bcb9',.38,.91);
  const brass=material('aged brass','#9e7950',.42,.82);
@@ -45,7 +47,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  // Share the photographed channels; architecture keeps its board-interior sampler,
  // directional grain coordinates, recessed openings and original solid geometry.
  for(const m of [architecture.sidingMaterial,...architecture.materials.values()].filter((m,i,a)=>m&&(m===architecture.sidingMaterial||/oiled oak/.test(m.name))&&a.indexOf(m)===i)){
-  m.map=aged.map;m.normalMap=aged.normalMap;m.roughnessMap=aged.roughnessMap;m.aoMap=aged.aoMap;m.aoMapIntensity=.45;m.color.set('#d4c2a5');m.needsUpdate=true;
+  m.map=aged.map;m.normalMap=aged.normalMap;m.roughnessMap=aged.roughnessMap;m.aoMap=aged.aoMap;m.aoMapIntensity=.45;m.color.set('#d4c2a5');m.needsUpdate=true;if(m===architecture.sidingMaterial)installLimedTimberFinish(m,{amount:.91});
  }
  function rounded(w,h,d,r=.012){
   r=Math.min(r,w*.2,h*.2,d*.2);const g=new T.BoxGeometry(1,1,1,3,3,3).toNonIndexed(),p=g.attributes.position,n=g.attributes.normal;
