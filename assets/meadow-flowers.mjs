@@ -33,88 +33,58 @@ export function meadowFlowerHeightAt(x,z,variation=.5){
  return .82+cover*.42+Math.max(0,Math.min(1,variation))*.14;
 }
 
-// Long raceme lupin: two six-leaf palmate whorls, unequal pea flowers and a green terminal bud.
-// 238 triangles per stalk; no alpha cards or flower-coloured green stems.
+// Original rounded pea raceme: small convex banners, unequal curved wings and
+// a cupped keel share each stem attachment. Connected palmate leaves retain
+// their old outer contacts while a curved midrib replaces the flat leaf fan.
 export function createMeadowLupinGeometry(THREE){
-  const P=[],C=[],I=[];
-  const color=new THREE.Color();
-  function face(points,hex){
-    const b=P.length/3;color.set(hex);
-    for(const p of points){P.push(...p);C.push(color.r,color.g,color.b);}
-    I.push(b,b+1,b+2);if(points.length===4)I.push(b,b+2,b+3);
+ const P=[],C=[],I=[],ranges=[],color=new THREE.Color();
+ const push=(p,hex)=>{color.set(hex);P.push(...p);C.push(color.r,color.g,color.b);return P.length/3-1;};
+ const triangle=(a,b,c,wanted)=>{const A=P.slice(a*3,a*3+3),B=P.slice(b*3,b*3+3),D=P.slice(c*3,c*3+3),u=B.map((v,k)=>v-A[k]),v=D.map((v,k)=>v-A[k]);const dot=(u[1]*v[2]-u[2]*v[1])*wanted[0]+(u[2]*v[0]-u[0]*v[2])*wanted[1]+(u[0]*v[1]-u[1]*v[0])*wanted[2];I.push(...(dot<0?[a,c,b]:[a,b,c]));};
+ function face(points,hex,wanted){const base=P.length/3;points.forEach(p=>push(p,hex));triangle(base,base+1,base+2,wanted);if(points.length===4)triangle(base,base+2,base+3,wanted);}
+ function patch(outline,centre,hex,wanted,kind,owner){
+  const vertexStart=P.length/3,indexStart=I.length;outline.forEach(p=>push(p,hex));const center=push(centre,hex);
+  for(let i=0;i<outline.length;i++)triangle(vertexStart+i,vertexStart+(i+1)%outline.length,center,wanted);
+  ranges.push({kind,owner,vertexStart,vertexCount:outline.length+1,indexStart,indexCount:outline.length*3,attachment:vertexStart});
+ }
+ // Keep the established stem and two petiole anchors; all floret attachments
+ // remain on these original pentagonal faces and the walkable root stays zero.
+ for(let i=0;i<5;i++){
+  const a=i*Math.PI*2/5,b=(i+1)*Math.PI*2/5;
+  face([[Math.cos(a)*.012,0,Math.sin(a)*.012],[Math.cos(b)*.012,0,Math.sin(b)*.012],[Math.cos(b)*.005+.042,1.115,Math.sin(b)*.005],[Math.cos(a)*.005+.042,1.115,Math.sin(a)*.005]],'#518137',[Math.cos((a+b)/2),0,Math.sin((a+b)/2)]);
+ }
+ const joints=[];
+ for(let whorl=0;whorl<2;whorl++){
+  const heading=.72+whorl*2.65,y=.145+whorl*.16,c=Math.cos(heading),s=Math.sin(heading),base=[.042*y/1.115,y,0],joint=[base[0]+c*.096,y+.052,s*.096];joints.push(joint);
+  face([base,[base[0]-s*.008,y,base[2]+c*.008],[joint[0]-s*.004,joint[1],joint[2]+c*.004],joint],'#467332',[0,1,0]);
+  for(let leaf=0;leaf<6;leaf++){
+   const a=heading+(leaf-2.5)*.67,lc=Math.cos(a),ls=Math.sin(a),len=.14+(leaf%3)*.023,w=.024;
+   const outline=[joint,[joint[0]+lc*len*.26-ls*w*.58,joint[1]+.021,joint[2]+ls*len*.26+lc*w*.58],
+    [joint[0]+lc*len*.62-ls*w,joint[1]+.036,joint[2]+ls*len*.62+lc*w],
+    [joint[0]+lc*len,joint[1]+.066-(leaf%2)*.018,joint[2]+ls*len],
+    [joint[0]+lc*len*.60+ls*w,joint[1]+.025,joint[2]+ls*len*.60-lc*w],
+    [joint[0]+lc*len*.26+ls*w*.58,joint[1]+.018,joint[2]+ls*len*.26-lc*w*.58]];
+   patch(outline,[joint[0]+lc*len*.51,joint[1]+.050,joint[2]+ls*len*.51],whorl?'#648e3e':'#759b48',[0,1,0],'leaf',whorl*6+leaf);
   }
-  for(let i=0;i<5;i++){
-    const a=i*Math.PI*2/5,b=(i+1)*Math.PI*2/5;
-    face([[Math.cos(a)*.012,0,Math.sin(a)*.012],[Math.cos(b)*.012,0,Math.sin(b)*.012],
-      [Math.cos(b)*.005+.042,1.115,Math.sin(b)*.005],[Math.cos(a)*.005+.042,1.115,Math.sin(a)*.005]],'#518137');
-  }
-  // Petiole and all six leaflets meet at one real palmate joint. The two
-  // whorls face different directions; no disconnected floating leaf spray.
-  for(let whorl=0;whorl<2;whorl++){
-    const heading=.72+whorl*2.65,y=.145+whorl*.16,c=Math.cos(heading),s=Math.sin(heading);
-    const base=[.042*y/1.115,y,0],joint=[base[0]+c*.096,y+.052,s*.096];
-    face([base,[base[0]-s*.008,y,base[2]+c*.008],
-      [joint[0]-s*.004,joint[1],joint[2]+c*.004],joint],'#467332');
-    for(let leaf=0;leaf<6;leaf++){
-      const a=heading+(leaf-2.5)*.67,lc=Math.cos(a),ls=Math.sin(a),len=.14+(leaf%3)*.023,w=.024;
-      face([joint,[joint[0]+lc*len*.62-ls*w,joint[1]+.036,joint[2]+ls*len*.62+lc*w],
-        [joint[0]+lc*len,joint[1]+.066-(leaf%2)*.018,joint[2]+ls*len],
-        [joint[0]+lc*len*.60+ls*w,joint[1]+.025,joint[2]+ls*len*.60-lc*w]],
-        whorl?'#648e3e':'#759b48');
-    }
-  }
-  // Each pea floret has a folded upright banner, two unequal wings and a
-  // projecting keel. The petals share one root on the real pentagonal stalk.
-  const petal=(points,hex,outward)=>{
-    const [a,b,c]=points,u=b.map((n,k)=>n-a[k]),v=c.map((n,k)=>n-a[k]);
-    const dot=(u[1]*v[2]-u[2]*v[1])*outward[0]+(u[2]*v[0]-u[0]*v[2])*outward[1]+(u[0]*v[1]-u[1]*v[0])*outward[2];
-    face(dot<0?[...points].reverse():points,hex);
-  };
-  for(let ring=0;ring<8;ring++)for(let flower=0;flower<3;flower++){
-    const phase=ring*2.07+flower*2.39996,variation=Math.sin(phase*1.71+2.1);
-    const a=flower*Math.PI*2/3+ring*1.87+variation*.19,y=.60+ring*.065+Math.sin(phase)*.004;
-    const scale=2.05*(1-ring*.070)*(1+variation*.075),c=Math.cos(a),s=Math.sin(a);
-    const sector=Math.PI*2/5,delta=((a%sector)+sector)%sector-sector/2;
-    const radius=(.012-y*.007/1.115)*Math.cos(Math.PI/5)/Math.cos(delta);
-    const root=[.042*y/1.115+c*radius,y,s*radius],outward=[c,0,s];
-    const point=([u,v,d])=>[root[0]+s*u*scale+c*d*scale,root[1]+v*scale,root[2]-c*u*scale+s*d*scale];
-    const emit=(points,hex)=>petal(points.map(point),hex,outward);
-    const hood=ring%3===0?'#b38bc7':'#9d70ba',wing=ring%2?'#9167b0':'#8058a1';
-    // Two shallow banner folds rise above the wings; unequal shoulders avoid
-    // the former repeated bowl silhouettes. All dimensions are metres.
-    const base=[0,0,0],left=[-.007,.001,.003],right=[.006,.002,.003];
-    const upperLeft=[-.023,.024,.011],crest=[-.001,.029,.013],upperRight=[.021,.023,.012];
-    emit([base,left,upperLeft,crest],hood);
-    emit([base,crest,upperRight,right],hood);
-    emit([base,[-.022,-.009,.022],[-.002,-.012,.027]],wing);
-    emit([base,[.004,-.012,.027],[.020,-.008,.023]],wing);
-    emit([base,[-.007,-.011,.023],[-.003,-.014,.027],[.007,-.012,.026]],'#8762ab');
-  }
-  // A small closed terminal bud meets the existing stalk before tapering out.
-  // Four triangular sides per half keep the whole plant at 238 triangles.
-  const lower=[.042*1.075/1.115,1.075,0],upper=[.042,1.143,0],bud=[];
-  for(let i=0;i<4;i++){const a=i*Math.PI/2;bud.push([.042+Math.cos(a)*.010,1.111,Math.sin(a)*.010]);}
-  for(let i=0;i<4;i++){
-    const j=(i+1)%4;
-    petal([lower,bud[j],bud[i]],i%2?'#638547':'#719150',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
-    petal([upper,bud[i],bud[j]],i%2?'#719150':'#86a364',[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)]);
-  }
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeVertexNormals();
-  // Join only the two banner panels for soft petal shading. Their normals
-  // derive from these Float32 triangles; stem, leaves, wings and keel stay exact.
-  const positions=g.attributes.position.array,normals=g.attributes.normal.array,indices=g.index.array;
-  for(let flower=0;flower<24;flower++){
-    const start=76+flower*18,sums=new Map(),key=id=>positions.slice(id*3,id*3+3).join(',');
-    for(let triangle=38+flower*8;triangle<42+flower*8;triangle++){
-      const ids=Array.from(indices.slice(triangle*3,triangle*3+3)),[a,b,c]=ids.map(id=>id*3);
-      const ux=positions[b]-positions[a],uy=positions[b+1]-positions[a+1],uz=positions[b+2]-positions[a+2];
-      const vx=positions[c]-positions[a],vy=positions[c+1]-positions[a+1],vz=positions[c+2]-positions[a+2];
-      const n=[uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx];
-      for(const id of ids){const k=key(id),sum=sums.get(k)||[0,0,0];for(let axis=0;axis<3;axis++)sum[axis]+=n[axis];sums.set(k,sum);}
-    }
-    for(let id=start;id<start+8;id++){const n=sums.get(key(id)),length=Math.hypot(...n);for(let axis=0;axis<3;axis++)normals[id*3+axis]=n[axis]/length;}
-  }
-  g.computeBoundingBox();g.computeBoundingSphere();g.userData.meadowFlowers={profile:'palmate-raceme-1',triangles:238,whorls:2,leaflets:12,florets:24};return g;
+ }
+ const flowerRoots=[];
+ for(let ring=0;ring<8;ring++)for(let flower=0;flower<3;flower++){
+  const phase=ring*2.07+flower*2.39996,variation=Math.sin(phase*1.71+2.1),a=flower*Math.PI*2/3+ring*1.87+variation*.19,y=.60+ring*.065+Math.sin(phase)*.004;
+  const scale=2.05*(1-ring*.070)*(1+variation*.075),c=Math.cos(a),s=Math.sin(a),sector=Math.PI*2/5,delta=((a%sector)+sector)%sector-sector/2;
+  const radius=(.012-y*.007/1.115)*Math.cos(Math.PI/5)/Math.cos(delta),root=[.042*y/1.115+c*radius,y,s*radius],wanted=[c,0,s],owner=ring*3+flower;flowerRoots.push(root);
+  const point=([u,v,d])=>[root[0]+s*u*scale+c*d*scale,root[1]+v*scale,root[2]-c*u*scale+s*d*scale];
+  const emit=(outline,centre,hex,kind)=>patch(outline.map(point),point(centre),hex,wanted,kind,owner);
+  const hood=ring%3===0?'#b38bc7':'#9d70ba',wing=ring%2?'#9167b0':'#8058a1';
+  // Rounded outline with a raised centre supplies a real small pea banner,
+  // rather than a four-corner purple shelf. Its two side wings cup the keel.
+  emit([[0,0,0],[-.010,.002,.004],[-.020,.012,.008],[-.018,.024,.011],[-.007,.030,.012],[.009,.028,.013],[.019,.021,.011],[.017,.009,.008]],[0,.015,.019],hood,'banner');
+  emit([[0,0,0],[-.008,-.002,.011],[-.020,-.006,.019],[-.020,-.012,.023],[-.006,-.014,.025]],[-.010,-.007,.024],wing,'left-wing');
+  emit([[0,0,0],[.006,-.002,.011],[.018,-.006,.020],[.017,-.011,.023],[.005,-.013,.025]],[.009,-.007,.025],wing,'right-wing');
+  emit([[0,0,0],[-.005,-.007,.022],[-.004,-.014,.028],[.006,-.014,.027],[.008,-.007,.021]],[.001,-.010,.028],'#8762ab','keel');
+ }
+ // Original green terminal bud establishes the exact historic top1.143m.
+ const lower=[.042*1.075/1.115,1.075,0],upper=[.042,1.143,0],bud=[];
+ for(let i=0;i<4;i++){const a=i*Math.PI/2;bud.push([.042+Math.cos(a)*.010,1.111,Math.sin(a)*.010]);}
+ for(let i=0;i<4;i++){const j=(i+1)%4,wanted=[Math.cos((i+.5)*Math.PI/2),0,Math.sin((i+.5)*Math.PI/2)];face([lower,bud[j],bud[i]],i%2?'#638547':'#719150',wanted);face([upper,bud[i],bud[j]],i%2?'#719150':'#86a364',wanted);}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();
+ g.userData.meadowFlowers={profile:'rounded-pea-raceme-2',triangles:I.length/3,whorls:2,leaflets:12,florets:24,ranges,joints,flowerRoots};return g;
 }
-

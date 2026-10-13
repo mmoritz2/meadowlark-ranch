@@ -1,0 +1,30 @@
+{
+  "base": "e8b5cf4",
+  "sourceChanges": [
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=landmark-fields-1';",
+      "after": "export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=lupin-rounded-1';"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "// The modelled flower bank retains its existing mesh and 238-triangle budget.",
+      "after": "// Rounded modelled flowers retain the existing mesh; the prototype uses 646 triangles."
+    }
+  ],
+  "originalSHA256": {
+    "assets/meadow-flowers.mjs": "d5abc641ee0d4e0dbf5c65a5328d49c0cf6d29926e57e2ebeb636092c07d561a",
+    "assets/meadow-cover.js": "362b6c89126c61775b08ba5fb6d4eb20926dffdd2f6dd93f03f37c9091be9208",
+    "ranch3d.html": "634f706f143593e21d817de75b9941e2355774f7310ec9cf521cd57f86faa94a"
+  },
+  "callerLupinFillSHA256": "f5e7672da49f21914259cefa1066741ec17f42910f63c70d32324e8f88114dce",
+  "costViews": {
+    "colony-high": 377,
+    "commons-high": 223,
+    "clover-high": 243,
+    "clover-switched-low": 243,
+    "eastfield-high": 308,
+    "wet-chalk-cold-dry-controls": 0
+  },
+  "capacity": 8624
+}

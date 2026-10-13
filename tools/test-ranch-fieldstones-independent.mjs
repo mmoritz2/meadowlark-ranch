@@ -12,6 +12,7 @@ import {COTTONWOOD_TRACKS} from '../assets/cottonwood-routes.mjs';
 import {needsPastoralFieldstone,groundPastoralFieldstone} from '../assets/ranch-fieldstones.mjs?v=ranch-fieldstones-1';
 import {forTerrainIntersections} from './terrain-water-contact.mjs';
 import {normalizeRanchModelSource} from './ranch-model-source-guard.mjs';
+import {normalizeLupinSource} from './lupin-source-guard.mjs';
 
 const fixture=new URL('./fixtures/ranch-model-b5d22a6/',import.meta.url),read=rel=>fs.readFileSync(new URL(rel,fixture));
 const contract=JSON.parse(read('fieldstone-contract.json')),oldSource=read('geology.js').toString();
@@ -28,7 +29,7 @@ let pair;
 
 test('frozen combined source binds only the exact twelve model and cache literals; original whole geology and main world bodies remain',()=>{
  for(const [file,expected]of Object.entries(contract.runtimeSHA256)){
-  const current=fs.readFileSync(new URL('../'+file,import.meta.url));assert.equal(sha(current),expected);
+  const current=fs.readFileSync(new URL('../'+file,import.meta.url));assert.equal(sha(normalizeLupinSource(current.toString(),file)),expected);
   if(contract.sourceSHA256[file])assert.equal(sha(normalizeRanchModelSource(current.toString(),file)),contract.sourceSHA256[file]);
  }
  assert.equal(contract.approvedNewSourceChanges.length,12);

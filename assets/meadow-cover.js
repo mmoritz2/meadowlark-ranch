@@ -142,8 +142,8 @@ export function meadowBladeColor(color,x,z,variation=.5){
   return color.setHSL(hh,ss,ll);
 }
 
-// The modelled flower bank retains its existing mesh and 238-triangle budget.
-export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=landmark-fields-1';
+// Rounded modelled flowers retain the existing mesh; the prototype uses 646 triangles.
+export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=lupin-rounded-1';
 
 // A bounded ring carries pasture silhouettes into the middle distance. Slots
 // only rebuild when a 12 m cell enters the ring; no extra work per grass blade
