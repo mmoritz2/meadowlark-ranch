@@ -1,3 +1,4 @@
+import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -15,7 +16,7 @@ const nearBlock=s=>sourceSlice(s,' const gh=',' const crossGeo=')+sourceSlice(s,
 const meshPacket=m=>({count:m.count,matrix:sha(bytes(m.instanceMatrix.array)),color:sha(bytes(m.instanceColor.array)),matrixVersion:m.instanceMatrix.version,colorVersion:m.instanceColor.version});
 function replayPacket(r){return{meshes:Object.fromEntries(['near','flow','fern','reed','rock','lupin'].map(k=>[k,meshPacket(r[k])])),cells:[r.grassCells,r.lupinCells,r.reedCells].map(c=>({digest:cellsDigest(c),counts:c.map(v=>v.count)})),origin:r.cellOrigin(),version:r.sourceVersion(),colliders:r.D.G.world.colliders};}
 test('frozen runtime and genuine previous native geometry bind exactly; colony policy, constructors and physical source stay unchanged',()=>{
- for(const [file,hash] of Object.entries(contract.runtimeSHA256))assert.equal(sha(fs.readFileSync(path.join(repo,file))),hash,file);
+ for(const [file,hash] of Object.entries(contract.runtimeSHA256))assert.equal(sha(normalizeCoyoteMacroSource(fs.readFileSync(path.join(repo,file),'utf8'),file)),hash,file);
  assert.equal(sha(read('../lupin-original-e8b5cf4.mjs')),contract.flowerSHA256);assert.equal(sha(normalizeLupinSource(fs.readFileSync(path.join(repo,'assets/meadow-cover.js'),'utf8'),'assets/meadow-cover.js')),contract.coverSHA256);
  assert.equal(sha(course),contract.courseSHA256);assert.equal(nearBlock(source),contract.near);
  assert.equal(sourceSlice(source,'const lupinTex=','const fernTex='),contract.canvas,'legacy unused texture/RNG factory survives');

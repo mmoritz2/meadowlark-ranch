@@ -31,7 +31,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollo
    includes every town building world.js placed — and it leaves a clear circle at each town centre
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
-import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';
+import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-3';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
 import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
 import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1';

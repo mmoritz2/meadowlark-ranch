@@ -1,3 +1,4 @@
+import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
 import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,7 +22,7 @@ function withoutChalkRenderResponse(source){
  return source.replace(river,'W.canyonPlacement?.heightAt');
 }
 const source=exactCache(withoutChalkRenderResponse(normalizePastoralSource(read('../assets/features/world-flora.js'),'assets/features/world-flora.js')),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
-const photo=exactCache(read('../assets/world-photoscans.js'),[["import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';","import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=steep-flora-roots-1';"],["import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';","import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';"]]),oldPhoto=read('./fixtures/steep-flora-11fb567/world-photoscans.js');
+const photo=exactCache(normalizeCoyoteMacroSource(read('../assets/world-photoscans.js'),'assets/world-photoscans.js'),[["import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';","import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=steep-flora-roots-1';"],["import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';","import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';"]]),oldPhoto=read('./fixtures/steep-flora-11fb567/world-photoscans.js');
 function fixture(body=source,{height=terrain.height,planned=terrain.oldHeight,capacity=40}={}){
  const geometry=new T.BoxGeometry(),material=new T.MeshBasicMaterial(),BANK={};for(const kind of ['pine','cold','oak','trunk'])BANK[kind]={im:new T.InstancedMesh(geometry,material,capacity),n:0,cap:capacity};
  const W={colliders:[],forestPoints:[],sceneryArt:{containsWaterfall:()=>false},terrainH:height,hollowpeakPlacement:{heightAt:planned}},G={world:W,vistas:{clearZones:[]},floraPkg:{bank:BANK,treeOwners:[]}},F=G.floraPkg;

@@ -1,3 +1,4 @@
+import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
 import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -6,7 +7,7 @@ import {fixture as f} from './coyote-bank-fixture.mjs';
 import {createDesertArt} from '../assets/desert-art.js';
 const read=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8');
 const original=JSON.parse(read('./fixtures/coyote-planning-11fb567.json'));
-const rawFlora=process.env.COYOTE_PLANNING_FLORA_RUNTIME?fs.readFileSync(process.env.COYOTE_PLANNING_FLORA_RUNTIME,'utf8'):read('../assets/features/world-flora.js'),html=read('../ranch3d.html'),{T,old,next}=f;
+const rawFlora=process.env.COYOTE_PLANNING_FLORA_RUNTIME?fs.readFileSync(process.env.COYOTE_PLANNING_FLORA_RUNTIME,'utf8'):read('../assets/features/world-flora.js'),html=normalizeCoyoteMacroSource(read('../ranch3d.html'),'ranch3d.html'),{T,old,next}=f;
 // Approved ownership-only edits are separately exercised by the nine retirement
 // fixtures. Their exact declared literals may coexist with these planning tests.
 // Approved post-layout Chalk response is independently exercised against actual

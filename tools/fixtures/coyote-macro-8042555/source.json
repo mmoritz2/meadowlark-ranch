@@ -1,0 +1,15 @@
+{
+  "base": "8042555",
+  "provenance": "Fresh804 native coyote-macro-8042555-baseline-native; actual terrain513 grid and routes. Same a153 grid as previous flower release is independently confirmed.",
+  "originalSHA256": "0d083ab131fcca53d111ac10c70cbb163086fb4736ce728a3ca5a1897491bb56",
+  "terrainSHA256": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+  "runtimeSHA256": {
+    "assets/canyon-landscape.js": "0d083ab131fcca53d111ac10c70cbb163086fb4736ce728a3ca5a1897491bb56",
+    "ranch3d.html": "fb8c532cf926d097c2e9acf6c0a0c10640ebab8730e44d19cdadaeace83e8667",
+    "assets/features/world-flora.js": "71dc5863463abac5f7630cfcef890cc37aaa3dcda25894523edc1aa2027abc6e",
+    "assets/features/index.js": "33b7f2747151349c489e4a746ef7947e40d1e474f6ae10f50675a6b87cf2e91b",
+    "assets/world-photoscans.js": "ed19c51f0810f4302453939c8ef6573c8b805f235fd9a29ab8294ac9ac687160",
+    "assets/features/world.js": "fcf2a2a4143ff6f01daf94964aeebc53d44faed293cb1821425c63414a44485b",
+    "assets/features/world-vistas.js": "10fef6849052f9035812bb0cb925da0d47ff63d0ce0c188c5c9224084fac56f0"
+  }
+}

@@ -15,7 +15,7 @@ import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './uprigh
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
-import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';
+import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-3';
 import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
 import {installThunderOak} from './thunder-oak-art.js?v=landmark-fields-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';

@@ -1,3 +1,4 @@
+import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-3';
 // Original terrain composition: connected sandstone banks around the riding
 // valley. The same height field feeds visible terrain, hoof contact and dressing.
 export const CANYON_RIDGES=[
@@ -178,7 +179,8 @@ export function coyoteBankShape({id,front,best,side,along,edge}){
 }
 export const coyoteBankShapeControls={chains:CHAINS,cuts:CUTS};
 
-function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false){
+function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false,macroform=true){
+ if(!planning&&macroform&&r.id==='north-rim')return coyoteNorthMacroHeight(best,side,along,edge);
  const authored=coyoteBankShape({id:r.id,front:countrysideBanks[r.id].front,best,side,along,edge});
  if(!planning&&authored!==null)return authored;
  const bank=countrysideBanks[r.id];let a=bank.spine[0],b=a;
@@ -197,8 +199,8 @@ function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=fals
  gully*=crestSmooth(-.18,.12,facing)*(1-crestSmooth(.90,1.08,best));
  return Math.min(legacyHeight,Math.max(0,rise*shoulder-gully));
 }
-export function canyonRelief(x,z,planning=false){
- let height=0,oasisUpperDelta=0;
+export function canyonRelief(x,z,planning=false,macroform=true){
+ let height=0,oasisUpperDelta=0,oasisBest=Infinity,oasisEdge=Infinity;
  for(const r of prepared){
   if(x<r.minX||x>r.maxX||z<r.minZ||z>r.maxZ)continue;
   let best=Infinity,crest=0,along=0,side=0,bankAlong=0;
@@ -215,7 +217,8 @@ export function canyonRelief(x,z,planning=false){
   const cap=1-.20*smooth(.34,.52,edge)-.62*smooth(.57,.82,edge)-.18*smooth(.81,1.08,edge);
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
   let ridgeHeight=Math.max(0,crest*cap*crown);
-  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning);
+  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning,macroform);
+  if(r.id==='oasis-butte'){oasisBest=best;oasisEdge=edge;}
   if(r.id==='oasis-butte')oasisUpperDelta=Math.max(0,crest*(1-crestSmooth(.18,1.08,edge))*crown)-ridgeHeight;
   height=Math.max(height,ridgeHeight);
  }
@@ -224,7 +227,9 @@ export function canyonRelief(x,z,planning=false){
  const face=retained+oasisUpperDelta*keepLandmarks(x,z)*oasisFrontMask(x,z,retained);
  const front=face-oasisFrontDepression(x,z,retained);
  const seated=front-oasisPrincipalSeat(x,z,front);
- return oasisUpperCrown(x,z,seated);
+ const retainedCrown=oasisUpperCrown(x,z,seated);
+ const macroBlend=!planning&&macroform?coyoteOasisMacroBlend(x,z,oasisBest,oasisEdge):0;
+ return macroBlend===0?retainedCrown:retainedCrown+(coyoteOasisMacroHeight(x,z,oasisBest,oasisEdge)*keepLandmarks(x,z)-retainedCrown)*macroBlend;
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.
@@ -246,8 +251,10 @@ export function canyonCliffAt(x,z,heightAt){
 // Historical Coyote decision ground. The physical grid always uses canyonRelief;
 // this reference prevents a local front edit from advancing sequential planting
 // decisions and relocating distant quarters. Pure numbers: no renderer or RNG.
-export const canyonPlanningRelief=(x,z)=>canyonRelief(x,z,true);
-export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep}){
+export const canyonPlanningRelief=(x,z)=>canyonRelief(x,z,true,false);
+// Exact previous804 physical macro recipe for newly changed North/Oasis decisions.
+export const canyonMacroPlanningRelief=(x,z)=>canyonRelief(x,z,false,false);
+export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep,macroRawHeightAt=rawHeightAt,surfaceHeightAt=(_x,_z,height)=>height}){
  if(typeof rawHeightAt!=='function'||typeof heightAt!=='function'||!(terrainStep>0))throw Error('Invalid canyon planning sampler');
  const banks=prepared.filter(r=>r.id==='eastern-wall'||r.id==='western-wall');
  const bounds={x0:Math.min(...banks.map(r=>r.minX)),x1:Math.max(...banks.map(r=>r.maxX)),z0:Math.min(...banks.map(r=>r.minZ)),z1:Math.max(...banks.map(r=>r.maxZ))};
@@ -257,9 +264,20 @@ export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep}){
  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){
   const y=rawHeightAt((ix+ix0)*terrainStep-500,(iz+iz0)*terrainStep-500);if(!Number.isFinite(y))throw Error('Nonfinite canyon planning ground');heights[iz*nx+ix]=y;
  }
+ const macroGrids=prepared.filter(r=>r.id==='north-rim'||r.id==='oasis-butte').map(r=>{
+  const ix0=Math.floor((r.minX+500)/terrainStep)-1,iz0=Math.floor((r.minZ+500)/terrainStep)-1;
+  const ix1=Math.ceil((r.maxX+500)/terrainStep)+1,iz1=Math.ceil((r.maxZ+500)/terrainStep)+1,nx=ix1-ix0+1,nz=iz1-iz0+1,heights=new Float32Array(nx*nz);
+  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const y=macroRawHeightAt((ix+ix0)*terrainStep-500,(iz+iz0)*terrainStep-500);if(!Number.isFinite(y))throw Error('Nonfinite macro decision ground');heights[iz*nx+ix]=y;}
+  return{id:r.id,ix0,iz0,nx,nz,heights,bytes:heights.byteLength};
+ });
+ function macroPlanningHeight(x,z){
+  for(const g of macroGrids){const gx=(x+500)/terrainStep-g.ix0,gz=(z+500)/terrainStep-g.iz0,ix=Math.floor(gx),iz=Math.floor(gz);if(ix<0||iz<0||ix>=g.nx-1||iz>=g.nz-1)continue;
+   const fx=gx-ix,fz=gz-iz,i=iz*g.nx+ix,a=g.heights[i],b=g.heights[i+g.nx],c=g.heights[i+g.nx+1],d=g.heights[i+1];const terrain=fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);return surfaceHeightAt(x,z,terrain);
+  }return heightAt(x,z);
+ }
  function planningHeight(x,z){
   const gx=(x+500)/terrainStep-ix0,gz=(z+500)/terrainStep-iz0,ix=Math.floor(gx),iz=Math.floor(gz);
-  if(ix<0||iz<0||ix>=nx-1||iz>=nz-1)return heightAt(x,z);
+  if(ix<0||iz<0||ix>=nx-1||iz>=nz-1)return macroPlanningHeight(x,z);
   const fx=gx-ix,fz=gz-iz,i=iz*nx+ix,a=heights[i],b=heights[i+nx],c=heights[i+nx+1],v=heights[i+1];
   return fx+fz<=1?a+(v-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(v-c)*(1-fz);
  }
@@ -275,7 +293,7 @@ export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep}){
   }
  }
  const collidersForPlanning=(colliders,liveBarriers)=>{const live=new Set(liveBarriers||[]);return [...colliders.filter(c=>!live.has(c)),...barriers];};
- return {profile:'coyote-bank-planning-11fb567',heightAt:planningHeight,cliffAt,collidersForPlanning,bounds,grid:{ix0,iz0,nx,nz,heights,bytes:heights.byteLength},barriers};
+ return {profile:'coyote-bank-planning-11fb567',heightAt:planningHeight,cliffAt,collidersForPlanning,bounds,grid:{ix0,iz0,nx,nz,heights,bytes:heights.byteLength},macroGrids,barriers};
 }
 
 export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material,colliders}){

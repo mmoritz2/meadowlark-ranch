@@ -1,3 +1,4 @@
+import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
 import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
 import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
@@ -115,7 +116,10 @@ export function install(G){
  /* ================= helpers: clear ground, structures ================= */
  /* The canyon's mesas and the mountain's slopes are placed by the terrain, so a structure asks
     for a clear circle before it is built instead of assuming one. */
- function clear(x,z,need){for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
+ const canyonBootPlanning=createCoyoteBootPlanning(W);
+ let planningBoot=true;G.on('boot',()=>{planningBoot=false;});
+ const placementColliders=()=>planningBoot?canyonBootPlanning.collidersForPlanning(W.colliders):W.colliders;
+ function clear(x,z,need){for(const c of placementColliders()){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
  /* ok, when it is given, is one more test the spot has to pass: for a placement that has to keep
     off something that is not a collider. */
  function findClear(cx,cz,need,maxR,ok){const fits=(x,z)=>clear(x,z,need)&&(!ok||ok(x,z));if(fits(cx,cz))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [x,z];}return [cx,cz];}

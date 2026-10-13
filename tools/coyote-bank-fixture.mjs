@@ -2,7 +2,10 @@ import {legacyRiverBankHeight} from '../assets/riverbank-terrain.mjs?v=river-ban
 import fs from 'node:fs';import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import * as old from './fixtures/coyote-banks-11fb567/assets/canyon-landscape.js';
-import * as next from '../assets/canyon-landscape.js';
+import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
+const next=await import('data:text/javascript;base64,'+Buffer.from(normalizeCoyoteMacroSource(fs.readFileSync(new URL('../assets/canyon-landscape.js',import.meta.url),'utf8'),'assets/canyon-landscape.js')).toString('base64'));
+// Exact804 counterfactual retains the prior West/East bank contract. Actual
+// new North/Oasis physics and all source bodies are tested separately.
 import {pastureRise} from '../assets/pastoral-fields.mjs';
 import {oasisTerrainHeight} from '../assets/oasis-art.js';
 import {fallsTerrainHeight} from '../assets/falls-landscape.js';

@@ -681,7 +681,7 @@ import {installPastoralCoverRefresh} from './assets/pastoral-cover-refresh.mjs?v
 import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=lupin-rounded-1';
 import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
 import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-cascades-1';
-import {canyonRelief,canyonPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=regional-landmarks-1';
+import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-3';
 import {createGeology} from './assets/geology.js?v=ranch-models-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
 import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1';
@@ -713,12 +713,12 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=regional-landmarks-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-3';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=pastoral-cover-1';
+import {FEATURES} from './assets/features/index.js?v=coyote-macroform-3';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -1582,7 +1582,7 @@ function pathDist(x,z){
 // Sample the collision surface from the same triangles used by the visible terrain.
 const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
 const riverBankPlacement=configureRiverBanks({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
 const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
@@ -1597,7 +1597,9 @@ function terrainH(x,z){
 const hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,
  rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});
 const canyonPlacement=createCanyonPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt});
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),
+ macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight),
+ surfaceHeightAt:(x,z,h)=>{for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));return h;},heightAt:hollowpeakPlacement.heightAt});
 const groundSurfaces=[];
 const colliders=[];
 const walls=[];

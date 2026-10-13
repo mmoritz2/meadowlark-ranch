@@ -1,0 +1,1200 @@
+import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
+import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
+/* Feature package 'world' — the place-making pass over Kestrel Basin.
+   Regions with metadata and gating, living towns, named landmarks and per-town arenas, four
+   collectible families (horseshoes, bottles, sheriff badges, the toy unicorn), the world map
+   markers, balloons and the ferry, wild herds with co-op taming and sanctuaries, the trust
+   HUD, and the follower AI the foal, the pet and a trusting wild horse all share.
+   Owned by this package: this file plus five one-line hot spots in ranch3d.html (G.anim,
+   G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
+   Nothing runs at import time. */
+import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-cascades-1';
+import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
+export const id='world';
+export function install(G){
+ const {THREE,scene,$,toast}=G;
+ const W=G.world,T=G.tables,H=G.horse,S=G.save,M=G.money,Q=G.quest,N=G.net,UI=G.ui;
+ const player=H.player;
+ const groundH=W.groundH, riverZ=W.riverZ, riverLevel=W.riverLevel;
+ const box=W.box,tube=W.tube,blob=W.blob;
+ const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
+ const wrap=a=>{while(a>Math.PI)a-=Math.PI*2;while(a<-Math.PI)a+=Math.PI*2;return a;};
+ const rnd=(a,b)=>a+Math.random()*(b-a);
+ const P={};                                             // this package's live state, exposed as G.worldPkg for QA
+ G.worldPkg=P;
+
+ /* ================= save fields ================= */
+ S.ensure(s=>{
+  s.unlocked=s.unlocked||{}; s.bottles=s.bottles||[]; if(s.toyUnicorn===undefined)s.toyUnicorn=null;
+  s.sanctuary=s.sanctuary||{}; s.wildSeen=s.wildSeen||{}; if(s.companion===undefined)s.companion=null;
+  s.stats=s.stats||{}; if(s.stats.balloons==null)s.stats.balloons=0; if(s.stats.ferry==null)s.stats.ferry=0; if(s.stats.tamedWild==null)s.stats.tamedWild=0; if(s.stats.released==null)s.stats.released=0;
+ });
+
+ /* ================= 1. regions: metadata, unlock rules, venues ================= */
+ /* Region ids are stable keys the rest of the package (and other packages) ask for. Unlock
+    rules are story-by-label so a story package that inserts a prologue does not shift them,
+    with a ranch-level alternative so a builder is never stuck, and a seasonal open week. */
+ const REGION_META={
+  '🐴 Home Pasture':{id:'pasture',biome:'meadow',ft:'🐴 Pasture'},
+  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-238,z:220}},
+  '🌾 Barleyfold Farms':{id:'barleyfold',biome:'farm',ft:'🌾 Barleyfold',unlock:{story:['Win Cottonwood Welcome Jump',1,4],ranch:2,text:'after Grandpa Wren\'s fourth errand, or at ranch level 2'},venue:{x:206,z:-38}},
+  '💦 Hollowpeak Falls':{id:'falls',biome:'mountain',ft:'💦 The Falls',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'}},
+  '🏔️ Hollowpeak Heights':{id:'hollowpeak',biome:'mountain',ft:'🏔️ Hollowpeak',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'},venue:{x:-92,z:-173}},
+  '🌉 Riverside Crossing':{id:'riverside',biome:'river',ft:null},
+  '🌊 Loon Lake':{id:'lake',biome:'lake',ft:'🌊 Loon Lake'},
+  '🏘️ Cottonwood Village':{id:'cottonwood',biome:'meadow',ft:'🏘️ Cottonwood',venue:{x:-6,z:-116}},
+  '🌲 Hollowpeak Pines':{id:'pines',biome:'forest',ft:null},
+  '🏡 Meadowlark Ranch':{id:'ranch',biome:'meadow',ft:'🏠 Ranch',venue:{x:2,z:1}},
+  '🌾 Kestrel Basin Meadows':{id:'meadows',biome:'meadow',ft:null},
+  /* The four quarters past the old fence. Deliberately no unlock rule: a locked region is
+     physically barred, not merely un-fast-travellable, and gating these would hand the
+     player a bigger basin and then fence most of it off again. They are open country,
+     and their fast-travel stops open with them. */
+  '🍂 Amberwood':{id:'amberwood',biome:'forest',ft:'🍂 Amberwood'},
+  '🪻 Willowmere Marsh':{id:'willowmere',biome:'marsh',ft:'🪻 Willowmere'},
+  '❄️ Frostpine Tundra':{id:'frostpine',biome:'mountain',ft:'❄️ Frostpine'},
+  '🏜️ Ochre Reach':{id:'ochre',biome:'desert',ft:'🏜️ Ochre Reach'},
+ };
+ for(const rg of T.REGIONS){const m=REGION_META[rg.name];if(m)Object.assign(rg,m);else if(!rg.id)rg.id=rg.name.replace(/[^a-z]/gi,'').toLowerCase();}
+ const OPEN_ROTATION=['coyote','hollowpeak','barleyfold'];   // one locked region opens to everyone for a season's first week
+ const regionById=id=>T.REGIONS.find(r=>r.id===id);
+ function ranchLevel(s){const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}
+ function storyIndexOf(label,nth){let k=0;for(let i=0;i<Q.STORY.length;i++)if(Q.STORY[i].label===label){k++;if(k===nth)return i;}return -1;}
+ function storyReached(rule){const i=storyIndexOf(rule[0],rule[1]);return Q.storyIdx()>=(i>=0?i:rule[2]);}
+ function seasonOpen(rg){
+  try{const sn=G.time.seasonNow(); if(sn.def&&(sn.def.openRegion===rg.id||(Array.isArray(sn.def.openRegions)&&sn.def.openRegions.includes(rg.id))))return true;
+   return sn.day<=7&&OPEN_ROTATION[sn.n%OPEN_ROTATION.length]===rg.id;}catch(e){return false;}
+ }
+ function ruleTrue(rg,s){const u=rg.unlock;if(!u)return true;return (u.story&&storyReached(u.story))||(u.ranch&&ranchLevel(s)>=u.ranch);}
+ function regionUnlocked(rg,s){if(!rg||!rg.unlock)return true;s=s||S.fresh()||{};return !!((s.unlocked&&s.unlocked[rg.id])||ruleTrue(rg,s)||seasonOpen(rg));}
+ function lockText(rg){return rg.name+' opens '+(rg.unlock?rg.unlock.text:'')+(seasonOpen(rg)?'':' — or during its season open week');}
+ /* Write the permanent unlock the first time a rule is true, and say so once. */
+ function ensureUnlocks(){
+  const news=[];
+  S.sync(s=>{s.unlocked=s.unlocked||{};for(const rg of T.REGIONS){if(!rg.unlock||s.unlocked[rg.id])continue;if(ruleTrue(rg,s)){s.unlocked[rg.id]=Date.now();news.push(rg);}}});
+  for(const rg of news){try{toast('🗺️ New region: '+rg.name+' is open to you!');G.xp.passAdd(50);}catch(e){}}
+  if(news.length)refreshFtLocks();
+  return news;
+ }
+ function lockedRegionsAt(x,z){return T.REGIONS.filter(rg=>rg.unlock&&rg.r<999&&hyp(x,z,rg.x,rg.z)<rg.r&&!regionUnlocked(rg));}
+ P.lockedAt=(x,z)=>lockedRegionsAt(x,z).length>0;
+ Object.assign(P,{REGION_META,regionUnlocked,ruleTrue,seasonOpen,ensureUnlocks,lockText,ranchLevel,storyIndexOf,lockedRegionsAt,regionById});
+
+ /* Jumping events are laid in their own town's arena (startCourse reads ev.at). Dressage keeps
+    the lettered home arena; races already cross the regions.
+    Each town arena stands on a fixed, surveyed site (the venue coordinates above). They used to be
+    moved at boot by findClear, before the towns were built and against whatever trees happened to be
+    standing, so from one load to the next the Coyote ring came down among three mesas, the outpost and
+    a field of cacti, Barleyfold's across its own town wall or on Sparrow Creek, Cottonwood's round the
+    windmill, and others on hillsides or across a road. Every site was checked on the built world for
+    open, gently sloping ground, a clear footprint for the ring and its grandstand (seeded mesas, the
+    towns' buildings as authored, walls and fences, roads), distance from the river, the creek and Loon
+    Lake, and room from every race route. The same place on every load, so a course's fences stand in
+    the same place too.
+    Cottonwood's first fixed site, (60,14), stood on the Loon Lake Shore ranch a player can buy: the
+    ring over its pasture, the grandstand over plot k6 and the barn row's end. It now stands on the
+    flattest open ground within reach of the village, south of the ranch: under a metre of fall
+    across the whole ring (every other site near the village, and the old one, fell two), clear of
+    every ranch's pasture, barn row and plot, of the roads and their field boundaries, and of every
+    route (the Grand Loop's south leg swings wide of it). */
+ const VENUE_OF={Cottonwood:'cottonwood',Barleyfold:'barleyfold',Coyote:'coyote',Hollowpeak:'hollowpeak'};
+ for(const ev of T.EVENTS3){if(ev.race||ev.dressage||ev.kind||ev.at)continue;const rg=regionById(VENUE_OF[ev.town]);if(rg&&rg.venue)ev.at=[rg.venue.x,rg.venue.z];}
+ /* A course that starts in another town takes you there: the fences are 250 m away otherwise. */
+ G.on('courseStart',c=>{const ev=c&&c.ev;if(!ev||!ev.at||P.veh)return;if(hyp(player.pos.x,player.pos.z,ev.at[0],ev.at[1])>45){player.pos.set(ev.at[0]-22,0,ev.at[1]);player.speed=0;player.heading=Math.PI/2;toast('🧭 Off to the '+ev.town+' arena!');}});
+
+ /* Fast travel respects the locks (capture phase runs before the button's own handler), and
+    the bar is greyed whenever it is rebuilt. The soft boundary in tick handles riding in. */
+ function ftRegion(f){const rg=T.REGIONS.find(r=>r.ft===f[0]);return rg||T.REGIONS.find(r=>r.r<999&&hyp(f[1],f[2],r.x,r.z)<r.r&&r.unlock)||null;}
+ function refreshFtLocks(){const bar=$('ftBar');if(!bar)return;bar.querySelectorAll('[data-ft]').forEach(b=>{const f=T.FT[+b.dataset.ft];const rg=f&&ftRegion(f);const locked=rg&&!regionUnlocked(rg);b.classList.toggle('ftLocked',!!locked);b.title=locked?lockText(rg):'';b.textContent=(locked?'🔒 ':'')+f[0];});}
+ {const bar=$('ftBar');if(bar){bar.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-ft]');if(!b)return;const f=T.FT[+b.dataset.ft];const rg=f&&ftRegion(f);if(rg&&!regionUnlocked(rg)){e.stopImmediatePropagation();e.preventDefault();P.lastLock=rg.id;toast('🔒 '+lockText(rg));}},true);
+  try{new MutationObserver(()=>refreshFtLocks()).observe(bar,{childList:true});}catch(e){}}}
+ refreshFtLocks();
+ {const st=document.createElement('style');st.textContent='#ftBar .ftLocked{opacity:.55;filter:grayscale(.7)}#tameHud.bad{background:#a33}#tameHud .cbar{background:rgba(255,255,255,.22);width:170px;margin-top:5px}#tameHud .cfill{background:#8fe08a}#tameHud small{display:block;font-weight:600;font-size:11px;opacity:.85}';document.head.appendChild(st);}
+
+ /* ================= helpers: clear ground, structures ================= */
+ /* The canyon's mesas and the mountain's slopes are placed by the terrain, so a structure asks
+    for a clear circle before it is built instead of assuming one. */
+ function clear(x,z,need){for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
+ /* ok, when it is given, is one more test the spot has to pass: for a placement that has to keep
+    off something that is not a collider. */
+ function findClear(cx,cz,need,maxR,ok){const fits=(x,z)=>clear(x,z,need)&&(!ok||ok(x,z));if(fits(cx,cz))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [x,z];}return [cx,cz];}
+ P.findClear=findClear;
+ /* Room from the courses. A town building, a balloon field or a sanctuary settles wherever findClear finds
+    room round what was planted nearby, which differs a little from load to load; this keeps any of them
+    from settling on a race route (the closing leg too) or in a town arena, so a course is never ridden
+    into a building that happened to land on it. */
+ /* The routes are read at the moment of asking, never copied at install: this file installs before events2-disciplines
+    lays the season's gauntlet loop into T.RACE_ROUTES (and a season roll lays the next), so a list taken here would never
+    hold them. Once events2 is up, every season's loop counts, not only this season's, since whatever is placed now is
+    still standing when the next one is ridden. The placements this file makes while installing, before those loops
+    exist, are checked again at boot (recheckPlacements, section 11) against the full set. */
+ function routeLines(){
+  const out=[],R=T.RACE_ROUTES||{};
+  for(const k in R)if(Array.isArray(R[k]))out.push(R[k]);
+  try{const GS=G.events2&&G.events2.GAUNTLET_SEASONS;if(GS)for(const k in GS){const d=GS[k];if(d&&Array.isArray(d.pts)&&!R[d.route])out.push(d.pts);}}catch(e){}
+  return out;
+ }
+ function offCourse(x,z,need){
+  for(const R of routeLines()){
+   for(let i=0;i<R.length;i++){const a=R[i],b=R[(i+1)%R.length];if(!a||!b)continue;const dx=b[0]-a[0],dz=b[1]-a[1],l2=dx*dx+dz*dz||1e-6;let t=((x-a[0])*dx+(z-a[1])*dz)/l2;t=t<0?0:t>1?1:t;if(hyp(x,z,a[0]+dx*t,a[1]+dz*t)<need)return false;}}
+  for(const rg of T.REGIONS){const v=rg.venue;if(!v||rg.id==='ranch')continue;if(((x-v.x)/(20+need))**2+((z-v.z)/(15+need))**2<1||(Math.abs(x-v.x)<8+need&&z>v.z&&z<v.z+26+need))return false;}
+  return true;
+ }
+ P.offCourse=offCourse;
+ const PLACED=[];   // [{id,x,z,need}] what was placed with offCourse, for the boot re-check
+ const paintMat=W.mats.paintMat;
+ function post(x,z,g,h,c){box(0.18,h||1.25,0.18,c||'#c9b083',x,(h||1.25)/2,z,g);}
+ function railRing(g,R,segs,gapFrom,gapTo,col){   // posts and rails round a circle with one mouth
+  let prev=null;
+  for(let k=0;k<=segs;k++){const a=k/segs*Math.PI*2,inGap=gapFrom!=null&&a>gapFrom&&a<gapTo;const x=Math.cos(a)*R,z=Math.sin(a)*R;
+   if(!inGap)post(x,z,g);
+   if(prev&&!inGap&&!prev.gap){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.10,0.07,col||'#e2d3ae',mx,0.95,mz,g);rail.rotation.y=Math.atan2(x-prev.x,z-prev.z)+Math.PI/2;const r2=box(len,0.08,0.06,col||'#e2d3ae',mx,0.55,mz,g);r2.rotation.y=rail.rotation.y;}
+   prev={x,z,gap:inGap};}
+ }
+ function sign(text,w,h){try{return W.arrivalArt.buildSign({text,width:w||2.4,height:h||0.42});}catch(e){return new THREE.Group();}}
+ /* ---- nameplates ---------------------------------------------------------------------
+    Two things are wrong with the built-in plate and both of them show up in a screenshot.
+    It cuts the text at 22 characters, which is how "Wick the Almanac-Keeper" came to read
+    "Wick the Almanac-Ke" and how half this package's shopfronts lost their last word; and a
+    plate is 2.4 m of fixed world geometry, so the moment anything wearing one walks past the
+    lens it becomes a white billboard across a third of the frame. plate() sizes the canvas to
+    the words instead of slicing them. The billboard half is handled by tickLabels() further
+    down, which fades every plate in the scene by distance — ours, the game's, anybody's.
+    Declared up here rather than beside the fade pass: labelAt runs while this file installs,
+    long before section 10's line is reached, and a const declared down there would still be
+    in its dead zone. */
+ const LABELS=[];
+ /* One house size for a nameplate. A couple of them are hung four metres wide — the quest
+    board's and the calendar's — which at eight metres away is a quarter of the screen and reads
+    as a menu that has escaped into the world. The canvas is untouched, so the words stay every
+    bit as readable; they simply stop shouting. */
+ const PLATE_MAX=2.6;
+ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+ function plate(text){
+  const s=String(text==null?'':text);
+  const cv=document.createElement('canvas'),c=cv.getContext('2d');
+  let fs=56;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';
+  let w=c.measureText(s).width;
+  while(w>860&&fs>30){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';w=c.measureText(s).width;}   // something very long shrinks to fit instead of running off the end
+  cv.height=128;cv.width=Math.max(256,Math.ceil((w+120)/8)*8);   // setting width resets the context, so the font is set again below
+  /* Readable through the colour grade: the plate measured 2.9:1 on screen (brown on a grey pill). The texture carried no
+     colour space, so its sRGB colours were brightened a second time on the way out, tone mapping greyed the white, and the
+     pill was see-through. sRGB texture, no tone mapping, a solid pill with a thin rim, near-black words with a light
+     outline: the same recipe as ranch3d.html's nameSprite, so a plate hung here matches one hung there. */
+  c.fillStyle='#fffdf7';c.beginPath();c.roundRect(10,12,cv.width-20,104,44);c.fill();
+  c.lineWidth=4;c.strokeStyle='#7a6248';c.stroke();
+  c.font='700 '+fs+'px "Trebuchet MS",sans-serif';c.textAlign='center';
+  c.lineJoin='round';c.lineWidth=Math.max(5,fs*0.16);c.strokeStyle='#fffdf7';c.strokeText(s,cv.width/2,68+fs*0.34);
+  c.fillStyle='#1b140e';c.fillText(s,cv.width/2,68+fs*0.34);
+  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
+  try{tx.anisotropy=G.renderer.capabilities.getMaxAnisotropy();}catch(e){}
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
+  sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
+  sp.userData.plate=1;
+  return guardFloatingLabel(sp);
+ }
+ /* Repaint a plate somebody else already hung, for the cases where we know the full text and
+    the game only kept the first 22 characters of it. */
+ function redress(sp,text){
+  if(!sp||!sp.material)return sp;
+  const np=plate(text);
+  try{if(sp.material.map)sp.material.map.dispose();}catch(e){}
+  sp.material.map=np.material.map;sp.material.needsUpdate=true;
+  sp.scale.copy(np.scale);
+  for(const L of LABELS)if(L.sp===sp){const k=np.scale.x>PLATE_MAX?PLATE_MAX/np.scale.x:1;L.bx=np.scale.x*k;L.by=np.scale.y*k;}
+  try{np.material.dispose();}catch(e){}
+  return sp;
+ }
+ function labelAt(g,text,y){const sp=plate(text);sp.position.y=y||3;g.add(sp);return sp;}
+ function building(kind,opts){opts=opts||{};if(kind==='townhouse')return W.ranchArchitecture.buildTownhouse(opts);if(kind==='cottage')return W.ranchArchitecture.buildCottage({variant:opts.variant||0});if(kind==='barn')return W.ranchArchitecture.buildBarn();return W.ranchArchitecture.buildOutbuilding(Object.assign({width:4.6,depth:3.2,height:3.4,animatedDoorOpening:{width:1.0,height:1.9}},opts));}
+ /* A door: stand near a building and press E to open the panel it houses. */
+ function door(id,x,z,r,label,open){return W.addThing({kind:'door',id,x,z,g:null,reach:r,label:()=>label+' (E)',use:()=>{try{open();}catch(e){console.error('door '+id,e);}}});}
+
+ /* ================= 2. towns, landmarks, walls, oasis, arenas ================= */
+ const TOWNS=[
+  {id:'cottonwood',region:'cottonwood',name:'Cottonwood Village',cx:47,cz:-50,
+   buildings:[
+    {id:'store',kind:'townhouse',x:34,z:-58,rot:0.9,opts:{width:5.4,depth:3.8,store:true,variant:1,name:'Cottonwood | Petal & Pail'},label:'🛍️ Petal & Pail general store',r:3.5,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
+    {id:'auction',kind:'barn',x:64,z:-58,rot:-0.5,label:'🏛️ Cottonwood Auction House',r:5.2,open:()=>UI.openShop('market'),door:'🏛️ Step into the auction house',glyph:'🏛️'},
+    {id:'clubhouse',kind:'townhouse',x:33,z:-45,rot:1.2,opts:{width:5.0,depth:3.6,variant:2,name:'Cottonwood | Club House'},label:'🏠 The Meadowlark Club House',r:3.3,open:()=>UI.openOnline(),door:'🏠 Go into the club house',glyph:'🏠'},
+    {id:'inn',kind:'townhouse',x:41,z:-63,rot:0.2,opts:{style:'coaching-inn',width:12,depth:7.6,variant:0,name:'Cottonwood | Blossom Inn'},label:'🏨 The Blossom Inn',r:3.7,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
+   ],
+   folk:[
+    {id:'cw_pim',name:'Pim',icon:'🧑',hat:'#c9a86a',shirt:'#6a8fbf',idle:'Morning! The store had fresh apples in — go on, your horse will thank you.',walkBy:'store',path:[[40,-52],[36,-58],[44,-60],[50,-54]]},
+    {id:'cw_rosa',name:'Rosa',icon:'👩',hat:'#e07a7a',shirt:'#9bbf6a',idle:'The auction house is buzzing today. A grey went for six hundred, can you believe it?',path:[[58,-52],[62,-46],[52,-44],[50,-56]]},
+    {id:'cw_ned',walkBy:'clubhouse',name:'Old Ned',icon:'👴',hat:'#8a7a5a',shirt:'#7a5a3a',idle:'Been here since before the bridge. Cottonwood was three cottages and a well.',path:[[36,-48],[38,-40],[46,-38],[44,-46]]},
+   ]},
+  {id:'barleyfold',region:'barleyfold',name:'Barleyfold Farms',cx:215,cz:-105,
+   buildings:[
+    {id:'breedbarn',kind:'barn',x:236,z:-120,rot:0.6,label:'💞 Barleyfold Breeding Barn',r:5.4,open:()=>UI.openShop('breed'),door:'💞 Visit the breeding barn',glyph:'💞'},
+    {id:'grain',kind:'outbuilding',x:196,z:-118,rot:-0.4,label:'🌾 Barleyfold grain store',r:2.8,open:()=>UI.openShop('food'),door:'🌾 Buy feed at the grain store'},
+    {id:'farmhouse',kind:'cottage',x:200,z:-86,rot:2.4,variant:1,label:'🏠 Otto\'s farmhouse',r:2.6},
+    {id:'gatehouse',kind:'outbuilding',x:186,z:-72,rot:0.0,label:'🚪 Barleyfold gatehouse',r:2.6,opts:{width:3.2,depth:2.6,height:2.8}},
+   ],
+   walls:{x1:180,z1:-146,x2:256,z2:-64,gaps:[[180,-96,180,-82],[214,-146,232,-146],[256,-112,256,-98]]},
+   folk:[
+    {id:'bf_hanne',name:'Hanne',icon:'👩‍🌾',hat:'#d9c47f',shirt:'#c46a3a',idle:'Mind the wheat rows! The harvest cart comes through at noon.',path:[[205,-112],[222,-100],[224,-88],[208,-92]]},
+    {id:'bf_kip',name:'Kip',icon:'🧑‍🌾',hat:'#7a5a3a',shirt:'#5a7a3a',idle:'I feed the stud horses at the breeding barn. Some of them are faster than yours, no offence.',path:[[228,-112],[240,-108],[242,-126],[226,-128]]},
+    {id:'bf_lotte',name:'Lotte',icon:'👧',hat:'#f2c1d1',shirt:'#8ab0e0',idle:'Did you come in the gate? Uncle Otto says the walls kept the coyotes out for a hundred years.',path:[[192,-90],[188,-78],[200,-76],[204,-90]]},
+   ]},
+  {id:'coyote',region:'coyote',name:'Coyote Canyon outpost',cx:-220,cz:130,
+   buildings:[
+    {id:'saddlery',kind:'outbuilding',x:-206,z:112,rot:0.4,label:'🧵 Bea\'s Saddlery',r:2.9,open:()=>UI.openShop('tack'),door:'🧵 Browse the saddlery',glyph:'🧵',opts:{width:5.2,depth:3.4,height:3.2,animatedDoorOpening:{width:1.1,height:1.9}}},
+    {id:'outpost',kind:'outbuilding',x:-230,z:116,rot:-0.7,label:'🤠 Sheriff\'s outpost',r:2.9,open:()=>UI.openQuests(),door:'🤠 Read the bounty board',glyph:'🤠'},
+    {id:'trading',kind:'outbuilding',x:-236,z:140,rot:0.2,label:'🏜️ Dry Gulch trading post',r:2.8,open:()=>UI.openShop('food'),door:'🏜️ Trade at the post'},
+   ],
+   rail:{x:-218,z:120},
+   oasis:OASIS,
+   folk:[
+    {id:'cc_dusty',name:'Dusty',icon:'🤠',hat:'#5a4a3a',shirt:'#b07a4a',idle:'Ain\'t seen the Sheriff\'s badge since the dust storm. Reckon it is out on the mesas somewhere.',path:[[-222,124],[-228,130],[-218,136],[-212,126]]},
+    {id:'cc_sol',name:'Sol',icon:'🧑',hat:'#e8c070',shirt:'#c85a3a',idle:'There is water at the oasis east of here. The wild herd comes down to drink at dusk.',path:[[-212,146],[-211,153],[-212,166],[-216,157]]},
+   ]},
+  {id:'hollowpeak',region:'hollowpeak',name:'Hollowpeak hamlet',cx:-160,cz:-210,
+   buildings:[
+    {id:'lodge',kind:'outbuilding',x:-168,z:-192,rot:0.5,label:'🎽 Summit Lodge outfitters',r:2.9,open:()=>UI.openShop('style'),door:'🎽 Step into the lodge',glyph:'🎽',opts:{width:5.0,depth:3.6,height:3.4,exterior:'village',variant:1,animatedDoorOpening:{width:1.1,height:1.9}}},
+    {id:'cabin',kind:'cottage',x:-138,z:-204,rot:-0.8,variant:0,label:'🧣 Ilse\'s cabin',r:2.6},
+   ],
+   folk:[
+    {id:'hp_bjorn',name:'Bjørn',icon:'🧔',hat:'#3a3a4a',shirt:'#4a6a8a',idle:'Snow on the pass by morning. The falls freeze at the edges — beautiful, and treacherous.',path:[[-160,-200],[-152,-194],[-146,-208],[-158,-214]]},
+   ]},
+ ];
+ P.TOWNS=TOWNS; P.LANDMARKS=[]; P.townsfolk=[];
+ function buildTown(tn){
+  const rg=regionById(tn.region);
+  for(const b of tn.buildings){
+   const plot=tn.id==='cottonwood'&&COTTONWOOD_PLOTS[b.id];
+   if(plot){b.x=plot.x;b.z=plot.z;b.rot=plot.rot;b.opts=Object.assign({},b.opts,{width:plot.width,depth:plot.depth});b.r=Math.hypot(plot.width,plot.depth)/2;}
+   const need=b.r+1.5; const at=plot?[plot.x,plot.z]:findClear(b.x,b.z,need,40,(x,z)=>offCourse(x,z,need+5)); b.x=at[0]; b.z=at[1]; PLACED.push({id:tn.id+':'+b.id,x:b.x,z:b.z,need:need+5});
+   let grp=null;
+   /* No label passed to addBuilding: its plate would arrive pre-truncated — "🛍️ Petal & Pail
+      general store" came out as "🛍️ Petal & Pail gener". We hang our own at the height the
+      architecture suggests instead. */
+   try{grp=W.addBuilding({x:b.x,z:b.z,rot:b.rot||0,r:b.r,build:()=>building(b.kind,Object.assign({variant:b.variant||0},b.opts||{}))});
+    if(grp)labelAt(grp,b.label,(grp.userData.architecture&&grp.userData.architecture.suggestedLabelY)||3);}catch(e){console.error('town building '+b.id,e);}
+   if(b.open)door(tn.id+':'+b.id,b.x,b.z,b.r+2.6,b.door||b.label,b.open);
+   P.LANDMARKS.push({id:tn.id+':'+b.id,region:tn.region,x:b.x,z:b.z,label:b.label,glyph:b.glyph||null,kind:b.kind,grp});
+  }
+  if(tn.walls){   // the walled farm town: stone runs with gaps for the roads, every run a collider
+   const w=tn.walls,g=new THREE.Group();const runs=[[w.x1,w.z1,w.x2,w.z1],[w.x2,w.z1,w.x2,w.z2],[w.x2,w.z2,w.x1,w.z2],[w.x1,w.z2,w.x1,w.z1]];
+   let n=0;
+   for(const r of runs){const len=Math.hypot(r[2]-r[0],r[3]-r[1]),steps=Math.round(len/6);
+    for(let k=0;k<steps;k++){const x=r[0]+(r[2]-r[0])*(k+0.5)/steps,z=r[1]+(r[3]-r[1])*(k+0.5)/steps;
+     if(w.gaps.some(gp=>x>=Math.min(gp[0],gp[2])-1&&x<=Math.max(gp[0],gp[2])+1&&z>=Math.min(gp[1],gp[3])-1&&z<=Math.max(gp[1],gp[3])+1))continue;
+     const gy=groundH(x,z),ry=Math.atan2(r[2]-r[0],r[3]-r[1])+Math.PI/2;
+     const seg=box(6.1,2.2,0.9,'#b8a98a',0,0,0,g);seg.position.set(x,gy+1.1,z);seg.rotation.y=ry;seg.castShadow=true;seg.receiveShadow=true;
+     const cap=box(6.2,0.25,1.1,'#8a7a62',0,0,0,g);cap.position.set(x,gy+2.3,z);cap.rotation.y=ry;
+     W.colliders.push({x,z,r:3.0});n++;}}
+   for(const gp of w.gaps){const gx=(gp[0]+gp[2])/2,gz=(gp[1]+gp[3])/2;post(gp[0],gp[1],g,3.2,'#8a7a62');post(gp[2],gp[3],g,3.2,'#8a7a62');const arch=sign('BARLEYFOLD',3.2,0.5);arch.position.set(gx,groundH(gx,gz)+3.4,gz);arch.rotation.y=Math.atan2(gp[2]-gp[0],gp[3]-gp[1])+Math.PI/2;g.add(arch);}
+   scene.add(g);W.followCamera.register(g);tn.wallSegs=n;
+  }
+  if(tn.rail){const g=new THREE.Group();post(-1.4,0,g,1.1,'#6b4a2a');post(1.4,0,g,1.1,'#6b4a2a');box(3.2,0.09,0.09,'#8a6a4a',0,1.05,0,g);g.position.set(tn.rail.x,groundH(tn.rail.x,tn.rail.z),tn.rail.z);scene.add(g);}
+  if(tn.oasis){   // a desert pond ringed with palms: the herd drinks here, and so can you
+   const o=tn.oasis,g=new THREE.Group();
+   const art={THREE,groundH,x:o.x,z:o.z,radius:o.r,terrainStep:W.terrainStep};
+   g.add(createOasisWater({...art,waterMaterial:W.waterMaterial}));
+   g.add(createOasisBank(art));
+   const palms=createOasisPalms(art);g.add(palms);P.oasisReady=palms.ready;
+   for(const p of palms.userData.oasisPalms.palms)W.colliders.push({...p,trunk:true});
+   for(let k=0;k<12;k++){
+    const a=Math.random()*Math.PI*2,r=o.r+2.4+Math.random()*1.2,dx=Math.cos(a)*r,dz=Math.sin(a)*r;
+    const rush=W.desertArt.create('rush',k%3),s=.55+(k%4)*.055; rush.name='Oasis | bank rushes';rush.scale.setScalar(s);
+    // The waterline bank blends over the terrain. Plant on firm ground beyond its outer edge.
+    const shore=groundH(o.x+dx,o.z+dz)-groundH(o.x,o.z);
+    rush.position.set(dx,shore-rush.children[0].geometry.boundingBox.min.y*s-.005,dz);g.add(rush);
+   }
+   const y=groundH(o.x,o.z);g.position.set(o.x,y,o.z);scene.add(g);P.oasis={x:o.x,z:o.z,r:o.r,y:OASIS.level};
+   labelAt(g,'🌴 Dry Gulch Oasis',3.2);
+   W.addThing({kind:'oasis',id:'oasis',x:o.x,z:o.z,g:null,reach:o.r+3,label:()=>'🌴 Let your horse drink (E)',use:()=>{let ok=false;S.sync(s=>{const h=s.horses[H.rideIdx()];if(!h)return;h.needs=h.needs||{};h.needs.thirst=Math.min(100,(h.needs.thirst||0)+40);ok=true;});if(ok){toast('🌴 '+H.ridden().name+' drinks deep at the oasis. +40 thirst');G.sChime();}}});
+  }
+  for(const f of tn.folk){   // townsfolk stroll their little rounds; quest-givers stay put so they can be found
+   // A shop stroll follows its actual placed forecourt, including findClear's
+   // relocation. The former fixed loop crossed the larger shop's front window.
+   const shop=f.walkBy&&P.LANDMARKS.find(l=>l.id===tn.id+':'+f.walkBy)?.grp;
+   let path=f.path;
+   if(shop){const front=shop.userData.architecture.depth/2;shop.updateMatrixWorld(true);
+    path=[[-1.45,front+1.10],[1.45,front+1.10],[1.45,front+2.30],[-1.45,front+2.30]].map(([x,z])=>{
+     const p=shop.localToWorld(new THREE.Vector3(x,0,z));return [p.x,p.z];});}
+   const def={id:f.id,name:f.name,icon:f.icon,x:path[0][0],z:path[0][1],hat:f.hat,shirt:f.shirt,idle:f.idle,folk:true};
+   try{const e=W.addNPC(def);P.townsfolk.push({e,def,path,wi:1,x:def.x,z:def.z,heading:0,town:tn.id,pause:0});}catch(err){console.error('townsfolk '+f.id,err);}
+  }
+ }
+ for(const tn of TOWNS){try{buildTown(tn);}catch(e){console.error('town '+tn.id,e);}}
+ /* Arenas: a fenced ring round each town's jumping ellipse, a grandstand and a sign. Venue coords
+    are what startCourse now reads from ev.at. */
+ const ARENAS=[];
+ for(const rg of T.REGIONS){
+  if(!rg.venue||rg.id==='ranch')continue;
+  const v=rg.venue,g=new THREE.Group(),A=20,B=15,gy=groundH(v.x,v.z);
+  /* Every post and rail stands on the ground under it. The ring used to be one flat hoop at the height
+     of its centre, so on the gentlest slope half the rail floated and the other half was buried. */
+  const dy=(x,z)=>groundH(v.x+x,v.z+z)-gy;
+  let prev=null;for(let k=0;k<=36;k++){const th=k/36*Math.PI*2,x=Math.cos(th)*A,z=Math.sin(th)*B,y=dy(x,z);if(k%2===0)box(0.18,1.1,0.18,'#dcd3bd',x,y+0.55,z,g);if(prev){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.09,0.07,'#f2ecdc',mx,(y+prev.y)/2+0.9,mz,g);rail.rotation.set(0,Math.atan2(x-prev.x,z-prev.z)+Math.PI/2,Math.atan2(prev.y-y,len));}prev={x,z,y};}
+  const townName=(rg.name.slice(rg.name.indexOf(' ')+1)).split(' ')[0].toUpperCase();
+  const sgY=dy(0,-B-1.5);const sg=sign(townName+' ARENA',4.4,0.5);sg.position.set(0,sgY+3.1,-B-1.5);g.add(sg);for(const px of[-2.3,2.3])box(0.18,3.0,0.18,'#8a7a62',px,dy(px,-B-1.5)+1.5,-B-1.5,g);
+  /* The grandstand stands back from the rail. Its round collider (r 5.5 at B+4.5) reached a metre inside
+     the ring, an invisible wall at the C end that a horse cantering round the rail ran into; it sits at
+     B+6 now and its three smaller circles follow the 13 by 4.6 m stand, all of it five metres off the rail. */
+  const SZ=B+6,SC=SZ+1.4;
+  const stand=W.ranchBuilderArt.create('grandstand');stand.name='Arena | grandstand | '+rg.id;
+  // Keep the deck level while footing extensions meet the sloped town ground.
+  const supportPoints=[-5.85,-1.8,1.8,5.85].flatMap(x=>[.35,-3.15].map(z=>[x,z]));
+  const standY=Math.max(...supportPoints.map(([x,z])=>dy(-x,SZ-z)));
+  stand.position.set(0,standY,SZ);stand.rotation.y=Math.PI;g.add(stand);
+  for(const [x,z]of supportPoints){
+   const wx=-x,wz=SZ-z,base=dy(wx,wz),h=standY-base;
+   if(h>.015)box(.39,h+.08,.39,W.ranchBuilderArt.materials.stone,wx,base+h/2,wz,g);
+  }
+  const entryZ=SZ-.45,entryBase=dy(0,entryZ),entryRise=standY-entryBase;
+  if(entryRise>.015)box(1.16,entryRise+.05,.60,W.ranchBuilderArt.materials.stone,0,entryBase+entryRise/2,entryZ,g);
+  g.position.set(v.x,gy,v.z);
+  for(const c of g.children){if(c.isMesh){c.castShadow=true;}}
+  scene.add(g);W.followCamera.register(g);
+  for(const sx of[-4.3,0,4.3])W.colliders.push({x:v.x+sx,z:v.z+SC,r:2.6,keep:true});   // keep: course-clear clears round the ring and must leave the stand solid
+  const lbl=rg.name.slice(rg.name.indexOf(' ')+1).split(' ')[0]+' Arena';
+  door('grandstand:'+rg.id,v.x,v.z+SC,8,'🏆 '+lbl+' grandstand — see the events',()=>UI.openEvents());
+  ARENAS.push({id:rg.id,x:v.x,z:v.z,label:lbl,g});
+  P.LANDMARKS.push({id:'arena:'+rg.id,region:rg.id,x:v.x,z:v.z,label:'🏟️ '+lbl,glyph:'🏟️',kind:'arena',grp:g});
+ }
+ P.ARENAS=ARENAS;
+ /* Townsfolk walk their rounds only when someone is there to see it. */
+ function tickTownsfolk(dt){
+  for(const f of P.townsfolk){
+   if(hyp(player.pos.x,player.pos.z,f.x,f.z)>180)continue;
+   if(f.pause>0){f.pause-=dt;continue;}
+   const wp=f.path[f.wi],dx=wp[0]-f.x,dz=wp[1]-f.z,d=Math.hypot(dx,dz);
+   if(d<0.4){f.wi=(f.wi+1)%f.path.length;f.pause=1.5+Math.random()*4;continue;}
+   const want=Math.atan2(dx,dz);f.heading+=wrap(want-f.heading)*Math.min(1,dt*4);
+   const sp=0.9;f.x+=Math.sin(f.heading)*sp*dt;f.z+=Math.cos(f.heading)*sp*dt;
+   const g=f.e.g;g.position.set(f.x,groundH(f.x,f.z),f.z);g.rotation.y=f.heading;
+   if(!W.npcCharacters?.hasModel(f.def.id))g.position.y+=Math.abs(Math.sin(performance.now()*0.008))*0.03;
+  }
+ }
+
+ /* ================= 3. collectibles: bottles, sheriff badges, the toy unicorn ================= */
+ /* Eight bottles along the water, each with a note from the valley's past. */
+ const BOTTLE_NOTES=[
+  'To whoever finds this: the river was high the spring we built the bridge. Grandma W. swam it on a grey mare to fetch the doctor. Nobody believed her but me.',
+  'Loon Lake, midsummer. Counted eleven loons and one silver horse drinking at the far shore. Did not tell Wren. He would only go looking.',
+  'Ferry log, day 40: two riders, one dog, a sack of Barleyfold pumpkins that rolled overboard. The bass have never eaten so well.',
+  'If the Cottonwood blossom is out before the ice leaves the falls, plant the lettuce late. My mother said so and she was never wrong about lettuce.',
+  'Sheriff\'s note: lost my badge somewhere between the mesas and the river. If found, keep it — I have another, and you earned it.',
+  'The canyon herd has a dun with a stripe down her back like a river on a map. She will not be caught by anyone in a hurry.',
+  'Ilse says the snowfield horses came down the pass a hundred winters ago and simply stayed. So did she, I think.',
+  'For the one who reads every note: the toy unicorn was Grandma\'s. She hid it behind the falls for a grandchild who could find it. Look where the mist is thickest.',
+ ];
+ /* b8 lay on the arena's north rail at (9,20), a metre from the old River Run finish and off a Loon Lake Crossing leg,
+    so riding through the finish picked it up and its card opened over the result. It lies on the lake's east side now,
+    outside the rail and well off every route; and a card found while a course is running waits (loreCard). */
+ function bank(x,off){const z0=riverZ(x);for(const dz of [off,-off]){const z=z0+dz;if(groundH(x,z)>riverLevel(x)+0.35)return [x,z];}return [x,z0+off];}
+ const BOTTLES=[
+  {id:'b1',pt:bank(-120,7),region:'meadows'},{id:'b2',pt:bank(-70,7),region:'meadows'},{id:'b3',pt:[14,124],region:'riverside'},{id:'b4',pt:bank(60,7),region:'meadows'},
+  {id:'b5',pt:bank(110,7),region:'meadows'},{id:'b6',pt:bank(-190,7),region:'coyote'},{id:'b7',pt:[31,17],region:'lake'},{id:'b8',pt:[28,11],region:'lake'},
+ ].map((b,i)=>Object.assign(b,{note:BOTTLE_NOTES[i],x:b.pt[0],z:b.pt[1]}));
+ P.BOTTLES=BOTTLES;
+ const glassMat=new THREE.MeshStandardMaterial({color:0x7fd8c8,emissive:0x3fa898,emissiveIntensity:0.35,roughness:0.15,metalness:0.1,transparent:true,opacity:0.85});
+ function mkBottle(b){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.13,0.42,10),glassMat);body.position.y=0.3;g.add(body);const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.08,0.16,8),glassMat);neck.position.y=0.58;g.add(neck);box(0.07,0.08,0.07,'#c9a86a',0,0.68,0,g);const note=box(0.06,0.2,0.02,'#f4e8c8',0,0.3,0,g);note.rotation.y=0.6;g.rotation.z=0.35;g.position.set(b.x,groundH(b.x,b.z),b.z);scene.add(g);return g;}
+ function showLore(title,text,extra){const d=$('dlg');if(!d)return;d.innerHTML='<b>'+title+'</b><p style="font-style:italic">'+text+'</p>'+(extra||'')+'<button id="dlgBtn">Keep it 🍾</button>';d.style.display='block';$('dlgBtn').onclick=()=>{d.style.display='none';};}
+ /* A card never opens over a course or its result. Picked up mid-course (a bottle lying beside a finish line) it waits in
+    the queue, and tickLore shows it once the course is over, the result card has been opened and
+    closed, and no other dialogue is up. The toast still says what was found at the moment it was found. */
+ const LORE_Q=[]; let courseSeenAt=-1e9;
+ const loreBusy=()=>{if(G.course.get()||performance.now()-courseSeenAt<1500)return true;const rp=$('resultPanel');if(rp&&rp.style.display&&rp.style.display!=='none')return true;const d=$('dlg');return !!(d&&d.style.display==='block');};
+ function loreCard(title,text,extra){if(loreBusy()){LORE_Q.push([title,text,extra]);return;}showLore(title,text,extra);}
+ function tickLore(){if(G.course.get()){courseSeenAt=performance.now();return;}if(LORE_Q.length&&!loreBusy())showLore(...LORE_Q.shift());}
+ P.loreQueue=LORE_Q;
+ for(const b of BOTTLES){
+  const g=mkBottle(b);
+  W.addThing({kind:'bottle',id:b.id,g,x:b.x,z:b.z,reach:0,label:()=>'',
+   tick(dt,t,d){if(!g.visible)return;g.position.y=groundH(b.x,b.z)+Math.sin(performance.now()*0.002+b.x)*0.04;if(d<1.7&&player.y<1.2)collectBottle(b,t);}});
+  b.thing=g;
+ }
+ function collectBottle(b,t){
+  if(!b.thing.visible)return; b.thing.visible=false;
+  let n=0,key=false,all=false;
+  S.sync(s=>{s.bottles=s.bottles||[];if(!s.bottles.includes(b.id))s.bottles.push(b.id);n=s.bottles.length;s.coins+=60;if(n%4===0){s.keys=(s.keys||0)+1;key=true;}if(n>=BOTTLES.length&&!S.flag(s,'bottles-all')){}else if(n>=BOTTLES.length&&!(s.setsDone&&s.setsDone.bottles)){s.setsDone=s.setsDone||{};s.setsDone.bottles=true;M.payReward(s,{g:5,k:1});all=true;}});
+  M.refreshWallet();G.sChime();G.xp.passAdd(4);Q.dailyEvt('bottle',1);
+  loreCard('🍾 Message in a bottle '+n+'/'+BOTTLES.length,b.note,'<div style="font-size:12px;color:#8c7a63">+60🪙'+(key?' +1🗝️':'')+(all?' — every bottle found! +5💎 +1🗝️':'')+'</div>');
+  toast('🍾 A message in a bottle! +60🪙'+(key?' +1🗝️':''));
+ }
+ /* Sheriff badges: eight brass stars, six lost on the mesas and two carried off toward the river. */
+ T.COLL_SETS.badges={label:'⭐ Sheriff badges',col:'#f0b429',n:8,reward:{g:5,k:2},
+  pts:[[-198,98],[-246,112],[-262,150],[-228,176],[-188,168],[-256,86],[236,-62],[-14,140]]};
+ const badgeMat=new THREE.MeshStandardMaterial({color:0xf0b429,emissive:0xa87418,emissiveIntensity:0.35,metalness:0.9,roughness:0.25});
+ function mkBadge(i,pt){const g=new THREE.Group();const star=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.04,5),badgeMat);star.rotation.x=Math.PI/2;star.position.y=0.55;g.add(star);const pin=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.06,12),badgeMat);pin.rotation.x=Math.PI/2;pin.position.set(0,0.55,0.03);g.add(pin);g.position.set(pt[0],groundH(pt[0],pt[1]),pt[1]);scene.add(g);return {g,m:star};}
+ T.COLL_SETS.badges.pts.forEach((pt,i)=>{
+  const at=findClear(pt[0],pt[1],1.2,30);pt[0]=at[0];pt[1]=at[1];
+  const {g,m}=mkBadge(i,pt);
+  W.addThing({kind:'badge',id:'badge_'+i,set:'badges',i,g,m,x:pt[0],z:pt[1],reach:0,label:()=>'',tick(dt,t,d){if(!g.visible)return;m.rotation.y+=dt*1.5;if(d<1.6&&player.y<1.2)collectSet(t);}});
+ });
+ /* A set with more than five pieces: the same save shape as the built-in sets, n-aware. */
+ function collectSet(t){
+  if(!t.g.visible)return;t.g.visible=false;const set=T.COLL_SETS[t.set],n=set.n||5;let done=false,cnt=0;
+  S.sync(sv=>{sv.sets=sv.sets||{};const a=sv.sets[t.set]=sv.sets[t.set]||[];if(!a.includes(t.i))a.push(t.i);cnt=a.length;if(cnt>=n&&!(sv.setsDone&&sv.setsDone[t.set])){sv.setsDone=sv.setsDone||{};sv.setsDone[t.set]=true;M.payReward(sv,set.reward);done=true;}});
+  G.sCoin();G.xp.passAdd(3);M.refreshWallet();Q.questEvt('coll',t.set);
+  toast(set.label+' '+cnt+'/'+n+(done?' — set complete! +'+M.rewardLabel(set.reward):''));if(done)G.sGem();
+ }
+ Q.types.coll=(m,val,prog)=>val===m.set?Math.min(m.goal,prog+1):prog;   // a story mission can ask for a set piece: {type:'coll',set:'badges',goal:3}
+ /* The rare toy unicorn, behind the falls where the mist is thickest. Not on the map. */
+ const TOY_UNICORN={x:-172,z:-238,r:1.6};P.TOY_UNICORN=TOY_UNICORN;
+ {
+  const g=new THREE.Group(),c='#f2d9ec',m='#c9a0e8';
+  blob(0.22,0.16,0.34,c,0,0.42,0,g);blob(0.10,0.14,0.16,c,0,0.66,0.26,g);blob(0.08,0.08,0.12,c,0,0.78,0.38,g);
+  for(const [x,z] of [[-0.1,0.16],[0.1,0.16],[-0.1,-0.16],[0.1,-0.16]])tube(0.035,0.035,0.34,c,x,0.18,z,g);
+  const horn=new THREE.Mesh(new THREE.ConeGeometry(0.03,0.16,8),new THREE.MeshStandardMaterial({color:0xffe6a8,emissive:0xffd070,emissiveIntensity:0.6}));horn.position.set(0,0.9,0.42);horn.rotation.x=-0.5;g.add(horn);
+  blob(0.05,0.12,0.2,m,0,0.74,0.1,g);blob(0.05,0.05,0.22,m,0,0.42,-0.36,g);
+  g.position.set(TOY_UNICORN.x,groundH(TOY_UNICORN.x,TOY_UNICORN.z),TOY_UNICORN.z);g.scale.setScalar(0.9);scene.add(g);
+  W.addThing({kind:'toy',id:'unicorn',g,x:TOY_UNICORN.x,z:TOY_UNICORN.z,reach:0,label:()=>'',tick(dt,t,d){if(!g.visible)return;g.rotation.y+=dt*0.8;if(d<TOY_UNICORN.r&&player.y<1.2){g.visible=false;S.sync(s=>{s.toyUnicorn=Date.now();M.payReward(s,{g:10,k:2});});M.refreshWallet();G.sGem();G.xp.addXp3D(50);G.xp.passAdd(40);
+   loreCard('🦄 A rare toy unicorn','Tucked in a dry crevice behind the falls: a little cloth unicorn, mane stitched from purple wool, one bead eye. On its belly, in faded ink: <b>for the one who looked</b>.','<div style="font-size:12px;color:#8c7a63">+10💎 +2🗝️ +50 XP</div>');toast('🦄 You found Grandma\'s toy unicorn! +10💎 +2🗝️');}}});
+  P.toyMesh=g;
+ }
+ /* Restore what an older session already found. */
+ function restoreFound(){const s=S.fresh();if(!s)return;for(const t of W.things){if(t.kind==='bottle'&&s.bottles&&s.bottles.includes(t.id))t.g.visible=false;if(t.kind==='badge'&&s.sets&&s.sets.badges&&s.sets.badges.includes(t.i))t.g.visible=false;if(t.kind==='toy'&&s.toyUnicorn)t.g.visible=false;}}
+ restoreFound();
+ /* Region hint for a point: which named zone (not the catch-all) it lies in. */
+ const regionOf=(x,z)=>{const rg=T.REGIONS.find(r=>r.r<999&&hyp(x,z,r.x,r.z)<r.r);return rg?rg.name:'🌾 the meadows';};
+ function perRegion(pts,have){const by={};pts.forEach((pt,i)=>{const k=regionOf(pt[0],pt[1]);by[k]=by[k]||{n:0,got:0};by[k].n++;if(have(i))by[k].got++;});return Object.keys(by).map(k=>k.split(' ').slice(1).join(' ')+' '+by[k].got+'/'+by[k].n).join(' · ');}
+ /* The Collection tab now holds every family in one place, with the counts by region. */
+ UI.questTab({id:'coll',label:'🗺️ Collection',render(s){
+  const shoeToday=(s.shoes&&s.shoes.date===new Date().toDateString())?s.shoes.got.length:0, shoes=(s.stats&&s.stats.shoesFound)||0;
+  const bottles=(s.bottles||[]).length, fishB=(s.fish&&s.fish.bottles)||0;
+  const row=(ico,title,pct,right,sub)=>'<div class="qrow'+(pct>=100?' claimed':'')+'"><span class="qico">'+ico+'</span><span class="qmain"><b>'+title+'</b>'+(sub?'<span style="font-size:11px;color:#8c7a63;font-weight:600">'+sub+'</span>':'')+'<span class="qbar"><span class="qfill" style="width:'+Math.min(100,pct)+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+right+'</span></div>';
+  let html='<span style="font-size:12px;color:#8c7a63">Open the map (M) — chests, collectibles, bottles, venues, balloons and the ferry are all marked. Four families, one per region, plus the treasure chests.</span>';
+  html+=row('🍀','Golden horseshoes',shoeToday*10,shoeToday+'/10 today · '+shoes+' ever','Ten new hiding spots every day, +80🪙 each and +6💎 for the set');
+  html+=row('🍾','Messages in a bottle',bottles/BOTTLES.length*100,bottles+'/'+BOTTLES.length+((s.setsDone&&s.setsDone.bottles)?' ✅':' → 5💎 1🗝️'),perRegion(BOTTLES.map(b=>[b.x,b.z]),i=>(s.bottles||[]).includes(BOTTLES[i].id))+(fishB?' · '+fishB+' fished up':''));
+  for(const k of Object.keys(T.COLL_SETS)){const set=T.COLL_SETS[k],n=set.n||5,have=(s.sets&&s.sets[k]||[]),done=s.setsDone&&s.setsDone[k];
+   html+=row(set.label.split(' ')[0],set.label.slice(set.label.indexOf(' ')+1),have.length/n*100,have.length+'/'+n+(done?' ✅':' → '+M.rewardLabel(set.reward)),perRegion(set.pts,i=>have.includes(i)));}
+  html+=row('🦄','A rare toy unicorn',s.toyUnicorn?100:0,s.toyUnicorn?'found ✅':'?/1',s.toyUnicorn?'Grandma\'s, from behind the falls':'One of a kind, hidden somewhere the mist is thickest. Read the bottles.');
+  const opened=T.CHESTS.filter(c=>s.chests&&s.chests[c.id]).length;
+  html+=row('🎁','Treasure chests',opened/T.CHESTS.length*100,opened+'/'+T.CHESTS.length+' found · refill in 3 days','');
+  const fish=s.fish||{n:0,bottles:0};
+  html+='<div class="qrow"><span class="qico">🎣</span><span class="qmain"><b>Loon Lake</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+fish.n+' fish caught</span></span></div>';
+  html+='<div class="qrow"><span class="qico">🔐</span><span class="qmain"><b>Grandma\'s tack room</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+((s.doors&&s.doors.tackroom)===G.time.weekKey()?'opened this week':'a Silver Key opens it: rare tack at least, once a week')+'</span></span></div>';
+  const sanct=Object.keys(s.sanctuary||{}).reduce((a,k)=>a+(s.sanctuary[k]||[]).length,0);
+  html+='<div class="qrow"><span class="qico">🏕️</span><span class="qmain"><b>Sanctuaries</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+sanct+' horse'+(sanct===1?'':'s')+' released · '+((s.stats&&s.stats.tamedWild)||0)+' wild horses tamed</span></span></div>';
+  const locked=T.REGIONS.filter(r=>r.unlock&&!regionUnlocked(r,s));
+  html+='<div class="qrow"><span class="qico">🗺️</span><span class="qmain"><b>Regions</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+(locked.length?locked.map(r=>'🔒 '+r.name.slice(r.name.indexOf(' ')+1)+' — '+r.unlock.text).join('<br>'):'every region of Kestrel Basin is open to you')+'</span></span></div>';
+  return html;
+ }});
+ Q.addAch({id:'badges8',icon:'⭐',label:'Deputy',desc:'Find all 8 sheriff badges',v:s=>((s.sets&&s.sets.badges)||[]).length,goal:8,r:{c:400,g:2}});
+ Q.addAch({id:'bottles8',icon:'🍾',label:'Beachcomber',desc:'Read every message in a bottle',v:s=>(s.bottles||[]).length,goal:8,r:{c:400,g:2}});
+ Q.addAch({id:'toyuni',icon:'🦄',label:'A rare find',desc:'Find the toy unicorn',v:s=>s.toyUnicorn?1:0,goal:1,r:{c:300,g:3}});
+ Q.addAch({id:'regions4',icon:'🗺️',label:'Basin explorer',desc:'Unlock every region',v:s=>T.REGIONS.filter(r=>r.unlock&&regionUnlocked(r,s)).length,goal:T.REGIONS.filter(r=>r.unlock).length,r:{c:500,g:2,k:1}});
+ Q.addAch({id:'balloon3',icon:'🎈',label:'Head in the clouds',desc:'Take 3 balloon rides',v:s=>(s.stats&&s.stats.balloons)||0,goal:3,r:{c:250,g:1}});
+ Q.addAch({id:'ferry3',icon:'⛵',label:'Ferry regular',desc:'Cross on the ferry 3 times',v:s=>(s.stats&&s.stats.ferry)||0,goal:3,r:{c:200,g:1}});
+ Q.addAch({id:'wild5',icon:'🐎',label:'Horse whisperer',desc:'Tame 5 wild horses from the herds',v:s=>(s.stats&&s.stats.tamedWild)||0,goal:5,r:{c:600,g:3}});
+ Q.addAch({id:'sanct3',icon:'🏕️',label:'Sanctuary keeper',desc:'Release 3 horses to a sanctuary',v:s=>(s.stats&&s.stats.released)||0,goal:3,r:{c:400,g:2,k:1}});
+ Q.addAch({id:'coop1',icon:'👥',label:'Better together',desc:'Tame a wild horse with a friend',v:s=>(s.stats&&s.stats.coopTames)||0,goal:1,r:{c:500,g:3},social:true});
+ Q.addDaily({type:'bottle',icon:'🍾',label:'Find a message in a bottle',goal:1,r:{c:100,p:15}});
+ Q.addDaily({type:'balloon',icon:'🎈',label:'Ride a hot-air balloon',goal:1,r:{c:90,p:15}});
+ Q.addDaily({type:'walkwild',icon:'🐎',label:'Walk a wild horse 50 m',goal:50,r:{c:120,p:20}});
+
+ /* ================= 4. the world map: markers for everything ================= */
+ const MK=W.mapMarkers;
+ for(const rg of T.REGIONS){   // every region labelled, locks drawn as a padlock with the rule
+  if(rg.r>=999)continue;
+  if(!['ranch','cottonwood','barleyfold','coyote','hollowpeak','riverside'].includes(rg.id)){const LBL={pasture:['🐴 Home Pasture',18],pines:['🌲 Pines',14],falls:['💦 The Falls',-16],lake:['🌊 Loon Lake',14],meadows:['',0]}[rg.id]||[rg.name,-4];   // placed clear of the built-in town labels
+   if(LBL[0])MK.push({x:rg.x,z:rg.z,glyph:' ',label:LBL[0],labelDz:LBL[1],kind:'region'});}
+  if(rg.unlock)MK.push({x:rg.x,z:rg.z-16,glyph:'🔒',kind:'lock',hidden:s=>regionUnlocked(rg,s)});
+ }
+ /* A forage spot comes in two shapes: a scatter box [cx,cz,rMin,rMax,n], and a list of exact
+    points ({at:[[x,z]…],count,jitter}) for the things that hang on a particular tree or hive.
+    Reading box fields off the second shape gave NaN, so the apple, honey, corn and royal-jelly
+    pins have been sitting at no coordinate at all — four map markers a player could never see or
+    steer by. Average the points instead. And skip an item whose own package has already named the
+    patch, or the map carries the same fruit twice a few metres apart. */
+ for(const item in W.FORAGE_SPOTS){
+  if(MK.some(m=>m.kind==='forage'&&m.item===item))continue;
+  const b=W.FORAGE_SPOTS[item],f=T.FOODS3[item],at=!Array.isArray(b)&&b.at||null;
+  const x=at?at.reduce((t,p)=>t+p[0],0)/at.length:b[0]+(b[2]+b[3])/2*0.5;
+  const z=at?at.reduce((t,p)=>t+p[1],0)/at.length:b[1]-(b[2]+b[3])/2*0.5;
+  MK.push({x,z,glyph:(f&&f.emoji)||'🌿',alpha:0.8,kind:'forage',item});
+ }
+ for(const ev of T.EVENTS3){const at=ev.at||(ev.race&&T.RACE_ROUTES[ev.route]&&T.RACE_ROUTES[ev.route][0])||(ev.dressage?[2,1]:null);if(at)MK.push({x:at[0]+(ev.race?0:4),z:at[1]+(ev.race?-4:0),glyph:ev.race?'🏁':'🏆',kind:'venue',ev:ev.id,alpha:0.9});}
+ for(const d of Q.NPC_DEFS){if(d.folk)continue;MK.push({x:d.x,z:d.z+6,glyph:d.icon||'💬',kind:'npc',npc:d.id});}
+ for(const f of T.FT)MK.push({x:f[1],z:f[2]-7,glyph:'🧭',alpha:0.85,kind:'ft'});
+ for(const b of BOTTLES)MK.push({x:b.x,z:b.z,glyph:'🍾',kind:'bottle',hidden:s=>(s.bottles||[]).includes(b.id)});
+ for(const l of P.LANDMARKS)if(l.glyph)MK.push({x:l.x,z:l.z,glyph:l.glyph,kind:'landmark',id:l.id});
+ P.markerKinds=()=>MK.reduce((a,m)=>{a[m.kind||'other']=(a[m.kind||'other']||0)+1;return a;},{});
+ // The travel-map controller owns projected pins and selection. Travel itself
+ // uses the shared guarded fastTravelTo handler in ranch3d.html.
+
+ /* ================= 5. balloons and the ferry: one vehicle, one freeze guard ================= */
+ const BALLOON_STATIONS=[
+  {id:'cottonwood',region:'cottonwood',x:72,z:-72,label:'🎈 Cottonwood balloon field',stripe:['#e0553a','#f4e2c0']},
+  {id:'coyote',region:'coyote',x:-176,z:138,label:'🎈 Canyon balloon field',stripe:['#e8a13a','#3a6a9a']},
+  {id:'hollowpeak',region:'hollowpeak',x:-116,z:-196,label:'🎈 Hollowpeak balloon field',stripe:['#7fb2e0','#f4f4f4']},
+ ];
+ P.BALLOON_STATIONS=BALLOON_STATIONS;
+ function mkBalloon(st){
+  const g=W.sceneryArt.balloon(st.stripe);
+  const burner=new THREE.Mesh(new THREE.SphereGeometry(.16,12,8),new THREE.MeshStandardMaterial({color:0xffc779,emissive:0xff891d,emissiveIntensity:1.2,transparent:true,opacity:.8}));
+  burner.scale.y=2.7;burner.position.set(0,4.30,0);g.add(burner);
+  /* Off every doorstep already standing, not just off the colliders. The auction house and the
+     Cottonwood field are both found room for round the same corner of town, and in an unlucky
+     boot the field came down on the auction-house doorstep; the prompt is whichever thing in
+     reach is nearest, so E at the door took off in a balloon. If nowhere within fifty metres
+     is clear of every prompt, clear of the colliders is still better than the bare centre. */
+  const offSteps=(x,z)=>W.things.every(t=>t.x==null||hyp(x,z,t.x,t.z)>(t.reach||3.2)+5.5)&&offCourse(x,z,9);
+  let at=findClear(st.x,st.z,4.5,50,offSteps);
+  if(!offSteps(at[0],at[1])||!clear(at[0],at[1],4.5))at=findClear(st.x,st.z,4.5,50,(x,z)=>offCourse(x,z,9));
+  st.x=at[0];st.z=at[1];PLACED.push({id:'balloon:'+st.id,x:st.x,z:st.z,need:9});
+  g.position.set(st.x,groundH(st.x,st.z),st.z);scene.add(g);W.followCamera.register(g);
+  labelAt(g,st.label,14.0);
+  return {g,burner};
+ }
+ for(const st of BALLOON_STATIONS){
+  const {g,burner}=mkBalloon(st);st.g=g;st.burner=burner;st.home={x:st.x,z:st.z};
+  W.addThing({kind:'balloon',id:st.id,x:st.x,z:st.z,g:null,reach:5.5,label:()=>P.veh?'🎈 …':'🎈 Ride the balloon (E) — 45 s over the valley',use:()=>boardBalloon(st)});
+  W.colliders.push({x:st.x,z:st.z,r:2.2});
+ }
+ function boardBalloon(st){
+  if(P.veh||G.run('travelGate','balloon'))return;
+  if(G.course.get()){toast('🏁 Finish the course first!');return;}
+  const s=S.fresh()||{};
+  const others=BALLOON_STATIONS.filter(o=>o!==st&&regionUnlocked(regionById(o.region),s));
+  const to=others.length?others[Math.floor(Math.random()*others.length)]:null;
+  const from={x:st.x,z:st.z};
+  P.veh={kind:'balloon',st,from,to:to?{x:to.x,z:to.z,st:to}:null,t:0,dur:45,alt:0,g:st.g,burner:st.burner,heading:player.heading,loop:!to};
+  player.speed=0;player.y=0;player.vy=0;
+  toast(to?'🎈 Up we go — landing at '+to.label.slice(2)+' in 45 s. Enjoy the view!':'🎈 Up we go — a lap over the valley and back down. Enjoy the view!');
+  G.sChime();
+ }
+ /* Where a balloon is after u∈[0,1] of its ride: straight across with a lazy sway, up over the
+    first fifth, down over the last, cruising at 30 m. A loop ride flies a circle instead. */
+ function balloonPos(v,u){
+  const lift=u<0.2?u/0.2:u>0.8?(1-u)/0.2:1;const alt=Math.sin(lift*Math.PI/2)*30;
+  let x,z;
+  if(v.loop){const a=u*Math.PI*2;x=v.from.x+Math.sin(a)*70;z=v.from.z+(1-Math.cos(a))*70;}
+  else{x=v.from.x+(v.to.x-v.from.x)*u+Math.sin(u*Math.PI*3)*6;z=v.from.z+(v.to.z-v.from.z)*u+Math.cos(u*Math.PI*2.5)*4;}
+  return {x,z,alt};
+ }
+ /* The ferry: Otter Ford, downstream to the far bank and back. */
+ const FERRY={docks:[{id:'ford',x:16,label:'⛵ Otter Ford ferry'},{id:'farbank',x:134,label:'⛵ Far bank ferry'}],speed:4.2,pts:[]};
+ for(let x=16;x<134;x+=6)FERRY.pts.push([x,riverZ(x)]);
+ FERRY.pts.push([134,riverZ(134)]);
+ for(const d of FERRY.docks){d.z=riverZ(d.x);const side=groundH(d.x,d.z+9)>groundH(d.x,d.z-9)?1:-1;d.bz=d.z+side*8;d.side=side;}
+ P.FERRY=FERRY;
+ {
+  const g=W.sceneryArt.boat(true);
+  const d0=FERRY.docks[0];g.position.set(d0.x,riverLevel(d0.x),d0.z);g.rotation.y=Math.atan2(1,(riverZ(17)-riverZ(15))/2);scene.add(g);FERRY.g=g;FERRY.at=0;
+  for(const d of FERRY.docks){
+   const bx=d.x,bz=d.z+d.side*5.5,deckY=Math.max(riverLevel(bx)+.70,groundH(bx,d.bz)+.12);
+   const dg=W.sceneryArt.dock({x:bx,z:bz,y:deckY,yaw:d.side<0?Math.PI:0,width:2.6,length:7.8,name:d.id+' ferry landing'});
+   scene.add(dg);d.g=dg;labelAt(dg,d.label,2.5);
+   W.addThing({kind:'ferry',id:d.id,x:d.x,z:d.bz,g:null,reach:9,label:()=>P.veh?'⛵ …':(FERRY.at===FERRY.docks.indexOf(d)?'⛵ Take the ferry (E) — across the river':'⛵ The ferry is at the other dock — wait for it (E)'),use:()=>boardFerry(d)});}
+ }
+ function boardFerry(d){
+  if(P.veh||G.run('travelGate','ferry'))return;if(G.course.get()){toast('🏁 Finish the course first!');return;}
+  const i=FERRY.docks.indexOf(d);
+  if(FERRY.at!==i){FERRY.at=i;toast('⛵ The ferryman poles back over for you…');const dk=FERRY.docks[i];FERRY.g.position.set(dk.x,riverLevel(dk.x),dk.z);return;}
+  const pts=i===0?FERRY.pts.slice():FERRY.pts.slice().reverse();let len=0;for(let k=1;k<pts.length;k++)len+=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);
+  P.veh={kind:'boat',pts,len,t:0,dur:len/FERRY.speed,g:FERRY.g,to:1-i,heading:player.heading};
+  player.speed=0;player.y=0;player.vy=0;
+  toast('⛵ Casting off — '+Math.round(len/FERRY.speed)+' s down the river.');G.sChime();
+ }
+ function boatPos(pts,len,u){let d=u*len;for(let k=1;k<pts.length;k++){const seg=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);if(d<=seg||k===pts.length-1){const f=seg>0?Math.max(0,Math.min(1,d/seg)):0;const x=pts[k-1][0]+(pts[k][0]-pts[k-1][0])*f,z=pts[k-1][1]+(pts[k][1]-pts[k-1][1])*f;return {x,z,heading:Math.atan2(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1])};}d-=seg;}return {x:pts[0][0],z:pts[0][1],heading:0};}
+ /* The freeze guard: aboard, the reins do nothing and the mount sits where the vehicle puts it. */
+ G.on('ride',R=>{if(!P.veh)return;R.target=0;R.noJump=true;player.speed=0;});
+ function tickVehicle(dt){
+  const v=P.veh;if(!v)return;
+  v.t+=dt;const u=Math.min(1,v.t/v.dur);
+  let x,z,y,heading;
+  if(v.kind==='balloon'){const p=balloonPos(v,u);x=p.x;z=p.z;const gy=groundH(x,z);y=gy+p.alt;v.alt=p.alt;heading=v.heading;
+   v.g.position.set(x,y,z);v.g.rotation.y+=dt*0.05;v.burner.material.emissiveIntensity=0.6+Math.random()*0.9;
+   player.pos.set(x,0,z);player.mesh.position.set(x,y+0.20,z);player.mesh.rotation.y=heading;player.mesh.rotation.x=0;}
+  else{const p=boatPos(v.pts,v.len,u);x=p.x;z=p.z;y=riverLevel(x)+Math.sin(v.t*1.7)*0.04;heading=p.heading;v.g.position.set(x,y,z);v.g.rotation.y=heading;v.g.rotation.z=Math.sin(v.t*1.3)*0.02;
+   player.pos.set(x,0,z);player.mesh.position.set(x,y+0.6,z);player.mesh.rotation.y=heading;player.mesh.rotation.x=0;}
+  v.x=x;v.z=z;v.y=y;v.h=heading;
+  if(u>=1)landVehicle(v);
+ }
+ function landVehicle(v){
+  P.veh=null;
+  if(v.kind==='balloon'){
+   const to=v.to?v.to.st:v.st;
+   v.g.position.set(v.st.home.x,groundH(v.st.home.x,v.st.home.z),v.st.home.z);   // the balloon we rode drifts home; we step out at the landing field
+   player.pos.set(to.x+4.5,0,to.z+2);player.heading=Math.PI;
+   S.sync(s=>{s.stats=s.stats||{};s.stats.balloons=(s.stats.balloons||0)+1;});
+   Q.dailyEvt('balloon',1);if(v.to)Q.dailyEvt('ft',1);G.xp.passAdd(10);
+   toast('🎈 Touched down at '+to.label.slice(2)+'. What a view!');
+  }else{
+   const dk=FERRY.docks[v.to];FERRY.at=v.to;
+   player.pos.set(dk.x,0,dk.bz);player.heading=dk.side>0?0:Math.PI;
+   S.sync(s=>{s.stats=s.stats||{};s.stats.ferry=(s.stats.ferry||0)+1;});
+   Q.dailyEvt('ft',1);G.xp.passAdd(8);
+   toast('⛵ Ashore at the '+dk.label.slice(2)+'.');
+  }
+  player.mesh.rotation.x=0;player.speed=0;G.sChime();
+ }
+ /* Aboard, the camera hangs back and a little above whatever we are riding. */
+ G.on('camera',c=>{
+  const v=P.veh;if(!v||v.x==null)return false;
+  const back=v.kind==='balloon'?19:10,up=v.kind==='balloon'?7:3.8;
+  const dx=Math.sin(v.h),dz=Math.cos(v.h);
+  const dx2=v.kind==='boat'?-dz:dx,dz2=v.kind==='boat'?dx:dz;   // beside the boat, behind the basket
+  const px=v.x-dx2*back,pz=v.z-dz2*back;
+  const py=Math.max(v.y+up,groundH(px,pz)+2.2);
+  const des=new THREE.Vector3(px,py,pz);
+  G.camera.position.lerp(des,1-Math.exp(-3*c.dt));
+  c.camLook.lerp(new THREE.Vector3(v.x,v.y+1.6,v.z),1-Math.exp(-6*c.dt));
+  G.camera.lookAt(c.camLook);
+  return true;
+ });
+ for(const st of BALLOON_STATIONS)MK.push({x:st.x,z:st.z,glyph:'🎈',kind:'balloon'});
+ for(const d of FERRY.docks)MK.push({x:d.x,z:d.bz,glyph:'⛵',kind:'ferry'});
+
+ /* ================= 6. the follower AI: steer() with whiskers and push-out ================= */
+ /* One steering routine for everything that follows something: turn toward the target, probe
+    a whisker two metres ahead against the colliders and the fence walls, turn away from what
+    it finds, integrate, then push out of anything it is inside. The foal, the pet and a wild
+    horse that has decided to follow all go through it. */
+ function segDist(px,pz,w){const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;let t=l2>0?((px-w.x1)*dx+(pz-w.z1)*dz)/l2:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(w.x1+dx*t),pz-(w.z1+dz*t));}
+ function blocked(x,z,pad){if(!fallsAllowsHorse(x,z))return {x,z,r:pad+.5};for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+pad)return c;}for(const w of W.walls){if(segDist(x,z,w)<pad)return w;}return null;}
+ function pushOut(a,pad){
+  for(const c of W.colliders){const ox=a.pos.x-c.x,oz=a.pos.z-c.z,d=Math.hypot(ox,oz),rad=c.r+pad;if(d<rad){if(d<0.02){a.pos.x=c.x+rad;}else{a.pos.x=c.x+ox/d*rad;a.pos.z=c.z+oz/d*rad;}}}
+  for(const w of W.walls){const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;let t=l2>0?((a.pos.x-w.x1)*dx+(a.pos.z-w.z1)*dz)/l2:0;t=Math.max(0,Math.min(1,t));const qx=w.x1+dx*t,qz=w.z1+dz*t;const d=Math.hypot(a.pos.x-qx,a.pos.z-qz);if(d<pad&&d>0.001){a.pos.x=qx+(a.pos.x-qx)/d*pad;a.pos.z=qz+(a.pos.z-qz)/d*pad;}}
+ }
+ /* Nudge a heading away from whatever the whisker touches; returns the adjusted heading. */
+ function avoid(a,heading,look){
+  const fx=a.pos.x+Math.sin(heading)*(look||2.2),fz=a.pos.z+Math.cos(heading)*(look||2.2);
+  const hit=blocked(fx,fz,0.6);if(!hit)return heading;
+  const cx=hit.r!=null?hit.x:(hit.x1+hit.x2)/2,cz=hit.r!=null?hit.z:(hit.z1+hit.z2)/2;
+  const side=Math.sign(Math.sin(heading)*(cz-a.pos.z)-Math.cos(heading)*(cx-a.pos.x))||1;   // which side the obstacle sits on
+  return heading+side*0.6;
+ }
+ function steer(a,tx,tz,dt,maxSp,opts){
+  opts=opts||{};const dx=tx-a.pos.x,dz=tz-a.pos.z,d=Math.hypot(dx,dz);
+  if(d<(opts.stop||0.5))return 0;
+  let want=Math.atan2(dx,dz);want=avoid(a,want);
+  a.heading+=wrap(want-a.heading)*Math.min(1,dt*(opts.turn||3));
+  const sp=Math.min(maxSp,(opts.base||1.2)+d*(opts.gain||0.55));
+  a.pos.x+=Math.sin(a.heading)*sp*dt;a.pos.z+=Math.cos(a.heading)*sp*dt;
+  pushOut(a,opts.pad||0.5);
+  return sp;
+ }
+ W.steer=steer;W.pushOut=pushOut;W.avoid=avoid;P.steer=steer;
+ /* Nothing that follows you is allowed to stand in the lens. The built-in loop parks a
+    companion 2.5 m from the rider on whichever side it happens to have arrived from, and that
+    is very often the side the camera is on: a horse three metres off the near plane is a wall
+    across a third of the frame, and you cannot see the horse you are actually riding. Push it
+    out of a cylinder round the camera at a couple of metres a second, so it reads as the foal
+    stepping aside rather than as a teleport. */
+ function clearOfCamera(a,dt,r,maxSpeed=2.5){
+  if(maxSpeed<=0)return false;
+  const cx=G.camera.position.x,cz=G.camera.position.z;
+  const dx=a.pos.x-cx,dz=a.pos.z-cz,d=Math.hypot(dx,dz);
+  if(d>=r)return false;
+  if(d<0.05){a.pos.x+=Math.min(r,dt*maxSpeed);return true;}   // dead on the lens: any direction will do
+  const push=Math.min(r-d,dt*maxSpeed);a.pos.x+=dx/d*push;a.pos.z+=dz/d*push;return true;
+ }
+ /* The companion foal (or any horse you take along) and the pet: the built-in loops integrate
+    them straight at their targets; this pass runs right after and keeps them out of the barn
+    and out of the camera. */
+ function tickFollowers(dt){
+  if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const nativeProfile=H.breedModels?.profile(H.myHorses[a.idx].breed),native=!!nativeProfile?.nativeBreed,scale=a.parts.group.getWorldScale(new THREE.Vector3()).z,limit=native?nativeProfile.nativeMaxSpeedMps*(nativeProfile.fitScale||1)*Math.abs(scale):Infinity,budget=Math.max(0,limit-(a.rest>0?0:a.wsp||0)),h0=a.heading,start=a.pos.clone();a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){const step=dt*Math.min(1.5,budget);a.pos.x+=Math.sin(a.heading)*step;a.pos.z+=Math.cos(a.heading)*step;}pushOut(a,0.55);clearOfCamera(a,dt,4.2,Math.min(2.5,budget));if(native){const offset=a.pos.clone().sub(start),max=budget*dt;if(offset.length()>max)a.pos.copy(start).add(offset.setLength(max));pushOut(a,0.55);}a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
+  /* The pet (pet-models.js) steers round buildings every frame and picks its own spot in the picture, so
+     here it only gets the barn push-out as a safety net: never the camera push (that shoved it away from
+     where it had chosen to be seen), never while a bird is in the air (a flat push-out at twenty metres
+     up means nothing, and re-seating it on the ground slammed it out of the sky), and it re-seats itself
+     through place(), which keeps its height, its hop and its float on water. */
+  const pet=G.petComp&&G.petComp();if(pet&&pet.pos&&!pet.airborne){const before=pet.pos.x+':'+pet.pos.z;pushOut(pet,0.4);if(!pet.framed)clearOfCamera(pet,dt,2.4);if(before!==pet.pos.x+':'+pet.pos.z){if(pet.place)pet.place();else pet.parts.group.position.set(pet.pos.x,groundH(pet.pos.x,pet.pos.z),pet.pos.z);}}
+ }
+ P.companionEntry=null;
+ const findCompanion=()=>{const cid=(S.fresh()||{}).companion;P.companionEntry=null;P.companionId=cid;if(cid==null)return;for(const a of H.herd()){const hh=H.myHorses[a.idx];if(hh&&hh.id===cid){P.companionEntry=a;break;}}};
+ G.on('rebuild',()=>setTimeout(findCompanion,0));
+ /* Any horse out in the pasture can be taken along, not only a foal. */
+ UI.stableRow((h,i)=>{if(h.foal||i===H.rideIdx())return '';const s=S.fresh()||{};const on=s.companion===h.id;if(!h.out&&!on)return '<span style="font-size:11px;color:#8c7a63" title="Turn it out to pasture to take it along">🐎 turn out to take along</span>';return '<button data-st="eq:'+i+'" '+(on?'class="claimBtn"':'')+' title="Walks along behind you on the trails">'+(on?'🐎 Following ✓':'🐎 Take along')+'</button>';});
+
+ /* ================= 7. wild herds, taming, co-op, the trust HUD ================= */
+ /* Region coats: the canyon's dun and grulla, the mountain's fjord — wild only, and only there. */
+ T.WILD_BREEDS.push(
+  {breed:'appaloosa',variant:'Canyon Dun',body:'#c8a06a',mane:'#4a3220',base:5,region:'coyote'},
+  {breed:'black',variant:'Mesa Grulla',body:'#6f6a66',mane:'#2a2624',base:5,region:'coyote'},
+  {breed:'fjord',variant:'Snowline Fjord',body:'#d9cbb0',mane:'#f4efe4',base:5,region:'hollowpeak'},
+ );
+ const WILD_HERDS=[
+  {id:'pines',region:'pines',x:-48,z:-84,r:20,n:3,label:'Pines herd'},
+  {id:'meadow',region:'meadows',x:118,z:52,r:24,n:4,label:'River meadow herd'},
+  {id:'coyote',region:'coyote',x:-246,z:150,r:26,n:4,exclusive:true,coop:true,label:'Canyon herd'},
+  {id:'hollowpeak',region:'hollowpeak',x:-128,z:-222,r:22,n:3,exclusive:true,coop:true,label:'Snowfield herd'},
+ ];
+ P.WILD_HERDS=WILD_HERDS;P.herds=[];let wildSerial=0,wildFeedSerial=0;
+ const NAMES=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo','Sage','Juniper','Ember','Sorrel','Dune','Frost','Reed'];
+ function pickWb(herd){const pool=T.WILD_BREEDS.filter(w=>!w.region||w.region===herd.region);const ex=pool.filter(w=>w.region===herd.region);const src=(herd.exclusive&&ex.length&&Math.random()<0.6)?ex:pool;return src[Math.floor(Math.random()*src.length)];}
+ function spawnMember(herd,i){
+  const wb=pickWb(herd);const a=Math.random()*Math.PI*2,r=Math.random()*herd.r*0.7;
+  let x=herd.x+Math.cos(a)*r,z=herd.z+Math.sin(a)*r;const at=findClear(x,z,1.5,herd.r,fallsAllowsHorse);x=at[0];z=at[1];
+  const parts=H.makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9),breed:wb.breed});
+  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
+  parts.group.position.set(x,groundH(x,z),z);scene.add(parts.group);
+  const m={runId:`wild-${Date.now().toString(36)}-${++wildSerial}-${Math.random().toString(36).slice(2,8)}`,herd,i,wb,parts,tag,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,4),phase:Math.random()*6,flee:0,trust:0,follow:false,remote:{},walked:0,name:NAMES[Math.floor(Math.random()*NAMES.length)],lastPub:0,coop:!!herd.coop,shown:false};
+  m.thing=W.addThing({kind:'wild',id:herd.id+':'+i,x,z,g:null,reach:5.5,member:m,
+   label:()=>m.flee>0?'':m.taming?(m.pending?'Retry saving '+m.name+'’s choice (E)':'Befriend '+m.name+' (E)'):(m.follow?m.name+' is following · trust '+Math.round(effTrust(m))+'%':'Offer '+m.name+' a carrot (E) · trust '+Math.round(effTrust(m))+'%'),
+   use:()=>useWildMember(m),tick:(dt,t)=>{t.x=m.pos.x;t.z=m.pos.z;}});
+  return m;
+ }
+ for(const herd of WILD_HERDS){const list=[];for(let i=0;i<herd.n;i++)list.push(spawnMember(herd,i));P.herds.push({def:herd,members:list,respawn:[]});}
+ function wildBlocked(){return !!G.input?.blocked?.()||document.hidden||!!G.cam?.isFree?.()||document.body.classList.contains('posing')||!!G.course.get()||!!G.course.drillActive?.()||!!G.trail?.ride||!!G.rescueRide?.snapshot?.().active||!!G.roundup?.state?.().active||!!P.veh||!!player.flying||(player.y||0)>.2;}
+ function wildInteraction(m){return wildTamingInteraction({trust:m?.taming?100:effTrust(m),distance:hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z),speed:player.speed,blocked:wildBlocked(),flee:m.flee>0});}
+ function useWildMember(m){
+  if(!P.herds.some(h=>h.members.includes(m)))return false;
+  checkTame(m);
+  if(m.taming)return tameMember(m,true);
+  return offerCarrot(m);
+ }
+ function offerCarrot(m){
+  if(m.taming)return tameMember(m,true);
+  if(wildBlocked()||hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z)>5.5)return false;
+  if(m.flee>0){toast('She is spooked. Give her room to settle.');return false;}
+  if(Math.abs(player.speed)>.8){toast('Halt first, then hold the carrot out.');return false;}
+  const feed=m.pendingCarrot||(m.pendingCarrot={id:m.runId+'-feed-'+(++wildFeedSerial)});let hadCarrot=false;
+  S.sync(s=>{
+   if(s.wildTaming?.feeds?.[feed.id]){hadCarrot=true;return;}
+   s.items=s.items||{};if((s.items.carrot||0)<1)return;
+   hadCarrot=true;s.items.carrot--;
+   s.wildTaming=s.wildTaming||{version:1};s.wildTaming.feeds={...s.wildTaming.feeds,[feed.id]:true};
+  });
+  let saved;try{saved=S.fresh();}catch{}
+  if(!saved?.wildTaming?.feeds?.[feed.id]){toast(hadCarrot||!saved?'The carrot could not be saved. Try offering it again.':'You have no carrots. You can still earn trust by standing quietly nearby.');return false;}
+  m.pendingCarrot=null;
+  m.trust=Math.min(100,m.trust+25);m.rest=3;m.fedT=1.2;G.sChime();
+  toast(m.name+' takes the carrot. Trust '+Math.round(effTrust(m))+'%.');
+  Q.dailyEvt('feed',1);checkTame(m);return true;
+ }
+ /* Shy herds retain their two-rider rule. Reaching full trust latches the earned
+    encounter; a helper leaving cannot revoke the choice before it is saved. */
+ function effTrust(m){
+  if(!m)return 0;if(m.taming)return 100;
+  const now=performance.now();let tot=m.coop?Math.min(60,m.trust):m.trust;
+  for(const id in m.remote){const r=m.remote[id];if(now-r.at>4000){delete m.remote[id];continue;}tot+=Math.min(60,r.tr);}
+  return Math.min(100,tot);
+ }
+ function helpers(m){const now=performance.now();return Object.values(m.remote).filter(r=>now-r.at<=4000).map(r=>r.n);}
+ function checkTame(m){
+  if(!m||m.taming||m.flee>0||effTrust(m)<100)return false;
+  m.taming=true;m.trust=100;m.follow=true;m.helperNames=helpers(m);m.flee=0;
+  toast(m.name+' trusts you. Stop nearby to choose a home.');return true;
+ }
+ function removeMember(m){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(m);else scene.remove(m.parts.group);const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
+ function nearestSanctuary(x,z){let best=null,bd=1e9;for(const sc of SANCTUARIES){const d=hyp(x,z,sc.x,sc.z);if(d<bd){bd=d;best=sc;}}return best;}
+ const tameEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const pendingWild=new Set();
+ P.pendingTaming=()=>[...pendingWild].map(m=>m.pending).filter(Boolean);
+ function tamePass(s){return G.xp.passAmount(40,s);}
+ function payTaming(s,pay){for(const [kind,value] of Object.entries(pay)){if(!value)continue;const handler=T.REWARD_KINDS[kind];if(!handler?.pay)throw Error('Missing wild-horse reward '+kind);handler.pay(s,value,pay);}}
+ function tameReceipt(m,result){
+  const d=$('dlg'),home=result.choice==='home',helper=result.choice==='helper';
+  d.innerHTML='<b>'+tameEsc(home?m.name+' has joined your ranch':helper?'A horse brought home together':m.name+' has a sanctuary home')+'</b>'
+   +'<p>'+tameEsc(home?'Your patience earned a new partner. '+H.breedLabel(m.wb.breed)+' · '+m.herd.label+'.':helper?'Your help counted toward this horse’s trust.':m.name+' is now part of '+result.sanctuaryLabel+'.')+'</p>'
+   +'<p class="wt-saved">Saved · '+(result.pay.c?result.pay.c+' coins · ':'')+result.pay.g+' gem'+(result.pay.g===1?'':'s')+' · '+result.pay.p+' pass points</p>'
+   +'<div class="wt-actions">'+(home?'<button id="wTameMeet">Meet '+tameEsc(m.name)+' in My Horses</button>':!helper?'<button id="wTameVisit">View sanctuary</button>':'')+'<button id="wTameClose">Keep exploring</button></div>';
+  d.style.display='block';
+  $('wTameClose').onclick=()=>{d.style.display='none';};
+  if(home)$('wTameMeet').onclick=()=>{d.style.display='none';G.seHorses?.open?G.seHorses.open():UI.openStable();G.seHorses?.select(result.horseId);};
+  else if(!helper)$('wTameVisit').onclick=()=>openSanctuary(SANCTUARIES.find(sc=>sc.id===result.sanctuaryId));
+ }
+ function chooseWild(m,choice){
+  if(!P.herds.some(h=>h.members.includes(m))||!m.taming)return false;
+  if(!m.pending){
+   if(!['home','sanctuary','helper'].includes(choice))return false;
+   const sc=nearestSanctuary(m.pos.x,m.pos.z),base=m.wb.base;
+   m.pending={runId:choice==='helper'?(m.helperRunId||m.runId):m.runId,choice,stats:Object.fromEntries(['speed','stamina','jump','accel','agility'].map(k=>[k,Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1))])),sanctuaryId:sc.id,sanctuaryLabel:sc.label.slice(sc.label.indexOf(' ')+1)};
+   pendingWild.add(m);
+  }
+  const outcome=saveWildTaming(S,m.pending,(s,pending)=>{
+   const helper=pending.choice==='helper',home=pending.choice==='home';
+   const before={c:s.coins||0,g:s.gems||0,p:s.pass?.pts||0};let horseId=null;
+   if(home){
+    const h=H.grantHorse(s,m.wb.breed,{name:m.name,noName:true,silent:true,preserveWildAppearance:true,colors:{body:m.wb.body,mane:m.wb.mane},bond:20,src:'wild',stats:{...pending.stats},needs:{hunger:90,thirst:90,clean:90,happy:90},extra:{wild:{breed:m.wb.breed,since:Date.now(),coat:null},variant:m.wb.variant||null,mark2:null,wildEncounter:pending.runId}});
+    if(!h)throw Error('Your new horse could not be added.');horseId=h.id;
+   }else if(!helper){
+    s.sanctuary=s.sanctuary||{};(s.sanctuary[pending.sanctuaryId]=s.sanctuary[pending.sanctuaryId]||[]).push({breed:m.wb.breed,variant:m.wb.variant||null,body:m.wb.body,mane:m.wb.mane,name:m.name,from:'wild',at:Date.now(),wildEncounter:pending.runId});
+   }
+   s.stats=s.stats||{};
+   if(!helper){s.stats.tamedWild=(s.stats.tamedWild||0)+1;s.wildSeen=s.wildSeen||{};s.wildSeen[m.herd.id]=(s.wildSeen[m.herd.id]||0)+1;if(!home)s.stats.released=(s.stats.released||0)+1;}
+   if(helper||m.helperNames?.length)s.stats.coopTames=(s.stats.coopTames||0)+1;
+   payTaming(s,{c:home?0:helper?300:150,g:helper?2:1,p:tamePass(s)});
+   const result={runId:pending.runId,choice:pending.choice,horseId,name:m.name,breed:m.wb.breed,herdId:m.herd.id,sanctuaryId:pending.sanctuaryId,sanctuaryLabel:pending.sanctuaryLabel,
+    pay:{c:(s.coins||0)-before.c,g:(s.gems||0)-before.g,p:(s.pass?.pts||0)-before.p}};
+   result.progress=Q.creditTamingProgress(s,result);return result;
+  });
+  if(!outcome.ok){if(m.pending.choice==='helper')toast('Your help is waiting to be saved. Stop beside '+m.name+' to retry.');else showWildChoice(m,true);return false;}
+  const result=outcome.result;
+  // These effects announce only the persisted choice. No successful-looking
+  // toast, despawn, or helper broadcast can happen before this read-back.
+  removeMember(m);Q.confirmTamingProgress(result,outcome.saved);pendingWild.delete(m);m.pending=null;
+  if(result.choice==='home')H.reloadHorses();
+  else if(result.choice==='sanctuary')refreshSanctuary(SANCTUARIES.find(sc=>sc.id===result.sanctuaryId));
+  M.refreshWallet();G.sChime();G.sGem();
+  if(result.choice!=='helper'&&m.helperNames?.length)N.sendChat('',{wildDone:{h:m.herd.id,i:m.i,by:String(N.myName()).slice(0,14),runId:result.runId}});
+  if(result.choice==='helper'){const d=$('dlg');if(d.dataset.wildTaming===m.runId&&d.querySelector('#wTameHome,#wTameRetry'))d.style.display='none';toast('Your help brought '+m.name+' home. Saved: '+result.pay.c+' coins, '+result.pay.g+' gems and '+result.pay.p+' pass points.');}
+  else tameReceipt(m,result);return true;
+ }
+ function showWildChoice(m,failed=false){
+  const d=$('dlg'),sc=nearestSanctuary(m.pos.x,m.pos.z),pending=m.pending;
+  d.dataset.wildTaming=m.runId;
+  G.riding?.releaseAll();
+  d.innerHTML='<b>'+tameEsc(m.name)+' trusts you</b><p>'+tameEsc(H.breedLabel(m.wb.breed)+' · '+m.herd.label)+'. '+(pending?'Your choice is waiting to be saved.':'You stayed close and let this horse set the pace. Choose where your new friend goes next.')+'</p>'
+   +(pending?'<p role="status" class="wt-pending">'+tameEsc(failed?'The save did not finish. '+m.name+' is still here. Keep this tab open and retry.':'Retry saving your chosen home before making another choice.')+'</p><div class="wt-actions"><button id="wTameRetry">Retry save</button><button id="wTameLater">Keep walking together</button></div>':
+    '<div class="wt-actions"><button id="wTameHome"><strong>Welcome to my ranch</strong><small>Keep '+tameEsc(m.name)+' · 1 gem · '+tamePass(S.fresh())+' pass points</small></button><button id="wTameSanct"><strong>Release to '+tameEsc(sc.label.slice(sc.label.indexOf(' ')+1))+'</strong><small>150 coins · 1 gem · '+tamePass(S.fresh())+' pass points</small></button><button id="wTameLater">Keep walking together</button></div>');
+  d.style.display='block';
+  G.dialogue?.frameHorse?.(m.parts.group,m.heading);
+  $('wTameLater').onclick=()=>{d.style.display='none';};
+  if(pending)$('wTameRetry').onclick=()=>chooseWild(m,pending.choice);
+  else{$('wTameHome').onclick=()=>chooseWild(m,'home');$('wTameSanct').onclick=()=>chooseWild(m,'sanctuary');}
+ }
+ function tameMember(m,finisher){
+  const ready=wildInteraction(m);if(!m.taming||!ready.eligible){if(ready.reason)toast(ready.reason);return false;}
+  showWildChoice(m);return true;
+ }
+ /* Club mates: every second, while you are working on a shy horse, say so; a helper's trust
+    reaches you the same way. The finisher's wildDone pays everyone who helped. */
+ G.on('chat',(m,nm)=>{
+  if(m.wild&&typeof m.wild==='object'){const hd=P.herds.find(h=>h.def.id===String(m.wild.h).slice(0,14));const mem=hd&&hd.members.find(x=>x.i===+m.wild.i);if(mem){mem.remote[String(m.id).slice(0,24)]={n:String(nm||'?').slice(0,14),tr:Math.max(0,Math.min(100,+m.wild.tr||0)),at:performance.now()};if(!mem.taming)checkTame(mem);}return true;}
+  if(m.wildDone&&typeof m.wildDone==='object'){
+   const hd=P.herds.find(h=>h.def.id===String(m.wildDone.h).slice(0,14)),mem=hd&&hd.members.find(x=>x.i===+m.wildDone.i);
+   const remoteRun=typeof m.wildDone.runId==='string'&&/^wild-[a-z0-9-]{1,100}$/.test(m.wildDone.runId)?m.wildDone.runId:null;
+   const helperRun=remoteRun?'helper-'+remoteRun:null;
+   if(helperRun&&S.fresh()?.wildTaming?.receipts?.[helperRun]?.saved)return true;
+   if(mem&&mem.trust>0&&!mem.pending){
+    mem.taming=true;mem.trust=100;mem.follow=true;mem.helperNames=[String(m.wildDone.by||nm).slice(0,14)];
+    // A saved finisher settles helpers who already reached full trust, too.
+    // Preserve a destination that this rider has already chosen and is saving.
+    if(helperRun)mem.helperRunId=helperRun;
+    chooseWild(mem,'helper');
+   }
+   return true;
+  }
+ });
+ /* The herd loop. Idle herds cost nothing: a herd more than 260 m off is skipped whole. */
+ function tickHerds(dt,t){
+  const sp=Math.abs(player.speed),now=performance.now(),paused=wildBlocked();
+  P.trustFocus=null;let focusScore=-1e9;   // the horse you are working on wins over a stranger that wandered closer
+  for(const hd of P.herds){
+   const far=hyp(player.pos.x,player.pos.z,hd.def.x,hd.def.z);
+   if(hd.respawn.length&&hd.respawn[0].at<now){const r=hd.respawn.shift();hd.members.push(spawnMember(hd.def,r.i));}
+   if(far>260&&!hd.members.some(m=>m.follow||m.pending)){for(const m of hd.members)m.parts.group.visible=false;continue;}
+   if(!hd.seen&&far<hd.def.r+40){hd.seen=true;S.sync(s=>{s.wildSeen=s.wildSeen||{};s.wildSeen[hd.def.id]=s.wildSeen[hd.def.id]||0;});toast('✨ Wild horses — the '+hd.def.label+'. Walk up slowly, no galloping.');}
+   for(const m of hd.members){
+    const previousX=m.pos.x,previousZ=m.pos.z;
+    m.parts.group.visible=true;
+    const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);
+    if(m.fedT>0)m.fedT-=dt;
+    const tolerant=m.follow?9:4.5;
+    if(!paused&&!m.taming&&wd<14&&sp>tolerant&&!P.veh)m.flee=2.5;
+    let gait='walk',amp=0.4,mv=0;
+    if((m.follow||m.taming)&&paused){m.phase+=dt*1.2;amp=.05;
+    }else if(m.flee>0){
+     m.flee-=dt;m.follow=false;
+     m.heading=Math.atan2(m.pos.x-player.pos.x,m.pos.z-player.pos.z);m.heading=avoid(m,m.heading,3);
+     m.pos.x+=Math.sin(m.heading)*7*dt;m.pos.z+=Math.cos(m.heading)*7*dt;pushOut(m,0.5);
+     const fd=hyp(m.pos.x,m.pos.z,m.herd.x,m.herd.z);if(fd>m.herd.r*2.2){m.pos.x=m.herd.x+(m.pos.x-m.herd.x)*m.herd.r*2.2/fd;m.pos.z=m.herd.z+(m.pos.z-m.herd.z)*m.herd.r*2.2/fd;}
+     m.trust=Math.max(0,m.trust-dt*12);m.phase+=dt*9;gait='gallop';amp=0.9;mv=9;
+    }else if(m.follow){
+     // Settle within the handover reach, slightly beside the rider. The old
+     // four-metre offset plus a1.6m stop radius stranded full trust outside5.5m.
+     const side=m.i%2?-2.7:2.7;
+     const bx=player.pos.x-Math.sin(player.heading)*3+Math.cos(player.heading)*side,bz=player.pos.z-Math.cos(player.heading)*3-Math.sin(player.heading)*side;
+     const px=m.pos.x,pz=m.pos.z;
+     mv=steer(m,bx,bz,dt,6.5,{stop:1,base:1.2,gain:0.8,turn:3.5});
+     if(mv>0){m.walked+=hyp(m.pos.x,m.pos.z,px,pz);if(m.walked>=5){Q.dailyEvt('walkwild',Math.floor(m.walked));m.walked-=Math.floor(m.walked);}}
+     if(!paused&&wd<9&&sp<6.5)m.trust=Math.min(100,m.trust+dt*6);
+     if(wd>40){m.follow=false;if(!m.taming)m.trust=Math.max(0,m.trust-20);toast(m.name+' lost sight of you. Return to continue your encounter.');}
+     m.phase+=dt*(mv>3.5?6:3);gait=mv>3.5?'gallop':'walk';amp=mv>3.5?0.72:mv>0.2?0.42:0.05;
+    }else{
+     m.phase+=dt*(m.rest>0?1.2:4);
+     if(m.rest>0)m.rest-=dt;
+     else{const dd=hyp(m.tx,m.tz,m.pos.x,m.pos.z);
+      if(dd<0.6){m.rest=2+Math.random()*4;const a2=Math.random()*Math.PI*2,rr=Math.random()*m.herd.r;m.tx=m.herd.x+Math.cos(a2)*rr;m.tz=m.herd.z+Math.sin(a2)*rr;if(!fallsAllowsHorse(m.tx,m.tz)){const target=findClear(m.tx,m.tz,1.2,m.herd.r,fallsAllowsHorse);m.tx=target[0];m.tz=target[1];}}
+      else mv=steer(m,m.tx,m.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2});}
+     amp=m.rest>0?0.05:0.4;
+     if(!paused&&wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));m.rest=Math.max(m.rest,0.6);   // she stands for you while you are calm beside her
+      if(m.trust>=50&&!m.follow&&!m.coop){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow. Walk together at a gentle pace.');}
+      if(m.trust>=50&&m.coop&&!m.follow&&effTrust(m)>=50){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow. Walk together at a gentle pace.');}
+      checkTame(m);}
+    }
+    if(!paused&&m.flee<=0)checkTame(m);
+    // Steering whiskers anticipate the mountain; this final movement guard
+    // also catches flightless horses fleeing or following across its waterline.
+    if(!fallsAllowsHorse(m.pos.x,m.pos.z)){m.pos.x=previousX;m.pos.z=previousZ;m.tx=m.herd.x;m.tz=m.herd.z;m.heading+=.6;mv=0;}
+    if(m.coop&&wd<8&&m.trust>0&&t-m.lastPub>1&&N.SOCIAL){m.lastPub=t;N.sendChat('',{wild:{h:m.herd.id,i:m.i,tr:Math.round(m.trust),x:+m.pos.x.toFixed(0),z:+m.pos.z.toFixed(0)}});}
+    /* draw */
+    const A=G.anim;
+    if(A){const gt=gait==='gallop'?A.GAITS.gallop:A.GAITS.walk;A.animateHorse(m.parts,m.phase,amp,gt,true,t,m.rest>0&&!m.follow&&m.flee<=0?1:0,dt);
+     if(H.worldLOD?.supportsBreed?.(m.wb.breed))H.worldLOD.update(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed,interacting:!!(m.follow||m.taming||m.pending||m.flee>0)},mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);else{if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}}
+    m.parts.group.position.set(m.pos.x,groundH(m.pos.x,m.pos.z),m.pos.z);m.parts.group.rotation.y=m.heading;
+    if(wd<20){const sc=effTrust(m)*10-wd+(m.follow?200:0);if(sc>focusScore){focusScore=sc;P.trustFocus=m;}}
+   }
+  }
+ }
+ /* One HUD for every wild horse — the herds and the Silver Kestrel alike: a bar, what she is
+    doing, and who is helping. Shown whenever one is within twenty metres. */
+ const hud=$('tameHud');
+ {const st=document.createElement('style');st.textContent=`
+ #tameHud{width:min(390px,calc(100vw - 440px));box-sizing:border-box;border:1px solid #a8c5ad55;border-radius:14px;padding:12px 16px;background:#183e32f2;line-height:1.4;box-shadow:0 5px 25px #17382725}
+ #tameHud .cbar{width:100%;height:6px;margin-top:8px}#tameHud small{line-height:1.4;margin-top:4px}
+ #wildTameAction{width:100%;min-height:44px;border:1px solid #e7d497;border-radius:8px;margin-top:10px;padding:9px 12px;background:#eee1b4;color:#173f30;font:750 14px/1.3 inherit;cursor:pointer}
+ #wildTameAction:disabled{background:#ffffff10;color:#d8e4d1;border-color:#ffffff40;cursor:default}#wildTameAction[hidden]{display:none}
+ body.dialogue-open #tameHud,body.se-screen-open #tameHud{display:none!important}
+ .wt-actions{display:flex;flex-wrap:wrap;gap:8px}.wt-actions button{flex:1;min-width:170px;padding:12px 16px;text-align:left}.wt-actions small{display:block;font-size:12px;font-weight:500;line-height:1.4;margin-top:5px}.wt-saved{color:#356645;font-weight:700}.wt-pending{padding:10px 12px;border:1px solid #d6b874;border-radius:9px;background:#f4e9ca}
+ @media(max-width:800px){#tameHud{top:120px;width:calc(100vw - 28px);max-width:390px}.wt-actions button{min-width:145px}}
+ @media(max-width:500px){.wt-actions{flex-direction:column}.wt-actions button{width:100%}}
+ @media(max-height:500px) and (min-width:601px){#tameHud{top:12px;width:calc(100vw - 415px);max-width:340px;padding:9px 12px;font-size:12px}#tameHud small{font-size:10px}#wildTameAction{margin-top:6px}}
+ `;document.head.appendChild(st);}
+ function ensureTrustHud(){
+  if(!hud||$('wildTameAction'))return;
+  hud.innerHTML='<span id="tameTxt"></span><small id="tameSub"></small><div class="cbar"><div id="tameFill" class="cfill" style="width:0%"></div></div><button id="wildTameAction" type="button" hidden></button>';
+  $('wildTameAction').onclick=()=>{if(P.trustFocus)useWildMember(P.trustFocus);};
+ }
+ ensureTrustHud();
+ function tickTrustHud(){
+  if(!hud)return;ensureTrustHud();
+  const sp=Math.abs(player.speed),button=$('wildTameAction');button.hidden=true;
+  let tr=null,txt='',sub='',bad=false;
+  const k=G.wild&&G.wild.get&&G.wild.get();
+  if(k){const wd=hyp(player.pos.x,player.pos.z,k.pos.x,k.pos.z);if(wd<20){tr=G.wild.trust();bad=k.flee>0;txt=bad?'Spooked — slow down!':wd<5.5&&sp<2?'Earning her trust… '+Math.round(tr)+'%':'Walk closer, gently · trust '+Math.round(tr)+'%';sub=k.wb&&k.wb.kestrel?'the Silver Kestrel':'a wild horse';}}
+  const m=P.trustFocus;
+  if(tr==null&&m){const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);tr=effTrust(m);bad=m.flee>0;const hn=helpers(m),ready=wildInteraction(m);
+   txt=m.taming?m.name+' trusts you · 100%':bad?'Spooked — slow down!':m.follow?m.name+' is following · '+Math.round(tr)+'%':wd<5.5&&sp<2?'Earning '+m.name+'’s trust… '+Math.round(tr)+'%':'Walk closer, gently · trust '+Math.round(tr)+'%';
+   sub=m.taming?(m.pending?'Your choice is waiting to be saved. ':ready.eligible?'Choose a home, or keep walking together. ':ready.reason+' '):'Stand quietly nearby. Carrots are optional. ';
+   if(!m.taming&&m.follow)sub='Keep a gentle pace and stay close to build trust. ';
+   sub+=(m.wb.variant||H.breedLabel(m.wb.breed))+' · '+m.herd.label+(m.coop&&!m.taming?' · shy: '+(hn.length?hn.join(', ')+' helping':'needs two riders; local trust up to 60%'):'');
+   if(m.taming){button.hidden=false;button.disabled=!ready.eligible;button.textContent=m.pending?'Retry save':ready.eligible?'Befriend '+m.name:ready.status==='far'?'Walk closer to befriend':'Stop to befriend';}
+  }
+  if(tr==null){hud.style.display='none';return;}
+  hud.style.display='block';hud.classList.toggle('bad',bad);
+  $('tameTxt').textContent=txt;$('tameSub').textContent=sub;$('tameFill').style.width=Math.round(tr)+'%';
+ }
+ P.effTrust=effTrust;P.helpers=helpers;P.wildInteraction=wildInteraction;
+ if(G.wild)G.wild.strays=false;   // the herds replace the single stray; the Kestrel still comes for the story
+
+ /* ================= 8. sanctuaries ================= */
+ const SANCTUARIES=[
+  {id:'pines',region:'pines',x:-62,z:-90,r:14,label:'🌲 Pines Horse Sanctuary'},
+  {id:'coyote',region:'coyote',x:-188,z:98,r:14,label:'🏜️ Coyote Horse Sanctuary'},
+ ];
+ P.SANCTUARIES=SANCTUARIES;
+ for(const sc of SANCTUARIES){
+  const at=findClear(sc.x,sc.z,sc.r+3,60,(x,z)=>offCourse(x,z,sc.r+6));sc.x=at[0];sc.z=at[1];PLACED.push({id:'sanctuary:'+sc.id,x:sc.x,z:sc.z,need:sc.r+6});
+  const g=new THREE.Group();railRing(g,sc.r,22,-0.25,0.25,'#e2d3ae');
+  const sg=sign(sc.label.slice(sc.label.indexOf(' ')+1).toUpperCase(),4.2,0.46);sg.position.set(sc.r+0.4,2.6,-2.6);sg.rotation.y=-Math.PI/2;g.add(sg);post(sc.r+0.4,-4.8,g,2.8,'#8a7a62');post(sc.r+0.4,-0.4,g,2.8,'#8a7a62');
+  box(2.2,0.7,0.9,'#8a6a45',0,0.35,-sc.r+2.5,g);box(2.0,0.2,0.7,'#b8a040',0,0.75,-sc.r+2.5,g);   // hay feeder
+  const trough=box(1.8,0.5,0.7,'#6b6b6b',-sc.r+3,0.25,3,g);const wat=new THREE.Mesh(new THREE.PlaneGeometry(1.6,0.5),new THREE.MeshStandardMaterial({color:0x4f9ad6}));wat.rotation.x=-Math.PI/2;wat.position.set(-sc.r+3,0.48,3);g.add(wat);
+  const ring=new THREE.Mesh(new THREE.CircleGeometry(sc.r,30),new THREE.MeshBasicMaterial({color:0x8fd070,transparent:true,opacity:0.12,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=0.05;g.add(ring);
+  labelAt(g,sc.label,3.4);
+  g.position.set(sc.x,groundH(sc.x,sc.z),sc.z);g.traverse(o=>{if(o.isMesh)o.castShadow=true;});scene.add(g);W.followCamera.register(g);
+  for(let k=0;k<22;k++){const a=k/22*Math.PI*2;if(a>-0.25&&a<0.25)continue;W.colliders.push({x:sc.x+Math.cos(a)*sc.r,z:sc.z+Math.sin(a)*sc.r,r:0.35});}
+  sc.g=g;sc.horses=[];
+  W.addThing({kind:'sanctuary',id:sc.id,x:sc.x,z:sc.z,g:null,reach:sc.r+4,label:()=>{const n=((S.fresh()||{}).sanctuary||{})[sc.id]||[];return '🏕️ '+sc.label.slice(sc.label.indexOf(' ')+1)+' — '+n.length+' horse'+(n.length===1?'':'s')+' (E to visit)';},use:()=>openSanctuary(sc)});
+  MK.push({x:sc.x,z:sc.z,glyph:'🏕️',kind:'sanctuary'});
+  P.LANDMARKS.push({id:'sanctuary:'+sc.id,region:sc.region,x:sc.x,z:sc.z,label:sc.label,glyph:'🏕️',kind:'sanctuary',grp:g});
+ }
+ /* The rescued horses graze inside the rails: up to six shown, the rest counted. */
+ function refreshSanctuary(sc){
+  for(const h of sc.horses){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(h);else scene.remove(h.parts.group);}sc.horses=[];
+  const list=((S.fresh()||{}).sanctuary||{})[sc.id]||[];
+  list.slice(0,6).forEach((e,k)=>{const a=k/6*Math.PI*2,r=sc.r*0.5;const x=sc.x+Math.cos(a)*r,z=sc.z+Math.sin(a)*r;
+   const parts=H.makeHorse({colors:{body:e.body||'#8a5a2b',mane:e.mane||'#332214'},seed:k+3,breed:e.breed||'bay'});const tag=plate('🏕️ '+String(e.name||'Rescue').slice(0,14));tag.position.y=2.7;parts.group.add(tag);parts.group.position.set(x,groundH(x,z),z);parts.group.name='sanctuary-horse';scene.add(parts.group);
+   sc.horses.push({parts,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,5),phase:Math.random()*6,e});});
+ }
+ for(const sc of SANCTUARIES)refreshSanctuary(sc);
+ P.refreshSanctuary=refreshSanctuary;
+ function tickSanctuaries(dt,t){
+  for(const sc of SANCTUARIES){
+   const far=hyp(player.pos.x,player.pos.z,sc.x,sc.z);if(far>220){for(const h of sc.horses)h.parts.group.visible=false;continue;}
+   for(const h of sc.horses){h.parts.group.visible=true;let mv=0;h.phase+=dt*(h.rest>0?1.2:4);
+    if(h.rest>0)h.rest-=dt;else{if(hyp(h.tx,h.tz,h.pos.x,h.pos.z)<0.6){h.rest=3+Math.random()*6;const a=Math.random()*Math.PI*2,r=Math.random()*(sc.r-3);h.tx=sc.x+Math.cos(a)*r;h.tz=sc.z+Math.sin(a)*r;}else mv=steer(h,h.tx,h.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2,pad:0.3});}
+    const A=G.anim;if(A){A.animateHorse(h.parts,h.phase,h.rest>0?0.05:0.4,A.GAITS.walk,true,t,h.rest>0?1:0,dt);if(H.worldLOD?.supportsBreed?.(h.e.breed||'bay'))H.worldLOD.update(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'},mv,dt,t,h.rest>0?1:0);else{if(far<50)H.dressWithRig(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'});A.tickRig(h,mv,dt,t,h.rest>0?1:0);}}
+    h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);h.parts.group.rotation.y=h.heading;}
+  }
+ }
+ function openSanctuary(sc){
+  const s=S.fresh()||{};const list=(s.sanctuary||{})[sc.id]||[];
+  const d=$('dlg');
+  d.innerHTML='<b>'+sc.label+'</b><p style="font-size:13px">A fenced meadow for horses that came in from the wild or off the roads. They stay free here — and every one you release pays its keep.</p>'
+   +(list.length?list.map(e=>'<div class="evrow">🐎 <b>'+e.name+'</b><span>'+(e.variant||G.horse.breedLabel(e.breed))+' · '+(e.from==='wild'?'tamed from the herd':'rescued')+'</span></div>').join(''):'<span style="font-size:12px;color:#8c7a63">No horses here yet. Tame one from a wild herd and choose “Release to sanctuary”.</span>')
+   +'<div style="font-size:12px;color:#8c7a63;margin-top:6px">Wild herds graze nearby: walk up slowly, halt, and offer a carrot.</div><button id="dlgBtn" style="margin-top:6px">🐴</button>';
+  d.style.display='block';$('dlgBtn').onclick=()=>{d.style.display='none';};
+ }
+
+ /* ================= 9. nameplates that earn their place ================= */
+ /* Stand in the yard and count them: the barn, the old stall, the tack room, Wren, Marta, the
+    quest board, June, every horse in the pasture and every horse that follows you, all wearing
+    a floating white plate at once. It reads as a debug view of a world rather than as a place,
+    and the moment one of the wearers walks past the camera its plate becomes a billboard. No
+    package owns them — a dozen of us hang them — so rather than chase the call sites, find them
+    in the scene and fade them by distance. They are easy to find: every plate the game builds
+    is a 512x128 canvas on a sprite, which nothing else in here is. */
+ function isPlate(o){
+  if(!o.isSprite||!o.material)return false;
+  if(o.userData&&o.userData.plate)return true;
+  const im=o.material.map&&o.material.map.image;
+  return !!(im&&im.width===512&&im.height===128);   // the chat bubble is 512x96 and stays out of this: a speech bubble you cannot read is worse than none
+ }
+ function scanLabels(){
+  let n=0;
+  scene.traverse(o=>{if(o.userData.wlbl||!isPlate(o))return;o.userData.wlbl=1;guardFloatingLabel(o);
+   const k=o.scale.x>PLATE_MAX?PLATE_MAX/o.scale.x:1;
+   LABELS.push({sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity});n++;});
+  for(let i=LABELS.length-1;i>=0;i--)if(!LABELS[i].sp.parent)LABELS.splice(i,1);   // a rebuilt barn throws its old plates away
+  return n;
+ }
+ /* Distances in metres from the camera. A wide plate is a name: you want it when you are close
+    enough for the name to matter, and never in your face — a building you are looking straight
+    at does not need telling you what it is. A narrow one is an arena letter or a jump number,
+    which you steer by from the far end of the school, so it keeps its range and only loses the
+    near end. Everything eases in and out; a plate that pops is as distracting as the clutter. */
+ function labelAlpha(d,wide){
+  if(wide)return d<2.6?0:d<5.4?(d-2.6)/2.8:d<18?1:d<30?1-(d-18)/12:0;
+  return d<1.5?0:d<3?(d-1.5)/1.5:d<52?1:d<72?1-(d-52)/20:0;
+ }
+ /* Sprites ignore lighting, so the game dims the ones it made by hand after dark; ours are not
+    in its list and would glow like UI at midnight. Same curve, read off the same clock. */
+ function dayTint(){try{const u=G.time.dayT(),elev=-12+66*(0.5-0.5*Math.cos(u*Math.PI*2));return 0.30+0.70*clamp(elev/14,0,1);}catch(e){return 1;}}
+ let labelScanT=0;
+ function tickLabels(dt){
+  labelScanT+=dt;if(labelScanT>2){labelScanT=0;scanLabels();}
+  const cx=G.camera.position.x,cy=G.camera.position.y,cz=G.camera.position.z,k=Math.min(1,dt*6);
+  let tint=-1;
+  for(let i=0;i<LABELS.length;i++){
+   const L=LABELS[i],sp=L.sp;if(!sp.parent)continue;
+   const e=sp.matrixWorld.elements,dx=e[12]-cx,dy=e[13]-cy,dz=e[14]-cz;   // one frame stale, which nobody can see in a fade
+   const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.bx>=1.6;
+   L.op+=(labelAlpha(d,wide)-L.op)*k;
+   /* Only ever un-hide a plate we hid ourselves. Somebody else's visible=false is a decision —
+      the party banner is parked invisible at the origin between parties — and quietly turning
+      it back on would hang a "🎉 Party!" sign over an empty yard. */
+   if(L.op<0.015){if(sp.visible){sp.visible=false;L.hid=1;}continue;}
+   if(!sp.visible){if(!L.hid)continue;sp.visible=true;L.hid=0;}
+   sp.material.opacity=L.op;
+   const s=wide?clamp(d/12,0.45,1):1;   // and never bigger on screen than it is at twelve metres, whatever it does up close
+   sp.scale.set(L.bx*s,L.by*s,1);
+   if(sp.userData.plate){if(tint<0)tint=dayTint();sp.material.color.setScalar(tint);}
+  }
+ }
+ /* The people get their names back. addNPC builds the plate inside the game, where the text is
+    already cut, but the full name is right there on the def — so repaint it. This is what was
+    making Wick the Almanac-Keeper introduce himself as "Wick the Almanac-Ke". */
+ function fixNpcTags(){
+  let n=0;
+  for(const e of (W.npcList||[])){
+   const nm=e&&e.def&&e.def.name;if(!nm||!e.g)continue;
+   const txt='💬 '+String(nm).replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','');
+   if(txt.length<=22)continue;   // short enough that the game drew it whole
+   e.g.traverse(o=>{if(o.isSprite&&isPlate(o)&&!o.userData.plate){redress(o,txt);o.userData.plate=1;n++;}});
+  }
+  return n;
+ }
+ P.plate=plate;P.labels=LABELS;P.scanLabels=scanLabels;P.labelAlpha=labelAlpha;
+
+ /* ================= 10. the ambient butterflies ================= */
+ /* This is the pink rectangle that floats over the arena. A butterfly here is two bare quads
+    standing on edge, and the loop that animates them turns rotation.z — which, for a quad in
+    the XY plane, spins it in its own plane instead of flapping it. So what a player actually
+    sees is a flat pink card slowly rotating in mid-air, with no body, no shape and no shading:
+    it looks exactly like a missing texture. Lay the wings flat so the same rotation becomes a
+    flap, cut a wing shape out of them, and give the thing a body. The objects live in
+    ranch3d.html and are published there for diagnostics; nothing else touches them. */
+ function wingTex(col){
+  const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');
+  c.fillStyle=col;
+  c.beginPath();c.ellipse(27,23,25,20,-0.22,0,Math.PI*2);c.fill();          // fore wing
+  c.beginPath();c.ellipse(21,47,18,15,0.18,0,Math.PI*2);c.fill();          // hind wing
+  c.globalAlpha=0.4;c.fillStyle='#fff6e8';c.beginPath();c.ellipse(33,17,8,6,-0.2,0,Math.PI*2);c.fill();   // one pale eyespot, so it is not a single flat colour
+  c.globalAlpha=0.5;c.fillStyle='#3a3228';c.beginPath();c.ellipse(46,12,5,4,0,0,Math.PI*2);c.fill();
+  const t=new THREE.CanvasTexture(cv);t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;return t;
+ }
+ function fixFlutters(){
+  const F=(window._life&&window._life.flutters)||[];
+  let n=0;
+  for(const f of F){
+   if(!f||!f.wl||!f.wr||f.wl.userData.wfix)continue;
+   let col='#ff8fab';try{col='#'+f.wl.material.color.getHexString();}catch(e){}
+   const g=new THREE.PlaneGeometry(0.1,0.085);g.rotateX(-Math.PI/2);g.translate(0.05,0,0);   // flat and hinged at the body, so rotation.z is a flap
+   const m=new THREE.MeshBasicMaterial({map:wingTex(col),transparent:true,alphaTest:0.4,side:THREE.DoubleSide,depthWrite:false});
+   const og=f.wl.geometry,om=f.wl.material;
+   f.wl.geometry=g;f.wr.geometry=g;f.wl.material=m;f.wr.material=m;
+   f.wl.userData.wfix=f.wr.userData.wfix=1;
+   try{og.dispose();om.dispose();}catch(e){}
+   const body=tube(0.009,0.011,0.085,'#463c30',0,0,0,f.g);body.rotation.x=Math.PI/2;   // a dark thread of a body, enough to read as an insect rather than as paper
+   blob(0.013,0.012,0.013,'#463c30',0,0,0.05,f.g);
+   n++;
+  }
+  return n;
+ }
+ /* A butterfly is 10 cm of wing. Half a metre from the lens that is a quarter of the screen in
+    flat colour, which is how a charming detail turns into a bug report. Nothing this small is
+    worth drawing inside arm's reach of the camera. */
+ function tickFlutters(){
+  const F=(window._life&&window._life.flutters)||[];if(!F.length)return;
+  const c=G.camera.position;
+  for(const f of F){if(!f.g.visible)continue;const p=f.g.position;if(Math.hypot(p.x-c.x,p.y-c.y,p.z-c.z)<1.5)f.g.visible=false;}
+ }
+ /* The pennant bunting is 36 unlit triangles floating at 1.12 m with nothing holding them up
+    and nothing between them — they read as coloured scraps hanging in the air over the rails.
+    Hang them point-down off a cord and the same 36 triangles read as bunting. Built in
+    ranch3d.html, so the flags are found in the scene rather than at their call site. */
+ function fixBunting(){
+  const flags=[];
+  scene.traverse(o=>{const g=o.geometry;if(!o.isMesh||!g||g.type!=='CircleGeometry')return;
+   const pr=g.parameters||{};if(pr.segments!==3||Math.abs(pr.radius-0.16)>0.01)return;flags.push(o);});
+  if(!flags.length)return 0;
+  for(const f of flags){f.rotation.z=-Math.PI/2;f.position.y=1.06;}   // the point hangs down, just under the cord
+  const cord=new THREE.Group();
+  for(const [x1,x2,z] of [[-22.2,22.4,-20],[-22.2,-3.9,20],[3.9,22.4,20]]){
+   const c=box(x2-x1,0.025,0.025,'#6b5a45',(x1+x2)/2,1.2,z,cord);c.castShadow=false;
+  }
+  scene.add(cord);
+  return flags.length;
+ }
+ P.fixFlutters=fixFlutters;P.fixBunting=fixBunting;
+
+ /* ================= 11. the per-frame pass, gating, state, boot ================= */
+ let gateT=0,unlockT=0,lastLockToast=0,followersT=0,companionT=0;
+ G.on('tick',(dt,t)=>{
+  tickVehicle(dt);
+  tickHerds(dt,t);
+  tickTrustHud();
+  tickSanctuaries(dt,t);
+  tickTownsfolk(dt);
+  tickLabels(dt);
+  tickFlutters();
+  tickLore();
+  followersT+=dt;if(followersT>0.1){followersT=0;tickFollowers(0.1);}
+  unlockT+=dt;if(unlockT>3){unlockT=0;ensureUnlocks();}
+  companionT+=dt;if(companionT>0.5){companionT=0;findCompanion();}
+  /* the soft boundary: a locked region turns you round at its edge; ridden in deep (a race
+     dropped you there), you are carried out to the nearest open fast-travel spot */
+  if(!P.veh&&!G.course.get()){gateT+=dt;if(gateT>0.25){gateT=0;const L=lockedRegionsAt(player.pos.x,player.pos.z);if(L.length){const rg=L.reduce((a,b)=>a.r>b.r?a:b);const dx=player.pos.x-rg.x,dz=player.pos.z-rg.z,d=Math.hypot(dx,dz)||1;
+    if(d<rg.r-25){const s=S.fresh();const open=T.FT.map(f=>({f,rg:ftRegion(f)})).filter(o=>!o.rg||regionUnlocked(o.rg,s));const best=open.reduce((a,o)=>{const dd=hyp(player.pos.x,player.pos.z,o.f[1],o.f[2]);return !a||dd<a.dd?{o,dd}:a;},null);if(best){player.pos.set(best.o.f[1],0,best.o.f[2]);}}
+    else{player.pos.x=rg.x+dx/d*(rg.r+2);player.pos.z=rg.z+dz/d*(rg.r+2);}
+    player.speed=0;P.lastLock=rg.id;if(t-lastLockToast>4){lastLockToast=t;toast('🔒 '+lockText(rg));}}}}
+ });
+ G.on('interval30',()=>{ensureUnlocks();fixNpcTags();});   // a package may put someone new in a town long after boot
+ G.on('state',o=>{
+  const rg=W.regionAt(player.pos.x,player.pos.z);
+  o.player.region=rg?rg.id:null;
+  const s=S.fresh()||{};
+  o.world={region:rg?rg.id:null,locked:T.REGIONS.filter(r=>r.unlock&&!regionUnlocked(r,s)).map(r=>r.id),
+   vehicle:P.veh?{kind:P.veh.kind,t:Number(P.veh.t.toFixed(1)),dur:Number(P.veh.dur.toFixed(1)),x:Number((P.veh.x||0).toFixed(1)),z:Number((P.veh.z||0).toFixed(1)),y:Number((P.veh.y||0).toFixed(1)),alt:Number((P.veh.alt||0).toFixed(1))}:null,
+   herds:P.herds.map(h=>({id:h.def.id,n:h.members.length,near:Math.min.apply(null,h.members.map(m=>hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z)).concat([1e9]))|0,trust:Math.round(Math.max.apply(null,h.members.map(m=>effTrust(m)).concat([0])))})),
+   trust:P.trustFocus?{name:P.trustFocus.name,herd:P.trustFocus.herd.id,i:P.trustFocus.i,local:Math.round(P.trustFocus.trust),eff:Math.round(effTrust(P.trustFocus)),follow:!!P.trustFocus.follow,flee:P.trustFocus.flee>0,helpers:helpers(P.trustFocus)}:null,
+   companion:s.companion==null?null:s.companion,bottles:(s.bottles||[]).length,badges:((s.sets&&s.sets.badges)||[]).length,toy:!!s.toyUnicorn,
+   sanctuary:Object.keys(s.sanctuary||{}).reduce((a,k)=>{a[k]=(s.sanctuary[k]||[]).length;return a;},{}),
+   townsfolk:P.townsfolk.length,landmarks:P.LANDMARKS.length,markers:MK.length,
+   labels:LABELS.length,labelsShown:LABELS.reduce((a,L)=>a+(L.sp.visible?1:0),0),
+   courseConflicts:P.courseConflicts.length,loreQueued:LORE_Q.length};
+ });
+ /* The boot re-check promised by offCourse: everything this file placed while installing, against every route that
+    exists now (the season's gauntlet included) and every season's loop. A conflict is reported (state world.courseConflicts,
+    and the console) rather than silently left for a rider to find. */
+ function recheckPlacements(){return PLACED.filter(p=>!offCourse(p.x,p.z,p.need)).map(p=>({id:p.id,x:+p.x.toFixed(1),z:+p.z.toFixed(1)}));}
+ P.courseConflicts=[];
+ G.on('boot',()=>{ensureUnlocks();refreshFtLocks();findCompanion();
+  try{P.courseConflicts=recheckPlacements();if(P.courseConflicts.length)console.warn('world: placed on or beside a course',JSON.stringify(P.courseConflicts));}catch(e){console.error('world recheck',e);}
+  /* Last in the queue, on purpose: every package has hung its plates by now, so one sweep of
+     the scene catches all of them. */
+  try{P.labelsFound=scanLabels();P.tagsFixed=fixNpcTags();P.fluttersFixed=fixFlutters();P.buntingFixed=fixBunting();}catch(e){console.error('world labels',e);}
+  const s=S.fresh();if(s?.story?.era===2&&S.flag(s,'seen-world')){S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-world']=1;});setTimeout(()=>{try{if(G.ui.canAnnounce())toast('🗺️ Kestrel Basin has grown: towns, a ferry, balloons and wild herds. Press M for the map.');}catch(e){}},6000);}});
+ Object.assign(P,{boardBalloon,boardFerry,vehicle:()=>P.veh,landVehicle,findCompanion,tameMember,offerCarrot,openSanctuary,collectBottle,regionOf,refreshFtLocks,ftRegion,VENUE_OF});
+}
