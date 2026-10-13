@@ -9,7 +9,8 @@ import {normalizeProgressionHintsSource} from './progression-hints-source-guard.
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file);
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+const root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
 const contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));
 const sha=s=>createHash('sha256').update(s).digest('hex');
 const original=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});

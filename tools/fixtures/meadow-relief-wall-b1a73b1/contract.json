@@ -1,0 +1,146 @@
+{
+  "state": "Frozen strict228 sixowner and23observer historical-subject contract; targetedCPU pending",
+  "baseCommit": "228a5962ebc8c31b8f0fab8d1e482fb251043838",
+  "files": {
+    "assets/coursed-field-wall.mjs": {
+      "rawSHA256": "e76658c6b48cd4132b0c94942b0bfb9c85f7676cd9c5a9a6959c14174607456d",
+      "candidateSHA256": "0a13c22d799d778369b1ff5009636af326e85021446851bbd0373f149e236e97",
+      "priorCanonicalSHA256": "e76658c6b48cd4132b0c94942b0bfb9c85f7676cd9c5a9a6959c14174607456d"
+    },
+    "assets/features/index.js": {
+      "rawSHA256": "308bc334ed7a5949a1cc354d98ec613979b732b487f063447d77ce65594ebc51",
+      "candidateSHA256": "b228384c411d406b57ee0821b3789e6582a989d464ded5b0996181ae3e9e4c54",
+      "priorCanonicalSHA256": "0d3ddc41324096d90ee2f81fcb4673b6fec6fddcca75745b47f20de8dacc78bb"
+    },
+    "assets/features/world-paths.js": {
+      "rawSHA256": "4812119061dcff569ec265f3810c3a8f97a7e37c9eae0da0793285f49187f118",
+      "candidateSHA256": "59fc76113c9eb2d38adfcb342c475dbc9d3fb0bfd220b735c752145670e3a3b1",
+      "priorCanonicalSHA256": "f49e63d9decb1a86a052d0d5af4344375b4e206181f536d4a3b05e613251b3a5"
+    },
+    "assets/pasture-mesosurface.mjs": {
+      "rawSHA256": "ca90979d443a39f14a8904f65e93d1ccf45e49fe4baf75f8151c0be561094843",
+      "candidateSHA256": "466c2e5afc77872e4846468f258b923203a9e98b0a31d6cdbbdf54f579d5eb21",
+      "priorCanonicalSHA256": "ca90979d443a39f14a8904f65e93d1ccf45e49fe4baf75f8151c0be561094843"
+    },
+    "assets/terrain-realism.js": {
+      "rawSHA256": "a3984c67df135a352436c03c7ed69844fb3bf30f79e71e3ebd8e7e63a9a0f2cc",
+      "candidateSHA256": "0c30d850306445e375ae5729c36c09ebbbd4be08bdbcf55abb5608ddea8285af",
+      "priorCanonicalSHA256": "a3984c67df135a352436c03c7ed69844fb3bf30f79e71e3ebd8e7e63a9a0f2cc"
+    },
+    "ranch3d.html": {
+      "rawSHA256": "e420d79d7cae8c744104beeff5dd090d4ff4d62f931729d01a840f4a59820bc3",
+      "candidateSHA256": "a613255bd772194f51db1d1c57cde9b460d2e33b27c25061bce3c52b3054bcb8",
+      "priorCanonicalSHA256": "d448c22a28b4da2521a05b23bf0753b3f9b7382dae82ee4888b3ad62473dd297"
+    }
+  },
+  "dependencySHA256": {
+    "tools/fieldstone-wall-cache-source-guard.cjs": "bc1c151cae52c7cdb75ba9a4548439643ec7e22a9819b621cd9b66e5f3441615",
+    "tools/published-world-import-source-guard.cjs": "1fd68937f868b264f314ec2ac01da704567fe018ed05c76f3e7a95abf051c804",
+    "tools/authored-camera-source-guard.cjs": "eeff7e2e7979d63ffa8d424aa113c1242c83f058f90a320b3a98b2488859f065",
+    "tools/riding-distance-source-guard.cjs": "97fe92b9a2a7a0a48c7c33f7f86029812214b6460273db7643488f6937d80284",
+    "tools/ribbon-award-source-guard.cjs": "31923a641233d1c2e2eef74f7f4d081d9d203d4a686380834f26a86f4495dd77",
+    "tools/fixtures/reviewed-riding-4e346b2/cache-changes.json": "b4bbecb268eece3397c81b1ec345e512c81b173e8e9bb9a7f08f6bda80f0cca9",
+    "tools/fixtures/grass-ribbon-d9b168e/source-changes.json": "4407e3d4bc8027a5998e2a52282b59f71262e9ecda6001a7f4ba895e4d68b405",
+    "tools/progression-loop-cache-source-guard.cjs": "c164aaf5333adb1abf8d05dfc1c5cf8926539979d7dd0b5e33383db110cf57db",
+    "tools/progression-hints-source-guard.cjs": "622b8450b0db2d24e04b696942647696ef07bc6eec4334a981ca5e01e4e1cd26",
+    "tools/fixtures/progression-loop-243dbfb/contract.json": "cf5ff527391ca6eefbabac929cc68273cd8ef5d3499bf7b5861cb6e932cbe017",
+    "tools/fixtures/progression-hints-243dbfb/contract.json": "59996a48689f05491817fe097ae6305fa215e9907cf5e8ef4870c899e343ed41",
+    "tools/fixtures/progression-grass-9c9ae98/contract.json": "958b9c5da1176b6fdabc7141f3768fb3a141b665c998fbd6bc7e35bb6ce2885f",
+    "tools/fixtures/progression-grass-9c9ae98/observer-changes.json": "40872f7b336c24f965329098e2951ec49e35a63c10163cad6128a92fd7f8f5c4",
+    "tools/fixtures/grass-ribbon-d9b168e/contract.json": "127fc737b1c66aea9adfbc630703a1c6750519d9d248dbfc24f4771f92902f8e",
+    "tools/fixtures/grass-ribbon-d9b168e/test-adapter-changes.json": "a93761c1efb10043174e1817d27ea579427b87e399338c1619532236ec22b54a",
+    "tools/fixtures/reviewed-riding-4e346b2/contract.json": "fad6b15aebd17a4308b86000be9cec078ba61407eebe611489c778a86e9a20c1",
+    "tools/lash-cache-source-guard.cjs": "9e97fe515b8e523be963cbc2b890fdf285adb47283487b10fdbbb9882b9f90e2",
+    "tools/fixtures/lash-cache-df065bd/contract.json": "58698c4725ad04d8a12dea7381daf30183ab576a2ca7c2b1a59bbe7f2179ab51",
+    "tools/fixtures/lash-cache-df065bd/observer-changes.json": "ecd0fd1269c4d8b09d5be04c2dcc242381b0dc77ac8d9dfca0754b8ca0ff658b"
+  },
+  "testAdapterPreimages": {
+    "tools/grass-arch-source-guard.cjs": "ee709fc1908a3f603ae193f0e3cfb02a89fc1bf62045c2decba4cdce16d8aaf3",
+    "tools/grass-ribbon-source-guard.cjs": "ccc7a399cc8a5f811d4effcb08c960f8d14aeb51c3cb4416f354a85ce9a29095",
+    "tools/progression-grass-source-guard.cjs": "4fea488dadd32eb573b41830dfa69c6010df9658f92831325f1fd87310579180",
+    "tools/reviewed-riding-source-guard.cjs": "4554276f2fbffb43899d1252e03c54fa2526956332b177cd833e6da72c4ac51b",
+    "tools/test-arched-grass-wind.mjs": "40b99dc5f75cb8749d97beb81c030a0ab694fc68a8d563f38552556267a992f1",
+    "tools/test-basic-riding-tack.mjs": "5ba088696be54f6dc385a7619986066c3e4e6a5d7e036535c3e00c57f6e8a49b",
+    "tools/test-coursed-field-wall.mjs": "bddfb5bf229e9e73b14d33404e55dae247379714cd740974937b18f4cf309264",
+    "tools/test-coyote-crag-composition.mjs": "d79de066a7d435aedfcc082575914f8cc25ee1325011339a4e1b8579f6774044",
+    "tools/test-fieldstone-wall-cache-guard.mjs": "b2e19fb4623895c7626ccb9e1cbfef193601e5b062c1a582934f3b4d7b6814b2",
+    "tools/test-fieldstone-wall-collision.mjs": "6fbb95ee0c39e9a0a755b5a0c50aaf8bbd37fbaedd82c12f97d78659bbbe9f09",
+    "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs": "22078efb875cd5d1b03dac3ddcfeebba0badb27de701b74c214cdb056bedb8d1",
+    "tools/test-fieldstone-wall-model.mjs": "8479eff8e1846b5a63fc49412d0ce8b88c8f39b66a9d6e46dc9d1089f353f8c4",
+    "tools/test-fine-hair-cache-guard.mjs": "7c14b3c2504ad0d0c1fdeb83da7b75f0f81c6627b349d224beb9af320d20b6ee",
+    "tools/test-lash-cache-source-guard.mjs": "4ea6e9e775590579bfc50b2008240fe05db6862683e673ffc315876dd85d13ff",
+    "tools/test-lupin-independent.mjs": "d61b96d3c9a64875b100ffa0ac82ec92b64f8a714bcbe5485c950584fd337991",
+    "tools/test-pasture-mesosurface.mjs": "fb89e09fac2d8183a70cdf6568fae543b6653f9e372fb3e754b38d3ce3d1bb2d",
+    "tools/test-progression-grass-composition.mjs": "d3e217211ce9b8f3dc4915c94ab69f5d2924bc391a859eeafc0446c1c85e4263",
+    "tools/test-progression-hints.mjs": "030f825bbc29ec57abafcb73e62e806c8f154c5014800cbfdb66d7dc2fa72315",
+    "tools/test-progression-loop-cache-guard.mjs": "1492f0eaee5ef446120de264d416ec1655a2bf5244e64911bff94746570dd115",
+    "tools/test-reviewed-riding-source-guard.mjs": "55efca4f80afe6ff2b904227a659399497a90420caf059ba257ab7f61c3325b7",
+    "tools/test-ribbon-grass-source-guard.mjs": "fe314e18f24c56b66473b0b1d22e59588042dd92ce079e00c821e26fa55e7bff",
+    "tools/test-starter-tack-catalog-preservation.mjs": "e21402cff79d0e651c2a46bd51561bd4e4752fae2dbfeca3684845a99c262367",
+    "tools/test-follow-camera-authored-parts.mjs": "271f07d6f64065ee9073a7ee17259e00e512a9ca9ff0b3c69d3adc242a524e9a"
+  },
+  "historicalTestSHA256": {
+    "tools/grass-arch-source-guard.cjs": [
+      "ddd5bb23be376c6af3f0e89a34acc7f3237cfe9bb456b52b4de63cb9ce604859"
+    ],
+    "tools/grass-ribbon-source-guard.cjs": [
+      "2b232663ae9f62b716f70019cae060a7607f1e4ea049e2d50e0ae24f43ae96cb"
+    ],
+    "tools/progression-grass-source-guard.cjs": [
+      "6a4c5957ca008f47de39594af49cebef75723c9601dbaabc3971305ddcae8f4c"
+    ],
+    "tools/reviewed-riding-source-guard.cjs": [
+      "8cfd67b53de131997d919869f5616f407c016047bb7892459c9ee91e2f325fca",
+      "82322d25fd68e7277ee85a4e88ecfb43c971db1c864d05c29dcfc67d74c98ed4",
+      "73ace7342af29856ade7f5aa405c516a7d35ff279722bc6e98dbce79a47bee77"
+    ],
+    "tools/test-arched-grass-wind.mjs": [
+      "f49ffa983a24155e030600a659c790fbbdbf1929e523ba1a3f7b05b1dc632f60"
+    ],
+    "tools/test-basic-riding-tack.mjs": [
+      "97c2d5308b342b1d83701341bd813f61083ecb6901b8f9502b1c5f4582d2729a",
+      "ab5a6a7b50c326f2624609c3da6469320b8a03e8df4a5c780c1fcfd6f16582d8"
+    ],
+    "tools/test-coursed-field-wall.mjs": [],
+    "tools/test-coyote-crag-composition.mjs": [
+      "9cf78610f34569a78414540675f3ca1d120ad6cf0b909b5ee75a6632e3ddd9dd",
+      "4ca5bdb1ffa5f0ccc38556e21a8f4bca3db2ffee291beb3d345326ed3cebe79e"
+    ],
+    "tools/test-fieldstone-wall-cache-guard.mjs": [
+      "5cd362f808e45612486b9b6093ab30045e730ddd67eecbf3302d002b2fc7cd5f"
+    ],
+    "tools/test-fieldstone-wall-collision.mjs": [],
+    "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs": [
+      "715e70103601c9a8789144cc3b70d58e643b9506669fed9682742c03d94a0f73"
+    ],
+    "tools/test-fieldstone-wall-model.mjs": [],
+    "tools/test-fine-hair-cache-guard.mjs": [
+      "ba6a83edf4c040ecbc81c5a75f8001e5c050350fe0bbd7e6125af0e5b3f86ac6"
+    ],
+    "tools/test-lupin-independent.mjs": [
+      "28c62714ac6d674ad3332d664af406c525dc9159412e77a6f0bb26e60fb79d27"
+    ],
+    "tools/test-pasture-mesosurface.mjs": [],
+    "tools/test-progression-grass-composition.mjs": [
+      "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e"
+    ],
+    "tools/test-reviewed-riding-source-guard.mjs": [
+      "7229b619468e64ee5af8392b02b9d951391be7a5b08b7c5549983c84a4a6976c",
+      "ebad495aafb9af04bbf116be72f4499dcb4c5419b0724ad4602403ec79c4f818",
+      "40f376850df04e75aa0057fd4a655c38a2ee6808a73607566b99127a96fb1066"
+    ],
+    "tools/test-ribbon-grass-source-guard.mjs": [
+      "4c9884df6ea5684c945c01ae3302695b6f3fb2ce3a3f9737fe9581987283f4f2"
+    ],
+    "tools/test-starter-tack-catalog-preservation.mjs": [
+      "23fe01c5b327a6c9936a45bb5bbf905035176e829b83d485563d1839391137ad",
+      "f6b4adfbf5c09a9895c0c75bf44ffd5a4e922ecaa1d30f5b455af1523da5548b"
+    ],
+    "tools/test-progression-loop-cache-guard.mjs": [
+      "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548"
+    ],
+    "tools/test-follow-camera-authored-parts.mjs": [
+      "fc8ac80768a5a806467b6af20d6f7843146b944cbec5dc93b7393c71f2d52a62"
+    ]
+  }
+}

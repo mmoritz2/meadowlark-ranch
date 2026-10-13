@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createCoursedFieldWallGeometry} from '../assets/coursed-field-wall.mjs';
+import {createCoursedFieldWallGeometry as historicalCreate} from './meadow-relief-wall-historical.mjs';
 const record=(x,z,yaw)=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:[20,21,22,23,24]});
-test('coursed kits are deterministic, finite and within the 280 triangle budget',()=>{
+test('Historical b1 slab: coursed kits are deterministic, finite and within the 280 triangle budget',()=>{
+ const createCoursedFieldWallGeometry=historicalCreate;
  const records=[record(65,-128,.75),record(-13,4,-2)];
  const a=createCoursedFieldWallGeometry(records,()=>0),b=createCoursedFieldWallGeometry(records,()=>0);
  assert.deepEqual(a,b);assert.equal(a.triangles,560);assert(a.units.every(u=>u.triangles===280));

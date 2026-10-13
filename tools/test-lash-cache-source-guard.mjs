@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
 const contract=JSON.parse(read('tools/fixtures/lash-cache-df065bd/contract.json'));
 const git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});
 const sha=source=>createHash('sha256').update(source).digest('hex');

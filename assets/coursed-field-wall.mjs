@@ -1,77 +1,64 @@
-// Original battered dry-stone wall geometry. Pure geometry creation consumes no RNG.
-// Route samples, gates and collision ownership remain in world-paths.js.
+// Original weathered rubble masonry. Coordinate hashing creates local stone
+// shape only; authored unit placement and the world's RNG stream are untouched.
 const hash=(a,b=0)=>{const n=Math.sin(a*127.1+b*311.7+17.3)*43758.5453;return n-Math.floor(n);};
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const dot=(a,b)=>a.reduce((v,n,i)=>v+n*b[i],0);
 export function createCoursedFieldWallGeometry(records,groundH){
  const p=[],n=[],uv=[],col=[],idx=[],units=[];
- function stone(r,u,lo,w,h,d,seed,coping=false){
-  const half=w/2,depth=d/2,b=Math.min(coping?.034:.014+hash(seed,47)*.024,w*.23);
-  const cx=r.x+r.tx*u,cz=r.z+r.tz*u;
-  // Each footing seats at the low corner of its own patch of ground, avoiding
-  // floating near-side corners on a slope. A modest buried base closes seams.
-  const base=Math.min(...[-1,1].flatMap(a=>[-1,1].map(c=>groundH(cx+r.tx*half*a+r.nx*depth*c,cz+r.tz*half*a+r.nz*depth*c))));
-  const centre=[cx,base+lo+h/2,cz];
-  const tint=.78+hash(seed,11)*.22,offset=[hash(seed,19)*3,hash(seed,23)*3];
-  function face(points){
-   // Sum the whole polygon area; a tiny bevel triangle must not choose the
-   // direction or lighting normal of the entire stone face.
-   let normal=[0,0,0];
-   for(let i=0;i<points.length;i++){
-    const a=points[i],b=points[(i+1)%points.length];
-    normal[0]+=(a[1]-b[1])*(a[2]+b[2]);
-    normal[1]+=(a[2]-b[2])*(a[0]+b[0]);
-    normal[2]+=(a[0]-b[0])*(a[1]+b[1]);
-   }
-   const mid=points.reduce((a,v)=>a.map((n,i)=>n+v[i]/points.length),[0,0,0]);
-   if(dot(normal,sub(mid,centre))<0){points=points.slice().reverse();normal=normal.map(v=>-v);}
-   const L=Math.hypot(...normal);if(L<1e-10)throw Error('Degenerate field stone');normal=normal.map(v=>v/L);
-   const axis=normal.map(Math.abs).indexOf(Math.max(...normal.map(Math.abs))),start=p.length/3;
-   for(const v of points){p.push(...v);n.push(...normal);col.push(tint,tint,tint);
-    const a=axis===0?v[2]:v[0],c=axis===1?v[2]:v[1];uv.push(a/.9+offset[0],c/.9+offset[1]);}
-   for(let i=1;i<points.length-1;i++)idx.push(start,start+i,start+i+1);
-  }
-  // Broad, flat bearings support the courses. Unequal lower and upper
-  // shoulders leave a chipped slab silhouette instead of a repeated box.
-  // Six points retain the original twenty-triangle stone budget.
-  const footL=w*(.045+hash(seed,71)*.085),footR=w*(.045+hash(seed,73)*.085);
-  const crownL=w*(.080+hash(seed,79)*.110),crownR=w*(.080+hash(seed,83)*.105);
-  const shoulderL=w*(.006+hash(seed,89)*.024),shoulderR=w*(.006+hash(seed,97)*.024);
-  const profile=[[-half+footL,lo],[half-footR,lo],
-   [half-shoulderR,lo+h*(.36+hash(seed,101)*.28)],
-   [half-crownR,lo+h*(.970+hash(seed,103)*.030)],
-   [-half+crownL,lo+h*(.965+hash(seed,107)*.035)],
-   [-half+shoulderL,lo+h*(.32+hash(seed,109)*.28)]];
+ const point=(r,x,y,z)=>{const wx=r.x+r.tx*x+r.nx*z,wz=r.z+r.tz*x+r.nz*z,h=groundH(wx,wz);if(!Number.isFinite(h))throw Error('Invalid rubble wall footing');return [wx,h+y,wz];};
+ function stone(r,left,right,lo,h,d,seed,coping=false){
+  const w=right-left,cx=(left+right)/2,half=w/2,depth=d/2;
+  // Smaller uneven blocks have broad interlocking bearings. The split face is
+  // a shallow real convex ridge rather than a flat rectangular side panel.
+  const profile=[[-half+w*(.07+hash(seed,71)*.07),lo],
+   [half-w*(.06+hash(seed,73)*.08),lo+.008*hash(seed,74)],
+   [half-w*.015,lo+h*(.39+hash(seed,79)*.15)],
+   [half-w*(.11+hash(seed,83)*.07),lo+h*(.97+hash(seed,89)*.03)],
+   [-half+w*(.09+hash(seed,97)*.09),lo+h*(.95+hash(seed,101)*.04)],
+   [-half+w*.015,lo+h*(.42+hash(seed,103)*.17)]];
+  const tint=.80+hash(seed,11)*.20,offset=[hash(seed,19)*3,hash(seed,23)*3];
   const rings=[-1,1].map(side=>profile.map(([x,y],i)=>{
-   // Depth rake is an affine function of the actual nicked profile. Both
-   // broad faces and every connecting shoulder therefore remain planar.
-   const nick=(hash(seed+i,13)-.5)*Math.min(coping?.006:.008,b*.72*.25),nickedY=y+nick;
-   const z=side*(depth-.014-(nickedY-lo)/h*(coping?.057:.043)+(x/w)*.012)+((hash(seed,53)-.5)*.006);
-   return[cx+r.tx*x+r.nx*z,base+nickedY,cz+r.tz*x+r.nz*z];
+   // Every corner follows the same actual ground function; a whole 1.15 m
+   // unit therefore never acquires the old level-top staircase on a grade.
+   // Batter and small face chips remain strictly inside the source thickness.
+   const z=side*(depth-.011-(y-lo)/h*.022+(hash(seed+i,127)-.5)*.010);
+   return point(r,cx+x,y,z);
   }));
-  face(rings[0]);face(rings[1]);
-  for(let i=0;i<profile.length;i++)face([rings[0][i],rings[0][(i+1)%profile.length],rings[1][(i+1)%profile.length],rings[1][i]]);
+  const interior=rings.flat().reduce((a,v)=>a.map((n,i)=>n+v[i]/12),[0,0,0]);
+  function tri(points){
+   let normal=cross(sub(points[1],points[0]),sub(points[2],points[0]));
+   const mid=points.reduce((a,v)=>a.map((n,i)=>n+v[i]/3),[0,0,0]);
+   if(dot(normal,sub(mid,interior))<0){points=[points[0],points[2],points[1]];normal=normal.map(v=>-v);}
+   const L=Math.hypot(...normal);if(L<1e-10)throw Error('Degenerate rubble stone');normal=normal.map(v=>v/L);
+   const axis=normal.map(Math.abs).indexOf(Math.max(...normal.map(Math.abs))),start=p.length/3;
+   for(const v of points){p.push(...v);n.push(...normal);col.push(tint,tint,tint);const a=axis===0?v[2]:v[0],c=axis===1?v[2]:v[1];uv.push(a/.9+offset[0],c/.9+offset[1]);}
+   idx.push(start,start+1,start+2);
+  }
+  for(let side=0;side<2;side++){
+   const s=side===0?-1:1,centre=point(r,cx+(hash(seed,137)-.5)*w*.05,lo+h*(.48+(hash(seed,139)-.5)*.12),s*(depth+.009+hash(seed,149)*.007));
+   for(let i=0;i<6;i++)tri([centre,rings[side][i],rings[side][(i+1)%6]]);
+  }
+  for(let i=0;i<6;i++){
+   const j=(i+1)%6;tri([rings[0][i],rings[0][j],rings[1][j]]);tri([rings[0][i],rings[1][j],rings[1][i]]);
+  }
  }
- for(let ri=0;ri<records.length;ri++){
-  const r=records[ri];if(![r.x,r.z,r.tx,r.tz,r.nx,r.nz].every(Number.isFinite))throw Error('Invalid field wall record');
-  const seed=r.x*7+r.z*13,start=idx.length,span=1.15;
-  // Alternating end half-stones break vertical joints. Each segment retains
-  // its existing centre and 1.15 m route sampling; no line or gap is moved.
-  for(let row=0;row<3;row++){
-   const cuts=row%2?[-.575,-.40+(hash(seed,row+2)-.5)*.07,.02+(hash(seed,row+5)-.5)*.11,.42+(hash(seed,row+8)-.5)*.06,.575]:[-.575,-.21+(hash(seed,row+2)-.5)*.10,.20+(hash(seed,row+5)-.5)*.10,.575];
-   const base=-.060+row*.245+(hash(seed,row+17)-.5)*.012,depth=.68-row*.055;
-   for(let i=0;i<cuts.length-1;i++){
-    const gap=.006+hash(seed+i,row+61)*.007,left=cuts[i]+gap,right=cuts[i+1]-gap;
-    stone(r,(left+right)/2,base,right-left,.238+(hash(seed+i,row+41)-.5)*.012,depth,seed+row*37+i*7);
+ for(const r of records){
+  if(![r.x,r.z,r.tx,r.tz,r.nx,r.nz].every(Number.isFinite))throw Error('Invalid field wall record');
+  const seed=r.x*7+r.z*13,start=idx.length,half=.575;
+  for(let row=0;row<4;row++){
+   const count=row%2?4:5,cuts=[-half];
+   for(let i=1;i<count;i++)cuts.push(-half+i*1.15/count+(hash(seed+i*7,row+211)-.5)*.040);
+   cuts.push(half);
+   const lo=[-.055,.128,.322,.510][row],h=[.208,.217,.208,.205][row],d=.64-row*.035;
+   for(let i=0;i<count;i++){
+    const gap=.003+hash(seed+i,row+223)*.003;
+    stone(r,cuts[i]+gap,cuts[i+1]-gap,lo+(hash(seed+i,row+227)-.5)*.006,h,d,seed+row*43+i*11);
    }
   }
-  for(let i=0;i<4;i++){
-   // Individual coping stones stay within their original quarter slots;
-   // unequal joints and bearings break the mechanical repeated skyline.
-   const slot=span/4,left=-span/2+i*slot+.006+hash(seed+i,113)*.015;
-   const right=-span/2+(i+1)*slot-.006-hash(seed+i,127)*.015;
-   stone(r,(left+right)/2,.658+hash(seed+i,137)*.010,right-left,.244+hash(seed+i,17)*.037,.555,seed+131+i*9,true);
+  for(let i=0;i<5;i++){
+   const left=-half+i*1.15/5+.004+hash(seed+i,241)*.005,right=-half+(i+1)*1.15/5-.004-hash(seed+i,251)*.005;
+   stone(r,left,right,.699+hash(seed+i,257)*.008,.184+hash(seed+i,263)*.034,.532,seed+307+i*13,true);
   }
   units.push({x:r.x,z:r.z,tx:r.tx,tz:r.tz,nx:r.nx,nz:r.nz,legacyRows:r.legacyRows,indexStart:start,indexCount:idx.length-start,visible:true,triangles:(idx.length-start)/3,halfLength:.575,halfDepth:.35,maxHeight:.952});
  }

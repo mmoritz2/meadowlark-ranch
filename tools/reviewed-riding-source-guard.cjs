@@ -1,6 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {normalizeLashCacheSource}=require('./lash-cache-source-guard.cjs');
 const {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');
+const {undoMeadowReliefWallSource}=require('./meadow-relief-wall-source-guard.cjs');
 const dir=path.join(__dirname,'fixtures/reviewed-riding-4e346b2');
 const load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));
 const contract=load('contract.json'),caches=load('cache-changes.json'),observers=load('observer-changes.json'),guide=load('guide-changes.json');
@@ -34,6 +35,7 @@ function normalizeReviewedCacheSource(source,file){
  return source;
 }
 function normalizeReviewedRuntimeSource(source,file){
+ source=undoMeadowReliefWallSource(source,file);
  source=normalizeLashCacheSource(source,file);
  source=normalizeProgressionLoopCacheSource(source,file);
  source=normalizeProgressionHintsSource(source,file);

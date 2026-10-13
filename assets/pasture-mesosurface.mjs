@@ -1,10 +1,10 @@
 // One connected grass-growth field controls the low tussock surface, crowns
 // and root hollows. This changes material response only, never riding height.
-export const PASTURE_MESO_CACHE='pasture-mesosurface-2';
+export const PASTURE_MESO_CACHE='pasture-mesosurface-4';
 export const PASTURE_MESO=Object.freeze({
- localMetres:3.4,groupMetres:11.0,localWeight:.72,height:.18,managedHeight:.36,managedMaterial:.55,
- crownLow:.22,crownHigh:.79,normalLimit:.30,rootOcclusion:.14,
- localFilter:Object.freeze([.22,.80]),groupFilter:Object.freeze([1.2,3.8]),
+ localMetres:1.45,groupMetres:11.0,localWeight:.72,height:.18,managedHeight:.72,managedMaterial:.82,managedCalmHeight:.58,
+ crownLow:.22,crownHigh:.79,normalLimit:.30,rootOcclusion:.30,
+ localFilter:Object.freeze([.12,.44]),groupFilter:Object.freeze([1.2,3.8]),
  envelopeLow:.40,envelopeHigh:.72,calmHeight:.16,
 });
 const fract=x=>x-Math.floor(x),clamp=x=>Math.max(0,Math.min(1,x));
@@ -21,14 +21,14 @@ export function pastureMesoAt(x,z,footprint=0,managed=0){
  const lf=1-smooth(...c.localFilter,footprint),gf=1-smooth(...c.groupFilter,footprint),v=.5+(local[0]-.5)*c.localWeight*lf+(group[0]-.5)*(1-c.localWeight)*gf;
  const gx=(.8*local[1]-.6*local[2])*c.localWeight*lf/c.localMetres+(.6*group[1]+.8*group[2])*(1-c.localWeight)*gf/c.groupMetres;
  const gz=(.6*local[1]+.8*local[2])*c.localWeight*lf/c.localMetres+(-.8*group[1]+.6*group[2])*(1-c.localWeight)*gf/c.groupMetres;
- const groupValue=.5+(group[0]-.5)*gf,gt=clamp((groupValue-c.envelopeLow)/(c.envelopeHigh-c.envelopeLow)),density=gt*gt*(3-2*gt),envelope=c.calmHeight+(1-c.calmHeight)*density;
- const envelopeDerivative=(1-c.calmHeight)*6*gt*(1-gt)/(c.envelopeHigh-c.envelopeLow),ex=(.6*group[1]+.8*group[2])*gf/c.groupMetres*envelopeDerivative,ez=(-.8*group[1]+.6*group[2])*gf/c.groupMetres*envelopeDerivative;
+ const groupValue=.5+(group[0]-.5)*gf,gt=clamp((groupValue-c.envelopeLow)/(c.envelopeHigh-c.envelopeLow)),density=gt*gt*(3-2*gt),calm=c.calmHeight+(c.managedCalmHeight-c.calmHeight)*clamp(managed),envelope=calm+(1-calm)*density;
+ const envelopeDerivative=(1-calm)*6*gt*(1-gt)/(c.envelopeHigh-c.envelopeLow),ex=(.6*group[1]+.8*group[2])*gf/c.groupMetres*envelopeDerivative,ez=(-.8*group[1]+.6*group[2])*gf/c.groupMetres*envelopeDerivative;
  const t=clamp((v-c.crownLow)/(c.crownHigh-c.crownLow)),crown=t*t*(3-2*t),derivative=6*t*(1-t)/(c.crownHigh-c.crownLow),height=c.height*(1+(c.managedHeight-1)*clamp(managed));
  return{crown,envelope,height:crown*envelope*height,dx:(gx*derivative*envelope+crown*ex)*height,dz:(gz*derivative*envelope+crown*ez)*height,filter:(lf*.72+gf*.28)*envelope*(1+(c.managedMaterial-1)*clamp(managed))};
 }
 const f=n=>Number.isInteger(n)?n+'.0':String(n),c=PASTURE_MESO;
 const declarations=`
-      // PASTURE_MESOSURFACE_V2: group growth leaves quiet patches between sward.
+      // PASTURE_MESOSURFACE_V4: close turf retains tangled relief across quiet fields.
       vec3 pastureMesoNoise(vec2 q){
         vec2 cell=floor(q),v=fract(q),w=v*v*(3.0-2.0*v),dw=6.0*v*(1.0-v);
         float a=tHash(cell),b=tHash(cell+vec2(1.0,0.0)),c=tHash(cell+vec2(0.0,1.0)),d=tHash(cell+vec2(1.0));
@@ -43,8 +43,9 @@ const declarations=`
         vec2 gradient=(local.yz*localBasis)*(${f(c.localWeight/c.localMetres)}*lf)+(group.yz*groupBasis)*(${f((1-c.localWeight)/c.groupMetres)}*gf);
         float t=clamp((value-${f(c.crownLow)})/${f(c.crownHigh-c.crownLow)},0.0,1.0),crown=t*t*(3.0-2.0*t);
         float groupValue=.5+(group.x-.5)*gf,gt=clamp((groupValue-${f(c.envelopeLow)})/${f(c.envelopeHigh-c.envelopeLow)},0.0,1.0);
-        float envelope=mix(${f(c.calmHeight)},1.0,gt*gt*(3.0-2.0*gt));
-        vec2 envelopeGradient=(group.yz*groupBasis)*(gf/${f(c.groupMetres)}*${f(1-c.calmHeight)}*6.0*gt*(1.0-gt)/${f(c.envelopeHigh-c.envelopeLow)});
+        float calm=mix(${f(c.calmHeight)},${f(c.managedCalmHeight)},managed);
+        float envelope=mix(calm,1.0,gt*gt*(3.0-2.0*gt));
+        vec2 envelopeGradient=(group.yz*groupBasis)*(gf/${f(c.groupMetres)}*(1.0-calm)*6.0*gt*(1.0-gt)/${f(c.envelopeHigh-c.envelopeLow)});
         // Product rule: this is the gradient of crown * envelope, not an
         // arbitrary multiplier on a disconnected normal map.
         gradient=(gradient*(6.0*t*(1.0-t)/${f(c.crownHigh-c.crownLow)}*envelope)+crown*envelopeGradient)
@@ -71,7 +72,7 @@ const fields=`
       // Small crown/root material differences follow the same relief; sunlight
       // and cavity shading provide depth rather than independent painted dots.
       float pastureMaterial=pastureCover*pastureGrowth.w;
-      surface*=mix(vec3(1.0),mix(vec3(.96,.985,.91),vec3(1.035,1.035,1.00),pastureGrowth.x),pastureMaterial);
+      surface*=mix(vec3(1.0),mix(vec3(.80,.89,.75),vec3(1.075,1.05,.99),pastureGrowth.x),pastureMaterial);
       surface=mix(surface,surface*vec3(1.12,.96,.79),pastureHollow*pastureMaterial*.09*(1.0-pastureManaged*.7));
 `;
 const normal=`
@@ -84,13 +85,13 @@ const normal=`
 `;
 const powderEnd='          normal=normalize(mix(normal,normalize(mat3(viewMatrix)*powderNormal),coldPowder));\n        }\n      #endif';
 export function patchPastureMesoSurface(shader){
- if(shader.fragmentShader.includes('PASTURE_MESOSURFACE_V2'))return false;
+ if(shader.fragmentShader.includes('PASTURE_MESOSURFACE_V4'))return false;
  const edits=[
   ['      // Right-angle UV rotations keep footprint area',declarations+'      // Right-angle UV rotations keep footprint area'],
   ['      soilWeight*=soilReady;','      soilWeight*=soilReady;'+fields],
   [powderEnd,powderEnd+normal],
   ['      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));',`      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));
-      roughnessFactor=min(1.0,roughnessFactor+(.01+.028*pastureHollow)*pastureMaterial*(1.0-rainWet));`],
+      roughnessFactor=mix(roughnessFactor,.89+.10*pastureHollow,pastureMaterial*(1.0-rainWet));`],
   ['#include <aomap_fragment>',`#include <aomap_fragment>
       // Shallow grass/root cavities occlude ambient light, not direct sun.
       reflectedLight.indirectDiffuse*=1.0-${f(c.rootOcclusion)}*pastureHollow*pastureMaterial;`],

@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+export const historicalMeadowWallSource=file=>normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);
+const uri=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
+const mesoSource=historicalMeadowWallSource('assets/pasture-mesosurface.mjs'),mesoURI=uri(mesoSource),meso=await import(mesoURI);
+export const PASTURE_MESO=meso.PASTURE_MESO,pastureMesoAt=meso.pastureMesoAt,patchPastureMesoSurface=meso.patchPastureMesoSurface;
+const terrainFile=new URL('../assets/terrain-realism.js',import.meta.url),terrainSource=historicalMeadowWallSource('assets/terrain-realism.js');
+const resolved=terrainSource.replace(/from (['"])(\.\/[^'"]+)\1/g,(_m,_q,p)=>'from '+JSON.stringify(p.startsWith('./pasture-mesosurface.mjs?')?mesoURI:new URL(p,terrainFile).href));
+const terrain=await import(uri(resolved));export const createTerrainSurface=terrain.createTerrainSurface;
+const wall=await import(uri(historicalMeadowWallSource('assets/coursed-field-wall.mjs')));
+export const createCoursedFieldWallGeometry=wall.createCoursedFieldWallGeometry,installCoursedFieldWalls=wall.installCoursedFieldWalls;

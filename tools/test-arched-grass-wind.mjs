@@ -6,7 +6,9 @@ import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
 import {createGrazedSwardGeometry} from '../assets/grazed-sward.mjs';
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
-import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+const normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);
 const forms=[{profile:'near',leafCount:8,segments:3},{profile:'meadow',leafCount:14,segments:3},{profile:'low',leafCount:14,segments:3},{profile:'seeded',leafCount:14,segments:2,seeded:true}];
 const make=[...forms.map(o=>()=>createLushMeadowGeometry(T,o)),()=>createGrazedSwardGeometry(T)];
 test('actual continuous ribbon leaf normals follow real wind, retirement and rider-parting triangles',()=>{
