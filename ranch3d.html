@@ -672,10 +672,10 @@ import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-arch-2';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-3';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-arch-2';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-ribbon-3';
 import {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';
 import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';
 import {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';
@@ -3298,7 +3298,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const lupinCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_LU*16),colors:new Float32Array(NG_LU*3)}));
  for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
- const okGrass=(x,z)=>{
+ const okGrass=(x,z,shortVerge=false)=>{
   if(G.photoscans?.excludesGroundCover?.(x,z))return false;
   if(alpineSnowAt(x,z)>.35)return false;
   const winterCover=coldPastureCover(x,z);
@@ -3310,7 +3310,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
   if(Math.hypot(x-20,z-16)<5.4||oasisContainsWater(x,z,.7))return false; // lake and oasis
-  if(pathDist(x,z)<PATH_W*.92||G.worldPaths?.trackDist(x,z)<3.4)return false;               // clear ground through the feathered shoulder
+  // Fine short turf joins the trail's feathered shoulder in ordinary meadow.
+  // Flowers, tall clutter, existing path cores and event lanes keep their clear strip.
+  const trackClearance=shortVerge&&biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35?2.6:3.4;
+  if(pathDist(x,z)<PATH_W*.92||G.worldPaths?.trackDist(x,z)<trackClearance)return false;
   if(G.quartersPkg?.pondContains(x,z))return false;
   if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
@@ -3343,7 +3346,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
- const meadowDistance=createMeadowDistance({THREE,scene,canGrow:okGrass,heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality});
+ const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality});
  const CLUT={
   meadow:{fern:'#8a9d71',rock:'#a39784',p:0.38,sz:0.70},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
@@ -3362,7 +3365,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   for(let k=0;k<NG_K;k++){
    const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   if(!okGrass(x,z))continue;
+   if(!okGrass(x,z,true))continue;
    const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z);
    const turfReach=ranchTurfReachAt(x,z);
    e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread*turfReach,(.9+h1*.2)*trim*growth*ranchTurfHeightAt(x,z),sz*spread*turfReach);

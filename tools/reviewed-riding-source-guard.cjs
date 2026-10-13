@@ -1,4 +1,5 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');
 const dir=path.join(__dirname,'fixtures/reviewed-riding-4e346b2');
 const load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));
 const contract=load('contract.json'),caches=load('cache-changes.json'),observers=load('observer-changes.json'),guide=load('guide-changes.json');
@@ -6,7 +7,7 @@ const sha=source=>crypto.createHash('sha256').update(source).digest('hex');
 // The existing landscape/camera/cache guards and every old fixture keep their
 // exact bytes. This outer compatibility layer reverses only reviewed riding
 // and ribbon code before those complete-body preimages run.
-for(const [file,hash]of Object.entries(contract.protectedGuardSHA256))assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),hash,'Unchanged incoming/original guard '+file);
+for(const [file,hash]of Object.entries(contract.protectedGuardSHA256))assert.equal(sha(normalizeGrassRibbonTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Unchanged incoming/original guard '+file);
 const {normalizeProgressionLoopCacheSource}=require('./progression-loop-cache-source-guard.cjs');
 const {normalizeProgressionHintsSource}=require('./progression-hints-source-guard.cjs');
 const {normalizeRibbonAwardSource}=require('./ribbon-award-source-guard.cjs');
@@ -47,6 +48,7 @@ function reverseExact(source,file,changes){
  return source;
 }
 function normalizeReviewedObserverSource(source,file){
+ source=normalizeGrassRibbonTestSource(source,file);
  const expected=contract.observerSHA256[file];if(!expected)return source;
  if(sha(source)!==expected)source=reverseExact(source,file,observers);
  assert.equal(sha(source),expected,'Whole unchanged incoming observer restored '+file);return source;

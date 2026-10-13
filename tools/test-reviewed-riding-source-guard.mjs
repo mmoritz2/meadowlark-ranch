@@ -6,8 +6,9 @@ import {execFileSync} from 'node:child_process';
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeProgressionLoopCacheSource} from './progression-loop-cache-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
+import {normalizeGrassRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
 const root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);
-const read=file=>fs.readFileSync(new URL(file,root),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex');
+const read=file=>{const source=fs.readFileSync(new URL(file,root),'utf8');return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');
 const contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));
 const git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});
 

@@ -1,0 +1,62 @@
+[
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "for(const [file,hash]of Object.entries(contract.protectedGuardSHA256))assert.equal(sha(normalizeGrassRibbonTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Unchanged incoming/original guard '+file);\n",
+    "after": "for(const [file,hash]of Object.entries(contract.protectedGuardSHA256))assert.equal(sha(normalizeGrassRibbonTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Unchanged incoming/original guard '+file);\nconst {normalizeProgressionLoopCacheSource}=require('./progression-loop-cache-source-guard.cjs');\nconst {normalizeProgressionHintsSource}=require('./progression-hints-source-guard.cjs');\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "function normalizeReviewedRuntimeSource(source,file){\n",
+    "after": "function normalizeReviewedRuntimeSource(source,file){\n source=normalizeProgressionLoopCacheSource(source,file);\n source=normalizeProgressionHintsSource(source,file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\n",
+    "after": "import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeProgressionLoopCacheSource} from './progression-loop-cache-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": " const current=read('ranch3d.html');for(const tag of ['fine-hair-20261013c','grass-arch-2','camera-authored-parts-4','physical-ride-2-starter-tack-2-fieldstone-walls-3'])assert(current.includes(tag));\n",
+    "after": " const current=normalizeProgressionLoopCacheSource(read('ranch3d.html'),'ranch3d.html');for(const tag of ['fine-hair-20261013c','grass-arch-2','camera-authored-parts-4','physical-ride-2-starter-tack-2-fieldstone-walls-3'])assert(current.includes(tag));\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "  let subject=read(edge.file);\n",
+    "after": "  let subject=normalizeProgressionLoopCacheSource(read(edge.file),edge.file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\n",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "for(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),hash,'Exact prior wall/published/camera source guard '+file);\n",
+    "after": "for(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeProgressionGuardSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact prior wall/published/camera source guard '+file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "function normalizeGrassRibbonTestSource(source,file){\n",
+    "after": "function normalizeGrassRibbonTestSource(source,file){\n source=normalizeProgressionGuardSource(source,file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-source-guard.mjs",
+    "before": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\n",
+    "after": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\nimport {normalizeProgressionSource,normalizeProgressionGuardSource} from './progression-grass-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-source-guard.mjs",
+    "before": "const read=file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');\n",
+    "after": "const read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file);\n",
+    "occurrences": 1
+  }
+]

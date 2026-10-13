@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';
+import {normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';
 
 const root=process.env.MEADOWLARK_TEST_ROOT||resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const contract=JSON.parse(readFileSync(new URL('./fixtures/follow-camera-d5b9441/contract.json',import.meta.url),'utf8'));
@@ -168,7 +169,7 @@ test('indexed camera conservatively matches scalar V2 at negative cells, exact b
 
 test('existing orbit/frame/input and builder/collision source contracts remain exact',()=>{
  const source=readFileSync(cameraPath,'utf8');const tail=source.slice(source.indexOf(' function resolve('));assert.equal(hash(tail),contract.unchangedResolveFrameAndReturnSHA256,'resolve/frame/orbit behavior remains byte-for-byte');
- for(const name of['assets/ranch-architecture.js','assets/solid-collisions.js','assets/features/course-guide.js','tools/test-follow-camera.mjs','tools/test-follow-camera-input.mjs'])assert.equal(hash(readFileSync(resolve(root,name))),contract.sourceHashes[name],name+' remains unchanged');
+ for(const name of['assets/ranch-architecture.js','assets/solid-collisions.js','assets/features/course-guide.js','tools/test-follow-camera.mjs','tools/test-follow-camera-input.mjs'])assert.equal(hash(name==='assets/features/course-guide.js'?normalizeReviewedGuideSource(readFileSync(resolve(root,name),'utf8'),name):readFileSync(resolve(root,name))),contract.sourceHashes[name],name+' remains unchanged');
 });
 
 test('exact frozen runtime and one import reversal reject camera drift without changing historical main assertions',()=>{

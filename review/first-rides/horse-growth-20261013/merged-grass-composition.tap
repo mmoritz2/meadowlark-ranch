@@ -1,0 +1,425 @@
+TAP version 13
+# Subtest: Historical d9 morphology: near: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 1 - Historical d9 morphology: near: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 13.492917
+  ...
+# Subtest: Historical d9 morphology: meadow: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 2 - Historical d9 morphology: meadow: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 5.117167
+  ...
+# Subtest: Historical d9 morphology: low: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 3 - Historical d9 morphology: low: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 5.777042
+  ...
+# Subtest: Historical d9 morphology: seeded: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 4 - Historical d9 morphology: seeded: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 3.611042
+  ...
+# Subtest: Historical d9 morphology: grazed: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 5 - Historical d9 morphology: grazed: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 2.238333
+  ...
+# Subtest: Historical d9 morphology: current family metadata agrees with actual physical leaves and seed stems
+ok 6 - Historical d9 morphology: current family metadata agrees with actual physical leaves and seed stems
+  ---
+  duration_ms: 0.880916
+  ...
+# Subtest: Historical d9 morphology: seeded model preserves original seed stem/head attributes and relative topology exactly
+ok 7 - Historical d9 morphology: seeded model preserves original seed stem/head attributes and relative topology exactly
+  ---
+  duration_ms: 3.778334
+  ...
+# Subtest: Historical d9 morphology: each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation
+ok 8 - Historical d9 morphology: each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation
+  ---
+  duration_ms: 13.757417
+  ...
+# Subtest: Historical d9 morphology: all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte
+ok 9 - Historical d9 morphology: all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte
+  ---
+  duration_ms: 83.811667
+  ...
+# Subtest: actual continuous ribbon leaf normals follow real wind, retirement and rider-parting triangles
+ok 10 - actual continuous ribbon leaf normals follow real wind, retirement and rider-parting triangles
+  ---
+  duration_ms: 34.146334
+  ...
+# Subtest: actual new factory rejects invalid topology before allocating any Three resource
+ok 11 - actual new factory rejects invalid topology before allocating any Three resource
+  ---
+  duration_ms: 0.203833
+  ...
+# Subtest: reviewed leaf reversal pins every full original body and rejects duplicate, malformed or unrelated edits
+ok 12 - reviewed leaf reversal pins every full original body and rejects duplicate, malformed or unrelated edits
+  ---
+  duration_ms: 228.541916
+  ...
+# Subtest: assets/features/world-paths.js: exactly one live fieldstone import reverses to the complete a78 body
+ok 13 - assets/features/world-paths.js: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 2.569375
+  ...
+# Subtest: assets/features/index.js: exactly one live fieldstone import reverses to the complete a78 body
+ok 14 - assets/features/index.js: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 2.696833
+  ...
+# Subtest: ranch3d.html: exactly one live fieldstone import reverses to the complete a78 body
+ok 15 - ranch3d.html: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 84.612
+  ...
+# Subtest: assets/features/world-paths.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 16 - assets/features/world-paths.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 4.199334
+  ...
+# Subtest: assets/features/index.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 17 - assets/features/index.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 2.267125
+  ...
+# Subtest: ranch3d.html: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 18 - ranch3d.html: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 46.145167
+  ...
+# Subtest: fieldstone cache normalization preserves the existing four native cache states and exact historical camera state
+ok 19 - fieldstone cache normalization preserves the existing four native cache states and exact historical camera state
+  ---
+  duration_ms: 506.911458
+  ...
+# Subtest: new parent suffix preserves all six existing published cache positive and malformed-import contracts
+ok 20 - new parent suffix preserves all six existing published cache positive and malformed-import contracts
+  ---
+  duration_ms: 215.261709
+  ...
+# Subtest: new wall-cache adapter keeps every six d5 grass body hash and four original298 body hash
+ok 21 - new wall-cache adapter keeps every six d5 grass body hash and four original298 body hash
+  ---
+  duration_ms: 108.852209
+  ...
+# Subtest: all current test/guard adapters reverse exactly to their complete a78 source with every original assertion and hash retained
+ok 22 - all current test/guard adapters reverse exactly to their complete a78 source with every original assertion and hash retained
+  ---
+  duration_ms: 2.282792
+  ...
+# Subtest: actual fieldstone lifecycle owner call is present exactly once and restores the complete original route owner
+ok 23 - actual fieldstone lifecycle owner call is present exactly once and restores the complete original route owner
+  ---
+  duration_ms: 14.521459
+  ...
+# Subtest: unknown wall array, malformed lifecycle call, duplicate/mixed call and unrelated route drift cannot normalize
+ok 24 - unknown wall array, malformed lifecycle call, duplicate/mixed call and unrelated route drift cannot normalize
+  ---
+  duration_ms: 16.636792
+  ...
+# Subtest: both exact fine-hair imports are live once and restore the unchanged complete world preimage
+ok 25 - both exact fine-hair imports are live once and restore the unchanged complete world preimage
+  ---
+  duration_ms: 58.095125
+  ...
+# Subtest: all eight reviewed controller/library cache combinations retain the same complete source body
+ok 26 - all eight reviewed controller/library cache combinations retain the same complete source body
+  ---
+  duration_ms: 354.862583
+  ...
+# Subtest: each fine-hair cache rejects missing, unknown, duplicate and mixed approved literals
+ok 27 - each fine-hair cache rejects missing, unknown, duplicate and mixed approved literals
+  ---
+  duration_ms: 154.045833
+  ...
+# Subtest: cache approval cannot hide a changed owner, unrelated source, or a new query suffix
+ok 28 - cache approval cannot hide a changed owner, unrelated source, or a new query suffix
+  ---
+  duration_ms: 78.66775
+  ...
+# Subtest: pinned legacy render-batch registration genuinely misses the recorded opaque barn wall
+ok 29 - pinned legacy render-batch registration genuinely misses the recorded opaque barn wall
+  ---
+  duration_ms: 181.023792
+  ...
+# Subtest: native ranch audit reproduces interior-to-exterior occlusion and retracts behind the actual wall
+ok 30 - native ranch audit reproduces interior-to-exterior occlusion and retracts behind the actual wall
+  ---
+  duration_ms: 517.515375
+  ...
+# Subtest: barn sheltered bays remain open while inset doors, side walls, roof and cross-beam block
+ok 31 - barn sheltered bays remain open while inset doors, side walls, roof and cross-beam block
+  ---
+  duration_ms: 66.534042
+  ...
+# Subtest: authored open doorway remains clear after translation and oblique rotations; walls and roof still stop
+ok 32 - authored open doorway remains clear after translation and oblique rotations; walls and roof still stop
+  ---
+  duration_ms: 228.282792
+  ...
+# Subtest: door approach and departure retain visible translated/rotated sightlines through smoothing
+ok 33 - door approach and departure retain visible translated/rotated sightlines through smoothing
+  ---
+  duration_ms: 316.781042
+  ...
+# Subtest: nested authored models and nonuniform parent transforms retain their own clear door and solid walls
+ok 34 - nested authored models and nonuniform parent transforms retain their own clear door and solid walls
+  ---
+  duration_ms: 36.531042
+  ...
+# Subtest: old unannotated meshes preserve wall fallback and translucent exclusion
+ok 35 - old unannotated meshes preserve wall fallback and translucent exclusion
+  ---
+  duration_ms: 0.488625
+  ...
+# Subtest: camera registration preserves authored models and consumes no seeded UUID/RNG values
+ok 36 - camera registration preserves authored models and consumes no seeded UUID/RNG values
+  ---
+  duration_ms: 41.642167
+  ...
+# Subtest: indexed camera conservatively matches scalar V2 at negative cells, exact boundaries, transformed parts and wide fallback
+ok 37 - indexed camera conservatively matches scalar V2 at negative cells, exact boundaries, transformed parts and wide fallback
+  ---
+  duration_ms: 262.834125
+  ...
+# Subtest: existing orbit/frame/input and builder/collision source contracts remain exact
+ok 38 - existing orbit/frame/input and builder/collision source contracts remain exact
+  ---
+  duration_ms: 3.374458
+  ...
+# Subtest: exact frozen runtime and one import reversal reject camera drift without changing historical main assertions
+ok 39 - exact frozen runtime and one import reversal reject camera drift without changing historical main assertions
+  ---
+  duration_ms: 36.41825
+  ...
+# Subtest: merged runtime preserves every incoming grass/verge owner byte except the declared progression hint and five cache imports
+ok 40 - merged runtime preserves every incoming grass/verge owner byte except the declared progression hint and five cache imports
+  ---
+  duration_ms: 381.655292
+  ...
+# Subtest: every compatibility observer reconstructs its exact incoming complete body and preserves all original assertions
+ok 41 - every compatibility observer reconstructs its exact incoming complete body and preserves all original assertions
+  ---
+  duration_ms: 215.508875
+  ...
+# Subtest: all fixed incoming dependency SHA and old fixture bytes remain authoritative through exact observer projection
+ok 42 - all fixed incoming dependency SHA and old fixture bytes remain authoritative through exact observer projection
+  ---
+  duration_ms: 402.286667
+  ...
+# Subtest: unknown, duplicate, mixed cache declarations and changed import owners cannot pass the combined whole-body guards
+ok 43 - unknown, duplicate, mixed cache declarations and changed import owners cannot pass the combined whole-body guards
+  ---
+  duration_ms: 27.888625
+  ...
+# Subtest: approved progression compatibility cannot normalize body drift, wrong hint logic or malformed grass literals
+ok 44 - approved progression compatibility cannot normalize body drift, wrong hint logic or malformed grass literals
+  ---
+  duration_ms: 78.856666
+  ...
+# Subtest: actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+ok 45 - actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+  ---
+  duration_ms: 1.211583
+  ...
+# Subtest: positive legacy race history stays compatible with absent or zero modern ledger
+ok 46 - positive legacy race history stays compatible with absent or zero modern ledger
+  ---
+  duration_ms: 0.285875
+  ...
+# Subtest: points, placings, best times and ribbons alone do not invent a completed race
+ok 47 - points, placings, best times and ribbons alone do not invent a completed race
+  ---
+  duration_ms: 0.359125
+  ...
+# Subtest: missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+ok 48 - missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+  ---
+  duration_ms: 0.577917
+  ...
+# Subtest: loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+ok 49 - loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+  ---
+  duration_ms: 0.278875
+  ...
+# Subtest: the real gate reads fresh progress every time without mutating it or writing rewards
+ok 50 - the real gate reads fresh progress every time without mutating it or writing rewards
+  ---
+  duration_ms: 0.122583
+  ...
+# Subtest: first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+ok 51 - first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+  ---
+  duration_ms: 2.653084
+  ...
+# Subtest: exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+ok 52 - exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+  ---
+  duration_ms: 294.670584
+  ...
+# Subtest: unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+ok 53 - unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+  ---
+  duration_ms: 5.275625
+  ...
+# Subtest: existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+ok 54 - existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+  ---
+  duration_ms: 483.351833
+  ...
+# Subtest: five exact live cache imports preserve the complete independently pinned243dbfb owners
+ok 55 - five exact live cache imports preserve the complete independently pinned243dbfb owners
+  ---
+  duration_ms: 236.208959
+  ...
+# Subtest: unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+ok 56 - unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+  ---
+  duration_ms: 116.503208
+  ...
+# Subtest: cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+ok 57 - cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+  ---
+  duration_ms: 393.365875
+  ...
+# Subtest: existing cache fixtures and source pins retain their original bytes
+ok 58 - existing cache fixtures and source pins retain their original bytes
+  ---
+  duration_ms: 309.859
+  ...
+# Subtest: merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+ok 59 - merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+  ---
+  duration_ms: 255.68025
+  ...
+# Subtest: original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+ok 60 - original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+  ---
+  duration_ms: 597.249
+  ...
+# Subtest: each exact new cache edge and its original subject retain the same complete old source body
+ok 61 - each exact new cache edge and its original subject retain the same complete old source body
+  ---
+  duration_ms: 391.4135
+  ...
+# Subtest: unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+ok 62 - unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+  ---
+  duration_ms: 79.151542
+  ...
+# Subtest: merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+ok 63 - merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+  ---
+  duration_ms: 72.0125
+  ...
+# Subtest: camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+ok 64 - camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+  ---
+  duration_ms: 26.254583
+  ...
+# Subtest: near: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+ok 65 - near: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+  ---
+  duration_ms: 10.284708
+  ...
+# Subtest: meadow: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+ok 66 - meadow: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+  ---
+  duration_ms: 36.806958
+  ...
+# Subtest: low: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+ok 67 - low: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+  ---
+  duration_ms: 12.93525
+  ...
+# Subtest: seeded: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+ok 68 - seeded: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+  ---
+  duration_ms: 6.230917
+  ...
+# Subtest: grazed: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+ok 69 - grazed: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost
+  ---
+  duration_ms: 2.338166
+  ...
+# Subtest: live seed stems and heads retain all original attributes and relative topology exactly after ribbon relocation
+ok 70 - live seed stems and heads retain all original attributes and relative topology exactly after ribbon relocation
+  ---
+  duration_ms: 1.011333
+  ...
+# Subtest: live family and planning resource metadata describes actual 2704-byte near geometry and unchanged 40/70-triangle tiers
+ok 71 - live family and planning resource metadata describes actual 2704-byte near geometry and unchanged 40/70-triangle tiers
+  ---
+  duration_ms: 2.032917
+  ...
+# Subtest: live ribbon and unchanged middle factories retain one geometry, four UUID draws, future24 and zero new materials/textures
+ok 72 - live ribbon and unchanged middle factories retain one geometry, four UUID draws, future24 and zero new materials/textures
+  ---
+  duration_ms: 46.243541
+  ...
+# Subtest: all216 noncanonical combinations and actual middle tiers retain complete d9 attributes, index, bounds and metadata
+ok 73 - all216 noncanonical combinations and actual middle tiers retain complete d9 attributes, index, bounds and metadata
+  ---
+  duration_ms: 126.213083
+  ...
+# Subtest: actual ribbons retain finite drawn sides under the Clover near/grazed instance scales and source tilts
+ok 74 - actual ribbons retain finite drawn sides under the Clover near/grazed instance scales and source tilts
+  ---
+  duration_ms: 15.76475
+  ...
+# Subtest: ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 75 - ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 468.92375
+  ...
+# Subtest: assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 76 - assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 1.283583
+  ...
+# Subtest: assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 77 - assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.638458
+  ...
+# Subtest: assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 78 - assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.289583
+  ...
+# Subtest: assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 79 - assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.355875
+  ...
+# Subtest: assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 80 - assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 1.401458
+  ...
+# Subtest: actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+ok 81 - actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+  ---
+  duration_ms: 43.948083
+  ...
+# Subtest: all previously accepted native and camera states preserve every original d5 body hash
+ok 82 - all previously accepted native and camera states preserve every original d5 body hash
+  ---
+  duration_ms: 225.877417
+  ...
+# Subtest: every observer adapter preserves its full d9 source, every old assertion and all old hashes
+ok 83 - every observer adapter preserves its full d9 source, every old assertion and all old hashes
+  ---
+  duration_ms: 5.973333
+  ...
+1..83
+# tests 83
+# suites 0
+# pass 83
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1893.339417

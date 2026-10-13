@@ -1,18 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
-import {createGrazedSwardGeometry,GRAZED_SWARD} from '../assets/grazed-sward.mjs';
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
-import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
+import {createLushMeadowGeometry} from './grass-ribbon-historical-factories.mjs';
+import {createGrazedSwardGeometry,GRAZED_SWARD} from './grass-ribbon-historical-factories.mjs';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-ribbon-historical-factories.mjs';
+import {createGrassTuftGeometry} from './grass-ribbon-historical-factories.mjs';
 import {
  createLushMeadowGeometry as baselineLush,
  createGrazedSwardGeometry as baselineGrazed,
  createGrassTuftGeometry as baselineTuft,
 } from './grass-arch-historical-factories.mjs';
 
-// This is the current physical arch model's contract. Historical narrow,
-// upright-blade contracts remain separate and use the pinned d5b9441 factories.
+// Historical d9 creased-arch assertions keep their original thresholds.
+// The actual continuous ribbon model has separate production-import contracts.
 const forms=[
  {name:'near',create:t=>createGrassTuftGeometry(t,{profile:'near-folded-v1'}),before:t=>baselineTuft(t,{profile:'near-folded-v1'}),leaves:8,arched:6,upright:2,triangles:40,vertices:64,bytes:3056,cap:1.1446000337600708},
  ...[0,1,2].map(family=>({name:['meadow','low','seeded'][family],create:t=>createGrassFamilyGeometry(t,family),before:t=>baselineLush(t,{leafCount:14,segments:family===2?2:3,profile:['meadow','low','seeded'][family],seeded:family===2}),leaves:[14,14,10][family],arched:[11,11,6][family],upright:[3,3,4][family],triangles:70,vertices:[112,112,122][family],bytes:[5348,5348,5788][family],cap:[1.1446000337600708,.6753140091896057,1.5850000381469727][family]})),
@@ -54,7 +54,7 @@ function physicalSurface(g){
  const saved=n.array.slice();g.computeVertexNormals();
  assert.deepEqual(n.array,saved,'Normals come from actual geometry, with no lighting-normal substitution');
 }
-for(const form of forms)test(`${form.name}: rooted creased arches, few upright tips, preserved source cap and triangle budget`,()=>{
+for(const form of forms)test(`Historical d9 morphology: ${form.name}: rooted creased arches, few upright tips, preserved source cap and triangle budget`,()=>{
  const old=form.before(T),g=form.create(T);
  try{
   physicalSurface(g);const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,leaves=ranges(g),roots=priorRootCentres(old,form.name);
@@ -94,7 +94,7 @@ for(const form of forms)test(`${form.name}: rooted creased arches, few upright t
  }finally{old.dispose();g.dispose();}
 });
 
-test('current family metadata agrees with actual physical leaves and seed stems',()=>{
+test('Historical d9 morphology: current family metadata agrees with actual physical leaves and seed stems',()=>{
  assert.deepEqual(GRASS_FAMILIES.map(f=>f.leaves),[14,14,10]);
  assert.deepEqual(GRASS_FAMILIES.map(f=>f.seedStems),[0,0,2]);
  assert.equal(GRAZED_SWARD.leaves,14);assert.equal(GRAZED_SWARD.bentLeaves,12);assert.equal(GRAZED_SWARD.maximumRadius,.60);
@@ -105,7 +105,7 @@ test('current family metadata agrees with actual physical leaves and seed stems'
  }
 });
 
-test('seeded model preserves original seed stem/head attributes and relative topology exactly',()=>{
+test('Historical d9 morphology: seeded model preserves original seed stem/head attributes and relative topology exactly',()=>{
  const a=baselineLush(T,{leafCount:14,segments:2,profile:'seeded',seeded:true}),b=createGrassFamilyGeometry(T,2);
  try{
   const lastA=ranges(a).at(-1),lastB=ranges(b).at(-1),startA=lastA.vertexStart+lastA.vertexCount,startB=lastB.vertexStart+lastB.vertexCount;
@@ -126,7 +126,7 @@ function sampledConstructor(create){
  try{const geometry=create(probe),calls=draws,future=Array.from({length:24},()=>Math.random());return{geometry,calls,future,allocated};}
  finally{Math.random=saved;}
 }
-test('each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation',()=>{
+test('Historical d9 morphology: each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation',()=>{
  const constructors=[...forms,...[4,6,8].map(n=>({name:`middle${n}`,create:t=>createGrassTuftGeometry(t,{profile:'middle-natural-v1',bladeCount:n,segments:2}),before:t=>baselineTuft(t,{profile:'middle-natural-v1',bladeCount:n,segments:2})}))];
  for(const form of constructors){
   const a=sampledConstructor(form.before),b=sampledConstructor(form.create);
@@ -135,7 +135,7 @@ test('each production factory keeps one geometry, four UUID draws and the future
  }
 });
 
-test('all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte',()=>{
+test('Historical d9 morphology: all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte',()=>{
  let exact=0,canonical=0;
  for(let leafCount=4;leafCount<=14;leafCount++)for(const segments of [2,3])for(const profile of ['meadow','low','seeded','near','middle'])for(const seeded of [false,true]){
   const changed=profile==='near'&&leafCount===8&&segments===3&&!seeded||['meadow','low'].includes(profile)&&leafCount===14&&segments===3&&!seeded||profile==='seeded'&&leafCount===14&&segments===2&&seeded;

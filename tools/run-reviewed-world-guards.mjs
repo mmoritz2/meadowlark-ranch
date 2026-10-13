@@ -29,7 +29,9 @@ function tree(relative=''){
    if(['assets','tools','assets/features'].includes(name))tree(name);else symlinkSync(src,dest,'dir');
   }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));
   else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(readFileSync(src,'utf8'),name));
-  else if(observers.has(name))writeFileSync(dest,normalizeReviewedObserverSource(readFileSync(src,'utf8'),name));
+  // Incoming live observers now perform their own complete historical adapter
+  // reversal; pre-projecting these copies would incorrectly reverse twice.
+  else if(observers.has(name))copyFileSync(src,dest);
   // Copy all top-level tool modules so their import.meta.url/__dirname subject
   // and fixture paths use the projection; asset geometry stays the live source.
   else if(relative==='tools'&&/\.(?:mjs|cjs|js)$/.test(ent.name))copyFileSync(src,dest);

@@ -1,4 +1,5 @@
 import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
+import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +13,7 @@ const source=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8'),course=fs.re
 const old=original.createMeadowLupinGeometry(T),next=current.createMeadowLupinGeometry(T);
 const bytes=a=>Buffer.from(a.buffer,a.byteOffset,a.byteLength);
 const rows=v=>{const b=fs.readFileSync(new URL(v.file,fixture));assert.equal(sha(b),v.sha256);return new Float32Array(b.buffer,b.byteOffset,b.byteLength/4);};
-const nearBlock=s=>sourceSlice(s,' const gh=',' const crossGeo=')+sourceSlice(s,' const okGrass=',' let swardAccentColliders=');
+const nearBlock=s=>{s=normalizeGrassRibbonSource(s,'ranch3d.html');return sourceSlice(s,' const gh=',' const crossGeo=')+sourceSlice(s,' const okGrass=',' let swardAccentColliders=');};
 const meshPacket=m=>({count:m.count,matrix:sha(bytes(m.instanceMatrix.array)),color:sha(bytes(m.instanceColor.array)),matrixVersion:m.instanceMatrix.version,colorVersion:m.instanceColor.version});
 function replayPacket(r){return{meshes:Object.fromEntries(['near','flow','fern','reed','rock','lupin'].map(k=>[k,meshPacket(r[k])])),cells:[r.grassCells,r.lupinCells,r.reedCells].map(c=>({digest:cellsDigest(c),counts:c.map(v=>v.count)})),origin:r.cellOrigin(),version:r.sourceVersion(),colliders:r.D.G.world.colliders};}
 test('frozen runtime and genuine previous native geometry bind exactly; colony policy, constructors and physical source stay unchanged',()=>{

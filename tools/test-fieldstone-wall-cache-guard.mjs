@@ -2,11 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';
+import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
+const normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
+import {normalizeReviewedObserverSource,normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';
 const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/fieldstone-wall-a78ed79/contract.json',import.meta.url),'utf8'));
-const read=file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');
+const read=file=>normalizeReviewedRuntimeSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);
 const sha=source=>createHash('sha256').update(source).digest('hex');
 // Keep the complete a78 raw snapshot and six historical published-edge subjects.
 // The live source is first checked by the unchanged strict fieldstone guard;
@@ -74,7 +77,7 @@ test('new wall-cache adapter keeps every six d5 grass body hash and four origina
 test('all current test/guard adapters reverse exactly to their complete a78 source with every original assertion and hash retained',()=>{
  const changes=JSON.parse(fs.readFileSync(new URL('./fixtures/fieldstone-wall-a78ed79/test-adapter-changes.json',import.meta.url),'utf8'));
  for(const [file,hash]of Object.entries(contract.testAdapterPreimages)){
-  let source=read(file);
+  let source=normalizeReviewedObserverSource(normalizeGrassRibbonTestSource(read(file),file),file);
   for(const c of changes.toReversed().filter(c=>c.file===file)){
    assert.equal(source.split(c.after).length,2,'Only the exact reviewed adapter '+file);
    source=source.replace(c.after,c.before);

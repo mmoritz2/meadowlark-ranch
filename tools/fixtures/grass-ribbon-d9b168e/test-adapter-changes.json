@@ -1,0 +1,230 @@
+[
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "const {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');",
+    "after": "const {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');\nconst {normalizeGrassRibbonSource}=require('./grass-ribbon-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "function normalizeGrassArchSource(source,file){\n source=normalizeFieldstoneWallCacheSource(source,file);",
+    "after": "function normalizeGrassArchSource(source,file){\n source=normalizeGrassRibbonSource(source,file);\n source=normalizeFieldstoneWallCacheSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-basic-riding-tack.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coyote-crag-composition.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "  let source=read(file);",
+    "after": "  let source=normalizeGrassRibbonTestSource(read(file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';",
+    "after": "import {createLushMeadowGeometry} from './grass-ribbon-historical-factories.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "import {createGrazedSwardGeometry,GRAZED_SWARD} from '../assets/grazed-sward.mjs';",
+    "after": "import {createGrazedSwardGeometry,GRAZED_SWARD} from './grass-ribbon-historical-factories.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';",
+    "after": "import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-ribbon-historical-factories.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "import {createGrassTuftGeometry} from '../assets/meadow-cover.js';",
+    "after": "import {createGrassTuftGeometry} from './grass-ribbon-historical-factories.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "// This is the current physical arch model's contract. Historical narrow,\n// upright-blade contracts remain separate and use the pinned d5b9441 factories.",
+    "after": "// Historical d9 creased-arch assertions keep their original thresholds.\n// The actual continuous ribbon model has separate production-import contracts.",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "test(`${form.name}: rooted creased arches",
+    "after": "test(`Historical d9 morphology: ${form.name}: rooted creased arches",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "test('current family metadata agrees",
+    "after": "test('Historical d9 morphology: current family metadata agrees",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "test('seeded model preserves",
+    "after": "test('Historical d9 morphology: seeded model preserves",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "test('each production factory keeps",
+    "after": "test('Historical d9 morphology: each production factory keeps",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-model.mjs",
+    "before": "test('all216 noncanonical public combinations",
+    "after": "test('Historical d9 morphology: all216 noncanonical public combinations",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-wind.mjs",
+    "before": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';",
+    "after": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-wind.mjs",
+    "before": "test('actual arched/creased leaf normals follow real wind, retirement and rider-parting triangles'",
+    "after": "test('actual continuous ribbon leaf normals follow real wind, retirement and rider-parting triangles'",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-wind.mjs",
+    "before": " const main=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),tag=",
+    "after": " const main=normalizeGrassRibbonSource(fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),'ranch3d.html'),tag=",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-field-grass.mjs",
+    "before": "import {MIXED_SWARD} from '../assets/mixed-sward.mjs';",
+    "after": "import {MIXED_SWARD} from './grass-ribbon-historical-factories.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-wind.mjs",
+    "before": "for(const fade of [0,.0001,.12,.45,1])",
+    "after": "for(const fade of [0,.0001,.12,.45,.73,1])",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fine-hair-cache-guard.mjs",
+    "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';",
+    "after": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fine-hair-cache-guard.mjs",
+    "before": "const source=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8');",
+    "after": "const source=normalizeGrassRibbonSource(fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),'ranch3d.html');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),hash,'Unchanged incoming/original guard '+file);",
+    "after": "assert.equal(sha(normalizeGrassRibbonTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Unchanged incoming/original guard '+file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "function normalizeReviewedObserverSource(source,file){\n const expected=",
+    "after": "function normalizeReviewedObserverSource(source,file){\n source=normalizeGrassRibbonTestSource(source,file);\n const expected=",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';",
+    "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeReviewedObserverSource} from './reviewed-riding-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "  let source=normalizeGrassRibbonTestSource(read(file),file);",
+    "after": "  let source=normalizeReviewedObserverSource(normalizeGrassRibbonTestSource(read(file),file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lupin-independent.mjs",
+    "before": "import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';",
+    "after": "import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lupin-independent.mjs",
+    "before": "const nearBlock=s=>sourceSlice(s,' const gh=',' const crossGeo=')+sourceSlice(s,' const okGrass=',' let swardAccentColliders=');",
+    "after": "const nearBlock=s=>{s=normalizeGrassRibbonSource(s,'ranch3d.html');return sourceSlice(s,' const gh=',' const crossGeo=')+sourceSlice(s,' const okGrass=',' let swardAccentColliders=');};",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';",
+    "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeGrassRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "const read=file=>fs.readFileSync(new URL(file,root),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex');",
+    "after": "const read=file=>{const source=fs.readFileSync(new URL(file,root),'utf8');return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "import {normalizeReviewedObserverSource} from './reviewed-riding-source-guard.cjs';",
+    "after": "import {normalizeReviewedObserverSource,normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "const read=file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');",
+    "after": "const read=file=>normalizeReviewedRuntimeSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-follow-camera-authored-parts.mjs",
+    "before": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';",
+    "after": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';\nimport {normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-follow-camera-authored-parts.mjs",
+    "before": "hash(readFileSync(resolve(root,name)))",
+    "after": "hash(name==='assets/features/course-guide.js'?normalizeReviewedGuideSource(readFileSync(resolve(root,name),'utf8'),name):readFileSync(resolve(root,name)))",
+    "occurrences": 1
+  }
+]

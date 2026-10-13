@@ -7,6 +7,7 @@ import {normalizeProgressionLoopCacheSource} from './progression-loop-cache-sour
 import {normalizeProgressionHintsSource} from './progression-hints-source-guard.cjs';
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
+import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';
 const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
 const source=read('ranch3d.html'),contract=JSON.parse(read('tools/fixtures/progression-hints-243dbfb/contract.json'));
 const sha=value=>createHash('sha256').update(value).digest('hex');
@@ -53,7 +54,7 @@ test('exactly one approved predicate reconstructs the independently pinned243dbf
  const original=execFileSync('git',['show',contract.baseline+':ranch3d.html'],{cwd:root,encoding:'utf8'}),{change}=contract;
  assert.equal(sha(original),contract.beforeSHA256);assert.equal(change.occurrences,1);assert.equal(original.split(change.before).length-1,1);
  assert.equal(sha(original.replace(change.before,change.after)),contract.afterSHA256);
- const projected=normalizeProgressionLoopCacheSource(source,'ranch3d.html');
+ const projected=normalizeProgressionLoopCacheSource(normalizeGrassRibbonOwnSource(source,'ranch3d.html'),'ranch3d.html');
  assert.equal(projected,original.replace(change.before,change.after));assert.equal(normalizeProgressionHintsSource(projected,'ranch3d.html'),original);assert.equal(normalizeProgressionHintsSource(original,'ranch3d.html'),original);
 });
 test('unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter',()=>{
@@ -63,8 +64,8 @@ test('unknown, duplicate, deleted and mixed eligibility changes cannot pass the 
 });
 test('existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal',()=>{
  const incoming=execFileSync('git',['show','04ba300:ranch3d.html'],{cwd:root,encoding:'utf8'});
- assert.equal(normalizeReviewedRuntimeSource(source,'ranch3d.html'),incoming);
- const projected=normalizeProgressionLoopCacheSource(source,'ranch3d.html');
+ assert.equal(normalizeReviewedRuntimeSource(normalizeGrassRibbonOwnSource(source,'ranch3d.html'),'ranch3d.html'),incoming);
+ const projected=normalizeProgressionLoopCacheSource(normalizeGrassRibbonOwnSource(source,'ranch3d.html'),'ranch3d.html');
  for(const bad of [source+'\n// unrelated runtime edit',projected.replace('physical-ride-2-starter-tack-2-fieldstone-walls-3','unknown-cache'),source.replace('!G.dialogue?.active&&!course','!G.dialogue?.active')]){
   assert.throws(()=>normalizeReviewedWorldSource(bad,'ranch3d.html'));assert.throws(()=>normalizeStarterTackSource(bad,'ranch3d.html'));
  }

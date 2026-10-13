@@ -7,6 +7,7 @@ import {normalizeProgressionLoopCacheSource} from './progression-loop-cache-sour
 import {normalizeProgressionHintsSource} from './progression-hints-source-guard.cjs';
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
+import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';
 const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
 const contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));
 const sha=s=>createHash('sha256').update(s).digest('hex');
@@ -15,7 +16,7 @@ const original=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd
 test('five exact live cache imports preserve the complete independently pinned243dbfb owners',()=>{
  assert.equal(contract.changes.length,5);
  for(const [file,hash] of Object.entries(contract.beforeSHA256)){
-  const before=original(file),live=read(file);assert.equal(sha(before),hash);
+  const before=original(file),live=normalizeGrassRibbonOwnSource(read(file),file);assert.equal(sha(before),hash);
   let expected=before;
   for(const c of contract.changes.filter(c=>c.file===file)){
    assert.equal(c.occurrences,1);assert.equal(expected.split(c.before).length-1,1);expected=expected.replace(c.before,c.after);
@@ -42,7 +43,7 @@ test('cache compatibility cannot strip an unknown version, suppress body drift, 
   const drift=live+'\n// unauthorized runtime behavior';
   assert(normalizeProgressionLoopCacheSource(drift,file).endsWith('// unauthorized runtime behavior'));
   assert.throws(()=>normalizeReviewedWorldSource(drift,file));assert.throws(()=>normalizeStarterTackSource(drift,file));
-  assert.equal(normalizeReviewedRuntimeSource(live,file),execFileSync('git',['show','04ba300:'+file],{cwd:root,encoding:'utf8'}));
+  assert.equal(normalizeReviewedRuntimeSource(normalizeGrassRibbonOwnSource(live,file),file),execFileSync('git',['show','04ba300:'+file],{cwd:root,encoding:'utf8'}));
  }
  assert.equal(normalizeProgressionLoopCacheSource('unchanged body','assets/features/course-engine.js'),'unchanged body');
 });

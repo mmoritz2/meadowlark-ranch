@@ -1,0 +1,11 @@
+{
+  "progressionCommit": "9c9ae98d38c77192f67ec4fefd9509ed2c752db7",
+  "grassCommit": "b1a73b14e5c82d9f0a985471340e2915db8cfce1",
+  "preimageSHA256": {
+    "tools/reviewed-riding-source-guard.cjs": "82322d25fd68e7277ee85a4e88ecfb43c971db1c864d05c29dcfc67d74c98ed4",
+    "tools/test-reviewed-riding-source-guard.mjs": "ebad495aafb9af04bbf116be72f4499dcb4c5419b0724ad4602403ec79c4f818",
+    "tools/grass-ribbon-source-guard.cjs": "2b232663ae9f62b716f70019cae060a7607f1e4ea049e2d50e0ae24f43ae96cb",
+    "tools/test-ribbon-grass-source-guard.mjs": "4c9884df6ea5684c945c01ae3302695b6f3fb2ce3a3f9737fe9581987283f4f2"
+  },
+  "scope": "Exact progression hint + five cache reversals before incoming grass owner/observer preimages; all incoming expected SHA values and old assertions remain fixed."
+}
