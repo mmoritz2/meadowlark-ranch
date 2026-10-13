@@ -39,6 +39,20 @@
       "before": "'./assets/game-hero-horse.js?v=draft-feathers-20261013d'",
       "after": "'./assets/game-hero-horse.js?v=feather-sway-20261013a'",
       "publishedCommit": "80dfb836171e9becc206cd4e9fb2c99a8d32fe9a"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/game-hero-horse.js?v=draft-feathers-20261013d'",
+      "after": "'./assets/game-hero-horse.js?v=fine-hair-20261013c'",
+      "approvedCommit": "bf50694e6bf8b28026baf720623105cd2443bd56",
+      "reason": "Reviewed fine-hair renderer cache only; every other world owner byte remains pinned."
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/breed-models.js?v=world-presentations-1'",
+      "after": "'./assets/breed-models.js?v=fine-hair-20261013c'",
+      "approvedCommit": "bf50694e6bf8b28026baf720623105cd2443bd56",
+      "reason": "Reviewed fine-hair renderer cache only; every other world owner byte remains pinned."
     }
   ],
   "baselineSHA256": {

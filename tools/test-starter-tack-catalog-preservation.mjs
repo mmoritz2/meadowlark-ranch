@@ -18,7 +18,7 @@ test('source preimage adapters keep prior explicit-equipment contracts meaningfu
 // change may pass only if all remaining source bytes restore the pinned fixture.
 test('only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail',()=>{
  const edges=[
-  ['ranch3d.html',"'./assets/game-hero-horse.js?v=full-groom-20261013c'","'./assets/game-hero-horse.js?v=draft-feathers-20261013d'"],
+  ['ranch3d.html',"'./assets/game-hero-horse.js?v=fine-hair-20261013c'","'./assets/game-hero-horse.js?v=draft-feathers-20261013d'"],
   ['ranch3d.html',"import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';","import {FEATURES} from './assets/features/index.js?v=starter-tack-2';"],
   ['assets/features/index.js',"import * as storyGuidance from './story-guidance.js?v=story-witness-1';","import * as storyGuidance from './story-guidance.js?v=ranch-rush-1';"],
   ['assets/features/index.js',"import * as seFrame from './se-frame.js?v=story-events-20261013';","import * as seFrame from './se-frame.js?v=horse-actions-20261009';"],
@@ -36,9 +36,9 @@ test('only exact reviewed cache edges are accepted; unknown, duplicate, mixed an
  }
 });
 
-test('published native-groom cache chain accepts all three reviewed states and rejects an unknown next version or mixed history',()=>{
+test('published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history',()=>{
  const file='ranch3d.html',source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file,fixture),'utf8');
- const latest="'./assets/game-hero-horse.js?v=full-groom-20261013c'",versions=['full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d'];
+ const latest="'./assets/game-hero-horse.js?v=fine-hair-20261013c'",versions=['fine-hair-20261013c','full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d'];
  assert.equal(source.split(latest).length-1,1);
  for(const version of versions){
   const literal="'./assets/game-hero-horse.js?v="+version+"'",candidate=source.replace(latest,literal);

@@ -8,12 +8,18 @@ import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/fieldstone-wall-a78ed79/contract.json',import.meta.url),'utf8'));
 const read=file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');
 const sha=source=>createHash('sha256').update(source).digest('hex');
+// Keep the complete a78 raw snapshot and six historical published-edge subjects.
+// The live source is first checked by the unchanged strict fieldstone guard;
+// only these two independently tested, explicitly reviewed cache literals differ.
+const priorHairImports=source=>source
+ .replace("'./assets/game-hero-horse.js?v=fine-hair-20261013c'","'./assets/game-hero-horse.js?v=full-groom-20261013c'")
+ .replace("'./assets/breed-models.js?v=fine-hair-20261013c'","'./assets/breed-models.js?v=world-presentations-1'");
 for(const [file,row]of Object.entries(contract.files))test(`${file}: exactly one live fieldstone import reverses to the complete a78 body`,()=>{
  const source=read(file),c=row.change;
  assert.equal(source.split(c.after).length-1,1,'Actual parent/child cache edge is live once');
  assert.equal(source.split(c.before).length-1,0,'No mixed original declaration');
  const original=normalizeFieldstoneWallCacheSource(source,file);
- assert.equal(sha(original),row.a78RawSHA256,'Every original a78 owner byte is retained');
+ assert.equal(sha(priorHairImports(original)),row.a78RawSHA256,'Every original a78 owner byte is retained');
  assert.equal(normalizeFieldstoneWallCacheSource(original,file),original,'Exact original state is accepted');
 });
 for(const [file,row]of Object.entries(contract.files))test(`${file}: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected`,()=>{
@@ -29,11 +35,11 @@ for(const [file,row]of Object.entries(contract.files))test(`${file}: unknown, mi
   ['unrelated owner body drift',source+'\n// unreviewed fieldstone owner body drift'],
  ])assert.throws(()=>normalizeFieldstoneWallCacheSource(candidate,file),reason);
 });
-test('fieldstone cache normalization preserves the existing three native cache states and exact historical camera state',()=>{
+test('fieldstone cache normalization preserves the existing four native cache states and exact historical camera state',()=>{
  const file='ranch3d.html',source=read(file),baseline=normalizeFieldstoneWallCacheSource(source,file);
- const current="'./assets/game-hero-horse.js?v=full-groom-20261013c'";
+ const current="'./assets/game-hero-horse.js?v=fine-hair-20261013c'";
  const fixture=fs.readFileSync(new URL('./fixtures/starter-tack-2986289/ranch3d.html',import.meta.url),'utf8');
- for(const version of ['full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d']){
+ for(const version of ['fine-hair-20261013c','full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d']){
   const literal="'./assets/game-hero-horse.js?v="+version+"'",candidate=source.replace(current,literal);
   assert.equal(normalizeFieldstoneWallCacheSource(candidate,file),baseline.replace(current,literal),'Earlier approved native import survives exactly');
   assert.equal(normalizeStarterTackSource(candidate,file),fixture,'Complete original298 body still restores');
@@ -49,7 +55,7 @@ test('new parent suffix preserves all six existing published cache positive and 
  for(const c of published.currentChanges){
   // The independent fieldstone gate verifies the actual live source first.
   // Existing six-edge assertions then keep their pre-wall subject verbatim.
-  const source=normalizeFieldstoneWallCacheSource(read(c.file),c.file);
+  const source=priorHairImports(normalizeFieldstoneWallCacheSource(read(c.file),c.file));
   const expected=fs.readFileSync(new URL('./fixtures/starter-tack-2986289/'+c.file.split('/').at(-1),import.meta.url),'utf8');
   assert.equal(source.split(c.after).length,2);
   assert.equal(normalizeStarterTackSource(source.replace(c.after,c.before),c.file),expected);
