@@ -1,6 +1,6 @@
 # Meadowlark Ranch: native development foundation
 
-This directory packages the existing game as an offline Capacitor 8 iOS app. It includes an Xcode project, a reproducible local web bundle, native save storage, and lifecycle hooks. It is **not an App Store release**. No native archive, signing, simulator run, or physical-device test has been performed. This machine has Apple command-line tools but not Xcode.
+This directory packages the existing game as an offline Capacitor 8 iOS app. It includes an Xcode project, a locally generated web bundle, native save storage, and lifecycle hooks. It is **not an App Store release**. No native archive, signing, simulator run, or physical-device test has been performed. This machine has Apple command-line tools but not Xcode.
 
 ## Build locally
 
@@ -17,7 +17,7 @@ npm run release:check
 
 The last command deliberately exits unsuccessfully while release evidence is missing. After installing Xcode 26 or later, open `ios/App/App.xcodeproj`, select an owned bundle identifier and development team, and build on a device. The iOS deployment target is 16.4 because the game's import maps require that WebKit version. Landscape orientation is configured for iPhone and iPad. The current bundle identifier is an unregistered development placeholder.
 
-`npm run stage` copies a conservative runtime bundle into ignored `www/`, bundles the native bootstrap with esbuild, and writes `bundle-manifest.json` with file sizes and SHA-256 hashes. Only a directory marked as generated is replaced. `npm run ios:sync` stages the current game source again and copies it into the ignored iOS `public/` directory. Re-run sync after game edits. Never add a production `server.url` pointing at the website.
+`npm run stage` copies a conservative runtime bundle into ignored `www/`, bundles the native bootstrap with esbuild, and writes `bundle-manifest.json` with file sizes, SHA-256 hashes, current raw source paths, the Git revision, required runtime inventory, compiler input paths and pre-build package/compiler hashes. `verify` rejects a stale but internally intact bundle; it does not independently reproduce transformed compiler output. Only a directory marked as generated is replaced. `npm run ios:sync` stages the current game source again and copies it into the ignored iOS `public/` directory. Re-run sync after game edits. Never add a production `server.url` pointing at the website.
 
 The staged-browser smoke can be run with the installed Playwright path:
 
@@ -44,17 +44,23 @@ The bridge is deliberately small. If boot, feature-installation, storage, or inp
 
 The native backend uses the official Filesystem plugin in iOS's persistent Library directory, with `meadowlark-save-a.json` and `meadowlark-save-b.json`. It never writes to the user's Safari storage or existing browser profile. A first native installation may migrate only the same app WebView's registered keys; Safari and the native app have separate origins, so Safari progress requires an explicit export/import.
 
-Registered keys are listed in `src/save-store.mjs`: the main ranch, photo journal, VR control preference, tutorial hint, and two feature progress keys. Unknown writes fail explicitly. Add new legitimate keys to that list when adding a saving feature.
+Registered keys are listed in `src/save-store.mjs`: the main ranch, photo journal, VR control preference, tutorial hint, the HUD goal preference, and the registered feature progress keys. Unknown writes fail explicitly. Add new legitimate keys to that list when adding a saving feature.
 
 Writes are coalesced, serialized, checksummed, read back, and alternated between snapshots. Hydration chooses the newest valid revision. One intact snapshot recovers an interrupted write; two damaged snapshots or an unexpected read error stop startup and preserve files. Checksums detect corruption, not malicious editing. Reset clears both recovery slots before reload succeeds, including when it overlaps an older write. Errors display a retry action and do not report a successful save. The in-memory mirror can contain progress newer than disk until a flush finishes; sudden termination during that window can lose the most recent input. Device testing must cover termination, low storage, large photo saves, backgrounding, import/reset, and OS upgrades. Cross-device synchronization is not implemented.
 
 The native privacy manifest declares the Filesystem plugin's file timestamp API reason `C617.1`. The bundled development edition has no analytics, tracking, account service, advertising, payments, or network social connection. This is an implementation description, not a published privacy policy or completed App Store disclosure.
 
+### Delivery reward confirmation
+
+The store exposes a mutation checkpoint and `whenDurable()` acknowledgement containing only verified backend snapshot values. The generated game supplies `save.awaitConfirmedFresh()` through `confirmGameSave`; Cottonwood Post Run validates its exact receipt against this acknowledgement before closing the ride or announcing the reward. A failed write retains the completed delivery and permits retry without paying the same run again. Browser preview uses actual browser storage readback instead. Other reward consumers still need their own durable-confirmation integration; this is not a claim that every native economy write is atomic.
+
+The focused store/controller checks exercise failed writes, held retries and a fresh-store reopen with the actual confirmation adapter. The generated offline bundle also completed one normal-input browser delivery and retained its single receipt after reload, with Social uninstalled. Those checks do not establish physical-device behavior.
+
 ## Exact runtime assets
 
 `runtime-assets.json` includes the entire runtime asset tree, excluding authoring files, plus explicit review-directory dependencies. The approved white-western, bay-western, and bay-sporthorse native body GLBs remain byte-for-byte identical and are checked against pinned hashes. The motion files and rider remain the existing game assets. No model has been downloaded, replaced, or substituted for mobile packaging.
 
-The first bundle is approximately 559 MiB. This intentionally conservative staging includes more than the initial scene needs, including approximately 192 MiB of legacy art under `assets/models/artist-breeds/`. A successful selected-horse smoke is not exhaustive proof of every breed's dynamic loading paths. Asset-size optimization and device memory/thermal tests are release work; removing files without checking dynamic asset paths is unsafe. The native horse profiles load three bodies from `review/native-trot-reference-kit/`, so an assets-only copy is incomplete.
+The current combined development bundle is approximately 680.4 MiB. This intentionally conservative staging includes more than the initial scene needs, including approximately 192 MiB of legacy art under `assets/models/artist-breeds/`. A successful selected-horse smoke is not exhaustive proof of every breed's dynamic loading paths. Asset-size optimization and device memory/thermal tests are release work; removing files without checking dynamic asset paths is unsafe. The native horse profiles load three bodies from `review/native-trot-reference-kit/`, so an assets-only copy is incomplete.
 
 ## Release gates
 

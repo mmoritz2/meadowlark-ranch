@@ -1,0 +1,338 @@
+[
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "const {normalizeGrassRibbonSource}=require('./grass-ribbon-source-guard.cjs');",
+    "after": "const {normalizeGrassRibbonSource}=require('./grass-ribbon-source-guard.cjs');\nconst {normalizeMeadowReliefWallSource}=require('./meadow-relief-wall-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "function normalizeGrassArchSource(source,file){",
+    "after": "function normalizeGrassArchSource(source,file){\n source=normalizeMeadowReliefWallSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "sha(normalizeProgressionGuardSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file))",
+    "after": "sha(normalizeProgressionGuardSource(normalizeMeadowReliefWallTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file),file))",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "function normalizeGrassRibbonTestSource(source,file){",
+    "after": "function normalizeGrassRibbonTestSource(source,file){\n source=normalizeMeadowReliefWallTestSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {undoMeadowReliefWallSource,normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "function normalizeProgressionSource(source,file){",
+    "after": "function normalizeProgressionSource(source,file){\n source=undoMeadowReliefWallSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "function normalizeProgressionGuardSource(source,file){",
+    "after": "function normalizeProgressionGuardSource(source,file){\n source=normalizeMeadowReliefWallTestSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "const {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');",
+    "after": "const {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');\nconst {undoMeadowReliefWallSource}=require('./meadow-relief-wall-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "function normalizeReviewedRuntimeSource(source,file){",
+    "after": "function normalizeReviewedRuntimeSource(source,file){\n source=undoMeadowReliefWallSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-arched-grass-wind.mjs",
+    "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-basic-riding-tack.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coursed-field-wall.mjs",
+    "before": "import {createCoursedFieldWallGeometry} from '../assets/coursed-field-wall.mjs';",
+    "after": "import {createCoursedFieldWallGeometry} from '../assets/coursed-field-wall.mjs';\nimport {createCoursedFieldWallGeometry as historicalCreate} from './meadow-relief-wall-historical.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coursed-field-wall.mjs",
+    "before": "test('coursed kits are deterministic, finite and within the 280 triangle budget',()=>{",
+    "after": "test('Historical b1 slab: coursed kits are deterministic, finite and within the 280 triangle budget',()=>{\n const createCoursedFieldWallGeometry=historicalCreate;",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coyote-crag-composition.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-cache-guard.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-collision.mjs",
+    "before": "import {installCoursedFieldWalls as install,createCoursedFieldWallGeometry as create} from '../assets/coursed-field-wall.mjs';",
+    "after": "import {installCoursedFieldWalls as install,createCoursedFieldWallGeometry as create} from '../assets/coursed-field-wall.mjs';\nimport {installCoursedFieldWalls as historicalInstall} from './meadow-relief-wall-historical.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-collision.mjs",
+    "before": "test('a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{",
+    "after": "test('Historical b1 slab: a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{\n const install=historicalInstall;",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "import {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from '../assets/coursed-field-wall.mjs';",
+    "after": "import {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from './meadow-relief-wall-historical.mjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "  let source=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');",
+    "after": "  let source=normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "test('actual slab geometry preserves complete source records, unit ranges, resources and zero RNG",
+    "after": "test('Historical b1 slab: actual slab geometry preserves complete source records, unit ranges, resources and zero RNG",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "test('every new stone is a closed convex outward slab with physically planar fan normals",
+    "after": "test('Historical b1 slab: every new stone is a closed convex outward slab with physically planar fan normals",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "test('broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles",
+    "after": "test('Historical b1 slab: broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "test('actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner",
+    "after": "test('Historical b1 slab: actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fieldstone-wall-model.mjs",
+    "before": "test('only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore",
+    "after": "test('Historical b1 slab: only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-fine-hair-cache-guard.mjs",
+    "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lupin-independent.mjs",
+    "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "import {createTerrainSurface} from '../assets/terrain-realism.js';",
+    "after": "import {createTerrainSurface} from './meadow-relief-wall-historical.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "import {PASTURE_MESO,pastureMesoAt,patchPastureMesoSurface} from '../assets/pasture-mesosurface.mjs';",
+    "after": "import {PASTURE_MESO,pastureMesoAt,patchPastureMesoSurface,historicalMeadowWallSource} from './meadow-relief-wall-historical.mjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "const source=readFileSync(new URL('../assets/pasture-mesosurface.mjs',import.meta.url),'utf8');",
+    "after": "const source=historicalMeadowWallSource('assets/pasture-mesosurface.mjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('main and outer use one coherent meso field after their final substrate and normal responses",
+    "after": "test('Historical b1 PMS2: main and outer use one coherent meso field after their final substrate and normal responses",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('meso response creates no texture/resource, changes no vertex source and retains opacity",
+    "after": "test('Historical b1 PMS2: meso response creates no texture/resource, changes no vertex source and retains opacity",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('repeated and incomplete patching is atomic",
+    "after": "test('Historical b1 PMS2: repeated and incomplete patching is atomic",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('analytic gradients agree with independent central differences of physical tuft height",
+    "after": "test('Historical b1 PMS2: analytic gradients agree with independent central differences of physical tuft height",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('field filtering removes subpixel response and managed turf has shallower coherent relief",
+    "after": "test('Historical b1 PMS2: field filtering removes subpixel response and managed turf has shallower coherent relief",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('projected normal relief stays finite, bounded and neutral for zero gradient",
+    "after": "test('Historical b1 PMS2: projected normal relief stays finite, bounded and neutral for zero gradient",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('non-pasture substrates suppress the response and cavity shading cannot remove direct light",
+    "after": "test('Historical b1 PMS2: non-pasture substrates suppress the response and cavity shading cannot remove direct light",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pasture-mesosurface.mjs",
+    "before": "test('the broad growth envelope leaves calm and fuller patches without another noise band",
+    "after": "test('Historical b1 PMS2: the broad growth envelope leaves calm and fuller patches without another noise band",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "const read=file=>normalizeLashObserverSource(normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),sha=s=>createHash('sha256').update(s).digest('hex');",
+    "after": "const read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "const root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file);",
+    "after": "const root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "import {normalizeGrassRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonOwnSource as normalizePriorRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-source-guard.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-source-guard.mjs",
+    "before": "const read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file);",
+    "after": "const read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';",
+    "after": "import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file)",
+    "after": "normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-hints.mjs",
+    "before": "import fs from 'node:fs';",
+    "after": "import fs from 'node:fs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-hints.mjs",
+    "before": "normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file)",
+    "after": "normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lash-cache-source-guard.mjs",
+    "before": "import fs from 'node:fs';",
+    "after": "import fs from 'node:fs';\nimport {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lash-cache-source-guard.mjs",
+    "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8')",
+    "after": "read=file=>normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-follow-camera-authored-parts.mjs",
+    "before": "import {normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';",
+    "after": "import {normalizeReviewedGuideSource,normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-follow-camera-authored-parts.mjs",
+    "before": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';",
+    "after": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-follow-camera-authored-parts.mjs",
+    "before": "const main=readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8');",
+    "after": "const main=normalizeReviewedRuntimeSource(normalizeMeadowReliefWallSource(readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8'),'ranch3d.html'),'ranch3d.html');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "{const source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');assert.equal(normalizeStarterTackSource(source,file),expected);",
+    "after": "{const source=normalizeReviewedRuntimeSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');assert.equal(normalizeStarterTackSource(source,file),expected);",
+    "occurrences": 1
+  }
+]

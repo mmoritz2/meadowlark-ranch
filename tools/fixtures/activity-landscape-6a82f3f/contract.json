@@ -1,0 +1,917 @@
+{
+  "activityParent": "6a82f3f82f5a6ff86c8635a68e712d9d609b4b2d",
+  "incomingParent": "3944c9e87ce0ca4c5f13cd0bda067f57b31d6ef2",
+  "baseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "scope": "Exact merged views reconstruct both frozen parents before their unchanged owner, dependency, observer and fixture pins run. Live behavior and new masonry/relief/lashes stay tested directly.",
+  "files": {
+    "ranch3d.html": {
+      "mergedSHA256": "02855b6e98ee6ae7ad4b449659834c83781696c631efcaf4d51483e96e2089b7",
+      "activitySHA256": "0b9bd03fc5bc20ad73fd8416fa63e79b532a87739fee3fb22f10b9cc80863d0d",
+      "incomingSHA256": "a613255bd772194f51db1d1c57cde9b460d2e33b27c25061bce3c52b3054bcb8",
+      "baselineSHA256": "16d741ee7b09bb34514455dea2dfe68d9e46ea6103a4fd6b1ebadf4b31eca027"
+    },
+    "assets/features/index.js": {
+      "mergedSHA256": "cddf0ce10ada48a0b47c6a86a197bc2a70354c2115ac840c4a0725099bbacd08",
+      "activitySHA256": "7b47bd7df36af5116a9c12ab0014222c013452d76a819f8af2536a128a082a7f",
+      "incomingSHA256": "b228384c411d406b57ee0821b3789e6582a989d464ded5b0996181ae3e9e4c54",
+      "baselineSHA256": "e6561453d146c1a4c4f2be53013a6f3904a6c566ae1d8c1bc6db76c8ec0a6f9f"
+    },
+    "assets/features/world.js": {
+      "mergedSHA256": "352a72a704ccdc9625e090d3604c4fa9992938aecfc83b490ed3c85573f04125",
+      "activitySHA256": "352a72a704ccdc9625e090d3604c4fa9992938aecfc83b490ed3c85573f04125",
+      "incomingSHA256": "58f4b28b823a9a249cd250d666c354126c7330342ba70ad37ea7bbc75364c297",
+      "baselineSHA256": "58f4b28b823a9a249cd250d666c354126c7330342ba70ad37ea7bbc75364c297"
+    },
+    "assets/features/story-quests.js": {
+      "mergedSHA256": "f937e85faf7de2add18c4b1bb1a69f8dffdf0736832c9f73b8725f5d17300836",
+      "activitySHA256": "f937e85faf7de2add18c4b1bb1a69f8dffdf0736832c9f73b8725f5d17300836",
+      "incomingSHA256": "cb83646ef507e58f94075bb3607970e22db9cd06f3feb1adc10d588deca49a91",
+      "baselineSHA256": "cb83646ef507e58f94075bb3607970e22db9cd06f3feb1adc10d588deca49a91"
+    }
+  },
+  "toIncoming": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=more-noticeable-lashes96-20261013-fieldstone-walls-4';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as story from './story-quests.js?v=hollowpeak-cascades-1';",
+      "after": "import * as story from './story-quests.js?v=earned-region-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as world from './world.js?v=coyote-macroform-3';",
+      "after": "import * as world from './world.js?v=earned-region-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as social from './social-play.js?v=cottonwood-post-1';",
+      "after": "import * as social from './social-play.js?v=offline-expeditions-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as cottonwoodPost from './cottonwood-post.js?v=cottonwood-post-1';",
+      "after": "import * as cottonwoodPost from './cottonwood-post.js?v=offline-expeditions-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as storyGuidance from './story-guidance.js?v=story-witness-1';",
+      "after": "import * as storyGuidance from './story-guidance.js?v=starter-stall-guide-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": "",
+      "after": "import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": "  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-238,z:220}},\n",
+      "after": "  // Reaching this existing mission follows claiming the five jumping ribbons.\n  // Coyote is a qualifier for the Final, so its story gate must come first.\n  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Earn 15 ribbons of any kind',1,23],ranch:3,text:'after earning your first five show-jumping ribbons, or at ranch level 3'},venue:{x:-238,z:220}},\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": " function ranchLevel(s){const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}\n",
+      "after": " function ranchLevel(s){const RS=G.ranchSys;if(RS&&RS.ranchLevel)return RS.ranchLevel(s);return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/story-quests.js",
+      "before": "",
+      "after": "import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/story-quests.js",
+      "before": "  const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0)+(s.builderBonus||0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}\n",
+      "after": "  return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    }
+  ],
+  "toActivity": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=pastoral-cover-1';",
+      "after": "import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1';",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';",
+      "after": "import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lashes96-20261013';",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=rider-adventures-4-starter-tack-2-fieldstone-walls-3';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as tack from './tack-wardrobe.js?v=noticeable-fine-lashes80-20261012';",
+      "after": "import * as tack from './tack-wardrobe.js?v=more-noticeable-lashes96-20261013';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as wPaths from './world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-3';",
+      "after": "import * as wPaths from './world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4';",
+      "occurrences": 1
+    }
+  ],
+  "observers": {
+    "tools/grass-arch-source-guard.cjs": {
+      "activity": {
+        "beforeSHA256": "ee709fc1908a3f603ae193f0e3cfb02a89fc1bf62045c2decba4cdce16d8aaf3",
+        "afterSHA256": "d0554531c3cd91bfa822230b4c7fc89378181cbfd80472596ab5a8a89f7c4228",
+        "changes": [
+          {
+            "before": "const {normalizeGrassRibbonSource}=require('./grass-ribbon-source-guard.cjs');\nconst directory=path.join(__dirname,'fixtures/grass-arch-d5b9441');\n",
+            "after": "const {normalizeGrassRibbonSource}=require('./grass-ribbon-source-guard.cjs');\nconst {normalizeMeadowReliefWallSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst directory=path.join(__dirname,'fixtures/grass-arch-d5b9441');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeGrassArchSource(source,file){\n source=normalizeGrassRibbonSource(source,file);\n",
+            "after": "function normalizeGrassArchSource(source,file){\n source=normalizeMeadowReliefWallSource(source,file);\n source=normalizeGrassRibbonSource(source,file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/grass-ribbon-source-guard.cjs": {
+      "activity": {
+        "beforeSHA256": "ccc7a399cc8a5f811d4effcb08c960f8d14aeb51c3cb4416f354a85ce9a29095",
+        "afterSHA256": "500368512ee4097a6686cbed76520705c8ba3f946544f7cb11557fe71158ecea",
+        "changes": [
+          {
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const sha=source=>crypto.createHash('sha256').update(source).digest('hex');\nfor(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeProgressionGuardSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact prior wall/published/camera source guard '+file);\nconst {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');\n",
+            "after": "const sha=source=>crypto.createHash('sha256').update(source).digest('hex');\nfor(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeProgressionGuardSource(normalizeMeadowReliefWallTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file),file)),hash,'Exact prior wall/published/camera source guard '+file);\nconst {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeGrassRibbonTestSource(source,file){\n source=normalizeProgressionGuardSource(source,file);\n",
+            "after": "function normalizeGrassRibbonTestSource(source,file){\n source=normalizeMeadowReliefWallTestSource(source,file);\n source=normalizeProgressionGuardSource(source,file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/meadow-relief-wall-source-guard.cjs": {
+      "incoming": {
+        "beforeSHA256": "bad1ecb25dd141b395935f8675c78f77cd8ab0d232b1ff6a7be0bebd5cfd2c28",
+        "afterSHA256": "7b41b6cd85aa7d2a52145f9489e1ae6653eedd2e6177237274c0f91e09f06e10",
+        "changes": [
+          {
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst dir=path.join(__dirname,'fixtures/meadow-relief-wall-b1a73b1'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeActivityIncomingSource,normalizeActivityIncomingObserverSource}=require('./activity-landscape-source-guard.cjs');\nconst dir=path.join(__dirname,'fixtures/meadow-relief-wall-b1a73b1'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),hash,'Exact preceding projection dependency '+file);\nconst {normalizeFieldstoneWallCacheSource:F}=require('./fieldstone-wall-cache-source-guard.cjs'),{normalizePublishedCacheSource:P}=require('./published-world-import-source-guard.cjs'),{normalizeAuthoredCameraSource:C}=require('./authored-camera-source-guard.cjs');\n",
+            "after": "const sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeActivityIncomingObserverSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact preceding projection dependency '+file);\nconst {normalizeFieldstoneWallCacheSource:F}=require('./fieldstone-wall-cache-source-guard.cjs'),{normalizePublishedCacheSource:P}=require('./published-world-import-source-guard.cjs'),{normalizeAuthoredCameraSource:C}=require('./authored-camera-source-guard.cjs');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "// whole-body chain and the full source gate below still reject unrelated drift.\nfunction undoMeadowReliefWallSource(source,file){return undo(source,file,changes,'meadow/wall source',true);}\nfunction normalizeMeadowReliefWallSource(source,file){\n",
+            "after": "// whole-body chain and the full source gate below still reject unrelated drift.\nfunction undoMeadowReliefWallSource(source,file){return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}\nfunction normalizeMeadowReliefWallSource(source,file){\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeMeadowReliefWallTestSource(source,file){\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n",
+            "after": "function normalizeMeadowReliefWallTestSource(source,file){\n source=normalizeActivityIncomingObserverSource(source,file);\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/progression-grass-source-guard.cjs": {
+      "activity": {
+        "beforeSHA256": "6a4c5957ca008f47de39594af49cebef75723c9601dbaabc3971305ddcae8f4c",
+        "afterSHA256": "df22ca782ba3842da696f6e52eb03b9e3b1d228d6f2a3d632480d43cf0b02b9b",
+        "changes": [
+          {
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst directory=path.join(__dirname,'fixtures/progression-grass-9c9ae98');\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {undoMeadowReliefWallSource,normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst {normalizeLashCacheSource,normalizeLashObserverSource}=require('./lash-cache-source-guard.cjs');\nconst directory=path.join(__dirname,'fixtures/progression-grass-9c9ae98');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeProgressionSource(source,file){\n return normalizeProgressionHintsSource(normalizeProgressionLoopCacheSource(source,file),file);\n",
+            "after": "function normalizeProgressionSource(source,file){\n source=undoMeadowReliefWallSource(source,file);\n source=normalizeLashCacheSource(source,file);\n return normalizeProgressionHintsSource(normalizeProgressionLoopCacheSource(source,file),file);\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeProgressionGuardSource(source,file){\n const hash=contract.preimageSHA256[file],actual=sha(source);\n",
+            "after": "function normalizeProgressionGuardSource(source,file){\n source=normalizeMeadowReliefWallTestSource(source,file);\n source=normalizeLashObserverSource(source,file);\n const hash=contract.preimageSHA256[file],actual=sha(source);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/progression-loop-cache-source-guard.cjs": {
+      "incoming": {
+        "beforeSHA256": "c164aaf5333adb1abf8d05dfc1c5cf8926539979d7dd0b5e33383db110cf57db",
+        "afterSHA256": "89d074b6ea35159cdd7dc9a698610915e08227a33716dc0f8dbf4a3974edf687",
+        "changes": [
+          {
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');\nconst {changes}=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/progression-loop-243dbfb/contract.json'),'utf8'));\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');\nconst {normalizeActivityRuntimeSource}=require('./activity-runtime-source-guard.cjs');\nconst {changes}=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/progression-loop-243dbfb/contract.json'),'utf8'));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeProgressionLoopCacheSource(source,file){\n for(const c of changes.filter(c=>c.file===file)){\n",
+            "after": "function normalizeProgressionLoopCacheSource(source,file){\n source=normalizeActivityRuntimeSource(source,file);\n for(const c of changes.filter(c=>c.file===file)){\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/reviewed-riding-source-guard.cjs": {
+      "activity": {
+        "beforeSHA256": "73ace7342af29856ade7f5aa405c516a7d35ff279722bc6e98dbce79a47bee77",
+        "afterSHA256": "3108eeaba13177937ba1dc44043bb6d51b4193998f3954f680d8783d7da1b3c7",
+        "changes": [
+          {
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');\nconst dir=path.join(__dirname,'fixtures/reviewed-riding-4e346b2');\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeLashCacheSource}=require('./lash-cache-source-guard.cjs');\nconst {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');\nconst {undoMeadowReliefWallSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst dir=path.join(__dirname,'fixtures/reviewed-riding-4e346b2');\n",
+            "occurrences": 1
+          },
+          {
+            "before": "function normalizeReviewedRuntimeSource(source,file){\n source=normalizeProgressionLoopCacheSource(source,file);\n",
+            "after": "function normalizeReviewedRuntimeSource(source,file){\n source=undoMeadowReliefWallSource(source,file);\n source=normalizeLashCacheSource(source,file);\n source=normalizeProgressionLoopCacheSource(source,file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/run-reviewed-world-guards.mjs": {
+      "incoming": {
+        "beforeSHA256": "2f8b0fddfbe03ab0c784d990fa5f93f04b4046e6b4c5232b6faf8bd62d452f0b",
+        "afterSHA256": "96e4719a46ed31c716743b8d29a3380f591294bc2d7e33b9d9869189e87d6d62",
+        "changes": [
+          {
+            "before": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nconst root=path.resolve(fileURLToPath(new URL('../',import.meta.url)));\n",
+            "after": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nconst root=path.resolve(fileURLToPath(new URL('../',import.meta.url)));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(readFileSync(src,'utf8'),name));\n",
+            "after": "  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(readFileSync(src,'utf8'),name));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-activity-runtime-source-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "91abcb8c68dc2a86f16747476095aad088ad352b5a7b2f6681c47d07b533a9c9",
+        "afterSHA256": "c6e38eb94376cc6ca094aa73143f02f06689c4187a7702608df00513a99e25a0",
+        "changes": [
+          {
+            "before": "import test from 'node:test';\n",
+            "after": "import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');\nconst contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));\n",
+            "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));\n",
+            "occurrences": 1
+          },
+          {
+            "before": " assert(runner.includes(\"else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));\"));\n assert.equal(execFileSync('git',['diff','--name-only',contract.baseline,'--','tools/fixtures'],{cwd:root,encoding:'utf8'}),'','No tracked original fixture changed');\n for(const file of ['tools/grass-arch-source-guard.cjs','tools/published-world-import-source-guard.cjs','tools/authored-camera-source-guard.cjs','tools/coyote-crag-composition-source-guard.cjs','tools/fieldstone-wall-cache-source-guard.cjs','tools/riding-distance-source-guard.cjs','tools/ribbon-award-source-guard.cjs','tools/reviewed-riding-source-guard.cjs','tools/progression-grass-source-guard.cjs'])assert.equal(read(file),git(file),file+' source assertions remain unchanged');\n",
+            "after": " assert(runner.includes(\"else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));\"));\n assert.equal(normalizeActivityFixtureChanges(execFileSync('git',['diff','--name-only',contract.baseline,'--','tools/fixtures'],{cwd:root,encoding:'utf8'}),contract.baseline),'','No tracked original fixture changed');\n for(const file of ['tools/grass-arch-source-guard.cjs','tools/published-world-import-source-guard.cjs','tools/authored-camera-source-guard.cjs','tools/coyote-crag-composition-source-guard.cjs','tools/fieldstone-wall-cache-source-guard.cjs','tools/riding-distance-source-guard.cjs','tools/ribbon-award-source-guard.cjs','tools/reviewed-riding-source-guard.cjs','tools/progression-grass-source-guard.cjs'])assert.equal(read(file),git(file),file+' source assertions remain unchanged');\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-arched-grass-wind.mjs": {
+      "activity": {
+        "beforeSHA256": "40b99dc5f75cb8749d97beb81c030a0ab694fc68a8d563f38552556267a992f1",
+        "afterSHA256": "339e2d48fdf48219e1305872cef8fe662cdb906caf21ed66dc54f4ee50c0abaa",
+        "changes": [
+          {
+            "before": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nconst forms=[{profile:'near',leafCount:8,segments:3},{profile:'meadow',leafCount:14,segments:3},{profile:'low',leafCount:14,segments:3},{profile:'seeded',leafCount:14,segments:2,seeded:true}];\n",
+            "after": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst forms=[{profile:'near',leafCount:8,segments:3},{profile:'meadow',leafCount:14,segments:3},{profile:'low',leafCount:14,segments:3},{profile:'seeded',leafCount:14,segments:2,seeded:true}];\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-basic-riding-tack.mjs": {
+      "activity": {
+        "beforeSHA256": "5ba088696be54f6dc385a7619986066c3e4e6a5d7e036535c3e00c57f6e8a49b",
+        "afterSHA256": "706e800aedaf9f279c640e3103e5489d55d263e7d96b0c85a955494798ab7874",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-cottonwood-post.mjs": {
+      "incoming": {
+        "beforeSHA256": "7326eeb0bec973894d80cfd01f2fb9e694c756a498180979994062b1e5066473",
+        "afterSHA256": "3744b78dae0779547cb3b60caa3fc86042c6d9333a0656c8df3a0a2dd5dfeb9a",
+        "changes": [
+          {
+            "before": "import * as THREE from '../assets/vendor/three/build/three.module.js';\nimport {POST_DEFINITION as D,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish} from '../assets/features/cottonwood-post-rules.mjs';\nimport {install} from '../assets/features/cottonwood-post.js';\nconst copy=x=>JSON.parse(JSON.stringify(x));\n",
+            "after": "import * as THREE from '../assets/vendor/three/build/three.module.js';\nimport {POST_DEFINITION as D,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish,confirmPostFinish} from '../assets/features/cottonwood-post-rules.mjs';\nimport {install} from '../assets/features/cottonwood-post.js';\nimport {EXPEDITIONS} from '../assets/expeditions.mjs';\nimport {createSaveStore} from '../mobile/src/save-store.mjs';\nimport {confirmGameSave} from '../mobile/src/save-confirmation.mjs';\nconst copy=x=>JSON.parse(JSON.stringify(x));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "}\ntest('actual controller preserves pending mission and emits finish only after confirmed reward; panel pause and repeated actions are safe',()=>{\n const h=gameHarness(),{G,S}=h;G.trail.start(route());assert.equal(G.cottonwoodPost.snapshot().active.stage,'collect');\n assert.equal(G.cottonwoodPost.interact(),true);h.ride(D.pines);assert.equal(G.cottonwoodPost.snapshot().active.stage,'deliver');h.ride({x:39,z:-39});\n",
+            "after": "}\n// Adapt the existing controller harness to the public core entry signature.\n// Admission still invokes registered activity gates and rejects canceled starts.\nfunction bindTrailEntry(h){\n const calls=[],legacy=h.G.trail.start.bind(h.G.trail);h.replaceTrail=legacy;\n h.G.trail.start=(pts,by,opts)=>{calls.push({pts,by,opts});if(h.G.run('activityGate','trail'))return false;\n  const r={pts:pts.map(p=>p.slice()),idx:0,t:0,by,...opts};legacy(r);return h.current===r;};\n return calls;\n}\nfunction homeWithReply(h){\n bindTrailEntry(h);assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(h.G.cottonwoodPost.interact(),true);\n h.ride(D.pines);h.ride({x:39,z:-39});assert.equal(h.G.cottonwoodPost.interact(),true);h.ride({x:-11,z:-15.8});\n}\nfunction deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};}\nfunction watchSuccess(h){const seen=[];h.G.money.refreshWallet=()=>seen.push('wallet');h.G.sChime=()=>seen.push('chime');h.G.sGem=()=>seen.push('gem');h.G.quest.dailyEvt=(k,n)=>seen.push([k,n]);return seen;}\ntest('actual controller preserves pending mission and emits finish only after confirmed reward; panel pause and repeated actions are safe',()=>{\n const h=gameHarness(),{G,S}=h;bindTrailEntry(h);assert.equal(G.cottonwoodPost.start(),true);assert.equal(G.social,undefined);assert.equal(G.cottonwoodPost.snapshot().active.stage,'collect');\n assert.equal(G.cottonwoodPost.interact(),true);h.ride(D.pines);assert.equal(G.cottonwoodPost.snapshot().active.stage,'deliver');h.ride({x:39,z:-39});\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('Adventures start clones the canonical solo expedition and uses the real trail start gate without broadcasting',()=>{\n const h=gameHarness(),stops=route().pts;let calls=0;h.G.social={EXPEDITIONS:[{id:'cottonwood',stops}]};h.G.net={myName:()=> 'Rider',publish(){throw Error('must not broadcast');}};\n const realStart=h.G.trail.start.bind(h.G.trail);h.G.trail.start=(pts,by,opts)=>{calls++;assert.notEqual(pts,stops);assert.notEqual(pts[0],stops[0]);assert.equal(by,'Rider');assert.equal(opts.soloExpedition,true);assert.equal(opts.exped,'cottonwood');realStart({...opts,pts,idx:0,t:0});return !!h.current;};\n assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(calls,1);assert.equal(h.G.cottonwoodPost.snapshot().active.stage,'collect');\n});\n",
+            "after": "});\ntest('Adventures starts offline from the canonical expedition without creating social state or broadcasting',()=>{\n const h=gameHarness(),stops=EXPEDITIONS.find(e=>e.id==='cottonwood').stops,before=copy(EXPEDITIONS),position=copy(h.P.pos),save=h.S.value;\n h.G.net={myName:()=> 'Rider',publish(){throw Error('must not broadcast');}};const calls=bindTrailEntry(h);\n assert.equal(h.G.social,undefined);assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(calls.length,1);\n assert.notEqual(calls[0].pts,stops);assert.notEqual(calls[0].pts[0],stops[0]);assert.deepEqual(calls[0].pts,stops);\n assert.equal(calls[0].by,'Rider');assert.deepEqual(calls[0].opts,{exped:'cottonwood',soloExpedition:true,name:D.name});\n assert.equal(h.G.cottonwoodPost.snapshot().active.stage,'collect');assert.equal(h.G.social,undefined);assert.deepEqual(h.P.pos,position);assert.deepEqual(h.S.value,save);\n h.current.pts[0][1]=999;assert.deepEqual(EXPEDITIONS,before,'a live ride cannot mutate the catalogue');\n});\ntest('offline public entry honors rejecting or unavailable core gates and unready mounts',()=>{\n const h=gameHarness(),before=h.S.value;h.G.trail.start=()=>false;assert.equal(h.G.cottonwoodPost.start(),false);\n h.G.trail.start=undefined;assert.equal(h.G.cottonwoodPost.start(),false);assert.equal(h.G.cottonwoodPost.snapshot().active,null);assert.deepEqual(h.S.value,before);assert.equal(h.scene.children.length,0);\n const busy=gameHarness();bindTrailEntry(busy);busy.G.on('activityGate',()=>true);assert.equal(busy.G.cottonwoodPost.start(),false);assert.equal(busy.current,null);\n const unready=gameHarness();bindTrailEntry(unready);unready.rig.ready=false;assert.equal(unready.G.cottonwoodPost.start(),false);assert.equal(unready.current,null);assert.equal(unready.scene.children.length,0);\n});\ntest('a partial or substituted social catalogue cannot replace the authored solo route',()=>{\n const h=gameHarness();h.G.social={EXPEDITIONS:[{id:'cottonwood',stops:[['Fake',0,0],['Fake',1,1]]}]};const calls=bindTrailEntry(h);\n assert.equal(h.G.cottonwoodPost.start(),true);assert.deepEqual(calls[0].pts,EXPEDITIONS.find(e=>e.id==='cottonwood').stops);\n assert.equal(isSoloPostRide(h.current),true);assert.equal(h.G.cottonwoodPost.start(),false,'pending active mission still owns the activity gate');\n});\n",
+            "occurrences": 1
+          },
+          {
+            "before": " button.onclick({detail:0,currentTarget:button});assert.equal(blurred,1,'keyboard activation retains focus');\n});\n",
+            "after": " button.onclick({detail:0,currentTarget:button});assert.equal(blurred,1,'keyboard activation retains focus');\n});\n\ntest('verified receipt validation rejects stale, malformed, changed-horse and mismatched reward acknowledgements',()=>{\n const store=storage(),proof=postFinishProof(finishedRun());assert(savePostFinish(store,proof,pay).ok);const saved=store.value;\n assert(confirmPostFinish(saved,proof).ok);assert.equal(confirmPostFinish(null,proof).ok,false);assert.equal(confirmPostFinish([],proof).ok,false);\n for(const mutate of [s=>{delete s.cottonwoodPost;},s=>{s.cottonwoodPost.receipts[0].at++;},s=>{s.cottonwoodPost.receipts[0].time++;},s=>{s.cottonwoodPost.receipts[0].distance++;},s=>{s.cottonwoodPost.receipts[0].horseId=99;},s=>{s.cottonwoodPost.receipts[0].horseName='Other';},s=>{s.cottonwoodPost.receipts[0].pay.c++;},s=>{s.cottonwoodPost.receipts[0].starPoints++;},s=>{delete s.cottonwoodPost.completions;},s=>{s.stats.trails='5';},s=>{s.expDone.cottonwood=0;}]){\n  const bad=copy(saved);mutate(bad);assert.equal(confirmPostFinish(bad,proof).ok,false);\n }\n});\ntest('native pending receipt holds the world and all success effects until exact verified acknowledgement',async()=>{\n const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),ack=deferred();let requests=0;\n h.S.awaitConfirmedFresh=()=>{requests++;return ack.promise;};const before=h.S.value,done=h.G.cottonwoodPost.interact();\n assert(done instanceof Promise);assert.equal(h.G.cottonwoodPost.snapshot().active.saving,true);assert.equal(h.G.cottonwoodPost.context().eligible,false);assert.equal(h.elements.get('postAction').disabled,true);assert.match(h.elements.get('postAction').textContent,/Saving reply/);\n assert.equal(h.G.cottonwoodPost.retrySave(),false);assert.equal(h.G.cottonwoodPost.interact(),false);assert.equal(h.G.trail.stop(),false);assert.equal(h.G.cottonwoodPost.snapshot().lastResult,null);\n assert.deepEqual(seen,[]);assert.equal(h.events.filter(e=>e==='trailDone'||e==='postFinish').length,0);assert.equal(h.S.value.coins,before.coins+450,'staged mirror is not a confirmed result');\n await Promise.resolve();assert.equal(requests,1);ack.resolve(h.S.value);assert.equal(await done,true);\n assert.equal(h.current,null);assert.equal(h.G.cottonwoodPost.snapshot().active,null);assert(h.G.cottonwoodPost.snapshot().lastResult);assert.deepEqual(seen,['wallet','gem',['trail',1],['exped',1]]);\n assert.equal(h.events.filter(e=>e==='trailDone').length,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);assert.equal(h.G.cottonwoodPost.retrySave(),false);\n});\ntest('native failed and stale acknowledgements leave one frozen receipt retryable without repaying',async()=>{\n const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),before=h.S.value;\n h.S.awaitConfirmedFresh=async()=>{throw Error('disk full');};assert.equal(await h.G.cottonwoodPost.interact(),false);\n const pending=h.G.cottonwoodPost.snapshot().active,staged=h.S.value;assert(pending.savePending);assert.equal(pending.saving,false);assert.equal(h.G.cottonwoodPost.context().eligible,true);assert.match(h.elements.get('postAction').textContent,/Retry save/);assert.deepEqual(seen,[]);\n h.S.awaitConfirmedFresh=async()=>before;assert.equal(await h.G.cottonwoodPost.retrySave(),false);assert.deepEqual(h.S.value,staged);assert.equal(h.G.cottonwoodPost.snapshot().active.runId,pending.runId);assert.equal(h.G.cottonwoodPost.snapshot().active.elapsed,pending.elapsed);\n const wrong=copy(staged);wrong.cottonwoodPost.receipts[0].horseId=99;h.S.awaitConfirmedFresh=async()=>wrong;assert.equal(await h.G.cottonwoodPost.retrySave(),false);assert.deepEqual(seen,[]);\n h.S.awaitConfirmedFresh=async()=>staged;assert.equal(await h.G.cottonwoodPost.retrySave(),true);assert.deepEqual(h.S.value,staged);assert.equal(h.S.value.cottonwoodPost.completions,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);\n});\ntest('native acknowledgement cannot finish a replaced trail or fall back to the newer mirror',async()=>{\n const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),ack=deferred();h.S.awaitConfirmedFresh=()=>ack.promise;\n const done=h.G.cottonwoodPost.interact(),staged=h.S.value,original=h.current;\n h.replaceTrail({pts:[['Other',0,0],['Other',1,1]],idx:0,t:0}); // External host replacement, not normal entry.\n assert.notEqual(h.current,original);ack.resolve(staged);assert.equal(await done,false);assert.deepEqual(seen,[]);assert.equal(h.G.cottonwoodPost.snapshot().lastResult,null);assert.equal(h.events.filter(e=>e==='postFinish').length,0);\n});\n\ntest('actual native save-store failure keeps Cottonwood pending until verified retry survives a new store',async()=>{\n const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),key='starRanchFable_v1',disk=new Map(),baseline=h.S.value;\n let fail=false,hold=null,writes=0;\n const backend={async read(slot){return disk.get(slot)??null;},async write(slot,data){writes++;if(fail)throw Error('device storage unavailable');if(hold)await hold.promise;disk.set(slot,data);}};\n const native=await createSaveStore({backend,seed:{[key]:JSON.stringify(baseline)},delay:100000});let reloaded;\n try{\n  h.S.fresh=()=>JSON.parse(native.getItem(key));\n  h.S.sync=fn=>{const s=h.S.fresh();fn(s);native.setItem(key,JSON.stringify(s));};\n  h.S.awaitConfirmedFresh=()=>confirmGameSave({native:true,storage:native},key);\n  fail=true;assert.equal(await h.G.cottonwoodPost.interact(),false);\n  assert.equal(h.S.fresh().cottonwoodPost.completions,1,'staged receipt exists');\n  assert.deepEqual(JSON.parse(native.getDurableItem(key)),baseline,'failed write did not become durable');\n  assert.deepEqual(seen,[]);assert.equal(h.G.cottonwoodPost.snapshot().active.savePending,true);assert.equal(h.events.filter(e=>e==='postFinish').length,0);\n  fail=false;hold=deferred();const retry=h.G.cottonwoodPost.retrySave();\n  await Promise.resolve();assert.equal(h.G.cottonwoodPost.snapshot().active.saving,true);assert.deepEqual(seen,[]);\n  assert.deepEqual(JSON.parse(native.getDurableItem(key)),baseline,'in-flight write is still unconfirmed');\n  hold.resolve();assert.equal(await retry,true);assert.equal(h.G.cottonwoodPost.snapshot().active,null);\n  const saved=JSON.parse(native.getDurableItem(key));assert.equal(saved.coins,baseline.coins+450);assert.equal(saved.gems,baseline.gems+2);assert.equal(saved.pass.pts,baseline.pass.pts+28);assert.equal(saved.cottonwoodPost.completions,1);assert.equal(saved.cottonwoodPost.receipts.length,1);\n  assert.equal(writes,3,'seed, rejected write, and one successful retry');assert.equal(h.events.filter(e=>e==='trailDone').length,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);\n  reloaded=await createSaveStore({backend,delay:100000});assert.deepEqual(JSON.parse(reloaded.getItem(key)),saved);assert.equal(writes,3,'reload does not write or pay again');\n }finally{hold?.resolve();native.dispose();reloaded?.dispose();}\n});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-coursed-field-wall.mjs": {
+      "activity": {
+        "beforeSHA256": "bddfb5bf229e9e73b14d33404e55dae247379714cd740974937b18f4cf309264",
+        "afterSHA256": "df16c0f3c5f39a623ff3d94c449b4a6779493faa334cd7713a9795e9d6517b0f",
+        "changes": [
+          {
+            "before": "import {createCoursedFieldWallGeometry} from '../assets/coursed-field-wall.mjs';\nconst record=(x,z,yaw)=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:[20,21,22,23,24]});\ntest('coursed kits are deterministic, finite and within the 280 triangle budget',()=>{\n const records=[record(65,-128,.75),record(-13,4,-2)];\n",
+            "after": "import {createCoursedFieldWallGeometry} from '../assets/coursed-field-wall.mjs';\nimport {createCoursedFieldWallGeometry as historicalCreate} from './meadow-relief-wall-historical.mjs';\nconst record=(x,z,yaw)=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:[20,21,22,23,24]});\ntest('Historical b1 slab: coursed kits are deterministic, finite and within the 280 triangle budget',()=>{\n const createCoursedFieldWallGeometry=historicalCreate;\n const records=[record(65,-128,.75),record(-13,4,-2)];\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-coyote-crag-composition.mjs": {
+      "activity": {
+        "beforeSHA256": "d79de066a7d435aedfcc082575914f8cc25ee1325011339a4e1b8579f6774044",
+        "afterSHA256": "9b6b6642dfe3a3bf607d712f3313cb3bbe775525291f08129f79746346f2e9c3",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-fieldstone-wall-cache-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "b2e19fb4623895c7626ccb9e1cbfef193601e5b062c1a582934f3b4d7b6814b2",
+        "afterSHA256": "3d25cdfe45c23e658264dc256afcb327648f5b3f39c59f94c370eae781166c3a",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-fieldstone-wall-collision.mjs": {
+      "activity": {
+        "beforeSHA256": "6fbb95ee0c39e9a0a755b5a0c50aaf8bbd37fbaedd82c12f97d78659bbbe9f09",
+        "afterSHA256": "0b6befdfa394ea7409f2f51b7409ee4bd2e6b4c69843e1737d26c40684dd845b",
+        "changes": [
+          {
+            "before": "import {installCoursedFieldWalls as install,createCoursedFieldWallGeometry as create} from '../assets/coursed-field-wall.mjs';\nconst record=(x=0,z=0,yaw=0,rows=[0,1,2,3,4])=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:rows});\n",
+            "after": "import {installCoursedFieldWalls as install,createCoursedFieldWallGeometry as create} from '../assets/coursed-field-wall.mjs';\nimport {installCoursedFieldWalls as historicalInstall} from './meadow-relief-wall-historical.mjs';\nconst record=(x=0,z=0,yaw=0,rows=[0,1,2,3,4])=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:rows});\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const original195=()=>Array.from({length:195},(_,i)=>wall(20+i,30,20+i,33));\ntest('a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{\n const walls=original195(),refs=walls.slice(),bodies=structuredClone(walls),r=record(77.77848460817359,-122.74421833313178,2.015553883);\n",
+            "after": "const original195=()=>Array.from({length:195},(_,i)=>wall(20+i,30,20+i,33));\ntest('Historical b1 slab: a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{\n const install=historicalInstall;\n const walls=original195(),refs=walls.slice(),bodies=structuredClone(walls),r=record(77.77848460817359,-122.74421833313178,2.015553883);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "22078efb875cd5d1b03dac3ddcfeebba0badb27de701b74c214cdb056bedb8d1",
+        "afterSHA256": "24daa5d178d157673c89bc8426c6881bbcdc30dbe4b4a6afc1a3bd38f932de61",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-fieldstone-wall-model.mjs": {
+      "activity": {
+        "beforeSHA256": "8479eff8e1846b5a63fc49412d0ce8b88c8f39b66a9d6e46dc9d1089f353f8c4",
+        "afterSHA256": "6c48bec8de3bda297da93d70641078c9423be6144f883c47c52f5efbe5bca2df",
+        "changes": [
+          {
+            "before": "import * as T from '../assets/vendor/three/build/three.module.js';\nimport {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from '../assets/coursed-field-wall.mjs';\nimport {createCoursedFieldWallGeometry as before,installCoursedFieldWalls as installBefore} from './fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs';\n",
+            "after": "import * as T from '../assets/vendor/three/build/three.module.js';\nimport {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from './meadow-relief-wall-historical.mjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nimport {createCoursedFieldWallGeometry as before,installCoursedFieldWalls as installBefore} from './fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);\ntest('actual slab geometry preserves complete source records, unit ranges, resources and zero RNG',()=>{\n const frozen=structuredClone(records),old=Math.random;let calls=0,samples=0;\n",
+            "after": "const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);\ntest('Historical b1 slab: actual slab geometry preserves complete source records, unit ranges, resources and zero RNG',()=>{\n const frozen=structuredClone(records),old=Math.random;let calls=0,samples=0;\n",
+            "occurrences": 1
+          },
+          {
+            "before": "\ntest('every new stone is a closed convex outward slab with physically planar fan normals',()=>{\n for(const slope of [0,.14,-.14]){\n",
+            "after": "\ntest('Historical b1 slab: every new stone is a closed convex outward slab with physically planar fan normals',()=>{\n for(const slope of [0,.14,-.14]){\n",
+            "occurrences": 1
+          },
+          {
+            "before": "}\ntest('broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles',()=>{\n let newFoot=0,oldFoot=0,asymmetry=0,copingWidths=[],copingCreasts=[];\n",
+            "after": "}\ntest('Historical b1 slab: broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles',()=>{\n let newFoot=0,oldFoot=0,asymmetry=0,copingWidths=[],copingCreasts=[];\n",
+            "occurrences": 1
+          },
+          {
+            "before": "}\ntest('actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner',async()=>{\n const old=await rngInstall(installBefore),now=await rngInstall(install);\n",
+            "after": "}\ntest('Historical b1 slab: actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner',async()=>{\n const old=await rngInstall(installBefore),now=await rngInstall(install);\n",
+            "occurrences": 1
+          },
+          {
+            "before": "\ntest('only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore',()=>{\n const directory=new URL('./fixtures/fieldstone-wall-a78ed79/',import.meta.url);\n",
+            "after": "\ntest('Historical b1 slab: only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore',()=>{\n const directory=new URL('./fixtures/fieldstone-wall-a78ed79/',import.meta.url);\n",
+            "occurrences": 1
+          },
+          {
+            "before": " for(const file of Object.keys(hashes)){\n  let source=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');\n  for(const c of changes.filter(c=>c.file===file).toReversed()){\n",
+            "after": " for(const file of Object.keys(hashes)){\n  let source=normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);\n  for(const c of changes.filter(c=>c.file===file).toReversed()){\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-fine-hair-cache-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "7c14b3c2504ad0d0c1fdeb83da7b75f0f81c6627b349d224beb9af320d20b6ee",
+        "afterSHA256": "b65a5dfe0cadb6347144f92815bfd34007b6cebdbb8d60901940b9da63ad947c",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\n",
+            "after": "import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-follow-camera-authored-parts.mjs": {
+      "activity": {
+        "beforeSHA256": "271f07d6f64065ee9073a7ee17259e00e512a9ca9ff0b3c69d3adc242a524e9a",
+        "afterSHA256": "2f179b100f28aa39bec22fc671fd99933e72f0c9dc5015df98b90be5c3ff34a2",
+        "changes": [
+          {
+            "before": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';\nimport {normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\n\n",
+            "after": "import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nimport {normalizeReviewedGuideSource,normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';\n\n",
+            "occurrences": 1
+          },
+          {
+            "before": " const guard=readFileSync(new URL('./authored-camera-source-guard.cjs',import.meta.url));assert.equal(hash(guard),contract.guardSHA256);\n const main=readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8');\n assert.equal(main.split(contract.cameraCache.after).length-1,1,'main imports the reviewed camera runtime exactly once');\n",
+            "after": " const guard=readFileSync(new URL('./authored-camera-source-guard.cjs',import.meta.url));assert.equal(hash(guard),contract.guardSHA256);\n const main=normalizeReviewedRuntimeSource(normalizeMeadowReliefWallSource(readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8'),'ranch3d.html'),'ranch3d.html');\n assert.equal(main.split(contract.cameraCache.after).length-1,1,'main imports the reviewed camera runtime exactly once');\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-lupin-independent.mjs": {
+      "activity": {
+        "beforeSHA256": "d61b96d3c9a64875b100ffa0ac82ec92b64f8a714bcbe5485c950584fd337991",
+        "afterSHA256": "9effbff04533ae4db1b20e2e3d727dcecb7e533f92487349c73d42d2c7138f99",
+        "changes": [
+          {
+            "before": "import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';\nimport {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport test from 'node:test';\n",
+            "after": "import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nimport test from 'node:test';\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-meadow-relief-wall-source-guard.mjs": {
+      "incoming": {
+        "beforeSHA256": "a4c27de87628d0d295434afca0824e281fad838b9684db4774524375ffada007",
+        "afterSHA256": "fb3cd92b0385b2e24fa3217e5a09050c70b60eb64622568e79ed2ebc2f85dc8e",
+        "changes": [
+          {
+            "before": "import test from 'node:test';\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityIncomingObserverSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),functions=load('prior-projection-functions.json');\nconst read=file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex');\nfor(const[file,row]of Object.entries(contract.files))test(`${file}: actual new owner is exact and only approved blocks restore the full228 body`,()=>{\n",
+            "after": "const contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),functions=load('prior-projection-functions.json');\nconst read=file=>normalizeActivityIncomingObserverSource(normalizeActivityIncomingSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nfor(const[file,row]of Object.entries(contract.files))test(`${file}: actual new owner is exact and only approved blocks restore the full228 body`,()=>{\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-pasture-mesosurface.mjs": {
+      "activity": {
+        "beforeSHA256": "fb89e09fac2d8183a70cdf6568fae543b6653f9e372fb3e754b38d3ce3d1bb2d",
+        "afterSHA256": "dcb7a623af5a293edde12c8380824560c3ae557919a13ba707b116fa9bdb8967",
+        "changes": [
+          {
+            "before": "import * as T from '../assets/vendor/three/build/three.module.js';\nimport {createTerrainSurface} from '../assets/terrain-realism.js';\nimport {patchOuterRegions} from '../assets/outer-landscape.js';\nimport {PASTURE_MESO,pastureMesoAt,patchPastureMesoSurface} from '../assets/pasture-mesosurface.mjs';\nconst source=readFileSync(new URL('../assets/pasture-mesosurface.mjs',import.meta.url),'utf8');\nconst shader=()=>({vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader,uniforms:{}});\n",
+            "after": "import * as T from '../assets/vendor/three/build/three.module.js';\nimport {createTerrainSurface} from './meadow-relief-wall-historical.mjs';\nimport {patchOuterRegions} from '../assets/outer-landscape.js';\nimport {PASTURE_MESO,pastureMesoAt,patchPastureMesoSurface,historicalMeadowWallSource} from './meadow-relief-wall-historical.mjs';\nconst source=historicalMeadowWallSource('assets/pasture-mesosurface.mjs');\nconst shader=()=>({vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader,uniforms:{}});\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const count=(s,p)=>s.split(p).length-1;\ntest('main and outer use one coherent meso field after their final substrate and normal responses',()=>{\n for(const sh of[main,outer]){\n",
+            "after": "const count=(s,p)=>s.split(p).length-1;\ntest('Historical b1 PMS2: main and outer use one coherent meso field after their final substrate and normal responses',()=>{\n for(const sh of[main,outer]){\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('meso response creates no texture/resource, changes no vertex source and retains opacity',()=>{\n assert(!/texture2D|sampler2D|TextureLoader|new\\s+.*Texture|gl_FragColor|diffuseColor\\.a|discard\\s*;/.test(source));\n",
+            "after": "});\ntest('Historical b1 PMS2: meso response creates no texture/resource, changes no vertex source and retains opacity',()=>{\n assert(!/texture2D|sampler2D|TextureLoader|new\\s+.*Texture|gl_FragColor|diffuseColor\\.a|discard\\s*;/.test(source));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('repeated and incomplete patching is atomic',()=>{\n const repeated={...main};assert.equal(patchPastureMesoSurface(repeated),false);assert.equal(repeated.fragmentShader,main.fragmentShader);\n",
+            "after": "});\ntest('Historical b1 PMS2: repeated and incomplete patching is atomic',()=>{\n const repeated={...main};assert.equal(patchPastureMesoSurface(repeated),false);assert.equal(repeated.fragmentShader,main.fragmentShader);\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('analytic gradients agree with independent central differences of physical tuft height',()=>{\n const epsilon=1e-5;let tested=0;\n",
+            "after": "});\ntest('Historical b1 PMS2: analytic gradients agree with independent central differences of physical tuft height',()=>{\n const epsilon=1e-5;let tested=0;\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('field filtering removes subpixel response and managed turf has shallower coherent relief',()=>{\n for(let i=0;i<100;i++){\n",
+            "after": "});\ntest('Historical b1 PMS2: field filtering removes subpixel response and managed turf has shallower coherent relief',()=>{\n for(let i=0;i<100;i++){\n",
+            "occurrences": 1
+          },
+          {
+            "before": "});\ntest('projected normal relief stays finite, bounded and neutral for zero gradient',()=>{\n for(const raw of[[0,1,0],[1,0,0],[0,0,1],[.2,.8,.1]])for(const previous of[[0,1,0],[1,0,0],[-1,0,0],[.5,.5,.5]])for(let i=0;i<40;i++){\n",
+            "after": "});\ntest('Historical b1 PMS2: projected normal relief stays finite, bounded and neutral for zero gradient',()=>{\n for(const raw of[[0,1,0],[1,0,0],[0,0,1],[.2,.8,.1]])for(const previous of[[0,1,0],[1,0,0],[-1,0,0],[.5,.5,.5]])for(let i=0;i<40;i++){\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};\ntest('non-pasture substrates suppress the response and cavity shading cannot remove direct light',()=>{\n const cover=(other,canopy,wear,bank,canyon,soil)=>(1-smooth(.04,.58,other))*(1-smooth(.02,.68,canopy))*(1-smooth(.02,.62,Math.max(wear,bank)))*(1-smooth(.02,.65,canyon))*(1-Math.max(0,Math.min(1,soil)));\n",
+            "after": "const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};\ntest('Historical b1 PMS2: non-pasture substrates suppress the response and cavity shading cannot remove direct light',()=>{\n const cover=(other,canopy,wear,bank,canyon,soil)=>(1-smooth(.04,.58,other))*(1-smooth(.02,.68,canopy))*(1-smooth(.02,.62,Math.max(wear,bank)))*(1-smooth(.02,.65,canyon))*(1-Math.max(0,Math.min(1,soil)));\n",
+            "occurrences": 1
+          },
+          {
+            "before": "\ntest('the broad growth envelope leaves calm and fuller patches without another noise band',()=>{\n assert.equal(count(source,'vec3 local=pastureMesoNoise('),1);assert.equal(count(source,'vec3 group=pastureMesoNoise('),1);\n",
+            "after": "\ntest('Historical b1 PMS2: the broad growth envelope leaves calm and fuller patches without another noise band',()=>{\n assert.equal(count(source,'vec3 local=pastureMesoNoise('),1);assert.equal(count(source,'vec3 group=pastureMesoNoise('),1);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-progression-grass-composition.mjs": {
+      "activity": {
+        "beforeSHA256": "75646332a38426747abc22f7aced1e5af421e16260b664f017d567e8f0457494",
+        "afterSHA256": "7de03b54e97e6b8a594b582a0e8a4bd0328d6bffef2874f816e75a82cc1ba67c",
+        "changes": [
+          {
+            "before": "import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport test from 'node:test';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nconst root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\n",
+            "after": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "ef9fd427577131f2a835505e70643943cbbec7970922de9e9908f52fdd303860",
+        "afterSHA256": "7de03b54e97e6b8a594b582a0e8a4bd0328d6bffef2874f816e75a82cc1ba67c",
+        "changes": [
+          {
+            "before": "import test from 'node:test';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\n",
+            "after": "const root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-progression-hints.mjs": {
+      "activity": {
+        "beforeSHA256": "7c3f1e7d63e412a8c651b1e824385150b25a93633bd0bfdbf816c22fd0882247",
+        "afterSHA256": "e01a3d4557cb38383a7aac5a36fa0ee9cb933ebda190c8963fad925b276744ec",
+        "changes": [
+          {
+            "before": "import fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import fs from 'node:fs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');\nconst source=read('ranch3d.html'),contract=JSON.parse(read('tools/fixtures/progression-hints-243dbfb/contract.json'));\n",
+            "after": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst source=read('ranch3d.html'),contract=JSON.parse(read('tools/fixtures/progression-hints-243dbfb/contract.json'));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-progression-loop-cache-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "f01a42811cf40f52cc836b92aafa25f429d8f3e9b1d592c242c230aa5f352f8c",
+        "afterSHA256": "32ebca10f8969f75a63a668903d15740ee5f38432f834a16e6259f7fe41e8d79",
+        "changes": [
+          {
+            "before": "import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport test from 'node:test';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\n",
+            "after": "import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "2ec1d72dc660286502cb1f612ce2aa929775b305a67025f174df4a0d70445c0f",
+        "afterSHA256": "32ebca10f8969f75a63a668903d15740ee5f38432f834a16e6259f7fe41e8d79",
+        "changes": [
+          {
+            "before": "import test from 'node:test';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\n",
+            "after": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-reviewed-riding-source-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "40f376850df04e75aa0057fd4a655c38a2ee6808a73607566b99127a96fb1066",
+        "afterSHA256": "5a049fefc32b6229a37e37c8baef59aa2168e1bf67593a50cf7aa8d4f97a0ec6",
+        "changes": [
+          {
+            "before": "import fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeGrassRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=fs.readFileSync(new URL(file,root),'utf8');return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\n",
+            "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeGrassRibbonOwnSource as normalizePriorRibbonOwnSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-ribbon-grass-source-guard.mjs": {
+      "activity": {
+        "beforeSHA256": "fe314e18f24c56b66473b0b1d22e59588042dd92ce079e00c821e26fa55e7bff",
+        "afterSHA256": "58f9b20c769b998f044365452785cf4fffbe024b0c614372dd49b03947be132f",
+        "changes": [
+          {
+            "before": "import {createHash} from 'node:crypto';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\n",
+            "after": "import {createHash} from 'node:crypto';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nimport {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\n",
+            "occurrences": 1
+          },
+          {
+            "before": "const changes=JSON.parse(fs.readFileSync(new URL('source-changes.json',directory)));\nconst read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file);\nconst sha=source=>createHash('sha256').update(source).digest('hex');\n",
+            "after": "const changes=JSON.parse(fs.readFileSync(new URL('source-changes.json',directory)));\nconst read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),file);\nconst sha=source=>createHash('sha256').update(source).digest('hex');\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-starter-tack-catalog-preservation.mjs": {
+      "activity": {
+        "beforeSHA256": "e21402cff79d0e651c2a46bd51561bd4e4752fae2dbfeca3684845a99c262367",
+        "afterSHA256": "103f05e5c6460ac3993a2128b786edb5322259b41f793e39865a6860313085fe",
+        "changes": [
+          {
+            "before": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "after": "import {normalizeFieldstoneWallCacheSource as normalizeFieldstoneWallSource} from './fieldstone-wall-cache-source-guard.cjs';\nimport {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nconst normalizeFieldstoneWallCacheSource=(source,file)=>normalizeFieldstoneWallSource(normalizeGrassRibbonSource(source,file),file);\n",
+            "occurrences": 1
+          },
+          {
+            "before": "test('source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change',()=>{\n for(const file of ['ranch3d.html','assets/tack-collection-models.js','assets/features/on-foot.js','assets/features/index.js']){const source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');assert.equal(normalizeStarterTackSource(source,file),expected);assert.throws(()=>normalizeStarterTackSource(source+'\\n// unreviewed drift',file),/Entire original298 body/);}\n assert.equal(getTackPiece('ranch_basic_saddle'),null);assert.equal(getTackPiece('ranch_basic_pad'),null);assert.equal(getTackPiece('ranch_basic_bridle'),null);\n",
+            "after": "test('source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change',()=>{\n for(const file of ['ranch3d.html','assets/tack-collection-models.js','assets/features/on-foot.js','assets/features/index.js']){const source=normalizeReviewedRuntimeSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');assert.equal(normalizeStarterTackSource(source,file),expected);assert.throws(()=>normalizeStarterTackSource(source+'\\n// unreviewed drift',file),/Entire original298 body/);}\n assert.equal(getTackPiece('ranch_basic_saddle'),null);assert.equal(getTackPiece('ranch_basic_pad'),null);assert.equal(getTackPiece('ranch_basic_bridle'),null);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-story-guidance.mjs": {
+      "incoming": {
+        "beforeSHA256": "63c61780278affac05a7302429222914f99bf68dc6e3fa4f9c2aa5edf4691b2c",
+        "afterSHA256": "1415fc68fd494002536b098b6d1ecff01cdd9e46269423740863bfe21afb08e8",
+        "changes": [
+          {
+            "before": "const source=await readFile(new URL('../assets/features/story-guidance.js',import.meta.url),'utf8');\nconst {missionPersonId,nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,install}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));\nconst pickup=(x,z,item='lettuce',visible=true)=>({item,g:{visible,position:{x,y:0,z}}});\n",
+            "after": "const source=await readFile(new URL('../assets/features/story-guidance.js',import.meta.url),'utf8');\nconst {missionPersonId,nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,starterStallApproach,install}=await import(new URL('../assets/features/story-guidance.js',import.meta.url));\nconst pickup=(x,z,item='lettuce',visible=true)=>({item,g:{visible,position:{x,y:0,z}}});\n",
+            "occurrences": 1
+          },
+          {
+            "before": " f.save.story.prog=1;assert.equal(f.G.storyGuidance.describe().label,'Return to Wren');assert.equal(f.wayTarget(),f.npcs[0].g);\n});\n",
+            "after": " f.save.story.prog=1;assert.equal(f.G.storyGuidance.describe().label,'Return to Wren');assert.equal(f.wayTarget(),f.npcs[0].g);\n});\n\n\ntest('old-stall instructions and actual HUD target lead June’s rider to the authored north opening, not Wren',async()=>{\n const m={type:'door',door:'starter',npc:'wren',label:'Open the old stall',goal:1,reward:{c:100}},position={x:9,z:-9};\n const {COTTONWOOD_ROUTES}=await import('../assets/cottonwood-routes.mjs');\n const approach=COTTONWOOD_ROUTES.out[1],outside=COTTONWOOD_ROUTES.out[2],world={groundH:()=>2};\n const plan=nextAction(m,false,position),marker=resolveTarget(m,false,world,position);\n assert.equal(plan.label,'Find the old stall');assert.match(plan.hint,/north gate/);assert.match(plan.hint,/Interact/);assert.doesNotMatch(plan.hint,/talk to Wren/);\n assert.deepEqual(marker.position,{x:approach[0],z:approach[1],y:2});assert.equal(marker.arrivalDistance,1);\n const save={story:{idx:0,prog:0}},G={quest:{STORY:[m],storyIdx:()=>0,storyProg:()=>0,NPC_DEFS:[{id:'wren',name:'Grandpa Wren'}]},horse:{ridden:()=>({}),player:{pos:position}},world,save:{fresh:()=>save},money:{rewardLabel:()=>''},tables:{DECOR_CAT:{}},ui:{action(){}},$:()=>null,on(){},hidePanels(){}};\n install(G);const target=new Function('G',\"let wayKey='',wayNpc=null;const wayPlace={position:{set(){}}};\"+wayTargetSource+'return wayTarget;')(G);\n assert.deepEqual(target().position,marker.position);\n position.x=approach[0];position.z=approach[1];\n assert.deepEqual(resolveTarget(m,false,world,position).position,{x:outside[0],z:outside[1],y:2});\n assert.deepEqual(starterStallApproach(m,{x:-4.3,z:-19}),{x:outside[0],z:outside[1]});\n});\ntest('the advised stall crossing clears both actual north-rail segments at the physical horse radius',async()=>{\n const html=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');\n const gate=html.match(/const NORTH_GATE=(\\{x1:[^;]+\\});/);assert(gate,'Actual authored north gate');\n const {x1,x2}=new Function('return '+gate[1])();\n const walls=html.match(/\\[\\[-25,-20,NORTH_GATE\\.x1,-20\\],[\\s\\S]*?\\]\\n/);assert(walls,'Actual arena collision walls still bind this route');\n const m={type:'door',door:'starter'},radius=.55;\n for(const start of [{x:-3,z:-16},{x:-4.3,z:-19},{x:-1.7,z:-18}]){\n  const end=starterStallApproach(m,start),t=(-20-start.z)/(end.z-start.z),crossing=start.x+(end.x-start.x)*t;\n  assert(t>0&&t<1);assert(crossing-radius>x1&&crossing+radius<x2,'The real hoof/root corridor fits inside the retained physical opening');\n }\n});\ntest('outside, completed, unrelated and invalid stall actions preserve established quest resolution and saved progress',()=>{\n const m={type:'door',door:'starter'};\n for(const position of [{x:0,z:-22},{x:30,z:0},{x:0,z:21},{x:NaN,z:0},null])assert.equal(starterStallApproach(m,position),null);\n assert.equal(resolveTarget(m,true,{},here),undefined);assert.equal(nextAction(m,true,here),null);\n assert.equal(resolveTarget({type:'door',door:'other'},false,{},here),undefined);\n assert.match(nextAction(m,false,{x:0,z:-22}).hint,/old stall marker/);\n const input={story:{idx:4,prog:0},keys:1,doors:{}},before=structuredClone(input);\n nextAction(m,false,{x:9,z:-9},{save:input});resolveTarget(m,false,{},here,input);assert.deepEqual(input,before);\n});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    }
+  },
+  "historicalObserverSHA256": {
+    "tools/grass-arch-source-guard.cjs": [
+      "d0554531c3cd91bfa822230b4c7fc89378181cbfd80472596ab5a8a89f7c4228",
+      "ddd5bb23be376c6af3f0e89a34acc7f3237cfe9bb456b52b4de63cb9ce604859",
+      "ee709fc1908a3f603ae193f0e3cfb02a89fc1bf62045c2decba4cdce16d8aaf3"
+    ],
+    "tools/grass-ribbon-source-guard.cjs": [
+      "2b232663ae9f62b716f70019cae060a7607f1e4ea049e2d50e0ae24f43ae96cb",
+      "500368512ee4097a6686cbed76520705c8ba3f946544f7cb11557fe71158ecea",
+      "ccc7a399cc8a5f811d4effcb08c960f8d14aeb51c3cb4416f354a85ce9a29095"
+    ],
+    "tools/meadow-relief-wall-source-guard.cjs": [
+      "bad1ecb25dd141b395935f8675c78f77cd8ab0d232b1ff6a7be0bebd5cfd2c28"
+    ],
+    "tools/progression-grass-source-guard.cjs": [
+      "4fea488dadd32eb573b41830dfa69c6010df9658f92831325f1fd87310579180",
+      "6a4c5957ca008f47de39594af49cebef75723c9601dbaabc3971305ddcae8f4c",
+      "df22ca782ba3842da696f6e52eb03b9e3b1d228d6f2a3d632480d43cf0b02b9b"
+    ],
+    "tools/progression-loop-cache-source-guard.cjs": [
+      "89d074b6ea35159cdd7dc9a698610915e08227a33716dc0f8dbf4a3974edf687",
+      "c164aaf5333adb1abf8d05dfc1c5cf8926539979d7dd0b5e33383db110cf57db"
+    ],
+    "tools/reviewed-riding-source-guard.cjs": [
+      "3108eeaba13177937ba1dc44043bb6d51b4193998f3954f680d8783d7da1b3c7",
+      "4554276f2fbffb43899d1252e03c54fa2526956332b177cd833e6da72c4ac51b",
+      "73ace7342af29856ade7f5aa405c516a7d35ff279722bc6e98dbce79a47bee77",
+      "82322d25fd68e7277ee85a4e88ecfb43c971db1c864d05c29dcfc67d74c98ed4",
+      "8cfd67b53de131997d919869f5616f407c016047bb7892459c9ee91e2f325fca"
+    ],
+    "tools/run-reviewed-world-guards.mjs": [
+      "2f8b0fddfbe03ab0c784d990fa5f93f04b4046e6b4c5232b6faf8bd62d452f0b",
+      "96e4719a46ed31c716743b8d29a3380f591294bc2d7e33b9d9869189e87d6d62"
+    ],
+    "tools/test-activity-runtime-source-guard.mjs": [
+      "91abcb8c68dc2a86f16747476095aad088ad352b5a7b2f6681c47d07b533a9c9"
+    ],
+    "tools/test-arched-grass-wind.mjs": [
+      "339e2d48fdf48219e1305872cef8fe662cdb906caf21ed66dc54f4ee50c0abaa",
+      "40b99dc5f75cb8749d97beb81c030a0ab694fc68a8d563f38552556267a992f1",
+      "f49ffa983a24155e030600a659c790fbbdbf1929e523ba1a3f7b05b1dc632f60"
+    ],
+    "tools/test-basic-riding-tack.mjs": [
+      "5ba088696be54f6dc385a7619986066c3e4e6a5d7e036535c3e00c57f6e8a49b",
+      "706e800aedaf9f279c640e3103e5489d55d263e7d96b0c85a955494798ab7874",
+      "97c2d5308b342b1d83701341bd813f61083ecb6901b8f9502b1c5f4582d2729a",
+      "ab5a6a7b50c326f2624609c3da6469320b8a03e8df4a5c780c1fcfd6f16582d8"
+    ],
+    "tools/test-cottonwood-post.mjs": [
+      "3744b78dae0779547cb3b60caa3fc86042c6d9333a0656c8df3a0a2dd5dfeb9a",
+      "7326eeb0bec973894d80cfd01f2fb9e694c756a498180979994062b1e5066473"
+    ],
+    "tools/test-coursed-field-wall.mjs": [
+      "bddfb5bf229e9e73b14d33404e55dae247379714cd740974937b18f4cf309264",
+      "df16c0f3c5f39a623ff3d94c449b4a6779493faa334cd7713a9795e9d6517b0f"
+    ],
+    "tools/test-coyote-crag-composition.mjs": [
+      "4ca5bdb1ffa5f0ccc38556e21a8f4bca3db2ffee291beb3d345326ed3cebe79e",
+      "9b6b6642dfe3a3bf607d712f3313cb3bbe775525291f08129f79746346f2e9c3",
+      "9cf78610f34569a78414540675f3ca1d120ad6cf0b909b5ee75a6632e3ddd9dd",
+      "d79de066a7d435aedfcc082575914f8cc25ee1325011339a4e1b8579f6774044"
+    ],
+    "tools/test-fieldstone-wall-cache-guard.mjs": [
+      "3d25cdfe45c23e658264dc256afcb327648f5b3f39c59f94c370eae781166c3a",
+      "5cd362f808e45612486b9b6093ab30045e730ddd67eecbf3302d002b2fc7cd5f",
+      "b2e19fb4623895c7626ccb9e1cbfef193601e5b062c1a582934f3b4d7b6814b2"
+    ],
+    "tools/test-fieldstone-wall-collision.mjs": [
+      "0b6befdfa394ea7409f2f51b7409ee4bd2e6b4c69843e1737d26c40684dd845b",
+      "6fbb95ee0c39e9a0a755b5a0c50aaf8bbd37fbaedd82c12f97d78659bbbe9f09"
+    ],
+    "tools/test-fieldstone-wall-lifecycle-cache-guard.mjs": [
+      "22078efb875cd5d1b03dac3ddcfeebba0badb27de701b74c214cdb056bedb8d1",
+      "24daa5d178d157673c89bc8426c6881bbcdc30dbe4b4a6afc1a3bd38f932de61",
+      "715e70103601c9a8789144cc3b70d58e643b9506669fed9682742c03d94a0f73"
+    ],
+    "tools/test-fieldstone-wall-model.mjs": [
+      "6c48bec8de3bda297da93d70641078c9423be6144f883c47c52f5efbe5bca2df",
+      "8479eff8e1846b5a63fc49412d0ce8b88c8f39b66a9d6e46dc9d1089f353f8c4"
+    ],
+    "tools/test-fine-hair-cache-guard.mjs": [
+      "7c14b3c2504ad0d0c1fdeb83da7b75f0f81c6627b349d224beb9af320d20b6ee",
+      "b65a5dfe0cadb6347144f92815bfd34007b6cebdbb8d60901940b9da63ad947c",
+      "ba6a83edf4c040ecbc81c5a75f8001e5c050350fe0bbd7e6125af0e5b3f86ac6"
+    ],
+    "tools/test-follow-camera-authored-parts.mjs": [
+      "271f07d6f64065ee9073a7ee17259e00e512a9ca9ff0b3c69d3adc242a524e9a",
+      "2f179b100f28aa39bec22fc671fd99933e72f0c9dc5015df98b90be5c3ff34a2",
+      "fc8ac80768a5a806467b6af20d6f7843146b944cbec5dc93b7393c71f2d52a62"
+    ],
+    "tools/test-lupin-independent.mjs": [
+      "28c62714ac6d674ad3332d664af406c525dc9159412e77a6f0bb26e60fb79d27",
+      "9effbff04533ae4db1b20e2e3d727dcecb7e533f92487349c73d42d2c7138f99",
+      "d61b96d3c9a64875b100ffa0ac82ec92b64f8a714bcbe5485c950584fd337991"
+    ],
+    "tools/test-meadow-relief-wall-source-guard.mjs": [
+      "a4c27de87628d0d295434afca0824e281fad838b9684db4774524375ffada007"
+    ],
+    "tools/test-pasture-mesosurface.mjs": [
+      "dcb7a623af5a293edde12c8380824560c3ae557919a13ba707b116fa9bdb8967",
+      "fb89e09fac2d8183a70cdf6568fae543b6653f9e372fb3e754b38d3ce3d1bb2d"
+    ],
+    "tools/test-progression-grass-composition.mjs": [
+      "75646332a38426747abc22f7aced1e5af421e16260b664f017d567e8f0457494",
+      "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e",
+      "d3e217211ce9b8f3dc4915c94ab69f5d2924bc391a859eeafc0446c1c85e4263",
+      "ef9fd427577131f2a835505e70643943cbbec7970922de9e9908f52fdd303860"
+    ],
+    "tools/test-progression-hints.mjs": [
+      "030f825bbc29ec57abafcb73e62e806c8f154c5014800cbfdb66d7dc2fa72315",
+      "7c3f1e7d63e412a8c651b1e824385150b25a93633bd0bfdbf816c22fd0882247",
+      "e01a3d4557cb38383a7aac5a36fa0ee9cb933ebda190c8963fad925b276744ec"
+    ],
+    "tools/test-progression-loop-cache-guard.mjs": [
+      "1492f0eaee5ef446120de264d416ec1655a2bf5244e64911bff94746570dd115",
+      "2ec1d72dc660286502cb1f612ce2aa929775b305a67025f174df4a0d70445c0f",
+      "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548",
+      "f01a42811cf40f52cc836b92aafa25f429d8f3e9b1d592c242c230aa5f352f8c"
+    ],
+    "tools/test-reviewed-riding-source-guard.mjs": [
+      "40f376850df04e75aa0057fd4a655c38a2ee6808a73607566b99127a96fb1066",
+      "55efca4f80afe6ff2b904227a659399497a90420caf059ba257ab7f61c3325b7",
+      "5a049fefc32b6229a37e37c8baef59aa2168e1bf67593a50cf7aa8d4f97a0ec6",
+      "7229b619468e64ee5af8392b02b9d951391be7a5b08b7c5549983c84a4a6976c",
+      "ebad495aafb9af04bbf116be72f4499dcb4c5419b0724ad4602403ec79c4f818"
+    ],
+    "tools/test-ribbon-grass-source-guard.mjs": [
+      "4c9884df6ea5684c945c01ae3302695b6f3fb2ce3a3f9737fe9581987283f4f2",
+      "58f9b20c769b998f044365452785cf4fffbe024b0c614372dd49b03947be132f",
+      "fe314e18f24c56b66473b0b1d22e59588042dd92ce079e00c821e26fa55e7bff"
+    ],
+    "tools/test-starter-tack-catalog-preservation.mjs": [
+      "103f05e5c6460ac3993a2128b786edb5322259b41f793e39865a6860313085fe",
+      "23fe01c5b327a6c9936a45bb5bbf905035176e829b83d485563d1839391137ad",
+      "e21402cff79d0e651c2a46bd51561bd4e4752fae2dbfeca3684845a99c262367",
+      "f6b4adfbf5c09a9895c0c75bf44ffd5a4e922ecaa1d30f5b455af1523da5548b"
+    ],
+    "tools/test-story-guidance.mjs": [
+      "1415fc68fd494002536b098b6d1ecff01cdd9e46269423740863bfe21afb08e8",
+      "63c61780278affac05a7302429222914f99bf68dc6e3fa4f9c2aa5edf4691b2c"
+    ]
+  },
+  "approvedAddedFixtures": {
+    "tools/fixtures/activity-runtime-df065bd/contract.json": "cb5d05e979ef6866d6725292a46358939e344d872e23be9b620c7a9b75912a4e",
+    "tools/fixtures/lash-cache-df065bd/contract.json": "58698c4725ad04d8a12dea7381daf30183ab576a2ca7c2b1a59bbe7f2179ab51",
+    "tools/fixtures/lash-cache-df065bd/observer-changes.json": "ecd0fd1269c4d8b09d5be04c2dcc242381b0dc77ac8d9dfca0754b8ca0ff658b",
+    "tools/fixtures/managed-turf-native-points-b1.json": "a910123c907a492e963f05a3b451584f102e9d48ff1e083c70580042e1b0ff1f",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/contract.json": "3cff1eb7dc27bc01dda44374df346821396b31238958e527cb42df333e321b51",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/prior-projection-functions.json": "e7adfb03c6167c869c041f0ac3e58a3ee73ba5a871374537207e5a0a47fcb87b",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/source-changes.json": "e669420b69e14252a6439dcc851cd3a6f9b4930a6e9399a4bd7e6e22be60f463",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/test-adapter-changes.json": "f0ee89033b05672748c24c2acb5aa6d0fa36b648145e8bf33fc84347cb16240d",
+    "tools/fixtures/rubble-field-wall-b1a73b1/actual-units.json": "6bcdb527027826d94e02d909e9f1ee864590b924b5ff1b40e794a0a00dc4aa80"
+  }
+}

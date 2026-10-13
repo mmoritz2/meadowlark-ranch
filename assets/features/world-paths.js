@@ -1,4 +1,4 @@
-import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-3';
+import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-4';
 /* Feature package 'world-paths' — the ground between places.
 
    The basin already had six worn tracks baked into ranch3d.html, and every one of them stops at

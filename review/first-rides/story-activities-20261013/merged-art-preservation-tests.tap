@@ -1,0 +1,410 @@
+TAP version 13
+# Subtest: basic appearance is visual-only, absent slots only, and retains exact selected object identity
+ok 1 - basic appearance is visual-only, absent slots only, and retains exact selected object identity
+  ---
+  duration_ms: 2.192625
+  ...
+# Subtest: private synchronous basic construction restores global randomness on success, throw and nested calls
+ok 2 - private synchronous basic construction restores global randomness on success, throw and nested calls
+  ---
+  duration_ms: 0.790833
+  ...
+# Subtest: whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+ok 3 - whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+  ---
+  duration_ms: 269.943875
+  ...
+# Subtest: actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+ok 4 - actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+  ---
+  duration_ms: 4627.302167
+  ...
+# Subtest: actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+ok 5 - actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+  ---
+  duration_ms: 1315.606458
+  ...
+# Subtest: invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+ok 6 - invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+  ---
+  duration_ms: 263.499584
+  ...
+# Subtest: new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+ok 7 - new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+  ---
+  duration_ms: 1359.802917
+  ...
+# Subtest: actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+ok 8 - actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+  ---
+  duration_ms: 1387.277208
+  ...
+# Subtest: only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+ok 9 - only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+  ---
+  duration_ms: 2899.44275
+  ...
+# Subtest: conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+ok 10 - conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+  ---
+  duration_ms: 1342.613917
+  ...
+# Subtest: real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+ok 11 - real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+  ---
+  duration_ms: 207.081916
+  ...
+# Subtest: Historical b1 slab: coursed kits are deterministic, finite and within the 280 triangle budget
+ok 12 - Historical b1 slab: coursed kits are deterministic, finite and within the 280 triangle budget
+  ---
+  duration_ms: 8.153291
+  ...
+# Subtest: wall silhouettes stay inside the old collision footprint at arbitrary yaw
+ok 13 - wall silhouettes stay inside the old collision footprint at arbitrary yaw
+  ---
+  duration_ms: 52.14775
+  ...
+# Subtest: all triangles have outward consistent winding, area and normals
+ok 14 - all triangles have outward consistent winding, area and normals
+  ---
+  duration_ms: 3.051916
+  ...
+# Subtest: sloped units stay seated and do not exceed one metre above their local terrain
+ok 15 - sloped units stay seated and do not exceed one metre above their local terrain
+  ---
+  duration_ms: 1.509709
+  ...
+# Subtest: geometry creation consumes no random numbers and keeps authored records exact
+ok 16 - geometry creation consumes no random numbers and keeps authored records exact
+  ---
+  duration_ms: 1.692583
+  ...
+# Subtest: real course-clear rebuild retires the corresponding new wall while preserving row references
+ok 17 - real course-clear rebuild retires the corresponding new wall while preserving row references
+  ---
+  duration_ms: 23.870166
+  ...
+# Subtest: partial clearing removes the full replacement and preserves only original surviving rocks
+ok 18 - partial clearing removes the full replacement and preserves only original surviving rocks
+  ---
+  duration_ms: 6.215708
+  ...
+# Subtest: failed texture loading leaves all legacy visibility and the scene unchanged
+ok 19 - failed texture loading leaves all legacy visibility and the scene unchanged
+  ---
+  duration_ms: 2.196833
+  ...
+# Subtest: clearing while textures load cannot reintroduce the retired unit
+ok 20 - clearing while textures load cannot reintroduce the retired unit
+  ---
+  duration_ms: 1.045834
+  ...
+# Subtest: small bevels and narrow end stones retain planar outward triangles across regression seeds
+ok 21 - small bevels and narrow end stones retain planar outward triangles across regression seeds
+  ---
+  duration_ms: 1167.568
+  ...
+# Subtest: exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+ok 22 - exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+  ---
+  duration_ms: 2578.876708
+  ...
+# Subtest: exact published caches and the original five crag reversals restore the full original7009 bodies
+ok 23 - exact published caches and the original five crag reversals restore the full original7009 bodies
+  ---
+  duration_ms: 240.268417
+  ...
+# Subtest: the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+ok 24 - the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+  ---
+  duration_ms: 1474.974583
+  ...
+# Subtest: both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+ok 25 - both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+  ---
+  duration_ms: 0.775875
+  ...
+# Subtest: late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+ok 26 - late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+  ---
+  duration_ms: 9.6485
+  ...
+# Subtest: current maintained-turf owner adopts one physical PMS4 response without textures, vertex or depth changes
+ok 27 - current maintained-turf owner adopts one physical PMS4 response without textures, vertex or depth changes
+  ---
+  duration_ms: 1.836
+  ...
+# Subtest: the prior independently verified physical field is exact and CPU/shader scales remain coupled
+ok 28 - the prior independently verified physical field is exact and CPU/shader scales remain coupled
+  ---
+  duration_ms: 0.534
+  ...
+# Subtest: actual analytic gradients agree with independent central differences through cropped and filtered states
+ok 29 - actual analytic gradients agree with independent central differences through cropped and filtered states
+  ---
+  duration_ms: 56.989459
+  ...
+# Subtest: actual local and group cell seams retain continuous height and first derivative
+ok 30 - actual local and group cell seams retain continuous height and first derivative
+  ---
+  duration_ms: 0.360875
+  ...
+# Subtest: all captured native points retain finite relief and continuous managed/filter transitions
+ok 31 - all captured native points retain finite relief and continuous managed/filter transitions
+  ---
+  duration_ms: 1.371
+  ...
+# Subtest: new terrain gradients stay bounded on steep surfaces and fully excluded substrates retain exact zero response
+ok 32 - new terrain gradients stay bounded on steep surfaces and fully excluded substrates retain exact zero response
+  ---
+  duration_ms: 4.266833
+  ...
+# Subtest: actual emitted crown/root tint, matte roughness and ambient visibility remain bounded and vanish with zero pasture cover
+ok 33 - actual emitted crown/root tint, matte roughness and ambient visibility remain bounded and vanish with zero pasture cover
+  ---
+  duration_ms: 4.732167
+  ...
+# Subtest: repeated and missing-prerequisite material patches are atomic
+ok 34 - repeated and missing-prerequisite material patches are atomic
+  ---
+  duration_ms: 0.609
+  ...
+# Subtest: Historical b1 PMS2: main and outer use one coherent meso field after their final substrate and normal responses
+ok 35 - Historical b1 PMS2: main and outer use one coherent meso field after their final substrate and normal responses
+  ---
+  duration_ms: 0.777041
+  ...
+# Subtest: Historical b1 PMS2: meso response creates no texture/resource, changes no vertex source and retains opacity
+ok 36 - Historical b1 PMS2: meso response creates no texture/resource, changes no vertex source and retains opacity
+  ---
+  duration_ms: 0.565542
+  ...
+# Subtest: Historical b1 PMS2: repeated and incomplete patching is atomic
+ok 37 - Historical b1 PMS2: repeated and incomplete patching is atomic
+  ---
+  duration_ms: 0.214541
+  ...
+# Subtest: Historical b1 PMS2: analytic gradients agree with independent central differences of physical tuft height
+ok 38 - Historical b1 PMS2: analytic gradients agree with independent central differences of physical tuft height
+  ---
+  duration_ms: 101.531208
+  ...
+# Subtest: Historical b1 PMS2: field filtering removes subpixel response and managed turf has shallower coherent relief
+ok 39 - Historical b1 PMS2: field filtering removes subpixel response and managed turf has shallower coherent relief
+  ---
+  duration_ms: 0.318125
+  ...
+# Subtest: Historical b1 PMS2: projected normal relief stays finite, bounded and neutral for zero gradient
+ok 40 - Historical b1 PMS2: projected normal relief stays finite, bounded and neutral for zero gradient
+  ---
+  duration_ms: 6.95825
+  ...
+# Subtest: Historical b1 PMS2: non-pasture substrates suppress the response and cavity shading cannot remove direct light
+ok 41 - Historical b1 PMS2: non-pasture substrates suppress the response and cavity shading cannot remove direct light
+  ---
+  duration_ms: 0.205
+  ...
+# Subtest: Historical b1 PMS2: the broad growth envelope leaves calm and fuller patches without another noise band
+ok 42 - Historical b1 PMS2: the broad growth envelope leaves calm and fuller patches without another noise band
+  ---
+  duration_ms: 27.454416
+  ...
+# Subtest: actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+ok 43 - actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+  ---
+  duration_ms: 0.688958
+  ...
+# Subtest: positive legacy race history stays compatible with absent or zero modern ledger
+ok 44 - positive legacy race history stays compatible with absent or zero modern ledger
+  ---
+  duration_ms: 0.186833
+  ...
+# Subtest: points, placings, best times and ribbons alone do not invent a completed race
+ok 45 - points, placings, best times and ribbons alone do not invent a completed race
+  ---
+  duration_ms: 0.203333
+  ...
+# Subtest: missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+ok 46 - missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+  ---
+  duration_ms: 0.18825
+  ...
+# Subtest: loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+ok 47 - loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+  ---
+  duration_ms: 0.144708
+  ...
+# Subtest: the real gate reads fresh progress every time without mutating it or writing rewards
+ok 48 - the real gate reads fresh progress every time without mutating it or writing rewards
+  ---
+  duration_ms: 0.08275
+  ...
+# Subtest: first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+ok 49 - first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+  ---
+  duration_ms: 1.407958
+  ...
+# Subtest: exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+ok 50 - exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+  ---
+  duration_ms: 119.596625
+  ...
+# Subtest: unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+ok 51 - unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+  ---
+  duration_ms: 5.39225
+  ...
+# Subtest: existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+ok 52 - existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+  ---
+  duration_ms: 450.216333
+  ...
+# Subtest: merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+ok 53 - merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+  ---
+  duration_ms: 580.907291
+  ...
+# Subtest: original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+ok 54 - original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+  ---
+  duration_ms: 512.614375
+  ...
+# Subtest: each exact new cache edge and its original subject retain the same complete old source body
+ok 55 - each exact new cache edge and its original subject retain the same complete old source body
+  ---
+  duration_ms: 763.18825
+  ...
+# Subtest: unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+ok 56 - unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+  ---
+  duration_ms: 316.012833
+  ...
+# Subtest: merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+ok 57 - merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+  ---
+  duration_ms: 112.579167
+  ...
+# Subtest: camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+ok 58 - camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+  ---
+  duration_ms: 81.377083
+  ...
+# Subtest: ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 59 - ranch3d.html: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 1919.088667
+  ...
+# Subtest: assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 60 - assets/lush-meadow-geometry.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 1.75775
+  ...
+# Subtest: assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 61 - assets/meadow-cover.js: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.704916
+  ...
+# Subtest: assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 62 - assets/grass-families.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.734167
+  ...
+# Subtest: assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 63 - assets/grazed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 0.82325
+  ...
+# Subtest: assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+ok 64 - assets/mixed-sward.mjs: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards
+  ---
+  duration_ms: 1.314292
+  ...
+# Subtest: actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+ok 65 - actual parent and six child cache declarations are present once, with no stale or unknown ribbon edge
+  ---
+  duration_ms: 436.078791
+  ...
+# Subtest: all previously accepted native and camera states preserve every original d5 body hash
+ok 66 - all previously accepted native and camera states preserve every original d5 body hash
+  ---
+  duration_ms: 1044.376041
+  ...
+# Subtest: every observer adapter preserves its full d9 source, every old assertion and all old hashes
+ok 67 - every observer adapter preserves its full d9 source, every old assertion and all old hashes
+  ---
+  duration_ms: 19.252792
+  ...
+# Subtest: original actual163 wall records retain root, basis, legacy ownership and exact measured new budget
+ok 68 - original actual163 wall records retain root, basis, legacy ownership and exact measured new budget
+  ---
+  duration_ms: 276.954
+  ...
+# Subtest: all actual163 wall solids are closed, outward, positive-volume and finite
+ok 69 - all actual163 wall solids are closed, outward, positive-volume and finite
+  ---
+  duration_ms: 2829.575416
+  ...
+# Subtest: arbitrary yaw, both grades, steep grade and a ground crease retain finite physical faces and original collision envelope
+ok 70 - arbitrary yaw, both grades, steep grade and a ground crease retain finite physical faces and original collision envelope
+  ---
+  duration_ms: 378.57575
+  ...
+# Subtest: complete stone bearings follow the local ground while their relative profile stays unchanged across positive and negative grade
+ok 71 - complete stone bearings follow the local ground while their relative profile stays unchanged across positive and negative grade
+  ---
+  duration_ms: 11.412584
+  ...
+# Subtest: actual factory is deterministic, consumes zero RNG and never mutates authored source records
+ok 72 - actual factory is deterministic, consumes zero RNG and never mutates authored source records
+  ---
+  duration_ms: 89.419083
+  ...
+# Subtest: invalid actual record coordinates and bases fail before producing invalid geometry
+ok 73 - invalid actual record coordinates and bases fail before producing invalid geometry
+  ---
+  duration_ms: 0.748791
+  ...
+# Subtest: invalid or failed footing callbacks cannot emit NaN geometry or alter owned source records
+ok 74 - invalid or failed footing callbacks cannot emit NaN geometry or alter owned source records
+  ---
+  duration_ms: 2.702416
+  ...
+# Subtest: actual rubble installer keeps constructor RNG stream, three resident maps and one mesh draw owner
+ok 75 - actual rubble installer keeps constructor RNG stream, three resident maps and one mesh draw owner
+  ---
+  duration_ms: 109.961
+  ...
+# Subtest: actual rubble singleton gets its exact jumpable source span; all original195 refs, bodies and order remain
+ok 76 - actual rubble singleton gets its exact jumpable source span; all original195 refs, bodies and order remain
+  ---
+  duration_ms: 44.551917
+  ...
+# Subtest: already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+ok 77 - already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+  ---
+  duration_ms: 8832.219167
+  ...
+# Subtest: source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+ok 78 - source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+  ---
+  duration_ms: 139.794792
+  ...
+# Subtest: only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+ok 79 - only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+  ---
+  duration_ms: 338.3525
+  ...
+# Subtest: published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+ok 80 - published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+  ---
+  duration_ms: 466.168916
+  ...
+1..80
+# tests 80
+# suites 0
+# pass 80
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13925.851792

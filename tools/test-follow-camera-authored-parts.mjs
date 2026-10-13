@@ -5,7 +5,8 @@ import {createHash} from 'node:crypto';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {normalizeAuthoredCameraSource} from './authored-camera-source-guard.cjs';
-import {normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+import {normalizeReviewedGuideSource,normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';
 
 const root=process.env.MEADOWLARK_TEST_ROOT||resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const contract=JSON.parse(readFileSync(new URL('./fixtures/follow-camera-d5b9441/contract.json',import.meta.url),'utf8'));
@@ -175,7 +176,7 @@ test('existing orbit/frame/input and builder/collision source contracts remain e
 test('exact frozen runtime and one import reversal reject camera drift without changing historical main assertions',()=>{
  assert.equal(hash(readFileSync(cameraPath)),contract.reviewedRuntimeSHA256['assets/follow-camera.js'],'complete reviewed runtime camera body');
  const guard=readFileSync(new URL('./authored-camera-source-guard.cjs',import.meta.url));assert.equal(hash(guard),contract.guardSHA256);
- const main=readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8');
+ const main=normalizeReviewedRuntimeSource(normalizeMeadowReliefWallSource(readFileSync(process.env.CAMERA_MAIN_SOURCE||resolve(root,'ranch3d.html'),'utf8'),'ranch3d.html'),'ranch3d.html');
  assert.equal(main.split(contract.cameraCache.after).length-1,1,'main imports the reviewed camera runtime exactly once');
  const normalized=normalizeAuthoredCameraSource(main,'ranch3d.html');
  // For a combined GrassArch/camera main, its normalizer supplies the remaining

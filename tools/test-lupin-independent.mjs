@@ -1,5 +1,7 @@
 import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
-import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeGrassRibbonSource as normalizePriorRibbonSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+const normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

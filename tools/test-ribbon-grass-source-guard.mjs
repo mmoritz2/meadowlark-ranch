@@ -2,13 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {normalizeGrassRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeGrassRibbonSource as normalizePriorRibbonSource,normalizeGrassRibbonTestSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
+const normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 import {normalizeProgressionSource,normalizeProgressionGuardSource} from './progression-grass-source-guard.cjs';
 const directory=new URL('./fixtures/grass-ribbon-d9b168e/',import.meta.url);
 const contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory)));
 const changes=JSON.parse(fs.readFileSync(new URL('source-changes.json',directory)));
-const read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file);
+const read=file=>normalizeProgressionGuardSource(normalizeProgressionSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),file);
 const sha=source=>createHash('sha256').update(source).digest('hex');
 for(const [file,row]of Object.entries(contract.files))test(`${file}: actual accepted ribbon graph restores the complete d9 body before unchanged earlier guards`,()=>{
  const source=read(file);assert.equal(sha(source),row.candidateSHA256,'Actual source matches the accepted six-file runtime');

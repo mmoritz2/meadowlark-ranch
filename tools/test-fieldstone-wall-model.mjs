@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from '../assets/coursed-field-wall.mjs';
+import {createCoursedFieldWallGeometry as create,installCoursedFieldWalls as install} from './meadow-relief-wall-historical.mjs';
+import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
 import {createCoursedFieldWallGeometry as before,installCoursedFieldWalls as installBefore} from './fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs';
 const record=(x,z,yaw)=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:[20,21,22,23,24]});
 const records=Array.from({length:128},(_,i)=>record(Math.sin(i*7.13)*310,Math.cos(i*11.71)*310,i*.317));
@@ -13,7 +14,7 @@ const point=(d,id)=>Array.from(d.positions.subarray(id*3,id*3+3));
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
 const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
-test('actual slab geometry preserves complete source records, unit ranges, resources and zero RNG',()=>{
+test('Historical b1 slab: actual slab geometry preserves complete source records, unit ranges, resources and zero RNG',()=>{
  const frozen=structuredClone(records),old=Math.random;let calls=0,samples=0;
  Math.random=()=>{calls++;throw Error('Unexpected placement RNG');};
  let d;
@@ -28,7 +29,7 @@ test('actual slab geometry preserves complete source records, unit ranges, resou
  assert.deepEqual(d.colors,original.colors,'Existing deterministic per-stone variation retained');
 });
 
-test('every new stone is a closed convex outward slab with physically planar fan normals',()=>{
+test('Historical b1 slab: every new stone is a closed convex outward slab with physically planar fan normals',()=>{
  for(const slope of [0,.14,-.14]){
   const d=create(records,(x,z)=>x*slope-z*slope*.7);
   for(let stone=0;stone<records.length*14;stone++){
@@ -60,7 +61,7 @@ function profile(d,r,stone){
  const bottom=p.slice(0,2).sort((a,b)=>a.x-b.x),crown=p.slice(4).sort((a,b)=>a.x-b.x);
  return {foot:(bottom[1].x-bottom[0].x)/span,crown:(crown[1].x-crown[0].x)/span,asymmetry:Math.abs((bottom[0].x-left)-(right-bottom[1].x))/span,span,crest:Math.max(...p.map(p=>p.y)),bearingTilt:Math.abs(bottom[0].y-bottom[1].y)};
 }
-test('broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles',()=>{
+test('Historical b1 slab: broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles',()=>{
  let newFoot=0,oldFoot=0,asymmetry=0,copingWidths=[],copingCreasts=[];
  for(const r of records.slice(0,64)){
   const d=create([r],()=>0),old=before([r],()=>0);
@@ -92,7 +93,7 @@ async function rngInstall(factory){
  let wall;try{wall=await factory(o);}finally{Math.random=old;}
  return {o,wall,calls,future:Array.from({length:24},next)};
 }
-test('actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner',async()=>{
+test('Historical b1 slab: actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner',async()=>{
  const old=await rngInstall(installBefore),now=await rngInstall(install);
  assert.equal(now.calls,old.calls);assert.deepEqual(now.future,old.future,'No future seeded constructor stream drift');
  assert.deepEqual(now.o.loaded,old.o.loaded);assert.equal(now.o.loaded.length,3);
@@ -111,12 +112,12 @@ test('actual installer keeps constructor RNG stream, three resident maps and one
  assert.equal(bytes(create(now.o.records,()=>0)),25536);
 });
 
-test('only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore',()=>{
+test('Historical b1 slab: only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore',()=>{
  const directory=new URL('./fixtures/fieldstone-wall-a78ed79/',import.meta.url);
  const changes=JSON.parse(fs.readFileSync(new URL('source-changes.json',directory)));
  const hashes=JSON.parse(fs.readFileSync(new URL('preimage-SHA.json',directory)));
  for(const file of Object.keys(hashes)){
-  let source=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');
+  let source=normalizeMeadowReliefWallSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);
   for(const c of changes.filter(c=>c.file===file).toReversed()){
    assert.equal(source.split(c.after).length,2,'Exact approved replacement once: '+file);source=source.replace(c.after,c.before);
   }

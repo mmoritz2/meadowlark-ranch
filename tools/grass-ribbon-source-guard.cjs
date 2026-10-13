@@ -1,11 +1,12 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');
 const {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');
 const directory=path.join(__dirname,'fixtures/grass-ribbon-d9b168e');
 const contract=JSON.parse(fs.readFileSync(path.join(directory,'contract.json')));
 const changes=JSON.parse(fs.readFileSync(path.join(directory,'source-changes.json')));
 const adapters=JSON.parse(fs.readFileSync(path.join(directory,'test-adapter-changes.json')));
 const sha=source=>crypto.createHash('sha256').update(source).digest('hex');
-for(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeProgressionGuardSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact prior wall/published/camera source guard '+file);
+for(const [file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeProgressionGuardSource(normalizeMeadowReliefWallTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file),file)),hash,'Exact prior wall/published/camera source guard '+file);
 const {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');
 const {normalizePublishedCacheSource}=require('./published-world-import-source-guard.cjs');
 const {normalizeAuthoredCameraSource}=require('./authored-camera-source-guard.cjs');
@@ -46,6 +47,7 @@ function normalizeGrassRibbonSource(source,file){
 // Old observer bodies retain all old assertions and hashes. This exact
 // adapter reversal is only for source-reading observers, never runtime.
 function normalizeGrassRibbonTestSource(source,file){
+ source=normalizeMeadowReliefWallTestSource(source,file);
  source=normalizeProgressionGuardSource(source,file);
  const hash=contract.testAdapterPreimages[file];if(!hash)return source;
  if(sha(source)===hash)return source; // Only the complete pinned original state bypasses dependent adapter steps.

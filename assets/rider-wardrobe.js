@@ -5,8 +5,8 @@ import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-202
 // TMP integration candidate. Keeps the normal rider API and all existing outfit IDs.
 // Construction families still marked approximate below must receive dedicated art
 // before this becomes a complete catalog release.
-import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=noticeable-fine-lashes80-20261012';
-export * from './rider-model-base.js?v=noticeable-fine-lashes80-20261012';
+import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=more-noticeable-lashes96-20261013';
+export * from './rider-model-base.js?v=more-noticeable-lashes96-20261013';
 import {CLOTH_GLSL} from './rider-clothes.js?v=tailored-coats69-20261010';
 import {finishRidingBoots} from './rider-boot-finish.js?v=rider-fit74-20261010';
 import {technicalFinish} from './rider-technical-finish.js?v=tailored-coats69-20261010';

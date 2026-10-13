@@ -1,0 +1,559 @@
+{
+  "schema": "captured-native-clover-terrain-points-b1-v1",
+  "priorPhysicalFieldSHA256": "6ef6bc81df5ecd29e4c104306d709a8c24d75fc2c50f069ba0e614ea15029843",
+  "priorPhysicalConstants": {
+    "localMetres": 1.45,
+    "groupMetres": 11,
+    "localWeight": 0.72,
+    "height": 0.18,
+    "managedHeight": 0.72,
+    "managedMaterial": 0.82,
+    "managedCalmHeight": 0.58,
+    "crownLow": 0.22,
+    "crownHigh": 0.79,
+    "normalLimit": 0.3,
+    "localFilter": [
+      0.12,
+      0.44
+    ],
+    "groupFilter": [
+      1.2,
+      3.8
+    ],
+    "envelopeLow": 0.4,
+    "envelopeHigh": 0.72,
+    "calmHeight": 0.16
+  },
+  "priorIndependentPhysicalProof": {
+    "path": "output/equestrian-visual-goal/clover-ground-b1a73b-audit/maintained-turf-relief-v1-independent-cpu-proof.json",
+    "sha256": "9d7ff67d1d8f46ed32621be961cf2092f869998ca29890a601d446f1eab10179",
+    "finiteDifferenceCases": 40920,
+    "maxError": 6.365499377603001e-09
+  },
+  "captureScope": "Existing native final3 actual terrain hit positions and SHA-bound landcover masks; CPU footprint scenarios are explicit, not sampled GPU derivatives. Each native input remains present; no selection by expected success.",
+  "capturedPoints": [
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        220,
+        750
+      ],
+      "point": [
+        78.95286363668676,
+        1.136819246966363,
+        -108.05986416895244
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0,
+        "envelope": 0.16,
+        "height": 0,
+        "dx": 0,
+        "dz": 0,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0,
+        "ambientMaximumReduction": 0.012320000000000003,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        330,
+        550
+      ],
+      "point": [
+        77.91241145713467,
+        1.4741635540489884,
+        -112.01869247166914
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.8813403492693432,
+        "envelope": 0.16,
+        "height": 0.00913773674122455,
+        "dx": 0.0024232797975982513,
+        "dz": -0.0018040251725538103,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.0030210580597955453,
+        "ambientMaximumReduction": 0.00017346698860594434,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        455,
+        750
+      ],
+      "point": [
+        80.7078783484325,
+        1.2895309132679982,
+        -107.83938346101277
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0,
+        "envelope": 0.16,
+        "height": 0,
+        "dx": 0,
+        "dz": 0,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0,
+        "ambientMaximumReduction": 0.012320000000000003,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        975,
+        750
+      ],
+      "point": [
+        84.0460468999369,
+        1.5746060186128887,
+        -107.43042073407875
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.685436709956988,
+        "envelope": 0.16,
+        "height": 0.007106607808834052,
+        "dx": 0.0034892138417091855,
+        "dz": -0.0018269639221311859,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.003938579744773989,
+        "ambientMaximumReduction": 0.001219064781613868,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        1100,
+        550
+      ],
+      "point": [
+        85.82160927424722,
+        2.0210988132551306,
+        -110.38957440053467
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.8290132191625611,
+        "envelope": 0.16,
+        "height": 0.008595209056277434,
+        "dx": -3.1331031608973714e-05,
+        "dz": -0.0004617750518794613,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.0004628367229163668,
+        "ambientMaximumReduction": 0.0003601934240045726,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-masonry-owner",
+      "pixel": [
+        860,
+        330
+      ],
+      "point": [
+        84.73824626631607,
+        3.6378042601380693,
+        -120.85874124281264
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.9258755138100777,
+        "envelope": 0.16,
+        "height": 0.009599477327182885,
+        "dx": -0.00011428089244626057,
+        "dz": 0.0012491812392552797,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.0012543978200258762,
+        "ambientMaximumReduction": 6.769149405997418e-05,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        220,
+        750
+      ],
+      "point": [
+        76.3450365180522,
+        3.164302546658647,
+        -120.31851804918868
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.7017155971817787,
+        "envelope": 0.18625242104156164,
+        "height": 0.008469115629981002,
+        "dx": 0.001352447454164197,
+        "dz": -0.0006003398512003914,
+        "filter": 0.10243883157285891,
+        "normalGradient": 0.001479703366629449,
+        "ambientMaximumReduction": 0.0012760090118474243,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        330,
+        550
+      ],
+      "point": [
+        74.56103010557973,
+        3.4706155586210774,
+        -121.69515572230671
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.43441392210499347,
+        "envelope": 0.20551539075069838,
+        "height": 0.005785262802292037,
+        "dx": 0.0032909367399544215,
+        "dz": -0.0032718450718708684,
+        "filter": 0.11303346491288412,
+        "normalGradient": 0.004640607158627794,
+        "ambientMaximumReduction": 0.005062120715614204,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        455,
+        750
+      ],
+      "point": [
+        77.56055800579989,
+        3.3974121110939732,
+        -120.91224518087841
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.8867412339881428,
+        "envelope": 0.16409495622047898,
+        "height": 0.00942903270526752,
+        "dx": 3.3845658536346357e-05,
+        "dz": -0.00024922813425623655,
+        "filter": 0.09025222592126345,
+        "normalGradient": 0.00025151578778797093,
+        "ambientMaximumReduction": 0.0001620800674078929,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        975,
+        750
+      ],
+      "point": [
+        79.55119338539373,
+        3.770967106915979,
+        -121.90415098513222
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.88851518868239,
+        "envelope": 0.16,
+        "height": 0.009212125476259018,
+        "dx": -0.0001830293900394863,
+        "dz": 0.00027739410707796133,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.00033233604718688864,
+        "ambientMaximumReduction": 0.0001531235940637247,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        1100,
+        550
+      ],
+      "point": [
+        79.42640101915717,
+        4.18310927593915,
+        -123.30553566426866
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.872125472239042,
+        "envelope": 0.16,
+        "height": 0.009042196896174389,
+        "dx": -0.00011694188746470069,
+        "dz": 5.453916132766538e-05,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.00012903458901446476,
+        "ambientMaximumReduction": 0.00020145534455308435,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-close",
+      "pixel": [
+        860,
+        330
+      ],
+      "point": [
+        76.28426994131397,
+        4.914560311676486,
+        -125.78084335250479
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.20750851238238105,
+        "envelope": 0.23548389636022554,
+        "height": 0.0031664463639368744,
+        "dx": -0.003322243598169373,
+        "dz": 0.0015891995816800122,
+        "filter": 0.12951614299812406,
+        "normalGradient": 0.0036827785483231684,
+        "ambientMaximumReduction": 0.011387834590596863,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        220,
+        750
+      ],
+      "point": [
+        78.95286363668676,
+        1.136819246966363,
+        -108.05986416895244
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0,
+        "envelope": 0.16,
+        "height": 0,
+        "dx": 0,
+        "dz": 0,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0,
+        "ambientMaximumReduction": 0.012320000000000003,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        330,
+        550
+      ],
+      "point": [
+        77.91241145713464,
+        1.4741635540489946,
+        -112.0186924716692
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.8813403492693461,
+        "envelope": 0.16,
+        "height": 0.00913773674122458,
+        "dx": 0.002423279797598192,
+        "dz": -0.0018040251725536776,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.0030210580597954187,
+        "ambientMaximumReduction": 0.00017346698860593585,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        455,
+        750
+      ],
+      "point": [
+        80.7078783484325,
+        1.2895309132679982,
+        -107.83938346101277
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0,
+        "envelope": 0.16,
+        "height": 0,
+        "dx": 0,
+        "dz": 0,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0,
+        "ambientMaximumReduction": 0.012320000000000003,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        975,
+        750
+      ],
+      "point": [
+        84.0460468999369,
+        1.5746060186128887,
+        -107.43042073407875
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.685436709956988,
+        "envelope": 0.16,
+        "height": 0.007106607808834052,
+        "dx": 0.0034892138417091855,
+        "dz": -0.0018269639221311859,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.003938579744773989,
+        "ambientMaximumReduction": 0.001219064781613868,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        1100,
+        550
+      ],
+      "point": [
+        85.82160927424724,
+        2.021098813255137,
+        -110.38957440053471
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.8290132191625635,
+        "envelope": 0.16,
+        "height": 0.00859520905627746,
+        "dx": -3.133103160901958e-05,
+        "dz": -0.00046177505187948643,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.000462836722916395,
+        "ambientMaximumReduction": 0.0003601934240045623,
+        "managedScale": 0.36
+      }
+    },
+    {
+      "view": "clover-wall-low",
+      "pixel": [
+        860,
+        330
+      ],
+      "point": [
+        84.73824626631607,
+        3.6378042601380693,
+        -120.85874124281264
+      ],
+      "mask": [
+        0,
+        0,
+        1
+      ],
+      "baseline": {
+        "footprint": 0,
+        "crown": 0.9258755138100777,
+        "envelope": 0.16,
+        "height": 0.009599477327182885,
+        "dx": -0.00011428089244626057,
+        "dz": 0.0012491812392552797,
+        "filter": 0.08800000000000001,
+        "normalGradient": 0.0012543978200258762,
+        "ambientMaximumReduction": 6.769149405997418e-05,
+        "managedScale": 0.36
+      }
+    }
+  ],
+  "sourceEvidenceSHA256": "dacc94572be8a458e7bd5d1d072cf9d79f4a6c64d2ae75a391d625c3e60b42bb"
+}

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {installCoursedFieldWalls as install,createCoursedFieldWallGeometry as create} from '../assets/coursed-field-wall.mjs';
+import {installCoursedFieldWalls as historicalInstall} from './meadow-relief-wall-historical.mjs';
 const record=(x=0,z=0,yaw=0,rows=[0,1,2,3,4])=>({x,z,tx:Math.cos(yaw),tz:Math.sin(yaw),nx:-Math.sin(yaw),nz:Math.cos(yaw),legacyRows:rows});
 const wall=(x1,z1,x2,z2)=>({x1,z1,x2,z2});
 function options(records=[record()],walls=[]){
@@ -12,7 +13,8 @@ function options(records=[record()],walls=[]){
  return {THREE:{...T,TextureLoader:class{async loadAsync(){return new T.Texture();}}},scene,legacy,records,groundH:()=>0,walls};
 }
 const original195=()=>Array.from({length:195},(_,i)=>wall(20+i,30,20+i,33));
-test('a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{
+test('Historical b1 slab: a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain',async()=>{
+ const install=historicalInstall;
  const walls=original195(),refs=walls.slice(),bodies=structuredClone(walls),r=record(77.77848460817359,-122.74421833313178,2.015553883);
  const state=await install(options([r],walls)),added=walls.at(-1);
  assert.equal(walls.length,196);assert(walls.slice(0,195).every((w,i)=>w===refs[i]));assert.deepEqual(walls.slice(0,195),bodies);

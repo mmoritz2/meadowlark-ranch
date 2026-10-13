@@ -1,3 +1,4 @@
+import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -6,7 +7,7 @@ import {execFileSync} from 'node:child_process';
 import {normalizeActivityRuntimeSource,normalizeActivityObserverSource} from './activity-runtime-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
 const contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));
 const sha=source=>createHash('sha256').update(source).digest('hex');
 const git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});
@@ -70,6 +71,6 @@ test('every outer observer adapter restores its exact df body with all old asser
 test('the historical runner projects only the reviewed world/story seams and all older fixture pins remain byte exact',()=>{
  const runner=read('tools/run-reviewed-world-guards.mjs');
  assert(runner.includes("else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));"));
- assert.equal(execFileSync('git',['diff','--name-only',contract.baseline,'--','tools/fixtures'],{cwd:root,encoding:'utf8'}),'','No tracked original fixture changed');
+ assert.equal(normalizeActivityFixtureChanges(execFileSync('git',['diff','--name-only',contract.baseline,'--','tools/fixtures'],{cwd:root,encoding:'utf8'}),contract.baseline),'','No tracked original fixture changed');
  for(const file of ['tools/grass-arch-source-guard.cjs','tools/published-world-import-source-guard.cjs','tools/authored-camera-source-guard.cjs','tools/coyote-crag-composition-source-guard.cjs','tools/fieldstone-wall-cache-source-guard.cjs','tools/riding-distance-source-guard.cjs','tools/ribbon-award-source-guard.cjs','tools/reviewed-riding-source-guard.cjs','tools/progression-grass-source-guard.cjs'])assert.equal(read(file),git(file),file+' source assertions remain unchanged');
 });

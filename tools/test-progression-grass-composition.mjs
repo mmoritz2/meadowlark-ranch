@@ -1,14 +1,16 @@
-import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';
+import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {normalizeProgressionSource,normalizeProgressionGuardSource} from './progression-grass-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';
+import {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';
 const root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);
-const read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file),sha=s=>createHash('sha256').update(s).digest('hex');
+const read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');
 const contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));
 const caches=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-loop-243dbfb/contract.json',import.meta.url))).changes;
 const hint=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-hints-243dbfb/contract.json',import.meta.url))).change;
