@@ -28,7 +28,7 @@ const vector=new THREE.Vector3(),peerVector=new THREE.Vector3();
 function world(mesh,i,out){mesh.getVertexPosition(i,out);return mesh.localToWorld(out);}
 const fingerprint=rig=>hash(Buffer.concat(meshes(rig.scene).flatMap(m=>Object.values(m.geometry.attributes).map(a=>Buffer.from(a.array.buffer,a.array.byteOffset,a.array.byteLength)))));
 const hero=fs.readFileSync('assets/game-hero-horse.js','utf8'),start=hero.indexOf('export function nativeGroomFacade('),end=hero.indexOf('// The approved groom',start);assert(start>=0&&end>start);
-const facadeFactory=new Function('createNativeDraftFeathers',hero.slice(start,end).replace('export function','function')+';return nativeGroomFacade;')(()=>null);
+const facadeFactory=new Function('createNativeDraftFeathers','createNativeFlowingGroom',hero.slice(start,end).replace('export function','function')+';return nativeGroomFacade;')(()=>null,()=>null);
 try{
  await library.manifestReady;
  library.register(NEW_BREEDS.find(row=>row[0]==='rimewalker'));

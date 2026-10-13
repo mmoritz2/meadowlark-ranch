@@ -18,9 +18,9 @@ const production=[
  section('export function tickGameHero(','export function gameHeroSeat('),
  section('export function nativeGroomFacade(','// The approved groom')
 ].join('\n');
-const events=[],created=[],motionOptions=[];
+const events=[],created=[],createdFlowing=[],motionOptions=[];
 let finishSource=()=>{};
-const make=new Function('createNativeDraftFeathers','finishNativeSourceGrooms','createNativeHorseMotion','captureNativeActionSeat','tickNativeHorse',production+'\nreturn {nativeGroomFacade,initGameHero,tickGameHero,disposeMountedRig,finishNativeHorseGrooms};');
+const make=new Function('createNativeDraftFeathers','createNativeFlowingGroom','finishNativeSourceGrooms','createNativeHorseMotion','captureNativeActionSeat','tickNativeHorse',production+'\nreturn {nativeGroomFacade,initGameHero,tickGameHero,disposeMountedRig,finishNativeHorseGrooms};');
 const api=make(
  ({scene,profile})=>{
   if(profile?.noFeathers)return null;
@@ -38,6 +38,15 @@ const api=make(
    dispose(){this.disposed=true;scene.remove(mesh);}
   };created.push(helper);return helper;
  },
+ ({scene,profile})=>{
+  if(!profile?.flowing)return null;
+  const mesh=new THREE.Object3D();scene.add(mesh);
+  const helper={meshes:[mesh],updates:[],resets:0,disposed:false,
+   update(dt,state){assert(!this.disposed);this.updates.push({dt,state});events.push(['flowing',this]);},
+   reset(){this.resets++;},inspect(){return{frames:this.updates.length,resets:this.resets};},
+   dispose(){this.disposed=true;scene.remove(mesh);}
+  };createdFlowing.push(helper);return helper;
+ },
  ()=>{events.push(['source']);finishSource();},
  options=>{
   motionOptions.push(options);
@@ -49,10 +58,10 @@ const api=make(
 let checks=0;
 function check(ok,message){assert(ok,message);checks++;}
 function eq(actual,expected,message){assert.deepEqual(actual,expected,message);checks++;}
-function rig({noFeathers=false}={}){
+function rig({noFeathers=false,flowing=false}={}){
  const scene=new THREE.Group(),mount=new THREE.Group(),pastern=new THREE.Object3D();
  pastern.name='pastern';scene.add(pastern);mount.add(scene);
- const out={profile:{nativeBreed:true,noFeathers},scene,nativeRoot:scene,animations:[],testState:{gait:'walk',speedMps:1.6,phase01:.2}};
+ const out={profile:{nativeBreed:true,noFeathers,flowing},scene,nativeRoot:scene,animations:[],testState:{gait:'walk',speedMps:1.6,phase01:.2}};
  api.initGameHero(THREE,out);return {...out,mount,pastern};
 }
 
@@ -122,10 +131,36 @@ eq(created.reduce((n,h)=>n+h.updates.length,0),beforeEmpty,'no-addon native does
 eq(ordinary.groom.stats.feathers,null,'unfeathered native stats remain null');
 ordinary.groom.reset();api.disposeMountedRig(ordinary);api.disposeMountedRig(a);
 
+// Mane/tail and feather controllers share one final-pose update without either
+// requiring the other. This catches accidental feather-only early returns.
+const complete=rig({flowing:true}),hf=complete.groom.feathers,hg=complete.groom.flowing;
+api.tickGameHero(complete,3,.016);events.length=0;api.finishNativeHorseGrooms();
+eq(events.map(e=>e[0]),['source','flowing','feather'],'source settles before both private grooming controllers');
+eq([hg.updates.length,hf.updates.length],[1,1],'both private grooming layers advance once');
+check(hg.updates[0].state===complete.testState&&hf.updates[0].state===complete.testState,'both receive the final authoritative pose');
+complete.groom.update(.05,complete.testState);complete.groom.reset();api.finishNativeHorseGrooms();
+eq([hg.resets,hf.resets],[1,1],'pose reset reaches mane/tail and feather histories');
+eq([hg.updates.length,hf.updates.length],[1,1],'combined reset cancels queued old work');
+eq(complete.groom.stats.flowing,{frames:1,resets:1},'mane/tail stats remain live');
+api.disposeMountedRig(complete);check(hg.disposed&&hf.disposed,'combined disposal releases both private controllers');
+const unfeathered=rig({noFeathers:true,flowing:true}),only=unfeathered.groom.flowing;
+api.tickGameHero(unfeathered,2,.02);api.finishNativeHorseGrooms();
+eq(only.updates.length,1,'ordinary horse mane/tail sway works without feathering');
+check(unfeathered.groom.stats.feathers===null&&unfeathered.groom.stats.flowing.frames===1,'ordinary groom reports only its actual layer');
+api.disposeMountedRig(unfeathered);
+
+// Reinitializing the same actor restores private geometry and releases source
+// pose ownership before a new action/motion controller inspects the horse.
+const reused=rig({flowing:true}),oldFlow=reused.groom.flowing,oldFeather=reused.groom.feathers,oldMotion=reused.nativeMotion;
+reused.groom.update(.1,reused.testState);api.initGameHero(THREE,reused);api.finishNativeHorseGrooms();
+check(oldFlow.disposed&&oldFeather.disposed&&oldMotion.disposed,'reinitialization releases previous private groom and source controller');
+eq([oldFlow.updates.length,oldFeather.updates.length],[0,0],'reinitialization cancels old deferred grooming');
+api.disposeMountedRig(reused);
+
 // Production call sites must use the wrapper wherever they use tickGameHero.
 const read=name=>fs.readFileSync(new URL('../'+name,import.meta.url),'utf8');
 for(const file of ['ranch3d.html','assets/tack-studio.js']){
  const text=read(file),imports=[...text.matchAll(/import\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/g)];
  check(imports.some(m=>m[1].includes('tickGameHero')&&m[1].includes('finishNativeHorseGrooms')&&m[2].includes('game-hero-horse.js')),file+' uses game-hero finisher with native tick');
 }
-console.log(`Native feather integration: PASS ${checks} checks (actual facade/tick/lifecycle code, final-pose ordering, multi-actor flush, pause/reset/disposal, immediate preview and production callers).`);
+console.log(`Native groom integration: PASS ${checks} checks (actual facade/tick/lifecycle code, final-pose ordering, multi-actor flush, pause/reset/disposal, immediate preview and production callers).`);
