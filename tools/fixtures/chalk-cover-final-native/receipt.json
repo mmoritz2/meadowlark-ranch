@@ -1,0 +1,7 @@
+{
+  "status": "Original seed prototype first captured in the current final native run; prior519f baseline did not capture seed geometry",
+  "files": {
+    "chalk-surface-source.json": "1ca42595801b12b09865168f4b75da48626277162e317211ce3f42cf3b3a2061",
+    "chalk-front-high-grass-seed.f32": "92d5102be9daaddf2104ca585a40fd671e3808e6a8023ed690fd94f950506dfd"
+  }
+}

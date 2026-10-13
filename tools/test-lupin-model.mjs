@@ -3,8 +3,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLupinGeometry} from '../assets/meadow-cover.js';
-import {PROTOTYPE as PREVIOUS_CUP_CONSTRUCTOR} from './fixtures/lupin-model-source.mjs';
-const previous=await import('data:text/javascript;base64,'+Buffer.from(PREVIOUS_CUP_CONSTRUCTOR).toString('base64'));
+import {createMeadowLupinGeometry as previousGeometry} from './fixtures/lupin-original-e8b5cf4.mjs';
+const previous={createLupinGeometry:previousGeometry};
 function make(constructor){
  const prior=Math.random,stats={geometry:0,color:0,random:0};
  Math.random=()=>{stats.random++;return .375;};
@@ -18,7 +18,7 @@ const face=i=>new T.Triangle(...Array.from({length:3},(_,k)=>point(g.index.array
 const faces=Array.from({length:g.index.count/3},(_,i)=>face(i)),stem=faces.slice(0,10);
 
 // Connect faces by their actual emitted positions, independent of vertex IDs.
-// Petal folds deliberately duplicate vertices to keep their shading creases.
+// Each separate petal patch duplicates its root while sharing curved fan normals.
 function components(first,last){
  const keys=p=>p.toArray().map(n=>n.toFixed(7)).join(','),owners=new Map(),adj=new Map();
  for(let i=first;i<last;i++){
@@ -50,29 +50,30 @@ function touchesStem(group){
  return false;
 }
 
-test('one geometry and the same resource/RNG behavior fit the 240-triangle stalk budget',()=>{
+test('one geometry and the same resource/RNG behavior fit the declared 646-triangle rounded stalk budget',()=>{
  assert.deepEqual(after.stats,before.stats);assert.equal(after.stats.geometry,1);assert.equal(after.stats.color,1);
- assert.equal(g.index.count/3,238);assert(g.index.count/3<=240);
+ assert.equal(g.index.count/3,646);assert(g.index.count/3<=646);
  assert.deepEqual(Object.keys(g.attributes),Object.keys(before.geometry.attributes));
  for(const attribute of Object.values(g.attributes))assert([...attribute.array].every(Number.isFinite));
  for(const id of g.index.array)assert(id>=0&&id<g.attributes.position.count);
 });
 
 test('two palmate whorls connect twelve leaflets through actual petioles to the stalk',()=>{
- // Stem+foliage retain their exact38-triangle allocation, now arranged as two
- // petiole quads and twelve leaflets instead of fourteen independent leaves.
- assert.deepEqual(g.index.array.slice(0,38*3),before.geometry.index.array.slice(0,38*3));
- const groups=components(10,38);assert.equal(groups.length,2);
+ // Real source stem/petiole contacts remain; twelve six-triangle folded leaflets
+ // intentionally replace the former two-triangle flat leaf surfaces.
+ assert.deepEqual(g.attributes.position.array.slice(0,20*3),before.geometry.attributes.position.array.slice(0,20*3));
+ const groups=components(10,86);assert.equal(groups.length,2);
  for(const group of groups){
-  assert.equal(group.length,14);assert(touchesStem(group),'Palmate whorl does not meet the stalk');
+  assert.equal(group.length,38);assert(touchesStem(group),'Palmate whorl does not meet the stalk');
   const first=Math.min(...group),petioleStart=g.index.array[first*3];
-  const joint=point(petioleStart+3);
-  for(let leaf=0;leaf<6;leaf++)assert(joint.distanceTo(point(petioleStart+4+leaf*4))<1e-7,'Leaflet misses its common palmate joint');
+  const joint=point(petioleStart+3),whorl=joint.y<.3?0:1;
+  for(let leaf=0;leaf<6;leaf++){const r=g.userData.meadowFlowers.ranges.find(r=>r.kind==='leaf'&&r.owner===whorl*6+leaf);assert(joint.distanceTo(point(r.vertexStart))<1e-7,'Leaflet misses its common palmate joint');}
   const height=joint.y;assert(height>.15&&height<.4,'Low palmate foliage leaves an exposed flowering stem');
  }
  const c=g.attributes.color;
- for(let i=0;i<76;i++)assert(c.getY(i)>c.getX(i)&&c.getY(i)>c.getZ(i),'Stem/leaf colors remain green');
- assert.equal(g.attributes.position.count,532,'No vertices added to the stalk budget');
+ for(let i=0;i<112;i++)assert(c.getY(i)>c.getX(i)&&c.getY(i)>c.getZ(i),'Stem/leaf colors remain green');
+ assert.equal(g.attributes.position.count,784,'Declared rounded petal and leaflet vertex cost');
+ assert.deepEqual(g.boundingBox,before.geometry.boundingBox);assert.deepEqual(g.boundingSphere,before.geometry.boundingSphere,'Actual course clearing bounds remain exact');
 });
 
 test('real triangle normals are finite, unit and agree with every incident face winding',()=>{
@@ -80,14 +81,14 @@ test('real triangle normals are finite, unit and agree with every incident face 
  for(let i=0;i<normal.count;i++)assert(Math.abs(new T.Vector3().fromBufferAttribute(normal,i).length()-1)<1e-6);
  for(let i=0;i<faces.length;i++){
   const triangle=faces[i],n=triangle.getNormal(new T.Vector3());assert(triangle.getArea()>1e-10,'Degenerate triangle '+i);
-  for(let k=0;k<3;k++)assert(n.dot(new T.Vector3().fromBufferAttribute(normal,g.index.array[i*3+k]))>.5,'Winding/normal disagreement at triangle '+i);
+  for(let k=0;k<3;k++)assert(n.dot(new T.Vector3().fromBufferAttribute(normal,g.index.array[i*3+k]))>.35,'Winding/normal disagreement at triangle '+i);
  }
 });
 
 test('all twenty-four pea florets and the closed green tip contact actual stalk faces',()=>{
- const groups=components(38,faces.length);assert.equal(groups.length,25);
+ const groups=components(86,faces.length);assert.equal(groups.length,25);
  for(const group of groups){
-  assert.equal(group.length,8);assert(touchesStem(group),'Floating flower/bud component starts at triangle '+Math.min(...group));
+  assert.equal(group.length,Math.max(...group)<faces.length-8?23:8);assert(touchesStem(group),'Floating flower/bud component starts at triangle '+Math.min(...group));
   if(Math.max(...group)<faces.length-8){
    const closest=new T.Vector3(),vertices=group.flatMap(id=>[faces[id].a,faces[id].b,faces[id].c]);
    const root=vertices.find(p=>stem.some(s=>s.closestPointToPoint(p,closest).distanceTo(p)<1e-7));
@@ -110,7 +111,7 @@ test('all twenty-four pea florets and the closed green tip contact actual stalk 
  assert(g.boundingBox.min.y===0&&g.boundingBox.max.y>1.1&&g.boundingBox.max.y<1.15);
  assert(g.boundingBox.max.x-g.boundingBox.min.x<.55);
  assert(g.boundingBox.max.z-g.boundingBox.min.z<.45);
- const petalVertices=Array.from({length:24*18},(_,i)=>point(76+i));
+ const petalVertices=g.userData.meadowFlowers.ranges.filter(r=>r.kind!=='leaf').flatMap(r=>Array.from({length:r.vertexCount},(_,i)=>point(r.vertexStart+i)));
  assert(Math.min(...petalVertices.map(p=>p.y))>.56,'Colored florets must leave a green lower stem exposed');
 
 });

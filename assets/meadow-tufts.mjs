@@ -1,4 +1,4 @@
-import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=cliff-landscape-4';
+import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 
 // A final height response for the older static tussocks. The field mask and
 // meadow-margin recovery are the same ones used by the travelling grass layers.

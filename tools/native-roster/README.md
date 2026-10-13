@@ -243,16 +243,41 @@ their true skinned positions. `draftShape.stirrupTailoring` and the numerical
 report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
-silky hair meshes to Shire, Clydesdale and Vanner instances, including aliases
-such as Tempest and Rosebloom. Vanner uses 72 overlapping locks per leg with a
-denser undercoat; Shire's 56 and Clydesdale's 62 retain their approved shapes.
-Vanner's alpha-aware front/side collar coverage is 69–81%, with four draw calls.
-Across 328 real gait poses its feathers clear the floor by at least 30.9 mm
-and stirrup treads by 353.9 mm; standing sole clearance is 50.5 mm. All follow
-sampled skin and native joints. Their
-strand roots follow the measured widened lower-leg surface. Percheron, Belgian
-and Suffolk keep clean legs. The groom facade owns their Hair visibility and
-idempotent disposal; these strands do not alter the source skin or animation.
+hair meshes to Percheron, Shire, Clydesdale and Vanner instances, including
+Belgian, Suffolk, Tempest and Rosebloom aliases. Two staggered layers of rounded
+locks give the fetlocks a fuller silhouette. Narrow embedded roots with a
+fiber-alpha fade blend into the leg, and varied fine tips leave the hoof toes
+visible. The loose back/side locks are about 25% longer than the first fuller
+feather pass, with wider ribbons and more overlapping locks. Percheron keeps a
+lighter 72 locks per leg; Shire, Clydesdale and Vanner use 96, 100 and 104.
+Four draw calls are retained, with 8,064–11,648 triangles per horse.
+
+A per-leg damped spring measures native pastern movement relative to the actor.
+Feather tips lag behind leg swings and settle after stopping; the four legs
+have independent drivers rather than a shared clock oscillation. Vertex roots
+remain exact. The bounded solver updates only private feather positions and
+normals, with a source-leg shell guard and a floor guard based on source sole
+samples in the actor's frame. Translation/rotation of the complete horse does
+not excite the hair. Zero-time/paused updates hold the visible pose; reset
+restores exact base arrays, and long frame gaps reseed rather than kick the
+hair. This is secondary feather motion, not a strand collision simulation.
+
+Roots fit sampled lower-leg skin after refreshing world and skin-bind matrices,
+including horses already translated, rotated or scaled within the ranch. The
+native groom facade forwards updates/reset; ranch and Tack Studio updates are
+queued until the final actor transforms and source groom pose are complete.
+Breed Studio and the phase review update directly after each source pose.
+
+`node tools/test-native-draft-feathers.mjs` checks all four foundations across
+1,312 production idle, walk, trot, both canter/gallop leads and jump poses with
+hoof flex, plus root pinning, leg independence, stop damping, exact pause/reset,
+30/60/120 Hz consistency, alpha-aware coverage, sole/tack clearance, alias
+inheritance, transformed-parent fit and private resource lifecycle. The longer
+standing tips retain a 20 mm minimum sole gap; moving Trot tips must remain at
+least 5 mm above the floor. `node tools/test-native-feather-integration.mjs`
+checks final-pose flush order, multiple actors, native motion state, pause/reset,
+disposal and immediate previews. Visual review includes same-stride sway on/off
+comparisons. Source meshes, weights, binds and animation clips are unchanged.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat
@@ -365,7 +390,7 @@ the authored pose. Hair remains at least 127 mm above the local ground. The
 test also rejects malformed added skins, checks Hair visibility, and verifies
 reset, disposal and source immutability. These bounds complement visual review.
 
-Shire, Clydesdale and Vanner feathers remain runtime additions in
+Percheron, Shire, Clydesdale and Vanner feathers remain runtime additions in
 `assets/native-draft-feathers.js`, fitted to sampled lower-leg skin and attached
 to the native pastern bones. They are disposed with the groom facade. Vanner's
 fuller lower-leg fringe does not claim new knee-length skinned feathering.

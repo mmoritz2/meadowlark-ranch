@@ -1,0 +1,154 @@
+{
+  "ranch3d.html": [
+    {
+      "before": "",
+      "after": "import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';\n",
+      "oldLine": 671,
+      "newLine": 671
+    },
+    {
+      "before": "function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief){\n",
+      "after": "function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){\n",
+      "oldLine": 1501,
+      "newLine": 1502
+    },
+    {
+      "before": "",
+      "after": " h=riverHeight(x,z,h);\n",
+      "oldLine": 1519,
+      "newLine": 1520
+    },
+    {
+      "before": "",
+      "after": "const riverBankPlacement=configureRiverBanks({terrainStep:TERRAIN_STEP,\n rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});\n",
+      "oldLine": 1580,
+      "newLine": 1582
+    },
+    {
+      "before": " rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight),heightAt:(x,z)=>groundH(x,z)});\n",
+      "after": " rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});\n",
+      "oldLine": 1592,
+      "newLine": 1596
+    },
+    {
+      "before": " rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief),heightAt:hollowpeakPlacement.heightAt});\n",
+      "after": " rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt});\n",
+      "oldLine": 1594,
+      "newLine": 1598
+    },
+    {
+      "before": " installRiparian({THREE,scene,terrainH,riverZ,riverLevel,pathDist});\n",
+      "after": " installRiparian({THREE,scene,terrainH,planningHeightAt:riverBankPlacement.heightAt,riverZ,riverLevel,pathDist});\n",
+      "oldLine": 4684,
+      "newLine": 4688
+    },
+    {
+      "before": "  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,\n",
+      "after": "  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,\n",
+      "oldLine": 15090,
+      "newLine": 15094
+    }
+  ],
+  "assets/features/world-flora.js": [
+    {
+      "before": " const underlyingPlanningH=W.canyonPlacement?.heightAt||planning?.heightAt||groundH;\n",
+      "after": " const underlyingPlanningH=W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt||planning?.heightAt||groundH;\n",
+      "oldLine": 47,
+      "newLine": 47
+    }
+  ],
+  "assets/features/world-water.js": [
+    {
+      "before": "",
+      "after": "import {conformRiverBankGeometry,dressRiverBankMaterial} from '../riverbank-surface.mjs?v=river-banks-1';\n",
+      "oldLine": 1,
+      "newLine": 1
+    },
+    {
+      "before": "",
+      "after": " const planningGroundH=W.riverBankPlacement?.heightAt||groundH;\n",
+      "oldLine": 23,
+      "newLine": 24
+    },
+    {
+      "before": "",
+      "after": "  P.riverBedSurface=conformRiverBankGeometry({THREE,mesh:P.bed,groundHeight:W.terrainH,full:true,offsetM:.008,worldUV:true});dressRiverBankMaterial(P.bed.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 382,
+      "newLine": 384
+    },
+    {
+      "before": "    const gy=groundH(px,pz);\n",
+      "after": "    const gy=planningGroundH(px,pz);\n",
+      "oldLine": 449,
+      "newLine": 452
+    },
+    {
+      "before": "      roots.push({x:px+rr(-0.5,0.5),y:gy+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "after": "      roots.push({x:px+rr(-0.5,0.5),y:groundH(px,pz)+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "oldLine": 453,
+      "newLine": 456
+    },
+    {
+      "before": "",
+      "after": "  P.riverBankSurfaces=P.riverBankSurfaces||[];P.riverBankSurfaces.push(conformRiverBankGeometry({THREE,mesh:m,groundHeight:groundH}));dressRiverBankMaterial(apronMat,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 464,
+      "newLine": 467
+    },
+    {
+      "before": "   const h=groundH(x,z);\n   const s=Math.abs(groundH(x+1.2,z)-h)+Math.abs(groundH(x,z+1.2)-h);\n",
+      "after": "   const h=planningGroundH(x,z);\n   const s=Math.abs(planningGroundH(x+1.2,z)-h)+Math.abs(planningGroundH(x,z+1.2)-h);\n",
+      "oldLine": 995,
+      "newLine": 999
+    },
+    {
+      "before": "",
+      "after": "import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';\n",
+      "newLine": 1
+    },
+    {
+      "before": "",
+      "after": " // Register the new bank approach only after every original layout/course capture.\n installFerryBankApproach(G);\n",
+      "newLine": "late installer hook"
+    }
+  ],
+  "assets/riparian.js": [
+    {
+      "before": "export function installRiparian({ THREE, scene, terrainH, riverZ, riverLevel, pathDist }) {\n",
+      "after": "export function installRiparian({ THREE, scene, terrainH, planningHeightAt=terrainH, riverZ, riverLevel, pathDist }) {\n",
+      "oldLine": 136,
+      "newLine": 136
+    },
+    {
+      "before": "    const y = terrainH(x, z), water = riverLevel(x), pd = pathDist(x, z);\n",
+      "after": "    const y = terrainH(x, z), plannedY=planningHeightAt===terrainH?y:planningHeightAt(x,z), water = riverLevel(x), pd = pathDist(x, z);\n",
+      "oldLine": 191,
+      "newLine": 191
+    },
+    {
+      "before": "    if (!Number.isFinite(y) || !Number.isFinite(water) || !Number.isFinite(pd) ||\n        Math.abs(x) > 490 || Math.abs(x) < bridgeMargin || rd < 4.6 || rd > 10 || y <= water + .08 || pd < 2.35) {\n",
+      "after": "    if (!Number.isFinite(plannedY) || !Number.isFinite(water) || !Number.isFinite(pd) ||\n        Math.abs(x) > 490 || Math.abs(x) < bridgeMargin || rd < 4.6 || rd > 10 || plannedY <= water + .08 || pd < 2.35) {\n",
+      "oldLine": 193,
+      "newLine": 193
+    },
+    {
+      "before": "    const dx = (terrainH(x + .15, z) - terrainH(x - .15, z)) / .30;\n    const dz = (terrainH(x, z + .15) - terrainH(x, z - .15)) / .30;\n",
+      "after": "    let dx = (planningHeightAt(x + .15, z) - planningHeightAt(x - .15, z)) / .30;\n    let dz = (planningHeightAt(x, z + .15) - planningHeightAt(x, z - .15)) / .30;\n",
+      "oldLine": 197,
+      "newLine": 197
+    },
+    {
+      "before": "",
+      "after": "    // Original acceptance above; already-counted stones and timber follow live ground.\n    if(planningHeightAt!==terrainH){dx=(terrainH(x+.15,z)-terrainH(x-.15,z))/.30;dz=(terrainH(x,z+.15)-terrainH(x,z-.15))/.30;}\n",
+      "oldLine": 203,
+      "newLine": 203
+    }
+  ],
+  "assets/terrain-realism.js": [
+    {
+      "before": "",
+      "after": "  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};\n",
+      "oldLine": 142,
+      "newLine": 142
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "baseCommit": "7009c41eac7531604aa73e12c1704b5fde43bec0",
+  "baselineSHA256": {
+    "assets/world-photoscans.js": "ed57b6598cca0e4a5468dc08550fe91cb3ad7631eda1d116f73dcdfc5cec092e",
+    "ranch3d.html": "35b9110904ed504c4fcf56f29db036e4f7849328a8aa68c26233a65e283c07ef"
+  },
+  "installer": "function installVillageCrags(parts){\n    const specs=[\n      {seed:1116,primary:3,yaw:2.30,shoulder:4,angle:.42},\n      {seed:1122,primary:3,yaw:.68,shoulder:5,angle:2.13},\n      // This overlapping older mesa and its spires belong to the same outcrop.\n      {seed:1113,primary:2,yaw:1.12},\n      {seed:3528,primary:3,yaw:1.72},{seed:3529,primary:2,yaw:.32},\n      {seed:3531,primary:4,yaw:2.10},{seed:3534,primary:5,yaw:1.23},\n      {seed:3537,primary:3,yaw:.56}\n    ];\n    const material=parts[3].mat.clone();material.name='Countryside | scanned weathered crags';\n    dressCragMineral({material,source:W.geology.canyonMaterial});\n    const records=state.villageCrags=[],surfaces=[];\n    // All source triangles stay inside their original route circle. Most\n    // ground samples can therefore skip the detailed stone index completely.\n    const cragHeight=(x,z)=>{\n      let height=-Infinity;\n      for(const {mesh,cx,cz,r} of surfaces){\n        if((x-cx)**2+(z-cz)**2>r*r)continue;\n        height=Math.max(height,W.solidWorld.surfaceHeight(x,z,mesh));\n      }\n      return height;\n    };\n    W.groundSurfaces.push(cragHeight);\n    state.excludesGroundCover=(x,z)=>{\n      const height=cragHeight(x,z);\n      return height>-Infinity&&height>W.terrainH(x,z)+.15;\n    };\n    for(const spec of specs){\n      let original;\n      scene.traverse(o=>{if(o.isGroup&&o.userData.geology?.seed===spec.seed)original=o;});\n      if(!original)continue;\n      const {x,z}=original.position;\n      const collider=W.colliders.find(c=>Math.hypot(c.x-x,c.z-z)<.001&&Math.abs(c.r-original.userData.geology.radius*.95)<.001);\n      if(!collider)continue;\n      const meshes=[],details=[];\n      try{\n        const composition=[[spec.primary,0,collider.r*.94,spec.yaw]];\n        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*.51,collider.r*.42,spec.yaw+1.57]);\n        for(const [partIndex,offset,reach,yaw] of composition){\n          const piece=parts[partIndex],p=piece.geo.attributes.position,b=piece.bounds;\n          const cx=(b.min.x+b.max.x)/2,cz=(b.min.z+b.max.z)/2;\n          let sourceRadius=0;\n          for(let i=0;i<p.count;i++)sourceRadius=Math.max(sourceRadius,Math.hypot(p.getX(i)-cx,p.getZ(i)-cz));\n          const scale=reach/sourceRadius,co=Math.cos(yaw),sn=Math.sin(yaw);\n          const px=x+Math.sin(spec.angle||0)*offset,pz=z+Math.cos(spec.angle||0)*offset;\n          let ty=Infinity,footVertices=0;const lowBand=(b.max.y-b.min.y)*.075;\n          // Plant every low source vertex below the canonical terrain. This\n          // retains the photographed shape instead of stretching it to a skirt.\n          for(let i=0;i<p.count;i++){\n            const sy=p.getY(i);if(sy>b.min.y+lowBand)continue;\n            const sx=p.getX(i)-cx,sz=p.getZ(i)-cz;\n            const wx=px+scale*(co*sx+sn*sz),wz=pz+scale*(-sn*sx+co*sz);\n            ty=Math.min(ty,W.terrainH(wx,wz)-scale*sy-.16);footVertices++;\n          }\n          if(!footVertices||!Number.isFinite(ty))throw Error('No finite scanned crag footing');\n          const mesh=new THREE.Mesh(piece.geo,material);\n          mesh.name='Countryside scanned crag '+spec.seed+' | '+partIndex;\n          mesh.matrixAutoUpdate=false;\n          mesh.matrix.set(scale*co,0,scale*sn,px-scale*(co*cx+sn*cz),0,scale,0,ty,\n            -scale*sn,0,scale*co,pz-scale*(-sn*cx+co*cz),0,0,0,1);\n          mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);meshes.push(mesh);\n          const contactTriangles=W.solidWorld.registerSurface(mesh);\n          if(!contactTriangles)throw Error('Empty scanned crag surface');\n          details.push({name:mesh.name,source:'rock_moss_set_01',part:partIndex,matrix:mesh.matrix.toArray(),scale,footVertices,contactTriangles});\n        }\n      }catch(error){\n        for(const mesh of meshes){W.solidWorld.unregisterSurface(mesh);mesh.removeFromParent();}\n        if(!records.length)material.dispose();\n        throw error;\n      }\n      for(const mesh of meshes){\n        surfaces.push({mesh,cx:x,cz:z,r:collider.r});\n      }\n      collider.precise=true;\n      original.removeFromParent();original.traverse(o=>o.geometry?.dispose());\n      records.push({seed:spec.seed,x,z,routeRadius:collider.r,meshes:details});\n    }\n    if(!records.length)material.dispose();\n    W.nearGroundCover?.invalidate();\n  }",
+  "sites": [
+    {
+      "kind": "mesa",
+      "x": -323.4361948752548,
+      "z": 125.03008522484386,
+      "radius": 9.948003349127248,
+      "height": 9.932499518617988,
+      "seed": 1110
+    },
+    {
+      "kind": "mesa",
+      "x": -195.83215084834097,
+      "z": 125.66595509028143,
+      "radius": 8.848786510759965,
+      "height": 8.822864371351898,
+      "seed": 1113
+    },
+    {
+      "kind": "mesa",
+      "x": -147.1487664781018,
+      "z": 42.658726610246234,
+      "radius": 9.85658511845395,
+      "height": 14.906441053142771,
+      "seed": 1116
+    },
+    {
+      "kind": "mesa",
+      "x": -349.1653754247129,
+      "z": 138.07231333973914,
+      "radius": 7.866479412186891,
+      "height": 9.161111504537985,
+      "seed": 1117
+    },
+    {
+      "kind": "mesa",
+      "x": -191.8227245236306,
+      "z": 123.56940679465845,
+      "radius": 10.459471353329718,
+      "height": 16.38546021678485,
+      "seed": 1122
+    },
+    {
+      "kind": "hoodoo",
+      "x": -179.35139523604522,
+      "z": 127.87522970887497,
+      "radius": 1.3549340601079165,
+      "height": 9.87218005291652,
+      "seed": 3528
+    },
+    {
+      "kind": "hoodoo",
+      "x": -192.15878691378774,
+      "z": 130.99680024250225,
+      "radius": 2.3636562271043657,
+      "height": 4.520599033101462,
+      "seed": 3529
+    },
+    {
+      "kind": "hoodoo",
+      "x": -184.92810805186593,
+      "z": 106.31983177290613,
+      "radius": 1.7858920130878686,
+      "height": 8.947810523561202,
+      "seed": 3531
+    },
+    {
+      "kind": "hoodoo",
+      "x": -178.9322375058914,
+      "z": 56.86063378639081,
+      "radius": 1.8558423841372131,
+      "height": 7.393751134513877,
+      "seed": 3533
+    },
+    {
+      "kind": "hoodoo",
+      "x": -194.13952697635665,
+      "z": 133.56244292647693,
+      "radius": 1.424704169947654,
+      "height": 8.104531004908495,
+      "seed": 3534
+    },
+    {
+      "kind": "hoodoo",
+      "x": -174.5061587017475,
+      "z": 123.82298776638572,
+      "radius": 1.9107763772830366,
+      "height": 9.581829025759362,
+      "seed": 3537
+    },
+    {
+      "kind": "hoodoo",
+      "x": -179.25589390620937,
+      "z": 221.0835910103737,
+      "radius": 1.7800659533590077,
+      "height": 8.418839734396897,
+      "seed": 3539
+    },
+    {
+      "kind": "hoodoo",
+      "x": -345.05155413047663,
+      "z": 130.80521683961314,
+      "radius": 2.215971070434898,
+      "height": 6.100509635056369,
+      "seed": 3540
+    },
+    {
+      "kind": "hoodoo",
+      "x": -134.85543603641165,
+      "z": 212.39393997089155,
+      "radius": 1.6526107092853635,
+      "height": 8.678225775831379,
+      "seed": 3550
+    },
+    {
+      "kind": "hoodoo",
+      "x": -263.5032936544912,
+      "z": 236.02721236132496,
+      "radius": 2.167526732990518,
+      "height": 6.92044300690759,
+      "seed": 3553
+    },
+    {
+      "kind": "hoodoo",
+      "x": -107.76978022635555,
+      "z": 61.11545600269433,
+      "radius": 1.6892302663531154,
+      "height": 9.407214641221799,
+      "seed": 3554
+    }
+  ],
+  "gridPath": "tools/fixtures/coyote-crag-7009c41/terrain-grid.f32",
+  "actualGridSHA256": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+  "modelSHA256": "0d03a00efdf2ac68c5bd3a604e952afd0ccbd7ca8452ece076d91cc578f88f84",
+  "site": {
+    "seed": 1116,
+    "x": -147.14876647810183,
+    "z": 42.658726610246234,
+    "radius": 9.85658511845395,
+    "routeRadius": 9.363755862531251,
+    "baselineHighestWorldY": 17.038963112456432
+  },
+  "normalizerSHA256": "cdda5b83bdd8101ca716a4cbb523df4357785afa7acf55e52a1e85f4de017403",
+  "approvedSourceLiterals": 5,
+  "integrationCommit": "080924aeca255339e299ae7ea553302bd68b142c",
+  "integrationMainSHA256": "d47079b38fed164dc0dd32d21d5b9be5a3cd22263dda93987bc2704d5594cf58",
+  "integrationScope": "Only separately released game-hero import cache is reversed for old whole-source preimages; native horse runtime files are preserved by Git merge and not edited by this supplement."
+}

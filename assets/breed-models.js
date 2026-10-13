@@ -78,22 +78,24 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     if(!coatFiles.has(cu.href))coatFiles.set(cu.href,new THREE.TextureLoader(manager).loadAsync(cu.href).then(t=>{t.colorSpace=THREE.SRGBColorSpace;t.flipY=false;return t;}).catch(e=>{coatFiles.delete(cu.href);throw e;}));
     return Promise.all([variantFiles.get(vu.href),coatFiles.get(cu.href)]);
   }
-  async function load(requested='bay'){
+  async function load(requested='bay',construct=fn=>fn(),residentOnly=false){
     await manifestReady;const key=resolve(requested);if(ready.has(key))return ready.get(key);
     if(!pending.has(key)){
       const spec=manifest.breeds[key];if(!spec)throw new Error(`Missing authored breed: ${requested}`);
       const url=new URL(spec.file,spec.nativeBreed?import.meta.url:base);url.searchParams.set('build',spec.sha256||revision);
-      const source=gltfFile(url),roster=rosterFiles(spec);
+      if(residentOnly&&!files.has(url.href))return null;
+      if(residentOnly&&spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(!files.has(mu.href))return null;}
+      const source=gltfFile(url),roster=construct(()=>rosterFiles(spec));
       let motion=Promise.resolve(null);
-      if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);motion=gltfFile(mu);}
+      if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(residentOnly&&!files.has(mu.href))return null;motion=gltfFile(mu);}
       // Independent files start together. Preparation still uses a private clone
       // and the same shape, coat, then motion ordering as every approved breed.
-      pending.set(key,Promise.all([source,roster,motion]).then(([source,roster,extra])=>{
+      pending.set(key,Promise.all([source,roster,motion]).then(([source,roster,extra])=>construct(()=>{
         let g={...source,scene:clone(source.scene)};
         if(roster){g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;const [binary,coat]=roster;applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});prepareNativeEquestrianGroom({THREE,gltf:g,spec,binary});}
         if(extra){const replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}
         return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec);
-      }).catch(e=>{pending.delete(key);throw e;}));
+      })).catch(e=>{pending.delete(key);throw e;}));
     }
     return pending.get(key);
   }
@@ -120,5 +122,5 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     return inst;
   }
   function mountPoint(asset,point){if(!Array.isArray(point))return null;if(Array.isArray(point[0]))point=point[0];if(point.length!==3||!point.every(Number.isFinite))return null;return new THREE.Vector3(point[0]*asset.fitScale,point[1]*asset.fitScale+asset.fitY,point[2]*asset.fitScale);}
-  return {load,resolve,profile,instantiate,mountPoint,alias,register,nativeProfiles:NATIVE_BREED_PROFILES,get:key=>ready.get(resolve(key)),get manifest(){return manifest;},manifestReady};
+  return {load,loadVisual:(key,construct)=>load(key,construct,true),resolve,profile,instantiate,mountPoint,alias,register,nativeProfiles:NATIVE_BREED_PROFILES,get:key=>ready.get(resolve(key)),get manifest(){return manifest;},manifestReady};
 }

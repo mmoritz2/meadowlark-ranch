@@ -1,3 +1,4 @@
+import {dressPastoralFieldstone,groundPastoralFieldstone} from './ranch-fieldstones.mjs?v=ranch-fieldstones-1';
 import {dressCanyonSurface} from './canyon-surface.js?v=countryside-banks-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 /* Deterministic original sedimentary geology. Shapes are local to a ground-level
@@ -369,7 +370,7 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     const g=groundAt(makeMesa(radius,height,seed),x,z);if(scene)scene.add(g);return g;
   };
   const placeHoodoo=(x,z,radius,height,seed=1)=>{
-    const g=groundAt(makeHoodoo(radius,height,seed),x,z);if(scene)scene.add(g);return g;
+    const g=makeHoodoo(radius,height,seed);if(dressPastoralFieldstone({THREE,group:g,x,z,radius,height,seed,material}))groundPastoralFieldstone({group:g,groundH,x,z});else groundAt(g,x,z);if(scene)scene.add(g);return g;
   };
   return {makeMesa,makeHoodoo,makeArch,makeBoulder,makeWaterfallCliff,groundAt,placeMesa,placeHoodoo,material,canyonMaterial};
 }

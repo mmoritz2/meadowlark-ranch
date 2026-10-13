@@ -1,0 +1,165 @@
+{
+  "base": "7fbd127",
+  "changes": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';",
+      "after": "import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';\nimport {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';\nimport {installPastoralCoverRefresh} from './assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "  applyChalkGrassMesh(near,groundH,grassDrawCount);",
+      "after": "  applyChalkGrassMesh(near,groundH,grassDrawCount);\n  applyPastoralSourceMesh(near,grassCells,groundH,grassDrawCount);"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "installChalkCoverRefresh(G);",
+      "after": "installChalkCoverRefresh(G);\ninstallPastoralCoverRefresh(G);"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';",
+      "after": "import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';\nimport {respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);",
+      "after": "matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';",
+      "after": "import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';\nimport {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "export function grazedSwardWeight(x,z){\n const g=Math.max(meadowSwardGrazingAt(x,z),chalkGrazingAt(x,z).cut)",
+      "after": "export function grazedSwardWeight(x,z,pastoralCut=pastoralCoverAt(x,z).cut){\n const g=Math.max(meadowSwardGrazingAt(x,z),chalkGrazingAt(x,z).cut,pastoralCut)"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "export function selectsGrazedSward(x,z,sample){return sample<grazedSwardWeight(x,z);}",
+      "after": "export function selectsGrazedSward(x,z,sample,pastoralCut){return sample<grazedSwardWeight(x,z,pastoralCut);}"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';",
+      "after": "import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';\nimport {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "{const list=[];for(let row=0;row<c.count;row++)",
+      "after": "{const list=[],pastoral=pastoralSourceRows(c);for(let row=0;row<c.count;row++)"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "grazed:basal&&selectsGrazedSward(x,z,swardHash(x,z,37)),variant",
+      "after": "grazed:basal&&selectsGrazedSward(x,z,swardHash(x,z,37),pastoral.cuts[row]),pastoralCut:pastoral.cuts[row],pastoralCap:pastoral.caps[row],variant"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);if(colors)",
+      "after": "respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});if(colors)"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "   respondChalkGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH);",
+      "after": "   respondChalkGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH);\n   respondPastoralGrassMatrix(mesh.instanceMatrix.array,dst,mesh.geometry,W.groundH,0,0,0,{cut:r.pastoralCut,cap:r.pastoralCap});"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "before": "import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';",
+      "after": "import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';\nimport {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "before": " F.refreshChalkGrazing=()=>F.chalkGrazing={",
+      "after": " F.refreshPastoralCover=()=>F.pastoralCover={tuft:applyPastoralGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n)};\n F.refreshChalkGrazing=()=>F.chalkGrazing={"
+    },
+    {
+      "file": "assets/terrain-realism.js",
+      "before": "import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';",
+      "after": "import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';\nimport {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1';"
+    },
+    {
+      "file": "assets/terrain-realism.js",
+      "before": "    fieldSurface.chalkDownTexels=applyChalkGrazingPixels(woodedPixels.data,MASK);",
+      "after": "    fieldSurface.chalkDownTexels=applyChalkGrazingPixels(woodedPixels.data,MASK);\n    fieldSurface.pastoralTexels=applyPastoralGrazingPixels(woodedPixels.data,MASK);\n    fieldSurface.pastoralProfile=PASTORAL_COVER_PROFILE;"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "before": "",
+      "after": "import {dressBotanicalPetals} from '../botanical-petals.mjs?v=botanical-petals-1';\n"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "before": " const reedGeo=crossGeo(3,0.46,0.16), tuftGeo=crossGeo(3,1.15,0.24), petalGeo=crossGeo(2,0.52,0.10);\n",
+      "after": " const reedGeo=crossGeo(3,0.46,0.16), tuftGeo=crossGeo(3,1.15,0.24), petalGeo=crossGeo(2,0.52,0.10);\n dressBotanicalPetals({THREE,geometry:petalGeo,material:M.petal});\n"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "  const height=.38+(leaf%7)*.045,lean=.13+(leaf%5)*.019,half=.0072+(leaf%5)*.0005;",
+      "after": "  const height=.38+(leaf%7)*.045,lean=.13+(leaf%5)*.019,half=leaf<GRAZED_SWARD.bentLeaves?.0170+(leaf%5)*.0007:.0072+(leaf%5)*.0005;"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "profile:'grazed-sward-5'",
+      "after": "profile:'grazed-sward-6'"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "leaves:GRAZED_SWARD.leaves};",
+      "after": "leaves:GRAZED_SWARD.leaves,broadLeaves:GRAZED_SWARD.bentLeaves};"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/mixed-sward.mjs?v=chalk-grazing-1",
+      "after": "./assets/mixed-sward.mjs?v=pastoral-cover-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/meadow-cover.js?v=chalk-grazing-1",
+      "after": "./assets/meadow-cover.js?v=pastoral-cover-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/terrain-realism.js?v=river-ecotone-1",
+      "after": "./assets/terrain-realism.js?v=pastoral-cover-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/features/index.js?v=river-ecotone-1",
+      "after": "./assets/features/index.js?v=pastoral-cover-1"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "./grazed-sward.mjs?v=chalk-grazing-1",
+      "after": "./grazed-sward.mjs?v=pastoral-cover-1"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "./world-flora.js?v=river-ecotone-1",
+      "after": "./world-flora.js?v=pastoral-cover-1"
+    },
+    {
+      "file": "assets/lush-meadow-geometry.mjs",
+      "before": "   const half=width*(short?.78:.40+.75*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.58),heading=a+twist*t*t;",
+      "after": "   const half=(width+(profile==='near'&&leaf%2===0?(.008+(leaf%4)*.001)*Math.sin(Math.PI*t):0))*(short?.78:.40+.75*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.58),heading=a+twist*t*t;"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "./lush-meadow-geometry.mjs?v=field-grass-3",
+      "after": "./lush-meadow-geometry.mjs?v=pastoral-cover-1"
+    }
+  ],
+  "baselineSHA256": {
+    "assets/features/world-flora.js": "9c2219be9dd1bcb011ccd24f8efaac5f2a29e7ea09bc494f026da0d0ea0c1364",
+    "assets/grazed-sward.mjs": "16fb6f076f043671c3b3ae7b029a7580c45d8cab691a549b74a966679b6aa1f6",
+    "assets/meadow-cover.js": "5937f3735b68ae075f718e7eec8df01d9e9d4813fc325b4c472ef4c5d23d89ef",
+    "assets/mixed-sward.mjs": "bf11f43a03eb2ac035a98b430a16afb28cf19512ca7ea4d9229a584004a6c4d4",
+    "assets/terrain-realism.js": "520de075f4148198f4063b617584c08e8dd6f85e00b0739db7bd35d2c2c16981",
+    "ranch3d.html": "19c5ceeef46cbb75f00d0d8294300f837b2bfb104a5b91124c35bede1dea68f8",
+    "assets/features/index.js": "e9e40c9c046bf8cddc88cd595e926cca4e051d3dd47a793b2bb5097fed786307",
+    "assets/lush-meadow-geometry.mjs": "2590b0c2761ef9ebb70362f2df04160a867beb1bec6b6a0ad917b3dbc654b586"
+  }
+}

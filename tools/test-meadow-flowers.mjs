@@ -5,10 +5,10 @@ import * as T from '../assets/vendor/three/build/three.module.js';
 import {createMeadowLupinGeometry,MEADOW_FLOWER_BANKS,meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from '../assets/meadow-flowers.mjs';
 import {meadowSwardGrazingAt} from '../assets/pastoral-fields.mjs';
 
-test('raceme has finite nondegenerate correctly oriented surfaces inside the existing triangle budget',()=>{
+test('raceme has finite nondegenerate correctly oriented surfaces inside the declared rounded prototype budget',()=>{
  const g=createMeadowLupinGeometry(T);
  try{
-  assert.equal(g.index.count,238*3);assert.equal(g.attributes.position.count,532);
+  assert.equal(g.index.count,646*3);assert.equal(g.attributes.position.count,784);
   assert.equal(g.userData.meadowFlowers.whorls,2);assert.equal(g.userData.meadowFlowers.leaflets,12);assert.equal(g.userData.meadowFlowers.florets,24);
   const p=g.attributes.position,n=g.attributes.normal;
   for(const attr of Object.values(g.attributes))assert([...attr.array].every(Number.isFinite));
@@ -18,15 +18,15 @@ test('raceme has finite nondegenerate correctly oriented surfaces inside the exi
    const ids=Array.from(g.index.array.slice(k,k+3));
    const [a,b,c]=ids.map(i=>new T.Vector3().fromBufferAttribute(p,i));
    const cross=b.sub(a).cross(c.sub(a));assert(cross.length()>1e-8,'no collapsed stem, leaflet or petal');
-   if(k/3>=38&&k/3<230)petalArea+=cross.length()*.5;
+   if(g.userData.meadowFlowers.ranges.some(r=>r.kind!=='leaf'&&k>=r.indexStart&&k<r.indexStart+r.indexCount))petalArea+=cross.length()*.5;
    cross.normalize();for(const i of ids)minFaceDot=Math.min(minFaceDot,cross.dot(new T.Vector3().fromBufferAttribute(n,i)));
   }
   assert(minFaceDot>0,'all vertex normals face their actual surface');assert(petalArea>.075&&petalArea<.13,'24 pea flowers have bounded real petal surfaces, not a colored stem');
   assert.equal(g.boundingBox.min.y,0);assert(Math.abs(g.boundingBox.max.y-MEADOW_LUPIN_HEIGHT)<1e-6);
   assert(g.boundingSphere.radius<.7);assert(g.boundingBox.max.x-g.boundingBox.min.x<.55);
   for(let whorl=0;whorl<2;whorl++){
-   const petiole=20+whorl*28,joint=new T.Vector3().fromBufferAttribute(p,petiole+3);
-   for(let leaf=0;leaf<6;leaf++)assert(joint.distanceTo(new T.Vector3().fromBufferAttribute(p,petiole+4+leaf*4))<1e-7);
+   const petiole=20+whorl*46,joint=new T.Vector3().fromBufferAttribute(p,petiole+3);
+   for(let leaf=0;leaf<6;leaf++){const row=g.userData.meadowFlowers.ranges.find(r=>r.kind==='leaf'&&r.owner===whorl*6+leaf);assert(joint.distanceTo(new T.Vector3().fromBufferAttribute(p,row.vertexStart))<1e-7);}
   }
  }finally{g.dispose();}
 });

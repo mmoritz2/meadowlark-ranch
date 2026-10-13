@@ -1,0 +1,172 @@
+[
+  {
+    "view": {
+      "name": "pastoral-ranch-paddock-high",
+      "quality": "high",
+      "rider": true,
+      "player": [
+        -69,
+        -10
+      ],
+      "eye": [
+        -53,
+        2.8,
+        -20
+      ],
+      "look": [
+        -73,
+        1.2,
+        -7
+      ]
+    },
+    "file": "pastoral-ranch-paddock-high-grass-lupin.f32",
+    "bytes": 4864,
+    "sha256": "44c550180bb1c7094ba1a9ecb71a5ed2607f714682f2bbbc756715bc63775521"
+  },
+  {
+    "view": {
+      "name": "pastoral-clover-high",
+      "quality": "high",
+      "rider": true,
+      "player": [
+        88,
+        -157
+      ],
+      "heading": 3.14159265,
+      "eye": [
+        90,
+        3.3,
+        -147
+      ],
+      "look": [
+        88,
+        1.3,
+        -160
+      ]
+    },
+    "file": "pastoral-clover-high-grass-lupin.f32",
+    "bytes": 18468,
+    "sha256": "ba21767bd2d7d34b59decc7ae94ef0a5c9fb31bf1a221bdd3c8e8ba3c2267a2a"
+  },
+  {
+    "view": {
+      "name": "pastoral-clover-low",
+      "quality": "low",
+      "rider": true,
+      "player": [
+        88,
+        -157
+      ],
+      "heading": 3.14159265,
+      "eye": [
+        90,
+        3.3,
+        -147
+      ],
+      "look": [
+        88,
+        1.3,
+        -160
+      ]
+    },
+    "file": "pastoral-clover-low-grass-lupin.f32",
+    "bytes": 18468,
+    "sha256": "ba21767bd2d7d34b59decc7ae94ef0a5c9fb31bf1a221bdd3c8e8ba3c2267a2a"
+  },
+  {
+    "view": {
+      "name": "pastoral-east-field-high",
+      "quality": "high",
+      "eye": [
+        154,
+        2.5,
+        6
+      ],
+      "look": [
+        177,
+        0.9,
+        24
+      ]
+    },
+    "file": "pastoral-east-field-high-grass-lupin.f32",
+    "bytes": 23408,
+    "sha256": "cb7b2c800bd87bd01659d1648b32c1afcd7d1e96615da339f8c502aa7f69244f"
+  },
+  {
+    "view": {
+      "name": "pastoral-north-meadow-high",
+      "quality": "high",
+      "eye": [
+        43,
+        2.5,
+        215
+      ],
+      "look": [
+        66,
+        0.9,
+        239
+      ]
+    },
+    "file": "pastoral-north-meadow-high-grass-lupin.f32",
+    "bytes": 16872,
+    "sha256": "447ce3a5dd31dd241ab1889d1393e92850ec0e5434cd576f2379ef545eb907b7"
+  },
+  {
+    "view": {
+      "name": "pastoral-willowmere-high",
+      "quality": "high",
+      "eye": [
+        280,
+        2.5,
+        280
+      ],
+      "look": [
+        298,
+        0.9,
+        300
+      ]
+    },
+    "file": "pastoral-willowmere-high-grass-lupin.f32",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "view": {
+      "name": "pastoral-physical-flower-colony-high",
+      "quality": "high",
+      "blossomColony": [
+        -69,
+        36
+      ]
+    },
+    "file": "pastoral-physical-flower-colony-high-grass-lupin.f32",
+    "bytes": 28652,
+    "sha256": "de687c68f8dc319f528470a13c9abf013090508aa85894b167de55f8de6f7793"
+  },
+  {
+    "view": {
+      "name": "pastoral-commons-riding-high",
+      "quality": "high",
+      "rider": true,
+      "player": [
+        -28,
+        76
+      ],
+      "heading": 3.14159265,
+      "actualRideCamera": true,
+      "eye": [
+        -28,
+        2.7,
+        76
+      ],
+      "look": [
+        -10,
+        0.9,
+        45
+      ]
+    },
+    "file": "pastoral-commons-riding-high-grass-lupin.f32",
+    "bytes": 16948,
+    "sha256": "2d4560a3b5bd602b1c1d5528a04ab32d66df114b13d10f5661575ca18d7cc790"
+  }
+]

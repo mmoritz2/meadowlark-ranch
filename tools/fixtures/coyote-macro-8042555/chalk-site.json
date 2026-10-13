@@ -1,0 +1,59 @@
+{
+  "site": {
+    "x": -68.98,
+    "z": 213.41,
+    "len": 112,
+    "depth": 76,
+    "h": 14,
+    "crest": 0.5,
+    "sited": true
+  },
+  "stats": {
+    "groundTriangles": 35840,
+    "chalkTriangles": 26800,
+    "planningBytes": 72772,
+    "repairedCutTriangles": 3460,
+    "omittedCutArea": 1.0952295269817114e-05,
+    "profile": "chalk-downland-3"
+  },
+  "sourceMeshReceipt": [
+    {
+      "name": "vista:chalkscarp",
+      "triangles": 35840,
+      "attributes": {
+        "position": "9e87469b",
+        "color": "20403d09",
+        "uv": "aa1d54dc",
+        "chalkRelief": "208df028",
+        "normal": "e005ecb9"
+      },
+      "index": "28738f77",
+      "mat": "",
+      "cache": "terrain-biomes-v20-granular-soil-pasture-mesosurface-2-north-pasture-2-hollowpeak-snow-foothill-thaw-2|atmos-cloudshadow-v1"
+    },
+    {
+      "name": "Chalk Mare | worn turf edge",
+      "triangles": 1806,
+      "attributes": {
+        "position": "136a97ec",
+        "normal": "274c0b9d"
+      },
+      "index": null,
+      "mat": "",
+      "cache": "onBeforeCompile( /* shaderobject, renderer */ ) {}"
+    },
+    {
+      "name": "Chalk Mare | ground cutting",
+      "triangles": 26800,
+      "attributes": {
+        "position": "8cd8ec97",
+        "normal": "c497b6a4",
+        "color": "b7782bc2",
+        "uv": "da90d190"
+      },
+      "index": null,
+      "mat": "",
+      "cache": "weathered-chalk-cut-1"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
+import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=landmark-fields-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1';
+import {configureChalkGrazing} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -177,9 +179,12 @@ export function install(G){
     findClear: this package should not break when that one is refactored, and this one also
     keeps off the worn paths and off Sparrow Creek, whose bed runs perched above the meadow in
     the north and which fooled the first pass at siting all of this. */
+ const canyonBootPlanning=createCoyoteBootPlanning(W);
+ const bootLandforms=new Set(canyonBootPlanning.barriers);
+ const placementColliders=()=>canyonBootPlanning.collidersForPlanning(W.colliders);
  function clearAt(cx,cz,need,maxR){
   const legal=(x,z)=>W.pathDist(x,z)>need*0.5+6&&Math.abs(z-W.riverZ(x))>need+14&&(z>172||Math.abs(x-W.streamX(z))>need+14);
-  const room=(x,z)=>{let m=1e9;for(const c of W.colliders){const q=hyp(x,z,c.x,c.z)-c.r;if(q<m)m=q;}return m;};
+  const room=(x,z)=>{let m=1e9;for(const c of placementColliders()){const q=hyp(x,z,c.x,c.z)-c.r;if(q<m)m=q;}return m;};
   /* Take the roomiest point rather than the first legal one, with a small penalty for
      wandering. First-fit put a nine-stone circle down with the nearest oak sixteen metres off
      when there was a forty-metre clearing twenty metres away, and a landmark that cannot be
@@ -518,7 +523,7 @@ export function install(G){
   if(hyp(x,z,20,16)<pad+10)return false;
   for(const sg of segs)if(segDist(x,z,sg)<pad+6)return false;
   for(const rg of T.REGIONS){const v=rg.venue;if(!v)continue;const home=rg.id==='ranch',A=(home?30:20)+pad+6,B=(home?25:15)+pad+6;if(((x-v.x)/A)**2+((z-v.z)/B)**2<1||(!home&&Math.abs(x-v.x)<8+pad&&z>v.z&&z<v.z+27+pad))return false;}
-  for(const c of W.colliders)if(c&&c.landform&&hyp(x,z,c.x,c.z)<c.r+pad)return false;
+  for(const c of placementColliders())if(c&&(c.landform||bootLandforms.has(c))&&hyp(x,z,c.x,c.z)<c.r+pad)return false;
   /* the ranches a player can own or build on: every 12 m plot, every pasture and every barn row */
   const RG=G.ranch||{};
   for(const k in (RG.SLOTS||{})){const q=RG.SLOTS[k];if(Math.abs(x-q.x)<8+pad&&Math.abs(z-q.z)<8+pad)return false;}
@@ -557,7 +562,7 @@ export function install(G){
   };
   const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH,groundMaterial:pasture.material,groundColorAt});
   scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;window.__chalkReliefAt=down.reliefAt;
-  P.SCARP=SCARP;
+  P.SCARP=SCARP;configureChalkGrazing(SCARP);
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
      of it: from the foot she is a white smear, and from here she is a horse. Its patch was checked with the mound's
      footprint, so it stands exactly there (fixed) instead of shuffling round whatever tree grew on it. */

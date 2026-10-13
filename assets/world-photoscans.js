@@ -1,4 +1,5 @@
-import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=cliff-landscape-4';
+import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';
+import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
 import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
 import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
@@ -14,7 +15,7 @@ import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './uprigh
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
-import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
+import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-3';
 import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
 import {installThunderOak} from './thunder-oak-art.js?v=landmark-fields-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
@@ -24,11 +25,12 @@ import {installVillageEvergreens} from './village-planting.js?v=village-gardens-
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
-import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=cliff-landscape-4';
+import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=cliff-landscape-4';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
+import {applyPineSprayCutout} from './pine-spray-surfaces.mjs?v=pine-spray-surfaces-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -142,6 +144,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(id==='pine_tree_01'&&/twig/.test(mat.name))mat.color.setRGB(1.7,2.1,1.5);
       mat.userData.hasCanopyShade=!!canopyShade&&/leaves/.test(mat.name);
       configureMaterial(mat,/leaves|twig/.test(mat.name));
+      if(id==='pine_tree_01'&&mat.name==='pine_tree_01_twig'){
+        applyPineSprayCutout(mat);applyPineSprayCutout(mat.userData.scanDepth);
+      }
     }
     loaded.set(id,asset.scene);state.assets.push(id);return asset.scene;
   }
@@ -174,7 +179,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=summer-canopy-surfaces-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=pine-photo-island-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -321,7 +326,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind});
       });
     }
-    const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[];
+    const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[],floraOwners=new Map();
+    for(const owner of G.floraPkg?.treeOwners||[]){
+      if(!floraOwners.has(owner.canopy))floraOwners.set(owner.canopy,new Map());
+      floraOwners.get(owner.canopy).set(owner.canopyIndex,owner);
+    }
     if(banks?.trunk){
       const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
       for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
@@ -331,7 +340,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
           bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
           const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;
           add({x:pos.x,z:pos.z,height:scale.y,yaw:new THREE.Euler().setFromQuaternion(rot).y,kind,
-            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i});
+            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i,floraOwner:floraOwners.get(bank.im)?.get(i)});
         }
       }
     }
@@ -644,7 +653,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   // uses the registered stone surfaces after the replacement is ready.
   function installVillageCrags(parts){
     const specs=[
-      {seed:1116,primary:3,yaw:2.30,shoulder:4,angle:.42},
+      {seed:1116,primary:3,yaw:-.42,shoulder:0,angle:-.70,shoulderOffset:.43,shoulderReach:.55,shoulderYaw:1.07},
       {seed:1122,primary:3,yaw:.68,shoulder:5,angle:2.13},
       // This overlapping older mesa and its spires belong to the same outcrop.
       {seed:1113,primary:2,yaw:1.12},
@@ -680,7 +689,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const meshes=[],details=[];
       try{
         const composition=[[spec.primary,0,collider.r*.94,spec.yaw]];
-        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*.51,collider.r*.42,spec.yaw+1.57]);
+        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*(spec.shoulderOffset??.51),collider.r*(spec.shoulderReach??.42),spec.shoulderYaw??spec.yaw+1.57]);
         for(const [partIndex,offset,reach,yaw] of composition){
           const piece=parts[partIndex],p=piece.geo.attributes.position,b=piece.bounds;
           const cx=(b.min.x+b.max.x)/2,cz=(b.min.z+b.max.z)/2;
@@ -698,7 +707,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
             ty=Math.min(ty,W.terrainH(wx,wz)-scale*sy-.16);footVertices++;
           }
           if(!footVertices||!Number.isFinite(ty))throw Error('No finite scanned crag footing');
-          const mesh=new THREE.Mesh(piece.geo,material);
+          const mesh=new THREE.Mesh(piece.geo,spec.seed===1116?piece.mat:material);
           mesh.name='Countryside scanned crag '+spec.seed+' | '+partIndex;
           mesh.matrixAutoUpdate=false;
           mesh.matrix.set(scale*co,0,scale*sn,px-scale*(co*cx+sn*cz),0,scale,0,ty,
@@ -881,12 +890,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   let previousSelection=new Set(),previousMode=null;
   function updateTrees(){
     if(!treeMeshes.length)return;
-    const p=H.player.pos,tier=G.gfx.get(),enabled=tier!=='low'&&!renderer.xr.isPresenting;
-    const range=tier==='high'?58:40,budget=tier==='high'?12:6;
+    const p=H.player.pos,tier=G.gfx.get(),enabled=!renderer.xr.isPresenting;
+    const range=tier==='high'?58:tier==='low'?26:40,budget=tier==='high'?12:tier==='low'?4:6;
     // Keep an incumbent until a new tree is appreciably closer. Nearest-N
     // alone alternates equally distant trees at every scenery tick while riding.
     const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
-    const candidates=enabled?trees.filter(t=>distance(t)<(range+(previousSelection.has(t)?5:0))**2)
+    const candidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&distance(t)<(range+(previousSelection.has(t)?5:0))**2)
       .sort((a,b)=>distance(a)*(previousSelection.has(a)?.72:1)-distance(b)*(previousSelection.has(b)?.72:1)):[];
     // The fuller mature canopy shares a fixed geometry budget with the nearby
     // saplings, so asset quality cannot silently multiply the phone workload.
@@ -914,14 +923,14 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     for(const {mesh,records} of treeCards){
       if(!changed(records))continue;
-      let count=0;for(const t of records)if(!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
+      let count=0;for(const t of records)if(!t.retiredFallsFlora&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
       mesh.count=count;mesh.visible=count>0;mesh.castShadow=!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
       if(count)mesh.computeBoundingSphere();
     }
     previousSelection=set;previousMode=mode;
     state.detailRebuilds=(state.detailRebuilds||0)+1;
     state.activeTrees=selected.length;
-    state.distantTrees=trees.length-selected.length;
+    state.distantTrees=trees.length-(state.hollowpeakCliffFlora?.retired.length||0)-selected.length;
   }
   state.ready=(async()=>{
     await H.arrivalReady;
@@ -936,6 +945,26 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     installOuterSunShadows(G);
     return state.assets;
   })();
+  // Keep the narrow scan/detail dependency contract: scans never await details.
+  // Retirement separately waits every late planting/capture, so removing an
+  // occupancy record cannot change its layout or advance a different RNG stream.
+  // Capture dependencies after the synchronous installers: undergrowth follows scans.
+  state.floraRetirementReady=Promise.resolve().then(()=>Promise.allSettled([state.ready,G.worldDetails?.ready,G.undergrowth?.ready])).then(()=>{
+    // All synchronous/scan/details/undergrowth layout is finished. Source rows
+    // and capacities stay fixed; model/card submissions omit only retired owners.
+    state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(G,trees,zero);
+    if(state.hollowpeakCliffFlora.retired.length){
+      const active=trees.filter(t=>!t.retiredFallsFlora);
+      state.trees=active.length+COTTONWOOD_TREES.length;
+      state.conifers=active.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;
+      state.matureTrees=active.filter(t=>t.source.key==='mature-pine').length;
+      state.treePositions=active.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+      state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
+      scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+      G.followCam.invalidateTrees();previousMode=null;updateTrees();
+    }
+    return state.hollowpeakCliffFlora;
+  });
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;

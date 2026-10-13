@@ -1,5 +1,7 @@
-import {grazedTuftScale} from '../meadow-tufts.mjs?v=cliff-landscape-4';
-import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=cliff-landscape-4';
+import {dressBotanicalPetals} from '../botanical-petals.mjs?v=botanical-petals-1';
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1';
+import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';
+import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollowpeak-cascades-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
    index.js for the contract. Nothing runs at import time.
@@ -29,9 +31,10 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=cliff
    includes every town building world.js placed — and it leaves a clear circle at each town centre
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
-import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';
+import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-3';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
 import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
+import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
@@ -43,7 +46,7 @@ export function install(G){
  // cannot advance the sequential seed stream for the rest of the whole basin.
  // Writers below still use live groundH, including all local root transforms.
  const planning=W.hollowpeakPlacement;
- const underlyingPlanningH=planning?.heightAt||groundH;
+ const underlyingPlanningH=W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt||planning?.heightAt||groundH;
  const chalkPlanning=G.vistas?.chalkDown;
  const planningH=(x,z)=>{const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
  const plantingExcluded=planning?.excludesDryPlants||((x,z)=>fallsExcludesDryPlants(x,z,groundH));
@@ -118,7 +121,9 @@ export function install(G){
  const key=(i,j)=>i*8192+j;
  const addOcc=(x,z,r)=>{const i0=Math.floor((x-r)/HC),i1=Math.floor((x+r)/HC),j0=Math.floor((z-r)/HC),j1=Math.floor((z+r)/HC);
   for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++){const k=key(i,j);let a=occ.get(k);if(!a)occ.set(k,a=[]);a.push(x,z,r);}};
- for(const c of planning?.collidersForPlanning(W.colliders,W.fallsLandscape?.barriers)||W.colliders)addOcc(c.x,c.z,c.r);
+ const mountainPlanning=planning?.collidersForPlanning(W.colliders,W.fallsLandscape?.barriers)||W.colliders;
+ const decisionColliders=W.canyonPlacement?.collidersForPlanning(mountainPlanning,W.canyonLandscape?.barriers)||mountainPlanning;
+ for(const c of decisionColliders)addOcc(c.x,c.z,c.r);
  const taken=(x,z,pad)=>{const i=Math.floor(x/HC),j=Math.floor(z/HC);
   for(let di=-1;di<=1;di++)for(let dj=-1;dj<=1;dj++){const a=occ.get(key(i+di,j+dj));if(!a)continue;
    for(let n=0;n<a.length;n+=3){const dx=x-a[n],dz=z-a[n+1],r=a[n+2]+pad;if(dx*dx+dz*dz<r*r)return true;}}
@@ -135,8 +140,9 @@ export function install(G){
     grass and reed are allowed right down the bank. */
  const inBasin=(x,z)=>x*x+z*z<448*448;
  const onWater=(x,z,m)=>Math.abs(z-riverZ(x))<m||(z<166&&Math.abs(x-streamX(z))<m*0.8)||hyp(x,z,20,16)<m+2||oasisContainsWater(x,z,.7);
+ const planningCliffAt=W.canyonPlacement?.cliffAt||canyonCliffAt;
  const okGround=(x,z)=>{
-  if(!inBasin(x,z)||canyonCliffAt(x,z,planningH)||plantingExcluded(x,z))return false;
+  if(!inBasin(x,z)||planningCliffAt(x,z,planningH)||plantingExcluded(x,z))return false;
   if(Math.abs(x)<32&&Math.abs(z)<28)return false;          // the arena and its run-off stay sand
   if(Math.abs(x)<5&&z>BRA-3&&z<BRB+3)return false;         // never on the bridge deck
   return pathDist(x,z)>3.4;                                // the roads are worn, and stay worn
@@ -413,6 +419,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0;i<n;i++){const a=i/n*Math.PI+0.3;w.card(0,0,0,a,lean*(hsh(i,17)-0.4),wid,1,0.70+i*0.09);}
   return w.finish();};
  const reedGeo=crossGeo(3,0.46,0.16), tuftGeo=crossGeo(3,1.15,0.24), petalGeo=crossGeo(2,0.52,0.10);
+ dressBotanicalPetals({THREE,geometry:petalGeo,material:M.petal});
  const desertArt=W.desertArt||createDesertArt({THREE});
  const succGeo=desertArt.geometry('agave'),ocoGeo=desertArt.geometry('ocotillo');
  M.succ=desertArt.material;M.oco=desertArt.material;
@@ -461,6 +468,9 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     the specular lobe are all invisible on a tussock and are paid for on every one of the many
     thousand fragments they cover. Lambert draws the same picture for a fraction of the fragment. */
  F.bank=BANK;
+ // Exact references are captured without altering seeded planting or occupancy.
+ // Retirement runs after the full world/scan layout, never inside tree().
+ F.treeOwners=[];
 
  const _m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_e=new THREE.Euler(),_v=new THREE.Vector3(),_sc=new THREE.Vector3(),_col=new THREE.Color();
  /* One plant. h is its height in metres, wid its spread relative to that, and sink how far its base
@@ -491,15 +501,18 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   _sc.set(h*wid,h,h*wid);_v.set(x,y,z);_m.compose(_v,_q,_sc);
   b.im.setMatrixAt(b.n,_m);_col.set(leafCol||TREE[kind]).offsetHSL((rnd()-0.5)*0.03,(rnd()-0.5)*0.12,(rnd()-0.5)*0.11);
   b.im.setColorAt(b.n,_col);b.n++;
-  const tb=BANK.trunk;
+  const tb=BANK.trunk,trunkIndex=tb.n<tb.cap?tb.n:null;
   if(tb.n<tb.cap){tb.im.setMatrixAt(tb.n,_m);_col.set(barkCol||BARK[kind]||'#ddd2ba').offsetHSL(0,(rnd()-0.5)*0.10,(rnd()-0.5)*0.22);tb.im.setColorAt(tb.n,_col);tb.n++;}
-  if(!noColl){const r=Math.max(0.55,h*0.055);W.colliders.push({x,z,r,height:h});addOcc(x,z,r);}
+  let collider=null,forestPoint=null;
+  if(!noColl){const r=Math.max(0.55,h*0.055);collider={x,z,r,height:h};W.colliders.push(collider);addOcc(x,z,r);}
   /* And onto forestPoints, the list the follow camera reads to keep its eye and its sight line out
      of the trees. Every copse this package planted had a collider for the horse and was invisible
      to the camera, which only knew the valley's first trees; that stayed hidden while the eye rode
      three metres up and put trunks straight across the shot once it came down to eye level. Its
      crown model is an ~8 m tree at scale 1, so s is the height over eight. */
-  if(!noColl&&h>3&&W.forestPoints)W.forestPoints.push({x,z,s:h/8});
+  if(!noColl&&h>3&&W.forestPoints){forestPoint={x,z,s:h/8};W.forestPoints.push(forestPoint);}
+  F.treeOwners.push({kind,x,z,height:h,canopy:b.im,canopyIndex:b.n-1,
+   trunk:trunkIndex===null?null:tb.im,trunkIndex,collider,forestPoint});
   return true;
  }
  function snag(x,z,h,col){
@@ -992,6 +1005,14 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   grazedTufts.maxLowestPointAfter=grazedTufts.maxLowestPointAfter===null?lowestAfter:Math.max(grazedTufts.maxLowestPointAfter,lowestAfter);
  }
  F.grazedTufts=grazedTufts;
+ // Keep original submitted plant sizes through the course-clear gather/mow.
+ // Final cover readiness invokes this response after clearing; existing zero
+ // rows, source counts/colours, planting decisions and outside bytes stay exact.
+ F.refreshPastoralCover=()=>F.pastoralCover={tuft:applyPastoralGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n)};
+ F.refreshChalkGrazing=()=>F.chalkGrazing={
+  tuft:applyChalkGrassMesh(BANK.tuft.im,groundH,BANK.tuft.n),
+  brack:applyChalkGrassMesh(BANK.brack.im,groundH,BANK.brack.n),
+  petal:applyChalkFlowerMesh(BANK.petal.im,BANK.petal.n)};
 
  // Suppress live cutting cover only after every density/height policy. Earlier
  // zeroing would feed Matrix4.decompose a singular basis in the cleanup passes.

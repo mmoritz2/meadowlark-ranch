@@ -1,5 +1,6 @@
 import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
+import {dressTimberBox} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';
 /* Original ranch architecture. Metre-scaled materials, real wall openings and
    batched static details. Collision part bounds are retained before batching;
    placement and collision resolution belong to the world. */
@@ -97,6 +98,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     constructor(name) { this.group=new THREE.Group(); this.group.name=name; this.batches=new Map(); this.parts=0; }
     geometry(g,m,matrix = new THREE.Matrix4(),solid = true) {
       if(solid)recordSolidPart(THREE,this.group,g,m,matrix);
+      if(m===siding&&g.userData.ranchTimberBox) dressTimberBox(THREE,g,{...g.userData.ranchTimberBox,radius:.003,siding:true,lengthMetres:m.userData.patchMetres||2.4});
       g.applyMatrix4(matrix);
       let b=this.batches.get(m); if(!b){b={p:[],n:[],u:[],i:[]};this.batches.set(m,b);}
       const offset=b.p.length/3;
@@ -122,6 +124,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       const q=rotation instanceof THREE.Quaternion?rotation:new THREE.Quaternion().setFromEuler(rotation||new THREE.Euler());
       const transform=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),q,new THREE.Vector3(1,1,1));
       if(frame)transform.premultiply(frame);
+      if(m===siding)g.userData.ranchTimberBox={width:w,height:h,depth:d,x,y,z};
       this.geometry(g,m,transform);
     }
     beam(a,b,width,depth,m,frame=null) {

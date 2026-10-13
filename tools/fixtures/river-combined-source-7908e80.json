@@ -1,0 +1,117 @@
+{
+  "bankAndRamp": [
+    {
+      "before": "",
+      "after": "import {conformRiverBankGeometry,dressRiverBankMaterial} from '../riverbank-surface.mjs?v=river-banks-1';\n",
+      "oldLine": 1,
+      "newLine": 1
+    },
+    {
+      "before": "",
+      "after": " const planningGroundH=W.riverBankPlacement?.heightAt||groundH;\n",
+      "oldLine": 23,
+      "newLine": 24
+    },
+    {
+      "before": "",
+      "after": "  P.riverBedSurface=conformRiverBankGeometry({THREE,mesh:P.bed,groundHeight:W.terrainH,full:true,offsetM:.008,worldUV:true});dressRiverBankMaterial(P.bed.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 382,
+      "newLine": 384
+    },
+    {
+      "before": "    const gy=groundH(px,pz);\n",
+      "after": "    const gy=planningGroundH(px,pz);\n",
+      "oldLine": 449,
+      "newLine": 452
+    },
+    {
+      "before": "      roots.push({x:px+rr(-0.5,0.5),y:gy+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "after": "      roots.push({x:px+rr(-0.5,0.5),y:groundH(px,pz)+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "oldLine": 453,
+      "newLine": 456
+    },
+    {
+      "before": "",
+      "after": "  P.riverBankSurfaces=P.riverBankSurfaces||[];P.riverBankSurfaces.push(conformRiverBankGeometry({THREE,mesh:m,groundHeight:groundH}));dressRiverBankMaterial(apronMat,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 464,
+      "newLine": 467
+    },
+    {
+      "before": "   const h=groundH(x,z);\n   const s=Math.abs(groundH(x+1.2,z)-h)+Math.abs(groundH(x,z+1.2)-h);\n",
+      "after": "   const h=planningGroundH(x,z);\n   const s=Math.abs(planningGroundH(x+1.2,z)-h)+Math.abs(planningGroundH(x,z+1.2)-h);\n",
+      "oldLine": 995,
+      "newLine": 999
+    },
+    {
+      "before": "",
+      "after": "import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';\n"
+    },
+    {
+      "before": "",
+      "after": " // Register the new bank approach only after every original layout/course capture.\n installFerryBankApproach(G);\n"
+    }
+  ],
+  "bankAndReed": [
+    {
+      "before": "",
+      "after": "import {conformRiverBankGeometry,dressRiverBankMaterial} from '../riverbank-surface.mjs?v=river-banks-1';\n",
+      "oldLine": 1,
+      "newLine": 1
+    },
+    {
+      "before": "",
+      "after": " const planningGroundH=W.riverBankPlacement?.heightAt||groundH;\n",
+      "oldLine": 23,
+      "newLine": 24
+    },
+    {
+      "before": "",
+      "after": "  P.riverBedSurface=conformRiverBankGeometry({THREE,mesh:P.bed,groundHeight:W.terrainH,full:true,offsetM:.008,worldUV:true});dressRiverBankMaterial(P.bed.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 382,
+      "newLine": 384
+    },
+    {
+      "before": "    const gy=groundH(px,pz);\n",
+      "after": "    const gy=planningGroundH(px,pz);\n",
+      "oldLine": 449,
+      "newLine": 452
+    },
+    {
+      "before": "      roots.push({x:px+rr(-0.5,0.5),y:gy+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "after": "      roots.push({x:px+rr(-0.5,0.5),y:groundH(px,pz)+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),\n",
+      "oldLine": 453,
+      "newLine": 456
+    },
+    {
+      "before": "",
+      "after": "  P.riverBankSurfaces=P.riverBankSurfaces||[];P.riverBankSurfaces.push(conformRiverBankGeometry({THREE,mesh:m,groundHeight:groundH}));dressRiverBankMaterial(apronMat,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n",
+      "oldLine": 464,
+      "newLine": 467
+    },
+    {
+      "before": "   const h=groundH(x,z);\n   const s=Math.abs(groundH(x+1.2,z)-h)+Math.abs(groundH(x,z+1.2)-h);\n",
+      "after": "   const h=planningGroundH(x,z);\n   const s=Math.abs(planningGroundH(x+1.2,z)-h)+Math.abs(planningGroundH(x,z+1.2)-h);\n",
+      "oldLine": 995,
+      "newLine": 999
+    },
+    {
+      "before": "",
+      "after": "import {createBankRushGeometry} from '../bank-rushes.mjs?v=bank-rushes-1';\n"
+    },
+    {
+      "before": " const reedGeo=(()=>{                                  // three crossed cards: 6 triangles a clump\n  const g=new THREE.BufferGeometry(),pos=[],uv=[],idx=[];\n  for(let k=0;k<3;k++){\n   const a=k*Math.PI/3, ca=Math.cos(a),sa=Math.sin(a),o=pos.length/3;\n   pos.push(-ca*0.5,0,-sa*0.5, ca*0.5,0,sa*0.5, ca*0.5,1,sa*0.5, -ca*0.5,1,-sa*0.5);\n   uv.push(0,0, 1,0, 1,1, 0,1);\n   idx.push(o,o+1,o+2,o,o+2,o+3);\n  }\n  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));\n  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));\n  g.setIndex(idx);g.computeVertexNormals();return g;\n })();\n",
+      "after": " // One physical prototype replaces the old six-triangle crossed reed cards.\n // Its conservative original source sphere preserves course-clear ownership.\n const reedGeo=createBankRushGeometry(THREE);\n"
+    },
+    {
+      "before": " /* No vertexColors on any of these. An InstancedMesh tints itself through instanceColor, which\n    three.js enables on its own; asking for vertexColors as well switches on USE_COLOR, whose\n    `color` attribute these prototype geometries do not have \u2014 and an absent vertex attribute reads\n    as (0,0,0), so the first version of this file grew a riverbank full of pure black reeds. */",
+      "after": " /* Physical bank reeds now carry real per-vertex leaf/stem/seed colour. Every other prototype\n    keeps its original instanceColor-only material; no missing colour attribute is enabled.\n    reedTex is still constructed by the original canvas factory so texture/UUID/random ordering\n    is exact, but the opaque physical surfaces no longer sample its crossed-card alpha mask. */"
+    },
+    {
+      "before": " const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:0.9,metalness:0});",
+      "after": " const reedMat=new THREE.MeshStandardMaterial({map:null,vertexColors:true,alphaTest:0.5,side:THREE.DoubleSide,roughness:0.9,metalness:0});"
+    }
+  ],
+  "runtimeHelperSha": "7877a9627929fbd77351dc87ed85e1f28f83119aca628d0e78876bc8e4f97ecb",
+  "runtimeWaterSha": "54d6ba21bcd0f95c04df2dd18b4e0c48ef8233034872e79d1eb0917733f1d27f",
+  "reason": "Exact individuallyapproved river-bank morphology/planning/renderedsoil additions, original reedmorphology4parts and corrected deferredrampowner2parts. No broad source ignoring."
+}

@@ -1,7 +1,9 @@
+import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
+import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=ranch-actors-2';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-cascades-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its
@@ -81,6 +83,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
     fieldSurface.skirtTexels=extended.texelsRaised;
     fieldSurface.northPastureTexels=applyNorthPastureGrazingPixels(woodedPixels.data,MASK);
     fieldSurface.northPastureProfile=NORTH_PASTURE_PROFILE;
+    fieldSurface.chalkDownTexels=applyChalkGrazingPixels(woodedPixels.data,MASK);
+    fieldSurface.pastoralTexels=applyPastoralGrazingPixels(woodedPixels.data,MASK);
+    fieldSurface.pastoralProfile=PASTORAL_COVER_PROFILE;
     ctx.putImageData(woodedPixels,0,0);
     ctx.lineCap='round'; ctx.lineJoin='round';
     for(const {pts,width,strength} of pathList){
@@ -137,6 +142,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
   material.userData.soilSurface=soilSurface;
+  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'attribute float hollowSnow; varying float terrainHollowSnow; attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
@@ -628,6 +634,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   }
   material.userData.setPaths = setPaths;
   material.userData.setTrees = setTrees;
+  material.userData.refreshGrazing = redrawMask;
   return {material, setTrees, setPaths};
 }
 

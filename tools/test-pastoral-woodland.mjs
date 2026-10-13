@@ -83,7 +83,7 @@ const placementCode=CORE_ONLY?'':sliceBetween('    for(const t of trees){\n     
 const place=new Function('THREE','trees','W','q','s','v','UP',placementCode);
 const registrationCode=CORE_ONLY?'':sliceBetween('    if(pastoral.trees.length){','    pastoral.trees=pastoral.trees.map');
 const register=new Function('THREE','pastoral','group','identity','uprightSource','UPRIGHT_HYBRID_WOOD_BOXES','UPRIGHT_HYBRID_WOOD_SOURCE_SHA','W','G',registrationCode);
-const replacementCode=CORE_ONLY?'':sliceBetween('    const pastoral=state.pastoralWoodland=','    state.villageEvergreens=');
+const replacementCode=CORE_ONLY?'':sliceBetween('    const pastoral=state.pastoralWoodland=','    const settlement=state.settlementWoodland=');
 const replace=new Function('THREE','state','trees','uprightSource','W','G','window','routes','edgeWoodRadius','cottonwoodReserved','segmentDistance','coldWoodlandWeights','selectPastoralWoodland','isOrdinaryTrunkCircle',replacementCode+'return pastoral;');
 function fixture(trees,{circles=null,forestPoints=null}={}){
  const world=createSolidWorld({THREE:T}),scene=new T.Scene(),group=new T.Group();scene.add(group);

@@ -1,0 +1,24 @@
+import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {T,old,next,oldHeight,height,step,oldPlan,plan,noRNG,arraySHA} from './coyote-macroform-fixture.mjs';
+import {createCoyoteBootPlanning} from '../assets/coyote-boot-planning.mjs';
+const make=(m,h)=>{const colliders=[],art=m.createCanyonLandscape({THREE:T,scene:new T.Scene(),heightAt:h,terrainStep:step,material:new T.MeshStandardMaterial(),colliders});return{art,colliders};},before=make(old,oldHeight),after=make(next,height),world={colliders:after.colliders,canyonLandscape:after.art,canyonPlacement:plan},reference=noRNG(()=>createCoyoteBootPlanning(world));
+const source=fs.readFileSync(new URL('../assets/features/world.js',import.meta.url),'utf8');
+function actualClear(W,helper=createCoyoteBootPlanning){const hooks=new Map(),P={},G={on(k,fn){hooks.set(k,fn);}},riverZ=x=>120+Math.sin(x*.012)*45,hyp=(x,z,a,b)=>Math.hypot(x-a,z-b),start=source.indexOf(' const canyonBootPlanning='),end=source.indexOf(' P.findClear=findClear;',start);assert(start>0&&end>start);const api=new Function('G','W','P','riverZ','hyp','createCoyoteBootPlanning',source.slice(start,end)+'return{clear,findClear};')(G,W,P,riverZ,hyp,helper);return{...api,boot:()=>hooks.get('boot')()};}
+const key=c=>[c.x,c.z,c.r].join('|');
+test('boot reference is exact original804 physical contour occupancy, with no game RNG/scene resources and distinct older Flora generation',()=>{
+ assert.equal(reference.barriers.length,412);assert.deepEqual(reference.barriers,before.art.barriers.map(({x,z,r})=>({x,z,r})));assert.notDeepEqual(reference.barriers,oldPlan.barriers,'Older Flora decision generation must not replace original physical occupancy');assert.equal(after.art.barriers.length,414);
+ assert(!/THREE|Math\.random|fetch\(|Texture|Mesh|Material/.test(fs.readFileSync(new URL('../assets/coyote-boot-planning.mjs',import.meta.url),'utf8')));
+});
+test('exact identity replacement preserves the original order of unrelated owners and cannot revive a missing actual cliff group',()=>{
+ const left={x:40,z:20,r:1},copy={...after.art.barriers[0]},right={x:-20,z:30,r:2},physical=[left,...after.art.barriers,copy,right],snapshot=physical.slice(),planned=noRNG(()=>reference.collidersForPlanning(physical));assert.deepEqual(physical,snapshot);assert.equal(planned[0],left);assert.deepEqual(planned.slice(1,413),reference.barriers);assert.equal(planned[413],copy);assert.equal(planned[414],right);assert(!planned.some(c=>after.art.barriers.includes(c)));const removed=[left,copy,right];assert.equal(reference.collidersForPlanning(removed),removed,'No exact owned physical refs means no injected planning circles');const noOwner=createCoyoteBootPlanning({colliders:removed});assert.equal(noOwner.collidersForPlanning(removed),removed);
+});
+test('actual production clear/findClear retains original boot predicates and search outcomes including changed sites, then returns to live occupancy on boot',()=>{
+ const extra=[{x:-224,z:120,r:6},{x:-140,z:174,r:1.2},{x:-289,z:40,r:.8}],W={...world,colliders:[...after.colliders,...extra]},oldW={...W,colliders:[...before.colliders,...extra]},a=actualClear(oldW,()=>({collidersForPlanning:rows=>rows})),b=actualClear(W);let changes=0,samples=0;
+ for(let x=-357.7;x<-110;x+=2.9)for(let z=-1.3;z<201;z+=3.7)for(const need of[.6,1.2,4.5]){assert.equal(b.clear(x,z,need),a.clear(x,z,need));const live=actualClear(W,()=>({collidersForPlanning:rows=>rows}));if(live.clear(x,z,need)!==a.clear(x,z,need))changes++;samples++;}
+ for(const x of[-321,-294,-265,-235,-202,-177,-166,-152,-133])for(const z of[24,49,72,142,165,181])assert.deepEqual(b.findClear(x,z,2.5,30),a.findClear(x,z,2.5,30));assert(changes>20,'Negative control reproduces source decision differences with actual new cliff occupancy');b.boot();const live=actualClear(W,()=>({collidersForPlanning:rows=>rows}));for(let x=-350.17;x<-120;x+=4.1)for(let z=10.27;z<195;z+=4.3)assert.equal(b.clear(x,z,1.2),live.clear(x,z,1.2));assert(samples>10000);
+});
+test('boot clear does not change actual NPC/controller collision laws or mutate the live list while adding later original props',()=>{
+ const oldWorld=fs.readFileSync(new URL('./fixtures/coyote-macro-8042555/world.js',import.meta.url),'utf8');assert.equal(normalizeCoyoteMacroSource(source,'assets/features/world.js'),oldWorld,'Only exact import and boot-clear closure plus canonical cache edge changed');
+ const mutable={...world,colliders:after.colliders.slice()},clear=actualClear(mutable),beforeDigest=mutable.colliders.map(key),p={x:350,z:240,r:3};assert(clear.clear(p.x,p.z,1));mutable.colliders.push(p);assert(!clear.clear(p.x,p.z,1));assert.deepEqual(mutable.colliders.slice(0,-1).map(key),beforeDigest);assert.equal(mutable.colliders.at(-1),p);clear.boot();assert(!clear.clear(p.x,p.z,1));
+});
