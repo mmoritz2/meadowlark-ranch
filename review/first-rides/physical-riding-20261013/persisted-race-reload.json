@@ -1,0 +1,144 @@
+{
+  "card": "Pasture Pony Dash\nMeadowlark Ranch · Flat Racing\n4,384\n52\nEvent\nBoard\nFull card\nFlat Racing\nLv 1 · 6 gates\nS\n1\n2\n3\n4\n5\n🌱\nNovice\nlower rails, a slower clock, 70% of the purse\n126\n🏇\nOpen\nthe course as set\n180\n🔥\nElite\nOpens at Lv 3\n270\n4 of 4 ribbons earned\nBramble · Open\n\nYour horse is ready for this event.\n\nHorse readiness\n1 / 1 requirements met\n\nFavoured stats · Acceleration 3\n\nAt 7 or higher, a favoured stat also boosts your race rewards.\n\nAloof\n\nAt 80 bond, pace gains 6%.\n\nStops briefly when exhausted.\n\nBond 40 / 100 · 4% less gallop stamina used from bond.\n\nBonds especially well through ribbons and treats.\n\nIn Bond & feed: Groom gives +2 bond.\n\nChoose horse\nBond & feed\nEntry\nFree\nListed purse\n180 coins\nCourse format\n0:41 allowed\nPersonal best\n0:22.6\nRewards & riding tips\nReady to enter\nFlat Racing · Open\nPrepare horse\nEnter event",
+  "errors": [],
+  "featureErrors": [],
+  "networkConnected": false,
+  "player": {
+    "blown": false,
+    "breed": "bay-sporthorse",
+    "exhaustT": 0,
+    "heading": 3.141592653589793,
+    "horseId": 1,
+    "horseName": "Bramble",
+    "landT": 0,
+    "loadingBreed": false,
+    "modelKey": "bay-sporthorse",
+    "rigReady": true,
+    "speed": 0,
+    "stam": 1,
+    "x": -7,
+    "z": 10
+  },
+  "saveSummary": {
+    "horseCount": 2,
+    "horseNames": [
+      {
+        "breed": "bay-sporthorse",
+        "id": 1,
+        "name": "Bramble"
+      },
+      {
+        "breed": "pinto",
+        "id": 2,
+        "name": "Clover"
+      }
+    ],
+    "journey": {
+      "claimed": {
+        "first-partners": {
+          "at": 1791650619995,
+          "gearId": "journey-first-partners"
+        },
+        "river-rhythm": {
+          "at": 1791656399494,
+          "gearId": "journey-river-rhythm"
+        },
+        "steady-hands": {
+          "at": 1791654968498,
+          "gearId": "journey-steady-hands"
+        }
+      },
+      "lastClaimId": "river-rhythm",
+      "version": 1
+    },
+    "rescue": {
+      "adopted": true,
+      "completions": 1
+    },
+    "riderCreated": true,
+    "ridingHorseId": 1,
+    "rush": {
+      "rush-pasture": {
+        "bestCombo": 6,
+        "bestScore": 1271,
+        "bestTime": 35.9,
+        "lastRunId": "mv2mggc9-1-febb42",
+        "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+        "medal": "gold",
+        "plays": 1,
+        "splits": [
+          5.54,
+          11.68,
+          20.1,
+          25.65,
+          29.88,
+          35.9
+        ]
+      },
+      "rush-river": {
+        "bestCombo": 6,
+        "bestScore": 1400,
+        "bestTime": 95.46,
+        "lastRunId": "mv2r8fvw-1-zqlzum",
+        "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+        "medal": "silver",
+        "plays": 3,
+        "splits": [
+          1.87,
+          7.44,
+          72.12,
+          75.16,
+          80.86,
+          85.56,
+          88.83,
+          95.46
+        ]
+      },
+      "rush-trail": {
+        "bestCombo": 7,
+        "bestScore": 2034,
+        "bestTime": 50.77,
+        "lastRunId": "mv2req07-1-o7t2pz",
+        "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+        "medal": "silver",
+        "plays": 1,
+        "splits": [
+          2.15,
+          9.47,
+          14.82,
+          17.77,
+          24.95,
+          32.11,
+          35.89,
+          43.72,
+          48.33,
+          50.77
+        ]
+      }
+    },
+    "totalRaces": 0
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Follow the marker back to Wren to collect your reward. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (300/300)\nReturn to Wren · reward ready"
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 300,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 300
+    },
+    "target": null
+  }
+}

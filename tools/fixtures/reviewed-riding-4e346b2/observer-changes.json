@@ -1,0 +1,44 @@
+[
+  {
+    "file": "tools/test-basic-riding-tack.mjs",
+    "before": "import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';\n",
+    "after": "import {normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-basic-riding-tack.mjs",
+    "before": "const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(source,file),file);\n",
+    "after": "const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(normalizeReviewedRuntimeSource(source,file),file),file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coyote-crag-composition.mjs",
+    "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';\n",
+    "after": "import {normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';\nimport test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-coyote-crag-composition.mjs",
+    "before": "const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(source,file),file);\n",
+    "after": "const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(normalizeReviewedRuntimeSource(source,file),file),file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createHash} from 'node:crypto';\n",
+    "after": "import {normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';\nimport test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createHash} from 'node:crypto';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "  const source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');\n",
+    "after": "  const source=normalizeFieldstoneWallCacheSource(normalizeReviewedRuntimeSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),file),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": " const file='ranch3d.html',source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file,fixture),'utf8');\n",
+    "after": " const file='ranch3d.html',source=normalizeFieldstoneWallCacheSource(normalizeReviewedRuntimeSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),file),expected=fs.readFileSync(new URL(file,fixture),'utf8');\n",
+    "occurrences": 1
+  }
+]

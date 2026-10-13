@@ -1,0 +1,236 @@
+TAP version 13
+# Subtest: the observed old fourth-ribbon conflict cannot appear as a gold or confirmed full set
+ok 1 - the observed old fourth-ribbon conflict cannot appear as a gold or confirmed full set
+  ---
+  duration_ms: 1.976125
+  ...
+# Subtest: a saved final nongold receipt overrides an unverified fourth without granting or revoking save rewards
+ok 2 - a saved final nongold receipt overrides an unverified fourth without granting or revoking save rewards
+  ---
+  duration_ms: 0.491542
+  ...
+# Subtest: a genuine confirmed gold and a lower later result preserve the best award
+ok 3 - a genuine confirmed gold and a lower later result preserve the best award
+  ---
+  duration_ms: 0.164417
+  ...
+# Subtest: a historical global gold remains visible after a later nongold round without inventing its difficulty
+ok 4 - a historical global gold remains visible after a later nongold round without inventing its difficulty
+  ---
+  duration_ms: 0.139292
+  ...
+# Subtest: confirmed golds are counted by difficulty without adding an extra global gold
+ok 5 - confirmed golds are counted by difficulty without adding an extra global gold
+  ---
+  duration_ms: 0.195416
+  ...
+# Subtest: empty, aggregate-only, malformed and unconfirmed saved records remain read-only and cannot fabricate a gold
+ok 6 - empty, aggregate-only, malformed and unconfirmed saved records remain read-only and cannot fabricate a gold
+  ---
+  duration_ms: 0.619875
+  ...
+# Subtest: the actual event card ribbon resolver reads the final judged helper
+ok 7 - the actual event card ribbon resolver reads the final judged helper
+  ---
+  duration_ms: 1.445333
+  ...
+# Subtest: the actual ladder cannot display unsaved gold from its provisional cached grade
+ok 8 - the actual ladder cannot display unsaved gold from its provisional cached grade
+  ---
+  duration_ms: 0.502667
+  ...
+# Subtest: only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+ok 9 - only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+  ---
+  duration_ms: 4.856417
+  ...
+# Subtest: start admission respects the offline owned-origin and visible unblocked game guards
+ok 10 - start admission respects the offline owned-origin and visible unblocked game guards
+  ---
+  duration_ms: 1.985625
+  ...
+# Subtest: countdown releases keys while production alone owns the clock and gate index
+ok 11 - countdown releases keys while production alone owns the clock and gate index
+  ---
+  duration_ms: 1.184834
+  ...
+# Subtest: real numbered gate centres select ordinary gaits and steering without writing game observations
+ok 12 - real numbered gate centres select ordinary gaits and steering without writing game observations
+  ---
+  duration_ms: 2.129667
+  ...
+# Subtest: UI, background, flight, unmounted state and rig loading stop an already running driver
+ok 13 - UI, background, flight, unmounted state and rig loading stop an already running driver
+  ---
+  duration_ms: 2.760417
+  ...
+# Subtest: course, event and mount identity changes halt rather than adopting another run
+ok 14 - course, event and mount identity changes halt rather than adopting another run
+  ---
+  duration_ms: 0.943167
+  ...
+# Subtest: a missing originally ridden horse cannot provide a valid mounted-race identity
+ok 15 - a missing originally ridden horse cannot provide a valid mounted-race identity
+  ---
+  duration_ms: 0.194709
+  ...
+# Subtest: missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+ok 16 - missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+  ---
+  duration_ms: 1.404291
+  ...
+# Subtest: five seconds of held-forward physical stall stops input; observed movement resets that deadline
+ok 17 - five seconds of held-forward physical stall stops input; observed movement resets that deadline
+  ---
+  duration_ms: 1.249833
+  ...
+# Subtest: diagnostics preserve the course horse and actual result data after the course ends
+ok 18 - diagnostics preserve the course horse and actual result data after the course ends
+  ---
+  duration_ms: 0.82425
+  ...
+# Subtest: a real window keyup clears intent so the next forward request dispatches another keydown
+ok 19 - a real window keyup clears intent so the next forward request dispatches another keydown
+  ---
+  duration_ms: 0.252667
+  ...
+# Subtest: stamina diagnostics report actual raw exhaustion and landing values without changing them
+ok 20 - stamina diagnostics report actual raw exhaustion and landing values without changing them
+  ---
+  duration_ms: 0.612375
+  ...
+# Subtest: the driver follows the published detour waypoint rather than the numbered gate centre
+ok 21 - the driver follows the published detour waypoint rather than the numbered gate centre
+  ---
+  duration_ms: 0.187625
+  ...
+# Subtest: missing, blocked, stale and malformed guide targets stop input without inventing a path
+ok 22 - missing, blocked, stale and malformed guide targets stop input without inventing a path
+  ---
+  duration_ms: 1.221542
+  ...
+# Subtest: a gate crossing can wait for its next normal guide publication without steering toward a stale target
+ok 23 - a gate crossing can wait for its next normal guide publication without steering toward a stale target
+  ---
+  duration_ms: 0.3045
+  ...
+# Subtest: eligibility is limited to genuine all-gate unscored flat races
+ok 24 - eligibility is limited to genuine all-gate unscored flat races
+  ---
+  duration_ms: 1.124458
+  ...
+# Subtest: a clear route remains direct and never changes player, course or world observations
+ok 25 - a clear route remains direct and never changes player, course or world observations
+  ---
+  duration_ms: 1.307958
+  ...
+# Subtest: the actual rotated and scaled race hay blocks the early gate-three ray and its detour is physically clear
+ok 26 - the actual rotated and scaled race hay blocks the early gate-three ray and its detour is physically clear
+  ---
+  duration_ms: 83.735
+  ...
+# Subtest: finite walls and multiple circle obstacles require real clearance along every segment
+ok 27 - finite walls and multiple circle obstacles require real clearance along every segment
+  ---
+  duration_ms: 2.772416
+  ...
+# Subtest: sealed destinations and riders inside a real solid are honestly blocked
+ok 28 - sealed destinations and riders inside a real solid are honestly blocked
+  ---
+  duration_ms: 22.645916
+  ...
+# Subtest: invalid geometry, nonfinite terrain and out-of-world travel fail closed
+ok 29 - invalid geometry, nonfinite terrain and out-of-world travel fail closed
+  ---
+  duration_ms: 0.237791
+  ...
+# Subtest: stable detours reuse their route, retain a waypoint until reached and reset for another course
+ok 30 - stable detours reuse their route, retain a waypoint until reached and reset for another course
+  ---
+  duration_ms: 1.985167
+  ...
+# Subtest: gate changes and newly blocked cached legs never publish the stale unsafe target
+ok 31 - gate changes and newly blocked cached legs never publish the stale unsafe target
+  ---
+  duration_ms: 3.579417
+  ...
+# Subtest: actual course-guide plan displays the real hay detour and follows only externally changed gate indices
+ok 32 - actual course-guide plan displays the real hay detour and follows only externally changed gate indices
+  ---
+  duration_ms: 22.326834
+  ...
+# Subtest: actual formal scored-line plan preserves the exact scored segment without consulting detour geometry
+ok 33 - actual formal scored-line plan preserves the exact scored segment without consulting detour geometry
+  ---
+  duration_ms: 0.694375
+  ...
+# Subtest: an actual blocked plan cannot leave the old public target or rendered unsafe line visible
+ok 34 - an actual blocked plan cannot leave the old public target or rendered unsafe line visible
+  ---
+  duration_ms: 0.519709
+  ...
+# Subtest: actual plan clears old flat-race state when the current scope becomes a judged class or ends
+ok 35 - actual plan clears old flat-race state when the current scope becomes a judged class or ends
+  ---
+  duration_ms: 0.114917
+  ...
+# Subtest: the actual public gate-guide handle withdraws its target while disabled or finishing
+ok 36 - the actual public gate-guide handle withdraws its target while disabled or finishing
+  ---
+  duration_ms: 0.151584
+  ...
+# Subtest: captured wood contact is clear at the old slab but overlaps after the slope raises the body
+ok 37 - captured wood contact is clear at the old slab but overlaps after the slope raises the body
+  ---
+  duration_ms: 16.534209
+  ...
+# Subtest: grounded convergence clears a neighbourhood of the captured trunk without moving its collider
+ok 38 - grounded convergence clears a neighbourhood of the captured trunk without moving its collider
+  ---
+  duration_ms: 49.099083
+  ...
+# Subtest: downhill correction lowers the body into a short second obstacle and resolves it
+ok 39 - downhill correction lowers the body into a short second obstacle and resolves it
+  ---
+  duration_ms: 0.276666
+  ...
+# Subtest: flat clear movement costs one resolve and preserves the original previous pose object
+ok 40 - flat clear movement costs one resolve and preserves the original previous pose object
+  ---
+  duration_ms: 0.107458
+  ...
+# Subtest: every convergence pass preserves the initial previous pose for surface-side logic
+ok 41 - every convergence pass preserves the initial previous pose for surface-side logic
+  ---
+  duration_ms: 0.098417
+  ...
+# Subtest: nonconvergent corrections restore only a separately certified clear prior grounded pose
+ok 42 - nonconvergent corrections restore only a separately certified clear prior grounded pose
+  ---
+  duration_ms: 0.092791
+  ...
+# Subtest: an overlapping prior pose is never restored after cap exhaustion
+ok 43 - an overlapping prior pose is never restored after cap exhaustion
+  ---
+  duration_ms: 0.077333
+  ...
+# Subtest: cancelled pushes with reported contact are not mistaken for clear zero motion
+ok 44 - cancelled pushes with reported contact are not mistaken for clear zero motion
+  ---
+  duration_ms: 0.053792
+  ...
+# riding input: four gaits, temporary modifiers, brake-before-reverse, stop, foot/flight, camera grace passed
+# Subtest: tools/test-riding-input.mjs
+ok 5 - tools/test-riding-input.mjs
+  ---
+  duration_ms: 48.307
+  ...
+1..45
+# tests 45
+# suites 0
+# pass 45
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 267.826292

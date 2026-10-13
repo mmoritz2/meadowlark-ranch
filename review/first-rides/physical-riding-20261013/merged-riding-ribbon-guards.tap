@@ -1,0 +1,340 @@
+TAP version 13
+# Subtest: basic appearance is visual-only, absent slots only, and retains exact selected object identity
+ok 1 - basic appearance is visual-only, absent slots only, and retains exact selected object identity
+  ---
+  duration_ms: 0.983666
+  ...
+# Subtest: private synchronous basic construction restores global randomness on success, throw and nested calls
+ok 2 - private synchronous basic construction restores global randomness on success, throw and nested calls
+  ---
+  duration_ms: 0.594625
+  ...
+# Subtest: whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+ok 3 - whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+  ---
+  duration_ms: 42.057333
+  ...
+# Subtest: actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+ok 4 - actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+  ---
+  duration_ms: 1653.172833
+  ...
+# Subtest: actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+ok 5 - actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+  ---
+  duration_ms: 1278.761167
+  ...
+# Subtest: invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+ok 6 - invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+  ---
+  duration_ms: 231.505959
+  ...
+# Subtest: new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+ok 7 - new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+  ---
+  duration_ms: 1445.62025
+  ...
+# Subtest: actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+ok 8 - actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+  ---
+  duration_ms: 1263.687709
+  ...
+# Subtest: only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+ok 9 - only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+  ---
+  duration_ms: 2636.537541
+  ...
+# Subtest: conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+ok 10 - conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+  ---
+  duration_ms: 1254.31425
+  ...
+# Subtest: real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+ok 11 - real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+  ---
+  duration_ms: 215.447208
+  ...
+# Subtest: nominal motion against obstacles, missing snapshots and invalid distances cannot earn bond
+ok 12 - nominal motion against obstacles, missing snapshots and invalid distances cannot earn bond
+  ---
+  duration_ms: 9.065667
+  ...
+# Subtest: wrong or missing current horse identity cannot contribute riding metres
+ok 13 - wrong or missing current horse identity cannot contribute riding metres
+  ---
+  duration_ms: 0.921459
+  ...
+# Subtest: 200 actual non-flying mounted metres award one riding bond and preserve the remainder
+ok 14 - 200 actual non-flying mounted metres award one riding bond and preserve the remainder
+  ---
+  duration_ms: 1.363125
+  ...
+# Subtest: replaying the same immutable frame snapshot cannot double-credit its metres
+ok 15 - replaying the same immutable frame snapshot cannot double-credit its metres
+  ---
+  duration_ms: 0.679209
+  ...
+# Subtest: actual jump travel builds riding bond but flight, vehicles and on-foot travel never do
+ok 16 - actual jump travel builds riding bond but flight, vehicles and on-foot travel never do
+  ---
+  duration_ms: 4.254042
+  ...
+# Subtest: the existing personality gain and eight-bond daily cap remain authoritative
+ok 17 - the existing personality gain and eight-bond daily cap remain authoritative
+  ---
+  duration_ms: 5.088917
+  ...
+# Subtest: normal daily rollover still opens the existing riding cap
+ok 18 - normal daily rollover still opens the existing riding cap
+  ---
+  duration_ms: 1.738959
+  ...
+# Subtest: a reordered fresh save pays the same measured horse ID rather than another horse at its old index
+ok 19 - a reordered fresh save pays the same measured horse ID rather than another horse at its old index
+  ---
+  duration_ms: 0.987416
+  ...
+# Subtest: a horse removed from the fresh save cannot redirect riding bond to a replacement
+ok 20 - a horse removed from the fresh save cannot redirect riding bond to a replacement
+  ---
+  duration_ms: 1.99575
+  ...
+# Subtest: exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+ok 21 - exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+  ---
+  duration_ms: 554.039917
+  ...
+# Subtest: exact published caches and the original five crag reversals restore the full original7009 bodies
+ok 22 - exact published caches and the original five crag reversals restore the full original7009 bodies
+  ---
+  duration_ms: 41.903208
+  ...
+# Subtest: the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+ok 23 - the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+  ---
+  duration_ms: 498.424708
+  ...
+# Subtest: both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+ok 24 - both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+  ---
+  duration_ms: 0.334833
+  ...
+# Subtest: late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+ok 25 - late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+  ---
+  duration_ms: 4.987167
+  ...
+# Subtest: the reproduced89% race stores only three final ribbons and never advances a gold goal
+ok 26 - the reproduced89% race stores only three final ribbons and never advances a gold goal
+  ---
+  duration_ms: 1.893917
+  ...
+# Subtest: raw grading hooks are pure: provisional gold does not write ribbons or progress
+ok 27 - raw grading hooks are pure: provisional gold does not write ribbons or progress
+  ---
+  duration_ms: 0.813042
+  ...
+# Subtest: a genuinely tidy race saves four ribbons and posts its gold only after the confirmed write
+ok 28 - a genuinely tidy race saves four ribbons and posts its gold only after the confirmed write
+  ---
+  duration_ms: 0.633125
+  ...
+# Subtest: the same actual course and cloned post-signal cannot pay ribbon totals, Star Points or gold twice
+ok 29 - the same actual course and cloned post-signal cannot pay ribbon totals, Star Points or gold twice
+  ---
+  duration_ms: 0.627625
+  ...
+# Subtest: before-write failure and missing readback cannot publish finalized ribbon progress
+ok 30 - before-write failure and missing readback cannot publish finalized ribbon progress
+  ---
+  duration_ms: 0.7815
+  ...
+# Subtest: a confirmed write remains valid when the save wrapper reports an ambiguous post-write failure
+ok 31 - a confirmed write remains valid when the save wrapper reports an ambiguous post-write failure
+  ---
+  duration_ms: 0.426084
+  ...
+# Subtest: unconfirmed, changed or stale receipts cannot create progress through the public final signal
+ok 32 - unconfirmed, changed or stale receipts cannot create progress through the public final signal
+  ---
+  duration_ms: 0.498
+  ...
+# Subtest: a later weaker round preserves both genuine old gold and confirmed best data
+ok 33 - a later weaker round preserves both genuine old gold and confirmed best data
+  ---
+  duration_ms: 0.683
+  ...
+# Subtest: old phantom fourth records and already-paid progress are retained without being revalidated or revoked
+ok 34 - old phantom fourth records and already-paid progress are retained without being revalidated or revoked
+  ---
+  duration_ms: 0.701083
+  ...
+# Subtest: only the latest record per difficulty is kept while confirmed bests survive new runs
+ok 35 - only the latest record per difficulty is kept while confirmed bests survive new runs
+  ---
+  duration_ms: 0.694334
+  ...
+# Subtest: jump and judged-class grades retain the existing final gold criteria
+ok 36 - jump and judged-class grades retain the existing final gold criteria
+  ---
+  duration_ms: 0.781959
+  ...
+# Subtest: the separate two-literal repair adapter preserves all six distance edits and original protected sources
+ok 37 - the separate two-literal repair adapter preserves all six distance edits and original protected sources
+  ---
+  duration_ms: 48.496167
+  ...
+# Subtest: breeding weekly ribbons count final three rather than provisional four, with persisted duplicate protection
+ok 38 - breeding weekly ribbons count final three rather than provisional four, with persisted duplicate protection
+  ---
+  duration_ms: 2.490709
+  ...
+# Subtest: breeding eight-ribbon weekly reward and rollover remain unchanged
+ok 39 - breeding eight-ribbon weekly reward and rollover remain unchanged
+  ---
+  duration_ms: 0.949666
+  ...
+# Subtest: breeding cannot count unverified awards, failed ribbon saves or previous-week replay
+ok 40 - breeding cannot count unverified awards, failed ribbon saves or previous-week replay
+  ---
+  duration_ms: 0.690792
+  ...
+# Subtest: merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+ok 41 - merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+  ---
+  duration_ms: 85.506125
+  ...
+# Subtest: original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+ok 42 - original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+  ---
+  duration_ms: 254.019292
+  ...
+# Subtest: each exact new cache edge and its original subject retain the same complete old source body
+ok 43 - each exact new cache edge and its original subject retain the same complete old source body
+  ---
+  duration_ms: 197.144542
+  ...
+# Subtest: unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+ok 44 - unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+  ---
+  duration_ms: 27.19425
+  ...
+# Subtest: merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+ok 45 - merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+  ---
+  duration_ms: 80.869875
+  ...
+# Subtest: camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+ok 46 - camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+  ---
+  duration_ms: 25.487375
+  ...
+# Subtest: real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+ok 47 - real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+  ---
+  duration_ms: 6.240542
+  ...
+# Subtest: real legacy rail and trunk footprints cannot award nominal gallop travel
+ok 48 - real legacy rail and trunk footprints cannot award nominal gallop travel
+  ---
+  duration_ms: 3.66925
+  ...
+# Subtest: wall sliding credits only the actual tangent displacement after all collision substeps
+ok 49 - wall sliding credits only the actual tangent displacement after all collision substeps
+  ---
+  duration_ms: 1.057875
+  ...
+# Subtest: the terrain boundary produces no reward for an outward gallop
+ok 50 - the terrain boundary produces no reward for an outward gallop
+  ---
+  duration_ms: 0.775125
+  ...
+# Subtest: stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+ok 51 - stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+  ---
+  duration_ms: 0.907709
+  ...
+# Subtest: sampling is frame-local: fast travel between frames never contributes its relocation distance
+ok 52 - sampling is frame-local: fast travel between frames never contributes its relocation distance
+  ---
+  duration_ms: 0.47625
+  ...
+# Subtest: on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+ok 53 - on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+  ---
+  duration_ms: 2.568292
+  ...
+# Subtest: native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+ok 54 - native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+  ---
+  duration_ms: 0.573167
+  ...
+# Subtest: refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+ok 55 - refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+  ---
+  duration_ms: 0.764459
+  ...
+# Subtest: a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+ok 56 - a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+  ---
+  duration_ms: 0.722208
+  ...
+# Subtest: real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+ok 57 - real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+  ---
+  duration_ms: 0.491875
+  ...
+# Subtest: legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+ok 58 - legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+  ---
+  duration_ms: 1.010042
+  ...
+# Subtest: zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+ok 59 - zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+  ---
+  duration_ms: 1.234625
+  ...
+# Subtest: the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+ok 60 - the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+  ---
+  duration_ms: 0.455959
+  ...
+# Subtest: straight actual travel produces the same accumulated metres across different frame sizes
+ok 61 - straight actual travel produces the same accumulated metres across different frame sizes
+  ---
+  duration_ms: 1.366958
+  ...
+# Subtest: the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+ok 62 - the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+  ---
+  duration_ms: 113.171084
+  ...
+# Subtest: already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+ok 63 - already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+  ---
+  duration_ms: 6816.336417
+  ...
+# Subtest: source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+ok 64 - source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+  ---
+  duration_ms: 52.105042
+  ...
+# Subtest: only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+ok 65 - only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+  ---
+  duration_ms: 104.124667
+  ...
+# Subtest: published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+ok 66 - published native-groom cache chain accepts all four reviewed states and rejects an unknown next version or mixed history
+  ---
+  duration_ms: 152.689667
+  ...
+1..66
+# tests 66
+# suites 0
+# pass 66
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10172.944125

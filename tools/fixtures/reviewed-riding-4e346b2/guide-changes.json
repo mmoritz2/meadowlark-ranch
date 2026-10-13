@@ -1,0 +1,80 @@
+[
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   intervals, and rebuilds the route when needed. It creates no new meshes during riding;\n",
+    "after": "   intervals, and rebuilds the route when needed. Unscored flat races also cache a\n   solid-aware steering route and validate it every 300 ms. It creates no new meshes during riding;\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   recovery planning and changed snapshots may allocate small temporary objects. */\n",
+    "after": "   recovery planning and changed snapshots may allocate small temporary objects. */\nimport {createFlatRaceGuidance} from '../flat-race-guidance.mjs?v=flat-race-guide-1';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": " const fenceRecovery=createRushFenceRecovery({clearSegment:(a,b,c,j)=>rushRecoverySegmentClear(a,b,{world:W,course:c,skip:j}),isJumping:p=>(p.y||0)>.05||(p.vy||0)>0||G.horse.RIG?.()?.heroJumpAge!=null});\n",
+    "after": " const fenceRecovery=createRushFenceRecovery({clearSegment:(a,b,c,j)=>rushRecoverySegmentClear(a,b,{world:W,course:c,skip:j}),isJumping:p=>(p.y||0)>.05||(p.vy||0)>0||G.horse.RIG?.()?.heroJumpAge!=null});\n const flatGuide=createFlatRaceGuidance({world:W});\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "  PL.ok=false;\n",
+    "after": "  PL.ok=false;\n  const flat=flatGuide.update(c,player,performance.now());\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "  const j=c.jumps&&c.jumps[c.idx]; if(!j)return PL;\n",
+    "after": "  const j=c.jumps&&c.jumps[c.idx]; if(!j){flatGuide.reset();return PL;}\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   PL.tx=recovery.target.x;PL.tz=recovery.target.z;PL.scored=false;PL.mode=5;PL.a=c.idx;PL.b=fenceRecovery.revision;PL.ok=true;return PL;\n",
+    "after": "   PL.tx=recovery.target.x;PL.tz=recovery.target.z;PL.scored=false;PL.mode=5;PL.a=c.idx;PL.b=fenceRecovery.revision;PL.ok=true;return PL;\n  }\n  if(flat){\n   if(!flat.target)return PL;\n   PL.pts[0][0]=player.pos.x;PL.pts[0][1]=player.pos.z;PL.n=1;\n   for(const p of flat.waypoints){if(PL.n>=5)break;PL.pts[PL.n][0]=p.x;PL.pts[PL.n++][1]=p.z;}\n   PL.tx=flat.target.x;PL.tz=flat.target.z;PL.scored=false;PL.mode=6;PL.a=c.idx;PL.b=flat.revision;PL.ok=true;return PL;\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": " G.on('courseStart',()=>{fenceRecovery.reset();SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});\n",
+    "after": " G.on('courseStart',()=>{fenceRecovery.reset();flatGuide.reset();SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": " G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get())closing=true;});\n",
+    "after": " G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get()){closing=true;flatGuide.reset();}});\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   if(lastCourse!==c){lastCourse=c;SP.mode=-1;SP.a=-1;SP.b=-1;if(c)closing=false;}\n",
+    "after": "   if(lastCourse!==c){lastCourse=c;flatGuide.reset();SP.mode=-1;SP.a=-1;SP.b=-1;if(c)closing=false;}\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   const P=c&&!closing?plan(c):null;\n",
+    "after": "   const P=c&&!closing?plan(c):null;\n   // Never fade an old unsafe ray while a blocked route is being reported.\n   if(c&&!closing&&flatGuide.snapshot()?.phase==='blocked'){\n    fade=0;hide();if(distEl){distEl.textContent='\u00b7 Find a clear way to the gate';distEl.style.display='';}return;\n   }\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "     distEl.textContent=fenceRecovery.snapshot()?'\u00b7 '+({around:'Circle around',approach:'Return to approach',lineup:'Face the log',blocked:'Find a clear approach'}[fenceRecovery.snapshot().phase]):circ?'\u00b7 big circle':toCue?'\u00b7 '+JUMP_CUES[toCue]:'\u00b7 \ud83d\udccd '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';\n",
+    "after": "     distEl.textContent=fenceRecovery.snapshot()?'\u00b7 '+({around:'Circle around',approach:'Return to approach',lineup:'Face the log',blocked:'Find a clear approach'}[fenceRecovery.snapshot().phase]):flatGuide.snapshot()?.phase==='detour'?'\u00b7 Follow the clear route':circ?'\u00b7 big circle':toCue?'\u00b7 '+JUMP_CUES[toCue]:'\u00b7 \ud83d\udccd '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,recovery:fenceRecovery.snapshot(),\n",
+    "after": "   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,recovery:fenceRecovery.snapshot(),gateGuide:enabled&&!closing?flatGuide.snapshot():null,\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/features/course-guide.js",
+    "before": "  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,recovery:()=>fenceRecovery.snapshot(),TO_PERFECT,TO_GOOD,TO_SHOW,\n",
+    "after": "  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,recovery:()=>fenceRecovery.snapshot(),gateGuide:()=>enabled&&!closing?flatGuide.snapshot():null,TO_PERFECT,TO_GOOD,TO_SHOW,\n",
+    "occurrences": 1
+  }
+]

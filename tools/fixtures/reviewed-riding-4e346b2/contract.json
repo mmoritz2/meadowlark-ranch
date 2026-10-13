@@ -1,0 +1,19 @@
+{
+  "oursCommit": "4e346b26966c44bf825f2ef1419e8755071799cb",
+  "incomingCommit": "04ba300a897696a09e2c39d772334dd25060dd6e",
+  "observerSHA256": {
+    "tools/test-basic-riding-tack.mjs": "ab5a6a7b50c326f2624609c3da6469320b8a03e8df4a5c780c1fcfd6f16582d8",
+    "tools/test-coyote-crag-composition.mjs": "4ca5bdb1ffa5f0ccc38556e21a8f4bca3db2ffee291beb3d345326ed3cebe79e",
+    "tools/test-starter-tack-catalog-preservation.mjs": "f6b4adfbf5c09a9895c0c75bf44ffd5a4e922ecaa1d30f5b455af1523da5548b"
+  },
+  "guideBeforeSHA256": "9255a396788faa1210870a79c19fb2aa15d47fa0b60fcf84b2a1f5c04dc84ee4",
+  "guideAfterSHA256": "fa351921ce497af9978068fb155d2bb24e0c6dc061367799c4eb3446836baa6c",
+  "protectedGuardSHA256": {
+    "tools/published-world-import-source-guard.cjs": "1fd68937f868b264f314ec2ac01da704567fe018ed05c76f3e7a95abf051c804",
+    "tools/authored-camera-source-guard.cjs": "eeff7e2e7979d63ffa8d424aa113c1242c83f058f90a320b3a98b2488859f065",
+    "tools/grass-arch-source-guard.cjs": "ddd5bb23be376c6af3f0e89a34acc7f3237cfe9bb456b52b4de63cb9ce604859",
+    "tools/fieldstone-wall-cache-source-guard.cjs": "bc1c151cae52c7cdb75ba9a4548439643ec7e22a9819b621cd9b66e5f3441615",
+    "tools/coyote-crag-composition-source-guard.cjs": "cdda5b83bdd8101ca716a4cbb523df4357785afa7acf55e52a1e85f4de017403"
+  },
+  "scope": "Exact reviewed two final-ribbon and six physical-distance literals plus declared cache imports; old whole-body/observer preimages and guard fixtures remain authoritative."
+}

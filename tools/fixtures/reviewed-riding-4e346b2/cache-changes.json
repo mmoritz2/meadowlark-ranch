@@ -1,0 +1,52 @@
+[
+  {
+    "file": "ranch3d.html",
+    "before": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';",
+    "after": "import {FEATURES} from './assets/features/index.js?v=physical-ride-1-starter-tack-2';"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';",
+    "after": "import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2';"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2-fieldstone-walls-3';",
+    "after": "import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2-fieldstone-walls-3';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as course from './course-engine.js?v=jump-crossing-1';",
+    "after": "import * as course from './course-engine.js?v=final-ribbon-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as breeding from './breeding.js?v=wild-bond-1';",
+    "after": "import * as breeding from './breeding.js?v=final-ribbon-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as ev2disc from './events2-disciplines.js?v=rush-recovery-1';",
+    "after": "import * as ev2disc from './events2-disciplines.js?v=final-ribbon-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as ev2ladder from './events2-ladder.js?v=event-recovery-1';",
+    "after": "import * as ev2ladder from './events2-ladder.js?v=final-ribbon-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as seEvents from './se-events.js?v=horse-choice-1';",
+    "after": "import * as seEvents from './se-events.js?v=final-ribbon-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as courseGuide from './course-guide.js?v=rush-recovery-1';",
+    "after": "import * as courseGuide from './course-guide.js?v=flat-race-guide-1';"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as bond from './bond-personality-emotes.js?v=horse-life-20261009';",
+    "after": "import * as bond from './bond-personality-emotes.js?v=physical-ride-1';"
+  }
+]

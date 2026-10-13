@@ -1,0 +1,151 @@
+{
+  "list": "Riding Events\n4,384\n52\nMeadowlark\nCottonwood\nKestrel Basin\nLoon Lake\nBarleyfold\nCoyote\nHollowpeak\n★ ★ MEADOWLARK RANCH ★ ★\nFLAT RACING\nENTRY\nENTRY\n101632531277\nThe Meadowlark Cup\nPasture Pony Dash\n3/12 ribbons · 0/3 gold\n25%\nUnlock next event:\nLv 3\n★ ★ MEADOWLARK RANCH ★ ★\nGAUNTLET\nENTRY\nENTRY\n101260422518\nThe Meadowlark Cup\nEmber Trials\nNEEDS LV 3\nBramble is Lv 2\n0/12 ribbons · 0/3 gold\n0%\nUnlock next event:\nLv 3\n★ ★ MEADOWLARK RANCH ★ ★\nTRAINING\nENTRY\nENTRY\n103953022700\nThe Meadowlark Cup\nTraining Drills\nFree stat training\nTrain a stat for free\n★ ★ MEADOWLARK RANCH ★ ★\nROUNDUP\nENTRY\nENTRY\n101301469676\nThe Meadowlark Cup\nThe Runaway Roundup\n130 coins per horse\nReady to start\nFeatured this week\nView\n🍂 The Harmony Festival\nLadder\nAll events",
+  "card": "Pasture Pony Dash\nMeadowlark Ranch · Flat Racing\n4,384\n52\nEvent\nBoard\nFull card\nFlat Racing\nLv 1 · 6 gates\nS\n1\n2\n3\n4\n5\n🌱\nNovice\nlower rails, a slower clock, 70% of the purse\n126\n🏇\nOpen\nthe course as set\n180\n🔥\nElite\nOpens at Lv 3\n270\n3 of 4 ribbons earned\n\nFinish another judged round to confirm this older ribbon record.\n\nBramble · Open\n\nYour horse is ready for this event.\n\nHorse readiness\n1 / 1 requirements met\n\nFavoured stats · Acceleration 3\n\nAt 7 or higher, a favoured stat also boosts your race rewards.\n\nAloof\n\nAt 80 bond, pace gains 6%.\n\nStops briefly when exhausted.\n\nBond 40 / 100 · 4% less gallop stamina used from bond.\n\nBonds especially well through ribbons and treats.\n\nIn Bond & feed: Groom gives +2 bond.\n\nChoose horse\nBond & feed\nEntry\nFree\nListed purse\n180 coins\nCourse format\n0:41 allowed\nPersonal best\n0:22.6\nRewards & riding tips\nReady to enter\nFlat Racing · Open\nPrepare horse\nEnter event",
+  "errors": [],
+  "featureErrors": [],
+  "player": {
+    "blown": false,
+    "breed": "bay-sporthorse",
+    "exhaustT": 0,
+    "heading": 3.141592653589793,
+    "horseId": 1,
+    "horseName": "Bramble",
+    "landT": 0,
+    "loadingBreed": false,
+    "modelKey": "bay-sporthorse",
+    "rigReady": true,
+    "speed": 0,
+    "stam": 1,
+    "x": -7,
+    "z": 10
+  },
+  "saveSummary": {
+    "bestTimes": {
+      "pp": 22.6,
+      "rush-pasture": 35.9,
+      "rush-river": 95.5,
+      "rush-trail": 50.8
+    },
+    "breedingWeek": {
+      "ribbons": 6,
+      "week": "2026-10-12"
+    },
+    "coins": 4384,
+    "gems": 52,
+    "horseCount": 2,
+    "horseNames": [
+      {
+        "bond": 40,
+        "breed": "bay-sporthorse",
+        "id": 1,
+        "level": 2,
+        "name": "Bramble"
+      },
+      {
+        "bond": 58,
+        "breed": "pinto",
+        "id": 2,
+        "level": 2,
+        "name": "Clover"
+      }
+    ],
+    "journey": {
+      "claimed": {
+        "first-partners": {
+          "at": 1791650619995,
+          "gearId": "journey-first-partners"
+        },
+        "river-rhythm": {
+          "at": 1791656399494,
+          "gearId": "journey-river-rhythm"
+        },
+        "steady-hands": {
+          "at": 1791654968498,
+          "gearId": "journey-steady-hands"
+        }
+      },
+      "lastClaimId": "river-rhythm",
+      "version": 1
+    },
+    "rescue": {
+      "adopted": true,
+      "completions": 1
+    },
+    "ribbonAwards": null,
+    "ribbonGold": {},
+    "ribbons": {
+      "pp": 3,
+      "rush-pasture": 2,
+      "rush-river": 1,
+      "rush-trail": 2
+    },
+    "ribbonsBy": {
+      "pp:open": 4,
+      "rush-pasture:novice": 2,
+      "rush-river:novice": 1,
+      "rush-trail:novice": 2
+    },
+    "riderCreated": true,
+    "ridingHorseId": 1,
+    "rush": {
+      "rush-pasture": {
+        "bestCombo": 6,
+        "bestScore": 1271,
+        "bestTime": 35.9,
+        "lastRunId": "mv2mggc9-1-febb42",
+        "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+        "medal": "gold",
+        "plays": 1,
+        "splits": [
+          5.54,
+          11.68,
+          20.1,
+          25.65,
+          29.88,
+          35.9
+        ]
+      },
+      "rush-river": {
+        "bestCombo": 6,
+        "bestScore": 1400,
+        "bestTime": 95.46,
+        "lastRunId": "mv2r8fvw-1-zqlzum",
+        "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+        "medal": "silver",
+        "plays": 3,
+        "splits": [
+          1.87,
+          7.44,
+          72.12,
+          75.16,
+          80.86,
+          85.56,
+          88.83,
+          95.46
+        ]
+      },
+      "rush-trail": {
+        "bestCombo": 7,
+        "bestScore": 2034,
+        "bestTime": 50.77,
+        "lastRunId": "mv2req07-1-o7t2pz",
+        "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+        "medal": "silver",
+        "plays": 1,
+        "splits": [
+          2.15,
+          9.47,
+          14.82,
+          17.77,
+          24.95,
+          32.11,
+          35.89,
+          43.72,
+          48.33,
+          50.77
+        ]
+      }
+    },
+    "totalRaces": 0
+  }
+}

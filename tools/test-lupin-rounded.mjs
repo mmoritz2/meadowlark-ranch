@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -17,7 +18,7 @@ function tuples(g,first,count){const p=g.attributes.position.array,c=g.attribute
 test('only the original prototype and canonical child cache edge change; all planting policy and caller bytes stay exact',()=>{
  assert.equal(sha(oldSource),receipt.originalSHA256['assets/meadow-flowers.mjs']);
  assert.equal(source.slice(0,source.indexOf('// Original rounded pea raceme:')),oldSource.slice(0,oldSource.indexOf('// Long raceme lupin:')));
- let cover=readFileSync(new URL('../assets/meadow-cover.js',import.meta.url),'utf8');
+ let cover=normalizeGrassArchSource(readFileSync(new URL('../assets/meadow-cover.js',import.meta.url),'utf8'),'assets/meadow-cover.js');
  for(const c of receipt.sourceChanges){assert.equal(c.file,'assets/meadow-cover.js');assert.equal(cover.split(c.after).length,2);cover=cover.replace(c.after,c.before);}
  assert.equal(sha(cover),receipt.originalSHA256['assets/meadow-cover.js']);
  const html=readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),s=html.indexOf('const cell=lupinCells[slot];cell.count=0;'),e=html.indexOf('for(let k=0;k<NG_FR;k++)',s);

@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {GRAZED_SWARD,createGrazedSwardGeometry,grazedSwardWeight,selectsGrazedSward} from '../assets/grazed-sward.mjs';
+import {grazedSwardWeight,selectsGrazedSward} from '../assets/grazed-sward.mjs';
+import {GRAZED_SWARD,createGrazedSwardGeometry,historicalSource} from './grass-arch-historical-factories.mjs';
 import {meadowSwardGrazingAt} from '../assets/pastoral-fields.mjs';
 
-test('short turf keeps 70 triangles with 12 broader curved leaves, 34 fine leaves and real physical normals',()=>{
+test('Historical d5 morphology: short turf keeps 70 triangles with 12 broader curved leaves, 34 fine leaves and real physical normals',()=>{
  const g=createGrazedSwardGeometry(T),p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,c=g.attributes.color;
  assert.equal(g.index.count/3,70);assert.equal(g.userData.grazedSward.leaves,46);assert.equal(p.count,162);
  assert.equal(g.userData.grazedSward.profile,'grazed-sward-6');assert.equal(g.userData.grazedSward.broadLeaves,12);
@@ -17,7 +18,7 @@ test('short turf keeps 70 triangles with 12 broader curved leaves, 34 fine leave
  for(let leaf=0;leaf<46;leaf++){const stride=leaf<12?5:3,tip=at+stride-1;assert.equal(p.getY(at),0);assert.equal(p.getY(at+1),0);assert.equal(uv.getY(at),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(c.getY(at)<.30&&c.getY(at+2)>c.getY(at)*2);anchors.add(((p.getX(at)+p.getX(at+1))/2).toFixed(4)+','+((p.getZ(at)+p.getZ(at+1))/2).toFixed(4));const width=new T.Vector3().fromBufferAttribute(p,at).distanceTo(new T.Vector3().fromBufferAttribute(p,at+1));if(leaf<12){assert(width>.019&&width<.024);const mid=new T.Vector3().fromBufferAttribute(p,at+2).distanceTo(new T.Vector3().fromBufferAttribute(p,at+3));assert(mid>.027&&mid<.033);}else assert(width>.008&&width<.011);at+=stride;}
  assert.equal(anchors.size,7);g.dispose();
 });
-test('geometry is repeatable without changing global placement randomness or allocating new textures',()=>{
+test('Historical d5 morphology: geometry is repeatable without changing global placement randomness or allocating new textures',()=>{
  const a=createGrazedSwardGeometry(T),b=createGrazedSwardGeometry(T);for(const k of Object.keys(a.attributes))assert.deepEqual(a.attributes[k].array,b.attributes[k].array);assert.deepEqual(a.index.array,b.index.array);a.dispose();b.dispose();
  const src=fs.readFileSync(new URL('../assets/grazed-sward.mjs',import.meta.url),'utf8');assert(!src.includes('Math.random'));assert(!src.includes('Material('));assert(!src.includes('Texture('));assert(!src.includes('fetch('));
 });
@@ -29,7 +30,7 @@ test('short turf is confined to grazed interiors and leaves uncut wild and golde
  assert(boundary>100);
 });
 
-test('mixed broad and fine grazed leaves increase ground-plane fullness within bounded upright spread',()=>{
+test('Historical d5 morphology: mixed broad and fine grazed leaves increase ground-plane fullness within bounded upright spread',()=>{
  const g=createGrazedSwardGeometry(T),p=g.attributes.position;let projection=0;
  for(let i=0;i<g.index.count;i+=3){const[a,b,c]=[0,1,2].map(j=>new T.Vector3().fromBufferAttribute(p,g.index.array[i+j]));projection+=Math.abs(new T.Vector3().crossVectors(b.sub(a),c.sub(a)).y)*.5;}
  // Sum of true triangle projections is a design-area measurement, not a claim
@@ -42,8 +43,8 @@ test('mixed broad and fine grazed leaves increase ground-plane fullness within b
 // Recover the pinned original whole factory through the same exact approved
 // source literals as the full guard. No hand-built legacy geometry substitutes
 // for its actual leaf positions, constructors or projected ground area.
-test('broader profile retains all 34 fine leaves and all 46 physical centerlines/heights/UV/colors/indices',()=>{
- const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-cover-source-7fbd127.json',import.meta.url)));let source=fs.readFileSync(new URL('../assets/grazed-sward.mjs',import.meta.url),'utf8');
+test('Historical d5 morphology: broader profile retains all 34 fine leaves and all 46 physical centerlines/heights/UV/colors/indices',()=>{
+ const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-cover-source-7fbd127.json',import.meta.url)));let source=historicalSource('assets/grazed-sward.mjs');
  for(const c of contract.changes.filter(c=>c.file==='assets/grazed-sward.mjs').reverse()){assert.equal(source.split(c.after).length-1,1);source=source.replace(c.after,c.before);}
  const start=source.indexOf('export function createGrazedSwardGeometry');assert(start>0);const factory=new Function('GRAZED_SWARD','return ('+source.slice(start).replace(/^export /,'')+');')(GRAZED_SWARD);
  const withCounter=make=>{const previous=Math.random;let calls=0;Math.random=()=>{calls++;return .31;};try{return{geometry:make(),calls};}finally{Math.random=previous;}};

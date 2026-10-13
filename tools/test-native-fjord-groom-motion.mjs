@@ -85,6 +85,9 @@ facade.mane.visible=false;assert(!live.crest.visible&&!live.hair.visible);assert
 const beforeLive=geometryState(live.meshes),beforePlain=geometryState(plain.meshes);
 const sourceLocals=f=>f.body.skeleton.bones.map(b=>({name:b.name,parent:b.parent.name,p:b.position.toArray(),q:b.quaternion.toArray(),s:b.scale.toArray()}));
 const initialLocals=sourceLocals(live);
+// Both fixtures need the same identity for the UUID-seeded expression phase.
+// Only the comparator's additive groom factory differs; expressions remain live.
+plain.root.uuid=live.root.uuid;
 const motion=createNativeHorseMotion({THREE,root:live.root,profile,clips,deferGroom:true}),baseline=createPlainMotion({THREE,root:plain.root,profile,clips,deferGroom:true});
 assert.equal(motion.groomInertia.validation.controls,58,'All 58 audited inertial controls stay enabled');assert.equal(baseline.groomInertia,null);
 motion.reset();baseline.reset();live.actor.updateMatrixWorld(true);plain.actor.updateMatrixWorld(true);
@@ -132,6 +135,7 @@ for(const [label,mode,duration,speed,lead='left']of stages){
  report.modes.push({mode:label,maxHairDeltaM:0,minHairY:Infinity});motion.set(mode,{lead,speedMps:speed});baseline.set(mode,{lead,speedMps:speed});
  for(let frame=0;frame<Math.ceil(duration*60);frame++){
   const dt=1/60;time+=dt;motion.update(dt,{rate:1});baseline.update(dt,{rate:1});
+  assert.deepEqual(motion.expression?.snapshot(),baseline.expression?.snapshot(),'Paired groom fixtures retain identical live expression timing');
   // Real late-frame finalization after rider travel, turns and jump lift.
   const yaw=.13*Math.sin(time*.7);travel.x+=Math.sin(yaw)*speed*dt;travel.z+=Math.cos(yaw)*speed*dt;
   for(const [f,m]of [[live,motion],[plain,baseline]]){f.actor.position.copy(travel);f.actor.position.y=m.state.bodyLiftM*profile.fitScale;f.actor.rotation.y=yaw;f.actor.updateMatrixWorld(true);m.finishGroomPose();f.actor.updateMatrixWorld(true);}

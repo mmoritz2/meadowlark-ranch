@@ -13,6 +13,7 @@ import {resolveGroundedContact} from '../assets/grounded-contact.mjs';
 import {ridingTravelCredit} from '../assets/riding-distance.mjs';
 import {normalizeRidingDistanceSource} from './riding-distance-source-guard.cjs';
 import {normalizeRibbonAwardSource} from './ribbon-award-source-guard.cjs';
+import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource,normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';
 const root=new URL('../',import.meta.url),source=fs.readFileSync(new URL('ranch3d.html',root),'utf8');
 const sha=v=>createHash('sha256').update(v).digest('hex');
@@ -95,7 +96,7 @@ test('straight actual travel produces the same accumulated metres across differe
 test('the six exact approved source changes restore the actual8733008 baseline and original protected bodies',()=>{
  const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/riding-distance-8733008/contract.json',import.meta.url))),changes=JSON.parse(fs.readFileSync(new URL('./fixtures/riding-distance-8733008/source-changes.json',import.meta.url)));
  assert.equal(changes.length,6);assert.equal(contract.approvedSourceLiterals,6);assert(changes.every(c=>c.file==='ranch3d.html'&&c.occurrences===1));
- const original=execFileSync('git',['show',contract.baseline+':ranch3d.html'],{cwd:root,encoding:'utf8'});assert.equal(sha(original),contract.beforeSHA256);let authored=original;for(const c of changes){assert.equal(authored.split(c.before).length-1,c.occurrences);authored=authored.replace(c.before,c.after);}assert.equal(sha(authored),contract.sourceSHA256,'The original six-literal release is independently reproducible before later cache edges');assert.equal(normalizePublishedCacheSource(normalizeRidingDistanceSource(normalizeRibbonAwardSource(source,'ranch3d.html'),'ranch3d.html'),'ranch3d.html'),normalizePublishedCacheSource(original,'ranch3d.html'));assert.equal(normalizeRidingDistanceSource(original,'ranch3d.html'),original);
+ const original=execFileSync('git',['show',contract.baseline+':ranch3d.html'],{cwd:root,encoding:'utf8'});assert.equal(sha(original),contract.beforeSHA256);let authored=original;for(const c of changes){assert.equal(authored.split(c.before).length-1,c.occurrences);authored=authored.replace(c.before,c.after);}assert.equal(sha(authored),contract.sourceSHA256,'The original six-literal release is independently reproducible before later cache edges');assert.equal(normalizeReviewedWorldSource(source,'ranch3d.html'),normalizePublishedCacheSource(original,'ranch3d.html'));assert.equal(normalizeRidingDistanceSource(original,'ranch3d.html'),original);
  assert.equal(normalizeStarterTackSource(source,'ranch3d.html'),fs.readFileSync(new URL('./fixtures/starter-tack-2986289/ranch3d.html',import.meta.url),'utf8'));
  for(const c of changes){assert.throws(()=>normalizeRidingDistanceSource(source+'\n// duplicate '+c.after,'ranch3d.html'));assert.throws(()=>normalizeRidingDistanceSource(source.replace(c.after,c.after.replace('ridingTravel','unreviewedTravel')),'ranch3d.html'));}
  assert.throws(()=>normalizeRidingDistanceSource(source.replace('riding-distance.mjs?v=physical-ride-1','riding-distance.mjs?v=unreviewed-next'),'ranch3d.html'));

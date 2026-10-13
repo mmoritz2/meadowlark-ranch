@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from '../../assets/breed-models.js?v=horse-art-20261009b';
+import {createBreedLibrary} from '../../assets/breed-models.js?v=fine-hair-20261013c';
 import {createNativeHorseMotion} from '../../assets/native-horse-motion.js?v=horse-art-20261009b';
-import {nativeGroomFacade} from '../../assets/game-hero-horse.js?v=full-groom-20261013c';
+import {nativeGroomFacade} from '../../assets/game-hero-horse.js?v=fine-hair-20261013c';
 import {configureNativeCustomization} from '../../assets/native-horse-customization.js?v=natural-mane-20261009';
 import {registerNewBreedPreviews} from '../../assets/features/new-breeds.js?v=horse-quality-1';
 import {registerRosterPreviews} from '../../assets/features/horse-roster.js?v=natural-mane-20261009';

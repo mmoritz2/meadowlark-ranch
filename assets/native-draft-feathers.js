@@ -13,6 +13,7 @@ function random(seed){let n=seed>>>0;return()=>{n=(Math.imul(n,1664525)+10139042
 function once(resource){const dispose=resource.dispose.bind(resource);let disposed=false;resource.dispose=()=>{if(disposed)return;disposed=true;dispose();};return resource;}
 
 function strandTexture(THREE,grounded=false){
+ if(grounded)return shaggyStrandTexture(THREE);
  const width=64,height=256,data=new Uint8Array(width*height*4);
  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
   const u=(x+.5)/width,v=y/(height-1),edge=Math.pow(Math.sin(Math.PI*u),.45);
@@ -30,6 +31,25 @@ function strandTexture(THREE,grounded=false){
  texture.generateMipmaps=true;texture.anisotropy=4;texture.needsUpdate=true;return texture;
 }
 
+// Eight irregular fiber fields break repeated pinstripes without adding a
+// material or draw call. Fine longer fibers remain visible at the contact hem.
+function shaggyStrandTexture(THREE){
+ const tiles=8,tileWidth=64,width=tiles*tileWidth,height=256,data=new Uint8Array(width*height*4);
+ for(let tile=0;tile<tiles;tile++){
+  const rnd=random(7139+tile*593),fibers=[];
+  for(let k=0;k<18;k++)fibers.push({center:(k+.18+.64*rnd())/18,width:.018+.018*rnd(),wave:(rnd()-.5)*.038,phase:rnd()*6.28,tip:k%2===0?1.10+.06*rnd():.90+.14*rnd(),shade:.76+.24*rnd()});
+  for(let y=0;y<height;y++)for(let x=0;x<tileWidth;x++){
+   const u=(x+.5)/tileWidth,v=y/(height-1),edge=Math.pow(Math.sin(Math.PI*u),.65);let body=0,tip=0,shade=0;
+   for(const f of fibers){const center=f.center+f.wave*Math.sin(v*3.6+f.phase)*Math.sin(v*Math.PI*.8),d=(u-center)/f.width,weight=Math.exp(-d*d*2.2);body+=weight;tip+=weight*smooth01((f.tip-v)/.09);shade+=weight*f.shade;}
+   const root=smooth01((v-.014-.022*Math.sin(u*21+tile))/.12),fiber=Math.min(1,body),end=body?tip/body:0;
+   const alpha=edge*root*(.45+.55*fiber)*end,i=(y*width+tile*tileWidth+x)*4;
+   const value=Math.round(255*(body?shade/body:.84)*(.91+.09*smooth01(v/.28)));data[i]=value;data[i+1]=value;data[i+2]=value;data[i+3]=Math.round(255*alpha);
+  }
+ }
+ const texture=once(new THREE.DataTexture(data,width,height));texture.name='Native draft irregular layered fibers';texture.colorSpace=THREE.SRGBColorSpace;
+ texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.generateMipmaps=true;texture.anisotropy=4;texture.needsUpdate=true;return texture;
+}
+
 // Secondary motion owns only the four private feather position/normal arrays.
 // Leg displacement is measured relative to the actor, never from camera/world
 // travel. No source bone, skin, bind matrix or animation track is edited.
@@ -38,7 +58,16 @@ function createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained){
  const point=new THREE.Vector3(),top=new THREE.Vector3(),pivot=new THREE.Vector3();
  const rest=meshes.map(m=>({position:m.geometry.attributes.position.array.slice(),normal:m.geometry.attributes.normal.array.slice()}));
  const legs=anchors.map((a,i)=>({a,mesh:meshes[i],rest:rest[i],ready:false,px:0,py:0,pz:0,ux:0,uy:1,uz:0,vx:0,vy:0,vz:0,x:0,y:0,z:0,dx:0,dy:0,dz:0,tx:0,ty:0,tz:0,driver:0,offset:0}));
- const cap=restrained?.034:.045,stats={frames:0,maxTipOffsetM:0,peakTipOffsetM:0,groundCorrections:0,finite:true};
+ // Preserve each authored lock's rest fall direction and root-to-tip drop.
+ // Only the loose length counters a raised hoof's rotation toward gravity.
+ scene.updateWorldMatrix(true,false);inverseScene.copy(scene.matrixWorld).invert();
+ for(const l of legs){
+  l.a.pastern.updateWorldMatrix(true,false);matrix.multiplyMatrices(inverseScene,l.a.pastern.matrixWorld);inverse.copy(matrix).invert();
+  const e=matrix.elements,ie=inverse.elements;l.restDown=new THREE.Vector3(-ie[4],-ie[5],-ie[6]);
+  const base=l.rest.position,uv=l.mesh.geometry.attributes.uv.array;l.drop=new Float32Array(base.length/3);let rootY=0;
+  for(let i=0;i<base.length/3;i++){const n=i*3,y=e[1]*base[n]+e[5]*base[n+1]+e[9]*base[n+2]+e[13];if(uv[i*2+1]===0)rootY=y;l.drop[i]=Math.max(0,rootY-y);}l.drape=0;
+ }
+ const cap=restrained?.034:.045,drapeCap=restrained?0:.075,stats={frames:0,maxTipOffsetM:0,peakTipOffsetM:0,maxDrapeOffsetM:0,groundCorrections:0,finite:true};
  function normals(geometry){
   const p=geometry.attributes.position.array,n=geometry.attributes.normal.array,idx=geometry.index.array;n.fill(0);
   for(let t=0;t<idx.length;t+=3){const a=idx[t]*3,b=idx[t+1]*3,c=idx[t+2]*3,abx=p[b]-p[a],aby=p[b+1]-p[a+1],abz=p[b+2]-p[a+2],acx=p[c]-p[a],acy=p[c+1]-p[a+1],acz=p[c+2]-p[a+2],x=aby*acz-abz*acy,y=abz*acx-abx*acz,z=abx*acy-aby*acx;for(let k=0;k<3;k++){const i=idx[t+k]*3;n[i]+=x;n[i+1]+=y;n[i+2]+=z;}}
@@ -46,8 +75,8 @@ function createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained){
   geometry.attributes.normal.needsUpdate=true;
  }
  function reset(){
-  stats.frames=0;stats.maxTipOffsetM=0;stats.peakTipOffsetM=0;stats.groundCorrections=0;stats.finite=true;
-  for(let i=0;i<legs.length;i++){const l=legs[i];l.ready=false;l.vx=l.vy=l.vz=l.x=l.y=l.z=l.dx=l.dy=l.dz=l.tx=l.ty=l.tz=l.driver=l.offset=0;const g=l.mesh.geometry;g.attributes.position.array.set(l.rest.position);g.attributes.normal.array.set(l.rest.normal);g.attributes.position.needsUpdate=true;g.attributes.normal.needsUpdate=true;}
+  stats.frames=0;stats.maxDrapeOffsetM=0;stats.maxTipOffsetM=0;stats.peakTipOffsetM=0;stats.groundCorrections=0;stats.finite=true;
+  for(let i=0;i<legs.length;i++){const l=legs[i];l.ready=false;l.vx=l.vy=l.vz=l.x=l.y=l.z=l.dx=l.dy=l.dz=l.tx=l.ty=l.tz=l.driver=l.offset=l.drape=0;const g=l.mesh.geometry;g.attributes.position.array.set(l.rest.position);g.attributes.normal.array.set(l.rest.normal);g.attributes.position.needsUpdate=true;g.attributes.normal.needsUpdate=true;}
  }
  function update(dt,state){
   if(!Number.isFinite(dt)||dt<0)return;
@@ -64,14 +93,14 @@ function createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained){
   // foot does not raise the ground, while a native negative sole is respected.
   let sole=Infinity;
   skin.updateWorldMatrix(true,false);skin.updateMatrixWorld(true);
-  for(const a of anchors)for(let n=0;n<a.soleSamples.length;n++){
-   skin.getVertexPosition(a.soleSamples[n],point);point.applyMatrix4(skin.matrixWorld).applyMatrix4(inverseScene);if(point.y<sole)sole=point.y;
-  }
+  for(const a of anchors){a.frameSole=Infinity;for(let n=0;n<a.soleSamples.length;n++){
+   skin.getVertexPosition(a.soleSamples[n],point);point.applyMatrix4(skin.matrixWorld).applyMatrix4(inverseScene);if(point.y<sole)sole=point.y;if(point.y<a.frameSole)a.frameSole=point.y;
+  }}
   // Heavy feather brushes the actor's ground plane; it must not hover with
   // the lighter Percheron margin or follow a raised hoof into the air.
   const floor=restrained?Math.min(0,Number.isFinite(sole)?sole:0)+.008:.0006;
   const filter=1-Math.exp(-dt/.045),steps=Math.max(1,Math.ceil(dt*120)),h=dt/steps;
-  stats.maxTipOffsetM=0;stats.groundCorrections=0;
+  stats.maxTipOffsetM=0;stats.maxDrapeOffsetM=0;stats.groundCorrections=0;
   for(let i=0;i<legs.length;i++){
    const l=legs[i],a=l.a;a.pastern.updateWorldMatrix(true,false);a.upper.updateWorldMatrix(true,false);
    matrix.multiplyMatrices(inverseScene,a.pastern.matrixWorld);inverse.copy(matrix).invert();const e=matrix.elements,ie=inverse.elements;
@@ -100,12 +129,20 @@ function createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained){
    }
    const size=Math.hypot(l.x,l.y,l.z);if(size>cap){const q=cap/size;l.x*=q;l.y*=q;l.z*=q;l.dx*=.5;l.dy*=.5;l.dz*=.5;}
    const g=l.mesh.geometry,p=g.attributes.position.array,uv=g.attributes.uv.array,base=l.rest.position;
-   l.offset=0;
+   l.offset=0;l.drape=0;
+   const lifted=restrained?0:smooth01((a.frameSole-a.soleY-.012)/.065),down=l.restDown;
+   const gravityX=-(e[0]*down.x+e[4]*down.y+e[8]*down.z),gravityY=-1-(e[1]*down.x+e[5]*down.y+e[9]*down.z),gravityZ=-(e[2]*down.x+e[6]*down.y+e[10]*down.z);
    for(let n=0;n<p.length;n+=3){
     const t=uv[n/3*2+1];if(t===0){p[n]=base[n];p[n+1]=base[n+1];p[n+2]=base[n+2];continue;}
     const w=t*t*(.82+.18*t),bx=base[n],by=base[n+1],bz=base[n+2];
     const qx=e[0]*bx+e[4]*by+e[8]*bz+e[12],qy=e[1]*bx+e[5]*by+e[9]*bz+e[13],qz=e[2]*bx+e[6]*by+e[10]*bz+e[14];
     let x=l.x*w,y=l.y*w,z=l.z*w;
+    if(lifted>0){
+     const loose=smooth01((t-.15)/.85)*l.drop[n/3]*lifted;
+     let gx=gravityX*loose,gy=gravityY*loose,gz=gravityZ*loose;
+     const length=Math.hypot(gx,gy,gz);if(length>drapeCap){const factor=drapeCap/length;gx*=factor;gy*=factor;gz*=factor;}
+     x+=gx;y+=gy;z+=gz;l.drape=Math.max(l.drape,Math.hypot(gx,gy,gz));
+    }
     // Keep the displaced lock outside its original cannon shell, allowing only
     // a tiny inward flex. This prevents a running lock cutting through the leg.
     let rx=qx-pivot.x,ry=qy-pivot.y,rz=qz-pivot.z;const along=rx*top.x+ry*top.y+rz*top.z;rx-=along*top.x;ry-=along*top.y;rz-=along*top.z;
@@ -118,7 +155,7 @@ function createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained){
     const offset=Math.hypot(x,y,z);l.offset=Math.max(l.offset,offset);
     p[n]=bx+ie[0]*x+ie[4]*y+ie[8]*z;p[n+1]=by+ie[1]*x+ie[5]*y+ie[9]*z;p[n+2]=bz+ie[2]*x+ie[6]*y+ie[10]*z;
    }
-   g.attributes.position.needsUpdate=true;normals(g);stats.maxTipOffsetM=Math.max(stats.maxTipOffsetM,l.offset);
+   g.attributes.position.needsUpdate=true;normals(g);stats.maxTipOffsetM=Math.max(stats.maxTipOffsetM,l.offset);stats.maxDrapeOffsetM=Math.max(stats.maxDrapeOffsetM,l.drape);
   }
   stats.frames++;stats.peakTipOffsetM=Math.max(stats.peakTipOffsetM,stats.maxTipOffsetM);stats.finite=Number.isFinite(stats.maxTipOffsetM);
  }
@@ -155,8 +192,8 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
  const color=new THREE.Color(vanner?'#f1ede4':'#e6e0d4');
  if(fantasy){const mane=profile.nativeRosterAppearance?.mane||profile.nativeRosterColors?.mane;if(mane)color.set(mane).lerp(new THREE.Color('#e6e0d4'),.42);}
  const material=once(new THREE.MeshStandardMaterial({name:'Native draft silky feather',map:texture,color,
-  side:THREE.DoubleSide,alphaTest:.32,roughness:.82,metalness:0,depthWrite:true}));
- const meshes=[],segments=7,strandsPerLeg=restrained?72:vanner?104:foundation==='clyde'?100:96;
+  side:THREE.DoubleSide,alphaTest:restrained?.32:.25,alphaToCoverage:!restrained,roughness:restrained?.82:.88,metalness:0,depthWrite:true}));
+ const meshes=[],segments=7,strandsPerLeg=restrained?72:vanner?150:foundation==='clyde'?144:138;
  const frontLocks=restrained?12:24,layerLocks=(strandsPerLeg-frontLocks)/2;
  for(let leg=0;leg<anchors.length;leg++){
   const a=anchors[leg],rnd=random(1987+leg*811+(restrained?127:vanner?831:foundation==='clyde'?412:0));
@@ -167,34 +204,36 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
   const sceneToBone=new THREE.Matrix4().copy(a.pastern.matrixWorld).invert().multiply(scene.matrixWorld);
   const local=new THREE.Vector3(),center=new THREE.Vector3();
   for(let strand=0;strand<strandsPerLeg;strand++){
-   const front=strand>=strandsPerLeg-frontLocks,upperLayer=!front&&strand>=layerLocks;
+   const heavyLayer=restrained?0:Math.floor(strand/(strandsPerLeg/3));
+   const front=restrained&&strand>=strandsPerLeg-frontLocks,upperLayer=restrained?!front&&strand>=layerLocks:heavyLayer===2;
    // Heavy drafts carry a full flowing skirt around the toe and heel. The
    // Percheron family retains lighter back/side feather and short front wisps.
    const slot=front?strand-(strandsPerLeg-frontLocks):strand%layerLocks;
-   const angle=front?Math.PI+((slot+.2+.6*rnd())/frontLocks-.5)*(restrained?1.10:1.80)
+   const angle=!restrained?((strand%(strandsPerLeg/3)+.12+.76*rnd()+heavyLayer*.43)/(strandsPerLeg/3)-.5)*Math.PI*2:front?Math.PI+((slot+.2+.6*rnd())/frontLocks-.5)*(restrained?1.10:1.80)
     :((slot+.18+.64*rnd()+(upperLayer?.35:0))/layerLocks-.5)*Math.PI*1.72;
    const radialX=Math.sin(angle),radialZ=-Math.cos(angle);
    const rootUp=front?(restrained?.012+rnd()*.052:.032+rnd()*.074):restrained
     ?upperLayer?.083+rnd()*.050:.030+rnd()*.053
-    :upperLayer?.096+rnd()*.065:.028+rnd()*.070;
+    :heavyLayer===2?.085+rnd()*.065:heavyLayer===1?.045+rnd()*.070:.018+rnd()*.075;
    const length=front?(restrained?.045+rnd()*.035:.057+rnd()*.043):restrained
     ?.130+rnd()*.060:.181+rnd()*.084;
    const width=front?(restrained?.006+rnd()*.004:.016+rnd()*.014):restrained
-    ?.012+rnd()*.009:.018+rnd()*.014;
+    ?.012+rnd()*.009:.015+rnd()*.009;
    const flare=front?.005+rnd()*.008:restrained?.017+rnd()*.021
     :(upperLayer?.018+rnd()*.022:.027+rnd()*.024);
    const bend=(rnd()-.5)*(restrained?.013:.019),rootY=a.pivot.y+rootUp;
    const minimumTipY=Math.max(.025,a.toe.y-(restrained?.051:.064));
-   const contactLayer=!restrained&&(!upperLayer||front);
-   const heavyTip=restrained?0:contactLayer?.0008+.0009*rnd():.004+rnd()*.014;
+   const contactLayer=!restrained&&heavyLayer===0;
+   const heavyTip=restrained?0:contactLayer?.0008+.0009*rnd():heavyLayer===1?.004+rnd()*.034:.023+rnd()*.070;
    const drop=restrained?Math.min(length,Math.max(.03,rootY-minimumTipY)):Math.max(.03,rootY-heavyTip);
    const hoofRx=Number.isFinite(a.hoofMinX)?(a.hoofMaxX-a.hoofMinX)*.5:rx;
    const hoofRz=Number.isFinite(a.hoofMinZ)?(a.hoofMaxZ-a.hoofMinZ)*.5:rz;
    const hoofCx=Number.isFinite(a.hoofMinX)?(a.hoofMaxX+a.hoofMinX)*.5:cx;
    const hoofCz=Number.isFinite(a.hoofMinZ)?(a.hoofMaxZ+a.hoofMinZ)*.5:cz;
    const shade=.82+rnd()*.18,base=positions.length/3;
+   const curl=restrained?0:(rnd()-.5)*.54,roll=restrained?0:(rnd()-.5)*1.05,tile=(strand*3+leg*5)%8;
    for(let step=0;step<=segments;step++){
-    const t=step/segments,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.025:.14)+(restrained?.975:.86)*rootWidth*Math.pow(1-t,.48),spread=flare*Math.sin(t*Math.PI*.5);
+    const t=step/segments,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.025:.25)+(restrained?.975:.75)*rootWidth*Math.pow(1-t,restrained?.48:.44),spread=flare*Math.sin(t*Math.PI*.5);
     const embeddedRoot=.88+.06*smooth01(t/.26);
     // Most of the flow falls downward; a modest rear sweep and rounded lock
     // face keep the silhouette soft from oblique/front/rear views.
@@ -202,17 +241,19 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
      rootY-drop*t,cz+axis.z*rootUp+radialZ*(rz*embeddedRoot+spread)-.009*Math.sin(t*Math.PI));
     if(!restrained){
      const aroundHoof=smooth01(t/.78),rootX=cx+axis.x*rootUp,rootZ=cz+axis.z*rootUp;
+     const sweep=angle+curl*smooth01(t),sx=Math.sin(sweep),sz=-Math.cos(sweep);
      const radiusX=rx*embeddedRoot+(Math.max(rx+flare,hoofRx+.014)-rx*embeddedRoot)*aroundHoof;
      const radiusZ=rz*embeddedRoot+(Math.max(rz+flare,hoofRz+.017)-rz*embeddedRoot)*aroundHoof;
-     center.x=rootX+(hoofCx-rootX)*aroundHoof+radialX*radiusX+bend*Math.sin(t*Math.PI*.8);
-     center.z=rootZ+(hoofCz-rootZ)*aroundHoof+radialZ*radiusZ-.008*Math.sin(t*Math.PI);
+     center.x=rootX+(hoofCx-rootX)*aroundHoof+sx*radiusX+bend*Math.sin(t*Math.PI*.8);
+     center.z=rootZ+(hoofCz-rootZ)*aroundHoof+sz*radiusZ-.008*Math.sin(t*Math.PI);
     }
     for(const side of [-1,0,1]){
-     local.copy(center);local.x+=Math.cos(angle)*width*taper*side*.5;local.z+=Math.sin(angle)*width*taper*side*.5;
+     const sweep=angle+curl*smooth01(t),twist=roll*Math.sin(t*Math.PI*.8),acrossX=Math.cos(sweep)*Math.cos(twist)+Math.sin(sweep)*Math.sin(twist),acrossZ=Math.sin(sweep)*Math.cos(twist)-Math.cos(sweep)*Math.sin(twist);
+     local.copy(center);local.x+=acrossX*width*taper*side*.5;local.z+=acrossZ*width*taper*side*.5;
      const bow=(1-side*side)*width*.20*taper;
      local.x+=radialX*bow;local.z+=radialZ*bow;
      local.applyMatrix4(sceneToBone);positions.push(local.x,local.y,local.z);
-     uvs.push((side+1)*.5,t);colors.push(shade,shade,shade);
+     uvs.push(restrained?(side+1)*.5:(tile+.035+(side+1)*.465)/8,t);colors.push(shade,shade,shade);
     }
     if(step<segments){const n=base+step*3;for(let panel=0;panel<2;panel++)indices.push(n+panel,n+panel+3,n+panel+1,n+panel+1,n+panel+3,n+panel+4);}
 
@@ -226,7 +267,7 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
  }
  material.vertexColors=true;
  const motion=createFeatherMotion(THREE,scene,skin,anchors,meshes,restrained);
- const controller={foundation,meshes,anchors,strands:4*strandsPerLeg,layers:2,style:restrained?'light flowing feather':'ground-brushing full feather',disposed:false,
+ const controller={foundation,meshes,anchors,strands:4*strandsPerLeg,layers:restrained?2:3,style:restrained?'light flowing feather':'layered shaggy ground feather',disposed:false,
   update(dt,state){if(!this.disposed)motion.update(dt,state);},reset(){if(!this.disposed)motion.reset();},motion,
   setColors({maneColor}={}){if(!this.disposed&&fantasy&&maneColor)material.color.set(maneColor).lerp(new THREE.Color('#e6e0d4'),.42);},
   inspect(){return inspectNativeDraftFeathers(this);},
@@ -240,6 +281,6 @@ export function inspectNativeDraftFeathers(feathers){
  if(!feathers)return {enabled:false,drawCalls:0,triangles:0,strands:0,finiteAnchors:true};
  let triangles=0,finite=true;for(const mesh of feathers.meshes){triangles+=mesh.geometry.index.count/3;finite=finite&&mesh.geometry.attributes.position.array.every(Number.isFinite);}
  return {enabled:!feathers.disposed,foundation:feathers.foundation,drawCalls:feathers.disposed?0:feathers.meshes.length,
-  triangles,strands:feathers.strands,maxTipOffsetM:feathers.motion.stats.maxTipOffsetM,peakTipOffsetM:feathers.motion.stats.peakTipOffsetM,frames:feathers.motion.stats.frames,groundCorrections:feathers.motion.stats.groundCorrections,legs:feathers.motion.legs.map(l=>({id:l.a.id,tipOffsetM:l.offset,driverM:l.driver})),layers:feathers.layers,style:feathers.style,finiteAnchors:finite&&feathers.anchors.every(a=>a.pastern.matrixWorld.elements.every(Number.isFinite)),
+  triangles,strands:feathers.strands,maxDrapeOffsetM:feathers.motion.stats.maxDrapeOffsetM,maxTipOffsetM:feathers.motion.stats.maxTipOffsetM,peakTipOffsetM:feathers.motion.stats.peakTipOffsetM,frames:feathers.motion.stats.frames,groundCorrections:feathers.motion.stats.groundCorrections,legs:feathers.motion.legs.map(l=>({id:l.a.id,tipOffsetM:l.offset,driverM:l.driver,drapeM:l.drape})),layers:feathers.layers,style:feathers.style,finiteAnchors:finite&&feathers.anchors.every(a=>a.pastern.matrixWorld.elements.every(Number.isFinite)),
   boneNames:feathers.anchors.map(a=>a.pastern.name),skinSamples:feathers.anchors.map(a=>a.samples)};
 }

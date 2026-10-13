@@ -1,9 +1,12 @@
+import {normalizeReviewedRuntimeSource} from './reviewed-riding-source-guard.cjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
-import {normalizeCoyoteCragCompositionSource} from './coyote-crag-composition-source-guard.cjs';
-import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';
-import {normalizeRidingDistanceSource} from './riding-distance-source-guard.cjs';
-import {normalizeRibbonAwardSource} from './ribbon-award-source-guard.cjs';
-const normalizePublishedCompositionSource=(source,file)=>normalizeCoyoteCragCompositionSource(normalizePublishedCacheSource(normalizeRidingDistanceSource(normalizeRibbonAwardSource(source,file),file),file),file);
+import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';
+import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
+const normalizeCoyoteCragCompositionSource=(source,file)=>normalizeCragSource(normalizeGrassArchSource(source,file),file);
+import {normalizePublishedCacheSource as normalizePublishedSource} from './starter-tack-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
+const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(normalizeReviewedRuntimeSource(source,file),file),file);
+const normalizePublishedCompositionSource=(source,file)=>normalizeCoyoteCragCompositionSource(normalizePublishedCacheSource(source,file),file);
 const ROOT=path.resolve(process.env.COYOTE_CRAG_SOURCE_ROOT||path.join(path.dirname(fileURLToPath(import.meta.url)),'..'));
 const DEPENDENCIES=path.resolve(process.env.COYOTE_CRAG_DEPENDENCY_ROOT||ROOT);
 const T=await import(pathToFileURL(path.join(DEPENDENCIES,'assets/vendor/three/build/three.module.js')));
@@ -40,7 +43,7 @@ test('exact production installer uses the same constructor stream, circle identi
 test('exact published caches and the original five crag reversals restore the full original7009 bodies',()=>{
  for(const file of Object.keys(contract.baselineSHA256)){const s=fs.readFileSync(path.join(ROOT,file),'utf8');assert.equal(sha(normalizePublishedCompositionSource(s,file)),contract.baselineSHA256[file]);}
  const approved=JSON.parse(fs.readFileSync(new URL('./fixtures/coyote-crag-7009c41/source-changes.json',import.meta.url)));assert.equal(approved.length,5);assert.equal(contract.approvedSourceLiterals,5);
- const main=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),nativeCache="'./assets/game-hero-horse.js?v=full-groom-20261013c'";assert.equal(main.split(nativeCache).length,2);
+ const main=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),nativeCache="'./assets/game-hero-horse.js?v=fine-hair-20261013c'";assert.equal(main.split(nativeCache).length,2);
  assert.throws(()=>normalizePublishedCompositionSource(main+'\n// duplicate '+nativeCache,'ranch3d.html'));
  assert.throws(()=>normalizePublishedCompositionSource(main.replace(nativeCache,"'./assets/game-hero-horse.js?v=draft-feathers-unreviewed'"),'ranch3d.html'));
 
