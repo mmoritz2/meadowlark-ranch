@@ -1,8 +1,10 @@
+import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import fs from 'node:fs';import assert from 'node:assert/strict';
 const changes=JSON.parse(fs.readFileSync(new URL('./fixtures/coyote-macro-8042555/source-changes.json',import.meta.url)));
 // Restore only the reviewed numeric shape/decision islands and exact cache
 // literals. Historical whole-body SHA fixtures still test everything else.
 export function normalizeCoyoteMacroSource(source,file){
+ source=normalizeStarterTackSource(source,file);
  const edits=changes.filter(c=>c.file===file);
  if(!edits.length||!source.includes('coyote-macroform'))return source;
  // The macroRaw callback correction composes with the preceding new binding;

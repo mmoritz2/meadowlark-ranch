@@ -1,3 +1,4 @@
+import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import {normalizeCoyoteMacroSource} from './coyote-macroform-source-guard.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {T,old,next,contract,fixture,oldRaw,newRaw,before,after,n,step,changed,maxBaseError,maxDelta,noRNG,arraySHA,sha,oldHeight,height,oldPlan,plan} from './coyote-macroform-fixture.mjs';
@@ -10,7 +11,7 @@ function tube(points,width){let samples=0;for(let i=1;i<points.length;i++){const
 function seeded(fn){const prior=Math.random;let state=928471,calls=0;Math.random=()=>{calls++;state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};try{const result=fn(),used=calls;return{result,calls:used,future:Array.from({length:32},Math.random)};}finally{Math.random=prior;}}
 const build=(m,h)=>seeded(()=>{const scene=new T.Scene(),material=new T.MeshStandardMaterial(),colliders=[],art=m.createCanyonLandscape({THREE:T,scene,heightAt:h,terrainStep:step,material,colliders});return{scene,material,colliders,art};}),a=build(old,oldHeight),b=build(next,height);
 test('actual source changes are limited to two finite fields with unchanged underlying terrain recipe and exterior contact grid',()=>{
- for(const [file,expected]of Object.entries(contract.runtimeSHA256)){const actual=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');assert.equal(sha(actual),expected);if(contract.sourceSHA256[file])assert.equal(sha(normalizeCoyoteMacroSource(actual,file)),contract.sourceSHA256[file]);}
+ for(const [file,expected]of Object.entries(contract.runtimeSHA256)){const actual=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');assert.equal(sha(normalizeStarterTackSource(actual,file)),expected);if(contract.sourceSHA256[file])assert.equal(sha(normalizeCoyoteMacroSource(actual,file)),contract.sourceSHA256[file]);}
  assert.equal(sha(oldSource),contract.sourceSHA256['assets/canyon-landscape.js']);assert.deepEqual(next.CANYON_RIDGES,old.CANYON_RIDGES);assert.equal(maxBaseError,0);assert(changed.length>300&&maxDelta>3,'real physical macroform replacement, not material-only decoration');assert(changed.length<8000&&maxDelta<32);
  for(const i of changed){const x=i%n*step-500,z=Math.floor(i/n)*step-500;assert(prepared.filter(r=>['north-rim','oasis-butte'].includes(r.id)).some(r=>x>=r.x0&&x<=r.x1&&z>=r.z0&&z<=r.z1));assert(Number.isFinite(after[i]));}
  assert.equal(source.slice(source.indexOf('export function createCanyonLandscape')),oldSource.slice(oldSource.indexOf('export function createCanyonLandscape')),'Exact original shader/geometry/collider factory body');

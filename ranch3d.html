@@ -716,9 +716,10 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-3';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';
-import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
+import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
+import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=coyote-macroform-3';
+import {FEATURES} from './assets/features/index.js?v=starter-tack-2';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -5408,7 +5409,7 @@ function dressWithRig(ent,parts,colors,opts){
   if(parts.horn)parts.horn.visible=false;
   if(parts.wings)for(const wing of parts.wings)wing.visible=false;
   if(parts.crest)parts.crest.visible=false;
-  ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,collectionDefaultTack:!!(opts.mine||opts.saddle),restQ:inst.bones.map(b=>b.quaternion.clone())};
+  ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,collectionDefaultTack:!!(opts.mine||opts.saddle),collectionBasicLocal:!!opts.basicLocalRiding,restQ:inst.bones.map(b=>b.quaternion.clone())};
   if(inst.profile.nativeKind==='horse')applyNativeRemoteMode(ent,{bareback:!!opts.bareback,wild:!!opts.wild||!opts.mine&&!opts.saddle});
   const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed&&h.breed===breed);
   rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);configureArtistCustomization(ent.rig,owner||{...opts,breed,colors});worldRigCount++;
@@ -6086,7 +6087,7 @@ function breedSeat(rig=RIG){
  const live=gameHeroSeat(rig,rig.scene?.parent);if(live)return live.clone();
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const bareback=RIG.profile?.nativeKind==='horse'&&(myHorses[rideIdx]?.bareback||!collectionPieces(myHorses[rideIdx]).saddle),seat=RIG.profile?.nativeBreed?((bareback?nativeRiderBridge?.barebackSeatLocal():null)||nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
+function riderSeat(){const bareback=RIG.profile?.nativeKind==='horse'&&(myHorses[rideIdx]?.bareback||!ridingVisualPieces(myHorses[rideIdx]).saddle),seat=RIG.profile?.nativeBreed?((bareback?nativeRiderBridge?.barebackSeatLocal():null)||nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
  if(RIG.profile?.nativeBreed)return {x:seat.x,y:seat.y+(bareback?.09:.11)/scale,z:seat.z-.02/scale};
  const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
  if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
@@ -6155,6 +6156,19 @@ function collectionPieces(h,remoteIds=null){
   if(piece?.slot===slot&&(!piece.premiumProduct||remoteIds||G.paidTack?.authorized(item)))out[slot]=piece;
  }return out;
 }
+// Only the current local native-horse hero gets the original basic visual kit.
+// Store, herd, remote packets and inventory resolution retain their old policy.
+function ridingVisualPieces(h,rig=RIG){
+ const equipped=collectionPieces(h);
+ return h===myHorses[rideIdx]&&rig.profile?.nativeKind==='horse'?withBasicRidingTack(h,equipped):equipped;
+}
+function basicRidingSlotActive(h,slot){
+ const live=myHorses[rideIdx],rig=player.onFoot?G.onFoot?.horseActionTarget?.():RIG;
+ if(!h||!live||String(h.id)!==String(live.id)||h.foal||h.egg||rig?.profile?.nativeKind!=='horse'||G.mastery?.isWild?.()||Object.prototype.hasOwnProperty.call(h.gear||{},slot))return false;
+ if(h.bareback&&(slot==='saddle'||slot==='pad'))return false;
+ const kit=rig.collectionTack,node=kit?.group?.getObjectByName('Collection '+slot);
+ return !!kit?.group?.visible&&!!node?.visible&&isBasicRidingTack(rig.collectionPieces?.[slot]);
+}
 function disposeCollectionTack(rig){
  rig.collectionTack?.dispose();rig.collectionTack=null;rig._collectionKey=null;rig._collectionMount=null;rig._collectionBase=null;rig._collectionPending=false;
 }
@@ -6188,7 +6202,8 @@ function syncCollectionTack(rig,mount,h,remoteIds=null){
  // The native dragons have different anatomy; equine fittings must not be
  // projected onto their wings or tails. Their existing gear bonuses stay intact.
  if(rig.profile?.nativeBreed&&rig.profile.nativeKind!=='horse')return;
- const pieces=collectionPieces(h,remoteIds),key=['saddle','pad','bridle','shoes'].map(slot=>pieces[slot]?.id||pieces[slot]?.catalogId||'').join('|');
+ const localBasic=!remoteIds&&(rig===RIG||rig.collectionBasicLocal===true);
+ const pieces=localBasic?ridingVisualPieces(h,rig):collectionPieces(h,remoteIds),key=['saddle','pad','bridle','shoes'].map(slot=>pieces[slot]?.id||pieces[slot]?.catalogId||'').join('|');
  rig.collectionHorse=h||{};rig.collectionPieces=pieces;
  const playerRig=rig===RIG;
  if(!playerRig&&!rig.profile?.nativeBreed){
@@ -6492,7 +6507,7 @@ function attachNativeTack(){
  }
  RIG._nativeTackScene=RIG.scene;RIG._nativeTackRider=player.rider;
  }
- TACK.saddle.visible=horse&&!h?.bareback&&!!collectionPieces(h).saddle;
+ TACK.saddle.visible=horse&&!h?.bareback&&!!ridingVisualPieces(h).saddle;
  const rider=player.rider;
  if(rider?.g){rider._setHero?.(true);rider.g.visible=true;rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
   const seat=riderSeat();rider.g.position.set(seat.x||0,seat.y,seat.z);rider.g.scale.setScalar(1/(player.mesh.scale.x||1));rider._handHome=null;}
@@ -11172,7 +11187,7 @@ function tackLockerHtml(s){
    +STAT_KEYS.map(k=>'<tr><th>'+STAT_OF[k]+'</th><td>'+formatTackStat(breakdown.base[k])+'</td><td>+'+formatTackStat(breakdown.tack[k])+'</td><td><b>'+formatTackStat(breakdown.total[k])+'</b></td></tr>').join('')
    +'</tbody></table><div style="font-size:12px;margin-top:6px">Tack includes matching-set bonuses. Equipped totals count toward event stat requirements. Speed, acceleration and agility improve pace and handling; jump improves clearance, and stamina helps you last longer. Horse levels and ribbons are earned by playing.</div></div>';
   html+=GEAR_SLOTS.map(sl=>{const it=h.gear&&inv.find(t=>t.id===h.gear[sl]);
-   return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">nothing yet</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
+   return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">'+(basicRidingSlotActive(h,sl)?'Basic equipment · no stat bonus':'nothing yet')+'</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
  }
  const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+' · Common +1 · Uncommon +2 · Rare +3/+1 · Epic +4/+4 · Legendary +5/+5/+2</div>';

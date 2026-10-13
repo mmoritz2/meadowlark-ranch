@@ -1,3 +1,4 @@
+import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {fixture as f} from './coyote-macro-fixture.mjs';
 import {COYOTE_MACRO_CONTROLS,coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from '../assets/coyote-macroform.mjs';
@@ -19,7 +20,7 @@ test('fresh804 native grid is pinned, source reconstruction matches every change
 
 test('whole source bodies normalize to804 only through precise declared height/planning/cache changes',()=>{
  for(const [file,hash]of Object.entries(pins.runtimeSHA256)){
-  let source=read('../'+file);for(const change of changes.filter(c=>c.file===file).reverse()){
+  let source=normalizeStarterTackSource(read('../'+file),file);for(const change of changes.filter(c=>c.file===file).reverse()){
    if(change.kind==='prefix'){assert(source.startsWith(change.after));source=source.slice(change.after.length);}else{assert.equal(source.split(change.after).length,2,'exact-one declared hook '+file);source=source.replace(change.after,change.before);}
   }assert.equal(f.digest(source),hash,file+' unexplained source edit');
  }

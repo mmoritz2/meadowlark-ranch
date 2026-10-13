@@ -189,7 +189,7 @@ export function install(G){
   let sc=1; try{sc=RS.horseScale?RS.horseScale(h):(player.mesh?player.mesh.scale.x:1);}catch(e){}
   g.scale.setScalar(sc); g.position.set(x,Wd.groundH(x,z),z); g.rotation.y=heading; scene.add(g);
   const e={parts,x,z,heading,sc,idx:i,id:h.id,phase:Math.random()*6,speed:0,graze:0,grazeT:3+Math.random()*5};
-  e.dress=()=>{try{H.dressWithRig(e,parts,h.colors,{breed:h.breed,mine:true,foal:h.foal,bareback:!!h.bareback,coat:h.coat,dragon:h.dragon,tailCol:h.tailCol,mark:h.mark,markCol:h.markCol,mark2:h.mark2,seed:h.id,saddle:true});}catch(err){}};
+  e.dress=()=>{try{H.dressWithRig(e,parts,h.colors,{breed:h.breed,mine:true,foal:h.foal,bareback:!!h.bareback,coat:h.coat,dragon:h.dragon,tailCol:h.tailCol,mark:h.mark,markCol:h.markCol,mark2:h.mark2,seed:h.id,saddle:true,basicLocalRiding:true});}catch(err){}};
   e.dress();
   return e;
  }

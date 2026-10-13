@@ -4,7 +4,10 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const ROOT=path.resolve(__dirname,'..');
-const core=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8');
+// Original inventory/paid/remote counterfactual, restored only after exact
+// whole298 source guard. Active visual defaults have their own real native tests.
+const {normalizeStarterTackSource}=require('./starter-tack-source-guard.cjs');
+const core=normalizeStarterTackSource(fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),'ranch3d.html');
 const helpers=core.slice(core.indexOf('function collectionPieces('),core.indexOf('// --- tunables (adjust to fit) ---'));
 assert(helpers.startsWith('function collectionPieces('),'core tack integration helpers found');
 const mirror=core.split('\n').find(line=>line.startsWith('function refreshTack('));
