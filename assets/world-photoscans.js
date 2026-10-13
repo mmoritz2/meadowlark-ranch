@@ -653,7 +653,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   // uses the registered stone surfaces after the replacement is ready.
   function installVillageCrags(parts){
     const specs=[
-      {seed:1116,primary:3,yaw:2.30,shoulder:4,angle:.42},
+      {seed:1116,primary:3,yaw:-.42,shoulder:0,angle:-.70,shoulderOffset:.43,shoulderReach:.55,shoulderYaw:1.07},
       {seed:1122,primary:3,yaw:.68,shoulder:5,angle:2.13},
       // This overlapping older mesa and its spires belong to the same outcrop.
       {seed:1113,primary:2,yaw:1.12},
@@ -689,7 +689,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const meshes=[],details=[];
       try{
         const composition=[[spec.primary,0,collider.r*.94,spec.yaw]];
-        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*.51,collider.r*.42,spec.yaw+1.57]);
+        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*(spec.shoulderOffset??.51),collider.r*(spec.shoulderReach??.42),spec.shoulderYaw??spec.yaw+1.57]);
         for(const [partIndex,offset,reach,yaw] of composition){
           const piece=parts[partIndex],p=piece.geo.attributes.position,b=piece.bounds;
           const cx=(b.min.x+b.max.x)/2,cz=(b.min.z+b.max.z)/2;
@@ -707,7 +707,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
             ty=Math.min(ty,W.terrainH(wx,wz)-scale*sy-.16);footVertices++;
           }
           if(!footVertices||!Number.isFinite(ty))throw Error('No finite scanned crag footing');
-          const mesh=new THREE.Mesh(piece.geo,material);
+          const mesh=new THREE.Mesh(piece.geo,spec.seed===1116?piece.mat:material);
           mesh.name='Countryside scanned crag '+spec.seed+' | '+partIndex;
           mesh.matrixAutoUpdate=false;
           mesh.matrix.set(scale*co,0,scale*sn,px-scale*(co*cx+sn*cz),0,scale,0,ty,

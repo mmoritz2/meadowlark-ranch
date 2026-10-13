@@ -1,0 +1,26 @@
+[
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "{seed:1116,primary:3,yaw:2.30,shoulder:4,angle:.42},",
+    "after": "{seed:1116,primary:3,yaw:-.42,shoulder:0,angle:-.70,shoulderOffset:.43,shoulderReach:.55,shoulderYaw:1.07},",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*.51,collider.r*.42,spec.yaw+1.57]);",
+    "after": "if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*(spec.shoulderOffset??.51),collider.r*(spec.shoulderReach??.42),spec.shoulderYaw??spec.yaw+1.57]);",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "const mesh=new THREE.Mesh(piece.geo,material);",
+    "after": "const mesh=new THREE.Mesh(piece.geo,spec.seed===1116?piece.mat:material);",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "./assets/world-photoscans.js?v=coyote-macroform-3",
+    "after": "./assets/world-photoscans.js?v=coyote-scan-composition-2",
+    "occurrences": 1
+  }
+]
