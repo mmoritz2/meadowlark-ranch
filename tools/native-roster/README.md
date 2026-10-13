@@ -244,40 +244,53 @@ report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
 hair meshes to Percheron, Shire, Clydesdale and Vanner instances, including
-Belgian, Suffolk, Tempest and Rosebloom aliases. Two staggered layers of rounded
-locks give the fetlocks a fuller silhouette. Narrow embedded roots with a
-fiber-alpha fade blend into the leg, and varied fine tips leave the hoof toes
-visible. The loose back/side locks are about 25% longer than the first fuller
-feather pass, with wider ribbons and more overlapping locks. Percheron keeps a
-lighter 72 locks per leg; Shire, Clydesdale and Vanner use 96, 100 and 104.
-Four draw calls are retained, with 8,064–11,648 triangles per horse.
+Belgian, Suffolk, Tempest and Rosebloom aliases. Shire, Clydesdale and Vanner now
+have long front/back/side locks fitted outside the actual hoof envelope. Their
+fine fibers remain visible through the final texture row, covering the hoof
+top and toe and brushing the common ground plane. Percheron keeps lighter
+fetlock hair and a visible hoof. Heavy standing tips measure 0.66–0.79 mm above
+ground; alpha-aware front/side coverage with opaque hoof occlusion is 78–93%,
+and every hoof has visible fibers in the lowest 1–3 mm band. Feather roots
+remain exact; independent leg-driven springs move the loose ends and settle
+on stopping. A floor response keeps long fibers above the ground while allowing
+outward flex at contact. Four draw calls are retained.
 
-A per-leg damped spring measures native pastern movement relative to the actor.
-Feather tips lag behind leg swings and settle after stopping; the four legs
-have independent drivers rather than a shared clock oscillation. Vertex roots
-remain exact. The bounded solver updates only private feather positions and
-normals, with a source-leg shell guard and a floor guard based on source sole
-samples in the actor's frame. Translation/rotation of the complete horse does
-not excite the hair. Zero-time/paused updates hold the visible pose; reset
-restores exact base arrays, and long frame gaps reseed rather than kick the
-hair. This is secondary feather motion, not a strand collision simulation.
+`assets/native-flowing-groom.js` makes actor-private copies of the existing
+native mane, forelock and tail surfaces. Mane length/reach is increased roughly
+21–30%, with more breadth; tails are fuller and extend farther toward the ground.
+The Fjord's upright mane/crest and eyelashes keep their established shapes.
+Original indices, UVs, skin weights, binds, materials and dye shaders are reused;
+no body, eye, tack, bone or animation data is changed, and no draw calls are
+added. Only private hair geometry is owned/disposed by this controller.
 
-Roots fit sampled lower-leg skin after refreshing world and skin-bind matrices,
-including horses already translated, rotated or scaled within the ranch. The
-native groom facade forwards updates/reset; ranch and Tack Studio updates are
-queued until the final actor transforms and source groom pose are complete.
-Breed Studio and the phase review update directly after each source pose.
+Independent neck/head/tail motion drives bounded loose-end springs after the
+source hair pose. Attached roots stay fixed. A posed skin-space floor response
+bends loose hair upward when grazing or getting up would otherwise push it
+through the ground. Pause holds arrays, reset returns exact enlarged rest arrays,
+long frame gaps safely reseed, and complete-actor motion alone does not excite
+the hair. Static unchanged poses reuse the previous geometry/normals. This is
+secondary hair motion with a floor response, not a full strand simulation.
 
-`node tools/test-native-draft-feathers.mjs` checks all four foundations across
-1,312 production idle, walk, trot, both canter/gallop leads and jump poses with
-hoof flex, plus root pinning, leg independence, stop damping, exact pause/reset,
-30/60/120 Hz consistency, alpha-aware coverage, sole/tack clearance, alias
-inheritance, transformed-parent fit and private resource lifecycle. The longer
-standing tips retain a 20 mm minimum sole gap; moving Trot tips must remain at
-least 5 mm above the floor. `node tools/test-native-feather-integration.mjs`
-checks final-pose flush order, multiple actors, native motion state, pause/reset,
-disposal and immediate previews. Visual review includes same-stride sway on/off
-comparisons. Source meshes, weights, binds and animation clips are unchanged.
+The native groom facade combines flowing hair and feathers in one final-pose
+update. Ranch and Tack Studio flush after actor travel and source grooming;
+standalone Breed Studio and the phase review update directly. Reinitialization
+restores old private geometry and disposes the old motion controller before
+new action-fitting inspects the horse. Hair visibility, reset and disposal own
+both layers.
+
+`node tools/test-native-draft-feathers.mjs` checks 1,312 production gait/jump
+checkpoints with actual intermediate frames, hoof flex, source preservation,
+alpha-aware hoof/ground contact, leg independence, damping, exact pause/reset,
+30/60/120 Hz consistency, aliases and transformed parents. Heavy tips must brush
+ground without penetration; lighter Percheron keeps its 20 mm standing gap.
+`node tools/test-native-flowing-groom.mjs` uses the actual loader and motion
+controller to verify privacy, roots, volume/length gains, hair-only deformation,
+source grooming eligibility, dyes, Fjord/eyelash preservation, real gait/action
+floor clearance, deterministic replay and frame-rate consistency.
+`node tools/test-native-feather-integration.mjs` checks final flush ordering,
+multiple actors, authoritative motion state, combined layers, repeated init,
+pause/reset/disposal and immediate previews. Visual checks cover standing
+front/side views and walking/running mane, tail and feather motion.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat
