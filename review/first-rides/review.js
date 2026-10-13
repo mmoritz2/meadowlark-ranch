@@ -1,8 +1,8 @@
 const $=id=>document.getElementById(id),frame=$('game'),SAVE='starRanchFable_v1',MARK='first-rides-qa-owned',MARK_VALUE='disposable genuine first-rides review';
 const PREFIXES=['adventure:','journey:','rush:','herd:'],BUTTON_IDS=new Set(['rescueReassure','rescueRetrySave','adventureCancel','rushChoose','rushQuickStart','chSave']);
-const KEYS={forward:'KeyW',left:'KeyA',right:'KeyD',back:'KeyS'},held={},proxyNodes=new Map(),errors=[];
+const KEYS={forward:'KeyW',left:'KeyA',right:'KeyD',back:'KeyS',interact:'KeyE'},held={},proxyNodes=new Map(),errors=[];
 let networkStopped=false;const scenery={},roundupTrace=[],rushTrace=[];let tracedRun=null,lastTraceElapsed=-1;
-let rushCourse=null,lastRushTraceElapsed=-1,lastRushTraceKey='',jumpTimer=null;
+let rushCourse=null,lastRushTraceElapsed=-1,lastRushTraceKey='',jumpTimer=null,eventCourse=null,eventCourseHorse=null;
 let w=null,G=null,ready=false,loading=false,manualTimer=null,driver=null,driverSteps=0,driverStatus='off',driverTarget=null,lastClick=null,storageOwned=false;
 function guard(){if(location.protocol!=='http:'||!['localhost','127.0.0.1'].includes(location.hostname)||location.port!=='18800')throw Error('Use only http://127.0.0.1:18800/review/first-rides/.');}
 function readSave(){return JSON.parse(localStorage.getItem(SAVE)||'null');}
@@ -24,7 +24,7 @@ function renderProxies(){
  const rows=productionButtons().map(descriptor),seen=new Set();for(const row of rows){if(seen.has(row.key))continue;seen.add(row.key);let button=proxyNodes.get(row.key);if(!button){button=document.createElement('button');button.type='button';button.dataset.proxy=row.key;button.onclick=()=>{const actual=productionButtons().find(b=>descriptor(b).key===row.key);if(networkStopped||!actual||disabled(actual)){lastClick={ok:false,reason:'That visible control is unavailable or disabled.'};report();return;}lastClick={ok:true,label:actual.textContent.trim()};actual.click();report();};proxyNodes.set(row.key,button);$('proxies').appendChild(button);}button.textContent=row.label;button.disabled=networkStopped||row.disabled;}
  for(const [key,button]of proxyNodes)if(!seen.has(key)){button.remove();proxyNodes.delete(key);}return rows;
 }
-function key(code,on){if(!w||held[code]===on)return;held[code]=on;w.document.dispatchEvent(new w.KeyboardEvent(on?'keydown':'keyup',{code,key:{KeyW:'w',KeyA:'a',KeyD:'d',KeyS:'s',Space:' '}[code],bubbles:true,cancelable:true}));}
+function key(code,on){if(!w||held[code]===on)return;held[code]=on;w.document.dispatchEvent(new w.KeyboardEvent(on?'keydown':'keyup',{code,key:{KeyW:'w',KeyA:'a',KeyD:'d',KeyS:'s',KeyE:'e',Space:' '}[code],bubbles:true,cancelable:true}));}
 function release(){if(jumpTimer)clearTimeout(jumpTimer);jumpTimer=null;for(const code of Object.keys(held))key(code,false);G?.riding?.releaseAll();}
 function pulseJump(){key('Space',true);if(jumpTimer)clearTimeout(jumpTimer);jumpTimer=setTimeout(()=>{jumpTimer=null;key('Space',false);},120);}
 function manualJump(){if(networkStopped||!ready||blocked()){status('Close the current game dialog before asking for a jump.');return;}stop();w.document.activeElement?.blur?.();pulseJump();status('Pressed Space through ordinary input. Production decides whether the horse can jump.');recordRush('manual Space');report();}
@@ -111,6 +111,56 @@ function startRushDriver(){
   driverTarget={x,z,distance,checkpoint:current.idx+1,total:current.jumps.length,kind:j.kind,gait,cue,recovery,jumpRequested:!!jumpRequestedAt};
  }catch(e){stop();fail(e);}},100);
 }
+// Only ordinary flat gate races belong to this driver. It never accepts a
+// labelled race that actually contains jumping/dressage/custom obstacles.
+function flatRaceCourse(c){
+ const ev=c?.ev;
+ return !!(c&&c.race===true&&ev?.race===true&&typeof ev.id==='string'&&ev.id&&
+  !c.rush&&!ev.rush&&!c.dressage&&!ev.dressage&&!c.xc&&!ev.xc&&!ev.gauntlet&&!ev.kind&&
+  (!ev.disc||ev.disc==='race')&&c.ce?.kind==='race'&&Array.isArray(c.jumps)&&c.jumps.length&&
+  c.jumps.every(j=>j?.kind==='gate'&&Number.isFinite(j.x)&&Number.isFinite(j.z)));
+}
+function readEventCourse(){
+ const current=G?.course?.get?.();
+ if(flatRaceCourse(current)&&current!==eventCourse){eventCourse=current;const h=G.horse.ridden?.();eventCourseHorse=h?{id:h.id,name:h.name,breed:h.breed}:null;}
+ const c=eventCourse;if(!c)return null;
+ const active=current===c,j=c.jumps?.[c.idx],p=G.horse.player,dlg=w.document.getElementById('dlg');
+ return {id:c.ev?.id,name:c.ev?.name,active,started:!!c.started,countdown:c.cd,elapsed:c.t,index:c.idx,total:c.jumps?.length||0,
+  lap:c.ce?.lap||1,laps:c.ce?.laps||1,difficulty:c.ce?.diff?.k||c.rb?.diff||null,timeAllowed:c.ce?.timeAllowed??null,
+  target:j?{kind:j.kind,x:j.x,z:j.z,distance:Math.hypot(j.x-p.pos.x,j.z-p.pos.z)}:null,
+  faults:c.faults||0,lineOff:c.ce?.lineOff||0,accuracy:c.ce?.acc??c.rb?.acc??null,raceAccuracy:c.ce?.raceAcc??null,horse:eventCourseHorse,
+  player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed},
+  resultText:!active&&dlg?.getClientRects().length?dlg.textContent.trim().slice(0,2500):null};
+}
+function haltFlatRace(reason){stop();driverStatus=reason;status(reason+' All fixture keys released; inspect the actual event before resuming.');report();}
+function startFlatRaceDriver(){
+ const c=G?.course?.get?.();
+ if(networkStopped||!ready||!storageOwned||!flatRaceCourse(c)){status('Start a flat gate race through the production Events screen first.');return;}
+ if(blocked()){status('Close the event card or menu before starting the flat-race driver.');return;}
+ stop();w.document.activeElement?.blur?.();const course=c,event=c.ev,eventId=c.ev.id,horseId=G.horse.ridden?.()?.id;
+ let lastMovedAt=Date.now(),lastPosition={x:G.horse.player.pos.x,z:G.horse.player.pos.z},lastIndex=c.idx,lastLap=c.ce.lap;
+ readEventCourse();driverStatus='running '+event.name;status('Following '+event.name+' gates with ordinary riding keys. Production owns the clock, crossings and result.');
+ driver=setInterval(()=>{try{
+  const current=G.course.get(),p=G.horse.player;
+  if(!current){haltFlatRace('Flat race ended. Inspect the production result');return;}
+  if(current!==course||current.ev!==event||current.ev.id!==eventId||!flatRaceCourse(current)){haltFlatRace('Stopped: the active flat race changed or contains unsupported obstacles');return;}
+  if(blocked()){haltFlatRace('Stopped: the game is blocked by UI or background state');return;}
+  const rig=G.horse.RIG();
+  if(p.flying||p.onFoot||G.onFoot?.on||G.worldPkg?.vehicle?.()||!rig?.ready||rig.loadingBreed||G.horse.ridden?.()?.id!==horseId){haltFlatRace('Stopped: the original mounted ground-riding horse is unavailable');return;}
+  if(!Number.isFinite(current.cd)||!Number.isFinite(current.t)){haltFlatRace('Stopped: the actual course clock is unavailable');return;}
+  if(!current.started||current.cd>0){release();lastMovedAt=Date.now();lastPosition={x:p.pos.x,z:p.pos.z};driverStatus='waiting for production countdown';return;}
+  const j=current.jumps[current.idx];
+  if(!j||j.kind!=='gate'||![j.x,j.z,p.pos.x,p.pos.z,p.heading,p.speed].every(Number.isFinite)){haltFlatRace('Stopped: the current gate or rider position is unavailable');return;}
+  // Follow the real numbered gate centre, not a fixture-authored shortcut.
+  const x=j.x,z=j.z,distance=Math.hypot(x-p.pos.x,z-p.pos.z),angle=Math.atan2(x-p.pos.x,z-p.pos.z),delta=Math.atan2(Math.sin(angle-p.heading),Math.cos(angle-p.heading));
+  const gait=distance>18&&Math.abs(delta)<.2?'gallop':distance>9&&Math.abs(delta)<.45?'canter':'trot';G.riding.selectGait(gait);
+  key('KeyA',delta>.04);key('KeyD',delta<-.04);key('KeyW',Math.abs(delta)<.65);key('KeyS',Math.abs(delta)>1&&p.speed>1.2);
+  if(current.idx!==lastIndex||current.ce.lap!==lastLap){lastIndex=current.idx;lastLap=current.ce.lap;lastMovedAt=Date.now();lastPosition={x:p.pos.x,z:p.pos.z};}
+  if(!held.KeyW||Math.hypot(p.pos.x-lastPosition.x,p.pos.z-lastPosition.z)>.25){lastMovedAt=Date.now();lastPosition={x:p.pos.x,z:p.pos.z};}
+  if(held.KeyW&&Date.now()-lastMovedAt>5000){haltFlatRace('Stopped: forward input made no physical progress for five seconds');return;}
+  driverSteps++;driverStatus='running '+event.name;driverTarget={x,z,distance,checkpoint:current.idx+1,total:current.jumps.length,lap:current.ce.lap||1,kind:'gate',gait};
+ }catch(e){stop();fail(e);}},100);
+}
 function startRoundupDriver(){
  const initial=G?.roundup?.state();
  if(networkStopped||!ready||!initial?.active||initial.shared||!['beginner','full'].includes(initial.mode)){status('Start a solo roundup through a visible production button first.');return;}
@@ -150,13 +200,25 @@ async function boot(){
  await waitFor(()=>{w=frame.contentWindow;G=w.__features;return w.document!==before&&G?.rescueRide&&G?.riderJourney&&G?.ranchRush&&G.horse?.RIG().ready&&!w.document.getElementById('load');},'production horse and activity features');
  w.addEventListener('error',e=>fail(e.error||e.message));w.addEventListener('unhandledrejection',e=>fail(e.reason));
  for(const [name,source] of Object.entries({undergrowth:G.undergrowth,photoscans:G.photoscans,worldDetails:G.worldDetails,builder:G.world?.ranchBuilderArt})){scenery[name]='pending';Promise.resolve(source?.ready).then(()=>scenery[name]='settled',e=>{scenery[name]='failed';fail(e);});}
- ready=true;loading=false;for(const id of ['gait','forward','left','right','back','jump','jumpAssist','stop','drive','driveRush','driveRoundup'])$(id).disabled=false;
+ // Production may release input while opening a panel or pausing. Keep only
+ // the fixture's key-intent cache aligned so a later normal keydown is sent.
+ w.addEventListener('keyup',e=>{if(Object.prototype.hasOwnProperty.call(held,e.code))held[e.code]=false;});
+ ready=true;loading=false;for(const id of ['gait','forward','left','right','back','interact','jump','jumpAssist','stop','drive','driveRush','driveRace','driveRoundup'])$(id).disabled=false;
  status('Ready. Inspect and complete the real onboarding before choosing an activity.');report();
 }
 function roundupGeometry(){
  const bounds={x1:-110,x2:-33,z1:-45,z2:25},W=G?.world;if(!W)return null;
  const near=c=>Number.isFinite(c.x)&&Number.isFinite(c.z)&&Number.isFinite(c.r)&&c.r>=0&&c.x+c.r>=bounds.x1-2&&c.x-c.r<=bounds.x2+2&&c.z+c.r>=bounds.z1-2&&c.z-c.r<=bounds.z2+2;
  return {bounds,colliders:(W.colliders||[]).filter(near).map(c=>({x:c.x,z:c.z,r:c.r,precise:!!c.precise})),walls:(W.walls||[]).filter(w=>[w.x1,w.z1,w.x2,w.z2].every(Number.isFinite)&&Math.max(w.x1,w.x2)>=bounds.x1-2&&Math.min(w.x1,w.x2)<=bounds.x2+2&&Math.max(w.z1,w.z2)>=bounds.z1-2&&Math.min(w.z1,w.z2)<=bounds.z2+2).map(w=>({x1:w.x1,z1:w.z1,x2:w.x2,z2:w.z2}))};
+}
+function storySnapshot(s){
+ const Q=G?.quest,idx=Q?.storyIdx?.(),prog=Q?.storyProg?.(),m=Q?.STORY?.[idx];
+ const track=w?.document.getElementById('questTrack');
+ const guidance=track?{text:track.textContent,accessibleLabel:track.getAttribute('aria-label')}:null;
+ const target=m?G?.storyGuidance?.target?.(m,s,prog>=m.goal):null;
+ return {index:idx,progress:prog,saved:s?.story?{index:s.story.idx,progress:s.story.prog,name:s.story.name||null,era:s.story.era,clues:[...(s.story.clues||[])]}:null,
+  mission:m?{label:m.label,type:m.type,goal:m.goal,npc:m.npc||'wren',talk:m.talk||null}:null,guidance,
+  target:target?.position?{id:target.id||null,x:target.position.x,z:target.position.z}:null};
 }
 function snapshot(){
  const controls=renderProxies(),base={ready,loading,status:$('status').textContent,controls,lastClick,errors:[...errors],method:'Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.'};
@@ -167,11 +229,11 @@ function snapshot(){
   if(tracedRun!==roundState.runId){tracedRun=roundState.runId;roundupTrace.length=0;lastTraceElapsed=-1;}
   if(roundState.elapsed-lastTraceElapsed>=.75){const h=roundState.target;roundupTrace.push({elapsed:roundState.elapsed,penned:roundState.penned,horse:h?.name,x:h?.x,z:h?.z,heading:h?.heading,avoidSide:h?.avoidSide,pressure:h?.pressure,distance:h?.distance,speed:h?.speed,approachBlocked:h?.approachBlocked,approachPhase:h?.approachPhase,approachTarget:h?.approachTarget,planMs:h?.approachPlanMs,playerX:p.pos.x,playerZ:p.pos.z,playerSpeed:p.speed});if(roundupTrace.length>250)roundupTrace.shift();lastTraceElapsed=roundState.elapsed;}
  }
- return {...base,rescue:G.rescueRide?.snapshot(),journey:G.riderJourney?.snapshot(),rush:G.ranchRush?.snapshot(),rushCourse:readRush(),rushTrace:[...rushTrace],roundup:roundState,roundupGeometry:roundupGeometry(),roundupTrace:[...roundupTrace],scenery:{...scenery},adoptedMount:G.rescueRide?.adoptedMount?.()||null,player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,rigReady:G.horse.RIG().ready,horseId:G.horse.ridden?.()?.id,horseName:G.horse.ridden?.()?.name,breed:G.horse.ridden?.()?.breed,modelKey:G.horse.RIG().modelKey,loadingBreed:!!G.horse.RIG().loadingBreed},ui:{blocked:!!G.input?.blocked?.(),bodyClasses:w.document.body.className,dialogVisible:!!w.document.getElementById('dlg')?.getClientRects().length},driver:{active:!!driver,status:driverStatus,steps:driverSteps,target:driverTarget},networkConnected:!!G.net?.net.client?.connected,networkStopped,featureErrors:G.errors||[],saveSummary:s?{horseCount:s.horses?.length||0,riderCreated:!!s.rider?.made,ridingHorseId:s.ridingHorseId,horseNames:s.horses?.map(h=>({id:h.id,name:h.name,breed:h.breed})),totalRaces:s.totalRaces||0,rescue:{completions:s.rescueRides?.completions||0,adopted:!!s.rescueRides?.adopted},journey:s.riderJourney||null,rush:s.ranchRush?.records||null}:null};
+ return {...base,story:storySnapshot(s),rescue:G.rescueRide?.snapshot(),journey:G.riderJourney?.snapshot(),rush:G.ranchRush?.snapshot(),rushCourse:readRush(),eventCourse:readEventCourse(),rushTrace:[...rushTrace],roundup:roundState,roundupGeometry:roundupGeometry(),roundupTrace:[...roundupTrace],scenery:{...scenery},adoptedMount:G.rescueRide?.adoptedMount?.()||null,player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,rigReady:G.horse.RIG().ready,horseId:G.horse.ridden?.()?.id,horseName:G.horse.ridden?.()?.name,breed:G.horse.ridden?.()?.breed,modelKey:G.horse.RIG().modelKey,loadingBreed:!!G.horse.RIG().loadingBreed},ui:{blocked:!!G.input?.blocked?.(),bodyClasses:w.document.body.className,dialogVisible:!!w.document.getElementById('dlg')?.getClientRects().length},driver:{active:!!driver,status:driverStatus,steps:driverSteps,target:driverTarget},networkConnected:!!G.net?.net.client?.connected,networkStopped,featureErrors:G.errors||[],saveSummary:s?{horseCount:s.horses?.length||0,riderCreated:!!s.rider?.made,ridingHorseId:s.ridingHorseId,horseNames:s.horses?.map(h=>({id:h.id,name:h.name,breed:h.breed})),totalRaces:s.totalRaces||0,rescue:{completions:s.rescueRides?.completions||0,adopted:!!s.rescueRides?.adopted},journey:s.riderJourney||null,rush:s.ranchRush?.records||null}:null};
 }
 function report(){try{$('report').textContent=JSON.stringify(snapshot(),null,2);}catch(e){$('report').textContent='Diagnostics unavailable: '+String(e);}}
 $('boot').onclick=()=>boot().catch(fail);$('reportNow').onclick=report;for(const [id,code]of Object.entries(KEYS))$(id).onclick=()=>manual(code);
 $('jump').onclick=manualJump;$('jumpAssist').onchange=()=>{if($('jumpAssist').value==='off'){if(jumpTimer)clearTimeout(jumpTimer);jumpTimer=null;key('Space',false);}recordRush('assistance changed');report();};
-$('stop').onclick=()=>{stop();status('All fixture riding keys released.');report();};$('drive').onclick=startDriver;$('driveRush').onclick=startRushDriver;$('driveRoundup').onclick=startRoundupDriver;$('gait').onchange=()=>{if(ready&&['walk','trot','canter'].includes($('gait').value))G.riding.selectGait($('gait').value);};
+$('stop').onclick=()=>{stop();status('All fixture riding keys released.');report();};$('drive').onclick=startDriver;$('driveRush').onclick=startRushDriver;$('driveRace').onclick=startFlatRaceDriver;$('driveRoundup').onclick=startRoundupDriver;$('gait').onchange=()=>{if(ready&&['walk','trot','canter','gallop'].includes($('gait').value))G.riding.selectGait($('gait').value);};
 window.addEventListener('pagehide',stop);window.addEventListener('blur',()=>{if(manualTimer){clearTimeout(manualTimer);manualTimer=null;release();}});
 try{guard();setInterval(()=>{if(ready&&blocked())release();report();},1000);report();}catch(e){$('boot').disabled=true;fail(e);}

@@ -14,7 +14,9 @@
    ribbons won per difficulty, best times, the week), and every action goes through the game's own
    buttons: the events panel is still rendered underneath (se-frame's cover()), so "Ride" clicks the
    programme's own entry button for that event and difficulty, a weekly claim clicks its claim, the
-   roundup and the drills click theirs. Nothing about entering, paying or gating changes. The full
+   roundup and the drills click theirs. Horse comparison uses the normal selector and confirms
+   the saved horse ID and attached model before entry. Existing stat/difficulty gates and rewards
+   remain authoritative. The full
    programme is still there, one tap away, framed like every other menu.
 
    The pictures: each ticket is drawn here (landscape, horse and rider in the discipline's pose,
@@ -22,6 +24,7 @@
    from above the venue on the frame the screen opens (se-frame's snap). Nothing runs at import
    time. */
 import {eventPreparation} from './event-preparation.js?v=event-training-1';
+import {eventHorseComparison,eventHorseById,createEventHorseSelection} from './event-horse-comparison.mjs?v=horse-choice-1';
 export const id='se-events';
 export function install(G){
  const K=G.seFrame, T=G.tables;
@@ -190,14 +193,14 @@ export function install(G){
   arr.sort((a,b)=>oi(a.name)-oi(b.name)||a.min-b.min);
   return arr;
  }
- function gate(ev){
+ function gate(ev,h=ridden()){
   if(ev.special)return {ok:true,missing:[]};
-  try{if(G.course&&G.course.eventOk)return G.course.eventOk(ev,ridden());}catch(e){}
-  const lvl=ridden().level||1; return {ok:lvl>=(ev.lvl||1),missing:lvl>=(ev.lvl||1)?[]:[['level',ev.lvl,lvl]]};
+  try{if(G.course&&G.course.eventOk)return G.course.eventOk(ev,h);}catch(e){}
+  const lvl=h.level||1; return {ok:lvl>=(ev.lvl||1),missing:lvl>=(ev.lvl||1)?[]:[['level',ev.lvl,lvl]]};
  }
  function preparationFor(ev,di,h=ridden(),s=S()){
-  const DF=DIFFS(),d=DF[clamp(di==null?1:di,0,DF.length-1)],g=gate(ev),lk=townLock(ev.town),lvl=h.level||1;
-  const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
+  const DF=DIFFS(),d=DF[clamp(di==null?1:di,0,DF.length-1)],g=gate(ev,h),lk=townLock(ev.town),lvl=h.level||1;
+  const stats=G.xp.statBreakdown?G.xp.statBreakdown(h,s.tack):{total:G.xp.effStats(h,s.tack),base:h.stats||{},tack:{}};
   const entryLock=G.ladder?.entryLock?.(ev,{...s,evDiff:di},h)||(!g.ok?'Needs '+needText(g.missing):d.lvlAdd&&lvl<ev.lvl+d.lvlAdd?d.label+' opens at Lv '+(ev.lvl+d.lvlAdd):'');
   const trainingCaps=Object.fromEntries(Object.keys(ev.req||{}).map(k=>[k,{level:G.xp.statCap?.(h),breed:G.xp.statCeil?.(h,k)}]));
   return eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id),trainingCaps});
@@ -242,6 +245,7 @@ export function install(G){
 
  /* ---------------------------------------------------------------- the look -------------- */
  /* Destination layout lives in assets/menu-destinations.css. */
+ const comparisonStyle=document.createElement('link');comparisonStyle.rel='stylesheet';comparisonStyle.href=new URL('../event-horse-comparison.css?v=horse-choice-1',import.meta.url).href;document.head.appendChild(comparisonStyle);
 
  /* ---------------------------------------------------------------- the screen ------------ */
  const root=document.createElement('div'); root.id='seEv'; root.setAttribute('role','dialog'); root.setAttribute('aria-label','Riding Events');
@@ -254,20 +258,21 @@ export function install(G){
  document.body.appendChild(root);
  const strip=K.bar({icon:'events',title:'Riding Events',back:()=>back(),close:()=>closeAll()});
  root.insertBefore(strip,root.children[1]);
- const st={on:false,town:0,cur:{},page:null,diff:null,tab:'event'};
+ const st={on:false,town:0,cur:{},page:null,diff:null,tab:'event',compare:false,context:0};
  try{const m=JSON.parse(localStorage.getItem('mk_sev')||'{}');if(m&&typeof m.town==='string')st.townName=m.town;if(m&&m.cur)st.cur=m.cur;}catch(e){}
  const remember=()=>{try{localStorage.setItem('mk_sev',JSON.stringify({town:st.townName,cur:st.cur}));}catch(e){}};
  let TW=[];
 
- function closeAll(){st.page=null;root.classList.remove('page','sheet');G.hidePanels();}
+ function closeAll(){st.context++;st.compare=false;st.page=null;root.classList.remove('page','sheet');G.hidePanels();}
  function back(){
+  if(st.compare){st.context++;st.compare=false;paintPage();$('sevPage').querySelector('[data-sev="prepare:myhorses"]')?.focus();return;}
   if(root.classList.contains('sheet')){root.classList.remove('sheet');return;}
   if(st.page){st.page=null;root.classList.remove('page');paint();focusSelectedCard();return;}
   const f=K.takeBack('eventsPanel');   // a screen that sent the player here (My Journey's discipline cards) gets them back
   closeAll(); if(f)setTimeout(()=>{try{f();}catch(e){}},0);
  }
  function show(){st.on=true;root.classList.add('on');K.settle();paint();}
- function hide(){st.on=false;st.page=null;root.classList.remove('on','page','sheet');K.settle();}
+ function hide(){st.context++;st.compare=false;st.on=false;st.page=null;root.classList.remove('on','page','sheet');K.settle();}
  K.screens.add(()=>st.on);
  let pend=0;
  function refresh(){if(!st.on)return;clearTimeout(pend);pend=setTimeout(()=>{if(st.page)paintPage();else paint();},60);}
@@ -362,15 +367,62 @@ export function install(G){
  function move(d){const T0=TW[st.town];if(!T0)return;const c=clamp((st.cur[T0.name]||0)+d,0,T0.evs.length-1);if(c===st.cur[T0.name])return;st.cur[T0.name]=c;paint();}
  function focusSelectedCard(){const card=root.querySelector('.sev-card[tabindex="0"]');if(card)card.focus({preventScroll:true});}
 
+ const mountSelection=createEventHorseSelection(G,{selector:()=>$('horseSel'),changed:()=>{if(st.on&&st.page)paintPage();}});
+ const statNumber=value=>String(Math.round((Number(value)||0)*100)/100);
+ function comparisonFor(ev,di,h,s=S()){
+  const prep=preparationFor(ev,di,h,s),stats=G.xp.statBreakdown?G.xp.statBreakdown(h,s.tack):{base:h.stats||{},tack:{},total:G.xp.effStats(h,s.tack)};
+  return eventHorseComparison({horse:h,event:ev,preparation:prep,stats,personality:G.horse.persOf?.(h)||T.PERS?.[h.pers]||{},personalityMultipliers:G.horse.persMul?.(h)||{},bondLevel:G.horse.bondLevel?.(h)||0,bondGain:G.horse.bondGain,names:G.horse.BOND_NAMES||[],racePace:G.events?.raceTraitMul?.(ev,h)??null,raceMatches:G.events?.traitMatches?.(ev,h)??null,turnout:ev.kind==='show'?G.events?.turnoutOf?.(s,h):null});
+ }
+ function partnership(plan){
+  const p=plan.personality,b=plan.bond,bestCare=b.actions.filter(action=>action.gain>0).sort((a,b)=>b.gain-a.gain)[0];
+  return (plan.turnout?'<p><strong>Show turnout '+plan.turnout.percent+'%</strong> · Bond manners '+plan.turnout.manners+'%</p>':'')+'<p><strong>'+esc(p.label)+'</strong>'+(p.effects.length?' · '+esc(p.effects.join(' · ')):'')+'</p>'
+   +(p.milestones.length?'<p>'+esc(p.milestones.join(' '))+'</p>':'')
+   +'<p>'+esc(p.exhaustion)+'</p><p><strong>Bond '+b.value+' / 100</strong> · '+b.staminaSaving+'% less gallop stamina used from bond.</p><p>'+esc(b.preference)+'</p>'+(bestCare?'<p>In Bond &amp; feed: '+esc(bestCare.label)+' gives +'+bestCare.gain+' bond.</p>':'');
+ }
+ function favourLine(plan){
+  if(!plan.favours.length)return '';
+  return '<p><strong>Favoured stats</strong> · '+plan.favours.map(row=>esc(row.label)+' '+statNumber(row.value)+(row.matched?' ✓':'')).join(' · ')
+   +(plan.paceBonus>0?' · +'+plan.paceBonus+'% race pace bonus':'')+'</p><p class="sev-prep-note">At 7 or higher, a favoured stat also boosts your race rewards.</p>';
+ }
+ function comparisonMarkup(ev,di,s){
+  const difficulty=DIFFS()[di],selection=mountSelection.state(),horses=(s.horses||[]).filter(h=>eventHorseById(s,h.id)),current=ridden().id;
+  let html='<div class="sev-horse-heading"><button class="se-cream" data-sev="horses:back">Back to event</button><div><h2>Choose your event horse</h2><p>'+esc(ev.name)+' · '+esc(difficulty.label)+'. Compare entry stats and the partnership you will ride with.</p></div></div>';
+  if(selection.pending||selection.reason)html+='<p class="sev-horse-notice" role="status">'+esc(selection.pending?'Preparing your selected horse…':selection.reason)+'</p>';
+  if(!horses.length)return html+'<p class="sev-horse-notice">No adult horses are available to ride. Foals and eggs must grow before entering events.</p>';
+  html+='<div class="sev-horse-grid">';
+  for(const h of horses){const plan=comparisonFor(ev,di,h,s),isCurrent=h.id===current,id=esc(JSON.stringify(h.id)),disabled=selection.pending?' disabled':'',training=plan.training.find(row=>row.canTrain),deficits=plan.requirements.filter(row=>!row.met),levelNeed=plan.requirements.find(row=>row.key==='level')?.need||ev.lvl;
+   const action=(kind,label,extra='',primary=false)=>'<button class="'+(primary?'se-gold':'se-cream')+'" data-sev="horse:'+kind+'" data-horse-id="'+id+'" '+extra+disabled+'>'+esc(label)+'</button>';
+   html+='<article class="sev-horse-card'+(isCurrent?' current':'')+'" data-event-horse-id="'+id+'"><div class="sev-horse-title"><div class="sev-horse-picture" aria-hidden="true">'+(typeof G.ui?.k?.thumb==='function'?G.ui.k.thumb(h.breed,{size:72}):'<span class="sev-horse-fallback">🐴</span>')+'</div><div><h3>'+esc(plan.name)+'</h3><p>'+esc(G.horse.breedLabel?.(h.breed)||h.breed)+' · Lv '+plan.level+' / needs '+levelNeed+'</p>'+(isCurrent?'<p class="sev-horse-current">Selected now</p>':'')+'</div></div>'
+    +'<p class="sev-horse-entry'+(plan.ready?'':' locked')+'">'+esc(plan.ready?'Meets this event’s entry requirements':plan.reason||'Preparation needed')+'</p>'
+    +(deficits.length?'<p>'+esc(deficits.map(row=>(row.key==='level'?'Level':statLbl(row.key).replace(/^\S+\s/,''))+' '+row.have+' / '+row.need).join(' · '))+'</p>':'')
+    +'<table class="sev-horse-stats"><caption class="sr-only">'+esc(plan.name)+' trained and equipped stats</caption><thead><tr><th scope="col">Stat</th><th scope="col">Equipped total</th><th scope="col">Required</th></tr></thead><tbody>'+plan.rows.map(row=>'<tr><th scope="row">'+esc(row.label)+'</th><td><b>'+statNumber(row.total)+'</b><small>'+statNumber(row.base)+' trained + '+statNumber(row.tack)+' tack</small></td><td class="'+(row.met===false?'bad':'')+'">'+(row.need===null?'—':statNumber(row.need))+'</td></tr>').join('')+'</tbody></table>'
+    +'<div class="sev-horse-effects">'+favourLine(plan)+partnership(plan)+'</div>'
+    +(plan.training.length?'<p class="sev-horse-train">'+esc(plan.training[0].hint)+'</p>':'')
+    +'<div class="sev-horse-actions">'+action('select',isCurrent?'Use this horse':'Choose '+plan.name,'',true)+action('bond','Bond & feed')+action('tack','Compare tack')+(training&&G.trainingDrills?.startForEvent?action('train','Train '+training.label,'data-stat="'+esc(training.key)+'"'):'')+'</div></article>';
+  }
+  return html+'</div>';
+ }
+ async function selectEventHorse(id,action='select',stat=null){
+  const ev=evById(st.page);if(!ev||ev.special||!eventHorseById(S(),id))return false;
+  const context=st.context,diff=st.diff,result=await mountSelection.choose(id);
+  if(!st.on||st.page!==ev.id||st.diff!==diff||st.context!==context)return result.ok;
+  if(!result.ok||result.horseId!==id){paintPage();return false;}
+  st.compare=false;paintPage();
+  if(action==='bond'||action==='tack')prepareHorse(action==='bond'?'feeding':'equipment');
+  else if(action==='train')trainForEvent(stat);
+  else $('sevPage').querySelector('[data-sev="ride"]:not(:disabled),[data-sev="prepare:myhorses"]')?.focus({preventScroll:true});
+  return true;
+ }
+
  /* ---- the event page ---- */
- function openPage(ev){const hadFocus=root.contains(document.activeElement);st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();
+ function openPage(ev){const hadFocus=root.contains(document.activeElement);st.context++;st.compare=false;st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();
   if(hadFocus){const button=$('sevPage').querySelector('button:not([disabled])');if(button)button.focus({preventScroll:true});}}
  function evById(id){if(!id)return null;const sp=specials().find(e=>e.id===id);return sp||T.EVENTS3.find(e=>e.id===id)||null;}
  function paintPage(){
   const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}
   const s=S(), disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), lk=townLock(ev.town), h=ridden(), lvl=h.level||1;
   strip.setTitle(ev.name,(ev.town||'')+' · '+D.t,'events');
-  const page=$('sevPage'),view=ev.id+':'+st.diff,sameView=page.dataset.view===view;
+  const page=$('sevPage'),view=ev.id+':'+st.diff+':'+(st.compare?'horses':'event'),sameView=page.dataset.view===view;
   const expanded=sameView?[...page.querySelectorAll('details')].map(d=>[d.className,d.open]):[];
   const pageScroll=sameView?page.querySelector('.sev-main')?.scrollTop||0:0;
   const focus=page.contains(document.activeElement)?document.activeElement.closest('[data-sev]')?.dataset.sev:null;
@@ -388,6 +440,8 @@ export function install(G){
    main+='<div class="sev-plaque">Home pasture</div><div class="sev-prow"><div class="sev-map">'+snapImg(venueView(ev),'')+'</div></div><div class="sev-blurb">'+esc(ev.blurb)+'</div>'
     +'<div class="sev-pbar"><span><span class="pb-k">Pays</span><span class="pb-v">130 coins a horse</span></span><span class="pb-req"></span>'
     +'<button class="se-gold" data-sev="round"'+(ready?'':' disabled')+'>'+(ready?'Start':'Not yet')+'</button></div></div>';
+  }else if(st.compare){
+   const di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);main+=comparisonMarkup(ev,di,s)+'</div>';
   }else{
    const rb=ribbonsOf(ev,s), DF=DIFFS(), di=clamp(st.diff==null?1:st.diff,0,DF.length-1), d=DF[di];
    const mv=mapView(ev), me=K.snap(mv);
@@ -401,13 +455,13 @@ export function install(G){
    main+='<div class="sev-ribs"><span>'+rb.per[di]+' of 4 ribbons earned</span>'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
    const best=(s.bestTimes||{})[ev.id], bestS=(ev.dressage||ev.kind==='show')?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
-   const prep=preparationFor(ev,di,h,s);
+   const prep=preparationFor(ev,di,h,s),comparison=comparisonFor(ev,di,h,s);
    const req=prep.requirements.map(({key:k,have,need,base,tack,met})=>{
     const label=k==='level'?'Level':statLbl(k).replace(/^\S+\s/,'');
     const detail=k==='level'?'':('<small>'+esc(base)+' trained'+(tack>0?' + '+esc(tack)+' tack':'')+'</small>');
     return '<span class="'+(met?'ok':'bad')+'">'+esc(label)+' <b>'+esc(have)+' / '+esc(need)+'</b>'+detail+'</span>';
    }).join('');
-   const why=prep.reason;
+   const selection=mountSelection.state(),why=selection.blocked?(selection.pending?'Preparing your selected horse…':selection.reason||'Your selected horse is not ready. Choose it again.'):prep.reason,entryReady=prep.ready&&!selection.blocked;
    const scoring=G.events2?.allowedLine?.(ev,di)||(prep.judged?'Judged on percentage':(tA?tSec(tA)+' allowed':'See full card'));
    const met=prep.requirements.filter(r=>r.met).length;
    const firstTraining=prep.training.find(plan=>plan.canTrain),chooseHorse=!firstTraining&&met<prep.requirements.length;
@@ -415,16 +469,17 @@ export function install(G){
     +'<p class="pb-lock" role="status">'+esc(why||'Your horse is ready for this event.')+'</p>'
     +'<details class="sev-requirements"'+(prep.ready?'':' open')+'><summary>Horse readiness <span>'+met+' / '+prep.requirements.length+' requirements met</span></summary><div class="pb-req">'+req+'</div><p class="sev-prep-note">Current / required, including tack. '+esc(prep.prepareHint)+'</p>'
     +(prep.levelHint?'<p class="sev-prep-note">'+esc(prep.levelHint)+'</p>':'')
-    +prep.training.map(plan=>'<div class="sev-prep-step"><p class="sev-prep-note"><strong>'+esc(plan.label)+'</strong> · '+esc(plan.hint)+'</p>'+(plan.canTrain&&plan!==firstTraining?'<button class="se-cream" style="min-height:44px;margin-top:8px" data-sev="train:'+esc(plan.key)+'"'+(G.trainingDrills?.startForEvent?'':' disabled')+'>Train '+esc(plan.label)+'</button>':'')+'</div>').join('')
+    +prep.training.map(plan=>'<div class="sev-prep-step"><p class="sev-prep-note"><strong>'+esc(plan.label)+'</strong> · '+esc(plan.hint)+'</p>'+(plan.canTrain&&plan!==firstTraining?'<button class="se-cream" style="min-height:44px;margin-top:8px" data-sev="train:'+esc(plan.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(plan.label)+'</button>':'')+'</div>').join('')
     +(prep.training.length?'<div class="sev-stats" aria-label="Other ways to prepare"><button class="se-cream" data-sev="prepare:equipment"'+(G.seCare?.open?'':' disabled')+'>Compare tack</button>'+(!chooseHorse?'<button class="se-cream" data-sev="prepare:myhorses"'+(G.seCare?.open?'':' disabled')+'>Choose horse</button>':'')+'</div>':'')+'</details>'
+    +'<div class="sev-partnership">'+favourLine(comparison)+partnership(comparison)+'<div class="sev-stats"><button class="se-cream" data-sev="prepare:myhorses">Choose horse</button><button class="se-cream" data-sev="prepare:feeding"'+(G.seCare?.open&&!selection.blocked?'':' disabled')+'>Bond & feed</button></div></div>'
     +'<div class="sev-entry-facts"><div><span>Entry</span><b>Free</b></div><div><span>Listed purse'+(prep.featured?' · Featured ×1.5':'')+'</span><b>'+fmt(prep.purse)+' coins</b></div>'
     +'<div><span>'+(prep.judged?'Scoring':'Course format')+'</span><b>'+esc(scoring)+'</b></div>'
     +'<div><span>Personal best</span><b>'+(prep.judged?(bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'No score yet'):(best?tBest(best):'No time yet'))+'</b></div></div>'
     +'<details class="sev-scoring"><summary>Rewards & riding tips</summary><p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
    if(disc==='jump'||disc==='xc')main+='<p class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' when the ring turns green.</p>';
-   main+='</details></section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(prep.ready?'':' locked')+'">'+(prep.ready?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
-    +(firstTraining?'<button class="se-cream" data-sev="train:'+esc(firstTraining.key)+'"'+(G.trainingDrills?.startForEvent?'':' disabled')+'>Train '+esc(firstTraining.label)+'</button>':'<button class="se-cream" data-sev="prepare:'+(chooseHorse?'myhorses':prep.prepareTab)+'"'+(G.seCare?.open?'':' disabled')+'>'+(chooseHorse?'Choose horse':'Prepare horse')+'</button>')
-    +'<button class="se-gold" data-sev="ride"'+(!prep.ready?' disabled title="'+esc(why)+'"':'')+'>'+(prep.ready?'Enter event':'Locked')+'</button></div></div>';
+   main+='</details></section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(entryReady?'':' locked')+'">'+(entryReady?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
+    +(firstTraining?'<button class="se-cream" data-sev="train:'+esc(firstTraining.key)+'"'+(G.trainingDrills?.startForEvent&&!selection.blocked?'':' disabled')+'>Train '+esc(firstTraining.label)+'</button>':'<button class="se-cream" data-sev="prepare:'+(chooseHorse?'myhorses':prep.prepareTab)+'"'+(G.seCare?.open?'':' disabled')+'>'+(chooseHorse?'Choose horse':'Prepare horse')+'</button>')
+    +'<button class="se-gold" data-sev="ride"'+(!entryReady?' disabled title="'+esc(why)+'"':'')+'>'+(entryReady?'Enter event':'Locked')+'</button></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
   }
@@ -482,7 +537,7 @@ export function install(G){
   if(!e.repeat)card.click();
  });
  root.addEventListener('click',e=>{
-  const b=e.target.closest('[data-sev],[data-town],[data-card]'); if(!b||!root.contains(b))return;
+  const b=e.target.closest('[data-sev],[data-town],[data-card]'); if(!b||!root.contains(b)||b.disabled)return;
   if(b.dataset.town!=null){const t=TW[+b.dataset.town];if(t){st.townName=t.name;paint();const lk=townLock(t.name);if(lk)G.toast('🔒 '+lk);}return;}
   if(b.dataset.card!=null&&!b.dataset.sev){const T0=TW[st.town],i=+b.dataset.card;if(!T0)return;
    if(i!==st.cur[T0.name]){st.cur[T0.name]=i;paint();return;}
@@ -514,6 +569,8 @@ export function install(G){
    }
   }
   else if(k==='diff'){st.diff=+a;G.save.sync(s=>{s.evDiff=+a;});paintPage();}
+  else if(k==='horses'){st.context++;st.compare=false;paintPage();$('sevPage').querySelector('[data-sev="prepare:myhorses"]')?.focus({preventScroll:true});}
+  else if(k==='horse'){try{const id=JSON.parse(b.dataset.horseId);if(['select','bond','tack','train'].includes(a))selectEventHorse(id,a,b.dataset.stat);}catch{G.toast('Reopen your horse comparison and try again.');}}
   else if(k==='prepare')prepareHorse(a);
   else if(k==='train')trainForEvent(a);
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}
@@ -525,14 +582,14 @@ export function install(G){
   return ()=>{
    const button=$('eventsBtn');if(!button||!evById(ev.id))return;
    if(!st.on)button.click();
-   setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;root.classList.add('page');paintPage();
+   setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;st.compare=false;root.classList.add('page');paintPage();
     const page=$('sevPage'),main=page.querySelector('.sev-main');if(main)main.scrollTop=scroll;
     (page.querySelector(focus)||page.querySelector('[data-sev="ride"]:not(:disabled)')||page.querySelector('[data-sev^="prepare:"]'))?.focus({preventScroll:true});
    },40);
   };
  }
  function prepareHorse(tab){
-  const ev=evById(st.page);if(!ev||!G.seCare?.open)return;
+  const ev=evById(st.page);if(!ev)return;if(tab==='myhorses'){st.compare=true;paintPage();$('sevPage').querySelector('[data-sev="horses:back"]')?.focus({preventScroll:true});return;}if(!G.seCare?.open||mountSelection.state().blocked)return;
   G.seCare.open(tab,{label:'Back to '+ev.name,onBack:eventReturn(ev,st.diff)});
  }
  function trainForEvent(stat){
@@ -541,10 +598,11 @@ export function install(G){
   // Recheck the currently ridden horse: a menu painted before a tack swap or
   // horse change must not promise training at a cap or train an unrelated stat.
   const plan=prep.training.find(plan=>plan.key===stat);
-  if(!plan?.canTrain){paintPage();return false;}
+  if(!plan?.canTrain||mountSelection.state().blocked){paintPage();return false;}
   return G.trainingDrills.startForEvent(stat,{eventId:ev.id,eventName:ev.name,difficulty:diff,onBack:eventReturn(ev,diff,'[data-sev="train:'+stat+'"]')});
  }
  function ride(ev,di){
+  if(mountSelection.state().blocked){paintPage();return;}
   const P=$('eventsPanel'), i=T.EVENTS3.indexOf(ev);
   const btn=P&&(P.querySelector('button[data-ev="'+i+':'+di+'"]')||P.querySelector('button[data-ev="'+i+'"]'));
   st.page=null; root.classList.remove('page');
@@ -568,10 +626,12 @@ export function install(G){
   if(c==='ArrowUp'||c==='ArrowDown'||c==='KeyW'||c==='KeyS'||c==='Space')return true;
   return false;
  });
- G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.page){st.page=null;root.classList.remove('page');paint();focusSelectedCard();return true;}return false;});
+ G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.compare){st.context++;st.compare=false;paintPage();return true;}if(st.page){st.page=null;root.classList.remove('page');paint();focusSelectedCard();return true;}return false;});
+ G.on('rebuild',refresh);
+ G.on('courseGate',()=>{const choice=mountSelection.state();if(choice.blocked){G.toast(choice.pending?'Wait for your chosen horse to finish loading.':choice.reason||'Your selected horse is not ready. Choose it again.');return true;}});
  G.on('wallet',()=>{if(st.on)strip.paint();});
  G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up
- G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,sheet:root.classList.contains('sheet'),
+ G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,comparison:st.compare,horseSelection:mountSelection.state(),sheet:root.classList.contains('sheet'),
   towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});
- G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,state:st};
+ G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,comparison:()=>{const ev=evById(st.page),s=S(),di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);return ev&&!ev.special?(s.horses||[]).filter(h=>eventHorseById(s,h.id)).map(h=>comparisonFor(ev,di,h,s)):[];},state:st};
 }

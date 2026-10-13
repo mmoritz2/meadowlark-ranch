@@ -25,11 +25,29 @@ export function install(G){
   const paths={pad:`<path d="M15 25h49l5 39q-27 12-58 0Z" fill="${metal}" stroke="${ink}" stroke-width="3"/><path d="m18 37 44 0M21 49h37M26 60h30" fill="none" stroke="${ink}" opacity=".5" stroke-width="2"/>`,bridle:`<path d="M24 15q17-8 29 3l9 35-16 24-21-5-7-23Z" fill="none" stroke="${leather}" stroke-width="7"/><path d="m21 46 36-4m-29-25 19 59" fill="none" stroke="${metal}" stroke-width="5"/><circle cx="50" cy="63" r="8" fill="none" stroke="${ink}" stroke-width="4"/>`,shoes:`<path d="M21 66C-3 25 22 9 40 9s44 16 19 57L47 58c14-23 3-32-7-32s-21 9-7 32Z" fill="${metal}" stroke="${ink}" stroke-width="3"/><path d="m17 35 5-1m0-13 4 4m28 0 4-4m0 14 5 1" stroke="${ink}" stroke-width="3"/>`,saddle:`<path d="m10 44 8-21 12 5q7 12 23 4l11-11 9 28-13 8-8 15-20-2-9-16Z" fill="${leather}" stroke="${ink}" stroke-width="3"/><path d="m26 35 6 10 22-1 10-10" fill="none" stroke="${metal}" stroke-width="5"/><path d="m29 52-9 21h14l4-17m23-7 10 22H57l-4-18" fill="none" stroke="${metal}" stroke-width="3"/>`};
   return `<svg viewBox="0 0 82 84" aria-hidden="true">${paths[slot]||paths.saddle}</svg>`;
  }
+ // A saved chapter opens an optional route back into the existing story. This
+ // is derived on every render/click, including after reload or an uncertain readback;
+ // no new story cursor, clue, reward, or completion event is written here.
+ function storyPlan(s=J.snapshot()){
+  if(!s.chapters.some(c=>c.id==='first-partners'&&c.status==='claimed'))return null;
+  const saved=G.save?.fresh()?.story,Q=G.quest,guidance=G.storyGuidance;
+  if(!saved||!Number.isInteger(saved.idx)||saved.idx<0||!Number.isFinite(saved.prog)||saved.prog<0||
+   Q?.storyIdx?.()!==saved.idx||Q?.storyProg?.()!==saved.prog||!guidance?.activateCurrent)return null;
+  const step=guidance.describe();if(!step)return null;
+  const named=typeof saved.name==='string'&&saved.name.trim(),mare=named||'the grey mare';
+  return {step,title:named?'Continue '+mare+'’s story':'Continue the grey mare’s story',
+   detail:saved.era===1?'Clover is the pinto you rescued. The grey foal’s story is another path you can follow.':
+    'Clover is the pinto you rescued. Continue the story of '+mare+', the grey mare, at your current task.'};
+ }
+ function storyCard(s){
+  const plan=storyPlan(s);if(!plan)return '';
+  return `<section class="journey-strip jr-story"><div class="jr-strip-copy"><div class="jr-eyebrow">Optional · Story</div><b>${esc(plan.title)}</b><p>${esc(plan.detail)}</p><b>${esc(plan.step.title)}</b><p>${esc(plan.step.hint)}</p></div><button data-fx="journey:story">${esc(plan.step.label||'Continue story')}</button></section>`;
+ }
  function strip(){
-  const s=J.snapshot(),c=s.current;
-  if(!c)return `<section class="journey-strip"><div class="jr-strip-copy"><div class="jr-eyebrow">Rider journey complete</div><b>Meadowlark Champion</b><p>Your five chapters and earned tack are saved. Keep chasing your own best rides.</p></div><button data-fx="journey:open">Your collection</button></section>`;
+  const s=J.snapshot(),c=s.current,story=storyCard(s);
+  if(!c)return `<section class="journey-strip"><div class="jr-strip-copy"><div class="jr-eyebrow">Rider journey complete</div><b>Meadowlark Champion</b><p>Your five chapters and earned tack are saved. Keep chasing your own best rides.</p></div><button data-fx="journey:open">Your collection</button></section>${story}`;
   const next=c.goals.find(g=>!g.done),ready=c.status==='ready';
-  return `<section class="journey-strip"><div class="jr-strip-copy"><div class="jr-eyebrow">Your riding journey · Chapter ${c.number} of 5</div><b>${ready?'Your next reward is ready.':esc(c.name)}</b><p>${ready?`Collect ${c.reward.coins} coins and your ${esc(c.reward.gear.set)} ${esc(c.reward.gear.slot)}.`:esc(next?.label||c.description)}</p><div class="jr-small-track" aria-label="${s.claimedCount} of 5 chapters claimed">${s.chapters.map(ch=>`<i class="${ch.status}"></i>`).join('')}</div></div><div class="jr-strip-actions"><button class="jr-primary" data-fx="${ready?'journey:open':'journey:start'}">${ready?'Collect your reward':'Ride next goal'}</button><button data-fx="journey:open">View journey</button></div></section>`;
+  return `<section class="journey-strip"><div class="jr-strip-copy"><div class="jr-eyebrow">Your riding journey · Chapter ${c.number} of 5</div><b>${ready?'Your next reward is ready.':esc(c.name)}</b><p>${ready?`Collect ${c.reward.coins} coins and your ${esc(c.reward.gear.set)} ${esc(c.reward.gear.slot)}.`:esc(next?.label||c.description)}</p><div class="jr-small-track" aria-label="${s.claimedCount} of 5 chapters claimed">${s.chapters.map(ch=>`<i class="${ch.status}"></i>`).join('')}</div></div><div class="jr-strip-actions"><button class="jr-primary" data-fx="${ready?'journey:open':'journey:start'}">${ready?'Collect your reward':'Ride next goal'}</button><button data-fx="journey:open">View journey</button></div></section>${story}`;
  }
  function currentCard(s){
   const c=s.current;
@@ -38,7 +56,7 @@ export function install(G){
  }
  function collection(s){return `<aside class="jr-collection"><div class="jr-eyebrow">A collection you earn by riding</div><h2>Your Silver Trail tack</h2><p>Earn all four Silver pieces, then chase the Legendary Aurora saddle. Equip a reward on the horse you are riding.</p>${s.chapters.map(c=>{const g=c.reward.gear;return `<div class="jr-item ${g.rarity==='Legendary'?'gold':''}"><div class="jr-item-art">${gearArt(g.slot,g.rarity==='Legendary')}</div><div class="jr-item-copy"><b>${esc(g.set)} ${esc(g.slot)}</b><small>${esc(g.rarity)} · ${esc(stats(g.bonus))}<br>${c.status==='claimed'?(c.owned?(c.equipped?'Equipped on your current horse':'Earned · in your tack collection'):'Earned · item no longer in your bag'):'Chapter '+c.number+' reward'}</small></div>${c.owned?`<button data-fx="journey:equip:${esc(c.id)}" ${c.equipped?'disabled':''}>${c.equipped?'Equipped':'Equip'}</button>`:''}</div>`;}).join('')}<div class="jr-collection-note">Matching Silver pieces add a set bonus: two give +1 jump; all four give +2 jump and +1 stamina. Replaced tack stays in your bag.</div></aside>`;}
  function earned(s){if(!receipt)return '';const c=s.chapters.find(ch=>ch.id===receipt.id);if(!c)return '';return `<section class="jr-earned">${gearArt(c.reward.gear.slot,c.reward.gear.rarity==='Legendary')}<div><b>You earned ${esc(c.reward.gear.set)} ${esc(c.reward.gear.slot)}.</b><p>+${receipt.coins} coins · ${esc(stats(c.reward.gear.bonus))} when equipped</p></div>${c.owned?`<button class="jr-primary" data-fx="journey:equip:${esc(c.id)}" ${c.equipped?'disabled':''}>${c.equipped?'Equipped':'Equip on your horse'}</button>`:''}</section>`;}
- function render(){const s=J.snapshot();return `<div class="jr-shell"><div class="jr-top"><span class="jr-brand">MEADOWLARK / RIDER JOURNEY</span><div class="jr-top-actions"><button data-fx="journey:activities">All activities</button><button data-fx="journey:close">Back to riding ×</button></div></div><div class="jr-eyebrow">${s.claimedCount} of 5 chapters completed</div><h1 class="jr-title">Build a partnership. Earn your place.</h1><p class="jr-intro">A path from your first rescue to a championship ride. Every chapter has a clear goal and a guaranteed reward. Your earlier rides already count.</p>${earned(s)}${notice?`<div class="jr-notice" role="status">${esc(notice)}</div>`:''}<div class="jr-layout">${currentCard(s)}${collection(s)}</div><div class="jr-eyebrow">The road ahead</div><div class="jr-route">${s.chapters.map(c=>`<article class="jr-chapter ${c.status}"><div class="jr-chapter-label"><span>0${c.number}</span><span>${{claimed:'Complete',ready:'Reward ready',active:'Up next',locked:'Ahead'}[c.status]}</span></div><b>${esc(c.name)}</b><p>${c.goals.map(g=>esc(g.label)).join('<br>')}</p></article>`).join('')}</div><p class="jr-foot">Your progress stays with your save. Every activity remains free to play, in any order.</p></div>`;}
+ function render(){const s=J.snapshot();return `<div class="jr-shell"><div class="jr-top"><span class="jr-brand">MEADOWLARK / RIDER JOURNEY</span><div class="jr-top-actions"><button data-fx="journey:activities">All activities</button><button data-fx="journey:close">Back to riding ×</button></div></div><div class="jr-eyebrow">${s.claimedCount} of 5 chapters completed</div><h1 class="jr-title">Build a partnership. Earn your place.</h1><p class="jr-intro">A path from your first rescue to a championship ride. Every chapter has a clear goal and a guaranteed reward. Your earlier rides already count.</p>${earned(s)}${storyCard(s)}${notice?`<div class="jr-notice" role="status">${esc(notice)}</div>`:''}<div class="jr-layout">${currentCard(s)}${collection(s)}</div><div class="jr-eyebrow">The road ahead</div><div class="jr-route">${s.chapters.map(c=>`<article class="jr-chapter ${c.status}"><div class="jr-chapter-label"><span>0${c.number}</span><span>${{claimed:'Complete',ready:'Reward ready',active:'Up next',locked:'Ahead'}[c.status]}</span></div><b>${esc(c.name)}</b><p>${c.goals.map(g=>esc(g.label)).join('<br>')}</p></article>`).join('')}</div><p class="jr-foot">Your progress stays with your save. Every activity remains free to play, in any order.</p></div>`;}
  G.ui.panel({id:'riderJourneyPanel',title:'Rider journey',render});
  const panel=$('riderJourneyPanel');panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Rider journey and earned tack');panel.setAttribute('aria-modal','true');
  const isOpen=()=>panel.style.display==='flex';G.seFrame?.screens.add(isOpen);new MutationObserver(()=>G.seFrame?.settle()).observe(panel,{attributes:true,attributeFilter:['style']});
@@ -48,6 +66,11 @@ export function install(G){
   if(action==='open')open();
   else if(action==='start')start();
   else if(action==='claim'){const r=J.claim(arg);if(r){receipt=r;notice='';G.sChime?.();G.ui.rerender(panel.id);}}
+  else if(action==='story'){
+   if(busy()||G.worldPkg?.vehicle?.()){G.toast('Finish or leave your current ride before continuing the story.');return;}
+   if(!storyPlan()){notice='Your current story task is unavailable. Try opening the story again when your save is ready.';G.toast(notice);if(isOpen())G.ui.rerender(panel.id);return;}
+   G.storyGuidance.activateCurrent();G.seFrame?.settle();
+  }
   else if(action==='equip'){if(J.equip(arg)){notice='Your earned tack is now equipped on '+(G.horse.ridden()?.name||'your horse')+'.';G.ui.rerender(panel.id);}}
   else if(action==='activities'){G.hidePanels();G.rideHub?.open();G.seFrame?.settle();}
   else if(action==='close'){G.hidePanels();G.seFrame?.settle();}

@@ -374,7 +374,7 @@ export function install(G){
    footer.querySelector('[data-sem-util="muteBtn"]').textContent=G.audio?.muted?.()?'Sound off':'Sound on';
    const goal=($('questTrack')?.textContent||'').replace(/\p{Extended_Pictographic}|️/gu,'').split('·').map(v=>v.trim()).filter(Boolean);
    const quest=G.quest,mission=quest?.STORY?.[quest.storyIdx?.()];
-   $('semGoal').textContent=mission?.label||goal.at(-1)||'Take the long way home.';
+   $('semGoal').textContent=String(mission?.label||goal.at(-1)||'Take the long way home.').replace(/\{name\}/g,s.story?.name||'the grey mare');
    $('semChapter').textContent=mission?.ch||(goal.length>2?goal.slice(1,-1).join(' · '):'There is always another trail to discover.');
    $('semRidden').textContent=h.name?'In the saddle with '+h.name:'Welcome to the valley';
    if(!hero.querySelector('.sem-hero-art>img'))hero.querySelector('.sem-hero-art').innerHTML=ranchScene();

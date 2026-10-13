@@ -71,10 +71,27 @@ export function firstGallopExit(m,position){
  return Math.abs(x)>2||z<14?{x:0,z:16}:{x:0,z:26};
 }
 
+// One person resolver for the text and the world marker. Read the current clue
+// ledger each time: noting a witness must immediately point to the next one.
+export function missionPersonId(m,done,save={}){
+ if(!m)return null;
+ if(!done){
+  if(m.talk)return m.talk;
+  const had=Array.isArray(save.story?.clues)?save.story.clues:[];
+  const next=Array.isArray(m.clues)&&m.clues.find(c=>c?.npc&&!had.includes(c.npc));
+  if(next)return next.npc;
+ }
+ return m.npc||'wren';
+}
+
 // undefined lets the established door/visit/person resolver handle the mission.
 // null deliberately removes a misleading arrow to the giver before an action is done.
-export function resolveTarget(m,done,world,position){
+export function resolveTarget(m,done,world,position,save={}){
  if(!m||done)return undefined;
+ if(m.talk||(Array.isArray(m.clues)&&m.clues.length)){
+  const id=missionPersonId(m,false,save),g=world.npcList?.find(q=>q.def?.id===id)?.g;
+  return g?.position&&g.visible!==false?{id:'story-person:'+id,position:g.position}:null;
+ }
  const exit=firstGallopExit(m,position);
  if(exit)return {id:'prologue:south-gate',position:{...exit,y:world.groundH?.(exit.x,exit.z)||0},arrivalDistance:1};
  if(m.type==='carrots'||m.type==='forage'){
@@ -120,13 +137,21 @@ export function install(G){
   else{
    const training=m.type==='train'?trainingFood(G.tables.FOODS3,save.items,horse,G.xp,f=>f.sxp*G.mul('sxp',save,horse,f.stat)):undefined;
    step=nextAction(m,false,H.player.pos,{save,catalog:G.tables.DECOR_CAT,training,statLabels:G.tables.STAT_LBL});
-   if(!step)step={hint:m.type==='visit'?'Follow the marker to '+title.replace(/^Visit |^Ride to /,'')+'.':'Follow the marker and talk to '+short+'.',action:'guide',label:m.type==='visit'?'Ride there':'Find '+short};
+   if(!step){
+    const personId=missionPersonId(m,false,save),person=Q.NPC_DEFS.find(d=>d.id===personId);
+    const who=(person?.name||personId||'the giver').replace(/^(Grandpa|Auntie|Farmer|Sheriff) /,'');
+    const compare=Array.isArray(m.clues)&&m.clues.length&&personId===(m.npc||'wren');
+    step=compare?{hint:'You have heard from every witness. Return to '+who+' to compare the clues.',action:'guide',label:'Compare clues with '+who}:
+     {hint:m.type==='visit'?'Follow the marker to '+title.replace(/^Visit |^Ride to /,'')+'.':'Follow the marker and talk to '+who+'.',action:'guide',label:m.type==='visit'?'Ride there':'Find '+who};
+   }
   }
   const checklist=m.type==='build2'&&!m.ridingAlternative?['lantern','trough'].map(item=>({label:G.tables.DECOR_CAT[item]?.label||item,done:(save.decor||[]).some(d=>d.t===item)})):[];
   return {...step,label:step.label||'Follow the marker',title,progress,goal,reward,complete,checklist};
  }
  let cachedTarget, targetMission=null, targetTime=-Infinity;
  const target=(m,s,complete)=>{
+  // NPCs can move, and a newly noted clue can change the target in this frame.
+  if(m?.talk||(Array.isArray(m?.clues)&&m.clues.length))return resolveTarget(m,complete,W,H.player.pos,s);
   const now=performance.now();
   // A few dozen pickups do not need a full scan on every rendered frame.
   if(m!==targetMission||now-targetTime>200||complete){
