@@ -55,3 +55,23 @@ Coverage includes model delay/timeout/retry, wrong or detached rigs, persistence
 ## Browser evidence
 
 Recorded JSON and images in this directory document the playtest. The rescue was completed with normal wall-time inputs and explicit reassurance, then adopted and ridden as horse ID 2 (pinto). Bramble remained ID 1. The selection and rescue records survived a production reload. Further course/reward outcomes are recorded in `playtest-results.json`.
+
+## Story and event horse comparison · 13 October 2026
+
+After a confirmed First Partners claim, Activities, riding-result summaries and Rider Journey offer the current grey horse story as a separate optional path. The card reads the saved name and current quest; it never changes the story cursor or credits an activity. Witness instructions and world markers now use the same person resolver. On phones, the current riding goal stays above the optional story card.
+
+Events → open a normal event → **Choose horse** compares actual saved adult horses for the selected difficulty. It shows each horse’s trained and equipped stats, entry shortfalls, personality handling, bond stamina savings, and favoured race stats. Choosing, bonding, comparing tack or training confirms that horse’s saved ID and attached model; preparation returns to the same event and difficulty.
+
+Acceptance used the existing isolated, production-created review save with Bramble and adopted Clover. It already had three Journey claims; this was not another empty-save onboarding proof. Normal controls opened the new optional story, rode to Wren, named the grey foal Luna, claimed the naming quest through the original dialogue, and reached the original 300 m gallop task. Naming, quest index and existing Journey claims survived reload. No story order or gate was bypassed.
+
+The actual comparison showed Bramble (Lv 1, bond 25; equipped stats 3/4/3/3/3) and Clover (Lv 2, bond 58; 4/8/14/4/5). Choosing Bramble loaded the bay sporthorse with saved ID 1. Grooming through Bond & Feed gave +2 bond, and Back to Pasture Pony Dash returned to Open difficulty. The real race completed all six gates, paid 180 coins, four gems and one ribbon; the ribbon raised Bramble’s bond to 29. Selection, bond, ribbon, 7:21.1 personal best and story state survived another normal reload.
+
+This was a poor competitive run: 441.1 seconds, P4/4 and 101 time faults. The driver stopped at gate 4 after five seconds without physical progress near the permanent haybales. The operator reversed, turned and rode around them with normal S/D/W inputs, then explicitly restarted the driver. No fixture teleport, course index, clock, score, reward or save edit was used. This proves normal selection, preparation, completion and persistence; it does not prove an intuitive course, a clean time or a gold medal. The haybale guidance conflict remains the next gameplay priority.
+
+The native gallop counter reached 270.09/300 during this run. Its current implementation uses speed × time, including blocked motion, and canter can exceed its old speed threshold. That value is not evidence of 270 m of physical galloping. The next distance change must measure actual movement after collisions, use the real gait, preserve saved progress and avoid zero-valued daily events.
+
+Phone comparison evidence uses a 390 × 844 browser: the game panel was 364 pixels wide without horizontal overflow, comparison cards were 332 pixels wide, and all action buttons were 44 pixels high. Both actual breed portraits loaded at 640-pixel source resolution. Runtime listeners and the feature error list recorded no errors; multiplayer stayed disconnected on this isolated origin. Witness sequencing, failed claims, stale actions, lost selection saves and delayed/wrong models were covered by focused checks rather than a complete browser playthrough of the missing-horse story. Evidence is in `story-events-20261013/`.
+
+The integration also repaired stale cache-only source-preimage adapters while retaining the original source fixtures, pinned crag normalizer and unknown-mutation rejection. The baseline proof and release TAP are retained with the browser evidence.
+
+Final Journey phone acceptance kept **Ride next goal** at 686 pixels inside the 760-pixel game frame, above the optional story action at 988 pixels. Both were 44 pixels high; the panel remained 364 pixels wide without sideways overflow.

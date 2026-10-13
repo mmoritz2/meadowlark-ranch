@@ -94,3 +94,15 @@ test('renamed mares are read fresh and escaped, while the prologue bridge avoids
 test('busy rides and vehicles block the bridge without closing screens or changing progress',()=>{
  for(const kind of ['course','drill','rescue','roundup','trail','vehicle']){const f=claimed();bridgePresent(f);if(kind==='trail')f.G.trail.ride={managed:'some-ride'};else f.activity[kind]=kind==='course'||kind==='vehicle'?{}:true;const before=f.save;f.act('story');assert.deepEqual(f.trace.effects,[],kind);assert.deepEqual(f.save,before);assert.match(f.trace.toasts.at(-1),/Finish or leave your current ride/);}
 });
+
+
+test('the real panel keeps its earned receipt and current riding action before the optional story, with collection in the second column',()=>{
+ const f=claimed(),before=f.save,html=f.render();
+ const earned=html.indexOf('class="jr-earned"'),layout=html.indexOf('class="jr-layout"'),column=html.indexOf('class="jr-primary-column"'),current=html.indexOf('class="jr-current"'),primary=html.indexOf('id="followJourney"'),story=html.indexOf('class="journey-strip jr-story"'),collection=html.indexOf('class="jr-collection"');
+ assert(earned>=0&&earned<layout&&layout<column&&column<current&&current<primary&&primary<story&&story<collection);
+ assert.match(html.slice(story,collection),/<\/section><\/div><aside $/);
+ assert.equal((html.match(/data-fx="journey:story"/g)||[]).length,1);
+ const summary=f.summary();assert(summary.indexOf('data-fx="journey:start"')<summary.indexOf('data-fx="journey:story"'),'the result summary continues to put the riding action first');
+ assert.deepEqual(f.save,before);assert.deepEqual(f.trace.effects,[]);
+ f.edit(s=>{delete s.story;});const withoutStory=f.render();assert.match(withoutStory,/<div class="jr-primary-column"><section class="jr-current">/);assert.equal(card(withoutStory),'');assert(withoutStory.indexOf('id="followJourney"')<withoutStory.indexOf('class="jr-collection"'));
+});
