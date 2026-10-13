@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {normalizeProgressionLoopCacheSource} from './progression-loop-cache-source-guard.cjs';
@@ -8,7 +9,7 @@ import {normalizeProgressionHintsSource} from './progression-hints-source-guard.
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file);
 const source=read('ranch3d.html'),contract=JSON.parse(read('tools/fixtures/progression-hints-243dbfb/contract.json'));
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const method=source.match(/ui:\{(canAnnounce\(\)\{[^\n]+?\}),panel:uiPanel/)[1];

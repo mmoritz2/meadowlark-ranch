@@ -1,4 +1,5 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {normalizeLashCacheSource}=require('./lash-cache-source-guard.cjs');
 const {normalizeGrassRibbonTestSource}=require('./grass-ribbon-source-guard.cjs');
 const dir=path.join(__dirname,'fixtures/reviewed-riding-4e346b2');
 const load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));
@@ -33,6 +34,7 @@ function normalizeReviewedCacheSource(source,file){
  return source;
 }
 function normalizeReviewedRuntimeSource(source,file){
+ source=normalizeLashCacheSource(source,file);
  source=normalizeProgressionLoopCacheSource(source,file);
  source=normalizeProgressionHintsSource(source,file);
  return normalizeReviewedCacheSource(normalizeRidingDistanceSource(normalizeRibbonAwardSource(source,file),file),file);

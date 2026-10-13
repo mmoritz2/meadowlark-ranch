@@ -1,0 +1,73 @@
+{
+  "baseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "version": "more-noticeable-lashes96-20261013",
+  "scope": "Three exact lash-release cache imports only; reverse complete current owners to independently pinned df065bd sources. Preserve historical source subjects and every old fixture/hash.",
+  "changes": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';",
+      "after": "import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lashes96-20261013';",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=physical-ride-3-starter-tack-2-fieldstone-walls-3';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=more-noticeable-lashes96-20261013';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as tack from './tack-wardrobe.js?v=noticeable-fine-lashes80-20261012';",
+      "after": "import * as tack from './tack-wardrobe.js?v=more-noticeable-lashes96-20261013';",
+      "occurrences": 1
+    }
+  ],
+  "ownerBeforeSHA256": {
+    "ranch3d.html": "16d741ee7b09bb34514455dea2dfe68d9e46ea6103a4fd6b1ebadf4b31eca027",
+    "assets/features/index.js": "e6561453d146c1a4c4f2be53013a6f3904a6c566ae1d8c1bc6db76c8ec0a6f9f"
+  },
+  "ownerAfterSHA256": {
+    "ranch3d.html": "e420d79d7cae8c744104beeff5dd090d4ff4d62f931729d01a840f4a59820bc3",
+    "assets/features/index.js": "308bc334ed7a5949a1cc354d98ec613979b732b487f063447d77ce65594ebc51"
+  },
+  "observerBeforeSHA256": {
+    "tools/reviewed-riding-source-guard.cjs": "73ace7342af29856ade7f5aa405c516a7d35ff279722bc6e98dbce79a47bee77",
+    "tools/progression-grass-source-guard.cjs": "6a4c5957ca008f47de39594af49cebef75723c9601dbaabc3971305ddcae8f4c",
+    "tools/test-progression-loop-cache-guard.mjs": "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548",
+    "tools/test-progression-grass-composition.mjs": "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e",
+    "tools/test-progression-hints.mjs": "7c3f1e7d63e412a8c651b1e824385150b25a93633bd0bfdbf816c22fd0882247",
+    "tools/test-reviewed-riding-source-guard.mjs": "40f376850df04e75aa0057fd4a655c38a2ee6808a73607566b99127a96fb1066"
+  },
+  "observerAfterSHA256": {
+    "tools/reviewed-riding-source-guard.cjs": "4554276f2fbffb43899d1252e03c54fa2526956332b177cd833e6da72c4ac51b",
+    "tools/progression-grass-source-guard.cjs": "4fea488dadd32eb573b41830dfa69c6010df9658f92831325f1fd87310579180",
+    "tools/test-progression-loop-cache-guard.mjs": "1492f0eaee5ef446120de264d416ec1655a2bf5244e64911bff94746570dd115",
+    "tools/test-progression-grass-composition.mjs": "d3e217211ce9b8f3dc4915c94ab69f5d2924bc391a859eeafc0446c1c85e4263",
+    "tools/test-progression-hints.mjs": "030f825bbc29ec57abafcb73e62e806c8f154c5014800cbfdb66d7dc2fa72315",
+    "tools/test-reviewed-riding-source-guard.mjs": "55efca4f80afe6ff2b904227a659399497a90420caf059ba257ab7f61c3325b7"
+  },
+  "observerApprovedPreimageSHA256": {
+    "tools/reviewed-riding-source-guard.cjs": [
+      "73ace7342af29856ade7f5aa405c516a7d35ff279722bc6e98dbce79a47bee77",
+      "82322d25fd68e7277ee85a4e88ecfb43c971db1c864d05c29dcfc67d74c98ed4",
+      "8cfd67b53de131997d919869f5616f407c016047bb7892459c9ee91e2f325fca"
+    ],
+    "tools/progression-grass-source-guard.cjs": [
+      "6a4c5957ca008f47de39594af49cebef75723c9601dbaabc3971305ddcae8f4c"
+    ],
+    "tools/test-progression-loop-cache-guard.mjs": [
+      "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548"
+    ],
+    "tools/test-progression-grass-composition.mjs": [
+      "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e"
+    ],
+    "tools/test-progression-hints.mjs": [
+      "7c3f1e7d63e412a8c651b1e824385150b25a93633bd0bfdbf816c22fd0882247"
+    ],
+    "tools/test-reviewed-riding-source-guard.mjs": [
+      "40f376850df04e75aa0057fd4a655c38a2ee6808a73607566b99127a96fb1066",
+      "7229b619468e64ee5af8392b02b9d951391be7a5b08b7c5549983c84a4a6976c",
+      "ebad495aafb9af04bbf116be72f4499dcb4c5419b0724ad4602403ec79c4f818"
+    ]
+  }
+}

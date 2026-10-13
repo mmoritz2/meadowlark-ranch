@@ -1,0 +1,80 @@
+[
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\n",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeLashCacheSource}=require('./lash-cache-source-guard.cjs');\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/reviewed-riding-source-guard.cjs",
+    "before": "function normalizeReviewedRuntimeSource(source,file){\n",
+    "after": "function normalizeReviewedRuntimeSource(source,file){\n source=normalizeLashCacheSource(source,file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\n",
+    "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeLashCacheSource,normalizeLashObserverSource}=require('./lash-cache-source-guard.cjs');\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "function normalizeProgressionSource(source,file){\n",
+    "after": "function normalizeProgressionSource(source,file){\n source=normalizeLashCacheSource(source,file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/progression-grass-source-guard.cjs",
+    "before": "function normalizeProgressionGuardSource(source,file){\n",
+    "after": "function normalizeProgressionGuardSource(source,file){\n source=normalizeLashObserverSource(source,file);\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "import fs from 'node:fs';\n",
+    "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8')",
+    "after": "read=file=>normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "import fs from 'node:fs';\n",
+    "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8')",
+    "after": "read=file=>normalizeLashObserverSource(normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-hints.mjs",
+    "before": "import fs from 'node:fs';\n",
+    "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-hints.mjs",
+    "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8')",
+    "after": "read=file=>normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "import fs from 'node:fs';\n",
+    "after": "import fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\n",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-reviewed-riding-source-guard.mjs",
+    "before": "const read=file=>{const source=fs.readFileSync(new URL(file,root),'utf8');",
+    "after": "const read=file=>{const source=normalizeLashCacheSource(fs.readFileSync(new URL(file,root),'utf8'),file);",
+    "occurrences": 1
+  }
+]

@@ -93,11 +93,11 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   }
   if(!root)continue;
   // Fuller outer spacing and fine tapered tips keep the fan visible at editor scale.
-  const stagger=[.89,1.04,.96,.92][i%4],length=(.0040+.0124*Math.pow(t,.8))*stagger*(1+.52*THREE.MathUtils.smoothstep(t,.35,.85))*(1.06+.20*THREE.MathUtils.smoothstep(t,.05,.80)),fan=side*(.0003+.0115*t+[.0002,-.0001,.0001,-.0002][i%4])*1.25,base=positions.length/3;
+  const stagger=[.89,1.04,.96,.92][i%4],length=(.0040+.0124*Math.pow(t,.8))*stagger*(1+.52*THREE.MathUtils.smoothstep(t,.35,.85))*(1.06+.20*THREE.MathUtils.smoothstep(t,.05,.80)),fan=side*(.0003+.0115*t+[.0002,-.0001,.0001,-.0002][i%4])*1.45,base=positions.length/3;
   const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.30,length*.08,length*.85)),root.clone().add(V(fan,length*.72,length*.94)));
   roots.push(root.toArray());lengths.push(length);
   for(let j=0;j<=segments;j++){
-   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00078*Math.pow(1-u,1.12)+.000018;
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00078*Math.pow(1-u,.90)+.000018;
    for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
     if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
    }
@@ -115,5 +115,5 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   for(const i of band.index.array)indices.push(offset+i);band.dispose();
  }
  surface.dispose();eyeSurface.dispose();face.dispose();eyeGeometry.dispose();
- const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;geo.userData.lashStyle={strands:roots.length,lengthM:[Math.min(...lengths),Math.max(...lengths)],radiusM:.000798,fan:'visible-fine-outer-fan'};return geo;
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;geo.userData.lashStyle={strands:roots.length,lengthM:[Math.min(...lengths),Math.max(...lengths)],radiusM:.000798,fan:'fuller-fine-outer-fan'};return geo;
 }
