@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "baseline": "05421c6a68a0f0914607ee4b50d5490dff3fa4de",
+  "scope": "Exact programme preparation/real handler preservation and opt-in canonical Basin regroup coordination, nine approved cache imports. Shared packets hold the existing local trail; they do not grant stops or rewards. Reverse only declared full-source/observer literals for unchanged historical checks; new behavior tests stay live.",
+  "files": {
+    "ranch3d.html": {
+      "beforeSHA256": "2283b1002394077fb2aa0bd3a48ac6884d18ebce9d814a75e6d31d944ee8e403",
+      "afterSHA256": "020b6ee5aa528b437e054305769aad0b2b4397b4572b878a590f2e84aea96182"
+    },
+    "assets/features/index.js": {
+      "beforeSHA256": "3c8286e2d5dbb2bc8b6e6d67505786b1ee74374563013ad4d86f662d3c0b6f3a",
+      "afterSHA256": "85b9e78f297f851d6adfd06283124e0ddd5d48c22958e8a8d483ec0f6938b567"
+    },
+    "assets/features/course-engine.js": {
+      "beforeSHA256": "2ff624293f870cf7ae3ee767331bc252eb48784f6075c2d13ce0ce50d428de62",
+      "afterSHA256": "dac0e526fca0ea043563546a576b698f5600ab2c7fa896824d8500c784ef0584"
+    },
+    "assets/features/events2-disciplines.js": {
+      "beforeSHA256": "73bcbb9b98560ac2a31a31c503428605b7170e1a51551ad514c1ad1a48f9c490",
+      "afterSHA256": "7a6779c355d206fcf8545f40fad1987eb03ced316077087c233128d05c8e5ff9"
+    },
+    "assets/features/events2-ladder.js": {
+      "beforeSHA256": "871b9c776344eea68556419ef86d67dcee4f15bc97f6855d2323384742d25992",
+      "afterSHA256": "f5902c85afa07a56c8d5fd82a3fcaa908962b981abc2bb80faa1607fb16c4379"
+    },
+    "assets/features/se-events.js": {
+      "beforeSHA256": "ce6e64df542279a270f40742ac9d3165527a64922aeaddebc3dd8f0575c21140",
+      "afterSHA256": "3df2fe58ad867435cea43812cd54b0298d41e8abe9fa2bc47e910ed347c3fc7d"
+    },
+    "assets/features/ui2-compete.js": {
+      "beforeSHA256": "520a3909c8b2b173141ee79f3452c6640bcd192f12e75b4b4d753e25ba9f9e5e",
+      "afterSHA256": "5820e562ecfa5f371c6d347fe8206691e1f91155bc4c6b46247a8cd38bcea58a"
+    },
+    "assets/features/club-rides.js": {
+      "beforeSHA256": "179e76ef332ae0829d2a59558b7a1eeec705010b10a61038d64a331491a49bba",
+      "afterSHA256": "1d50d4fe2019d49e255f5d4d13e376d441c869d61a4aeb3b3491359fd6696f4e"
+    },
+    "assets/club-social-view.js": {
+      "beforeSHA256": "0b061a3bb4677d3ae1cf73d567dee7a092e3a115792adf51adc893db9039ccc0",
+      "afterSHA256": "e8077f3272ab01ba03a00e895981c5c543a717f6841667056035fe89a8933029"
+    },
+    "assets/features/clubhouse-ui.js": {
+      "beforeSHA256": "18664aab95742285330c5dff74ae1f0113c84b99b0ea3726e9b46967fef3d087",
+      "afterSHA256": "35b0da3439f5eb3188db370fdfb64e64931ad2b6685cb7f1ed0063a1f5c8425d"
+    }
+  },
+  "changes": [
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as course from './course-engine.js?v=final-ribbon-1';",
+      "after": "import * as course from './course-engine.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as ev2disc from './events2-disciplines.js?v=final-ribbon-2';",
+      "after": "import * as ev2disc from './events2-disciplines.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as ev2ladder from './events2-ladder.js?v=horse-growth-1';",
+      "after": "import * as ev2ladder from './events2-ladder.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as ui2compete from './ui2-compete.js?v=tack-stats-1';",
+      "after": "import * as ui2compete from './ui2-compete.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as seEvents from './se-events.js?v=horse-training-plan-1';",
+      "after": "import * as seEvents from './se-events.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as clubRides from './club-rides.js?v=club-post-relay-1';",
+      "after": "import * as clubRides from './club-rides.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as clubhouseUI from './clubhouse-ui.js?v=club-post-relay-1';",
+      "after": "import * as clubhouseUI from './clubhouse-ui.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/clubhouse-ui.js",
+      "before": "import {createClubSocialView} from '../club-social-view.js?v=club-together-1';",
+      "after": "import {createClubSocialView} from '../club-social-view.js?v=programme-club-regroup-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/course-engine.js",
+      "before": "  return false;\n });\n G.on('eventGate',(ev,h)=>{ const r=eventOk(ev,h); const first=r.missing.find(m=>m[0]!=='level');\n  return {ok:r.ok,missing:r.missing,html:r.ok?'':' <span style=\"font-size:11px;color:#8c7a63\">needs '+missingText(r.missing)+'</span>'+(first?' <button data-drill=\"'+first[0]+'\" style=\"font-size:11px;padding:3px 8px\" title=\"Train '+T.STAT_LBL[first[0]]+' in a drill\">Drill</button>':'')}; });\n G.on('eventEnter',(ev,i,ctx)=>{\n  const h=ridden(), lvl=(h&&h.level)||1;\n  return '<span class=\"evdiff\">'+DIFFS.map((d,di)=>{\n",
+      "after": "  return false;\n });\n G.on('eventGate',(ev,h)=>{ const r=eventOk(ev,h); const first=r.missing.find(m=>m[0]!=='level');\n  const prepare=G.seEvents?.preparationControl?.(ev);\n  return {ok:r.ok,missing:r.missing,html:r.ok?'':' <span style=\"font-size:11px;color:#8c7a63\">needs '+missingText(r.missing)+'</span>'+(prepare|| (first?' <button data-drill=\"'+first[0]+'\" style=\"font-size:11px;padding:3px 8px\" title=\"Train '+T.STAT_LBL[first[0]]+' in a drill\">Drill</button>':''))}; });\n G.on('eventEnter',(ev,i,ctx)=>{\n  const h=ridden(), lvl=(h&&h.level)||1;\n  return '<span class=\"evdiff\">'+DIFFS.map((d,di)=>{\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/events2-disciplines.js",
+      "before": "            +(d.k==='jump'?'<br>4 faults a rail, 4 for a refusal and 8 for the second — three at one fence and you are out.':'')\n            +(s.bestTimes&&s.bestTimes[ev.id]?'<br>Your best here: <b>'+s.bestTimes[ev.id]+'s</b>':''))\n   +'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🚪 To get in</b><span class=\"ev2card\">'+reqLine(ev,h)+'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🐴 Your horse + equipped tack</b><span class=\"ev2card\">'+tackLine(ev,h)+'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🎁 What it pays · '+diffAt(di).label+'</b><span class=\"ev2card\">'+rewardLine(ev,di)+'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🎚️ The three levels</b>';\n",
+      "after": "            +(d.k==='jump'?'<br>4 faults a rail, 4 for a refusal and 8 for the second — three at one fence and you are out.':'')\n            +(s.bestTimes&&s.bestTimes[ev.id]?'<br>Your best here: <b>'+s.bestTimes[ev.id]+'s</b>':''))\n   +'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🚪 To get in</b><span class=\"ev2card\">'+reqLine(ev,h)+'</span>'+(G.seEvents?.preparationControl?.(ev,di)||'')+'</div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🐴 Your horse + equipped tack</b><span class=\"ev2card\">'+tackLine(ev,h)+'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🎁 What it pays · '+diffAt(di).label+'</b><span class=\"ev2card\">'+rewardLine(ev,di)+'</span></div>';\n  html+='<div class=\"evrow\" style=\"flex-wrap:wrap\"><b style=\"width:100%\">🎚️ The three levels</b>';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/events2-disciplines.js",
+      "before": "  return '<div class=\"ev2card\" data-ev2=\"'+ev.id+'\">'\n   +'<span class=\"ev2chip '+d.k+'\">'+d.icon+' '+d.label+'</span>'+discDetail(ev)+' · '+d.sub\n   +'<br>'+(d.k==='dressage'||d.k==='show'?'🎯 '+SCORE_BANDS:'⏱ '+allowedLine(ev,s&&s.evDiff))\n   +'<span class=\"ev2grid\"><button data-fx=\"ev2:card:'+ev.id+'\" title=\"The whole card before you commit\">ℹ️ Full card</button></span></div>';\n });\n let FILTER=null;\n function discCounts(){ const out={}; for(const ev of T.EVENTS3)out[discOf(ev).k]=(out[discOf(ev).k]||0)+1; return out; }\n",
+      "after": "  return '<div class=\"ev2card\" data-ev2=\"'+ev.id+'\">'\n   +'<span class=\"ev2chip '+d.k+'\">'+d.icon+' '+d.label+'</span>'+discDetail(ev)+' · '+d.sub\n   +'<br>'+(d.k==='dressage'||d.k==='show'?'🎯 '+SCORE_BANDS:'⏱ '+allowedLine(ev,s&&s.evDiff))\n   +'<span class=\"ev2grid\">'+(G.course.eventOk?.(ev,h)?.ok===false?'':G.seEvents?.preparationControl?.(ev,s?.evDiff)||'')+'<button data-fx=\"ev2:card:'+ev.id+'\" title=\"The whole card before you commit\">ℹ️ Full card</button></span></div>';\n });\n let FILTER=null;\n function discCounts(){ const out={}; for(const ev of T.EVENTS3)out[discOf(ev).k]=(out[discOf(ev).k]||0)+1; return out; }\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/events2-ladder.js",
+      "before": "  const lock=entryLock(ev,s,h);\n  if(lock)html+='<div class=\"sub ladLock\">🔒 '+esc(lock)+'</div>';\n  else if(i>=0)html+='<button class=\"claimBtn\" data-fx=\"lad:again:'+esc(ev.id)+'\">Enter · '+purse+'🪙</button>';\n  return html;\n }\n /* The Enter button used to ask only whether the horse met the event's own level and stats. The\n",
+      "after": "  const lock=entryLock(ev,s,h);\n  if(lock)html+='<div class=\"sub ladLock\">🔒 '+esc(lock)+'</div>';\n  else if(i>=0)html+='<button class=\"claimBtn\" data-fx=\"lad:again:'+esc(ev.id)+'\">Enter · '+purse+'🪙</button>';\n  html+=G.seEvents?.preparationControl?.(ev,di)||'';\n  return html;\n }\n /* The Enter button used to ask only whether the horse met the event's own level and stats. The\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/events2-ladder.js",
+      "before": "  if(jd&&jd.id===ev.id)bits.push('🎽 <b>judged class of the week</b>');\n  if(ev.champ&&L.champion)bits.push('🏆 last Final: <b>#'+L.champion.place+'</b>');\n  return '<div class=\"ladCard\">'+(bits.length?'<span style=\"flex:1;min-width:120px\">'+bits.join(' · ')+'</span>':'<span style=\"flex:1\"></span>')\n   +'<button data-fx=\"lad:why:'+esc(ev.id)+'\" title=\"Time allowed, favoured traits, the whole reward line and your record here\">ℹ️ Full card</button></div>';\n });\n /* the Events panel: the path, and anything waiting */\n G.ui.eventCard((s,h)=>{\n",
+      "after": "  if(jd&&jd.id===ev.id)bits.push('🎽 <b>judged class of the week</b>');\n  if(ev.champ&&L.champion)bits.push('🏆 last Final: <b>#'+L.champion.place+'</b>');\n  return '<div class=\"ladCard\">'+(bits.length?'<span style=\"flex:1;min-width:120px\">'+bits.join(' · ')+'</span>':'<span style=\"flex:1\"></span>')\n   +'<button data-fx=\"lad:why:'+esc(ev.id)+'\" title=\"Time allowed, favoured traits, the whole reward line and your record here\">Rewards &amp; record</button></div>';\n });\n /* the Events panel: the path, and anything waiting */\n G.ui.eventCard((s,h)=>{\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/se-events.js",
+      "before": " }\n\n /* ---- the event page ---- */\n function openPage(ev){const hadFocus=root.contains(document.activeElement);st.context++;st.compare=false;st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();\n  if(hadFocus){const button=$('sevPage').querySelector('button:not([disabled])');if(button)button.focus({preventScroll:true});}}\n function evById(id){if(!id)return null;const sp=specials().find(e=>e.id===id);return sp||T.EVENTS3.find(e=>e.id===id)||null;}\n function paintPage(){\n  const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}\n  const s=S(), disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), lk=townLock(ev.town), h=ridden(), lvl=h.level||1;\n",
+      "after": " }\n\n /* ---- the event page ---- */\n function preparationDifficulty(di){const value=di==null?(S().evDiff??1):di;return Number.isInteger(value)&&value>=0&&value<DIFFS().length?value:null;}\n function preparationControl(ev,di,label='Prepare horse'){\n  const event=ev&&evById(ev.id),diff=preparationDifficulty(di);\n  return event&&!event.special&&diff!==null?'<button data-fx=\"sev:prepare:'+esc(event.id)+':'+diff+'\" style=\"min-height:44px\" title=\"Horse level, XP, tack and training for this event\">'+esc(label)+'</button>':'';\n }\n function openPage(ev,di=null){const hadFocus=root.contains(document.activeElement);st.context++;st.compare=false;st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(di==null?(s.evDiff==null?1:s.evDiff):di);root.classList.add('page');paintPage();\n  if(hadFocus){const button=$('sevPage').querySelector('button:not([disabled])');if(button)button.focus({preventScroll:true});}}\n function evById(id){if(!id)return null;const sp=specials().find(e=>e.id===id);return sp||T.EVENTS3.find(e=>e.id===id)||null;}\n function prepareEvent(id,di){\n  const ev=evById(id),diff=preparationDifficulty(di);\n  if(!ev||ev.special||diff===null||!$('eventsPanel')||!G.ui?.openEvents)return false;\n  // The programme is the classic Events panel. Restore its existing cover\n  // explicitly; toggling the Events button alone can leave that list on top.\n  if(K.cover('eventsPanel',{}).classic)K.takeBack('eventsPanel');\n  G.hidePanels();st.townName=ev.town||'Meadowlark Ranch';G.ui.openEvents();K.cover('eventsPanel',{classic:false});\n  const town=TW.find(t=>t.name===st.townName);if(town)st.cur[town.name]=Math.max(0,town.evs.indexOf(ev));\n  openPage(ev,diff);\n  $('sevPage').querySelector('[data-sev=\"xp\"]:not(:disabled),[data-sev^=\"train:\"]:not(:disabled),.sev-requirements summary,[data-sev=\"ride\"]:not(:disabled)')?.focus({preventScroll:true});\n  return true;\n }\n function paintPage(){\n  const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}\n  const s=S(), disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), lk=townLock(ev.town), h=ridden(), lvl=h.level||1;\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/se-events.js",
+      "before": " }\n\n /* ---- input ---- */\n root.addEventListener('keydown',e=>{\n  const card=e.target.closest('.sev-card[role=\"button\"]');\n  if(!card||!root.contains(card)||(e.code!=='Enter'&&e.code!=='Space'))return;\n",
+      "after": " }\n\n /* ---- input ---- */\n G.ui.action('sev',a=>a[0]==='prepare'?prepareEvent(a[1],Number(a[2])):false);\n root.addEventListener('keydown',e=>{\n  const card=e.target.closest('.sev-card[role=\"button\"]');\n  if(!card||!root.contains(card)||(e.code!=='Enter'&&e.code!=='Space'))return;\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/se-events.js",
+      "before": " G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up\n G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,comparison:st.compare,horseSelection:mountSelection.state(),sheet:root.classList.contains('sheet'),\n  towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});\n G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,comparison:()=>{const ev=evById(st.page),s=S(),di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);return ev&&!ev.special?(s.horses||[]).filter(h=>eventHorseById(s,h.id)).map(h=>comparisonFor(ev,di,h,s)):[];},state:st};\n}\n",
+      "after": " G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up\n G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,comparison:st.compare,horseSelection:mountSelection.state(),sheet:root.classList.contains('sheet'),\n  towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});\n G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},preparationControl,prepareEvent,move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,comparison:()=>{const ev=evById(st.page),s=S(),di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);return ev&&!ev.special?(s.horses||[]).filter(h=>eventHorseById(s,h.id)).map(h=>comparisonFor(ev,di,h,s)):[];},state:st};\n}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/ui2-compete.js",
+      "before": "    const actWrap=el('div','c2-evAct');\n    if(act){\n     if(act===lock){\n      const inner=lock.innerHTML;\n      const note=el('span','c2-lockNote'); note.innerHTML=inner||'🔒';\n      lock.replaceWith(note); actWrap.appendChild(note);\n      actWrap.appendChild(el('span','c2-purse','Unlocks at Lv '+ev.lvl));\n     }else{\n",
+      "after": "    const actWrap=el('div','c2-evAct');\n    if(act){\n     if(act===lock){\n      // Keep the renderer's bound buttons when restyling a locked row.\n      const note=el('span','c2-lockNote');for(const child of Array.from(lock.childNodes))note.appendChild(child);if(!note.childNodes.length)note.textContent='🔒';\n      lock.replaceWith(note); actWrap.appendChild(note);\n      actWrap.appendChild(el('span','c2-purse','Unlocks at Lv '+ev.lvl));\n     }else{\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "/* Live club rides coordinate voluntary trail starts. Packets never move a rider,\n   award a reward, or replace an existing activity. The normal trail owns play. */\nexport const id='club-rides';\nconst TTL=180000, ONLINE=45000, HEARTBEAT=15000, LIFETIME=6*3600000;\nconst safe=v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{1,64}$/.test(v)&&v!=='prototype'&&!Object.prototype.hasOwnProperty.call(Object.prototype,v);\n",
+      "after": "/* Live club rides coordinate voluntary trail starts. Packets never move a rider,\n   award a reward, or replace an existing activity. The normal trail owns play. */\nimport {REGROUP_MODE,REGROUP_ROUTE,isRegroupRoute,regroupState} from '../club-regroup-rules.mjs?v=club-regroup-1';\nimport {createClubRegroup} from '../club-regroup.mjs?v=club-regroup-1';\nexport const id='club-rides';\nconst TTL=180000, ONLINE=45000, HEARTBEAT=15000, LIFETIME=6*3600000;\nconst safe=v=>typeof v==='string'&&/^[a-zA-Z0-9_-]{1,64}$/.test(v)&&v!=='prototype'&&!Object.prototype.hasOwnProperty.call(Object.prototype,v);\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "export function install(G){\n const N=G.net,S=G.save,now=()=>Date.now(),me=()=>N.net.id,name=()=>clean(N.myName(),14)||'Rider';\n const sessions=new Map(),members=new Map(),pending=new Map(),pendingPlans=new Map();\n let currentId=null,scope='',elapsed=0,lastBeat=0,lastConnected=false,lastNotice='';\n S.ensure(s=>{s.clubRideResume=s.clubRideResume||null;s.clubRideHistory=s.clubRideHistory||{};});\n const code=()=>G.clubs?.identity(S.fresh())?.code||'';\n const connected=()=>!!N.net.client?.connected&&!!code()&&N.net.club===code();\n",
+      "after": "export function install(G){\n const N=G.net,S=G.save,now=()=>Date.now(),me=()=>N.net.id,name=()=>clean(N.myName(),14)||'Rider';\n const sessions=new Map(),members=new Map(),pending=new Map(),pendingPlans=new Map();\n let currentId=null,scope='',elapsed=0,lastBeat=0,lastConnected=false,lastNotice='',starting=false;\n S.ensure(s=>{s.clubRideResume=s.clubRideResume||null;s.clubRideHistory=s.clubRideHistory||{};});\n const code=()=>G.clubs?.identity(S.fresh())?.code||'';\n const connected=()=>!!N.net.client?.connected&&!!code()&&N.net.club===code();\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": " const plan=id=>G.clubActivities?.snapshot().rides.find(r=>r.id===id);\n const topic=(kind,sid,pid)=>'srf1/'+scope+'/clubride2/'+kind+'/'+sid+(pid?'/'+pid:'');\n const notify=()=>G.run('clubRideChanged');\n function connectionReason(){if(!safe(code()))return 'Join a club first.';if(N.net.club!==code())return 'Connect to your club room to ride together.';if(!N.net.client?.connected)return 'Connect to your club to host or join a live ride.';return '';}\n function routeReason(r){\n  if(!r||!Array.isArray(r.stops)||r.stops.length<2)return 'This route is unavailable.';\n",
+      "after": " const plan=id=>G.clubActivities?.snapshot().rides.find(r=>r.id===id);\n const topic=(kind,sid,pid)=>'srf1/'+scope+'/clubride2/'+kind+'/'+sid+(pid?'/'+pid:'');\n const notify=()=>G.run('clubRideChanged');\n const regroupMode=s=>s?.mode===REGROUP_MODE;\n function memberAllowed(pid){const s=S.fresh()||{},c=G.clubs?.identity(s)||{},r=s.clubRecords?.[c.code]?.members?.[pid];if(!c.founder||c.canCreate||c.pendingJoin)return false;if(r?.left)return false;return pid===me()||c.founderId===pid||!!r||!!G.clubs?.memberRows?.(s).some(row=>row.id===pid);}\n const regroup=createClubRegroup(G,{now,me,route,roster,connected,memberAllowed,session:()=>sessions.get(currentId),publishSession,changed:notify,publish:(sid,pid,m)=>N.publish(topic('position',sid,pid),m,{retain:false})});\n function connectionReason(){if(!safe(code()))return 'Join a club first.';if(N.net.club!==code())return 'Connect to your club room to ride together.';if(!N.net.client?.connected)return 'Connect to your club to host or join a live ride.';return '';}\n function routeReason(r){\n  if(!r||!Array.isArray(r.stops)||r.stops.length<2)return 'This route is unavailable.';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  return '';\n }\n function playReason(sid){\n  if(G.clubPostRelay?.snapshot?.().current)return 'Leave your post relay before joining another club ride.';\n  if(G.course?.get())return 'Finish your event before joining a club ride.';\n  if(G.course?.drillActive?.())return 'Finish your drill before joining a club ride.';\n",
+      "after": "  return '';\n }\n function playReason(sid){\n  if(G.clubHerd?.snapshot?.().current)return 'Leave your herd drive before joining another club ride.';\n  if(G.clubPostRelay?.snapshot?.().current)return 'Leave your post relay before joining another club ride.';\n  if(G.course?.get())return 'Finish your event before joining a club ride.';\n  if(G.course?.drillActive?.())return 'Finish your drill before joining a club ride.';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  const saved=S.fresh()?.clubRideResume;\n  if(!saved||saved.code!==scope||!safe(saved.id)||saved.session?.id!==saved.id||saved.session.expiresAt<=now()||!route(saved.session.routeId))return;\n  const s=saved.session,p=saved.participant;if(!p||!Number.isInteger(p.progress))return;\n  sessions.set(s.id,copy(s));roster(s.id).set(me(),copy(p));currentId=s.id;\n }\n function changeScope(){\n  const next=code();if(next===scope)return;\n  stopTrail(currentId);sessions.clear();members.clear();pending.clear();pendingPlans.clear();currentId=null;scope=safe(next)?next:'';hydrate();notify();\n }\n function validSession(sid){\n  const s=sessions.get(sid);return s&&s.status!=='cancelled'&&s.expiresAt>now()&&!blocked(s.host)?s:null;\n",
+      "after": "  const saved=S.fresh()?.clubRideResume;\n  if(!saved||saved.code!==scope||!safe(saved.id)||saved.session?.id!==saved.id||saved.session.expiresAt<=now()||!route(saved.session.routeId))return;\n  const s=saved.session,p=saved.participant;if(!p||!Number.isInteger(p.progress))return;\n  if(s.mode!=null&&(!regroupMode(s)||!isRegroupRoute(route(s.routeId))||!memberAllowed(me())||!regroupState(s.regroup,{status:s.status,hostId:s.hostId})))return;\n  sessions.set(s.id,copy(s));roster(s.id).set(me(),copy(p));currentId=s.id;\n }\n function changeScope(){\n  const next=code();if(next===scope)return;\n  stopTrail(currentId);regroup.clear();sessions.clear();members.clear();pending.clear();pendingPlans.clear();currentId=null;scope=safe(next)?next:'';hydrate();notify();\n }\n function validSession(sid){\n  const s=sessions.get(sid);return s&&s.status!=='cancelled'&&s.expiresAt>now()&&!blocked(s.host)?s:null;\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": " function expire(){\n  let changed=false;\n  for(const [sid,s]of sessions)if(s.expiresAt<=now()||blocked(s.host)){\n   if(sid===currentId){stopTrail(sid);currentId=null;lastNotice='This club ride has ended or its host is no longer connected.';storeResume();}\n   sessions.delete(sid);members.delete(sid);changed=true;\n  }\n",
+      "after": " function expire(){\n  let changed=false;\n  for(const [sid,s]of sessions)if(s.expiresAt<=now()||blocked(s.host)){\n   if(sid===currentId&&regroupMode(s)&&G.trail?.ride?.clubRideId===sid){if(lastNotice!=='The group ride is unavailable. Continue alone or leave the trail.'){lastNotice='The group ride is unavailable. Continue alone or leave the trail.';changed=true;}continue;}\n   if(sid===currentId){stopTrail(sid);currentId=null;lastNotice='This club ride has ended or its host is no longer connected.';storeResume();}\n   sessions.delete(sid);members.delete(sid);changed=true;\n  }\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  const r=route(s.routeId),p=roster(s.id).get(me()),total=r.stops.length;\n  const people=[...roster(s.id)].filter(([,v])=>!v.left&&!blocked(v.name)).map(([pid,v])=>({id:pid,name:v.name,ready:!!v.ready,online:pid===me()?connected():now()-v.at<ONLINE,progress:v.progress,finished:!!v.finished}));\n  const joined=currentId===s.id&&!!p&&!p.left;\n  return {id:s.id,title:s.title,planId:s.planId||null,routeId:s.routeId,routeName:r.name,host:s.host,status:s.status,roster:people,canHost:s.hostId===me(),canStart:s.hostId===me()&&s.status==='waiting'&&joined&&connected()&&people.filter(v=>v.online).every(v=>v.ready),joined,\n   nextStop:r.stops[Math.min(p?.progress||0,total-1)][0],totalStops:total,progress:p?.progress||0,finished:!!p?.finished,riding:G.trail?.ride?.clubRideId===s.id};\n }\n function snapshot(){\n  changeScope();expire();\n  const list=[...sessions.values()].filter(s=>validSession(s.id)&&route(s.routeId)).sort((a,b)=>b.createdAt-a.createdAt).map(row);\n  return {connected:connected(),code:scope,reason:connectionReason()||lastNotice,routes:routes().map(r=>{const reason=routeReason(r);return {id:r.id,name:r.name,blurb:r.blurb,stops:r.stops.length,points:copy(r.stops),distance:r.stops.slice(1).reduce((d,p,i)=>d+Math.hypot(p[1]-r.stops[i][1],p[2]-r.stops[i][2]),0),locked:!!reason,reason};}),lobbies:list,current:list.find(s=>s.id===currentId)||null};\n }\n function begin(s){\n  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(s.id);if(reason)return fail(reason);\n  const p=roster(s.id).get(me());if(!p||p.left)return fail('Join this ride first.');if(p.finished)return fail('You have already finished this ride.');\n  if(G.trail.ride?.clubRideId===s.id)return {ok:true};\n  const r=route(s.routeId);\n  if(!G.trail.start(copy(r.stops),s.host,{name:s.title,exped:r.id,clubRideId:s.id}))return fail('The trail could not be started.');\n  G.trail.ride.idx=Math.min(p.progress,r.stops.length-1);setSelf(s.id,{ready:true,left:false});\n  G.riding?.releaseAll?.();G.hidePanels?.();return {ok:true};\n }\n",
+      "after": "  const r=route(s.routeId),p=roster(s.id).get(me()),total=r.stops.length;\n  const people=[...roster(s.id)].filter(([,v])=>!v.left&&!blocked(v.name)).map(([pid,v])=>({id:pid,name:v.name,ready:!!v.ready,online:pid===me()?connected():now()-v.at<ONLINE,progress:v.progress,finished:!!v.finished}));\n  const joined=currentId===s.id&&!!p&&!p.left;\n  const grouped=regroupMode(s),groupPeople=people.filter(p=>!roster(s.id).get(p.id)?.left);\n  const groupStart=!grouped||groupPeople.length>=2&&groupPeople.length<=4&&groupPeople.every(p=>memberAllowed(p.id)&&p.ready&&now()-(roster(s.id).get(p.id)?.at||0)<20000);\n  return {id:s.id,mode:s.mode||null,regroup:regroup.view(s),title:s.title,planId:s.planId||null,routeId:s.routeId,routeName:r.name,host:s.host,status:s.status,roster:people,canHost:s.hostId===me(),canStart:s.hostId===me()&&s.status==='waiting'&&joined&&connected()&&groupStart&&people.filter(v=>v.online).every(v=>v.ready),joined,\n   nextStop:r.stops[Math.min(p?.progress||0,total-1)][0],totalStops:total,progress:p?.progress||0,finished:!!p?.finished,riding:G.trail?.ride?.clubRideId===s.id};\n }\n function snapshot(){\n  changeScope();expire();\n  const list=[...sessions.values()].filter(s=>(validSession(s.id)||s.id===currentId&&regroupMode(s))&&route(s.routeId)).sort((a,b)=>b.createdAt-a.createdAt).map(row);\n  return {connected:connected(),code:scope,reason:connectionReason()||lastNotice,routes:routes().map(r=>{const reason=routeReason(r);return {id:r.id,name:r.name,blurb:r.id==='cottonwood'?'Ride through the pines to Cottonwood, then return together. For pouch handovers, choose the two-rider Post Relay.':r.blurb,canRegroup:isRegroupRoute(r)&&memberAllowed(me()),stops:r.stops.length,points:copy(r.stops),distance:r.stops.slice(1).reduce((d,p,i)=>d+Math.hypot(p[1]-r.stops[i][1],p[2]-r.stops[i][2]),0),locked:!!reason,reason};}),lobbies:list,current:list.find(s=>s.id===currentId)||null};\n }\n function begin(s){\n  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(s.id);if(reason)return fail(reason);\n  const p=roster(s.id).get(me());if(!p||p.left)return fail('Join this ride first.');if(p.finished)return fail('You have already finished this ride.');\n  if(G.trail.ride?.clubRideId===s.id)return {ok:true};\n  const r=route(s.routeId);\n  if(regroupMode(s)&&(!memberAllowed(me())||!s.regroup.crew.includes(me())))return fail('Join the group and mark Ready before it starts.');\n  let began=false;starting=true;try{began=G.trail.start(copy(r.stops),s.host,{name:s.title,exped:r.id,clubRideId:s.id});}finally{starting=false;}\n  if(!began)return fail('The trail could not be started.');\n  if(regroupMode(s))regroup.begin(s,G.trail.ride);\n  G.trail.ride.idx=Math.min(p.progress,r.stops.length-1);setSelf(s.id,{ready:true,left:false});\n  G.riding?.releaseAll?.();G.hidePanels?.();return {ok:true};\n }\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  const p=options.planId?plan(options.planId):null;\n  if(options.planId&&(!safe(options.planId)||!p||p.creator!==me()||p.routeId!==routeId))return fail('Only this scheduled ride’s host can launch its selected route.');\n  if(options.planId&&forPlan(options.planId))return fail('This scheduled ride already has a live lobby. Open it instead.');\n  const reason=connectionReason()||routeReason(route(routeId))||playReason(null);if(reason)return fail(reason);\n  if(currentId)return fail('Leave your current club ride before hosting another.');\n  if([...sessions.values()].some(s=>s.hostId===me()&&validSession(s.id)))return fail('You already have a live ride. Join it or cancel it first.');\n  if(!safe(me()))return fail('Your rider identity is unavailable.');\n  const id=me()+'-'+now().toString(36)+'-'+Math.random().toString(36).slice(2,6),r=route(routeId);\n  const s={id,hostId:me(),host:name(),routeId,planId:p?.id||null,title:p?.title||clean(options.title)||r.name,status:'waiting',rev:1,createdAt:now(),at:now(),expiresAt:now()+TTL};\n  sessions.set(id,s);currentId=id;lastNotice='';publishSession(s);setSelf(id,{ready:true});return {ok:true,id};\n }\n function launchPlan(planId){\n",
+      "after": "  const p=options.planId?plan(options.planId):null;\n  if(options.planId&&(!safe(options.planId)||!p||p.creator!==me()||p.routeId!==routeId))return fail('Only this scheduled ride’s host can launch its selected route.');\n  if(options.planId&&forPlan(options.planId))return fail('This scheduled ride already has a live lobby. Open it instead.');\n  if(options.regroup===true&&(!isRegroupRoute(route(routeId))||!memberAllowed(me())))return fail('Create or join a club to regroup on the Basin Loop.');\n  if(options.regroup!=null&&typeof options.regroup!=='boolean')return fail('This ride setup is unavailable.');\n  const reason=connectionReason()||routeReason(route(routeId))||playReason(null);if(reason)return fail(reason);\n  if(currentId)return fail('Leave your current club ride before hosting another.');\n  if([...sessions.values()].some(s=>s.hostId===me()&&validSession(s.id)))return fail('You already have a live ride. Join it or cancel it first.');\n  if(!safe(me()))return fail('Your rider identity is unavailable.');\n  const id=me()+'-'+now().toString(36)+'-'+Math.random().toString(36).slice(2,6),r=route(routeId);\n  const s={id,hostId:me(),host:name(),routeId,planId:p?.id||null,title:p?.title||clean(options.title)||r.name,status:'waiting',rev:1,createdAt:now(),at:now(),expiresAt:now()+TTL};\n  if(options.regroup===true){s.mode=REGROUP_MODE;s.regroup={route:REGROUP_ROUTE,crew:[],departures:[]};}\n  sessions.set(id,s);currentId=id;lastNotice='';publishSession(s);setSelf(id,{ready:true});return {ok:true,id};\n }\n function launchPlan(planId){\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(sid);if(reason)return fail(reason);\n  if(currentId&&currentId!==sid)return fail('Leave your current club ride before joining another.');\n  if(roster(sid).get(me())?.finished||S.fresh()?.clubRideHistory?.[scope+'|'+sid]?.finished)return fail('You have already finished this ride.');\n  if(roster(sid).size>=24&&!roster(sid).has(me()))return fail('This ride already has 24 riders.');\n  currentId=sid;lastNotice='';setSelf(sid,{left:false});return s.status==='riding'?begin(s):{ok:true};\n }\n",
+      "after": "  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(sid);if(reason)return fail(reason);\n  if(currentId&&currentId!==sid)return fail('Leave your current club ride before joining another.');\n  if(roster(sid).get(me())?.finished||S.fresh()?.clubRideHistory?.[scope+'|'+sid]?.finished)return fail('You have already finished this ride.');\n  if(regroupMode(s)){if(!memberAllowed(me())||!memberAllowed(s.hostId))return fail('Wait for your club’s member list to reconnect.');if(s.status!=='waiting')return fail('This group has started. Join the next group ride.');if([...roster(sid)].filter(([,p])=>!p.left).length>=4&&(!roster(sid).has(me())||roster(sid).get(me()).left))return fail('This group already has four riders.');}\n  if(roster(sid).size>=24&&!roster(sid).has(me()))return fail('This ride already has 24 riders.');\n  currentId=sid;lastNotice='';setSelf(sid,{left:false});return s.status==='riding'?begin(s):{ok:true};\n }\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(sid);if(reason)return fail(reason);\n  if(s.status!=='waiting')return fail('This ride has already started.');\n  if(!row(s).canStart)return fail('Wait for the riders who are online to mark Ready.');\n  const result=begin(s);if(!result.ok)return result;\n  Object.assign(s,{status:'riding',rev:s.rev+1,at:now(),expiresAt:now()+TTL});publishSession(s);storeResume();notify();return {ok:true};\n }\n function leave(){\n  changeScope();\n  const s=sessions.get(currentId);if(!s)return fail('You are not in a club ride.');\n  if(s.hostId===me())return cancel(s.id);\n  stopTrail(s.id);setSelf(s.id,{left:true,ready:false});currentId=null;storeResume();notify();return {ok:true};\n }\n function cancel(sid=currentId){\n  changeScope();\n  const s=sessions.get(sid);if(!s||s.hostId!==me())return fail('Only the host can end this ride.');\n  Object.assign(s,{status:'cancelled',rev:s.rev+1,at:now(),expiresAt:now()+TTL});if(connected())publishSession(s);\n  stopTrail(sid);if(currentId===sid){setSelf(sid,{left:true});currentId=null;storeResume();}notify();return {ok:true};\n }\n function rejoin(){changeScope();const s=validSession(currentId);if(!s)return fail('Join a live club ride first.');if(s.status!=='riding')return fail('The host has not started this ride yet.');return begin(s);}\n function acceptMember(sid,pid,m){\n  const s=validSession(sid);if(!s)return false;const total=route(s.routeId)?.stops.length;\n  if(!total||!Number.isInteger(m.progress)||m.progress<0||m.progress>total||typeof m.ready!=='boolean'||typeof m.left!=='boolean'||typeof m.finished!=='boolean'||m.finished!==(m.progress===total))return false;\n  const rows=roster(sid),old=rows.get(pid);if((old&&m.rev<=old.rev)||(!old&&rows.size>=24))return false;\n  rows.set(pid,{name:clean(m.n,14)||'Rider',ready:m.ready,left:m.left,finished:!!old?.finished||m.finished,progress:Math.max(old?.progress||0,m.progress),rev:m.rev,at:m.at});return true;\n }\n function acceptSession(sid,m,queue=true){\n  if(N.net.club!==scope||scope!==code()||m.expiresAt<=now()||m.at<now()-TTL||blocked(clean(m.n,14)))return;\n  if(m.planId!=null&&!safe(m.planId))return;\n  const old=sessions.get(sid);\n  if(old&&(old.hostId!==m.hostId||old.routeId!==m.routeId||(old.planId||null)!==(m.planId||null)||old.rev>=m.rev||(old.status==='cancelled'&&m.status!=='cancelled')||(old.status==='riding'&&m.status==='waiting')))return;\n  if(m.planId&&!old){\n   const p=plan(m.planId);\n",
+      "after": "  const reason=connectionReason()||routeReason(route(s.routeId))||playReason(sid);if(reason)return fail(reason);\n  if(s.status!=='waiting')return fail('This ride has already started.');\n  if(!row(s).canStart)return fail('Wait for the riders who are online to mark Ready.');\n  if(regroupMode(s))s.regroup.crew=[...roster(s.id)].filter(([,p])=>!p.left).map(([id])=>id);\n  const result=begin(s);if(!result.ok){if(regroupMode(s))s.regroup.crew=[];return result;}\n  Object.assign(s,{status:'riding',rev:s.rev+1,at:now(),expiresAt:now()+TTL});publishSession(s);storeResume();notify();return {ok:true};\n }\n function leave(){\n  changeScope();\n  const s=sessions.get(currentId);if(!s)return fail('You are not in a club ride.');\n  if(s.hostId===me()){const result=cancel(s.id);if(regroupMode(s)){stopTrail(s.id);regroup.clear();currentId=null;storeResume();notify();}return result;}\n  stopTrail(s.id);regroup.clear();setSelf(s.id,{left:true,ready:false});currentId=null;storeResume();notify();return {ok:true};\n }\n function cancel(sid=currentId){\n  changeScope();\n  const s=sessions.get(sid);if(!s||s.hostId!==me())return fail('Only the host can end this ride.');\n  Object.assign(s,{status:'cancelled',rev:s.rev+1,at:now(),expiresAt:now()+TTL});if(connected())publishSession(s);\n  if(!regroupMode(s)||G.trail?.ride?.clubRideId!==sid){stopTrail(sid);if(currentId===sid){setSelf(sid,{left:true});regroup.clear();currentId=null;storeResume();}}else {lastNotice='The group ride ended. Continue alone or leave the trail.';storeResume();}notify();return {ok:true};\n }\n function continueAlone(){\n  const s=sessions.get(currentId),r=G.trail?.ride;if(!regroupMode(s)||r?.clubRideId!==s.id)return fail('Join your group trail before continuing alone.');\n  if(s.hostId===me())cancel(s.id);\n  setSelf(s.id,{left:true,ready:false});delete r.clubRegroup;delete r.clubRideId;regroup.clear();currentId=null;lastNotice='You are continuing the ordinary trail alone.';storeResume();notify();return {ok:true};\n }\n function rejoin(){changeScope();const s=validSession(currentId);if(!s)return fail('Join a live club ride first.');if(s.status!=='riding')return fail('The host has not started this ride yet.');return begin(s);}\n function acceptMember(sid,pid,m){\n  const s=validSession(sid);if(!s)return false;const total=route(s.routeId)?.stops.length;\n  if(!total||!Number.isInteger(m.progress)||m.progress<0||m.progress>total||typeof m.ready!=='boolean'||typeof m.left!=='boolean'||typeof m.finished!=='boolean'||m.finished!==(m.progress===total))return false;\n  const rows=roster(sid),old=rows.get(pid);\n  if(regroupMode(s)&&(!memberAllowed(pid)||!m.left&&(!old||old.left)&&[...rows.values()].filter(p=>!p.left).length>=4||s.status==='riding'&&!s.regroup.crew.includes(pid)))return false;if((old&&m.rev<=old.rev)||(!old&&rows.size>=24))return false;\n  rows.set(pid,{name:clean(m.n,14)||'Rider',ready:m.ready,left:m.left,finished:!!old?.finished||m.finished,progress:Math.max(old?.progress||0,m.progress),rev:m.rev,at:m.at});return true;\n }\n function acceptSession(sid,m,queue=true){\n  if(N.net.club!==scope||scope!==code()||m.expiresAt<=now()||m.at<now()-TTL||blocked(clean(m.n,14)))return;\n  if(m.planId!=null&&!safe(m.planId))return;\n  const old=sessions.get(sid);\n  if((old?.mode||null)!==(m.mode||null)&&old)return;\n  let grouping=null;if(m.mode!=null){if(m.mode!==REGROUP_MODE||!isRegroupRoute(route(m.routeId))||!memberAllowed(m.id))return;grouping=regroupState(m.regroup,{status:m.status,hostId:m.hostId,previous:old?.regroup});if(!grouping)return;}\n  if(old&&(old.hostId!==m.hostId||old.routeId!==m.routeId||(old.planId||null)!==(m.planId||null)||old.rev>=m.rev||(old.status==='cancelled'&&m.status!=='cancelled')||(old.status==='riding'&&m.status==='waiting')))return;\n  if(m.planId&&!old){\n   const p=plan(m.planId);\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  }\n  // An already validated lobby may still end after its calendar plan is deleted.\n  if(!old&&sessions.size>=24)return;\n  const s={id:sid,hostId:m.hostId,host:clean(m.n,14)||'Rider',routeId:m.routeId,planId:m.planId||null,title:clean(m.title)||route(m.routeId).name,status:m.status,rev:m.rev,createdAt:m.createdAt,at:m.at,expiresAt:m.expiresAt};sessions.set(sid,s);\n  for(const [key,v]of pending)if(v.sid===sid){acceptMember(sid,v.pid,v.m);pending.delete(key);}\n  if(s.status==='cancelled'&&currentId===sid){stopTrail(sid);currentId=null;lastNotice='The host ended this club ride.';storeResume();}\n  pendingPlans.delete(sid);notify();\n }\n G.on('clubActivityChanged',()=>{expire();for(const [sid,p]of pendingPlans)acceptSession(sid,p.m,false);});\n",
+      "after": "  }\n  // An already validated lobby may still end after its calendar plan is deleted.\n  if(!old&&sessions.size>=24)return;\n  const s={id:sid,hostId:m.hostId,host:clean(m.n,14)||'Rider',routeId:m.routeId,planId:m.planId||null,title:clean(m.title)||route(m.routeId).name,status:m.status,rev:m.rev,createdAt:m.createdAt,at:m.at,expiresAt:m.expiresAt};if(grouping){s.mode=REGROUP_MODE;s.regroup=grouping;}sessions.set(sid,s);\n  for(const [key,v]of pending)if(v.sid===sid){acceptMember(sid,v.pid,v.m);pending.delete(key);}\n  if(s.status==='cancelled'&&currentId===sid){if(!regroupMode(s)||G.trail?.ride?.clubRideId!==sid){stopTrail(sid);regroup.clear();currentId=null;}lastNotice='The host ended this club ride.';storeResume();}\n  pendingPlans.delete(sid);notify();\n }\n G.on('clubActivityChanged',()=>{expire();for(const [sid,p]of pendingPlans)acceptSession(sid,p.m,false);});\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "   if(m.hostId!==m.id||!sid.startsWith(m.hostId+'-')||!route(m.routeId)||!['waiting','riding','cancelled'].includes(m.status)||!Number.isFinite(m.expiresAt)||m.expiresAt<=now()||m.expiresAt>m.at+TTL||!Number.isFinite(m.createdAt)||m.createdAt>m.at||now()-m.createdAt>LIFETIME)return true;\n   acceptSession(sid,m);return true;\n  }\n  if(p[3]==='rider'&&p.length===6&&safe(p[5])&&m.id===p[5]){\n   if(!sessions.has(sid)){const key=sid+'/'+p[5],old=pending.get(key);if((old||pending.size<128)&&(!old||m.rev>old.m.rev))pending.set(key,{sid,pid:p[5],m:copy(m),at:now()});}\n   else if(acceptMember(sid,p[5],m))notify();return true;\n",
+      "after": "   if(m.hostId!==m.id||!sid.startsWith(m.hostId+'-')||!route(m.routeId)||!['waiting','riding','cancelled'].includes(m.status)||!Number.isFinite(m.expiresAt)||m.expiresAt<=now()||m.expiresAt>m.at+TTL||!Number.isFinite(m.createdAt)||m.createdAt>m.at||now()-m.createdAt>LIFETIME)return true;\n   acceptSession(sid,m);return true;\n  }\n  if(p[3]==='position'&&p.length===6&&safe(p[5])&&m.id===p[5]){regroup.receive(sessions.get(sid),p[5],m);return true;}\n  if(p[3]==='rider'&&p.length===6&&safe(p[5])&&m.id===p[5]){\n   if(!sessions.has(sid)){const key=sid+'/'+p[5],old=pending.get(key);if((old||pending.size<128)&&(!old||m.rev>old.m.rev))pending.set(key,{sid,pid:p[5],m:copy(m),at:now()});}\n   else if(acceptMember(sid,p[5],m))notify();return true;\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": "  if(!r||r.clubRideId!==currentId)return;\n  const s=validSession(currentId),old=s&&roster(s.id).get(me());if(!s||!old||old.finished)return;\n  const n=Math.min(route(s.routeId).stops.length,Math.max(old.progress,r.idx|0));\n  if(finished||n!==old.progress)setSelf(s.id,{progress:n,finished:finished&&n===route(s.routeId).stops.length});\n }\n G.on('trailStop',r=>progress(r));G.on('trailDone',r=>progress(r,true));\n",
+      "after": "  if(!r||r.clubRideId!==currentId)return;\n  const s=validSession(currentId),old=s&&roster(s.id).get(me());if(!s||!old||old.finished)return;\n  const n=Math.min(route(s.routeId).stops.length,Math.max(old.progress,r.idx|0));\n  regroup.progress(r);\n  if(finished||n!==old.progress)setSelf(s.id,{progress:n,finished:finished&&n===route(s.routeId).stops.length});\n }\n G.on('trailStop',r=>progress(r));G.on('trailDone',r=>progress(r,true));\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/club-rides.js",
+      "before": " G.on('clubChanged',()=>{changeScope();subscribe();});\n G.on('clubRoom',(room)=>{if(room!==scope){progress(G.trail?.ride);stopTrail(currentId);notify();}});\n G.on('tick',dt=>{\n  elapsed+=dt;if(elapsed<1)return;elapsed=0;changeScope();expire();\n  const on=connected();if(on!==lastConnected){lastConnected=on;notify();}\n  if(G.trail?.ride?.clubRideId===currentId){progress(G.trail.ride);if(G.worldPkg?.vehicle?.())stopTrail(currentId);}\n  if(now()-lastBeat>=HEARTBEAT){lastBeat=now();heartbeat();}\n });\n G.on('state',o=>{const s=snapshot();o.clubRide={connected:s.connected,code:s.code,lobbies:s.lobbies.length,current:s.current};});\n G.clubRides={snapshot,host,join,ready,start,leave,cancel,rejoin,forPlan,launchPlan};subscribe();\n}\n",
+      "after": " G.on('clubChanged',()=>{changeScope();subscribe();});\n G.on('clubRoom',(room)=>{if(room!==scope){progress(G.trail?.ride);stopTrail(currentId);notify();}});\n G.on('tick',dt=>{\n  regroup.tick();elapsed+=dt;if(elapsed<1)return;elapsed=0;changeScope();expire();\n  const on=connected();if(on!==lastConnected){lastConnected=on;notify();}\n  if(G.trail?.ride?.clubRideId===currentId){progress(G.trail.ride);if(G.worldPkg?.vehicle?.())stopTrail(currentId);}\n  if(now()-lastBeat>=(regroupMode(sessions.get(currentId))?2000:HEARTBEAT)){lastBeat=now();heartbeat();}\n });\n G.on('state',o=>{const s=snapshot();o.clubRide={connected:s.connected,code:s.code,lobbies:s.lobbies.length,current:s.current};});\n G.on('trailTick',regroup.tickTrail);\n const gate=()=>{if(!starting&&regroupMode(sessions.get(currentId))){G.toast?.('Leave the group ride or choose Continue alone first.');return true;}};\n G.on('activityGate',gate);G.on('courseGate',gate);G.on('travelGate',gate);\n G.clubRides={readyAtStop:regroup.readyAtStop,continueTogether:regroup.continueTogether,continueAlone,snapshot,host,join,ready,start,leave,cancel,rejoin,forPlan,launchPlan};subscribe();\n}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/club-social-view.js",
+      "before": "  if(c.status==='waiting')controls=action('ready',self?.ready?'Not ready':'I’m ready','data-ready=\"'+(!self?.ready)+'\" '+(!s.connected?'disabled':''),self?.ready?'':'gold')+(c.canHost?action('start','Start club ride',attr('ride',c.id)+' '+(!c.canStart?'disabled':''),'gold'):'');\n  else if(!c.finished)controls=action(c.riding?'return':'resume',c.riding?'Return to ride':'Join the ride',!s.connected&&!c.riding?'disabled':'','gold');\n  controls+=c.canHost?action('cancel','End for everyone',attr('ride',c.id),'quiet'):action('leave','Leave ride','','quiet');\n  const subtitle=c.finished?'You finished this route. Your usual trail rewards have been earned.':c.status==='waiting'?'Get everyone ready, then the host can start the trail.':c.riding?'Follow the golden marker to '+clean(c.nextStop||'the next stop')+'.':'The host has started. Join when you are ready.';\n  return '<section class=\"cs-current\"><div class=\"cs-current-map\">'+routeArt(route)+'<span class=\"cs-map-badge\">'+esc(c.status==='waiting'?'MEETING UP':c.finished?'RIDE COMPLETE':'ON THE TRAIL')+'</span></div><div class=\"cs-current-copy\"><span class=\"ch-eyebrow\">YOUR CLUB RIDE</span><h2>'+esc(c.title||c.routeName||route?.name)+'</h2><p class=\"ch-muted\">'+esc(subtitle)+'</p><div class=\"cs-route-meta\"><span>Hosted by '+esc(c.host)+'</span><span>'+c.roster.length+' rider'+(c.roster.length===1?'':'s')+'</span></div>'+(c.status==='riding'?bar(progress,total,'Your trail stops')+'<small>'+Math.min(progress,total)+' / '+total+' stops complete</small>':'')+'<div class=\"ch-actions\">'+controls+'</div></div><div class=\"cs-current-roster\"><h3>Riding party</h3><ul>'+c.roster.map(memberRow).join('')+'</ul><p class=\"ch-footnote\">Each rider joins and rides the route themselves. Finishing contributes to club goals.</p></div></section>';\n }\n function activities(){\n  const s=rides(),others=s.lobbies.filter(l=>l.id!==s.current?.id);\n  const cards=s.routes.map(r=>'<article class=\"cs-route-card\">'+routeArt(r)+'<div class=\"cs-route-copy\"><span class=\"ch-eyebrow\">'+(r.locked?'REGION REQUIRED':'CLUB EXPEDITION')+'</span><h3>'+esc(r.name)+'</h3><p>'+esc(r.blurb)+'</p><div class=\"cs-route-meta\"><span>'+r.stops+' stops</span><span>'+fmt(r.distance||0)+' m</span></div>'+(r.locked?'<small class=\"cs-route-reason\">'+esc(r.reason)+'</small>':'')+action('host','Host this ride',attr('route',r.id)+' '+(!s.connected||r.locked||s.current?'disabled':''),'gold')+'</div></article>').join('');\n  return '<div class=\"ch-page-title\"><h1>Ride Together</h1><span>Good company. A shared route.</span></div>'+connection(s)+currentRide(s)+(others.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Join your clubmates</h2><span>'+others.length+' open ride'+(others.length===1?'':'s')+'</span></div><div class=\"cs-lobby-grid\">'+others.map(l=>'<article class=\"cs-lobby\"><span class=\"cs-avatar\">'+icon('horse')+'</span><div><h3>'+esc(l.title||l.routeName)+'</h3><p>With '+esc(l.host)+' · '+l.roster.length+' rider'+(l.roster.length===1?'':'s')+'</p>'+stateTag(l.status==='riding',l.status==='waiting'?'Meeting up':'On the trail')+'</div>'+action('join','Join ride',attr('ride',l.id)+' '+(!s.connected||s.current?'disabled':''),'gold')+'</article>').join('')+'</div></section>':'<div class=\"cs-no-rides\"><span>'+icon('flag')+'</span><p><strong>No other rides are open yet.</strong> Host a route below so your clubmates can join you.</p></div>')+'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Choose your next trail</h2><span>Existing expedition rewards apply</span></div><div class=\"cs-route-grid\">'+cards+'</div></section>';\n }\n function riderCard(r,kind){\n  const label=clean(r.activity||r.region)||(r.online?'Riding in your world':'Not in your current world');\n",
+      "after": "  if(c.status==='waiting')controls=action('ready',self?.ready?'Not ready':'I’m ready','data-ready=\"'+(!self?.ready)+'\" '+(!s.connected?'disabled':''),self?.ready?'':'gold')+(c.canHost?action('start','Start club ride',attr('ride',c.id)+' '+(!c.canStart?'disabled':''),'gold'):'');\n  else if(!c.finished)controls=action(c.riding?'return':'resume',c.riding?'Return to ride':'Join the ride',!s.connected&&!c.riding?'disabled':'','gold');\n  controls+=c.canHost?action('cancel','End for everyone',attr('ride',c.id),'quiet'):action('leave','Leave ride','','quiet');\n  if(c.regroup&&c.riding)controls+=action('alone','Continue alone','','quiet');\n  const subtitle=c.regroup?c.regroup.reason:c.finished?'You finished this route. Your usual trail rewards have been earned.':c.status==='waiting'?'Get everyone ready, then the host can start the trail.':c.riding?'Follow the golden marker to '+clean(c.nextStop||'the next stop')+'.':'The host has started. Join when you are ready.';\n  return '<section class=\"cs-current\"><div class=\"cs-current-map\">'+routeArt(route)+'<span class=\"cs-map-badge\">'+esc(c.status==='waiting'?'MEETING UP':c.finished?'RIDE COMPLETE':'ON THE TRAIL')+'</span></div><div class=\"cs-current-copy\"><span class=\"ch-eyebrow\">YOUR CLUB RIDE</span><h2>'+esc(c.title||c.routeName||route?.name)+'</h2><p class=\"ch-muted\">'+esc(subtitle)+'</p><div class=\"cs-route-meta\"><span>Hosted by '+esc(c.host)+'</span><span>'+c.roster.length+' rider'+(c.roster.length===1?'':'s')+'</span></div>'+(c.status==='riding'?bar(progress,total,'Your trail stops')+'<small>'+Math.min(progress,total)+' / '+total+' stops complete</small>':'')+'<div class=\"ch-actions\">'+controls+'</div></div><div class=\"cs-current-roster\"><h3>Riding party</h3><ul>'+c.roster.map(memberRow).join('')+'</ul><p class=\"ch-footnote\">'+(c.regroup?'Untimed · stop at each marker, ready in the riding HUD, then let the host continue. Every rider earns their own usual trail reward.':'Each rider joins and rides the route themselves. Finishing contributes to club goals.')+'</p></div></section>';\n }\n function activities(){\n  const s=rides(),others=s.lobbies.filter(l=>l.id!==s.current?.id);\n  const cards=s.routes.map(r=>'<article class=\"cs-route-card\">'+routeArt(r)+'<div class=\"cs-route-copy\"><span class=\"ch-eyebrow\">'+(r.locked?'REGION REQUIRED':'CLUB EXPEDITION')+'</span><h3>'+esc(r.name)+'</h3><p>'+esc(r.blurb)+'</p><div class=\"cs-route-meta\"><span>'+r.stops+' stops</span><span>'+fmt(r.distance||0)+' m</span></div>'+(r.locked?'<small class=\"cs-route-reason\">'+esc(r.reason)+'</small>':'')+(r.canRegroup?action('host-regroup','Regroup ride · 2–4 riders',attr('route',r.id)+' '+(!s.connected||r.locked||s.current?'disabled':''),'gold')+'<small class=\"cs-route-reason\">Untimed. Stop together at every marker and choose when to continue.</small>':'')+action('host',r.canRegroup?'Host ordinary trail':'Host this ride',attr('route',r.id)+' '+(!s.connected||r.locked||s.current?'disabled':''),'gold')+'</div></article>').join('');\n  return '<div class=\"ch-page-title\"><h1>Ride Together</h1><span>Good company. A shared route.</span></div>'+connection(s)+currentRide(s)+(others.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Join your clubmates</h2><span>'+others.length+' open ride'+(others.length===1?'':'s')+'</span></div><div class=\"cs-lobby-grid\">'+others.map(l=>'<article class=\"cs-lobby\"><span class=\"cs-avatar\">'+icon('horse')+'</span><div><h3>'+esc(l.title||l.routeName)+(l.regroup?' · Regroup':'')+'</h3><p>With '+esc(l.host)+' · '+l.roster.length+' rider'+(l.roster.length===1?'':'s')+'</p>'+stateTag(l.status==='riding',l.status==='waiting'?'Meeting up':'On the trail')+'</div>'+action('join',l.mode==='regroup-v1'&&l.status==='riding'?'Ride started':'Join ride',attr('ride',l.id)+' '+(!s.connected||s.current||l.mode==='regroup-v1'&&l.status==='riding'?'disabled':''),'gold')+'</article>').join('')+'</div></section>':'<div class=\"cs-no-rides\"><span>'+icon('flag')+'</span><p><strong>No other rides are open yet.</strong> Host a route below so your clubmates can join you.</p></div>')+'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Choose your next trail</h2><span>Existing expedition rewards apply</span></div><div class=\"cs-route-grid\">'+cards+'</div></section>';\n }\n function riderCard(r,kind){\n  const label=clean(r.activity||r.region)||(r.online?'Riding in your world':'Not in your current world');\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/club-social-view.js",
+      "before": "  return '<div class=\"ch-page-title\"><h1>Friends & Riders</h1><span>'+f.friends.length+' / '+(G.social?.FRIEND_MAX||50)+' friends</span></div>'+connection(f)+'<form id=\"chFriendsSearch\" class=\"cs-friends-search\"><label>Find a friend or clubmate<input name=\"query\" type=\"search\" placeholder=\"Search riders…\" value=\"'+esc(query)+'\" autocomplete=\"off\"></label><button class=\"ch-btn\" type=\"submit\">Search</button></form>'+(f.requests.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Friend requests</h2><span>'+f.requests.length+' waiting</span></div><div class=\"cs-rider-grid\">'+f.requests.map(r=>riderCard(r,'request')).join('')+'</div></section>':'')+'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Your friends</h2><span>'+f.friends.filter(r=>r.online).length+' riding now</span></div>'+(mine.length?'<div class=\"cs-rider-grid\">'+mine.map(r=>riderCard(r,'friend')).join('')+'</div>':'<div class=\"cs-empty\"><span>'+icon('members')+'</span><h3>'+ (q?'No matching friends':'Every ride is better with company')+'</h3><p>'+(q?'Try another name.':'Connect with your clubmates below. Accepted friend requests will appear here.')+'</p>'+button('copy','Copy club code','','gold')+'</div>')+'</section><section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Clubmates</h2><span>Meet riders from your club</span></div>'+(mates.length?'<div class=\"cs-rider-grid\">'+mates.map(r=>riderCard(r,'clubmate')).join('')+'</div>':'<p class=\"ch-muted\">'+(q?'No matching clubmates.':'Your other clubmates will appear here as their membership is received.')+'</p>')+'</section>'+(nearby.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Nearby riders</h2></div><div class=\"cs-rider-grid\">'+nearby.map(r=>riderCard(r,'nearby')).join('')+'</div></section>':'')+(f.outgoing.length?'<section class=\"cs-section\"><h3>Requests sent</h3><p class=\"ch-muted\">'+f.outgoing.map(r=>esc(r.name)).join(' · ')+'</p></section>':'');\n }\n const style=document.createElement('link');style.rel='stylesheet';style.href='assets/club-social.css?v=club-together-1';document.head.append(style);\n const hud=document.createElement('button');hud.id='clubRideStatus';hud.type='button';hud.hidden=true;hud.onclick=()=>G.clubHub?.open('activities');document.body.append(hud);\n let stamp='',elapsed=0;\n function syncHud(){const s=rides(),c=s.current;if(!c){hud.hidden=true;stamp='';return;}hud.hidden=false;const text=(c.finished?'Ride complete':c.status==='waiting'?'Club ride · meeting up':'Club ride · '+Math.min(c.progress||0,c.totalStops||0)+' / '+(c.totalStops||0)+' stops')+'|'+(c.title||c.routeName||'Ride together');if(text!==stamp){stamp=text;hud.innerHTML=icon('members')+'<span><b>'+esc(text.split('|')[0])+'</b><small>'+esc(text.split('|')[1])+'</small></span><span aria-hidden=\"true\">›</span>';}}\n G.on('clubRideChanged',syncHud);G.on('tick',dt=>{elapsed+=dt;if(elapsed>=1){elapsed=0;syncHud();}});\n return {home,activities,friends:friendsView};\n}\n",
+      "after": "  return '<div class=\"ch-page-title\"><h1>Friends & Riders</h1><span>'+f.friends.length+' / '+(G.social?.FRIEND_MAX||50)+' friends</span></div>'+connection(f)+'<form id=\"chFriendsSearch\" class=\"cs-friends-search\"><label>Find a friend or clubmate<input name=\"query\" type=\"search\" placeholder=\"Search riders…\" value=\"'+esc(query)+'\" autocomplete=\"off\"></label><button class=\"ch-btn\" type=\"submit\">Search</button></form>'+(f.requests.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Friend requests</h2><span>'+f.requests.length+' waiting</span></div><div class=\"cs-rider-grid\">'+f.requests.map(r=>riderCard(r,'request')).join('')+'</div></section>':'')+'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Your friends</h2><span>'+f.friends.filter(r=>r.online).length+' riding now</span></div>'+(mine.length?'<div class=\"cs-rider-grid\">'+mine.map(r=>riderCard(r,'friend')).join('')+'</div>':'<div class=\"cs-empty\"><span>'+icon('members')+'</span><h3>'+ (q?'No matching friends':'Every ride is better with company')+'</h3><p>'+(q?'Try another name.':'Connect with your clubmates below. Accepted friend requests will appear here.')+'</p>'+button('copy','Copy club code','','gold')+'</div>')+'</section><section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Clubmates</h2><span>Meet riders from your club</span></div>'+(mates.length?'<div class=\"cs-rider-grid\">'+mates.map(r=>riderCard(r,'clubmate')).join('')+'</div>':'<p class=\"ch-muted\">'+(q?'No matching clubmates.':'Your other clubmates will appear here as their membership is received.')+'</p>')+'</section>'+(nearby.length?'<section class=\"cs-section\"><div class=\"cs-section-title\"><h2>Nearby riders</h2></div><div class=\"cs-rider-grid\">'+nearby.map(r=>riderCard(r,'nearby')).join('')+'</div></section>':'')+(f.outgoing.length?'<section class=\"cs-section\"><h3>Requests sent</h3><p class=\"ch-muted\">'+f.outgoing.map(r=>esc(r.name)).join(' · ')+'</p></section>':'');\n }\n const style=document.createElement('link');style.rel='stylesheet';style.href='assets/club-social.css?v=club-together-1';document.head.append(style);\n const regroupStyle=document.createElement('link');regroupStyle.rel='stylesheet';regroupStyle.href='assets/club-regroup.css?v=club-regroup-1';document.head.append(regroupStyle);\n const together=document.createElement('section');together.id='clubRegroupHud';together.hidden=true;together.setAttribute('aria-label','Club regroup ride');\n together.innerHTML='<strong id=\"clubRegroupTitle\"></strong><p id=\"clubRegroupReason\" aria-live=\"polite\"></p><small id=\"clubRegroupPeople\"></small><div><button id=\"clubRegroupReady\" type=\"button\">Ready for next leg</button><button id=\"clubRegroupContinue\" type=\"button\">Continue together</button><button id=\"clubRegroupOpen\" type=\"button\">Ride options</button></div>';\n document.body.append(together);\n const titleNode=together.querySelector('#clubRegroupTitle'),reasonNode=together.querySelector('#clubRegroupReason'),peopleNode=together.querySelector('#clubRegroupPeople'),readyNode=together.querySelector('#clubRegroupReady'),continueNode=together.querySelector('#clubRegroupContinue');\n const act=fn=>{const result=fn?.();if(!result?.ok)G.toast?.(result?.reason||'This action is unavailable.');syncHud();};\n readyNode.onclick=()=>act(()=>G.clubRides?.readyAtStop());continueNode.onclick=()=>act(()=>G.clubRides?.continueTogether());together.querySelector('#clubRegroupOpen').onclick=()=>G.clubHub?.open('activities');\n const hud=document.createElement('button');hud.id='clubRideStatus';hud.type='button';hud.hidden=true;hud.onclick=()=>G.clubHub?.open('activities');document.body.append(hud);\n let stamp='',elapsed=0;\n function syncHud(){const s=rides(),c=s.current,g=c?.regroup;\n together.hidden=!g||!c.riding;\n if(!together.hidden){\n  titleNode.textContent='Regroup · '+clean(g.stop);reasonNode.textContent=g.reason;\n  peopleNode.textContent=g.people.filter(p=>!p.me&&!p.left).map(p=>{const at=G.horse?.player?.pos,d=p.position&&at?Math.round(Math.hypot(p.position.x-at.x,p.position.z-at.z)):null;return p.name+' · '+(p.ready?'ready':p.arrived?'at the stop':p.online?(d==null?'riding':d+' m away'):'connection lost');}).join(' · ');\n  readyNode.disabled=!g.canReady;readyNode.textContent=g.ready?'You’re ready':'Ready for next leg';continueNode.hidden=!c.canHost;continueNode.disabled=!g.canContinue;\n  hud.hidden=true;return;\n }\n if(!c){hud.hidden=true;stamp='';return;}hud.hidden=false;const text=(c.finished?'Ride complete':c.status==='waiting'?'Club ride · meeting up':'Club ride · '+Math.min(c.progress||0,c.totalStops||0)+' / '+(c.totalStops||0)+' stops')+'|'+(c.title||c.routeName||'Ride together');if(text!==stamp){stamp=text;hud.innerHTML=icon('members')+'<span><b>'+esc(text.split('|')[0])+'</b><small>'+esc(text.split('|')[1])+'</small></span><span aria-hidden=\"true\">›</span>';}}\n G.on('clubRideChanged',syncHud);G.on('tick',dt=>{elapsed+=dt;if(elapsed>=.35){elapsed=0;syncHud();}});\n return {home,activities,friends:friendsView};\n}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/clubhouse-ui.js",
+      "before": "   const command=k.slice(7),R=G.clubRides,F=G.clubFriends;let result;\n   if(command==='connect'){const c=identity(S.fresh()).code;if(!c){st.tab='search';refresh();return;}S.sync(s=>{s.pubWorld=false;s.club=c;s.clubPriv=c;});G.net.netConnect();return;}\n   if(command==='host')result=R?.host(b.dataset.route);\n   if(command==='join')result=R?.join(b.dataset.ride);\n   if(command==='ready')result=R?.ready(b.dataset.ready==='true');\n   if(command==='start')result=R?.start(b.dataset.ride);\n",
+      "after": "   const command=k.slice(7),R=G.clubRides,F=G.clubFriends;let result;\n   if(command==='connect'){const c=identity(S.fresh()).code;if(!c){st.tab='search';refresh();return;}S.sync(s=>{s.pubWorld=false;s.club=c;s.clubPriv=c;});G.net.netConnect();return;}\n   if(command==='host')result=R?.host(b.dataset.route);\n   if(command==='host-regroup')result=R?.host(b.dataset.route,{regroup:true});\n   if(command==='alone')result=R?.continueAlone();\n   if(command==='join')result=R?.join(b.dataset.ride);\n   if(command==='ready')result=R?.ready(b.dataset.ready==='true');\n   if(command==='start')result=R?.start(b.dataset.ride);\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/clubhouse-ui.js",
+      "before": "   if(command==='decline')result=F?.decline(b.dataset.name);\n   if(command==='friend-join')result=F?.join(b.dataset.name);\n   if(command==='remove'){U.confirm({title:'Remove this friend?',body:'Remove '+b.dataset.name+' from your friends list?',onYes:()=>{notify(F?.remove(b.dataset.name),'Friend could not be removed.');refresh();}});return;}\n   if(result?.ok===true&&['start','resume','friend-join'].includes(command)){close();return;}\n   notify(result,'This action is unavailable right now.');refresh();return;\n  }\n  if(k==='close'){close();return;}if(k==='back'){if(st.tab==='home')close();else{st.tab='home';refresh();}return;}\n",
+      "after": "   if(command==='decline')result=F?.decline(b.dataset.name);\n   if(command==='friend-join')result=F?.join(b.dataset.name);\n   if(command==='remove'){U.confirm({title:'Remove this friend?',body:'Remove '+b.dataset.name+' from your friends list?',onYes:()=>{notify(F?.remove(b.dataset.name),'Friend could not be removed.');refresh();}});return;}\n   if(result?.ok===true&&['start','resume','friend-join','alone'].includes(command)){close();return;}\n   notify(result,'This action is unavailable right now.');refresh();return;\n  }\n  if(k==='close'){close();return;}if(k==='back'){if(st.tab==='home')close();else{st.tab='home';refresh();}return;}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    }
+  ],
+  "observers": {
+    "tools/activity-landscape-source-guard.cjs": {
+      "beforeSHA256": "679efdca89884183cb700da186186615166287057fdf1f8efbf4590fd3d801f3",
+      "afterSHA256": "2d136f4a83448a5737abafbb6565e28f491b6df4f94d731bf29d3460b3949cdb",
+      "changes": [
+        {
+          "file": "tools/activity-landscape-source-guard.cjs",
+          "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\nconst fixture='tools/fixtures/activity-landscape-6a82f3f/contract.json';\nconst text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8'),contract=JSON.parse(text);\n",
+          "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\nconst fixture='tools/fixtures/activity-landscape-6a82f3f/contract.json';\nconst text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8'),contract=JSON.parse(text);\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/activity-landscape-source-guard.cjs",
+          "before": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file];if(!row)return source;\n let group=contract.toIncoming.filter(c=>c.file===file);\n",
+          "after": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file];if(!row)return source;\n let group=contract.toIncoming.filter(c=>c.file===file);\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/activity-landscape-source-guard.cjs",
+          "before": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file],group=contract.toActivity.filter(c=>c.file===file);if(!row||!group.length||sha(source)===row.activitySHA256)return source;\n if(!group.some(c=>source.includes(c.after)))return source;\n",
+          "after": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file],group=contract.toActivity.filter(c=>c.file===file);if(!row||!group.length||sha(source)===row.activitySHA256)return source;\n if(!group.some(c=>source.includes(c.after)))return source;\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/activity-landscape-source-guard.cjs",
+          "before": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeHorseTrainingObserverSource(source,file);\n const prior=activity.observers[file];\n if(prior&&sha(source)===prior.afterSHA256){\n",
+          "after": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);\n const prior=activity.observers[file];\n if(prior&&sha(source)===prior.afterSHA256){\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/activity-landscape-source-guard.cjs",
+          "before": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n// The original assertion still rejects any original fixture drift. The only\n// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeHorseTrainingFixtureChanges(diff);\n assert.equal(baseline,contract.baseline,'Exact original fixture baseline');\n const lines=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(lines).size,lines.length,'No duplicate fixture diff rows');\n",
+          "after": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n// The original assertion still rejects any original fixture drift. The only\n// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeProgrammeRegroupFixtureChanges(diff);\n diff=normalizeHorseTrainingFixtureChanges(diff);\n assert.equal(baseline,contract.baseline,'Exact original fixture baseline');\n const lines=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(lines).size,lines.length,'No duplicate fixture diff rows');\n",
+          "occurrences": 1,
+          "kind": "observer"
+        }
+      ]
+    },
+    "tools/test-activity-landscape-composition.mjs": {
+      "beforeSHA256": "97036d86ed5f96e4b90af5838c7b9bfa7196999cef75b8a984d213644272f4aa",
+      "afterSHA256": "6bf041e3bbcd8b46f24ba9f4ac39dbce4baba989208c3c5b67cf0e148b6f1319",
+      "changes": [
+        {
+          "file": "tools/test-activity-landscape-composition.mjs",
+          "before": "import {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+          "after": "import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/test-activity-landscape-composition.mjs",
+          "before": "import {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+          "after": "import {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+          "occurrences": 1,
+          "kind": "observer"
+        }
+      ]
+    },
+    "tools/test-horse-training-source-guard.mjs": {
+      "beforeSHA256": "2a1d4eb658e244edadcf92773c1d124cb98051daa436d0ab157ef70d50d9c88c",
+      "afterSHA256": "5e74aab9e2405219177f372fd8ebce06f7eae702392ec2eeaee2c82b57f502d3",
+      "changes": [
+        {
+          "file": "tools/test-horse-training-source-guard.mjs",
+          "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+          "after": "import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+          "occurrences": 1,
+          "kind": "observer"
+        },
+        {
+          "file": "tools/test-horse-training-source-guard.mjs",
+          "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+          "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file);\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+          "occurrences": 1,
+          "kind": "observer"
+        }
+      ]
+    }
+  },
+  "addedFiles": {
+    "assets/club-regroup-rules.mjs": {
+      "sha256": "38bc6ce37d0e97fa8d8b341d634fa887503283a7195fe44f27a623de8706908a",
+      "kind": "product"
+    },
+    "assets/club-regroup.mjs": {
+      "sha256": "22761c0fe0776f2cbb60c718da87ceb63b723ceda0d858124f5298f27c071435",
+      "kind": "product"
+    },
+    "assets/club-regroup.css": {
+      "sha256": "f9295e79c53f1746e419851ad8e78361fed99393539cfe325b3126a5a523a8c2",
+      "kind": "product"
+    },
+    "tools/test-club-regroup.mjs": {
+      "sha256": "d84a6d507c8a8a29c45f7573a3203cdacf55e9cb746b12cd5b197d37f27f0401",
+      "kind": "behavior"
+    },
+    "tools/test-club-regroup-ui.mjs": {
+      "sha256": "310ca53311f5ad0e9d31b0c8e9bad1a07ca1a16ab82f5e8ddec9f9a1a374c804",
+      "kind": "behavior"
+    },
+    "tools/test-programme-horse-preparation.mjs": {
+      "sha256": "355448062881e5b2da929b5666a0b57698e9d69411698f7e80c5384fd1726839",
+      "kind": "behavior"
+    },
+    "tools/test-first-rides-h1-input.mjs": {
+      "sha256": "033482d797a5f4a87cd68d0c6a0fd5b646d0704e219698a6c8a372564a25c8d2",
+      "kind": "behavior"
+    }
+  },
+  "unchangedFixtureCount": 165
+}

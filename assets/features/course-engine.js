@@ -238,7 +238,8 @@ export function install(G){
   return false;
  });
  G.on('eventGate',(ev,h)=>{ const r=eventOk(ev,h); const first=r.missing.find(m=>m[0]!=='level');
-  return {ok:r.ok,missing:r.missing,html:r.ok?'':' <span style="font-size:11px;color:#8c7a63">needs '+missingText(r.missing)+'</span>'+(first?' <button data-drill="'+first[0]+'" style="font-size:11px;padding:3px 8px" title="Train '+T.STAT_LBL[first[0]]+' in a drill">Drill</button>':'')}; });
+  const prepare=G.seEvents?.preparationControl?.(ev);
+  return {ok:r.ok,missing:r.missing,html:r.ok?'':' <span style="font-size:11px;color:#8c7a63">needs '+missingText(r.missing)+'</span>'+(prepare|| (first?' <button data-drill="'+first[0]+'" style="font-size:11px;padding:3px 8px" title="Train '+T.STAT_LBL[first[0]]+' in a drill">Drill</button>':''))}; });
  G.on('eventEnter',(ev,i,ctx)=>{
   const h=ridden(), lvl=(h&&h.level)||1;
   return '<span class="evdiff">'+DIFFS.map((d,di)=>{

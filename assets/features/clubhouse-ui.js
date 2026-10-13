@@ -1,6 +1,6 @@
 import {createClubHorseCollection} from '../club-horse-collection.js?v=club-horses-1';
 import {createClubRallyView} from '../club-rally-view.js?v=club-rally-1';
-import {createClubSocialView} from '../club-social-view.js?v=club-together-1';
+import {createClubSocialView} from '../club-social-view.js?v=programme-club-regroup-1';
 /* Clubs: a readable clubhouse screen over the ranch. Artwork is Meadowlark's own; data, permissions,
  * rewards and applications are provided by the club packages.
  * Observed screen references: youtube.com/watch?v=Hz2yWsFRhx0 (clubs/rewards/points),
@@ -97,6 +97,8 @@ if(!$('clubhouse-ui-css')){const css=document.createElement('link');css.id='club
    const command=k.slice(7),R=G.clubRides,F=G.clubFriends;let result;
    if(command==='connect'){const c=identity(S.fresh()).code;if(!c){st.tab='search';refresh();return;}S.sync(s=>{s.pubWorld=false;s.club=c;s.clubPriv=c;});G.net.netConnect();return;}
    if(command==='host')result=R?.host(b.dataset.route);
+   if(command==='host-regroup')result=R?.host(b.dataset.route,{regroup:true});
+   if(command==='alone')result=R?.continueAlone();
    if(command==='join')result=R?.join(b.dataset.ride);
    if(command==='ready')result=R?.ready(b.dataset.ready==='true');
    if(command==='start')result=R?.start(b.dataset.ride);
@@ -109,7 +111,7 @@ if(!$('clubhouse-ui-css')){const css=document.createElement('link');css.id='club
    if(command==='decline')result=F?.decline(b.dataset.name);
    if(command==='friend-join')result=F?.join(b.dataset.name);
    if(command==='remove'){U.confirm({title:'Remove this friend?',body:'Remove '+b.dataset.name+' from your friends list?',onYes:()=>{notify(F?.remove(b.dataset.name),'Friend could not be removed.');refresh();}});return;}
-   if(result?.ok===true&&['start','resume','friend-join'].includes(command)){close();return;}
+   if(result?.ok===true&&['start','resume','friend-join','alone'].includes(command)){close();return;}
    notify(result,'This action is unavailable right now.');refresh();return;
   }
   if(k==='close'){close();return;}if(k==='back'){if(st.tab==='home')close();else{st.tab='home';refresh();}return;}

@@ -1,0 +1,100 @@
+{
+  "scope": "Programme horse preparation and optional two-to-four-rider Basin regroup",
+  "sourceBaseline": "05421c6a68a0f0914607ee4b50d5490dff3fa4de",
+  "browserAcceptance": {
+    "clients": "Two independent owned localhost origins; actual onboarding and private club/room-code forms",
+    "productionIdentityDistinct": true,
+    "network": "Existing real MQTT transport; no synthetic packets",
+    "input": "Ordinary W/A/D/S and actual visible Ready/Continue buttons; no position/time/progress/save injection",
+    "verifiedPhases": [
+      {
+        "phase": "lobby",
+        "stopIndex": 0,
+        "passed": true
+      },
+      {
+        "phase": "ready",
+        "stopIndex": 0,
+        "passed": true
+      },
+      {
+        "phase": "continued",
+        "stopIndex": 0,
+        "passed": true
+      },
+      {
+        "phase": "ready",
+        "stopIndex": 1,
+        "passed": true
+      },
+      {
+        "phase": "continued",
+        "stopIndex": 1,
+        "passed": true
+      }
+    ],
+    "earlyHostReady": "Host Ready at ranch left both ordinary trail cursors at0 while the guest was still outside arrival eligibility",
+    "finalPersonalCursors": {
+      "host": 2,
+      "guest": 2
+    },
+    "capturedRuntimeErrorCounts": {
+      "host": 0,
+      "guest": 0
+    },
+    "capturedFeatureErrorCounts": {
+      "host": 0,
+      "guest": 0
+    },
+    "fullCircuitCompleted": false,
+    "fullCircuitRewardsAndReloadVerified": false,
+    "viewportLimit": "Offscreen game frames paused; both production frames were kept visible for the verified checkpoints",
+    "privateDiagnostics": "Raw anonymous identities, room code and fixture token retained outside the repository; omitted here"
+  },
+  "programmeAcceptance": {
+    "actualEvent": "Barleyfold Cross Country",
+    "selectedDifficulty": "Novice",
+    "selectedHorse": "Bramble",
+    "remainingHorseXP": 128,
+    "actualPrepareRowAndScoringCardButtons": "Opened same horse/difficulty preparation without auto-entering an event or training",
+    "storyRide": "Real Pasture Dash silver1068, followed by real Wren claim; saved story index8,8004coins,81gems",
+    "formalJumpDriver": "First-attempt normal input cleared first h1 fence; actual landing handled, then stopped for manual reapproach; course canceled, no full-event payout claim"
+  },
+  "checks": {
+    "broadPriorFrozenBatch": {
+      "suites": 53,
+      "pass": 664,
+      "fail": 0,
+      "scope": "Before sole started-regroup lobby Join-label correction"
+    },
+    "finalAffectedCompositionAndRuntime": {
+      "pass": 50,
+      "fail": 0
+    },
+    "historicalChecks": {
+      "pass": 105,
+      "fail": 0
+    },
+    "priorClubNeighbors": {
+      "pass": 108,
+      "fail": 0,
+      "scope": "Before sole Join-label correction; affected current controller/UI covered in final50"
+    },
+    "finalReviewFixture": {
+      "pass": 18,
+      "fail": 0,
+      "newFineInputsPhysicallyVerified": false
+    },
+    "oldFixtureBlobsPreservedExactly": 165,
+    "countsOverlap": true
+  },
+  "remainingGoalWork": [
+    "Full two-rider pasture/gate/return circuit and earned reward reload",
+    "Phone HUD and physical-device acceptance",
+    "Formal multi-fence course approach usability",
+    "Authenticated multiplayer authority",
+    "Asset licensing and remaining App Store release gates",
+    "Human playtesting and broader content/balance polish"
+  ],
+  "goalComplete": false
+}

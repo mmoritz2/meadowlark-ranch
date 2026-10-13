@@ -969,6 +969,7 @@ export function install(G){
   const lock=entryLock(ev,s,h);
   if(lock)html+='<div class="sub ladLock">🔒 '+esc(lock)+'</div>';
   else if(i>=0)html+='<button class="claimBtn" data-fx="lad:again:'+esc(ev.id)+'">Enter · '+purse+'🪙</button>';
+  html+=G.seEvents?.preparationControl?.(ev,di)||'';
   return html;
  }
  /* The Enter button used to ask only whether the horse met the event's own level and stats. The
@@ -1186,7 +1187,7 @@ export function install(G){
   if(jd&&jd.id===ev.id)bits.push('🎽 <b>judged class of the week</b>');
   if(ev.champ&&L.champion)bits.push('🏆 last Final: <b>#'+L.champion.place+'</b>');
   return '<div class="ladCard">'+(bits.length?'<span style="flex:1;min-width:120px">'+bits.join(' · ')+'</span>':'<span style="flex:1"></span>')
-   +'<button data-fx="lad:why:'+esc(ev.id)+'" title="Time allowed, favoured traits, the whole reward line and your record here">ℹ️ Full card</button></div>';
+   +'<button data-fx="lad:why:'+esc(ev.id)+'" title="Time allowed, favoured traits, the whole reward line and your record here">Rewards &amp; record</button></div>';
  });
  /* the Events panel: the path, and anything waiting */
  G.ui.eventCard((s,h)=>{

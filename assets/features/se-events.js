@@ -435,9 +435,26 @@ export function install(G){
  }
 
  /* ---- the event page ---- */
- function openPage(ev){const hadFocus=root.contains(document.activeElement);st.context++;st.compare=false;st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();
+ function preparationDifficulty(di){const value=di==null?(S().evDiff??1):di;return Number.isInteger(value)&&value>=0&&value<DIFFS().length?value:null;}
+ function preparationControl(ev,di,label='Prepare horse'){
+  const event=ev&&evById(ev.id),diff=preparationDifficulty(di);
+  return event&&!event.special&&diff!==null?'<button data-fx="sev:prepare:'+esc(event.id)+':'+diff+'" style="min-height:44px" title="Horse level, XP, tack and training for this event">'+esc(label)+'</button>':'';
+ }
+ function openPage(ev,di=null){const hadFocus=root.contains(document.activeElement);st.context++;st.compare=false;st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(di==null?(s.evDiff==null?1:s.evDiff):di);root.classList.add('page');paintPage();
   if(hadFocus){const button=$('sevPage').querySelector('button:not([disabled])');if(button)button.focus({preventScroll:true});}}
  function evById(id){if(!id)return null;const sp=specials().find(e=>e.id===id);return sp||T.EVENTS3.find(e=>e.id===id)||null;}
+ function prepareEvent(id,di){
+  const ev=evById(id),diff=preparationDifficulty(di);
+  if(!ev||ev.special||diff===null||!$('eventsPanel')||!G.ui?.openEvents)return false;
+  // The programme is the classic Events panel. Restore its existing cover
+  // explicitly; toggling the Events button alone can leave that list on top.
+  if(K.cover('eventsPanel',{}).classic)K.takeBack('eventsPanel');
+  G.hidePanels();st.townName=ev.town||'Meadowlark Ranch';G.ui.openEvents();K.cover('eventsPanel',{classic:false});
+  const town=TW.find(t=>t.name===st.townName);if(town)st.cur[town.name]=Math.max(0,town.evs.indexOf(ev));
+  openPage(ev,diff);
+  $('sevPage').querySelector('[data-sev="xp"]:not(:disabled),[data-sev^="train:"]:not(:disabled),.sev-requirements summary,[data-sev="ride"]:not(:disabled)')?.focus({preventScroll:true});
+  return true;
+ }
  function paintPage(){
   const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}
   const s=S(), disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), lk=townLock(ev.town), h=ridden(), lvl=h.level||1;
@@ -551,6 +568,7 @@ export function install(G){
  }
 
  /* ---- input ---- */
+ G.ui.action('sev',a=>a[0]==='prepare'?prepareEvent(a[1],Number(a[2])):false);
  root.addEventListener('keydown',e=>{
   const card=e.target.closest('.sev-card[role="button"]');
   if(!card||!root.contains(card)||(e.code!=='Enter'&&e.code!=='Space'))return;
@@ -666,5 +684,5 @@ export function install(G){
  G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up
  G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,comparison:st.compare,horseSelection:mountSelection.state(),sheet:root.classList.contains('sheet'),
   towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});
- G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,comparison:()=>{const ev=evById(st.page),s=S(),di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);return ev&&!ev.special?(s.horses||[]).filter(h=>eventHorseById(s,h.id)).map(h=>comparisonFor(ev,di,h,s)):[];},state:st};
+ G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},preparationControl,prepareEvent,move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,comparison:()=>{const ev=evById(st.page),s=S(),di=clamp(st.diff==null?1:st.diff,0,DIFFS().length-1);return ev&&!ev.special?(s.horses||[]).filter(h=>eventHorseById(s,h.id)).map(h=>comparisonFor(ev,di,h,s)):[];},state:st};
 }

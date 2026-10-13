@@ -293,8 +293,8 @@ export function install(G){
     const actWrap=el('div','c2-evAct');
     if(act){
      if(act===lock){
-      const inner=lock.innerHTML;
-      const note=el('span','c2-lockNote'); note.innerHTML=inner||'🔒';
+      // Keep the renderer's bound buttons when restyling a locked row.
+      const note=el('span','c2-lockNote');for(const child of Array.from(lock.childNodes))note.appendChild(child);if(!note.childNodes.length)note.textContent='🔒';
       lock.replaceWith(note); actWrap.appendChild(note);
       actWrap.appendChild(el('span','c2-purse','Unlocks at Lv '+ev.lvl));
      }else{

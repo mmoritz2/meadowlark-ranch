@@ -1323,7 +1323,7 @@ export function install(G){
             +(d.k==='jump'?'<br>4 faults a rail, 4 for a refusal and 8 for the second — three at one fence and you are out.':'')
             +(s.bestTimes&&s.bestTimes[ev.id]?'<br>Your best here: <b>'+s.bestTimes[ev.id]+'s</b>':''))
    +'</span></div>';
-  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🚪 To get in</b><span class="ev2card">'+reqLine(ev,h)+'</span></div>';
+  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🚪 To get in</b><span class="ev2card">'+reqLine(ev,h)+'</span>'+(G.seEvents?.preparationControl?.(ev,di)||'')+'</div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🐴 Your horse + equipped tack</b><span class="ev2card">'+tackLine(ev,h)+'</span></div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎁 What it pays · '+diffAt(di).label+'</b><span class="ev2card">'+rewardLine(ev,di)+'</span></div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎚️ The three levels</b>';
@@ -1352,7 +1352,7 @@ export function install(G){
   return '<div class="ev2card" data-ev2="'+ev.id+'">'
    +'<span class="ev2chip '+d.k+'">'+d.icon+' '+d.label+'</span>'+discDetail(ev)+' · '+d.sub
    +'<br>'+(d.k==='dressage'||d.k==='show'?'🎯 '+SCORE_BANDS:'⏱ '+allowedLine(ev,s&&s.evDiff))
-   +'<span class="ev2grid"><button data-fx="ev2:card:'+ev.id+'" title="The whole card before you commit">ℹ️ Full card</button></span></div>';
+   +'<span class="ev2grid">'+(G.course.eventOk?.(ev,h)?.ok===false?'':G.seEvents?.preparationControl?.(ev,s?.evDiff)||'')+'<button data-fx="ev2:card:'+ev.id+'" title="The whole card before you commit">ℹ️ Full card</button></span></div>';
  });
  let FILTER=null;
  function discCounts(){ const out={}; for(const ev of T.EVENTS3)out[discOf(ev).k]=(out[discOf(ev).k]||0)+1; return out; }
