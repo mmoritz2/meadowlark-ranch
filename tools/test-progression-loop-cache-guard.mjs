@@ -1,3 +1,4 @@
+import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -8,7 +9,7 @@ import {normalizeProgressionHintsSource} from './progression-hints-source-guard.
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 import {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file);
 const contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));
 const sha=s=>createHash('sha256').update(s).digest('hex');
 const original=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});

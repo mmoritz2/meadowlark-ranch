@@ -1,5 +1,6 @@
-import {POST_DEFINITION,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postDistance,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish} from './cottonwood-post-rules.mjs?v=cottonwood-post-1';
+import {POST_DEFINITION,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postDistance,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish,confirmPostFinish} from './cottonwood-post-rules.mjs?v=offline-expeditions-1';
 import {COTTONWOOD_ROUTES} from '../cottonwood-routes.mjs?v=cottonwood-post-1';
+import {EXPEDITIONS} from '../expeditions.mjs?v=offline-expeditions-1';
 export const id='cottonwood-post';
 export function install(G){
  if(G.cottonwoodPost)return;
@@ -29,7 +30,9 @@ export function install(G){
   if(active?.run.stage==='deliver')return npc('ada',{x:39,z:-39,label:'Ada · Cottonwood Village'});
   return npc('wren',{x:-11,z:-15.8,label:'Grandpa Wren · Home Ranch'});
  }
- function context(){if(!active)return null;return postInteraction(active.run,{distance:postDistance(P.pos,target()),speed:P.speed,blocked:paused(),ready:ready()});}
+ function context(){if(!active)return null;const interaction=postInteraction(active.run,{distance:postDistance(P.pos,target()),speed:P.speed,blocked:paused(),ready:ready()});
+  return active.saving?{...interaction,eligible:false,status:'saving',label:'Saving reply…',reason:'Saving your completed delivery…'}:interaction;
+ }
  function guideTarget(){return active?.guide?.points[active.guide.index]||target();}
  function resetGuide(){if(!active)return;active.guideStage=active.run.stage;active.guide=createPostGuide(guides[active.run.stage==='deliver'?active.route:active.run.stage]||[]);}
  function setRoute(route){
@@ -38,7 +41,7 @@ export function install(G){
   if(active.route===route)return true;active.route=route;resetGuide();updateArt();paint();G.run('postRoute',snapshot().active);return true;
  }
  function snapshot(){const A=active,i=context(),at=target(),woodlandAvailable=canJump(),woodlandCue=A?.run.stage==='deliver'&&!i?.inReach?(!woodlandAvailable?'Your mount cannot jump this log. Follow the clear Meadow road to Ada.':A.route==='woodland'?'Follow the woodland trail. Canter toward the low log; press Space or Jump before you reach it.':null):null;return {definition:D,records:{completions:records.completions,bestTime:records.bestTime},lastResult,
-  active:A?{runId:A.run.runId,stage:A.run.stage,savePending:A.run.stage==='savePending',target:at,guide:{...guideTarget()},route:A.route,woodlandAvailable,elapsed:Math.round(A.run.elapsed*100)/100,
+  active:A?{runId:A.run.runId,stage:A.run.stage,savePending:A.run.stage==='savePending',saving:!!A.saving,target:at,guide:{...guideTarget()},route:A.route,woodlandAvailable,elapsed:Math.round(A.run.elapsed*100)/100,
    distance:Math.round(A.run.distance*100)/100,carrying:A.run.picked&&!A.run.returned?(A.run.exchanged?'reply':'post'):null,
    horseId:A.run.horseId,horseName:A.run.horseName,interaction:i,cue:A.run.stage==='pines'||A.proof?A.cue:woodlandCue||i?.reason||A.cue||'',paused:paused()||!ridingReady()}:null};}
  const style=document.createElement('style');style.textContent=`
@@ -56,7 +59,7 @@ export function install(G){
   ui.routes.hidden=a?.stage!=='deliver';ui.road.setAttribute('aria-pressed',String(a?.route==='road'));ui.woodland.setAttribute('aria-pressed',String(a?.route==='woodland'));ui.road.disabled=!!a?.paused;ui.woodland.disabled=!!a?.paused||!a?.woodlandAvailable;ui.woodland.title=a?.woodlandAvailable?'A shorter woodland path with one low log to jump.':'This mount cannot jump the log. The Meadow road is clear.';
   if(a){
    text(ui.title,{collect:'Collect Wren’s post',pines:'Ride through the pines',deliver:'Exchange the post with Ada',return:'Bring Ada’s reply home',savePending:'Your delivery is complete'}[a.stage]);
-   const meters=Math.round(postDistance(P.pos,a.guide));text(ui.details,a.savePending?'Reward not yet confirmed':`${a.carrying==='reply'?'Reply aboard':a.carrying==='post'?'Post aboard':'Pouch waiting'} · ${meters} m to ${a.guide.label}`);
+   const meters=Math.round(postDistance(P.pos,a.guide));text(ui.details,a.savePending?(a.saving?'Saving your reward…':'Reward not yet confirmed'):`${a.carrying==='reply'?'Reply aboard':a.carrying==='post'?'Post aboard':'Pouch waiting'} · ${meters} m to ${a.guide.label}`);
    text(ui.cue,a.savePending?active.cue||'Keep this tab open. Retry saving your completed delivery.':a.paused?'Mount up and return to riding to continue.':a.cue);
    ui.action.hidden=a.stage==='pines';ui.action.disabled=!a.interaction?.eligible;text(ui.action,a.interaction?.label||'Follow the trail');
    ui.cancel.disabled=a.savePending;ui.cancel.title=a.savePending?'Save your completed delivery before leaving.':'';text(ui.cancel,'End ride');
@@ -122,7 +125,7 @@ export function install(G){
  function clear(){active=null;disposeArt();if(G.trail.arrow)G.trail.arrow.visible=false;paint();}
  function cancel(){if(!active)return false;if(active.proof){G.toast('Retry saving your completed delivery before ending the ride.');return false;}return G.trail.stop?.()!==false;}
  function invalidate(reason){if(!active||active.proof)return;G.toast(reason);cancel();}
- function start(){const expedition=G.social?.EXPEDITIONS?.find(e=>e.id===D.id);if(!expedition)return false;
+ function start(){const expedition=EXPEDITIONS.find(e=>e.id===D.id);if(!expedition||typeof G.trail?.start!=='function')return false;
   return G.trail.start(expedition.stops.map(p=>p.slice()),G.net?.myName?.(),{exped:D.id,soloExpedition:true,name:D.name})===true;
  }
  function begin(r){
@@ -142,15 +145,28 @@ export function install(G){
    active.proof=postFinishProof(active.run);
    if(!active.proof){active.run.stage='return';active.run.returned=false;active.cue='Ride the full delivery route before handing over the reply.';syncStage();return false;}
   }
-  G.sChime?.();syncStage();G.run('postProgress',snapshot().active);if(active?.proof)return retrySave();return true;
+  if(!active.proof)G.sChime?.();syncStage();G.run('postProgress',snapshot().active);if(active?.proof)return retrySave();return true;
  }
- function retrySave(){
-  if(!active?.proof||paused())return false;
-  const A=active,out=savePostFinish(S,A.proof,(s,reward,points)=>{G.money.payReward(s,reward);G.xp.addSP(s,points,'trail');});
+ function finishSave(A,proof,out){
+  A.saving=false;
+  if(active!==A||A.proof!==proof||G.trail.ride!==A.ride)return false;
   if(!out.ok){A.cue=out.reason;paint();G.run('postSavePending',snapshot().active);return false;}
   A.confirmed=out.result;records=sanitizePostSave(out.saved.cottonwoodPost);
   if(!G.trail.finishManaged?.(A.ride)){A.cue='Your reward is saved. Retry to close the delivery.';paint();return false;}
   lastResult=Object.freeze(out.result);clear();G.money.refreshWallet();G.sGem?.();G.quest.dailyEvt('trail',1);G.quest.dailyEvt('exped',1);G.run('postFinish',lastResult);paint();return true;
+ }
+ function retrySave(){
+  if(!active?.proof||active.saving||G.trail.ride!==active.ride||paused())return false;
+  const A=active,proof=A.proof;A.confirmed=null;A.saving=true;
+  const out=savePostFinish(S,proof,(s,reward,points)=>{G.money.payReward(s,reward);G.xp.addSP(s,points,'trail');});
+  if(typeof S.awaitConfirmedFresh!=='function')return finishSave(A,proof,out);
+  A.cue='Saving your completed delivery…';paint();
+  // Native fresh() is a staged mirror. Only a verified disk readback can release
+  // the mission or its success effects, even if the mirror already has a receipt.
+  return Promise.resolve().then(()=>S.awaitConfirmedFresh()).then(
+   saved=>confirmPostFinish(saved,proof),
+   ()=>({ok:false,reason:'Your reward could not be saved. Keep this tab open and retry.'})
+  ).then(confirmed=>finishSave(A,proof,confirmed));
  }
  G.on('trailStart',begin);
  G.on('trailTick',(r,dt)=>{

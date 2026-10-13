@@ -2,10 +2,12 @@ import {Capacitor} from '@capacitor/core';
 import {App} from '@capacitor/app';
 import {Filesystem,Directory,Encoding} from '@capacitor/filesystem';
 import {createSaveStore,SAVE_KEYS} from './save-store.mjs';
+import {confirmGameSave} from './save-confirmation.mjs';
 
 const native=Capacitor.isNativePlatform();
 let game=null,wasActive=true,statusNode=null;
 const platform={mode:'native-development',native,social:false,paused:false,storage:null,ready:null,flush:async()=>{},
+ confirmedSave(key){return confirmGameSave(platform,key);},
  attachGame(hooks){game=hooks;if(platform.paused)game.pause?.();},
  async reload(){try{await platform.flush();location.replace(location.pathname);}catch(error){showStatus({state:'error',message:error.message});}},
  async reset(){platform.storage.clear();await platform.reload();}

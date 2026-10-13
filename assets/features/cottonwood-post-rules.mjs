@@ -93,7 +93,19 @@ export function savePostFinish(storage,proof,pay){
   s.cottonwoodPost=sanitizePostSave(state);
  });}catch(_){}
  let saved;try{saved=storage.fresh();}catch(_){}
- const state=sanitizePostSave(saved?.cottonwoodPost),result=state.receipts.find(r=>r.runId===proof.runId&&r.at===proof.at&&r.time===proof.time&&r.distance===proof.distance);
- if(!saved||!result||!(saved.stats?.trails>0)||!(saved.stats?.expeditions>0)||!(saved.expDone?.cottonwood>0))return {ok:false,reason};
- return {ok:true,result,saved};
+ return confirmPostFinish(saved,proof,reason);
+}
+// The same proof check serves browser readback and the native bridge's verified
+// disk snapshot. Never substitute the native in-memory mirror for that snapshot.
+export function confirmPostFinish(saved,proof,reason='Your reward could not be saved. Keep this tab open and retry.'){
+ if(!cleanReceipt(proof))return {ok:false,reason};
+ const raw=Array.isArray(saved?.cottonwoodPost?.receipts)?saved.cottonwoodPost.receipts.find(r=>r&&
+  r.runId===proof.runId&&r.at===proof.at&&r.time===proof.time&&r.distance===proof.distance&&
+  r.horseId===proof.horseId&&r.horseName===proof.horseName):null;
+ if(!raw||raw.id!==POST_DEFINITION.id||raw.name!==POST_DEFINITION.name||
+  !Number.isSafeInteger(raw.completions)||raw.completions<1||!Number.isSafeInteger(saved.cottonwoodPost.completions)||saved.cottonwoodPost.completions<raw.completions||
+  saved.cottonwoodPost.version!==1||typeof raw.newBest!=='boolean'||
+  raw.starPoints!==POST_DEFINITION.starPoints||Object.entries(POST_DEFINITION.reward).some(([key,value])=>raw.pay?.[key]!==value)||
+  ![saved.stats?.trails,saved.stats?.expeditions,saved.expDone?.cottonwood].every(n=>Number.isSafeInteger(n)&&n>0))return {ok:false,reason};
+ return {ok:true,result:cleanReceipt(raw),saved};
 }

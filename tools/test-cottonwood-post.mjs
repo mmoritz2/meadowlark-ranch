@@ -1,8 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../assets/vendor/three/build/three.module.js';
-import {POST_DEFINITION as D,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish} from '../assets/features/cottonwood-post-rules.mjs';
+import {POST_DEFINITION as D,isSoloPostRide,createPostRun,createPostGuide,advancePostGuide,postInteraction,observePostRun,actOnPostRun,postFinishProof,sanitizePostSave,savePostFinish,confirmPostFinish} from '../assets/features/cottonwood-post-rules.mjs';
 import {install} from '../assets/features/cottonwood-post.js';
+import {EXPEDITIONS} from '../assets/expeditions.mjs';
+import {createSaveStore} from '../mobile/src/save-store.mjs';
+import {confirmGameSave} from '../mobile/src/save-confirmation.mjs';
 const copy=x=>JSON.parse(JSON.stringify(x));
 const route=()=>({exped:'cottonwood',soloExpedition:true,pts:D.stops.map((p,i)=>['Stop '+i,...p]),idx:0,t:0});
 const newRun=(extra={})=>createPostRun({id:'post-run',at:1000,position:{x:-11,z:-15.8},horseId:1,horseName:'Juniper',...extra});
@@ -88,8 +91,22 @@ function gameHarness(){
  const ride=to=>{const from={...P.pos},steps=Math.ceil(Math.hypot(to.x-from.x,to.z-from.z));for(let n=1;n<=steps;n++)tick(from.x+(to.x-from.x)*n/steps,from.z+(to.z-from.z)*n/steps,{speed:10});P.speed=0;};
  return {G,S,P,rig,events,elements,scene,ride,tick,get current(){return current;},block:v=>{blocked=v;}};
 }
+// Adapt the existing controller harness to the public core entry signature.
+// Admission still invokes registered activity gates and rejects canceled starts.
+function bindTrailEntry(h){
+ const calls=[],legacy=h.G.trail.start.bind(h.G.trail);h.replaceTrail=legacy;
+ h.G.trail.start=(pts,by,opts)=>{calls.push({pts,by,opts});if(h.G.run('activityGate','trail'))return false;
+  const r={pts:pts.map(p=>p.slice()),idx:0,t:0,by,...opts};legacy(r);return h.current===r;};
+ return calls;
+}
+function homeWithReply(h){
+ bindTrailEntry(h);assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(h.G.cottonwoodPost.interact(),true);
+ h.ride(D.pines);h.ride({x:39,z:-39});assert.equal(h.G.cottonwoodPost.interact(),true);h.ride({x:-11,z:-15.8});
+}
+function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};}
+function watchSuccess(h){const seen=[];h.G.money.refreshWallet=()=>seen.push('wallet');h.G.sChime=()=>seen.push('chime');h.G.sGem=()=>seen.push('gem');h.G.quest.dailyEvt=(k,n)=>seen.push([k,n]);return seen;}
 test('actual controller preserves pending mission and emits finish only after confirmed reward; panel pause and repeated actions are safe',()=>{
- const h=gameHarness(),{G,S}=h;G.trail.start(route());assert.equal(G.cottonwoodPost.snapshot().active.stage,'collect');
+ const h=gameHarness(),{G,S}=h;bindTrailEntry(h);assert.equal(G.cottonwoodPost.start(),true);assert.equal(G.social,undefined);assert.equal(G.cottonwoodPost.snapshot().active.stage,'collect');
  assert.equal(G.cottonwoodPost.interact(),true);h.ride(D.pines);assert.equal(G.cottonwoodPost.snapshot().active.stage,'deliver');h.ride({x:39,z:-39});
  h.block(true);assert.equal(G.cottonwoodPost.interact(),false);h.block(false);assert.equal(G.cottonwoodPost.interact(),true);
  h.ride({x:-11,z:-15.8});S.mode.write=true;const before=S.value;assert.equal(G.cottonwoodPost.interact(),false);
@@ -142,13 +159,83 @@ test('mounts whose jump button starts flight stay on the clear road, including m
  h.rig.profile={nativeBreed:true,nativeJump:null};assert.equal(h.G.cottonwoodPost.setRoute('woodland'),false);
  h.rig.profile={nativeBreed:true,nativeRoster:true,nativeJump:{clip:'jump'}};h.rig.nativeFantasy={pair:{}};assert.equal(h.G.cottonwoodPost.setRoute('woodland'),false);
 });
-test('Adventures start clones the canonical solo expedition and uses the real trail start gate without broadcasting',()=>{
- const h=gameHarness(),stops=route().pts;let calls=0;h.G.social={EXPEDITIONS:[{id:'cottonwood',stops}]};h.G.net={myName:()=> 'Rider',publish(){throw Error('must not broadcast');}};
- const realStart=h.G.trail.start.bind(h.G.trail);h.G.trail.start=(pts,by,opts)=>{calls++;assert.notEqual(pts,stops);assert.notEqual(pts[0],stops[0]);assert.equal(by,'Rider');assert.equal(opts.soloExpedition,true);assert.equal(opts.exped,'cottonwood');realStart({...opts,pts,idx:0,t:0});return !!h.current;};
- assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(calls,1);assert.equal(h.G.cottonwoodPost.snapshot().active.stage,'collect');
+test('Adventures starts offline from the canonical expedition without creating social state or broadcasting',()=>{
+ const h=gameHarness(),stops=EXPEDITIONS.find(e=>e.id==='cottonwood').stops,before=copy(EXPEDITIONS),position=copy(h.P.pos),save=h.S.value;
+ h.G.net={myName:()=> 'Rider',publish(){throw Error('must not broadcast');}};const calls=bindTrailEntry(h);
+ assert.equal(h.G.social,undefined);assert.equal(h.G.cottonwoodPost.start(),true);assert.equal(calls.length,1);
+ assert.notEqual(calls[0].pts,stops);assert.notEqual(calls[0].pts[0],stops[0]);assert.deepEqual(calls[0].pts,stops);
+ assert.equal(calls[0].by,'Rider');assert.deepEqual(calls[0].opts,{exped:'cottonwood',soloExpedition:true,name:D.name});
+ assert.equal(h.G.cottonwoodPost.snapshot().active.stage,'collect');assert.equal(h.G.social,undefined);assert.deepEqual(h.P.pos,position);assert.deepEqual(h.S.value,save);
+ h.current.pts[0][1]=999;assert.deepEqual(EXPEDITIONS,before,'a live ride cannot mutate the catalogue');
+});
+test('offline public entry honors rejecting or unavailable core gates and unready mounts',()=>{
+ const h=gameHarness(),before=h.S.value;h.G.trail.start=()=>false;assert.equal(h.G.cottonwoodPost.start(),false);
+ h.G.trail.start=undefined;assert.equal(h.G.cottonwoodPost.start(),false);assert.equal(h.G.cottonwoodPost.snapshot().active,null);assert.deepEqual(h.S.value,before);assert.equal(h.scene.children.length,0);
+ const busy=gameHarness();bindTrailEntry(busy);busy.G.on('activityGate',()=>true);assert.equal(busy.G.cottonwoodPost.start(),false);assert.equal(busy.current,null);
+ const unready=gameHarness();bindTrailEntry(unready);unready.rig.ready=false;assert.equal(unready.G.cottonwoodPost.start(),false);assert.equal(unready.current,null);assert.equal(unready.scene.children.length,0);
+});
+test('a partial or substituted social catalogue cannot replace the authored solo route',()=>{
+ const h=gameHarness();h.G.social={EXPEDITIONS:[{id:'cottonwood',stops:[['Fake',0,0],['Fake',1,1]]}]};const calls=bindTrailEntry(h);
+ assert.equal(h.G.cottonwoodPost.start(),true);assert.deepEqual(calls[0].pts,EXPEDITIONS.find(e=>e.id==='cottonwood').stops);
+ assert.equal(isSoloPostRide(h.current),true);assert.equal(h.G.cottonwoodPost.start(),false,'pending active mission still owns the activity gate');
 });
 test('pointer route selection releases button focus for the next riding jump while keyboard selection keeps accessible focus',()=>{
  const h=gameHarness();h.G.trail.start(route());h.G.cottonwoodPost.interact();h.ride(D.pines);const button=h.elements.get('postWoodland');let blurred=0;button.blur=()=>{blurred++;};
  button.onclick({detail:1,currentTarget:button});assert.equal(blurred,1);assert.equal(h.G.cottonwoodPost.snapshot().active.route,'woodland');
  button.onclick({detail:0,currentTarget:button});assert.equal(blurred,1,'keyboard activation retains focus');
+});
+
+test('verified receipt validation rejects stale, malformed, changed-horse and mismatched reward acknowledgements',()=>{
+ const store=storage(),proof=postFinishProof(finishedRun());assert(savePostFinish(store,proof,pay).ok);const saved=store.value;
+ assert(confirmPostFinish(saved,proof).ok);assert.equal(confirmPostFinish(null,proof).ok,false);assert.equal(confirmPostFinish([],proof).ok,false);
+ for(const mutate of [s=>{delete s.cottonwoodPost;},s=>{s.cottonwoodPost.receipts[0].at++;},s=>{s.cottonwoodPost.receipts[0].time++;},s=>{s.cottonwoodPost.receipts[0].distance++;},s=>{s.cottonwoodPost.receipts[0].horseId=99;},s=>{s.cottonwoodPost.receipts[0].horseName='Other';},s=>{s.cottonwoodPost.receipts[0].pay.c++;},s=>{s.cottonwoodPost.receipts[0].starPoints++;},s=>{delete s.cottonwoodPost.completions;},s=>{s.stats.trails='5';},s=>{s.expDone.cottonwood=0;}]){
+  const bad=copy(saved);mutate(bad);assert.equal(confirmPostFinish(bad,proof).ok,false);
+ }
+});
+test('native pending receipt holds the world and all success effects until exact verified acknowledgement',async()=>{
+ const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),ack=deferred();let requests=0;
+ h.S.awaitConfirmedFresh=()=>{requests++;return ack.promise;};const before=h.S.value,done=h.G.cottonwoodPost.interact();
+ assert(done instanceof Promise);assert.equal(h.G.cottonwoodPost.snapshot().active.saving,true);assert.equal(h.G.cottonwoodPost.context().eligible,false);assert.equal(h.elements.get('postAction').disabled,true);assert.match(h.elements.get('postAction').textContent,/Saving reply/);
+ assert.equal(h.G.cottonwoodPost.retrySave(),false);assert.equal(h.G.cottonwoodPost.interact(),false);assert.equal(h.G.trail.stop(),false);assert.equal(h.G.cottonwoodPost.snapshot().lastResult,null);
+ assert.deepEqual(seen,[]);assert.equal(h.events.filter(e=>e==='trailDone'||e==='postFinish').length,0);assert.equal(h.S.value.coins,before.coins+450,'staged mirror is not a confirmed result');
+ await Promise.resolve();assert.equal(requests,1);ack.resolve(h.S.value);assert.equal(await done,true);
+ assert.equal(h.current,null);assert.equal(h.G.cottonwoodPost.snapshot().active,null);assert(h.G.cottonwoodPost.snapshot().lastResult);assert.deepEqual(seen,['wallet','gem',['trail',1],['exped',1]]);
+ assert.equal(h.events.filter(e=>e==='trailDone').length,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);assert.equal(h.G.cottonwoodPost.retrySave(),false);
+});
+test('native failed and stale acknowledgements leave one frozen receipt retryable without repaying',async()=>{
+ const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),before=h.S.value;
+ h.S.awaitConfirmedFresh=async()=>{throw Error('disk full');};assert.equal(await h.G.cottonwoodPost.interact(),false);
+ const pending=h.G.cottonwoodPost.snapshot().active,staged=h.S.value;assert(pending.savePending);assert.equal(pending.saving,false);assert.equal(h.G.cottonwoodPost.context().eligible,true);assert.match(h.elements.get('postAction').textContent,/Retry save/);assert.deepEqual(seen,[]);
+ h.S.awaitConfirmedFresh=async()=>before;assert.equal(await h.G.cottonwoodPost.retrySave(),false);assert.deepEqual(h.S.value,staged);assert.equal(h.G.cottonwoodPost.snapshot().active.runId,pending.runId);assert.equal(h.G.cottonwoodPost.snapshot().active.elapsed,pending.elapsed);
+ const wrong=copy(staged);wrong.cottonwoodPost.receipts[0].horseId=99;h.S.awaitConfirmedFresh=async()=>wrong;assert.equal(await h.G.cottonwoodPost.retrySave(),false);assert.deepEqual(seen,[]);
+ h.S.awaitConfirmedFresh=async()=>staged;assert.equal(await h.G.cottonwoodPost.retrySave(),true);assert.deepEqual(h.S.value,staged);assert.equal(h.S.value.cottonwoodPost.completions,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);
+});
+test('native acknowledgement cannot finish a replaced trail or fall back to the newer mirror',async()=>{
+ const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),ack=deferred();h.S.awaitConfirmedFresh=()=>ack.promise;
+ const done=h.G.cottonwoodPost.interact(),staged=h.S.value,original=h.current;
+ h.replaceTrail({pts:[['Other',0,0],['Other',1,1]],idx:0,t:0}); // External host replacement, not normal entry.
+ assert.notEqual(h.current,original);ack.resolve(staged);assert.equal(await done,false);assert.deepEqual(seen,[]);assert.equal(h.G.cottonwoodPost.snapshot().lastResult,null);assert.equal(h.events.filter(e=>e==='postFinish').length,0);
+});
+
+test('actual native save-store failure keeps Cottonwood pending until verified retry survives a new store',async()=>{
+ const h=gameHarness();homeWithReply(h);const seen=watchSuccess(h),key='starRanchFable_v1',disk=new Map(),baseline=h.S.value;
+ let fail=false,hold=null,writes=0;
+ const backend={async read(slot){return disk.get(slot)??null;},async write(slot,data){writes++;if(fail)throw Error('device storage unavailable');if(hold)await hold.promise;disk.set(slot,data);}};
+ const native=await createSaveStore({backend,seed:{[key]:JSON.stringify(baseline)},delay:100000});let reloaded;
+ try{
+  h.S.fresh=()=>JSON.parse(native.getItem(key));
+  h.S.sync=fn=>{const s=h.S.fresh();fn(s);native.setItem(key,JSON.stringify(s));};
+  h.S.awaitConfirmedFresh=()=>confirmGameSave({native:true,storage:native},key);
+  fail=true;assert.equal(await h.G.cottonwoodPost.interact(),false);
+  assert.equal(h.S.fresh().cottonwoodPost.completions,1,'staged receipt exists');
+  assert.deepEqual(JSON.parse(native.getDurableItem(key)),baseline,'failed write did not become durable');
+  assert.deepEqual(seen,[]);assert.equal(h.G.cottonwoodPost.snapshot().active.savePending,true);assert.equal(h.events.filter(e=>e==='postFinish').length,0);
+  fail=false;hold=deferred();const retry=h.G.cottonwoodPost.retrySave();
+  await Promise.resolve();assert.equal(h.G.cottonwoodPost.snapshot().active.saving,true);assert.deepEqual(seen,[]);
+  assert.deepEqual(JSON.parse(native.getDurableItem(key)),baseline,'in-flight write is still unconfirmed');
+  hold.resolve();assert.equal(await retry,true);assert.equal(h.G.cottonwoodPost.snapshot().active,null);
+  const saved=JSON.parse(native.getDurableItem(key));assert.equal(saved.coins,baseline.coins+450);assert.equal(saved.gems,baseline.gems+2);assert.equal(saved.pass.pts,baseline.pass.pts+28);assert.equal(saved.cottonwoodPost.completions,1);assert.equal(saved.cottonwoodPost.receipts.length,1);
+  assert.equal(writes,3,'seed, rejected write, and one successful retry');assert.equal(h.events.filter(e=>e==='trailDone').length,1);assert.equal(h.events.filter(e=>e==='postFinish').length,1);
+  reloaded=await createSaveStore({backend,delay:100000});assert.deepEqual(JSON.parse(reloaded.getItem(key)),saved);assert.equal(writes,3,'reload does not write or pay again');
+ }finally{hold?.resolve();native.dispose();reloaded?.dispose();}
 });

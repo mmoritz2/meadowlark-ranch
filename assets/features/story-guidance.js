@@ -1,3 +1,4 @@
+import {COTTONWOOD_ROUTES} from '../cottonwood-routes.mjs?v=cottonwood-post-1';
 /* Resolve the next playable action, without changing quest progress or rewards. */
 export const id='story-guidance';
 
@@ -71,6 +72,16 @@ export function firstGallopExit(m,position){
  return Math.abs(x)>2||z<14?{x:0,z:16}:{x:0,z:26};
 }
 
+// June's tent is inside the arena. The old stall is outside its north rail;
+// use the same surveyed approach and opening as the courier's ground route.
+// Outside riders retain the established physical door resolver.
+export function starterStallApproach(m,position){
+ if(m?.type!=='door'||m.door!=='starter'||!position||![position.x,position.z].every(Number.isFinite))return null;
+ const {x,z}=position;if(!(x>-25&&x<25&&z>-20&&z<20))return null;
+ const [ax,az]=COTTONWOOD_ROUTES.out[1],[gx,gz]=COTTONWOOD_ROUTES.out[2];
+ return Math.abs(x-ax)>1.4||z>az+1?{x:ax,z:az}:{x:gx,z:gz};
+}
+
 // One person resolver for the text and the world marker. Read the current clue
 // ledger each time: noting a witness must immediately point to the next one.
 export function missionPersonId(m,done,save={}){
@@ -92,6 +103,8 @@ export function resolveTarget(m,done,world,position,save={}){
   const id=missionPersonId(m,false,save),g=world.npcList?.find(q=>q.def?.id===id)?.g;
   return g?.position&&g.visible!==false?{id:'story-person:'+id,position:g.position}:null;
  }
+ const stallApproach=starterStallApproach(m,position);
+ if(stallApproach)return {id:'prologue:north-gate',position:{...stallApproach,y:world.groundH?.(stallApproach.x,stallApproach.z)||0},arrivalDistance:1};
  const exit=firstGallopExit(m,position);
  if(exit)return {id:'prologue:south-gate',position:{...exit,y:world.groundH?.(exit.x,exit.z)||0},arrivalDistance:1};
  if(m.type==='carrots'||m.type==='forage'){
@@ -115,6 +128,7 @@ export function nextAction(m,done,position,context={}){
  }
  if(m.type==='train'&&context.training===null)return {hint:'Your current stats are at their training caps. Ride an event to earn horse XP, then train again.',action:'events',label:'Earn horse XP'};
  if(firstGallopExit(m,position))return {hint:'Follow the south gate marker. Tap for Gallop.',action:'gallop'};
+ if(m.type==='door'&&m.door==='starter')return {hint:starterStallApproach(m,position)?'Follow the north gate marker, then stop beside the old stall and use Interact (E).':'Follow the old stall marker. Stop beside its door and use Interact (E).',action:'guide',label:'Find the old stall'};
  if(m.type==='name'&&m.npc==='wren')return {hint:'Follow the marker and talk to Wren by the barn.',action:''};
  if(m.type==='carrots'||m.type==='forage')return {hint:'Follow the marker and ride over the food.',action:''};
  const row=ACTIONS[m.type];

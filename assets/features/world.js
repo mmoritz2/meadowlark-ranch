@@ -1,3 +1,4 @@
+import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
 import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
 import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
@@ -38,7 +39,9 @@ export function install(G){
     with a ranch-level alternative so a builder is never stuck, and a seasonal open week. */
  const REGION_META={
   '🐴 Home Pasture':{id:'pasture',biome:'meadow',ft:'🐴 Pasture'},
-  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-238,z:220}},
+  // Reaching this existing mission follows claiming the five jumping ribbons.
+  // Coyote is a qualifier for the Final, so its story gate must come first.
+  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Earn 15 ribbons of any kind',1,23],ranch:3,text:'after earning your first five show-jumping ribbons, or at ranch level 3'},venue:{x:-238,z:220}},
   '🌾 Barleyfold Farms':{id:'barleyfold',biome:'farm',ft:'🌾 Barleyfold',unlock:{story:['Win Cottonwood Welcome Jump',1,4],ranch:2,text:'after Grandpa Wren\'s fourth errand, or at ranch level 2'},venue:{x:206,z:-38}},
   '💦 Hollowpeak Falls':{id:'falls',biome:'mountain',ft:'💦 The Falls',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'}},
   '🏔️ Hollowpeak Heights':{id:'hollowpeak',biome:'mountain',ft:'🏔️ Hollowpeak',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'},venue:{x:-92,z:-173}},
@@ -60,7 +63,7 @@ export function install(G){
  for(const rg of T.REGIONS){const m=REGION_META[rg.name];if(m)Object.assign(rg,m);else if(!rg.id)rg.id=rg.name.replace(/[^a-z]/gi,'').toLowerCase();}
  const OPEN_ROTATION=['coyote','hollowpeak','barleyfold'];   // one locked region opens to everyone for a season's first week
  const regionById=id=>T.REGIONS.find(r=>r.id===id);
- function ranchLevel(s){const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}
+ function ranchLevel(s){const RS=G.ranchSys;if(RS&&RS.ranchLevel)return RS.ranchLevel(s);return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}
  function storyIndexOf(label,nth){let k=0;for(let i=0;i<Q.STORY.length;i++)if(Q.STORY[i].label===label){k++;if(k===nth)return i;}return -1;}
  function storyReached(rule){const i=storyIndexOf(rule[0],rule[1]);return Q.storyIdx()>=(i>=0?i:rule[2]);}
  function seasonOpen(rg){

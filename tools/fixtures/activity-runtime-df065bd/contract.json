@@ -1,0 +1,169 @@
+{
+  "baseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "scope": "Six exact cache edges and five region import/gate/fallback literals only. Original runtime, scenery, source assertions and fixture hashes remain authoritative after this outer projection. Actual activity/region behavior tests read production directly.",
+  "files": {
+    "ranch3d.html": {
+      "beforeSHA256": "16d741ee7b09bb34514455dea2dfe68d9e46ea6103a4fd6b1ebadf4b31eca027",
+      "afterSHA256": "0b9bd03fc5bc20ad73fd8416fa63e79b532a87739fee3fb22f10b9cc80863d0d"
+    },
+    "assets/features/index.js": {
+      "beforeSHA256": "e6561453d146c1a4c4f2be53013a6f3904a6c566ae1d8c1bc6db76c8ec0a6f9f",
+      "afterSHA256": "7b47bd7df36af5116a9c12ab0014222c013452d76a819f8af2536a128a082a7f"
+    },
+    "assets/features/world.js": {
+      "beforeSHA256": "58f4b28b823a9a249cd250d666c354126c7330342ba70ad37ea7bbc75364c297",
+      "afterSHA256": "352a72a704ccdc9625e090d3604c4fa9992938aecfc83b490ed3c85573f04125"
+    },
+    "assets/features/story-quests.js": {
+      "beforeSHA256": "cb83646ef507e58f94075bb3607970e22db9cd06f3feb1adc10d588deca49a91",
+      "afterSHA256": "f937e85faf7de2add18c4b1bb1a69f8dffdf0736832c9f73b8725f5d17300836"
+    }
+  },
+  "changes": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=physical-ride-3-starter-tack-2-fieldstone-walls-3';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=rider-adventures-4-starter-tack-2-fieldstone-walls-3';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as story from './story-quests.js?v=hollowpeak-cascades-1';",
+      "after": "import * as story from './story-quests.js?v=earned-region-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as world from './world.js?v=coyote-macroform-3';",
+      "after": "import * as world from './world.js?v=earned-region-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as social from './social-play.js?v=cottonwood-post-1';",
+      "after": "import * as social from './social-play.js?v=offline-expeditions-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as cottonwoodPost from './cottonwood-post.js?v=cottonwood-post-1';",
+      "after": "import * as cottonwoodPost from './cottonwood-post.js?v=offline-expeditions-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as storyGuidance from './story-guidance.js?v=story-witness-1';",
+      "after": "import * as storyGuidance from './story-guidance.js?v=starter-stall-guide-1';",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": "",
+      "after": "import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": "  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-238,z:220}},\n",
+      "after": "  // Reaching this existing mission follows claiming the five jumping ribbons.\n  // Coyote is a qualifier for the Final, so its story gate must come first.\n  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Earn 15 ribbons of any kind',1,23],ranch:3,text:'after earning your first five show-jumping ribbons, or at ranch level 3'},venue:{x:-238,z:220}},\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/world.js",
+      "before": " function ranchLevel(s){const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}\n",
+      "after": " function ranchLevel(s){const RS=G.ranchSys;if(RS&&RS.ranchLevel)return RS.ranchLevel(s);return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/story-quests.js",
+      "before": "",
+      "after": "import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    },
+    {
+      "file": "assets/features/story-quests.js",
+      "before": "  const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0)+(s.builderBonus||0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}\n",
+      "after": "  return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}\n",
+      "occurrences": 1,
+      "kind": "runtime"
+    }
+  ],
+  "observers": {
+    "tools/progression-loop-cache-source-guard.cjs": {
+      "beforeSHA256": "c164aaf5333adb1abf8d05dfc1c5cf8926539979d7dd0b5e33383db110cf57db",
+      "afterSHA256": "89d074b6ea35159cdd7dc9a698610915e08227a33716dc0f8dbf4a3974edf687"
+    },
+    "tools/test-progression-loop-cache-guard.mjs": {
+      "beforeSHA256": "94932cd0071f7998d8b91d522a7ae61c3d2361683f23d0a77e95d10efc837548",
+      "afterSHA256": "f01a42811cf40f52cc836b92aafa25f429d8f3e9b1d592c242c230aa5f352f8c"
+    },
+    "tools/test-progression-grass-composition.mjs": {
+      "beforeSHA256": "76cff13fbeeb94f790efb0cdb4a48b448c34383ba48e212167d037241a07c38e",
+      "afterSHA256": "75646332a38426747abc22f7aced1e5af421e16260b664f017d567e8f0457494"
+    },
+    "tools/run-reviewed-world-guards.mjs": {
+      "beforeSHA256": "2f8b0fddfbe03ab0c784d990fa5f93f04b4046e6b4c5232b6faf8bd62d452f0b",
+      "afterSHA256": "96e4719a46ed31c716743b8d29a3380f591294bc2d7e33b9d9869189e87d6d62"
+    }
+  },
+  "observerChanges": [
+    {
+      "file": "tools/progression-loop-cache-source-guard.cjs",
+      "before": "const {changes}=JSON.parse",
+      "after": "const {normalizeActivityRuntimeSource}=require('./activity-runtime-source-guard.cjs');\nconst {changes}=JSON.parse",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/progression-loop-cache-source-guard.cjs",
+      "before": "function normalizeProgressionLoopCacheSource(source,file){\n",
+      "after": "function normalizeProgressionLoopCacheSource(source,file){\n source=normalizeActivityRuntimeSource(source,file);\n",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/test-progression-loop-cache-guard.mjs",
+      "before": "import test from 'node:test';\n",
+      "after": "import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport test from 'node:test';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/test-progression-loop-cache-guard.mjs",
+      "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8');",
+      "after": "read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file);",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/test-progression-grass-composition.mjs",
+      "before": "import test from 'node:test';\n",
+      "after": "import {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport test from 'node:test';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/test-progression-grass-composition.mjs",
+      "before": "const read=file=>fs.readFileSync(new URL(file,root),'utf8'),sha=",
+      "after": "const read=file=>normalizeActivityRuntimeSource(fs.readFileSync(new URL(file,root),'utf8'),file),sha=",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/run-reviewed-world-guards.mjs",
+      "before": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\n",
+      "after": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "tools/run-reviewed-world-guards.mjs",
+      "before": "  else if(name==='assets/features/course-guide.js')",
+      "after": "  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/course-guide.js')",
+      "occurrences": 1
+    }
+  ]
+}

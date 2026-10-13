@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 // The web project uses ES modules without a root package.json.
 const source=await readFile(new URL('../assets/features/story-guidance.js',import.meta.url),'utf8');
-const {missionPersonId,nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,install}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {missionPersonId,nearestPickup,resolveTarget,nextAction,missingBuildPieces,trainingFood,practiceTarget,starterStallApproach,install}=await import(new URL('../assets/features/story-guidance.js',import.meta.url));
 const pickup=(x,z,item='lettuce',visible=true)=>({item,g:{visible,position:{x,y:0,z}}});
 const here={x:0,z:0};
 
@@ -174,4 +174,40 @@ test('talk tasks describe and target their named conversation partner before ret
  const f=witnessFixture();Object.assign(f.mission,{type:'talk',talk:'theo',goal:1,label:'Ask Theo'});delete f.mission.clues;
  assert.equal(f.G.storyGuidance.describe().label,'Find Theo');assert.equal(f.wayTarget().position,f.npcs[2].g.position);
  f.save.story.prog=1;assert.equal(f.G.storyGuidance.describe().label,'Return to Wren');assert.equal(f.wayTarget(),f.npcs[0].g);
+});
+
+
+test('old-stall instructions and actual HUD target lead June’s rider to the authored north opening, not Wren',async()=>{
+ const m={type:'door',door:'starter',npc:'wren',label:'Open the old stall',goal:1,reward:{c:100}},position={x:9,z:-9};
+ const {COTTONWOOD_ROUTES}=await import('../assets/cottonwood-routes.mjs');
+ const approach=COTTONWOOD_ROUTES.out[1],outside=COTTONWOOD_ROUTES.out[2],world={groundH:()=>2};
+ const plan=nextAction(m,false,position),marker=resolveTarget(m,false,world,position);
+ assert.equal(plan.label,'Find the old stall');assert.match(plan.hint,/north gate/);assert.match(plan.hint,/Interact/);assert.doesNotMatch(plan.hint,/talk to Wren/);
+ assert.deepEqual(marker.position,{x:approach[0],z:approach[1],y:2});assert.equal(marker.arrivalDistance,1);
+ const save={story:{idx:0,prog:0}},G={quest:{STORY:[m],storyIdx:()=>0,storyProg:()=>0,NPC_DEFS:[{id:'wren',name:'Grandpa Wren'}]},horse:{ridden:()=>({}),player:{pos:position}},world,save:{fresh:()=>save},money:{rewardLabel:()=>''},tables:{DECOR_CAT:{}},ui:{action(){}},$:()=>null,on(){},hidePanels(){}};
+ install(G);const target=new Function('G',"let wayKey='',wayNpc=null;const wayPlace={position:{set(){}}};"+wayTargetSource+'return wayTarget;')(G);
+ assert.deepEqual(target().position,marker.position);
+ position.x=approach[0];position.z=approach[1];
+ assert.deepEqual(resolveTarget(m,false,world,position).position,{x:outside[0],z:outside[1],y:2});
+ assert.deepEqual(starterStallApproach(m,{x:-4.3,z:-19}),{x:outside[0],z:outside[1]});
+});
+test('the advised stall crossing clears both actual north-rail segments at the physical horse radius',async()=>{
+ const html=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');
+ const gate=html.match(/const NORTH_GATE=(\{x1:[^;]+\});/);assert(gate,'Actual authored north gate');
+ const {x1,x2}=new Function('return '+gate[1])();
+ const walls=html.match(/\[\[-25,-20,NORTH_GATE\.x1,-20\],[\s\S]*?\]\n/);assert(walls,'Actual arena collision walls still bind this route');
+ const m={type:'door',door:'starter'},radius=.55;
+ for(const start of [{x:-3,z:-16},{x:-4.3,z:-19},{x:-1.7,z:-18}]){
+  const end=starterStallApproach(m,start),t=(-20-start.z)/(end.z-start.z),crossing=start.x+(end.x-start.x)*t;
+  assert(t>0&&t<1);assert(crossing-radius>x1&&crossing+radius<x2,'The real hoof/root corridor fits inside the retained physical opening');
+ }
+});
+test('outside, completed, unrelated and invalid stall actions preserve established quest resolution and saved progress',()=>{
+ const m={type:'door',door:'starter'};
+ for(const position of [{x:0,z:-22},{x:30,z:0},{x:0,z:21},{x:NaN,z:0},null])assert.equal(starterStallApproach(m,position),null);
+ assert.equal(resolveTarget(m,true,{},here),undefined);assert.equal(nextAction(m,true,here),null);
+ assert.equal(resolveTarget({type:'door',door:'other'},false,{},here),undefined);
+ assert.match(nextAction(m,false,{x:0,z:-22}).hint,/old stall marker/);
+ const input={story:{idx:4,prog:0},keys:1,doors:{}},before=structuredClone(input);
+ nextAction(m,false,{x:9,z:-9},{save:input});resolveTarget(m,false,{},here,input);assert.deepEqual(input,before);
 });

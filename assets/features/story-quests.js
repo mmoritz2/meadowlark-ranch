@@ -1,3 +1,4 @@
+import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
 /* Feature package 'story-quests'.
    The prologue and the story arc, side quests, the quest log, the detective / ribbon / builder
    quest patterns, six dailies and the umbrella, the NPC roster, and horse naming.
@@ -109,7 +110,7 @@ export function install(G){
  function ribbonCount(s,disc){let n=0;const rb=(s&&s.ribbons)||{};for(const id in rb){const ev=T.EVENTS3.find(e=>e.id===id);if(!ev)continue;const d=ev.race?'race':ev.dressage?'dressage':'jump';if(disc==='any'||d===disc||(disc==='riding'&&d!=='jump'))n+=rb[id]||0;}return n;}
  const DISC_LBL={any:'',jump:'show-jumping ',race:'racing ',dressage:'dressage ',riding:'riding-event '};
  function ranchLevelOf(s){const RS=G.ranchSys; if(RS&&RS.ranchLevel)return RS.ranchLevel(s);   // the ranch package owns the points formula once it is installed
-  const p=(s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0)+(s.builderBonus||0);let l=1;for(let i=1;i<T.RANCH_LEVELS.length;i++)if(p>=T.RANCH_LEVELS[i])l=i+1;return l;}
+  return ranchProgress(s,T.DECOR_CAT,T.RANCH_LEVELS,G.ranch?.extraPts?.(s)||0).level;}
  function storyPct(){const m=cur();if(!STORY.length)return 0;return Math.min(100,Math.round(100*(idx()+(m?Math.min(1,prog()/m.goal):0))/STORY.length));}
  const chapterOf=m=>m.ch||(m.book||'The Home Meadow');
  function daysUntil(t){return Math.max(0,Math.ceil((t-nowMs())/864e5));}
