@@ -1,0 +1,22 @@
+[
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "import {recordSolidPart}",
+    "after": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';\nimport {recordSolidPart}"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": " function clearAt(cx,cz,need,maxR){",
+    "after": " const canyonBootPlanning=createCoyoteBootPlanning(W);\n const bootLandforms=new Set(canyonBootPlanning.barriers);\n const placementColliders=()=>canyonBootPlanning.collidersForPlanning(W.colliders);\n function clearAt(cx,cz,need,maxR){"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "for(const c of W.colliders){const q=hyp(x,z,c.x,c.z)-c.r;",
+    "after": "for(const c of placementColliders()){const q=hyp(x,z,c.x,c.z)-c.r;"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "for(const c of W.colliders)if(c&&c.landform&&hyp(x,z,c.x,c.z)<c.r+pad)",
+    "after": "for(const c of placementColliders())if(c&&(c.landform||bootLandforms.has(c))&&hyp(x,z,c.x,c.z)<c.r+pad)"
+  }
+]

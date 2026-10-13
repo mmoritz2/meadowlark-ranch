@@ -520,7 +520,7 @@ body.touch #stickZone{display:block}
  </div>
  <div class="intro-bottom"><span>YOUR STORY STARTS IN THE SADDLE</span><span class="intro-location"><i></i> The home pasture · Kestrel Basin</span></div>
 </section>
-<script src="assets/game-loading.js?v=playability-2"></script>
+<script src="assets/game-loading.js?v=mounted-curtain-2"></script>
 <div id="hud">
  <div id="wallet" class="glass">
   <span class="w" title="Coins"><i>🪙</i><b id="coinEl">0</b></span>
@@ -651,9 +651,9 @@ import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=leg-contours-20261012';
-import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-1';
-import {configureNativeCustomization} from './assets/native-horse-customization.js?v=equestrian-style-20261012';
+import {createBreedLibrary} from './assets/breed-models.js?v=world-presentations-1';
+import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-2';
+import {configureNativeCustomization} from './assets/native-horse-customization.js?v=world-presentations-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=equestrian-style-20261012';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
@@ -668,36 +668,43 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
-import {installUndergrowth} from './assets/undergrowth.js?v=cold-landscape-1';
-import {installMixedSward} from './assets/mixed-sward.mjs?v=cold-landscape-1';
+import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
+import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=pastoral-cover-1';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=cold-landscape-1';
-import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=landmark-fields-1';
-import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=cold-landscape-1';
-import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=countryside-banks-1';
-import {createGeology} from './assets/geology.js?v=countryside-banks-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=lupin-rounded-1';
+import {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';
+import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';
+import {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';
+import {installPastoralCoverRefresh} from './assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1';
+import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=lupin-rounded-1';
+import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
+import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-3';
+import {createGeology} from './assets/geology.js?v=ranch-models-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
 import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1';
-import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=cold-landscape-1';
+import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=hollowpeak-cascades-1';
 import {legacyFallsTerrainHeight,createHollowpeakPlacementPlan} from './assets/hollowpeak-placement-reference.mjs?v=hollowpeak-ridges-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
-import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
-import {installRiparian} from './assets/riparian.js';
+import {createWaterfallArt} from './assets/waterfall-art.js?v=hollowpeak-cascades-1';
+import {loadCascadeFoamTexture} from './assets/cascade-foam-texture.mjs?v=hollowpeak-cascades-1';
+import {installRiparian} from './assets/riparian.js?v=river-ecotone-1';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
 import {hollowpeakSnowAttribute} from './assets/hollowpeak-snow.mjs?v=cold-landscape-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=cold-landscape-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=world-cohesion-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=pastoral-cover-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=ranch-models-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=timber-cladding-1';
-import {createWorldFinish} from './assets/world-rendering.js?v=character-polish-20261009';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=ranch-models-1';
+import {createWorldFinish} from './assets/world-rendering.js?v=world-presentations-1';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
@@ -706,14 +713,17 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=cold-landscape-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-3';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
-import {createRiderLibrary} from './assets/rider-model.js?v=braid-curve77-20261012';
-import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
+import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';
+import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
+import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=roundup-route-2-cold-landscape-1';
+import {FEATURES} from './assets/features/index.js?v=starter-tack-2';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
+import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
+import {worldHorseCanDress,beginWorldHorseLoad,settleWorldHorseLoad,retireWorldHorse} from './assets/world-horse-lifecycle.mjs?v=ranch-actors-2';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
 import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-route-2';
 import {updateRoundupGuidance} from './assets/roundup-guidance.mjs?v=roundup-route-2';
@@ -1492,7 +1502,7 @@ const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
 const STREAM_JOIN=160;                          // it meets the river around z≈160
 const riverLevel=x=>0.50-x*0.009;
 const streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));
-function rawH(x,z,fallsHeight=fallsTerrainHeight){
+function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
  const far=1-THREE.MathUtils.smoothstep(d,380,460);
@@ -1505,11 +1515,12 @@ function rawH(x,z,fallsHeight=fallsTerrainHeight){
  h+=near*far*rg*rg*6.0;
  const bl=vnoise(x*0.011-31,z*0.011+44);                    // flat-topped bluffs, steep cliff faces
  h+=near*far*THREE.MathUtils.smoothstep(bl,0.35,0.60)*9.0;
- h+=canyonRelief(x,z);
+ h+=canyonHeight(x,z);
  // A continuous graded channel: the water elevation is independent of the hills.
  const rd=Math.abs(z-riverZ(x));
  const riverBed=riverLevel(x)-0.85+THREE.MathUtils.smoothstep(rd,0,7)*1.30;
  h=THREE.MathUtils.lerp(riverBed,h,THREE.MathUtils.smoothstep(rd,7.5,19));
+ h=riverHeight(x,z,h);
  if(z<STREAM_JOIN+3){
   const sd=Math.abs(x-streamX(z));
   const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;
@@ -1538,8 +1549,8 @@ const PATH_W=2.9;
 const villageGroundZones=COTTONWOOD_PUBLIC.map(q=>({...q}));
 // A maintained yard and clipped trail shoulders give way gradually to meadow.
 function managedGrass(x,z){
- return Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),
-  1-THREE.MathUtils.smoothstep(Math.min(pathDist(x,z),G.worldPaths?.trackDist(x,z)??Infinity),2.6,5.8));
+ return managedGroundsAt(x,z,Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),
+  1-THREE.MathUtils.smoothstep(Math.min(pathDist(x,z),G.worldPaths?.trackDist(x,z)??Infinity),2.6,5.8)));
 }
 const _PSEG=(()=>{                                                   // flattened into segments once
  const out=[];
@@ -1571,6 +1582,8 @@ function pathDist(x,z){
 }
 // Sample the collision surface from the same triangles used by the visible terrain.
 const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
+const riverBankPlacement=configureRiverBanks({terrainStep:TERRAIN_STEP,
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
 const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
@@ -1583,7 +1596,11 @@ function terrainH(x,z){
 }
 // Preserve authored planting decisions while every rendered/physical root uses terrainH.
 const hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight),heightAt:(x,z)=>groundH(x,z)});
+ rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});
+const canyonPlacement=createCanyonPlacementPlan({terrainStep:TERRAIN_STEP,
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),
+ macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight),
+ surfaceHeightAt:(x,z,h)=>{for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));return h;},heightAt:hollowpeakPlacement.heightAt});
 const groundSurfaces=[];
 const colliders=[];
 const walls=[];
@@ -2739,7 +2756,8 @@ const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
 const ranchBuilderArt=createRanchBuilderArt({THREE,GLTFLoader,architecture:ranchArchitecture,deferModels:true,
  anisotropy:renderer.capabilities.getMaxAnisotropy(),getRanchName:()=>freshSave()?.ranchName||'Meadowlark Ranch'});
-const waterfallArt=createWaterfallArt({THREE});
+const waterfallFlowTexture=await loadCascadeFoamTexture({THREE,url:new URL('./assets/textures/waterfall/cascade-foam-v1.png',import.meta.url)});
+const waterfallArt=createWaterfallArt({THREE,flowTexture:waterfallFlowTexture});
 const sceneryArt=createSceneryArt({THREE,materials:ranchBuilderArt.materials,groundH,groundSurfaces});
 const arrivalArt=createArrivalArt({THREE,anisotropy:renderer.capabilities.getMaxAnisotropy()});
 const geology=createGeology({THREE,scene,groundH:terrainH});
@@ -3109,7 +3127,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   e.set(0,Math.random()*Math.PI,(Math.random()-0.5)*0.15);
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
-  sc.set(s*spread,s*(.78-.40*managedGrass(x,z))*growth,s*spread);
+  const turfReach=ranchTurfReachAt(x,z);
+  sc.set(s*spread*turfReach,s*(.78-.40*managedGrass(x,z))*growth*ranchTurfHeightAt(x,z),s*spread*turfReach);
   const winterCover=coldPastureCover(x,z);
   // Keep all seeded random draws; winter cover only changes this blade's matrix.
   const winterSample=Math.sin(x*47.13+z*53.71)*43758.5453;
@@ -3168,12 +3187,29 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;
  transformed.y*=1.0-parting*.30;
 #endif`);
- if(grassAreaFade)sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
+ if(grassAreaFade){
+  sh.vertexShader=sh.vertexShader
+   .replace('transformed.x+=(sin(uTime*1.7+wph)*'+sway+'+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;','transformed.x+=nearGrassWindX*transformed.y;')
+   .replace('transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;','transformed.z+=nearGrassWindZ*transformed.y;')
+   .replace('transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;','transformed.xz+=nearGrassPartVector*transformed.y;')
+   .replace('transformed.y*=1.0-parting*.30;','transformed.y*=nearGrassPartScale;');
+  sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
 #ifdef USE_INSTANCING
  float nearNormalFade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(instanceMatrix[3].xz,uPlayer.xz));
  objectNormal.xz*=max(sqrt(nearNormalFade),.0001);
+ float nearGrassPhase=instanceMatrix[3].x*.19+instanceMatrix[3].z*.13;
+ float nearGrassSwayScale=length(instanceMatrix[1].xyz)*inversesqrt(max(dot(instanceMatrix[0].xyz,instanceMatrix[0].xyz),.000001));
+ float nearGrassWindX=(sin(uTime*1.7+nearGrassPhase)*${sway}+sin(uTime*3.1+nearGrassPhase*2.3)*.07)*nearGrassSwayScale;
+ float nearGrassWindZ=cos(uTime*1.2+nearGrassPhase)*.16*nearGrassSwayScale;
+ vec2 nearGrassAway=instanceMatrix[3].xz-uPlayer.xz;
+ float nearGrassParting=1.0-smoothstep(.35,1.35,length(nearGrassAway));
+ vec2 nearGrassPartVector=normalize(nearGrassAway+vec2(.001))*nearGrassParting*.70;
+ float nearGrassPartScale=1.0-nearGrassParting*.30;
+ // Inverse transpose of the same wind/parting shear and final Y scale.
+ objectNormal.y=(objectNormal.y-(nearGrassWindX+nearGrassPartVector.x)*objectNormal.x-(nearGrassWindZ+nearGrassPartVector.y)*objectNormal.z)/nearGrassPartScale;
 #endif`);
- };if(grassAreaFade)mat.customProgramCacheKey=()=> 'near-meadow-cover-2';};
+ }
+ };if(grassAreaFade)mat.customProgramCacheKey=()=> 'near-meadow-cover-3';};
  /* ===== ground cover =====
     Grass alone is a lawn. What makes ground read as country is the litter on it: ferns and
     scrub in the meadow, dry brush and spinifex in the canyon, snow-crusted tufts up at
@@ -3326,7 +3362,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z))continue;
    const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z);
-   e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread,(.9+h1*.2)*trim*growth,sz*spread);
+   const turfReach=ranchTurfReachAt(x,z);
+   e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread*turfReach,(.9+h1*.2)*trim*growth*ranchTurfHeightAt(x,z),sz*spread*turfReach);
    if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);m4.toArray(grassCell.matrices,grassCell.count*16);
    meadowBladeColor(bcol,x,z,h4);if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
@@ -3337,7 +3374,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58&&meadowGrazingAt(x,z)<.75;
    if(!meadow||coldWoodlandWeights(x,z).weight>.08||h3>0.6*(1-coyoteCoverDryWeight(x,z)*.95)||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
-   v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
+   v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc);respondChalkFlowerMatrix(m4.elements,0); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
   }
   const hide=(im,id)=>{sc.set(0,0,0);m4.compose(v.set(0,-40,0),q.identity(),sc);im.setMatrixAt(id,m4);};
@@ -3355,7 +3392,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     const oldHeight=sz*(0.85+h2*0.35)*LEGACY_LUPIN_HEIGHT;
     const topHeight=oldHeight+(meadowFlowerHeightAt(x,z,h2)-oldHeight)*bank;
     sc.set(sz,topHeight/MEADOW_LUPIN_HEIGHT,sz);
-    v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);m4.toArray(cell.matrices,cell.count*16);
+    v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);respondChalkFlowerMatrix(m4.elements,0);m4.toArray(cell.matrices,cell.count*16);
     bcol.setRGB(.87+h1*.13,.83+h2*.16,.93+h3*.07);bcol.toArray(cell.colors,cell.count*3);cell.count++;
    }
   }
@@ -3368,7 +3405,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    if(!okClutter(x,z)||h3>density*(B==='meadow'?1-.95*meadowGrazingAt(x,z)*(1-blend):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
    const sz=size*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
-   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
+   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH); fern.setMatrixAt(id,m4);
    bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10);
    if(winter)bcol.lerp(winterGrassTint,winter.tintAmount);fern.setColorAt(id,bcol);
   }
@@ -3379,7 +3416,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));
    if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62)continue;
    const sz=0.8+h3*0.7; e.set(0,h2*Math.PI*2,(h1-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.6),sz);
-   v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);m4.toArray(reedCell.matrices,reedCell.count*16);
+   v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,reed.geometry,groundH);m4.toArray(reedCell.matrices,reedCell.count*16);
    bcol.setRGB(.85+h2*.15,.88+h3*.12,.81+h1*.16);bcol.toArray(reedCell.colors,reedCell.count*3);reedCell.count++;
   }
   for(let k=0;k<NG_RK;k++){                                  // stones, everywhere, in the local rock colour
@@ -3407,6 +3444,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    near.instanceMatrix.array.set(cell.matrices.subarray(0,cell.count*16),grassDrawCount*16);
    near.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),grassDrawCount*3);grassDrawCount+=cell.count;
   }
+  applyChalkGrassMesh(near,groundH,grassDrawCount);
+  applyPastoralSourceMesh(near,grassCells,groundH,grassDrawCount);
   near.count=grassVR?Math.floor(grassDrawCount*.5):grassDrawCount;
   let liveFlowers=0;
   for(const cell of lupinCells){
@@ -4414,7 +4453,7 @@ for(let i=0;i<90;i++){                                       // cacti across Coy
 // Keep the settlement and its riding approaches open. Cull after generating
 // placements so changing the planting does not consume a different random stream.
 for(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
- const p=FOLIAGE[name][i];if(pathDist(p.x,p.z)>=3.6&&Math.hypot(p.x-CANYON.x,p.z-CANYON.z)>=32&&!canyonCliffAt(p.x,p.z,terrainH))continue;
+ const p=FOLIAGE[name][i];if(pathDist(p.x,p.z)>=3.6&&Math.hypot(p.x-CANYON.x,p.z-CANYON.z)>=32&&!canyonPlacement.cliffAt(p.x,p.z))continue;
  const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 for(const name of ['oak','birch','blossom','pine','snowpine'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
@@ -4652,7 +4691,7 @@ let waterMat=null;   // hoisted: the pond reuses it
  // reeds along the banks
  const reedMat=new THREE.MeshStandardMaterial({color:0x8aa84e,roughness:1});
  const m4r=new THREE.Matrix4(),er=new THREE.Euler(),qr=new THREE.Quaternion(),vr=new THREE.Vector3(),sr=new THREE.Vector3();
- installRiparian({THREE,scene,terrainH,riverZ,riverLevel,pathDist});
+ installRiparian({THREE,scene,terrainH,planningHeightAt:riverBankPlacement.heightAt,riverZ,riverLevel,pathDist});
  const brookReeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,80);
  for(let i=0;i<80;i++){
   const z=-320+Math.random()*470;
@@ -4698,9 +4737,11 @@ let waterMat=null;   // hoisted: the pond reuses it
     if(Math.hypot(x-CANYON.x,z-CANYON.z)<18||pathDist(x,z)<radius+4||Math.abs(z-riverZ(x))<radius*1.3+9)continue;
     const height=kind==='mesa'?7+rnd()*11:3.5+rnd()*6.5;
     if(canyonReplacesFormation(x,z,radius)){placed++;continue;}
+    let placedFormation;
     if(kind==='mesa')geology.placeMesa(x,z,radius,height,i+1107);
-    else geology.placeHoodoo(x,z,radius,height,i+3527);
-    colliders.push({x,z,r:radius*.95,height,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it
+    else placedFormation=geology.placeHoodoo(x,z,radius,height,i+3527);
+    const colliderHeight=placedFormation?.userData.geology.fieldstone?placedFormation.userData.geology.collisionHeight:height;
+    colliders.push({x,z,r:radius*.95,height:colliderHeight,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it
    }
   }
  }
@@ -4891,7 +4932,7 @@ for(let i=0;i<8;i++){
 }}
 for(let i=0;i<14;i++){
  const x=-150-Math.random()*130,z=70+Math.random()*120;
- if(Math.abs(z-riverZ(x))<9||pathDist(x,z)<3.6||Math.hypot(x-CANYON.x,z-CANYON.z)<32||canyonCliffAt(x,z,terrainH))continue;
+ if(Math.abs(z-riverZ(x))<9||pathDist(x,z)<3.6||Math.hypot(x-CANYON.x,z-CANYON.z)<32||canyonPlacement.cliffAt(x,z))continue;
  const cact=desertArt.create('saguaro',i%3);cact.name='Desert | young cactus';cact.scale.setScalar(1.9);
  cact.position.set(x,groundH(x,z)-.01,z);scene.add(cact);
  colliders.push({x,z,r:0.5});
@@ -5319,19 +5360,24 @@ function hairColourInner(){
    material, the same one the player's mount uses. */
 const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?16:32;
 function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // read live: the tier can change mid-game
+const WORLD_RIDER_TACK=Object.freeze({saddle:'tc_classicwestern_saddle',pad:'tc_classicwestern_pad',bridle:'tc_classicwestern_bridle'});
 let worldRigCount=0;
+let WORLD_HORSE_LOD=null;
 function undressRig(ent){   // take a horse's rigged body off again (to put its own on in place of a borrowed one)
  const r=ent.rig; if(!r)return;
  try{ if(r.scene&&r.scene.parent)r.scene.parent.remove(r.scene); if(r.saddle&&r.saddle.parent)r.saddle.parent.remove(r.saddle); if(r.bridle&&r.bridle.parent)r.bridle.parent.remove(r.bridle); disposeMountedRig(r); r.skin?.material?.dispose?.(); }catch(e){}
  worldRigCount=Math.max(0,worldRigCount-1); ent.rig=null; ent.drg=null; ent.rigTried=false; ent.rigStandIn=null;
 }
+function loadWorldHorseBreed(ent,breed){return ent.worldHorseLOD&&WORLD_HORSE_LOD?WORLD_HORSE_LOD.loadFull(breed):BREED_MODELS.load(breed);}
+function resumeWorldHorseDress(ent,parts,colors,opts){if(WORLD_HORSE_LOD?.resumeFull(ent,parts,colors,opts))return;dressWithRig(ent,parts,colors,opts);}
 function dressWithRig(ent,parts,colors,opts){
+ if(!worldHorseCanDress(ent,parts))return;
  opts=opts||{};
  /* A horse wearing a borrowed body (below) changes into its own the moment its breed's model has arrived; while it
     has not, the download is asked for again every few seconds, so one failed fetch is not the old body for good. */
  if(ent.rigStandIn){
   if(!ent.rigPending&&BREED_MODELS.get(ent.rigStandIn))undressRig(ent);
-  else{ if(!ent.rigPending&&performance.now()>(ent.rigRetryAt||0)){const b=ent.rigStandIn;ent.rigPending=true;BREED_MODELS.load(b).then(()=>{ent.rigPending=false;if(parts.group.parent)dressWithRig(ent,parts,colors,opts);}).catch(()=>{ent.rigPending=false;ent.rigRetryAt=performance.now()+6000;});} return; }
+  else{ if(!ent.rigPending&&performance.now()>(ent.rigRetryAt||0)){const b=ent.rigStandIn,request=beginWorldHorseLoad(ent,parts);loadWorldHorseBreed(ent,b).then(()=>{if(settleWorldHorseLoad(ent,request))resumeWorldHorseDress(ent,parts,colors,opts);}).catch(()=>{if(settleWorldHorseLoad(ent,request))ent.rigRetryAt=performance.now()+6000;});} return; }
  }
  if(ent.rig){const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed);if(owner)syncCollectionTack(ent.rig,parts.group,owner);return;}
  if(ent.rigPending||!RIG.ready)return;
@@ -5340,9 +5386,9 @@ function dressWithRig(ent,parts,colors,opts){
  const breed=opts.breed||parts.group.userData.breed||'bay';
  let asset=BREED_MODELS.get(breed);
  if(!asset){
-  ent.rigPending=true;
-  BREED_MODELS.load(breed).then(()=>{ent.rigPending=false;if(parts.group.parent)dressWithRig(ent,parts,colors,opts);})
-   .catch(e=>{ent.rigPending=false;ent.rigTried=true;ent.rigRetryAt=performance.now()+6000;console.warn('Breed model unavailable',breed,e);});
+  const request=beginWorldHorseLoad(ent,parts);
+  loadWorldHorseBreed(ent,breed).then(()=>{if(settleWorldHorseLoad(ent,request))resumeWorldHorseDress(ent,parts,colors,opts);})
+   .catch(e=>{if(!settleWorldHorseLoad(ent,request))return;ent.rigTried=true;ent.rigRetryAt=performance.now()+6000;console.warn('Breed model unavailable',breed,e);});
   /* Each breed is a separate six-megabyte model. Until this one arrives the horse used to stand there in the old
      procedural body — a foal taken along, the grey filly of the story, every horse whose breed was not loaded yet —
      for as long as the download took, and for the rest of the session if it failed. It wears the body already
@@ -5363,11 +5409,12 @@ function dressWithRig(ent,parts,colors,opts){
   if(parts.horn)parts.horn.visible=false;
   if(parts.wings)for(const wing of parts.wings)wing.visible=false;
   if(parts.crest)parts.crest.visible=false;
-  ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,collectionDefaultTack:!!(opts.mine||opts.saddle),restQ:inst.bones.map(b=>b.quaternion.clone())};
+  ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,collectionDefaultTack:!!(opts.mine||opts.saddle),collectionBasicLocal:!!opts.basicLocalRiding,restQ:inst.bones.map(b=>b.quaternion.clone())};
   if(inst.profile.nativeKind==='horse')applyNativeRemoteMode(ent,{bareback:!!opts.bareback,wild:!!opts.wild||!opts.mine&&!opts.saddle});
   const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed&&h.breed===breed);
   rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);configureArtistCustomization(ent.rig,owner||{...opts,breed,colors});worldRigCount++;
-  syncCollectionTack(ent.rig,parts.group,owner||{bareback:!!opts.bareback});
+  syncCollectionTack(ent.rig,parts.group,owner||{bareback:!!opts.bareback},opts.saddle&&!opts.mine?WORLD_RIDER_TACK:null);
+  WORLD_HORSE_LOD?.fullReady(ent);
   return;
  }
  if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.45*(opts.foal?.65:1));
@@ -5389,6 +5436,17 @@ function dressWithRig(ent,parts,colors,opts){
  ent.rig={...inst,phase:Math.random()*6,hair,saddle,bridle,parts,collectionDefaultTack:!!opts.saddle,fantasyMaterial:opts.coat?mat:null,restQ:inst.bones.map(b=>b.quaternion.clone())};
  try{rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);fitArtistFeatures(ent.rig,parts);configureArtistCustomization(ent.rig,myHorses.find(h=>h.id===opts.seed&&h.breed===breed)||{breed,colors,tailCol:opts.tailCol,mark:opts.mark,markCol:opts.markCol,id:opts.seed});}catch(e){if(!ent.rigStandIn)throw e;}
  const owner=opts.mine&&myHorses.find(h=>h.id===opts.seed);if(owner)syncCollectionTack(ent.rig,parts.group,owner);
+}
+function placeWorldHorseRider(ent,bob=0){
+ if(!ent.rig||!ent.rider?.g)return;
+ const rig=ent.rig,seat=breedSeat(rig),scale=ent.parts.group.scale.x||1;
+ if(rig.profile?.nativeBreed){
+  // The authored clip already moves the native seat. Use the same measured
+  // contact offsets as the player, without adding procedural stride bob.
+  const bareback=!!ent.bareback||!rig.collectionPieces?.saddle;
+  const contact=(bareback&&rig.nativeRider?.barebackSeatLocal?.())||seat;
+  ent.rider.g.position.set(contact.x,contact.y+(bareback?.09:.11)/scale,contact.z-.02/scale);
+ }else ent.rider.g.position.set(0,seat.y+.18+bob,seat.z+.02);
 }
 function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; if(r.heroMotion){tickGameHero(r,sp,dt);if(r.profile?.nativeBreed){updateCollectionTack(r,dt);return;}if(r.saddle)r.saddle.position.copy(breedSeat(r));if(r.bridle)r.bridle.userData.follow(r.headBone||r.bones[6],r.bones,r.restQ,r.scene,r.scene.parent);fitArtistFeatures(r,r.parts,true);updateCollectionTack(r,dt);return;} r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0,r); r.hair?.update?.(t,sp);updateCollectionTack(r,dt); }
 function fitArtistFeatures(rig,parts,animated=false){
@@ -6029,7 +6087,7 @@ function breedSeat(rig=RIG){
  const live=gameHeroSeat(rig,rig.scene?.parent);if(live)return live.clone();
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const bareback=RIG.profile?.nativeKind==='horse'&&(myHorses[rideIdx]?.bareback||!collectionPieces(myHorses[rideIdx]).saddle),seat=RIG.profile?.nativeBreed?((bareback?nativeRiderBridge?.barebackSeatLocal():null)||nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
+function riderSeat(){const bareback=RIG.profile?.nativeKind==='horse'&&(myHorses[rideIdx]?.bareback||!ridingVisualPieces(myHorses[rideIdx]).saddle),seat=RIG.profile?.nativeBreed?((bareback?nativeRiderBridge?.barebackSeatLocal():null)||nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
  if(RIG.profile?.nativeBreed)return {x:seat.x,y:seat.y+(bareback?.09:.11)/scale,z:seat.z-.02/scale};
  const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
  if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
@@ -6053,8 +6111,10 @@ async function requestPlayerBreed(breed){
  initGameHero(THREE,RIG);
  if(player.mesh){player.mesh.scale.setScalar(horseScale(myHorses[rideIdx]));attachRig();applyCoat();attachTack();}
  RIG.loadingBreed=false;
- HORSE_ARRIVAL.mounted(ticket,()=>ticket===breedRequest&&RIG.requestedBreed===(myHorses[rideIdx]?.breed||'bay')&&RIG.modelKey===BREED_MODELS.resolve(myHorses[rideIdx]?.breed||'bay')&&RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh);
- window.__setLoad?.(1,'ready!');
+ HORSE_ARRIVAL.mounted(ticket,()=>ticket===breedRequest&&RIG.requestedBreed===(myHorses[rideIdx]?.breed||'bay')&&RIG.modelKey===BREED_MODELS.resolve(myHorses[rideIdx]?.breed||'bay')&&RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh,()=>{
+  window.__setLoad?.(1,'ready!');
+  $('load')?.remove();
+ });
  if(!requestPlayerBreed.preloaded){requestPlayerBreed.preloaded=true;setTimeout(preloadBreeds,400);}
  }catch(e){
   if(ticket!==breedRequest)return;
@@ -6096,6 +6156,19 @@ function collectionPieces(h,remoteIds=null){
   if(piece?.slot===slot&&(!piece.premiumProduct||remoteIds||G.paidTack?.authorized(item)))out[slot]=piece;
  }return out;
 }
+// Only the current local native-horse hero gets the original basic visual kit.
+// Store, herd, remote packets and inventory resolution retain their old policy.
+function ridingVisualPieces(h,rig=RIG){
+ const equipped=collectionPieces(h);
+ return h===myHorses[rideIdx]&&rig.profile?.nativeKind==='horse'?withBasicRidingTack(h,equipped):equipped;
+}
+function basicRidingSlotActive(h,slot){
+ const live=myHorses[rideIdx],rig=player.onFoot?G.onFoot?.horseActionTarget?.():RIG;
+ if(!h||!live||String(h.id)!==String(live.id)||h.foal||h.egg||rig?.profile?.nativeKind!=='horse'||G.mastery?.isWild?.()||Object.prototype.hasOwnProperty.call(h.gear||{},slot))return false;
+ if(h.bareback&&(slot==='saddle'||slot==='pad'))return false;
+ const kit=rig.collectionTack,node=kit?.group?.getObjectByName('Collection '+slot);
+ return !!kit?.group?.visible&&!!node?.visible&&isBasicRidingTack(rig.collectionPieces?.[slot]);
+}
 function disposeCollectionTack(rig){
  rig.collectionTack?.dispose();rig.collectionTack=null;rig._collectionKey=null;rig._collectionMount=null;rig._collectionBase=null;rig._collectionPending=false;
 }
@@ -6129,7 +6202,8 @@ function syncCollectionTack(rig,mount,h,remoteIds=null){
  // The native dragons have different anatomy; equine fittings must not be
  // projected onto their wings or tails. Their existing gear bonuses stay intact.
  if(rig.profile?.nativeBreed&&rig.profile.nativeKind!=='horse')return;
- const pieces=collectionPieces(h,remoteIds),key=['saddle','pad','bridle','shoes'].map(slot=>pieces[slot]?.id||pieces[slot]?.catalogId||'').join('|');
+ const localBasic=!remoteIds&&(rig===RIG||rig.collectionBasicLocal===true);
+ const pieces=localBasic?ridingVisualPieces(h,rig):collectionPieces(h,remoteIds),key=['saddle','pad','bridle','shoes'].map(slot=>pieces[slot]?.id||pieces[slot]?.catalogId||'').join('|');
  rig.collectionHorse=h||{};rig.collectionPieces=pieces;
  const playerRig=rig===RIG;
  if(!playerRig&&!rig.profile?.nativeBreed){
@@ -6433,7 +6507,7 @@ function attachNativeTack(){
  }
  RIG._nativeTackScene=RIG.scene;RIG._nativeTackRider=player.rider;
  }
- TACK.saddle.visible=horse&&!h?.bareback&&!!collectionPieces(h).saddle;
+ TACK.saddle.visible=horse&&!h?.bareback&&!!ridingVisualPieces(h).saddle;
  const rider=player.rider;
  if(rider?.g){rider._setHero?.(true);rider.g.visible=true;rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
   const seat=riderSeat();rider.g.position.set(seat.x||0,seat.y,seat.z);rider.g.scale.setScalar(1/(player.mesh.scale.x||1));rider._handHome=null;}
@@ -8711,6 +8785,7 @@ function updateRein(mesh,handObj,bitObj){
 
 /* ================= player & herd ================= */
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(-7,0,10),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
+WORLD_HORSE_LOD=createWorldHorseLOD({THREE,models:BREED_MODELS,instantiate:instantiateArtistBreed,renderer,camera,player,fullDress:dressWithRig,fullTick:tickRig,undress:undressRig,getFallback:()=>BREED_MODELS.get('grey')||(RIG.profile?.nativeKind==='horse'?BREED_MODELS.get(RIG.modelKey):null),getDefinition:breed=>BREEDS3.find(row=>row[0]===breed)});
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
 /* ===== The barn row =========================================================
@@ -8742,7 +8817,13 @@ function buildBarnRow(){
  const sign=nameSprite('🏠 The barn'); sign.position.set(0,3.4,BARN_ROW.z0+BARN_ROW.step*2.5); g.add(sign);
  return barnBuilt;
 }
-function disposeHorseEnt(b){try{scene.remove(b.parts.group);if(b.rig){disposeMountedRig(b.rig);b.rig.skin.material.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}catch(e){}}   // a standing horse (barn, post, land stall) put away
+function disposeHorseEnt(b){
+ if(!b)return;
+ WORLD_HORSE_LOD?.release(b);
+ retireWorldHorse(b); // A late model arrival must not dress this removed actor.
+ b.parts?.group?.removeFromParent();
+ undressRig(b);
+}   // a standing horse (barn, post, land stall) put away
 function resetBarn(){ if(barnBuilt&&barnBuilt.g)scene.remove(barnBuilt.g); barnBuilt=null; }   // the home ranch moved: BARN_ROW changed, the row is rebuilt there
 /* Put the horses that are NOT out to grass into the stalls. */
 function refreshBarn(){
@@ -8787,7 +8868,7 @@ function rebuildAll(){
  player.breathHold=false;player.breathing=false;
  if(myHorses[rideIdx])syncSave(s=>{s.ridingHorseId=myHorses[rideIdx].id;});
  if(player.mesh)scene.remove(player.mesh);
- for(const a of herd){scene.remove(a.parts.group);if(a.rig){disposeMountedRig(a.rig);a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
+ for(const a of herd)disposeHorseEnt(a);
  herd=[];
  const h=myHorses[rideIdx];
  player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,dragon:h.dragon,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
@@ -9003,8 +9084,9 @@ addEventListener('keydown',e=>{
  // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
  if(e.code==='KeyB'&&!player.onFoot&&!freeCam&&!build.type&&!build.remove&&!build.move&&dragonElement(myHorses[rideIdx])){keys.KeyB=true;e.preventDefault();return;}
  if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
- if(e.code==='KeyE'&&(postInteractionHeld||G.cottonwoodPost?.context()?.inReach)){
-  if(!e.repeat&&!postInteractionHeld){postInteractionHeld=true;G.cottonwoodPost.interact();}
+ const postController=G.clubPostRelay?.context()?.inReach?G.clubPostRelay:G.cottonwoodPost?.context()?.inReach?G.cottonwoodPost:null;
+ if(e.code==='KeyE'&&(postInteractionHeld||postController)){
+  if(!e.repeat&&!postInteractionHeld){postInteractionHeld=true;postController?.interact();}
   e.preventDefault();return;
  }
  keys[e.code]=true;
@@ -10376,8 +10458,15 @@ function finishManagedTrail(r){
  r.finishNotified=true;G.run('trailDone',r);
  if(trailRide===r)trailRide=null;arrow.visible=false;return true;
 }
+// Cooperative relays own their verified shared receipts. Closing their trail
+// must not trigger expedition payments, solo progress or club contribution hooks.
+function finishUnrewardedManagedTrail(r){
+ if(!r||r!==trailRide||r.managed!=='club-post-relay'||typeof r.clubPostRelayId!=='string'||!r.clubPostRelayId||r.finishNotified||r.idx!==r.pts.length||G.run('unrewardedTrailFinishReady',r)!==true)return false;
+ r.finishNotified=true;releaseAllRidingControls();trailRide=null;arrow.visible=false;
+ G.run('unrewardedTrailFinished',r);return true;
+}
 /* The trail internals, for the social-play package (named rides, custom pins, expeditions). */
-G.trail={STOPS:TRAIL_STOPS,start:startTrail,stop:stopTrail,finishManaged:finishManagedTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){if(v===trailRide)return;if(trailRide&&!stopTrail())return;trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
+G.trail={STOPS:TRAIL_STOPS,start:startTrail,stop:stopTrail,finishManaged:finishManagedTrail,finishUnrewardedManaged:finishUnrewardedManagedTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){if(v===trailRide)return;if(trailRide&&!stopTrail())return;trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
 function tickTrail(dt){
  if(!trailRide||course)return;
  if(G.run('trailTick',trailRide,dt)===true)return;
@@ -10453,7 +10542,7 @@ function tickRunaways(dt,t){
    if(dd>45){ r.x=player.pos.x-Math.sin(player.heading)*20; r.z=player.pos.z-Math.cos(player.heading)*20; }   // fell far behind: it catches up out of sight
    if(dd>1.5){ sp=Math.min(15,dd*1.8); r.heading=Math.atan2(tx-r.x,tz-r.z); r.x+=Math.sin(r.heading)*sp*dt; r.z+=Math.cos(r.heading)*sp*dt; }
    if(Math.hypot(r.x-SANCTUARY.x,r.z-SANCTUARY.z)<SANCTUARY.r){
-    scene.remove(r.parts.group); r.done=true;
+    disposeHorseEnt(r); r.done=true;
     addCoins(200); syncSave(sv=>{sv.keys=(sv.keys||0)+1; sv.roundup={week:weekKey(),delivered:(sv.roundup&&sv.roundup.week===weekKey()?sv.roundup.delivered||0:0)+1}; addSP(sv,5,'roundup');}); refreshWallet(); sGem();
     toast('🤠 Home safe! +200🪙 +1🗝️');
    }
@@ -11098,7 +11187,7 @@ function tackLockerHtml(s){
    +STAT_KEYS.map(k=>'<tr><th>'+STAT_OF[k]+'</th><td>'+formatTackStat(breakdown.base[k])+'</td><td>+'+formatTackStat(breakdown.tack[k])+'</td><td><b>'+formatTackStat(breakdown.total[k])+'</b></td></tr>').join('')
    +'</tbody></table><div style="font-size:12px;margin-top:6px">Tack includes matching-set bonuses. Equipped totals count toward event stat requirements. Speed, acceleration and agility improve pace and handling; jump improves clearance, and stamina helps you last longer. Horse levels and ribbons are earned by playing.</div></div>';
   html+=GEAR_SLOTS.map(sl=>{const it=h.gear&&inv.find(t=>t.id===h.gear[sl]);
-   return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">nothing yet</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
+   return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">'+(basicRidingSlotActive(h,sl)?'Basic equipment · no stat bonus':'nothing yet')+'</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
  }
  const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+' · Common +1 · Uncommon +2 · Rare +3/+1 · Epic +4/+4 · Legendary +5/+5/+2</div>';
@@ -13439,7 +13528,7 @@ function spawnNPC(def){const g=makeNPC(def);g.position.set(def.x,groundH(def.x,d
 const npcList=NPC_DEFS.map(spawnNPC);
 function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);const e=spawnNPC(def);npcList.push(e);return e;}
 const npc=npcList[0].g;
-$('ctx').onclick=()=>{if(gameInputBlocked()||freeCam)return;if(G.cottonwoodPost?.context()?.inReach){G.cottonwoodPost.interact();return;}if(nearNPC)openDlg();else if(nearThing)useThing();};
+$('ctx').onclick=()=>{if(gameInputBlocked()||freeCam)return;if(G.clubPostRelay?.context()?.inReach){G.clubPostRelay.interact();return;}if(G.cottonwoodPost?.context()?.inReach){G.cottonwoodPost.interact();return;}if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
 const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true,coat:'moonlit',glow:true};
 const WILD_BREEDS=[
@@ -13488,7 +13577,7 @@ function spawnWild3(){
 /* Send it home so another can come. */
 function despawnWild(quiet){
  if(!wild3)return;
- try{ scene.remove(wild3.parts.group); }catch(e){}
+ disposeHorseEnt(wild3);
  wild3=null; wildTrust=0;
  const hud=$('tameHud'); if(hud)hud.style.display='none';
  if(!quiet)toast('✨ The wild horse melted back into the trees.');
@@ -13523,7 +13612,7 @@ function tameWild3(){
   myHorses.push(h);
   added=true;
  });
- scene.remove(w.parts.group);
+ disposeHorseEnt(w);
  wild3=null;wildTrust=0;
  $('tameHud').style.display='none';
  if(added){
@@ -13554,7 +13643,7 @@ const visitors=[];
   parts.group.add(tag);
   scene.add(parts.group);
   const wi=(ci*3)%WAY.length;
-  visitors.push({parts,colors:{body:c.body,mane:c.mane},WAY,wi,pos:new THREE.Vector3(WAY[wi][0],0,WAY[wi][1]),heading:0,phase:Math.random()*6});
+  visitors.push({parts,rider:rd,colors:{body:c.body,mane:c.mane},WAY,wi,pos:new THREE.Vector3(WAY[wi][0],0,WAY[wi][1]),heading:0,phase:Math.random()*6});
  });
 }
 /* Cottonwood village, signpost & named regions */
@@ -14241,7 +14330,7 @@ function tick(stepSeconds){
  nearNPC=null; let ndb=3.5;
  for(const q of npcList){const nd=Math.hypot(player.pos.x-q.g.position.x,player.pos.z-q.g.position.z);if(nd<ndb){ndb=nd;nearNPC=q;}}
  tickThings(dt); tickTrail(dt); tickParty(dt); tickRunaways(dt,t);
- const rl=runawayLabel(),postAction=G.cottonwoodPost?.context();
+ const rl=runawayLabel(),postAction=G.clubPostRelay?.context()||G.cottonwoodPost?.context();
  $('ctx').style.display=(postAction?.inReach||nearNPC||nearThing||rl)?'block':'none';
  if(postAction?.inReach)$('ctx').textContent=postAction.label+' (E)';else if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
  const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;
@@ -14351,7 +14440,7 @@ function tick(stepSeconds){
   }
   v.phase+=dt*7.5;
   animateHorse(v.parts,v.phase,0.55,GAITS.trot,true,t,0);
-  dressWithRig(v,v.parts,v.colors,{saddle:true,keep:[v.rider&&v.rider.g]}); tickRig(v,3.4,dt,t,0); if(v.rig&&v.rider){const seat=breedSeat(v.rig);v.rider.g.position.set(0,seat.y+.18+Math.max(0,Math.sin(v.phase))*.04,seat.z+.02);}
+  dressWithRig(v,v.parts,v.colors,{saddle:true,keep:[v.rider&&v.rider.g]}); tickRig(v,3.4,dt,t,0); placeWorldHorseRider(v,Math.max(0,Math.sin(v.phase))*.04);
   v.parts.group.position.set(v.pos.x,groundH(v.pos.x,v.pos.z),v.pos.z);
   v.parts.group.rotation.y=v.heading;
  }
@@ -14504,7 +14593,7 @@ function tick(stepSeconds){
   n.parts.group.rotation.y=n.heading;
   n.rider.g.rotation.x=0;
   if(n.rider.u)n.rider.u.uLean.value=0.06+0.2*Math.min(1,n.speed/6)+Math.sin(n.phase)*0.03;
-  if(n.rig){const seat=breedSeat(n.rig);n.rider.g.position.set(0,seat.y+.18+Math.max(0,Math.sin(n.phase))*.05,seat.z+.02);} else n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
+  if(n.rig)placeWorldHorseRider(n,Math.max(0,Math.sin(n.phase))*.05); else n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
  }
  for(const gb of gltfBirds){
   gb.m.visible=dayLife;
@@ -15023,8 +15112,8 @@ function installFeatures(){
    setNativeRidingMode,applyNativeRemoteMode,
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
-   reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+   reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
+  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
@@ -15079,6 +15168,8 @@ installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 installUndergrowth(G,{flowerShrubs:naturalFlowerShrubs,staticShrubs:STATIC_MERGE.filter(g=>/ shrub$/.test(g.name))});
 G.world.mixedSward=installMixedSward(G);
+installChalkCoverRefresh(G);
+installPastoralCoverRefresh(G);
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

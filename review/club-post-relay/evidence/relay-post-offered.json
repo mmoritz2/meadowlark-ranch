@@ -1,0 +1,323 @@
+{
+  "phase": "post-offered",
+  "clients": {
+    "guest": {
+      "relay": {
+        "me": "courier-b",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": {
+          "id": "courier-a-mv5hrtpe-g2wh3",
+          "hostId": "courier-a",
+          "host": "Relay Host",
+          "hosted": false,
+          "localId": "courier-b",
+          "status": "riding",
+          "roster": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host",
+              "ready": true,
+              "slot": 0,
+              "online": true
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest",
+              "ready": true,
+              "slot": 1,
+              "online": true
+            }
+          ],
+          "ready": true,
+          "canJoin": false,
+          "canStart": false,
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "stage": "passPost",
+          "carrierId": "courier-a",
+          "cargo": "post",
+          "route": "road",
+          "returnRoute": "road",
+          "guide": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "target": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "stations": {
+            "wren": {
+              "x": -11,
+              "z": -15.8,
+              "label": "Grandpa Wren"
+            },
+            "pines": {
+              "x": -30,
+              "z": -58,
+              "label": "Hollowpeak Pines"
+            },
+            "ada": {
+              "x": 39,
+              "z": -39,
+              "label": "Ada \u00b7 Cottonwood"
+            }
+          },
+          "interaction": {
+            "action": "accept",
+            "label": "Accept post",
+            "inReach": true,
+            "eligible": true,
+            "status": "ready",
+            "reason": "Accept the pouch your partner is holding.",
+            "offerId": "courier-a-mv5hrtpe-g2wh3_4_2"
+          },
+          "paused": false,
+          "waitingForHost": false,
+          "startupWaiting": false,
+          "waitingForRiders": false,
+          "waitingNames": [],
+          "elapsed": 250.94300000000098,
+          "distance": 62.75197324121386,
+          "handoffs": 0,
+          "stateRev": 4,
+          "offer": {
+            "id": "courier-a-mv5hrtpe-g2wh3_4_2",
+            "from": "courier-a",
+            "to": "courier-b",
+            "at": 1791824362184,
+            "rev": 4,
+            "kind": "post"
+          },
+          "partner": {
+            "id": "courier-a",
+            "name": "Relay Host",
+            "ready": true,
+            "slot": 0,
+            "kind": "input",
+            "n": "Relay Host",
+            "sid": "courier-a-mv5hrtpe-g2wh3",
+            "seq": 1153,
+            "at": 1791824367641,
+            "x": -29.29663267264822,
+            "z": -57.247923981704844,
+            "speed": 0,
+            "active": true,
+            "grounded": true,
+            "canJump": true,
+            "online": true
+          },
+          "woodlandAvailable": false,
+          "savePending": false,
+          "riding": true
+        },
+        "lastResult": null,
+        "records": {}
+      },
+      "player": {
+        "x": -29.472081988053716,
+        "z": -57.833311943587155,
+        "heading": 4.133535484547125,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "relayUI": {
+        "open": false,
+        "receiptId": null,
+        "art": {
+          "parcelVisible": false,
+          "carrierId": "courier-a",
+          "logVisible": false
+        }
+      },
+      "driver": {
+        "active": true,
+        "status": "waiting for explicit Accept post",
+        "steps": 1135,
+        "target": {
+          "x": -30,
+          "z": -58,
+          "label": "Hollowpeak Pines",
+          "distance": 0.5536084676809128,
+          "guideRadius": 2,
+          "haltDistance": 1.4,
+          "gait": "walk",
+          "stage": "passPost"
+        }
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    },
+    "host": {
+      "relay": {
+        "me": "courier-a",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": {
+          "id": "courier-a-mv5hrtpe-g2wh3",
+          "hostId": "courier-a",
+          "host": "Relay Host",
+          "hosted": true,
+          "localId": "courier-a",
+          "status": "riding",
+          "roster": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host",
+              "slot": 0,
+              "ready": true,
+              "online": true
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest",
+              "slot": 1,
+              "ready": true,
+              "online": true
+            }
+          ],
+          "ready": true,
+          "canJoin": false,
+          "canStart": false,
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "stage": "passPost",
+          "carrierId": "courier-a",
+          "cargo": "post",
+          "route": "road",
+          "returnRoute": "road",
+          "guide": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "target": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "stations": {
+            "wren": {
+              "x": -11,
+              "z": -15.8,
+              "label": "Grandpa Wren"
+            },
+            "pines": {
+              "x": -30,
+              "z": -58,
+              "label": "Hollowpeak Pines"
+            },
+            "ada": {
+              "x": 39,
+              "z": -39,
+              "label": "Ada \u00b7 Cottonwood"
+            }
+          },
+          "interaction": {
+            "action": null,
+            "label": "Follow the relay",
+            "inReach": true,
+            "eligible": false,
+            "status": "handoff",
+            "reason": "Your partner can now accept the pouch.",
+            "offerId": "courier-a-mv5hrtpe-g2wh3_4_2"
+          },
+          "paused": false,
+          "waitingForHost": false,
+          "startupWaiting": false,
+          "waitingForRiders": false,
+          "waitingNames": [],
+          "elapsed": 251.18700000000098,
+          "distance": 62.75197324121386,
+          "handoffs": 0,
+          "stateRev": 4,
+          "offer": {
+            "id": "courier-a-mv5hrtpe-g2wh3_4_2",
+            "from": "courier-a",
+            "to": "courier-b",
+            "at": 1791824362184,
+            "rev": 4,
+            "kind": "post"
+          },
+          "partner": {
+            "id": "courier-b",
+            "name": "Relay Guest",
+            "slot": 1,
+            "ready": true,
+            "kind": "input",
+            "n": "Relay Guest",
+            "sid": "courier-a-mv5hrtpe-g2wh3",
+            "seq": 1153,
+            "at": 1791824367579,
+            "x": -29.472081988053716,
+            "z": -57.833311943587155,
+            "speed": 0,
+            "active": true,
+            "grounded": true,
+            "canJump": true,
+            "online": true
+          },
+          "woodlandAvailable": true,
+          "savePending": false,
+          "riding": true
+        },
+        "lastResult": null,
+        "records": {}
+      },
+      "player": {
+        "x": -29.29663267264822,
+        "z": -57.247923981704844,
+        "heading": 3.6203354766220928,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "relayUI": {
+        "open": false,
+        "receiptId": null,
+        "art": {
+          "parcelVisible": true,
+          "carrierId": "courier-a",
+          "logVisible": false
+        }
+      },
+      "driver": {
+        "active": true,
+        "status": "at published marker; waiting for teammate or action",
+        "steps": 204,
+        "target": {
+          "x": -30,
+          "z": -58,
+          "label": "Hollowpeak Pines",
+          "distance": 1.0297300299013736,
+          "guideRadius": 2,
+          "haltDistance": 1.4,
+          "gait": "walk",
+          "stage": "passPost"
+        }
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    }
+  }
+}

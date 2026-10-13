@@ -1,3 +1,6 @@
+import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';
+import {createBankRushGeometry} from '../bank-rushes.mjs?v=bank-rushes-1';
+import {conformRiverBankGeometry,dressRiverBankMaterial} from '../riverbank-surface.mjs?v=river-banks-1';
 /* Feature package 'world-water' — the wet half of Kestrel Basin.
 
    The river was a flat blue ribbon laid on the ground: a hard straight line where the water met
@@ -20,6 +23,7 @@ export function install(G){
  const {THREE,scene}=G;
  const W=G.world;
  const groundH=W.groundH, riverZ=W.riverZ, riverLevel=W.riverLevel, streamX=W.streamX;
+ const planningGroundH=W.riverBankPlacement?.heightAt||groundH;
  const box=W.box, tube=W.tube;
  const P={}; G.waterPkg=P;                        // this package's live state, for QA to look at
 
@@ -208,28 +212,19 @@ export function install(G){
   }
   g.computeVertexNormals();return g;
  })();
- const reedGeo=(()=>{                                  // three crossed cards: 6 triangles a clump
-  const g=new THREE.BufferGeometry(),pos=[],uv=[],idx=[];
-  for(let k=0;k<3;k++){
-   const a=k*Math.PI/3, ca=Math.cos(a),sa=Math.sin(a),o=pos.length/3;
-   pos.push(-ca*0.5,0,-sa*0.5, ca*0.5,0,sa*0.5, ca*0.5,1,sa*0.5, -ca*0.5,1,-sa*0.5);
-   uv.push(0,0, 1,0, 1,1, 0,1);
-   idx.push(o,o+1,o+2,o,o+2,o+3);
-  }
-  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
-  g.setIndex(idx);g.computeVertexNormals();return g;
- })();
+ // One physical prototype replaces the old six-triangle crossed reed cards.
+ // Its conservative original source sphere preserves course-clear ownership.
+ const reedGeo=createBankRushGeometry(THREE);
  const rootGeo=(()=>{                                  // an undercut root, arcing out and dipping
   const pts=[];
   for(let i=0;i<=6;i++){const t=i/6;pts.push(new THREE.Vector3(t*1.25,0.12-Math.pow(t,1.7)*0.75,Math.sin(t*2.4)*0.16));}
   return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),7,0.052,4,false);
  })();
 
- /* No vertexColors on any of these. An InstancedMesh tints itself through instanceColor, which
-    three.js enables on its own; asking for vertexColors as well switches on USE_COLOR, whose
-    `color` attribute these prototype geometries do not have — and an absent vertex attribute reads
-    as (0,0,0), so the first version of this file grew a riverbank full of pure black reeds. */
+ /* Physical bank reeds now carry real per-vertex leaf/stem/seed colour. Every other prototype
+    keeps its original instanceColor-only material; no missing colour attribute is enabled.
+    reedTex is still constructed by the original canvas factory so texture/UUID/random ordering
+    is exact, but the opaque physical surfaces no longer sample its crossed-card alpha mask. */
  /* Tinted down from white. gravelTex is already a pale sheet — a #8f8b7e ground with speckles up
     to 240 grey — so leaving the material at 0xffffff and then letting the per-instance multiplier
     run to 1.12 brightened it past the brightest thing in the scene. On the ranch lawn and on the
@@ -237,7 +232,7 @@ export function install(G){
     the desert sand it read as broken glass. The tint costs nothing and is the difference between
     litter and shingle. */
  const pebbleMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x8b8578,roughness:0.93,metalness:0});
- const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:0.9,metalness:0});
+ const reedMat=new THREE.MeshStandardMaterial({map:null,vertexColors:true,alphaTest:0.5,side:THREE.DoubleSide,roughness:0.9,metalness:0});
  const rootMat=new THREE.MeshStandardMaterial({color:0x6b5540,roughness:0.95,metalness:0});
  const rockMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x9a958a,roughness:0.95,metalness:0});
  const wetRockMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x6e6f68,roughness:0.42,metalness:0.05});
@@ -379,6 +374,7 @@ export function install(G){
   P.bed=band(rows,5,new THREE.MeshStandardMaterial({map:gravelTex,vertexColors:true,roughness:0.88,metalness:0,
    side:THREE.DoubleSide}),'Water | river bed');
   P.bed.material.map.repeat.set(1,1);
+  P.riverBedSurface=conformRiverBankGeometry({THREE,mesh:P.bed,groundHeight:W.terrainH,full:true,offsetM:.008,worldUV:true});dressRiverBankMaterial(P.bed.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);
  }
  /* With a bed underneath worth seeing, the surface can stop being paint. The ribbon was 97%
     opaque, which is why it read as a strip of vinyl rather than as water lying in a channel.
@@ -446,11 +442,11 @@ export function install(G){
    /* Roots only where the water is cutting: the outside of the bend, hanging over the lip. */
    if(inside===0&&pl>0.45&&rnd()<0.30){
     const px=x+rr(-1,1), off=rr(4.3,5.2), pz=zc+sgn*off;
-    const gy=groundH(px,pz);
+    const gy=planningGroundH(px,pz);
     if(gy>riverLevel(px)-0.1){
      const n=1+Math.round(rnd()*2);
      for(let i=0;i<n;i++)
-      roots.push({x:px+rr(-0.5,0.5),y:gy+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),
+      roots.push({x:px+rr(-0.5,0.5),y:groundH(px,pz)+rr(-0.25,0.05),z:pz+rr(-0.3,0.3),
        sx:rr(0.7,1.3),sy:rr(0.7,1.2),sz:rr(0.7,1.3),ry:(sgn>0?Math.PI/2:-Math.PI/2)+rr(-0.7,0.7)});
     }
    }
@@ -461,6 +457,7 @@ export function install(G){
   const m=band(rows,4,apronMat,'Water | riverbank '+(sgn<0?'north':'south'));
   m.renderOrder=1;
   (P.aprons=P.aprons||[]).push(m);
+  P.riverBankSurfaces=P.riverBankSurfaces||[];P.riverBankSurfaces.push(conformRiverBankGeometry({THREE,mesh:m,groundHeight:groundH}));dressRiverBankMaterial(apronMat,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);
  }
 
 
@@ -710,7 +707,7 @@ export function install(G){
    const cliff=W.geology.makeWaterfallCliff({width:17.5,lip:lipY,foot:shelfY-1.1,seed:8723,notchWidth:3.5});
    cliff.position.set(FALL_X,shelfY-1.1,LIP_Z);cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;
    for(const side of[-1,1])for(let i=0;i<4;i++){const bx=FALL_X+side*(2.8+i*1.5),bz=LIP_Z+i*.24;if(claim(bx,bz,1.4,'falls-rock'))W.colliders.push({x:bx,z:bz,r:1.4});}
-   const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls'});scene.add(fall);P.fallSheet=fall;
+   const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls',footHeightAt:groundH,footWidth:1.35});scene.add(fall);P.fallSheet=fall;
   }
   /* below the shelf the water stops falling and starts running: a cascade down the rest of the
      natural face into the river. Tinted toward water rather than left pure white — the first
@@ -741,7 +738,7 @@ export function install(G){
   {
    const foam=W.waterfallArt.impact({x:FALL_X,y:lvl+.09,z:TOE_Z-.6,radius:2.4});scene.add(foam);P.plunge=foam;
    const shelf=groundH(FALL_X,SHELF_Z)+.09;
-   const upperFoam=W.waterfallArt.impact({x:FALL_X,y:shelf+.025,z:SHELF_Z,radius:1.7});scene.add(upperFoam);
+   const upperFoam=W.waterfallArt.impact({x:FALL_X,y:shelf+.025,z:SHELF_Z,radius:1.7,heightAt:groundH,surfaceOffset:.10});scene.add(upperFoam);
    P.fallEffects=W.waterfallArt.effects({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:shelf,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon upper',counts:{falling:40,spray:64,mist:18}});scene.add(P.fallEffects.group);
    P.toeEffects=W.waterfallArt.effects({x:FALL_X,z:TOE_Z-.6,top:lvl+.5,bottom:lvl+.09,width:1.7,run:0,name:'Ribbon toe',counts:{falling:0,spray:64,mist:18}});scene.add(P.toeEffects.group);
    // Retain the old package-local layout sequence (drops, mist sites, phases).
@@ -992,8 +989,8 @@ export function install(G){
   const rows=[];
   const want=(x,z)=>{
    if(Math.abs(z-riverZ(x))<5.6)return false;           // not in the river
-   const h=groundH(x,z);
-   const s=Math.abs(groundH(x+1.2,z)-h)+Math.abs(groundH(x,z+1.2)-h);
+   const h=planningGroundH(x,z);
+   const s=Math.abs(planningGroundH(x+1.2,z)-h)+Math.abs(planningGroundH(x,z+1.2)-h);
    return s<0.22&&h>riverLevel(x)-0.2;                  // flat, and not underwater already
   };
   for(let i=0;i<150;i++){
@@ -1059,5 +1056,7 @@ export function install(G){
  P.tick=waterTick;
  G.on('tick',waterTick);
 
+ // Register the new bank approach only after every original layout/course capture.
+ installFerryBankApproach(G);
  P.ok=true;
 }

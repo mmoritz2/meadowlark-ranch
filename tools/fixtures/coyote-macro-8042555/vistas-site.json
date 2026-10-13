@@ -1,0 +1,6569 @@
+{
+  "provenance": "Current804 exact source blocks plus fresh804 native physical landform circles. Final recorded plant circles are deliberately omitted because fixedFree only tests landform. Canyon412 first rows replaced by exact source-owned new414 for negative control. This does not replay every earlier Vistas landmark room decision.",
+  "sourceSHA256": {
+    "worldVistas": "10fef6849052f9035812bb0cb925da0d47ff63d0ce0c188c5c9224084fac56f0"
+  },
+  "snippets": {
+    "paths": "const PATHS=[\n ...COTTONWOOD_TRACKS,\n [[0,128],[0,138],[18,150],[47,171],[83,184]],                         // river crossing -> north meadow\n [[0,10],[13,-11],[28,-30],[44,-46],[50,-53]],                       // ranch -> Cottonwood\n [[-7,3],[-26,7],[-46,2],[-63,-6],[-71,-10]],                        // ranch -> Home Pasture\n [[2,15],[7,44],[4,72],[1,98],[0,112]],                              // ranch -> the river bridge\n [[53,-57],[96,-70],[140,-84],[184,-97],[214,-105]],                 // Cottonwood -> Barleyfold\n [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines\n];\nconst PATH_W=2.9;\nconst villageGroundZones=COTTONWOOD_PUBLIC.map(q=>({...q}));\n// A maintained yard and clipped trail shoulders give way gradually to meadow.\nfunction managedGrass(x,z){\n return managedGroundsAt(x,z,Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),\n  1-THREE.MathUtils.smoothstep(Math.min(pathDist(x,z),G.worldPaths?.trackDist(x,z)??Infinity),2.6,5.8)));\n}\nconst _PSEG=(()=>{                                                   // flattened into segments once\n const out=[];\n for(const pl of PATHS)for(let i=0;i<pl.length-1;i++){\n  const a=pl[i],b=pl[i+1];\n  out.push({ax:a[0],az:a[1],dx:b[0]-a[0],dz:b[1]-a[1],\n   len2:(b[0]-a[0])*(b[0]-a[0])+(b[1]-a[1])*(b[1]-a[1]),\n   lo:Math.min(a[0],b[0])-8,hi:Math.max(a[0],b[0])+8,zlo:Math.min(a[1],b[1])-8,zhi:Math.max(a[1],b[1])+8});\n }\n return out;\n})();\nfunction pathDist(x,z){\n let best=1e9;\n for(const s of _PSEG){\n  if(x<s.lo||x>s.hi||z<s.zlo||z>s.zhi)continue;                      // cheap reject first\n  let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2; t=t<0?0:t>1?1:t;\n  const px=s.ax+s.dx*t-x, pz=s.az+s.dz*t-z;\n  const d=px*px+pz*pz; if(d<best)best=d;\n }\n let distance=Math.sqrt(best);\n for(const q of villageGroundZones){\n  const dx=x-q.x,dz=z-q.z;\n  if(Math.abs(dx)>q.halfX+Math.max(Math.abs(q.minZ),Math.abs(q.maxZ))+8||Math.abs(dz)>q.halfX+Math.max(Math.abs(q.minZ),Math.abs(q.maxZ))+8)continue;\n  const lx=dx*q.cos-dz*q.sin,lz=dx*q.sin+dz*q.cos;\n  const edge=Math.hypot(Math.max(0,Math.abs(lx)-q.halfX),Math.max(0,q.minZ-lz,lz-q.maxZ));\n  distance=Math.min(distance,edge===0?0:edge+2.3);\n }\n return distance;\n}\n",
+    "routes": "const RACE_ROUTES={\n rr:[[0,66],[26,96],[56,126],[90,120],[96,76],[54,74]],\n r1:[[0,66],[45,95],[88,98],[99,25],[98,-30],[90,-110],[-20,-150],[-90,-100],[-134,0],[-114,31],[-50,35],[-5,40]],\n pp:[[-60,16],[-100,14],[-102,-36],[-70,-38],[-42,-34],[-40,2]],\n bd:[[-196,200],[-200,262],[-262,280],[-305,255],[-300,212],[-262,198],[-226,190]],\n wt:[[-80,-62],[-128,-92],[-195,-118],[-238,-165],[-208,-192],[-148,-142],[-100,-112]],\n};\n",
+    "ranches": " const RANCHES=[\n  {id:'meadowlark',label:'Meadowlark Ranch',emoji:'\ud83c\udfe1',x:0,z:5,price:0,pasture:8,barn:{x:-30.5,z0:-31.5,step:3.3,n:6},past:{x1:-110,x2:-33,z1:-45,z2:25},perk:null,\n   blurb:'The family place. Grandpa Wren raised the barn; the rest is yours to build.',\n   slots:[['l1',-40,56,0],['l2',-40,68,1500],['l3',-52,56,2500],['l4',-52,68,3500],['l5',-34,80,2000],['l6',-22,80,3000],['l7',-82,44,4000],['l8',-82,56,5000]]},\n  {id:'loon',label:'Loon Lake Shore',emoji:'\ud83c\udf0a',x:72,z:37,price:6000,pasture:10,barn:{x:82,z0:2,step:3.3,n:8},past:{x1:66,x2:80,z1:0,z2:32},perk:'xp',perkMul:1.10,perkText:'Horses earn 10% more XP by the water',\n   blurb:'A quiet shore east of the lake: eight stalls, a bigger string, and loons at dusk.',\n   slots:[['k1',76,42,2000],['k2',76,54,2500],['k3',76,66,3000],['k4',90,6,3500],['k5',31,36,2500],['k6',46,45,3000]]},\n  {id:'barleyfold',label:'Barleyfold Homestead',emoji:'\ud83c\udf3e',x:224,z:-100,price:15000,pasture:12,barn:{x:218,z0:-96,step:3.3,n:10},past:{x1:202,x2:216,z1:-92,z2:-72},perk:'decay',perkMul:0.85,perkText:'Farm grain: horses get hungry and thirsty 15% slower',\n   blurb:'The big farm on the east road: ten stalls, the widest pasture in the Basin, and grain by the sack.',\n   slots:[['b1',230,-106,2500],['b2',230,-94,3000],['b3',230,-82,3500],['b4',230,-70,4000],['b5',242,-106,4500],['b6',242,-94,5000],['b7',242,-82,5500],['b8',242,-70,6000]]},\n ];\n const SLOT_HALF=6;                                    // every plot is 12 m square\n const SLOTS={}; for(const r of RANCHES)for(const [sid,x,z,price] of r.slots)SLOTS[sid]={id:sid,ranch:r.id,x,z,price};\n",
+    "gauntlets": " const GAUNTLET_SEASONS={\n  /* the whole pasture the other way round, with a dip into the middle of the west side */\n  bloom:{route:'gt_bloom',limit:165,decor:'petal',twist:'Twelve elements, a dip across the soft middle, and a kinder clock.',\n   pts:[[-60,19],[-78,19],[-96,17],[-103,2],[-92,-10],[-102,-24],[-90,-37],[-72,-38],[-56,-38],[-44,-30],[-41,-14],[-44,12]]},\n  /* the widest loop: down the east side past the trough, and all the way round the fence line */\n  sun:  {route:'gt_sun',  limit:150,decor:'dust', twist:'The widest loop, the whole pasture round, in the heat.',\n   pts:[[-42,5],[-41,-22],[-52,-38],[-74,-39],[-96,-36],[-104,-16],[-103,12],[-86,19],[-70,19],[-54,18]]},\n  /* the east half, turning back north between the shelter and the big oak */\n  ember:{route:'gt_ember',limit:140,decor:'leaf', twist:'The east half, leaves across the line, and a tighter limit.',\n   pts:[[-43,9],[-41,-14],[-45,-31],[-58,-39],[-72,-38],[-80,-26],[-80,-10],[-79,6],[-72,19],[-58,19]]},\n  /* the west half, the shortest of the year */\n  frost:{route:'gt_frost',limit:130,decor:'frost',twist:'The short west loop, hard ground, and the shortest clock of the year.',\n   pts:[[-70,-10],[-71,-25],[-80,-37],[-96,-35],[-103,-20],[-103,-4],[-101,12],[-86,18],[-72,17],[-66,4]]},\n };\n"
+  },
+  "landforms": [
+    {
+      "x": -197,
+      "z": 12.920834356418421,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.415743205846795,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.20423970373272,
+      "z": 13.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.611492560784278,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -194.5,
+      "z": 12.648411986946419,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.821830383425954,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -192,
+      "z": 12.441604315796999,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.078166444981576,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -189.5,
+      "z": 12.368284859534434,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.312535764832525,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -187,
+      "z": 12.429414440740914,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.66073809401468,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -184.5,
+      "z": 12.576614737474202,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.06779012891541,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -182,
+      "z": 12.713536298237237,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.430980643503727,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.5,
+      "z": 13.039770964116972,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.581169011491998,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -178.12957024979985,
+      "z": 13.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.480238773395886,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232,
+      "z": 14.339499933894057,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.384810763359262,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -233.43619314627247,
+      "z": 16,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.076034216237364,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -229.5,
+      "z": 13.969946712163866,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.4364909048156,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227,
+      "z": 14.028053522704779,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.282489889032153,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224.5,
+      "z": 14.210942689997145,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.871952676436237,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -222,
+      "z": 14.451664437569859,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.21998224906242,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -219.5,
+      "z": 14.671512194078861,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.47816959635552,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -217,
+      "z": 14.826270862397433,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.590222208221782,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -214.5,
+      "z": 14.919646678557339,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.29621441615445,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212,
+      "z": 15.657996714985378,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.128223061633957,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -211.56355702990984,
+      "z": 16,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.463273395542664,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.5,
+      "z": 14.259218602145548,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.73370059494711,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.5380725084739,
+      "z": 16,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.083839978105875,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177,
+      "z": 14.364904143868168,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.139221062019715,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.5037120149015,
+      "z": 16,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.07094996813816,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -249.5,
+      "z": 17.929948299373752,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.83982433021347,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -251.34895275604484,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.895407040207456,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -247,
+      "z": 17.583037724015156,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.709884595303706,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -246.05098241107711,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.253995987436173,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234.5,
+      "z": 17.317086989537188,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.638895444615137,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.015167167675,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.143404911206844,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -210.73057878977042,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.914960909961035,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -202,
+      "z": 16.712332232974745,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.131859984504562,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -203.1863513740108,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.561820686913208,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -173.0660854892509,
+      "z": 18.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.289604000160452,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -267,
+      "z": 20.98757722564234,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.191808341657236,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -259.5,
+      "z": 20.780943025222463,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.93938602786367,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -260.67131171832983,
+      "z": 21,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.549897218701613,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -257,
+      "z": 19.988472365194287,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.18927895183883,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -254.5,
+      "z": 19.267045327230488,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.32665169641461,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -252,
+      "z": 18.696686021847515,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.891244736892425,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -245.00880526299363,
+      "z": 21,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.332166889904844,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -237,
+      "z": 19.063421481013552,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.555242816579174,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -238.980237813275,
+      "z": 21,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.849973270161943,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -209.5,
+      "z": 19.8690731688189,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.676455714010824,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -207,
+      "z": 19.917489677989177,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.000804094757555,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -204.5,
+      "z": 18.955632545848953,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.242148904633932,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.01985291818082,
+      "z": 21,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.03715937916333,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -329.5,
+      "z": 23.398158374813082,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.015701544769158,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -327,
+      "z": 22.44021122709516,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.822577549677348,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -324.5,
+      "z": 22.345536749793514,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.62174159701717,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -322,
+      "z": 22.282773587047974,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.25465405320674,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -319.5,
+      "z": 22.213564126715525,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.726550239481718,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -317,
+      "z": 22.183883746878287,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.09367773783851,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -314.5,
+      "z": 22.31188425518467,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.500525518544215,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -312,
+      "z": 22.577905654647793,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.55101075193734,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -309.9834035756832,
+      "z": 23.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.2834315543296,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -269.01864308893084,
+      "z": 23.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.966654026364356,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -264.5,
+      "z": 21.202826256794026,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.52620742642123,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -262,
+      "z": 21.191961477803396,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.295917733411468,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.5,
+      "z": 21.397207284775998,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.216688803541174,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242,
+      "z": 22.295640351252867,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.803830462658393,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -239.5,
+      "z": 21.336125285757248,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.814580704806524,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -170.93053116292782,
+      "z": 23.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.456186592372823,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -334.5,
+      "z": 25.48786642396248,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.934479999395144,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -335.62389767981136,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.61748556795291,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -332,
+      "z": 24.520213763176837,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.782718748319493,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -309.5,
+      "z": 23.86220565214588,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.509874951310774,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -308.05210721941904,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.906228256423372,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -289.5,
+      "z": 25.57440524888288,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.84845241017357,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -289.9125998324478,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.75436145012722,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -287,
+      "z": 24.75755879608878,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.230599021942922,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -284.5,
+      "z": 24.409791532499206,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.266343347796138,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -282,
+      "z": 23.995650388813214,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.303164278055625,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -279.5,
+      "z": 23.56132420828078,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.579278597340366,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -277.03713507127463,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.70712405287257,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -269.5,
+      "z": 24.780940215798825,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.074727709182493,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -270.005384563703,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.033466875182743,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -170.01891960179273,
+      "z": 26,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.513320518367607,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -339.5,
+      "z": 27.686086988434347,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.394763142300043,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -341.1465751553212,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.93652812457677,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -337,
+      "z": 26.640081711887046,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.44344420346451,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -308.0700022366584,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.357246989499565,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -299.5,
+      "z": 26.9730559184636,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.430826990777366,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -301.96165224399533,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.9101584756795,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -298.0920915176416,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.722439856595575,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -291.4155492853648,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.037674184853653,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -277,
+      "z": 26.491274843874862,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.316485007313076,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -276.86214024881554,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.122568094086585,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -271.82308658208143,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.333533041554144,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -169.92432270479733,
+      "z": 28.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.993476569113835,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -342,
+      "z": 29.535760098052968,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.116839795700194,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -343.4851188417825,
+      "z": 31,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.959892792721657,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -307,
+      "z": 29.11902427822616,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.28668300986398,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -304.5,
+      "z": 29.522607341394597,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.343413726839312,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -297,
+      "z": 29.571497881915924,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.602521389018957,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.5,
+      "z": 30.262978461029164,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.930776802586188,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -292,
+      "z": 29.161103197469874,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.565006918921007,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -274.5,
+      "z": 29.52612495661464,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.81371464332337,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -170.3561009574909,
+      "z": 31,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.175663093379367,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -344.5,
+      "z": 32.361383797761,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.520024711336283,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -345.03460592743613,
+      "z": 33.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.9806430700749,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -171.45151480956045,
+      "z": 33.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.55056401682612,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -346.34754566468865,
+      "z": 36,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.007360518456203,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172,
+      "z": 34.25151803175154,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.971654687166346,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -173.3292480771585,
+      "z": 36,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.210379300657674,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -347,
+      "z": 37.088711809284945,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.520790227538807,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -347.4715843022676,
+      "z": 38.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.54710179684282,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177,
+      "z": 38.409475486918396,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.15951305350929,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177.33275696468274,
+      "z": 38.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.131382707806612,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.5,
+      "z": 37.05183904332686,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.825113629701647,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -348.2374064820213,
+      "z": 41,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.081689152589842,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -187,
+      "z": 40.96177999348442,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.968814047802294,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -184.5,
+      "z": 40.3513672917886,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.923372523028064,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -182,
+      "z": 39.816556983647374,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.093602139740966,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.5,
+      "z": 39.23216568852978,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.39485768498337,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -348.0116309606182,
+      "z": 43.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.125367740671066,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -192,
+      "z": 43.15591766007486,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.949486287049815,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -192.7003710983429,
+      "z": 43.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.058305387478654,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -189.5,
+      "z": 42.0586386505865,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.494978130755644,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -347.4492608892457,
+      "z": 46,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.84789505044458,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -197,
+      "z": 45.83539407847584,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.816544705917938,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -197.35503096239205,
+      "z": 46,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.73121457841408,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -194.5,
+      "z": 44.58632290345724,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.989965005008017,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -347,
+      "z": 48.013904228386714,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.28027155258044,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -346.91969668650756,
+      "z": 48.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.1229416621541,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -202,
+      "z": 48.29115741064859,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.998594465104446,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -203.0729518532143,
+      "z": 48.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.64262829881362,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.5,
+      "z": 47.2989770962671,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.136297720557998,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -346.27056664873834,
+      "z": 51,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.420945220352078,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227,
+      "z": 50.905018924664645,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.492873735436493,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227.7482617655952,
+      "z": 51,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.635626393640457,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224.5,
+      "z": 50.65833391018499,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.856886781482146,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -222,
+      "z": 50.49660062755486,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.056424150377026,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -219.5,
+      "z": 50.403646110354,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.00535053695495,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -217,
+      "z": 50.336059809366176,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.040716516729265,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -214.5,
+      "z": 50.24107017645821,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.98155098675978,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212,
+      "z": 50.07096063408638,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.776029548156686,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -209.5,
+      "z": 49.7928825924738,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.404233760654417,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -207,
+      "z": 49.39965593464753,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.905769447804925,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -204.5,
+      "z": 48.90561088840525,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.19994211616075,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -345.15884889164954,
+      "z": 53.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.540205756075366,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242,
+      "z": 53.33430041733869,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.72554802205666,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.73358012287648,
+      "z": 53.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.7487387112041,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -239.5,
+      "z": 53.11189817358669,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.57348823855907,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -237,
+      "z": 52.84908327387635,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.408965622590493,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234.5,
+      "z": 52.48340478904601,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.760783158375254,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232,
+      "z": 51.67980396885542,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.781762899482217,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -229.5,
+      "z": 51.30117049801301,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.90436874524367,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -344.5,
+      "z": 54.52933392080339,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.99509610187562,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -343.70280380221675,
+      "z": 56,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.406116691261705,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -254.5,
+      "z": 55.88823205985881,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.857872191845235,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -254.8831385425385,
+      "z": 56,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.999615717238623,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -252,
+      "z": 55.25745709948377,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.41928306282949,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -249.5,
+      "z": 54.63718726407873,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.07845181913886,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -247,
+      "z": 54.08643765815359,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.43758815704445,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.5,
+      "z": 53.62084237685158,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.68809773438916,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -342,
+      "z": 58.12320691659376,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.107692124196657,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -341.7082680582208,
+      "z": 58.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.09032731331317,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -259.5,
+      "z": 57.890781389255935,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.8353023243668,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -261.12085788993915,
+      "z": 58.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.159708499420656,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -257,
+      "z": 56.828641390355244,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.078724044642467,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -339.5,
+      "z": 60.656928355449054,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.666822089904308,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -339.05999827835,
+      "z": 61,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.555803718062272,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -264.5,
+      "z": 60.17943643593297,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.24849501762581,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -266.21129161696456,
+      "z": 61,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.072162536084686,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -262,
+      "z": 58.91956796575267,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.316738304002715,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -337,
+      "z": 62.46233365107096,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.792178797577023,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -334.5,
+      "z": 63.46470698877124,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.683389521334178,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -317,
+      "z": 63.45064705710845,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.308418920846275,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -317.3829426564921,
+      "z": 63.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.411748835285106,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -314.5,
+      "z": 63.200516989347896,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.808669968011305,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -312,
+      "z": 63.07963071561658,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.2025767332213,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -309.5,
+      "z": 63.116140396023134,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.758220793815944,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -307,
+      "z": 63.24639610993809,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.155605704651038,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -304.5,
+      "z": 63.48690266387512,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.255283625323294,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -269.5,
+      "z": 62.817870437789075,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.54969312157106,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -271.08945577856906,
+      "z": 63.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.412184404917618,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -267,
+      "z": 61.46674895911138,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.708887904879145,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -332,
+      "z": 64.2174849865621,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.72157196994688,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -329.5,
+      "z": 64.4973768290618,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.0073992474243,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -327,
+      "z": 64.60357334844736,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.081642974290574,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -324.5,
+      "z": 64.54558358506176,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.950664897258388,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -322,
+      "z": 64.29909778579453,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.569588875509854,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -319.5,
+      "z": 63.89658946390596,
+      "r": 1.05,
+      "height": 80,
+      "topY": 21.979828786214977,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -302,
+      "z": 64.1884981024367,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.82158310311862,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -299.5,
+      "z": 65.12401647743961,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.783527166277157,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -297.29177770609556,
+      "z": 66,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.04427655589321,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -292,
+      "z": 65.96844780530333,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.947572999959863,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -289.5,
+      "z": 65.18393425805014,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.809255763219326,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -287,
+      "z": 65.02595986430961,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.38769831844586,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -285.19904422362475,
+      "z": 66,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.7021717751792,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -277,
+      "z": 65.66605993133403,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.867116147415462,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -278.8939432392315,
+      "z": 66,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.418388141879724,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -274.5,
+      "z": 65.02216915218071,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.31909002073102,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -272,
+      "z": 63.996471056653455,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.16631788884239,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -297,
+      "z": 66.1500559459704,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.90097263151397,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.5,
+      "z": 67.16639960180731,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.688141094615467,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -284.5,
+      "z": 66.5680719103303,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.721879921746577,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -282,
+      "z": 66.59903069427736,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.969516589966805,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -279.5,
+      "z": 66.16274152763006,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.991562408531536,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -261.9,
+      "z": 142.02861711533595,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.735140462871936,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -262.6709601983265,
+      "z": 142.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.668010860076055,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -259.4,
+      "z": 141.21225763043228,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.705462786632644,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -256.9,
+      "z": 141.0474417111676,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.9828384294226,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -255.14500566876063,
+      "z": 142.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.184998919541865,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -266.9,
+      "z": 144.41328679541553,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.059262161867267,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -267.792643988161,
+      "z": 145.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.72865514978167,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -264.4,
+      "z": 143.34323787314602,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.482919511248834,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -254.58343025767715,
+      "z": 145.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.417373534016185,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -271.9,
+      "z": 146.83234621879484,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.163323680043778,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -272.78210436537717,
+      "z": 147.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.569393347746203,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -269.4,
+      "z": 145.65692312520338,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.803963125558475,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -255.34624512590227,
+      "z": 147.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.517330460177767,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -274.4,
+      "z": 148.39150138967085,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.91002453025348,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -276.7052983051593,
+      "z": 150.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.83110613742988,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -255.62714708045178,
+      "z": 150.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.59966860291018,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -279.4,
+      "z": 151.56017454321804,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.421592370552144,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -280.64562634753423,
+      "z": 152.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.82298741333376,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -276.9,
+      "z": 150.2139923399247,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.767668462751953,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -255.45648422780408,
+      "z": 152.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.350957197874006,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -281.9,
+      "z": 153.49522081785062,
+      "r": 1.05,
+      "height": 80,
+      "topY": 20.00730200195085,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -283.7104139630283,
+      "z": 155.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.59508945579329,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -255.72609644812354,
+      "z": 155.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.94567661400652,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -284.4,
+      "z": 155.77906749161147,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.20234749789796,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -286.188675012431,
+      "z": 157.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.078656179410263,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -256.9,
+      "z": 156.43940452671094,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.337752615597957,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -257.6433364713879,
+      "z": 157.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.914227318991585,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -286.9,
+      "z": 158.75139536651264,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.574875369309556,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -288.05897118298145,
+      "z": 160.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.780873570120622,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -258.0272622882652,
+      "z": 160.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.150116862114572,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -289.4,
+      "z": 162.5054238065319,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.578636742543402,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -259.4,
+      "z": 161.555183553294,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.859231880116393,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -260.92134273578387,
+      "z": 162.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.949860090936504,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -290.9625339904243,
+      "z": 165.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.536206754178938,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -261.9,
+      "z": 164.69591809999525,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.34403460786668,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -261.99823203539205,
+      "z": 165.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.121317170952565,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -291.9,
+      "z": 167.50141675786375,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.935327168962797,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -264.4,
+      "z": 166.92916507669344,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.25949033165649,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -264.88023782144165,
+      "z": 167.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.55879994255955,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -293.0645905097075,
+      "z": 170.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.696401549414745,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -265.22496234860284,
+      "z": 170.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.977341738492992,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -293.76933332050913,
+      "z": 172.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.205232201482232,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -265.2887115147436,
+      "z": 172.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.6965821048572,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.89999999999998,
+      "z": 172.577546370781,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.80780628381022,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.4,
+      "z": 174.9022211056542,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.834910641073034,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -265.1229659584248,
+      "z": 175.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.371235451971813,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.23649108108765,
+      "z": 175.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 14.84955440194297,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -295.714041783409,
+      "z": 177.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.334523706398386,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -265.71325777552914,
+      "z": 177.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.90157601819609,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.59647360591487,
+      "z": 177.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 9.753739441372659,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -296.6202619985058,
+      "z": 180.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.158143135398035,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -266.9,
+      "z": 179.6247668537227,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.517392566077884,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -267.73152586932235,
+      "z": 180.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.82735583199525,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.89999999999998,
+      "z": 180.0222746637698,
+      "r": 1.05,
+      "height": 80,
+      "topY": 14.690196790793738,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -296.9,
+      "z": 181.0204195448332,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.26426799201642,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -297.66417929905464,
+      "z": 182.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.018298911142338,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -268.01161361612014,
+      "z": 182.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.361392190749655,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -298.4147372604175,
+      "z": 185.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.590404944252942,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -268.2342266680371,
+      "z": 185.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.520561092122364,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -296.9,
+      "z": 186.26983405595297,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.99070302276357,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -295.24004991186155,
+      "z": 187.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.027908864520562,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -269.4,
+      "z": 186.79186402169788,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.271204420904894,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -271.26237879358297,
+      "z": 187.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.44316031674574,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.90864792548433,
+      "z": 190.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.732035293504946,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -276.9,
+      "z": 189.5643477386404,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.156628916996297,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -278.92348797227413,
+      "z": 190.1,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.527215903395817,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -274.4,
+      "z": 189.2280053810097,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.264165190496975,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -271.9,
+      "z": 187.93603871501068,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.70327668057684,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.69271890154,
+      "z": 192.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.34040240494921,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -281.9,
+      "z": 192.27640269356354,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.096496982172575,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -283.0235128564661,
+      "z": 192.6,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.257604868930844,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -279.4,
+      "z": 190.33890745842442,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.862737156848475,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -294.4,
+      "z": 193.23778649946533,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.505592367813296,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -291.9,
+      "z": 195.06433013897424,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.684011017924107,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -289.4,
+      "z": 194.79675592339765,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.960219814778938,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -286.9,
+      "z": 194.15842797785683,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.47331314689534,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -284.4,
+      "z": 193.27704994823875,
+      "r": 1.05,
+      "height": 80,
+      "topY": 19.317200802284564,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -226.5,
+      "z": 155.8045737386946,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.155161560984078,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227.3097694397153,
+      "z": 156.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.552838009100787,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224.3486275632226,
+      "z": 156.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 13.978102794017683,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -229,
+      "z": 157.88987129464846,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.404656951308855,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -230.00920633005398,
+      "z": 159,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.372647428869875,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224,
+      "z": 156.61718466667583,
+      "r": 1.05,
+      "height": 80,
+      "topY": 13.058226104901557,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -222.34514136071843,
+      "z": 159,
+      "r": 1.05,
+      "height": 80,
+      "topY": 12.57757859016387,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -231.5,
+      "z": 160.02717281807966,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.64438856019603,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232.94115265670192,
+      "z": 161.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.548869766690615,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.98320788284536,
+      "z": 161.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.537496961658515,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234,
+      "z": 162.51320154762755,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.942635358611069,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -235.48669991196996,
+      "z": 164,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.49908183345815,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.5,
+      "z": 163.9824638959025,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.857193400182098,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -235.60295096884798,
+      "z": 166.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.523761155783752,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -220.47471872757865,
+      "z": 166.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 14.886712480405794,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.5,
+      "z": 167.89679336442322,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.289199864417203,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -237.46724287509076,
+      "z": 169,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.351103077713258,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -220.25673146983246,
+      "z": 169,
+      "r": 1.05,
+      "height": 80,
+      "topY": 15.501286111766612,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -239,
+      "z": 170.03160383777214,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.158528067911327,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -240.56329165818838,
+      "z": 171.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.499427149230105,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.06488334861393,
+      "z": 171.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.751138797844625,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.5,
+      "z": 172.59695077056696,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.724220308470994,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242.80446984787633,
+      "z": 174,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.224015873502854,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.5,
+      "z": 172.18261203944945,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.00895245349425,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -222.09486711681373,
+      "z": 174,
+      "r": 1.05,
+      "height": 80,
+      "topY": 16.933196051031477,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244,
+      "z": 176.02843713750258,
+      "r": 1.05,
+      "height": 80,
+      "topY": 12.754318251383232,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.4714808729235,
+      "z": 176.5,
+      "r": 1.05,
+      "height": 80,
+      "topY": 11.454849390747054,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224,
+      "z": 176.35073575570516,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.480650600016304,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244,
+      "z": 177.4657196940983,
+      "r": 1.05,
+      "height": 80,
+      "topY": 9.465163697255601,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242.53042718042323,
+      "z": 179,
+      "r": 1.05,
+      "height": 80,
+      "topY": 13.570215599546934,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -231.5,
+      "z": 178.84933461777828,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.962368468045682,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232.665620253903,
+      "z": 179,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.45097590319575,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -229,
+      "z": 178.47273209813534,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.64592409949051,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -226.5,
+      "z": 177.9034677662529,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.638392002203894,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.5,
+      "z": 179.73636135587006,
+      "r": 1.05,
+      "height": 80,
+      "topY": 14.507205967262765,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -239,
+      "z": 180.49826772568258,
+      "r": 1.05,
+      "height": 80,
+      "topY": 18.094388312382527,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.5,
+      "z": 180.04690043240072,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.334136867469052,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234,
+      "z": 179.46253906395015,
+      "r": 1.05,
+      "height": 80,
+      "topY": 17.167434905155247,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.7,
+      "z": 138.53847892301968,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.110497508598243,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -181.2787712833028,
+      "z": 139.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.065404109325005,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177.2,
+      "z": 137.760390646684,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.995286272080694,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.7,
+      "z": 137.47083782659752,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.039426259452448,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.2,
+      "z": 137.6307079602852,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.14738154782461,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -169.7,
+      "z": 138.07417580966327,
+      "r": 1.05,
+      "height": 80,
+      "topY": 29.440343623059267,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -167.2,
+      "z": 138.4881411730629,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.00484152596605,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.7,
+      "z": 138.9378848859384,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.20211734426478,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -162.2,
+      "z": 139.6804196988216,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.13689319794449,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -161.9387264042595,
+      "z": 139.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.21698234551167,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -181.45276942314385,
+      "z": 142.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.448012763511706,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -159.7,
+      "z": 140.75351585727068,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.791969468097612,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -157.2,
+      "z": 141.58408626779223,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.01756445157984,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -155.38254229948154,
+      "z": 142.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.73195740640346,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -139.7,
+      "z": 141.53062417386025,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.1961914015639,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -141.59718524623364,
+      "z": 142.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.194839820979503,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -137.2,
+      "z": 141.1329949633907,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.578553229927696,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -134.7,
+      "z": 141.20989837972922,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.97917829981285,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -132.2,
+      "z": 141.58391811030114,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.55838667352446,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -130.02908196930605,
+      "z": 142.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.935699494335122,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -180.99279485523047,
+      "z": 144.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.648099220934963,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -154.7,
+      "z": 142.62054180278543,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.648296346882272,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -152.2,
+      "z": 143.57585658705548,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.644308431616313,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -150.0482754086734,
+      "z": 144.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.524058872843202,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -144.7,
+      "z": 143.86235393024816,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.778251404254334,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -146.33005600091317,
+      "z": 144.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.640807587450713,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -142.2,
+      "z": 142.62120382168902,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.427545242686293,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -129.7,
+      "z": 142.4253990607342,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.930775067239697,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -127.19999999999999,
+      "z": 143.40679135954164,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.548955338602223,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -124.69999999999999,
+      "z": 144.21806221140747,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.357569974605493,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -123.65349388379553,
+      "z": 144.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.786139075526847,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -180.3483066170264,
+      "z": 147.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.933295329656374,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -149.7,
+      "z": 145.0462064062754,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.604554778013537,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -147.2,
+      "z": 145.29249335330118,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.434309285122783,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -122.19999999999999,
+      "z": 145.6671042049249,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.03807027836465,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -119.69999999999999,
+      "z": 146.8008396457721,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.211711131885213,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -119.03720684404469,
+      "z": 147.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.095445357982378,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.7,
+      "z": 148.7811259568971,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.76554648902346,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.55840807882242,
+      "z": 149.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 29.18350773894546,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -117.19999999999999,
+      "z": 148.71595549911936,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.901493975523298,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -116.07721854801439,
+      "z": 149.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.88268502254536,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.19439922404823,
+      "z": 152.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 29.137526641811178,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -114.69999999999999,
+      "z": 151.5599189920618,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.4300689321268,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -114.16410092488958,
+      "z": 152.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.013799038915568,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -178.90695576757508,
+      "z": 154.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.948792810133575,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -113.39928869300255,
+      "z": 154.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.44546882002208,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -178.77427790696174,
+      "z": 157.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.890553689145563,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -113.29063113551864,
+      "z": 157.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 22.822125940621955,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -178.69084215906972,
+      "z": 159.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.575081629788304,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -113.78074546339766,
+      "z": 159.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.166887447967106,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -178.25567971080156,
+      "z": 162.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.67197493042115,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -114.69999999999999,
+      "z": 161.83664073930973,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.35955200498037,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -114.97263745131808,
+      "z": 162.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.451322543403553,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177.21114219035698,
+      "z": 164.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.432871544720573,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -116.05986097575848,
+      "z": 164.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.653399640457753,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -176.96848273659785,
+      "z": 167.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 29.329423770598282,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -117.00488868356527,
+      "z": 167.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.594771439738317,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -175.8518662376368,
+      "z": 169.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.64562033894566,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -118.35838724395568,
+      "z": 169.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 23.762235492184626,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.7,
+      "z": 171.74462647178447,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.09523042511475,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.2638993404173,
+      "z": 172.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.64426408211436,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -119.69999999999999,
+      "z": 171.64781669076913,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.025483114494442,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -120.35439652493532,
+      "z": 172.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.22733383415355,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.48718916244445,
+      "z": 174.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.376054953247202,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -122.19999999999999,
+      "z": 173.5598569332521,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.617768623988308,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -124.12729022013798,
+      "z": 174.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.249672385691813,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.2,
+      "z": 175.0788674540253,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.582933288275395,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -169.7,
+      "z": 176.02035783892939,
+      "r": 1.05,
+      "height": 80,
+      "topY": 29.22060049339539,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -167.2,
+      "z": 176.1872502417917,
+      "r": 1.05,
+      "height": 80,
+      "topY": 28.20212720180002,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.7,
+      "z": 176.94578309633675,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.658303146655225,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.35582825284735,
+      "z": 177.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.97930105243468,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -127.19999999999999,
+      "z": 176.55814470487636,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.087630517902834,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -128.2292972647902,
+      "z": 177.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.478252094071323,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -124.69999999999999,
+      "z": 175.21907441754158,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.63229074087676,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.7,
+      "z": 177.78386370306353,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.09047626207103,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -165.61729689853573,
+      "z": 179.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.23208510692826,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -129.7,
+      "z": 178.59356608634212,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.630482077944226,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -130.92312320941312,
+      "z": 179.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.52996707803339,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.7,
+      "z": 181.58567097210502,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.902903334778195,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -163.3273739119412,
+      "z": 182.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.29256998479805,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -132.2,
+      "z": 181.40207215806439,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.150769214153453,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -132.9770509661241,
+      "z": 182.3,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.803417034768525,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -162.2,
+      "z": 182.82516533395093,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.478496295023337,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -159.7,
+      "z": 183.57871970300238,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.49413521198727,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -157.2,
+      "z": 184.104435500811,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.11001955647032,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -154.7,
+      "z": 184.5952134319006,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.980880462694337,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -153.80675439074332,
+      "z": 184.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.487877168116633,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -137.2,
+      "z": 184.44408788154132,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.73420315260315,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -138.02134718532142,
+      "z": 184.8,
+      "r": 1.05,
+      "height": 80,
+      "topY": 24.854333331247222,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -134.7,
+      "z": 183.3722999333277,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.095316464003773,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -152.2,
+      "z": 185.17523959327983,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.35385585470162,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -149.7,
+      "z": 185.63157192877532,
+      "r": 1.05,
+      "height": 80,
+      "topY": 26.57603485199076,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -147.2,
+      "z": 185.9412515057428,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.340257092499485,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -144.7,
+      "z": 186.07747176927697,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.464082736559995,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -142.2,
+      "z": 185.97870878251294,
+      "r": 1.05,
+      "height": 80,
+      "topY": 27.064286498926137,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -139.7,
+      "z": 185.5353357255429,
+      "r": 1.05,
+      "height": 80,
+      "topY": 25.846137444091863,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234.4000000000002,
+      "z": -392.966386432145,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.862048069954085,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.09799136558823,
+      "z": -392.0000000000001,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.65339844648299,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232.20000000000022,
+      "z": -393.5672381361176,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.119654292830703,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -230.00000000000023,
+      "z": -393.86405307071817,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.917857354761157,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227.80000000000024,
+      "z": -393.8730719916373,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.40811610227206,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -225.60000000000025,
+      "z": -393.4746467280293,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.298000424688347,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -223.40000000000026,
+      "z": -392.17868813489787,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.072677314598515,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -223.19929799706836,
+      "z": -392.0000000000001,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.007631358110135,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -238.80000000000018,
+      "z": -390.72097339683415,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.891086883209002,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -240.0423411840012,
+      "z": -389.8000000000001,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.688604917057294,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.6000000000002,
+      "z": -391.7704163785177,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.414262294251003,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.20000000000027,
+      "z": -390.45833241533376,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.08083663031456,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -220.4537367465602,
+      "z": -389.8000000000001,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.207044366592722,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -175.0000000000005,
+      "z": -390.35887710618533,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.61037974706963,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -176.4342094592194,
+      "z": -389.8000000000001,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.81095977228754,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.80000000000052,
+      "z": -390.6687612848112,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.562322119275375,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -170.60000000000053,
+      "z": -390.5953548797109,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.71389295911676,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -168.40000000000055,
+      "z": -389.8302747549349,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.922909102233458,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.00000000000017,
+      "z": -389.0138564025805,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.99043617325998,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242.64859932664598,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.633087265092534,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -219.00000000000028,
+      "z": -388.6759599310165,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.859158781336884,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -217.62170832877354,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.56415902204521,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -203.60000000000036,
+      "z": -388.49599615681296,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.487248028803158,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -205.1707151232899,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.930893360542786,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.40000000000038,
+      "z": -389.3729628267963,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.04630561066499,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.2000000000004,
+      "z": -389.6818334690487,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.026222552853294,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -197.0000000000004,
+      "z": -389.54120050922336,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.24235461465784,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -194.8000000000004,
+      "z": -389.173624303078,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.500025033716565,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -192.60000000000042,
+      "z": -388.36948020947204,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.956013072515173,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -191.79701864953006,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.97127004803465,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -183.80000000000047,
+      "z": -388.33770413077343,
+      "r": 1.05,
+      "height": 40,
+      "topY": 36.71626799424716,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -184.95425740608908,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 38.38285387884496,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -181.60000000000048,
+      "z": -388.9532209797143,
+      "r": 1.05,
+      "height": 40,
+      "topY": 35.30693443235953,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.4000000000005,
+      "z": -389.3349013872685,
+      "r": 1.05,
+      "height": 40,
+      "topY": 34.035176004348024,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177.2000000000005,
+      "z": -389.68607612464564,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.998397597823,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -166.20000000000056,
+      "z": -389.0259732411593,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.80437185492893,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.40791822968671,
+      "z": -387.60000000000014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.748881971633985,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.20000000000016,
+      "z": -386.8211743252069,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.256156627110627,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.4357655575845,
+      "z": -385.40000000000015,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.633504768821098,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -216.8000000000003,
+      "z": -387.0458603459538,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.205001905319698,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -214.6000000000003,
+      "z": -385.9351016598015,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.035219442340892,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212.8061828872852,
+      "z": -385.40000000000015,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.620954853026756,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -210.20000000000033,
+      "z": -385.6914720011089,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.718417961093447,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -211.70695754171945,
+      "z": -385.40000000000015,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.594584426541306,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -208.00000000000034,
+      "z": -386.47944582395974,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.74358886624148,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -205.80000000000035,
+      "z": -387.3147261841392,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.048289607109268,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -190.40000000000043,
+      "z": -387.1179831236138,
+      "r": 1.05,
+      "height": 40,
+      "topY": 36.00333037533684,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -188.20000000000044,
+      "z": -386.8266239190864,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.011653908707764,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -186.00000000000045,
+      "z": -387.335439936389,
+      "r": 1.05,
+      "height": 40,
+      "topY": 38.74057764888933,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.00000000000057,
+      "z": -387.27499610482056,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.501680333258214,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -161.92710173651454,
+      "z": -385.40000000000015,
+      "r": 1.05,
+      "height": 40,
+      "topY": 30.997490032915234,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -245.04201968839138,
+      "z": -383.20000000000016,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.144354075854817,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212.40000000000032,
+      "z": -385.3189732967407,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.274407576724286,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -159.6000000000006,
+      "z": -383.3367863251161,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.05759935794997,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -159.45914204914547,
+      "z": -383.20000000000016,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.27695199977553,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.73827213337563,
+      "z": -381.00000000000017,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.39939525656788,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -157.4000000000006,
+      "z": -381.45508756024645,
+      "r": 1.05,
+      "height": 40,
+      "topY": 34.57865496023441,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -156.94551722129418,
+      "z": -381.00000000000017,
+      "r": 1.05,
+      "height": 40,
+      "topY": 34.82699884553931,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.3349397310342,
+      "z": -378.8000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.69702017094128,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -155.2000000000006,
+      "z": -379.2244017444345,
+      "r": 1.05,
+      "height": 40,
+      "topY": 36.190884010969484,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.01116818754775,
+      "z": -376.6000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.812258405853562,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -153.00000000000063,
+      "z": -376.64679174369064,
+      "r": 1.05,
+      "height": 40,
+      "topY": 37.525577971944884,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.20044961367313,
+      "z": -374.4000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.100143944290526,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -151.01186661660964,
+      "z": -374.4000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 38.68471080858572,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.31466788071992,
+      "z": -372.2000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 28.062573302970044,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -150.80000000000064,
+      "z": -374.1370210535063,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.024046397626556,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -149.02102179900137,
+      "z": -372.2000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.837803093067734,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -117.80000000000074,
+      "z": -372.3016016592115,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.250754578785067,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -118.29515408925884,
+      "z": -372.2000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.370369925666434,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -117.05234812423991,
+      "z": -372.2000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.474604403830842,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -244.08099099747878,
+      "z": -370.0000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.910133396585447,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -148.60000000000065,
+      "z": -371.68859346849365,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.72387195513948,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -146.93631776659404,
+      "z": -370.0000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.480801295433025,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -124.40000000000074,
+      "z": -370.65644113783947,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.139286420547474,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -125.60505968594585,
+      "z": -370.0000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.858084977676498,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -122.20000000000074,
+      "z": -371.474136400975,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.087200026653214,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -120.00000000000074,
+      "z": -371.99993315710634,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.40541342888725,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -115.60000000000073,
+      "z": -372.0868945792032,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.327652662239654,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -113.40000000000073,
+      "z": -371.14527681308385,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.28813888237968,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -112.08395154516714,
+      "z": -370.0000000000002,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.035155635968984,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.36279843937118,
+      "z": -367.80000000000024,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.222582153561284,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -146.40000000000066,
+      "z": -369.4141221356333,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.1285224950591,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -144.57698144270736,
+      "z": -367.80000000000024,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.28066642188286,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -128.80000000000075,
+      "z": -368.6307374510774,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.92466163226666,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -130.32611561096022,
+      "z": -367.80000000000024,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.919405004206826,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -126.60000000000075,
+      "z": -369.59248246572236,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.44252779315362,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -111.20000000000073,
+      "z": -369.2661318377744,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.158728730062446,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -109.82622964548973,
+      "z": -367.80000000000024,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.62705277006239,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -243.20000000000016,
+      "z": -367.43248625622704,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.48528117497625,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -242.57947573603644,
+      "z": -365.60000000000025,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.145832290938955,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -144.20000000000067,
+      "z": -367.4619278406244,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.94616031778709,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -142.00000000000068,
+      "z": -366.1433625221394,
+      "r": 1.05,
+      "height": 40,
+      "topY": 38.04911844867961,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -140.58799193263,
+      "z": -365.60000000000025,
+      "r": 1.05,
+      "height": 40,
+      "topY": 34.92938982945681,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -135.40000000000072,
+      "z": -365.90687974360713,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.820800206345776,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -136.5741326393106,
+      "z": -365.60000000000025,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.969773561673218,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -133.20000000000073,
+      "z": -366.68756745746606,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.352454160164836,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -131.00000000000074,
+      "z": -367.5063530878816,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.362046286242084,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -109.00000000000072,
+      "z": -366.8249755595558,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.42035610173954,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -107.95619295353592,
+      "z": -365.60000000000025,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.334345353560437,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.68715521048478,
+      "z": -363.40000000000026,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.855424852215236,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -139.8000000000007,
+      "z": -365.3708293773062,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.18959907462125,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -137.6000000000007,
+      "z": -365.4130765821584,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.014667707856336,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -106.80000000000072,
+      "z": -363.87526724605453,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.056104610721945,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -106.35800813437655,
+      "z": -363.40000000000026,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.162830121468623,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -241.00000000000017,
+      "z": -361.97101143367576,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.44856790741674,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -240.71448299295096,
+      "z": -361.2000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.76918111726129,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -104.85388091840777,
+      "z": -361.2000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.11112214720225,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -239.7636458338514,
+      "z": -359.0000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 34.42025861032076,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -104.60000000000072,
+      "z": -360.7714547767779,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.750173088746358,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.4006507709882,
+      "z": -359.0000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.676812319163986,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -238.80000000000018,
+      "z": -357.5881972212334,
+      "r": 1.05,
+      "height": 40,
+      "topY": 35.44422635902504,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -238.21932184933237,
+      "z": -356.8000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 35.895225356498116,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -100.3132571138921,
+      "z": -356.8000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.388864421785996,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -236.6000000000002,
+      "z": -355.16516444726506,
+      "r": 1.05,
+      "height": 40,
+      "topY": 37.31223073037994,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -235.88535221073917,
+      "z": -354.6000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 37.86753895933205,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -100.20000000000071,
+      "z": -356.6197950268126,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.44202185805081,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -99.35459347776107,
+      "z": -354.6000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.352930619442134,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -234.4000000000002,
+      "z": -352.9284601680914,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.00582772759333,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -233.97740312749576,
+      "z": -352.4000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.31343400926272,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -98.68964716631922,
+      "z": -352.4000000000003,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.586202005869026,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -233.1977173126882,
+      "z": -350.20000000000033,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.89120406515069,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -98.00000000000071,
+      "z": -350.927390654818,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.469855513060686,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -97.50532623039646,
+      "z": -350.20000000000033,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.324408554236335,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232.39569210086714,
+      "z": -348.00000000000034,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.46734608461446,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -95.9030677951918,
+      "z": -348.00000000000034,
+      "r": 1.05,
+      "height": 40,
+      "topY": 32.03525740404864,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -232.20000000000022,
+      "z": -347.45222747832537,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.506399600949266,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -231.70168281217775,
+      "z": -345.80000000000035,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.53369205358066,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -93.93946039790937,
+      "z": -345.80000000000035,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.48593445220387,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -230.61511291105253,
+      "z": -343.60000000000036,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.04249701922671,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -93.6000000000007,
+      "z": -345.40210204039846,
+      "r": 1.05,
+      "height": 40,
+      "topY": 31.071495894682243,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -92.01717056025112,
+      "z": -343.60000000000036,
+      "r": 1.05,
+      "height": 40,
+      "topY": 30.580118751610364,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -230.00000000000023,
+      "z": -342.94404645949203,
+      "r": 1.05,
+      "height": 40,
+      "topY": 38.33953792462126,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -229.01925647398713,
+      "z": -341.4000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.07827406650074,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -91.4000000000007,
+      "z": -342.84430705154836,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.535290601229605,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -90.17346285990186,
+      "z": -341.4000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 28.955615542411863,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227.80000000000024,
+      "z": -340.0059807144193,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.962691637223,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -227.32551915440237,
+      "z": -339.2000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.294098844255906,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -89.2000000000007,
+      "z": -340.1326289807873,
+      "r": 1.05,
+      "height": 40,
+      "topY": 28.061387968339332,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -88.42464362589617,
+      "z": -339.2000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.175501220779854,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -225.7387876862275,
+      "z": -337.0000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 41.35677326166933,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -87.0000000000007,
+      "z": -337.2384341218719,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.239627292275486,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -224.45921158705877,
+      "z": -334.8000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 42.14697366537594,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -85.20448947274828,
+      "z": -334.8000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.913485523425937,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -223.40000000000026,
+      "z": -333.3774826299449,
+      "r": 1.05,
+      "height": 40,
+      "topY": 42.80123877179501,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -222.98069641235287,
+      "z": -332.6000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 42.74002004751938,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -84.8000000000007,
+      "z": -334.19713351711823,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.993419170705224,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -83.6224327523514,
+      "z": -332.6000000000004,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.809013000477822,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.67531272513813,
+      "z": -330.40000000000043,
+      "r": 1.05,
+      "height": 40,
+      "topY": 40.41086964486275,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -82.60000000000069,
+      "z": -331.0153663084935,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.00491888603665,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -82.14398558828216,
+      "z": -330.40000000000043,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.18334458954332,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -221.20000000000027,
+      "z": -329.80111102988235,
+      "r": 1.05,
+      "height": 40,
+      "topY": 39.016988545363,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -220.32081021813062,
+      "z": -328.20000000000044,
+      "r": 1.05,
+      "height": 40,
+      "topY": 33.75128858612051,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -80.7698266791489,
+      "z": -328.20000000000044,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.70520682427478,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -219.00000000000028,
+      "z": -326.52523361649014,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.993976338261444,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -218.64948413866438,
+      "z": -326.00000000000045,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.944989953334144,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -80.40000000000069,
+      "z": -327.557234180773,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.428141666731754,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -79.4064977683223,
+      "z": -326.00000000000045,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.566775539235913,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -216.85897515046804,
+      "z": -323.80000000000047,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.245712238682408,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -78.20000000000068,
+      "z": -323.84069212440045,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.778679105417243,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -216.8000000000003,
+      "z": -323.7344887807937,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.27954969487382,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -215.1735305374248,
+      "z": -321.6000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.81476557794867,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -77.13254339991002,
+      "z": -321.6000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.308233280651116,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -214.6000000000003,
+      "z": -320.9972818298863,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.424470650050484,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212.40000000000032,
+      "z": -319.44786101556485,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.93102686361716,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -212.17285657929284,
+      "z": -319.4000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.069179356527897,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -76.24977400356357,
+      "z": -319.4000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.35834206203156,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -210.20000000000033,
+      "z": -318.79654237413905,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.13272216883186,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -208.00000000000034,
+      "z": -318.71393798816786,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.42052338313469,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -205.80000000000035,
+      "z": -318.8314983784226,
+      "r": 1.05,
+      "height": 40,
+      "topY": 30.4867820976765,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -203.60000000000036,
+      "z": -319.1592828053847,
+      "r": 1.05,
+      "height": 40,
+      "topY": 30.755905880276686,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -202.1056972082886,
+      "z": -317.2000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 30.019956276299443,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -76.00000000000068,
+      "z": -317.5487030071758,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.1157024449703,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -75.95185583145255,
+      "z": -317.2000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.723342497871723,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.40000000000038,
+      "z": -315.58939306145925,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.323170411840653,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.24056699962628,
+      "z": -315.0000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 29.045919454031868,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -75.94086981906605,
+      "z": -315.0000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.76050280066091,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.70556047687018,
+      "z": -312.8000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.945605266622035,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -75.94086141584387,
+      "z": -312.8000000000005,
+      "r": 1.05,
+      "height": 40,
+      "topY": 28.808996954416425,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.14108486064367,
+      "z": -310.60000000000053,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.74021060397055,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -75.89573047973161,
+      "z": -310.60000000000053,
+      "r": 1.05,
+      "height": 40,
+      "topY": 28.902494462587676,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.62704091954697,
+      "z": -308.40000000000055,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.442219513604766,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -74.9268578265554,
+      "z": -308.40000000000055,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.087498694274153,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.51480189482797,
+      "z": -306.20000000000056,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.065815982583395,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -74.1029832593875,
+      "z": -306.20000000000056,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.299491733832436,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.9103951547668,
+      "z": -304.00000000000057,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.973115355081763,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.80000000000068,
+      "z": -305.4161201730607,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.789488122134124,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.12583058105221,
+      "z": -304.00000000000057,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.22001317626585,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.33329600257824,
+      "z": -301.8000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.24337519046571,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -72.38175298865964,
+      "z": -301.8000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.248097359615773,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.61326630143967,
+      "z": -299.6000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.848885292418316,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.89479784757802,
+      "z": -299.6000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 12.201213232187738,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.76451973786723,
+      "z": -297.4000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.438948917408553,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.7525574211039,
+      "z": -297.4000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 12.28465785427724,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.83599916148492,
+      "z": -295.2000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.48471539687615,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.7525574211039,
+      "z": -295.2000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.348845939776698,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.87427224479978,
+      "z": -293.0000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.213675043773193,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.75255742110392,
+      "z": -293.0000000000006,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.971419449364022,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.91844307326983,
+      "z": -290.80000000000064,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.077210004401927,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.75255742110879,
+      "z": -290.80000000000064,
+      "r": 1.05,
+      "height": 40,
+      "topY": 14.767841039311397,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.96697811235367,
+      "z": -288.60000000000065,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.08965670519323,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -71.77194390579605,
+      "z": -288.60000000000065,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.020134515220416,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.00523735796634,
+      "z": -286.40000000000066,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.185173353410786,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -72.30990896784232,
+      "z": -286.40000000000066,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.705681341492888,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.02145705146032,
+      "z": -284.20000000000067,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.34895865185626,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.80000000000068,
+      "z": -285.10113692748297,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.863466733368725,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -74.03357617161625,
+      "z": -284.20000000000067,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.20515766765694,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -201.00335054272713,
+      "z": -282.0000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.583648065912787,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.80000000000068,
+      "z": -283.63219402445964,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.500203178412182,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -72.89052085756929,
+      "z": -282.0000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.60953187536498,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.95752652758682,
+      "z": -279.8000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.818878423548515,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.04305595172224,
+      "z": -279.8000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.749031583219486,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.88179167351788,
+      "z": -277.6000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.046509411681402,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.3647803577531,
+      "z": -277.6000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 14.415888211484972,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.72519767415244,
+      "z": -275.4000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.41328963272785,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -73.80000000000068,
+      "z": -275.6154434399281,
+      "r": 1.05,
+      "height": 40,
+      "topY": 12.865401510274708,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -200.41850403165702,
+      "z": -273.2000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.846024755319824,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -74.51959240731772,
+      "z": -273.2000000000007,
+      "r": 1.05,
+      "height": 40,
+      "topY": 14.438460112169736,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.78314209534946,
+      "z": -271.00000000000074,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.42241135985355,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -75.78507736916261,
+      "z": -271.00000000000074,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.73530443872699,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -199.2000000000004,
+      "z": -269.78752941327684,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.993286764167234,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.9139821629381,
+      "z": -268.80000000000075,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.22510106969255,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -80.40000000000069,
+      "z": -270.53082107881784,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.38273877911064,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -82.03498230672973,
+      "z": -268.80000000000075,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.912931376754834,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -78.20000000000068,
+      "z": -270.791172355776,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.552230955781013,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.4066043125993,
+      "z": -266.60000000000076,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.546372302580647,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -100.20000000000071,
+      "z": -268.6775038614898,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.71543802832821,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.30601729120526,
+      "z": -266.60000000000076,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.045430718238574,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -98.00000000000071,
+      "z": -268.6857858741202,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.838938682470243,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -95.80000000000071,
+      "z": -268.3681059956882,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.3886319757157,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -93.6360688462034,
+      "z": -266.60000000000076,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.606917102766577,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -84.8000000000007,
+      "z": -266.6327631343837,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.897934584348816,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -82.60000000000069,
+      "z": -268.4344573073934,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.57939596024062,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.0126237743055,
+      "z": -264.4000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 27.227951199141202,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.40000000000072,
+      "z": -265.11089524603096,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.258641792002752,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.75617944228118,
+      "z": -264.4000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.802074244170594,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -91.4000000000007,
+      "z": -266.2224316700842,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.66951472521685,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -89.2000000000007,
+      "z": -266.2224250369435,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.79084564876046,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -87.0000000000007,
+      "z": -266.22245031767864,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.3634280137094,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -197.8869413433384,
+      "z": -262.2000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.08139211992843,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -103.44664748004976,
+      "z": -262.2000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.45466893419742,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.1330388945213,
+      "z": -260.0000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.992390376811947,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -103.52465752760125,
+      "z": -260.0000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.3084943769577,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.66824957194018,
+      "z": -257.8000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.865536555754808,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.97104566546001,
+      "z": -257.8000000000008,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.88976909592579,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -198.52044474065838,
+      "z": -255.60000000000082,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.06543666965547,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.40000000000072,
+      "z": -256.4285525798956,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.95520736088771,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.09080747140636,
+      "z": -255.60000000000082,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.976748711867447,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -197.0000000000004,
+      "z": -253.7515193426921,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.691486449551984,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -196.5567348140159,
+      "z": -253.40000000000083,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.765170018595793,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.6274046537816,
+      "z": -253.40000000000083,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.599793678463264,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -194.8000000000004,
+      "z": -252.2125856913468,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.96210710024645,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -193.14713309592273,
+      "z": -251.20000000000084,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.82933966836199,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.48825511814,
+      "z": -251.20000000000084,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.05415444951906,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -192.60000000000042,
+      "z": -250.8048695156613,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.867036463043444,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -190.40000000000043,
+      "z": -249.34795425887307,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.885389436060915,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -190.09517332348474,
+      "z": -249.00000000000085,
+      "r": 1.05,
+      "height": 40,
+      "topY": 26.75154037092575,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.47337206853103,
+      "z": -249.00000000000085,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.477019958214134,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -188.20000000000044,
+      "z": -247.41113313335148,
+      "r": 1.05,
+      "height": 40,
+      "topY": 25.54917203065602,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -187.3876449396395,
+      "z": -246.80000000000086,
+      "r": 1.05,
+      "height": 40,
+      "topY": 24.997832435329734,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.47563877676005,
+      "z": -246.80000000000086,
+      "r": 1.05,
+      "height": 40,
+      "topY": 14.817945977428177,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -186.00000000000045,
+      "z": -245.6997645237124,
+      "r": 1.05,
+      "height": 40,
+      "topY": 23.494633507837158,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -183.80000000000047,
+      "z": -244.6278032840656,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.540904611879984,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -183.73889116119554,
+      "z": -244.60000000000088,
+      "r": 1.05,
+      "height": 40,
+      "topY": 21.66925933594469,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -101.5678327820415,
+      "z": -244.60000000000088,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.223036871383515,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -181.60000000000048,
+      "z": -243.2683895216702,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.889394926519962,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.4000000000005,
+      "z": -242.45522756963865,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.426043346722317,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -179.23310534006654,
+      "z": -242.4000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.482356471674482,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.01398277961667,
+      "z": -242.4000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 11.814884802457431,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -177.2000000000005,
+      "z": -241.43279171669502,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.553470863246314,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -175.0000000000005,
+      "z": -240.48788869673788,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.627208446036782,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -174.4905881565361,
+      "z": -240.2000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 22.43402150780366,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -109.00000000000072,
+      "z": -240.52308085054287,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.505987323069636,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -111.185989520387,
+      "z": -240.2000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.20690021013649,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -106.80000000000072,
+      "z": -240.4538919961493,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.54814652304663,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -104.60000000000072,
+      "z": -240.31543351595877,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.322900454680358,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -102.40000000000072,
+      "z": -241.50939950279843,
+      "r": 1.05,
+      "height": 40,
+      "topY": 13.03630147609588,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -172.80000000000052,
+      "z": -238.99128228882805,
+      "r": 1.05,
+      "height": 40,
+      "topY": 20.55072585692947,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -170.60624734784213,
+      "z": -238.0000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.659677456710078,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -113.40000000000073,
+      "z": -238.65821863758833,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.630949898292995,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -114.60891352153212,
+      "z": -238.0000000000009,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.480760387595515,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -168.40000000000055,
+      "z": -237.15741806630783,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.49575124722935,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -166.20000000000056,
+      "z": -236.70543493568613,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.7934616139148,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -164.00000000000057,
+      "z": -235.98419790759638,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.79209596603673,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -163.59331133606057,
+      "z": -235.80000000000092,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.785656973572152,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -131.00000000000074,
+      "z": -235.8545178451358,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.651229276157324,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -131.3182173529031,
+      "z": -235.80000000000092,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.685438224932756,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -129.58816473153826,
+      "z": -235.80000000000092,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.950633933407047,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -117.80000000000074,
+      "z": -236.0934418369392,
+      "r": 1.05,
+      "height": 40,
+      "topY": 16.321871925856204,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -119.1326619122449,
+      "z": -235.80000000000092,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.041927629956383,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -115.60000000000073,
+      "z": -237.25821638092322,
+      "r": 1.05,
+      "height": 40,
+      "topY": 15.533963476517851,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -161.80000000000058,
+      "z": -235.27504117116564,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.764360709946697,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -132.53232584531523,
+      "z": -233.60000000000093,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.66490571652226,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -128.80000000000075,
+      "z": -235.43288693553947,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.974559708295743,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -126.60000000000075,
+      "z": -233.96492076799223,
+      "r": 1.05,
+      "height": 40,
+      "topY": 19.04388923401158,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -124.40000000000074,
+      "z": -234.03158878694336,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.969662625945837,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -122.20000000000074,
+      "z": -234.6473128741617,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.53343083350092,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -120.00000000000074,
+      "z": -235.40723120783818,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.569083653529887,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -135.40000000000072,
+      "z": -232.50306993849085,
+      "r": 1.05,
+      "height": 40,
+      "topY": 18.660457654179996,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -133.20000000000073,
+      "z": -233.37132773816163,
+      "r": 1.05,
+      "height": 40,
+      "topY": 17.968816993800694,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -154.8,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -153.20000000000002,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -151.60000000000002,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -150.00000000000003,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -148.40000000000003,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -146.80000000000004,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -145.20000000000005,
+      "z": -238.79999999999998,
+      "r": 1,
+      "height": 40,
+      "topY": 24.2,
+      "landform": true,
+      "terrainCliff": true
+    },
+    {
+      "x": -323.4361948752548,
+      "z": 125.03008522484386,
+      "r": 9.450603181670886,
+      "height": 9.932499518617988,
+      "landform": true
+    },
+    {
+      "x": -195.83215084834097,
+      "z": 125.66595509028143,
+      "r": 8.406347185221966,
+      "height": 8.822864371351898,
+      "landform": true,
+      "precise": true
+    },
+    {
+      "x": -147.14876647810183,
+      "z": 42.658726610246234,
+      "r": 9.363755862531251,
+      "height": 14.906441053142771,
+      "landform": true,
+      "precise": true
+    },
+    {
+      "x": -349.1653754247129,
+      "z": 138.07231333973914,
+      "r": 7.473155441577546,
+      "height": 9.161111504537985,
+      "landform": true
+    },
+    {
+      "x": -191.8227245236306,
+      "z": 123.56940679465845,
+      "r": 9.936497785663231,
+      "height": 16.38546021678485,
+      "landform": true,
+      "precise": true
+    },
+    {
+      "x": -263.39737156406045,
+      "z": 97.42358046816662,
+      "r": 9.808219231909606,
+      "height": 11.829238804522902,
+      "landform": true
+    }
+  ],
+  "originalCanyonCount": 412,
+  "expected": {
+    "x": -68.98,
+    "z": 213.41,
+    "sited": true
+  },
+  "negative": {
+    "x": -76,
+    "z": 172,
+    "sited": false
+  },
+  "venues": [
+    {
+      "id": "coyote",
+      "venue": {
+        "x": -238,
+        "z": 220
+      }
+    },
+    {
+      "id": "hollowpeak",
+      "venue": {
+        "x": -92,
+        "z": -173
+      }
+    },
+    {
+      "id": "barleyfold",
+      "venue": {
+        "x": 206,
+        "z": -38
+      }
+    },
+    {
+      "id": "cottonwood",
+      "venue": {
+        "x": -6,
+        "z": -116
+      }
+    },
+    {
+      "id": "ranch",
+      "venue": {
+        "x": 2,
+        "z": 1
+      }
+    }
+  ]
+}

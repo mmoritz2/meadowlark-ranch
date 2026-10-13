@@ -1,0 +1,108 @@
+{
+  "base": "8042555",
+  "sourceSHA256": {
+    "ranch3d.html": "fb8c532cf926d097c2e9acf6c0a0c10640ebab8730e44d19cdadaeace83e8667",
+    "assets/canyon-landscape.js": "0d083ab131fcca53d111ac10c70cbb163086fb4736ce728a3ca5a1897491bb56",
+    "assets/features/world-flora.js": "71dc5863463abac5f7630cfcef890cc37aaa3dcda25894523edc1aa2027abc6e",
+    "assets/world-photoscans.js": "ed19c51f0810f4302453939c8ef6573c8b805f235fd9a29ab8294ac9ac687160",
+    "assets/follow-camera.js": "0dc2ad4009ffcad37cecaad0b904491a6077765b765d0e3ef1d80cabfedfc4a6",
+    "assets/solid-collisions.js": "c06e7bad9f1c59e6ff9a42a98843f2eca408171fa05c173c2c26ed7112c48e1e",
+    "assets/oasis-art.js": "1df37b89386fc2ab08de3864d8be30404c50a73abbb1f15bc34acb30659db704",
+    "assets/features/index.js": "33b7f2747151349c489e4a746ef7947e40d1e474f6ae10f50675a6b87cf2e91b"
+  },
+  "snippets": {
+    "rawTerrain": "function ihash(ix,iz){\n let h=ix*374761393+iz*668265263;\n h=(h^(h>>13))*1274126177;\n return ((h^(h>>16))>>>0)/4294967295;\n}\nfunction vnoise(x,z){\n const ix=Math.floor(x),iz=Math.floor(z),fx=x-ix,fz=z-iz;\n const sx=fx*fx*(3-2*fx),sz=fz*fz*(3-2*fz);\n const a=ihash(ix,iz),b=ihash(ix+1,iz),c=ihash(ix,iz+1),d=ihash(ix+1,iz+1);\n return a+(b-a)*sx+(c-a)*sz+(a-b-c+d)*sx*sz;\n}\nconst riverZ=x=>120+Math.sin(x*0.012)*45;\n/* Sparrow Creek stream \u2014 a tributary that winds down from the southern hills into the river */\nconst streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;\nconst STREAM_JOIN=160;                          // it meets the river around z\u2248160\nconst riverLevel=x=>0.50-x*0.009;\nconst streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));\nfunction rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){\n const d=Math.hypot(x,z);\n const near=THREE.MathUtils.smoothstep(d,24,58);\n const far=1-THREE.MathUtils.smoothstep(d,380,460);\n const n=vnoise(x*0.018+7,z*0.018+3)*7.5       // medium rolling\n        +vnoise(x*0.055,z*0.055)*1.8           // small bumps\n        +vnoise(x*0.008+19,z*0.008+5)*14.0     // broad hills\n        +vnoise(x*0.0042+50,z*0.0042+22)*13.0; // very broad ridges & valleys\n let h=near*far*(n-9.5)+pastureRise(x,z);\n const rg=1-Math.abs(vnoise(x*0.006+83,z*0.006-41)*2-1);   // ridged crests give hills a backbone\n h+=near*far*rg*rg*6.0;\n const bl=vnoise(x*0.011-31,z*0.011+44);                    // flat-topped bluffs, steep cliff faces\n h+=near*far*THREE.MathUtils.smoothstep(bl,0.35,0.60)*9.0;\n h+=canyonHeight(x,z);\n // A continuous graded channel: the water elevation is independent of the hills.\n const rd=Math.abs(z-riverZ(x));\n const riverBed=riverLevel(x)-0.85+THREE.MathUtils.smoothstep(rd,0,7)*1.30;\n h=THREE.MathUtils.lerp(riverBed,h,THREE.MathUtils.smoothstep(rd,7.5,19));\n h=riverHeight(x,z,h);\n if(z<STREAM_JOIN+3){\n  const sd=Math.abs(x-streamX(z));\n  const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;\n  const creekInfluence=(1-THREE.MathUtils.smoothstep(sd,3.8,10))*(1-THREE.MathUtils.smoothstep(z,156,163));\n  h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);\n }\n\n return fallsHeight(x,z,oasisTerrainHeight(x,z,h));\n}\n",
+    "terrainContact": "function terrainH(x,z){\n if(x<=-500||x>=500||z<=-500||z>=500)return rawH(x,z);\n const gx=(x+500)/TERRAIN_STEP,gz=(z+500)/TERRAIN_STEP,ix=Math.floor(gx),iz=Math.floor(gz);\n const fx=gx-ix,fz=gz-iz,i=iz*(TERRAIN_SEGMENTS+1)+ix,n=TERRAIN_SEGMENTS+1;\n const a=TERRAIN_HEIGHTS[i],b=TERRAIN_HEIGHTS[i+n],c=TERRAIN_HEIGHTS[i+n+1],d=TERRAIN_HEIGHTS[i+1];\n return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);\n}\n",
+    "placementBinding": "// Preserve authored planting decisions while every rendered/physical root uses terrainH.\nconst hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,\n rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});\nconst canyonPlacement=createCanyonPlacementPlan({terrainStep:TERRAIN_STEP,\n rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt});\n",
+    "groundContact": "function groundH(x,z){\n let h=terrainH(x,z);\n if(Math.abs(x)<2.3&&z>BR_A&&z<BR_B)h=Math.max(h,BRIDGE_Y+0.55*Math.sin(Math.PI*(z-BR_A)/15));\n for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));\n return h;\n}\n",
+    "mainFactory": "const canyonLandscape=createCanyonLandscape({THREE,scene,heightAt:terrainH,terrainStep:TERRAIN_STEP,material:geology.canyonMaterial,colliders});\n",
+    "legacyCollider": " /* Legacy trunks and rocks retain their footprints; authored structures use part geometry. */\n for(const c of colliders){\n  if(c.precise||player.y>=(c.height??Math.max(2.5,c.r*2.5)))continue;\n  if(c.terrainCliff&&groundH(player.pos.x,player.pos.z)+player.y>=c.topY)continue;\n  if(c.climb&&player.onFoot)continue;   // rock she can climb: on foot the rock's own surface stops her or carries her (on-foot)\n  const ox=player.pos.x-c.x,oz=player.pos.z-c.z;\n  const d2=ox*ox+oz*oz,rad=c.r+0.55;\n  if(d2<rad*rad){\n   const d=Math.sqrt(d2);\n   if(d<0.02){\n    player.pos.x=c.x+Math.sin(player.heading+Math.PI)*rad;\n    player.pos.z=c.z+Math.cos(player.heading+Math.PI)*rad;\n   }else{\n    player.pos.x=c.x+ox/d*rad;\n    player.pos.z=c.z+oz/d*rad;\n   }\n  }\n }\n",
+    "youngCactus": "for(let i=0;i<14;i++){\n const x=-150-Math.random()*130,z=70+Math.random()*120;\n if(Math.abs(z-riverZ(x))<9||pathDist(x,z)<3.6||Math.hypot(x-CANYON.x,z-CANYON.z)<32||canyonPlacement.cliffAt(x,z))continue;\n const cact=desertArt.create('saguaro',i%3);cact.name='Desert | young cactus';cact.scale.setScalar(1.9);\n cact.position.set(x,groundH(x,z)-.01,z);scene.add(cact);\n colliders.push({x,z,r:0.5});\n}\nfor(let i=0;i<18;i++){\n const x=-95-Math.random()*130,z=-105-Math.random()*145;\n const t=makePine(1.0+Math.random()*0.9);\n t.position.set(x,groundH(x,z),z);\n scene.add(t);\n colliders.push({x,z,r:0.75});\n}\n",
+    "seedCactus": "for(let i=0;i<90;i++){                                       // cacti across Coyote Canyon desert\n const a=Math.random()*Math.PI*2,rr=Math.random()*(CANYON.r*0.92);\n const x=CANYON.x+Math.cos(a)*rr, z=CANYON.z+Math.sin(a)*rr;\n if(Math.abs(z-riverZ(x))<7)continue;\n const col={x,z,r:0.6,plant:true};colliders.push(col);   // plant: course-clear may take it off a course before the model has even loaded\n (Math.random()<0.6?FOLIAGE.cactus:FOLIAGE.cactus2).push({x,z,s:0.9+Math.random()*1.0,r:Math.random()*Math.PI*2,col});\n}\n// Keep the settlement and its riding approaches open. Cull after generating\n// placements so changing the planting does not consume a different random stream.\nfor(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--){\n const p=FOLIAGE[name][i];if(pathDist(p.x,p.z)>=3.6&&Math.hypot(p.x-CANYON.x,p.z-CANYON.z)>=32&&!canyonPlacement.cliffAt(p.x,p.z))continue;\n const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);\n}\n"
+  },
+  "actualProtectedScan": {
+    "xRange": [
+      -153.14224082350458,
+      -123.83681747899726
+    ],
+    "zRange": [
+      138.9626586800915,
+      150.00762352701452
+    ],
+    "exactCanonicalSupportThroughZ": 150.390625,
+    "source": "oasis-ridge-release-native-v1/surface-probes.json"
+  },
+  "existingAcceptedCrownRoutes": [
+    {
+      "name": "front-shoulder",
+      "points": [
+        [
+          -126,
+          157
+        ],
+        [
+          -130,
+          157
+        ],
+        [
+          -134,
+          157
+        ],
+        [
+          -138,
+          158
+        ]
+      ],
+      "reached": true,
+      "steps": 182,
+      "maxRise": 0.04545566180418348,
+      "maxFall": 0.006271480159789178,
+      "maxOffset": 0,
+      "maxStep": 0.07137584459000837,
+      "residual": 0,
+      "finite": true
+    },
+    {
+      "name": "saddle",
+      "points": [
+        [
+          -142,
+          163
+        ],
+        [
+          -148,
+          163
+        ],
+        [
+          -154,
+          163
+        ],
+        [
+          -160,
+          165
+        ]
+      ],
+      "reached": true,
+      "steps": 269,
+      "maxRise": 0.0188121720901826,
+      "maxFall": 0.05883216196915342,
+      "maxOffset": 0,
+      "maxStep": 0.0713814978795959,
+      "residual": 0,
+      "finite": true
+    }
+  ],
+  "gridSHA256": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+  "gridProvenance": "Fresh actual804 no-route native coyote-macro-8042555-baseline-native/terrain-grid.f32; byte-identical original lupin final grid. Four44 technical view gates and source binding recorded by root; art accepted baseline by root.",
+  "runtimeSHA256": {
+    "assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "ranch3d.html": "b4ccde61598e4e4af76eed64dbcc7496459e14e9a9ca890ecc38337ced3251df",
+    "assets/features/world-flora.js": "55d59116887433156f5cbd8af2ea6a9c1607814536b9625320bf0b8b37aec020",
+    "assets/features/index.js": "b64ba748f2bac5bf6c0ded32fd05fb980e70d23c7b99256b53893eaaaa07f4da",
+    "assets/world-photoscans.js": "ed57b6598cca0e4a5468dc08550fe91cb3ad7631eda1d116f73dcdfc5cec092e",
+    "assets/coyote-boot-planning.mjs": "b37485306905bba2a4448e9e204878aeb632ba0ce038d0afcd519ffad8b82ef1",
+    "assets/features/world.js": "58f4b28b823a9a249cd250d666c354126c7330342ba70ad37ea7bbc75364c297",
+    "assets/features/world-vistas.js": "241eae6cde1ad7abc2bdee58deeb66e494a248be427d556f98828fc5c6718dc6"
+  }
+}

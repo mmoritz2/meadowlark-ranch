@@ -1,19 +1,22 @@
-import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=fine-meadows-1';
+import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
+import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
+import {respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1';
+import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=pastoral-cover-1';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=cold-landscape-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-3';
 
-// Middle-distance long blades match the nearby upright stand. Four/six/eight
-// three-triangle ribbons preserve the existing 12/18/24-triangle tier budgets.
+// Middle-distance grass uses six/ten/twelve upright blades within the retained
+// 12/18/24-triangle tiers; the public blade count still selects that tier.
 function createMiddleCoverGeometry(THREE,bladeCount) {
  return createLushMeadowGeometry(THREE,{leafCount:bladeCount,segments:2,profile:'middle'});
 }
 
-// Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
-// The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
-// retain two segments, where the extra curvature is smaller than a pixel.
+// The original factory options retain their triangle tiers. Nearby pasture
+// now uses twelve slender leaves at forty triangles; middle tufts combine
+// straight and bent leaves to retain coverage within their smaller tiers.
 export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='legacy'}={}) {
   if(profile==='middle-natural-v1'&&segments===2&&[4,6,8].includes(bladeCount))return createMiddleCoverGeometry(THREE,bladeCount);
   if(profile==='near-folded-v1'&&bladeCount===8&&segments===3)return createLushMeadowGeometry(THREE,{leafCount:8,segments:3,profile:'near'});
@@ -139,8 +142,8 @@ export function meadowBladeColor(color,x,z,variation=.5){
   return color.setHSL(hh,ss,ll);
 }
 
-// The modelled flower bank retains its existing mesh and 238-triangle budget.
-export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=landmark-fields-1';
+// Rounded modelled flowers retain the existing mesh; the prototype uses 646 triangles.
+export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=lupin-rounded-1';
 
 // A bounded ring carries pasture silhouettes into the middle distance. Slots
 // only rebuild when a 12 m cell enters the ring; no extra work per grass blade
@@ -161,6 +164,10 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         // Inverse transpose of (sqrt(fade),fade,sqrt(fade)), up to a
         // common scalar. No division, including at the fully retired endpoint.
         objectNormal.xz*=max(sqrt(middleNormalFade),.0001);
+        vec2 middleGrassIP=instanceMatrix[3].xz;
+        float middleGrassSwayScale=abs(instanceMatrix[1].y)*inversesqrt(max(dot(instanceMatrix[0].xz,instanceMatrix[0].xz),.000001));
+        float middleGrassWind=sin(fieldTime*1.2+middleGrassIP.x*.3+middleGrassIP.y*.16)*.15*middleGrassSwayScale;
+        objectNormal.y-=middleGrassWind*objectNormal.x;
       #endif`);
     sh.vertexShader='uniform float fieldTime; uniform vec2 fieldRider;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
@@ -169,17 +176,18 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         // Height retires smoothly; square-root reach makes projected cover
         // linear in grow instead of disappearing quadratically at both LODs.
         transformed.xz*=sqrt(grow);transformed.y*=grow;
-        transformed.x+=sin(fieldTime*1.2+ip.x*.3+ip.y*.16)*transformed.y*.15;
+        transformed.x+=middleGrassWind*transformed.y;
       #endif`);
   };
-  mat.customProgramCacheKey=()=> 'middle-meadow-cover-2';
+  mat.customProgramCacheKey=()=> 'middle-meadow-cover-3';
   installPastureLighting(mat);
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
-  let cx=Infinity,cz=Infinity;
+  let cx=Infinity,cz=Infinity,geometryKey=getQuality();
   return {mesh,invalidate(){cx=cz=Infinity;slots.fill(undefined);},tick(time,x,z){
-    mesh.geometry=geometries[getQuality()]||geometries.high;
+    const nextGeometryKey=getQuality();mesh.geometry=geometries[nextGeometryKey]||geometries.high;
+    if(nextGeometryKey!==geometryKey){geometryKey=nextGeometryKey;cx=cz=Infinity;slots.fill(undefined);}
     uniforms.fieldTime.value=time;uniforms.fieldRider.value.set(x,z);
     const nx=Math.floor(x/CELL),nz=Math.floor(z/CELL);if(nx===cx&&nz===cz)return;cx=nx;cz=nz;
     for(let dz=-W/2;dz<W/2;dz++)for(let dx=-W/2;dx<W/2;dx++){
@@ -189,9 +197,9 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         const a=hash(ix*137+k*11,iz*73+k*31),b=hash(ix*59+k*23,iz*151+k*7),c=hash(ix+k*19,iz-k*17);
         const px=(ix+a)*CELL,pz=(iz+b)*CELL,id=slot*K+k;
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
-        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2),spread);}
+        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
         else scale.setScalar(0);
-        matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
+        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

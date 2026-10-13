@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './breed-models.js?v=leg-contours-20261012';
+import {createBreedLibrary} from './breed-models.js?v=world-presentations-1';
 import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=draft-feathers-20261013d';
 import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';
@@ -10,7 +10,7 @@ import {registerRosterPreviews} from './features/horse-roster.js?v=natural-mane-
 import {registerClubHorsePreviews} from './features/clubs-boards.js?v=native-tack-fit-1';
 import {registerMarketHorsePreviews} from './features/market-summon-keys-pets.js?v=native-tack-fit-1';
 import {registerNewBreedPreviews} from './features/new-breeds.js?v=native-tack-fit-1';
-import {configureNativeCustomization} from './native-horse-customization.js?v=equestrian-style-20261012';
+import {configureNativeCustomization} from './native-horse-customization.js?v=world-presentations-1';
 import {EXPANSION_HORSE_BREEDS} from './expansion-horses.js?v=horses-expansion-1';
 import {registerExpansionHorseCoats} from './expansion-horse-coats.js?v=horses-expansion-1';
 

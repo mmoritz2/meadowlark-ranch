@@ -1,0 +1,35 @@
+{
+  "runtimeSHA256": {
+    "assets/meadow-flowers.mjs": "ca6fca0a23ed67af0e578769f0f9815f93fe57b0376bb05106cd4e72faa2fc2e",
+    "assets/meadow-cover.js": "39e89cb5439ac3f597c26d6494fdfc30e2d518baa11d16a6cc9847a71dad90c2",
+    "ranch3d.html": "fb8c532cf926d097c2e9acf6c0a0c10640ebab8730e44d19cdadaeace83e8667"
+  },
+  "sourceChanges": [
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=landmark-fields-1';",
+      "after": "export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers.mjs?v=lupin-rounded-1';"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "// The modelled flower bank retains its existing mesh and 238-triangle budget.",
+      "after": "// Rounded modelled flowers retain the existing mesh; the prototype uses 646 triangles."
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/meadow-cover.js?v=pastoral-cover-1",
+      "after": "./assets/meadow-cover.js?v=lupin-rounded-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/meadow-flowers.mjs?v=landmark-fields-1",
+      "after": "./assets/meadow-flowers.mjs?v=lupin-rounded-1"
+    }
+  ],
+  "factory": {
+    "file": "assets/meadow-flowers.mjs",
+    "beforeMarker": "// Long raceme lupin:",
+    "afterMarker": "// Original rounded pea raceme:",
+    "afterSHA256": "2c53b891b13c15b153c0146196d0dec072081bdff19d94a4308f896f046591ff"
+  }
+}

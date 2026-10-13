@@ -46,8 +46,11 @@ export function createWorldFinish({composer, camera}) {
       void main(){
         vec4 source=texture2D(tDiffuse,vUv);
         float depth=texture2D(tDepth,vUv).x;
-        float receiverCoverage=riderAOReceptionEnabled>.5?(source.a<0.0?clamp((source.a+32.0)/33.0,0.0,1.0):1.0):1.0;
-        float outputAlpha=riderAOReceptionEnabled>.5?(source.a<0.0?1.0:source.a):source.a;
+        // The opaque main-world target uses alpha solely for receiver metadata.
+        // Filtering the -32 rider marker against +1 scenery can cross zero;
+        // decode the complete range before any bloom/output pass sees it.
+        float receiverCoverage=riderAOReceptionEnabled>.5?clamp((source.a+32.0)/33.0,0.0,1.0):1.0;
+        float outputAlpha=riderAOReceptionEnabled>.5?1.0:source.a;
         if(riderAOReceptionDebug>.5){gl_FragColor=vec4(mix(vec3(0),vec3(0,1,0),1.0-receiverCoverage),1.0);return;}
         if(receiverCoverage<=0.0){gl_FragColor=vec4(source.rgb,outputAlpha);return;}
         if(depth>=.999999){gl_FragColor=vec4(source.rgb,outputAlpha);return;}

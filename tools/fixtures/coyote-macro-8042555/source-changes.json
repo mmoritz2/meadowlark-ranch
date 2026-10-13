@@ -1,0 +1,275 @@
+[
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "",
+    "after": "import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-1';\n",
+    "kind": "prefix"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false){",
+    "after": "function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false,macroform=true){\n if(!planning&&macroform&&r.id==='north-rim')return coyoteNorthMacroHeight(best,side,along,edge);"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "export function canyonRelief(x,z,planning=false){\n let height=0,oasisUpperDelta=0;",
+    "after": "export function canyonRelief(x,z,planning=false,macroform=true){\n let height=0,oasisUpperDelta=0,oasisBest=Infinity,oasisEdge=Infinity;"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning);",
+    "after": "countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning,macroform);"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "if(r.id==='oasis-butte')oasisUpperDelta=",
+    "after": "if(r.id==='oasis-butte'){oasisBest=best;oasisEdge=edge;}\n  if(r.id==='oasis-butte')oasisUpperDelta="
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": " return oasisUpperCrown(x,z,seated);",
+    "after": " const retainedCrown=oasisUpperCrown(x,z,seated);\n const macroBlend=!planning&&macroform?coyoteOasisMacroBlend(x,z,oasisBest,oasisEdge):0;\n return macroBlend===0?retainedCrown:retainedCrown+(coyoteOasisMacroHeight(x,z,oasisBest,oasisEdge)*keepLandmarks(x,z)-retainedCrown)*macroBlend;"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "export const canyonPlanningRelief=(x,z)=>canyonRelief(x,z,true);",
+    "after": "export const canyonPlanningRelief=(x,z)=>canyonRelief(x,z,true,false);\n// Exact previous804 physical macro recipe for newly changed North/Oasis decisions.\nexport const canyonMacroPlanningRelief=(x,z)=>canyonRelief(x,z,false,false);"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep}){",
+    "after": "export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep,macroRawHeightAt=rawHeightAt}){"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": " function planningHeight(x,z){",
+    "after": " const macroGrids=prepared.filter(r=>r.id==='north-rim'||r.id==='oasis-butte').map(r=>{\n  const ix0=Math.floor((r.minX+500)/terrainStep)-1,iz0=Math.floor((r.minZ+500)/terrainStep)-1;\n  const ix1=Math.ceil((r.maxX+500)/terrainStep)+1,iz1=Math.ceil((r.maxZ+500)/terrainStep)+1,nx=ix1-ix0+1,nz=iz1-iz0+1,heights=new Float32Array(nx*nz);\n  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const y=macroRawHeightAt((ix+ix0)*terrainStep-500,(iz+iz0)*terrainStep-500);if(!Number.isFinite(y))throw Error('Nonfinite macro decision ground');heights[iz*nx+ix]=y;}\n  return{id:r.id,ix0,iz0,nx,nz,heights,bytes:heights.byteLength};\n });\n function macroPlanningHeight(x,z){\n  for(const g of macroGrids){const gx=(x+500)/terrainStep-g.ix0,gz=(z+500)/terrainStep-g.iz0,ix=Math.floor(gx),iz=Math.floor(gz);if(ix<0||iz<0||ix>=g.nx-1||iz>=g.nz-1)continue;\n   const fx=gx-ix,fz=gz-iz,i=iz*g.nx+ix,a=g.heights[i],b=g.heights[i+g.nx],c=g.heights[i+g.nx+1],d=g.heights[i+1];return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);\n  }return heightAt(x,z);\n }\n function planningHeight(x,z){"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "if(ix<0||iz<0||ix>=nx-1||iz>=nz-1)return heightAt(x,z);",
+    "after": "if(ix<0||iz<0||ix>=nx-1||iz>=nz-1)return macroPlanningHeight(x,z);"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "grid:{ix0,iz0,nx,nz,heights,bytes:heights.byteLength},barriers};",
+    "after": "grid:{ix0,iz0,nx,nz,heights,bytes:heights.byteLength},macroGrids,barriers};"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "canyonRelief,canyonPlanningRelief,createCanyonPlacementPlan,",
+    "after": "canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt",
+    "after": "rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),\n macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)",
+    "after": "rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight)",
+    "after": "macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight)"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "canyon-landscape.js?v=regional-landmarks-1",
+    "after": "canyon-landscape.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "assets/features/world-flora.js",
+    "before": "canyon-landscape.js?v=regional-landmarks-1",
+    "after": "canyon-landscape.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "canyon-landscape.js?v=regional-landmarks-1",
+    "after": "canyon-landscape.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "./assets/world-photoscans.js?v=regional-landmarks-1",
+    "after": "./assets/world-photoscans.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "./assets/features/index.js?v=pastoral-cover-1",
+    "after": "./assets/features/index.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "./world-flora.js?v=pastoral-cover-1",
+    "after": "./world-flora.js?v=coyote-macroform-1"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep,macroRawHeightAt=rawHeightAt}){",
+    "after": "export function createCanyonPlacementPlan({rawHeightAt,heightAt,terrainStep,macroRawHeightAt=rawHeightAt,surfaceHeightAt=(_x,_z,height)=>height}){"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);\n  }return heightAt(x,z);",
+    "after": "const terrain=fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);return surfaceHeightAt(x,z,terrain);\n  }return heightAt(x,z);"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight),heightAt:hollowpeakPlacement.heightAt",
+    "after": "macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight),\n surfaceHeightAt:(x,z,h)=>{for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));return h;},heightAt:hollowpeakPlacement.heightAt"
+  },
+  {
+    "file": "assets/features/world.js",
+    "before": "",
+    "after": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-2';\n",
+    "kind": "prefix"
+  },
+  {
+    "file": "assets/features/world.js",
+    "before": " function clear(x,z,need){for(const c of W.colliders){",
+    "after": " const canyonBootPlanning=createCoyoteBootPlanning(W);\n let planningBoot=true;G.on('boot',()=>{planningBoot=false;});\n const placementColliders=()=>planningBoot?canyonBootPlanning.collidersForPlanning(W.colliders):W.colliders;\n function clear(x,z,need){for(const c of placementColliders()){",
+    "scope": "Only clear/findClear boot placement. Runtime blocking/NPC pushOut unchanged."
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-1';",
+    "after": "import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-1';",
+    "after": "import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-1';",
+    "after": "import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {FEATURES} from './assets/features/index.js?v=coyote-macroform-1';",
+    "after": "import {FEATURES} from './assets/features/index.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "assets/features/world-flora.js",
+    "before": "import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-1';",
+    "after": "import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as wFlora from './world-flora.js?v=coyote-macroform-1';",
+    "after": "import * as wFlora from './world-flora.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-1';",
+    "after": "import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-2';",
+    "scope": "Canonical V2 importing URL only"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as world from './world.js?v=hollowpeak-cascades-1';",
+    "after": "import * as world from './world.js?v=coyote-macroform-2';",
+    "scope": "Canonical boot-clear owner V2 cache edge"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "import {recordSolidPart}",
+    "after": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-2';\nimport {recordSolidPart}"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": " function clearAt(cx,cz,need,maxR){",
+    "after": " const canyonBootPlanning=createCoyoteBootPlanning(W);\n const bootLandforms=new Set(canyonBootPlanning.barriers);\n const placementColliders=()=>canyonBootPlanning.collidersForPlanning(W.colliders);\n function clearAt(cx,cz,need,maxR){"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "for(const c of W.colliders){const q=hyp(x,z,c.x,c.z)-c.r;",
+    "after": "for(const c of placementColliders()){const q=hyp(x,z,c.x,c.z)-c.r;"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "for(const c of W.colliders)if(c&&c.landform&&hyp(x,z,c.x,c.z)<c.r+pad)",
+    "after": "for(const c of placementColliders())if(c&&(c.landform||bootLandforms.has(c))&&hyp(x,z,c.x,c.z)<c.r+pad)"
+  },
+  {
+    "file": "assets/canyon-landscape.js",
+    "before": "import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-2';",
+    "after": "import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-2';",
+    "after": "import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-2';",
+    "after": "import {installWorldPhotoscans} from './assets/world-photoscans.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {FEATURES} from './assets/features/index.js?v=coyote-macroform-2';",
+    "after": "import {FEATURES} from './assets/features/index.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/world-flora.js",
+    "before": "import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-2';",
+    "after": "import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as world from './world.js?v=coyote-macroform-2';",
+    "after": "import * as world from './world.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as wFlora from './world-flora.js?v=coyote-macroform-2';",
+    "after": "import * as wFlora from './world-flora.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/world-photoscans.js",
+    "before": "import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-2';",
+    "after": "import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/coyote-boot-planning.mjs",
+    "before": "import {CANYON_RIDGES,canyonMacroPlanningRelief} from './canyon-landscape.js?v=coyote-macroform-2';",
+    "after": "import {CANYON_RIDGES,canyonMacroPlanningRelief} from './canyon-landscape.js?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/world.js",
+    "before": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-2';",
+    "after": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/world-vistas.js",
+    "before": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-2';",
+    "after": "import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';",
+    "scope": "Canonical V3 import only"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "import * as wVistas from './world-vistas.js?v=chalk-grazing-1';",
+    "after": "import * as wVistas from './world-vistas.js?v=coyote-macroform-3';",
+    "scope": "Canonical Vistas occupancy owner V3 import"
+  }
+]

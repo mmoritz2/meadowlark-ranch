@@ -1,0 +1,50 @@
+{
+  "base": "7fbd127",
+  "status": "pinned actual current physical/contact/controller/source-geometry bodies; no copies of model required",
+  "files": {
+    "assets/grounded-contact.mjs": {
+      "sha256": "e3dec8dc0366716c07a67348cd68dceed37d07edae8b72beefa6396280d834b4",
+      "bytes": 1930
+    },
+    "assets/ferry-bank-approach.mjs": {
+      "sha256": "7877a9627929fbd77351dc87ed85e1f28f83119aca628d0e78876bc8e4f97ecb",
+      "bytes": 9506
+    },
+    "assets/riverbank-terrain.mjs": {
+      "sha256": "9caeaa13ad21ddd9268c2b8fca25e25e6ba985cc4e88cbd50c98c8926fc9829d",
+      "bytes": 5655
+    },
+    "assets/riverbank-surface.mjs": {
+      "sha256": "cb57f710d00794f3cd038c9374c62dd93d72d83d850ee66c7b449f08f2a08a3b",
+      "bytes": 5891
+    },
+    "assets/features/world-water.js": {
+      "sha256": "54d6ba21bcd0f95c04df2dd18b4e0c48ef8233034872e79d1eb0917733f1d27f",
+      "bytes": 59006
+    },
+    "assets/features/course-clear.js": {
+      "sha256": "a46cbfa2e904df7282afd8e3e58dafa6ae771c940cff2c13328d612eb181db1f",
+      "bytes": 22995
+    },
+    "assets/chalk-down.js": {
+      "sha256": "b46979b1ca1e8c3c0df22f2f45412184f1c5c7790ae91eaff479518044b68832",
+      "bytes": 14445
+    },
+    "assets/chalk-downland.mjs": {
+      "sha256": "abcd746cb09f3b6b61c39ec92c1b24664b30120b50939ecc0d18389fcf1919d1",
+      "bytes": 2953
+    },
+    "assets/features/horse-roster.js": {
+      "sha256": "179f207d788f586c4c3db4a322278fd3012128f1f1bf4e037b6fef41dc569642",
+      "bytes": 88575
+    },
+    "assets/models/world/grass_medium_02_specimens.glb": {
+      "sha256": "357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902",
+      "bytes": 142692
+    },
+    "assets/grass-families.mjs": {
+      "sha256": "c5c5cfa2e78e70af806a8159521fa0316fc6d9fb7dc4034d6c04117d32725839",
+      "bytes": 1021
+    }
+  }
+}

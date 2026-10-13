@@ -1,3 +1,4 @@
+import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
 import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
 import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
@@ -9,7 +10,7 @@ import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
 import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';
-import {fallsAllowsHorse} from '../falls-landscape.js?v=cold-landscape-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-cascades-1';
 import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
 export const id='world';
 export function install(G){
@@ -115,7 +116,10 @@ export function install(G){
  /* ================= helpers: clear ground, structures ================= */
  /* The canyon's mesas and the mountain's slopes are placed by the terrain, so a structure asks
     for a clear circle before it is built instead of assuming one. */
- function clear(x,z,need){for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
+ const canyonBootPlanning=createCoyoteBootPlanning(W);
+ let planningBoot=true;G.on('boot',()=>{planningBoot=false;});
+ const placementColliders=()=>planningBoot?canyonBootPlanning.collidersForPlanning(W.colliders):W.colliders;
+ function clear(x,z,need){for(const c of placementColliders()){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
  /* ok, when it is given, is one more test the spot has to pass: for a placement that has to keep
     off something that is not a collider. */
  function findClear(cx,cz,need,maxR,ok){const fits=(x,z)=>clear(x,z,need)&&(!ok||ok(x,z));if(fits(cx,cz))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [x,z];}return [cx,cz];}
@@ -775,7 +779,7 @@ export function install(G){
   m.taming=true;m.trust=100;m.follow=true;m.helperNames=helpers(m);m.flee=0;
   toast(m.name+' trusts you. Stop nearby to choose a home.');return true;
  }
- function removeMember(m){try{scene.remove(m.parts.group);}catch(e){}const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
+ function removeMember(m){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(m);else scene.remove(m.parts.group);const H2=P.herds.find(h=>h.def===m.herd);if(H2){H2.members=H2.members.filter(x=>x!==m);H2.respawn.push({at:performance.now()+180000,i:m.i});}const k=W.things.indexOf(m.thing);if(k>=0)W.things.splice(k,1);if(P.trustFocus===m)P.trustFocus=null;}
  function nearestSanctuary(x,z){let best=null,bd=1e9;for(const sc of SANCTUARIES){const d=hyp(x,z,sc.x,sc.z);if(d<bd){bd=d;best=sc;}}return best;}
  const tameEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pendingWild=new Set();
@@ -921,8 +925,7 @@ export function install(G){
     /* draw */
     const A=G.anim;
     if(A){const gt=gait==='gallop'?A.GAITS.gallop:A.GAITS.walk;A.animateHorse(m.parts,m.phase,amp,gt,true,t,m.rest>0&&!m.follow&&m.flee<=0?1:0,dt);
-     if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});
-     A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}
+     if(H.worldLOD?.supportsBreed?.(m.wb.breed))H.worldLOD.update(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed,interacting:!!(m.follow||m.taming||m.pending||m.flee>0)},mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);else{if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}}
     m.parts.group.position.set(m.pos.x,groundH(m.pos.x,m.pos.z),m.pos.z);m.parts.group.rotation.y=m.heading;
     if(wd<20){const sc=effTrust(m)*10-wd+(m.follow?200:0);if(sc>focusScore){focusScore=sc;P.trustFocus=m;}}
    }
@@ -992,7 +995,7 @@ export function install(G){
  }
  /* The rescued horses graze inside the rails: up to six shown, the rest counted. */
  function refreshSanctuary(sc){
-  for(const h of sc.horses){try{scene.remove(h.parts.group);}catch(e){}}sc.horses=[];
+  for(const h of sc.horses){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(h);else scene.remove(h.parts.group);}sc.horses=[];
   const list=((S.fresh()||{}).sanctuary||{})[sc.id]||[];
   list.slice(0,6).forEach((e,k)=>{const a=k/6*Math.PI*2,r=sc.r*0.5;const x=sc.x+Math.cos(a)*r,z=sc.z+Math.sin(a)*r;
    const parts=H.makeHorse({colors:{body:e.body||'#8a5a2b',mane:e.mane||'#332214'},seed:k+3,breed:e.breed||'bay'});const tag=plate('🏕️ '+String(e.name||'Rescue').slice(0,14));tag.position.y=2.7;parts.group.add(tag);parts.group.position.set(x,groundH(x,z),z);parts.group.name='sanctuary-horse';scene.add(parts.group);
@@ -1005,7 +1008,7 @@ export function install(G){
    const far=hyp(player.pos.x,player.pos.z,sc.x,sc.z);if(far>220){for(const h of sc.horses)h.parts.group.visible=false;continue;}
    for(const h of sc.horses){h.parts.group.visible=true;let mv=0;h.phase+=dt*(h.rest>0?1.2:4);
     if(h.rest>0)h.rest-=dt;else{if(hyp(h.tx,h.tz,h.pos.x,h.pos.z)<0.6){h.rest=3+Math.random()*6;const a=Math.random()*Math.PI*2,r=Math.random()*(sc.r-3);h.tx=sc.x+Math.cos(a)*r;h.tz=sc.z+Math.sin(a)*r;}else mv=steer(h,h.tx,h.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2,pad:0.3});}
-    const A=G.anim;if(A){A.animateHorse(h.parts,h.phase,h.rest>0?0.05:0.4,A.GAITS.walk,true,t,h.rest>0?1:0,dt);if(far<50)H.dressWithRig(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'});A.tickRig(h,mv,dt,t,h.rest>0?1:0);}
+    const A=G.anim;if(A){A.animateHorse(h.parts,h.phase,h.rest>0?0.05:0.4,A.GAITS.walk,true,t,h.rest>0?1:0,dt);if(H.worldLOD?.supportsBreed?.(h.e.breed||'bay'))H.worldLOD.update(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'},mv,dt,t,h.rest>0?1:0);else{if(far<50)H.dressWithRig(h,h.parts,{body:h.e.body,mane:h.e.mane},{breed:h.e.breed||'bay'});A.tickRig(h,mv,dt,t,h.rest>0?1:0);}}
     h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);h.parts.group.rotation.y=h.heading;}
   }
  }

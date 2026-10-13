@@ -1,3 +1,4 @@
+import {isBasicRidingTack,withBasicTackConstruction} from './basic-riding-tack.mjs?v=starter-tack-2';
 import {DISPLAY_REIN_COMPONENTS} from './native-rider.js?v=tack-store-live-20261007';
 /* Fitted collection tack. Every design is geometry, cloth and hardware; the
  * horse's hidden native rig keeps its seat/IK contacts. Equipped pieces
@@ -128,6 +129,7 @@ export function createTackCollection({THREE,rig,mount,equippedDesigns={},tack={}
    else if(d.pattern==='chevron')seam=line((v+Math.abs(u*4%1-.5)*.44)*10);
    else if(d.pattern==='lattice')seam=Math.max(line(u*8),line(v*8));
    else if(d.pattern==='herringbone')seam=line(u*8+(Math.floor(v*12)%2?1:-1)*v*6);
+   else if(d.pattern==='plain')seam=kind==='cloth'?Math.max(line((u+v)*5),line((u-v)*5)):0;
    else seam=Math.pow(Math.abs(Math.sin(u*25+Math.sin(v*20)*1.8)),18);
    const cloth=kind==='cloth',weave=cloth?((x%3===0||y%3===0)?-.022:.008):0,shade=1+noise*(cloth?.042:.065)+weave-seam*(cloth?.14:.11),stitch=seam*(cloth?.075:.035),h=clamp(cloth?.72-seam*.50+noise*.045:.50+noise*.19-seam*.13,0,1);
    // Broad dyed bands retain the fabric grain and recessed stitching. Tiny
@@ -190,6 +192,7 @@ export function createTackCollection({THREE,rig,mount,equippedDesigns={},tack={}
   }
  }
  function ornament(slot,d,mat,point,normal,size){
+  if(d.ornament==='none')return;
   const kind=d.ornament,shape=new THREE.Shape(),outline=[],add=(x,y)=>outline.push([x,y]);let shapes=[shape];
   const radial=(count,inner=.45,phase=Math.PI/2)=>{for(let i=0;i<count*2;i++){const a=phase+i*Math.PI/count,r=i%2?inner:1;add(Math.cos(a)*r,Math.sin(a)*r);}};
   if(kind==='crescent'){shape.absarc(0,0,1,.6,Math.PI*2-.6,false);shape.absarc(.48,0,.79,Math.PI*2-.45,.45,true);}
@@ -352,6 +355,31 @@ export function createTackCollection({THREE,rig,mount,equippedDesigns={},tack={}
     #endif`);};copy.customProgramCacheKey=()=> 'collection-neutral-leather-v2';copy.userData.collectionNeutralLeather=true;}
    resources.add(copy);return copy;}
  function overrideMaterial(object,d,slot){if(!object)return;object.traverse(o=>{if(!o.isMesh)return;const original=o.material,old=Array.isArray(original)?original:[original];if(slot==='saddle'&&old.includes(tack.saddle?.userData.mats?.pad))return;const next=old.map(mat=>styledMaterial(mat,d));o.material=Array.isArray(original)?next:next[0];overrides.push({object:o,original,next,colors:next.map(m=>m.color.clone()),roughness:next.map(m=>m.roughness),slot});});}
+ // Basic resting reins are original rounded ribbons around actual coat
+ // sections. Only bit/contact weights come from the hidden native guide;
+ // no source tack positions, indices, UVs, maps or display mesh are copied.
+ function makeBasicRestingReins(piece,material){
+  const vertices=[],uv=[],indices=[],paths=[],count=48,width=.015;
+  for(let sideIndex=0;sideIndex<2;sideIndex++){
+   const bit=nativeBits[sideIndex],bitWeight=nativeBitWeights[sideIndex];if(!bit||!bitWeight)throw Error('Basic bridle lacks native bit contact');
+   const side=Math.sign(bit.x)|| (sideIndex===0?-1:1),shoulder=back(seat.z+.20*fitLength,side*1.20,.045),path=[bit.clone()];
+   for(let j=1;j<=4;j++){
+    const t=j/5,center=bit.clone().lerp(shoulder,t),sectionAt=section(center,V(0,0,1),V(1,0,0),V(0,1,0),p=>p.y>Math.min(bit.y,seat.y)-.40,points,tri,true);
+    path.push(sectionAt?sectionAt.sample(side*(1.70-.30*t),.038):center.add(V(side*.13,.018,0)));
+   }
+   path.push(shoulder,back(seat.z-.07*fitLength,side*1.55,.080),back(seat.z-.18*fitLength,side*1.00,.065));paths.push(path.map(p=>p.toArray()));
+   const curve=new THREE.CatmullRomCurve3(path,false,'centripetal'),centers=Array.from({length:count+1},(_,i)=>curve.getPoint(i/count)),offset=vertices.length/3;
+   for(let i=0;i<=count;i++){
+    const tangent=centers[Math.min(count,i+1)].clone().sub(centers[Math.max(0,i-1)]).normalize(),across=V(0,1,0).addScaledVector(tangent,-tangent.y);if(across.lengthSq()<.03)across.copy(V(0,0,1).addScaledVector(tangent,-tangent.z));across.normalize();
+    vertices.push(...centers[i].clone().addScaledVector(across,-width/2).toArray(),...centers[i].clone().addScaledVector(across,width/2).toArray());uv.push(0,i/count,1,i/count);
+    if(i<count){const a=offset+i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+   }
+  }
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);
+  withWeights(p=>{for(let i=0;i<nativeBits.length;i++)if(p.distanceTo(nativeBits[i])<.018)return nativeBitWeights[i];return null;},()=>{restingReins=skinGeo(geo,material,'bridle','Basic draped leather reins');});
+  restingReins.userData.originalBasicReins={widthM:width,segments:count,paths};
+  stats.pieces.bridle.vertices+=vertices.length/3;stats.pieces.bridle.triangles+=indices.length/3;stats.restingReins={triangles:indices.length/3,vertices:vertices.length/3,mode:state.reinsMode,originalBasic:true};
+ }
  function makeRestingReins(piece){
   if(!nativeHorse||!piece||!slotGroups.bridle||!nativeReinIndices.length)return;const mesh=rig.nativeContacts.tack,sourceGeometry=mesh.geometry,d=piece.design||piece,unique=[...nativeReinVertices],remap=new Map(unique.map((value,i)=>[value,i])),geo=new THREE.BufferGeometry();
   for(const [name,attribute]of Object.entries(sourceGeometry.attributes)){const data=new attribute.array.constructor(unique.length*attribute.itemSize);for(let i=0;i<unique.length;i++)for(let k=0;k<attribute.itemSize;k++)data[i*attribute.itemSize+k]=attribute.array[unique[i]*attribute.itemSize+k];geo.setAttribute(name,new THREE.BufferAttribute(data,attribute.itemSize,attribute.normalized));}
@@ -386,12 +414,13 @@ export function createTackCollection({THREE,rig,mount,equippedDesigns={},tack={}
  }
  function clear(){restingReins=null;delete stats.restingReins;for(const e of nativeFoundations){e.object.geometry=e.geometry;e.object.material=e.material;e.object.visible=e.visible;}nativeFoundations.length=0;for(const o of overrides){o.object.material=o.original;}overrides.length=0;for(const [obj,visible]of hiddenOriginals)obj.visible=visible;hiddenOriginals.clear();for(const mesh of batches)mesh.removeFromParent();batches.length=0;for(const r of resources)r.dispose?.();resources.clear();for(const tex of textures)tex.dispose();textures.clear();group.clear();for(const slot of SLOTS)delete slotGroups[slot];stats.vertices=stats.triangles=stats.meshes=0;stats.pieces={};}
  function apply(designs={}){if(disposed)return api;const nextKey=JSON.stringify(SLOTS.map(slot=>designs[slot]?[slot,designs[slot].catalogId||designs[slot].id,designs[slot].design||designs[slot]]:null));if(nextKey===key)return api;clear();key=nextKey;current=designs;
-  for(const slot of SLOTS){const piece=designs[slot];if(!piece)continue;const d=piece.design||piece;if(!d.profile)continue;const node=new THREE.Group();node.name='Collection '+slot;node.userData.catalogId=piece.catalogId||piece.id;slotGroups[slot]=node;group.add(node);if(nativeHorse&&d.nativeOriginal===true){stats.pieces[slot]={id:piece.catalogId||piece.id,profile:d.profile,nativeOriginal:true,vertices:0,triangles:0};continue;}const mat=materials(d),before={v:stats.vertices,t:stats.triangles};({saddle,pad,bridle,shoes})[slot](d,mat);mergeSlot(slot);stats.pieces[slot]={id:piece.catalogId||piece.id,profile:d.profile,ornament:d.ornament,fingerprint:tackDesignFingerprint({slot,design:d}),vertices:stats.vertices-before.v,triangles:stats.triangles-before.t};
+  let basicBridleMaterial=null;
+  for(const slot of SLOTS){const piece=designs[slot];if(!piece)continue;const d=piece.design||piece;if(!d.profile)continue;withBasicTackConstruction(piece,()=>{const node=new THREE.Group();node.name='Collection '+slot;node.userData.catalogId=piece.catalogId||piece.id;slotGroups[slot]=node;group.add(node);if(nativeHorse&&d.nativeOriginal===true){stats.pieces[slot]={id:piece.catalogId||piece.id,profile:d.profile,nativeOriginal:true,vertices:0,triangles:0};return;}const mat=materials(d),before={v:stats.vertices,t:stats.triangles};({saddle,pad,bridle,shoes})[slot](d,mat);mergeSlot(slot);if(isBasicRidingTack(piece)&&slot==='bridle')basicBridleMaterial=mat.leather;stats.pieces[slot]={id:piece.catalogId||piece.id,profile:d.profile,ornament:d.ornament,fingerprint:tackDesignFingerprint({slot,design:d}),vertices:stats.vertices-before.v,triangles:stats.triangles-before.t};});
    if(!nativeHorse&&slot==='saddle')overrideMaterial(rig.henryRoot?.getObjectByName('Object_115')||tack.saddle,d,slot);
    if(!nativeHorse&&slot==='bridle')overrideMaterial(rig.henryRoot?.getObjectByName('Object_12')||tack.bridle,d,slot);
   }
   if(designs.pad&&tack.saddle?.userData.mats?.pad){const material=tack.saddle.userData.mats.pad;tack.saddle.traverse(o=>{if(o.isMesh&&(o.material===material||Array.isArray(o.material)&&o.material.includes(material))){hiddenOriginals.set(o,o.visible);}});}
-  makeRestingReins(designs.bridle);nativeFoundation(designs);update(0,state);return api;
+  if(nativeHorse&&basicBridleMaterial)withBasicTackConstruction(designs.bridle,()=>makeBasicRestingReins(designs.bridle,basicBridleMaterial));else makeRestingReins(designs.bridle);nativeFoundation(designs);update(0,state);return api;
  }
  const relative=M();
  function update(_dt=0,{bareback=tack.saddle?.visible===false,wild=false,reinsMode='resting'}={}){if(disposed)return;state={bareback,wild,reinsMode};group.visible=!wild;for(const [slot,node]of Object.entries(slotGroups))node.visible=!(bareback&&(slot==='saddle'||slot==='pad'));

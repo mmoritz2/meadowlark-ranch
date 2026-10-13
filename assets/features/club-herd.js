@@ -20,7 +20,7 @@ export function install(G){
  function busy(){
   const p=G.horse?.player,r=G.roundup.state(),rig=G.horse?.RIG?.();
   if(r.active||G.course?.get()||G.course?.drillActive?.()||G.rescueRide?.snapshot?.().active||G.trail?.ride)return 'Finish or leave your current activity first.';
-  if(G.clubRides?.snapshot?.().current)return 'Leave your current riding party first.';
+  if(G.clubRides?.snapshot?.().current||G.clubPostRelay?.snapshot?.().current)return 'Leave your current riding party first.';
   if(p?.onFoot||G.onFoot?.on)return 'Mount your horse first.';
   if(p?.flying||p?.landing||(p?.y||0)>.15||G.worldPkg?.vehicle?.())return 'Land and finish your journey first.';
   if(G.social?.spectate||G.social?.tour)return 'Leave spectating or the ranch tour first.';

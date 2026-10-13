@@ -122,6 +122,6 @@ test('tuft and flower geometry, material and random ownership remain unchanged b
   const a=cover.createGrassTuftGeometry(T,options),b=oldCover.createGrassTuftGeometry(T,options);byteEqual(a.index.array,b.index.array);
   for(const key of Object.keys(a.attributes)){byteEqual(a.attributes[key].array,b.attributes[key].array);assert([...a.attributes[key].array].every(Number.isFinite));}assert(a.index.count/3<=40);a.dispose();b.dispose();
  }
- const a=cover.createLupinGeometry(T),b=oldCover.createLupinGeometry(T);assert.equal(a.index.count/3,238);byteEqual(a.index.array,b.index.array);for(const key of Object.keys(a.attributes))byteEqual(a.attributes[key].array,b.attributes[key].array);a.dispose();b.dispose();
+ const a=cover.createLupinGeometry(T),b=oldCover.createLupinGeometry(T);assert.equal(a.index.count/3,646);byteEqual(a.index.array,b.index.array);for(const key of Object.keys(a.attributes))byteEqual(a.attributes[key].array,b.attributes[key].array);a.dispose();b.dispose();
  const previous=Math.random;try{Math.random=()=>{throw new Error('field composition must not consume generator randomness');};for(const b of FIELD_SWARD_BANDS)for(const [x,z] of b.nodes){fieldSwardAt(x,z);cover.meadowGrowthAt(x,z);palette(cover.meadowBladeColor,x,z);fields.meadowBloomAt(x,z);}}finally{Math.random=previous;}
 });

@@ -10,7 +10,7 @@ export function createWaterfallEffects({THREE:T,time,x,z,top,bottom,width,run,na
   const geometry=new T.PlaneGeometry(1,1),seeds=new Float32Array(count*4);
   for(let i=0;i<count;i++)for(let k=0;k<4;k++)seeds[i*4+k]=hash(i,k+kind*7);
   geometry.setAttribute('fxSeed',new T.InstancedBufferAttribute(seeds,4));
-  const material=new T.MeshBasicMaterial({name:'Water | '+['falling droplets','impact spray','rising water mist'][kind],color:0xffffff,transparent:true,opacity:[.40,.42,.11][kind],depthWrite:false,side:T.DoubleSide});
+  const material=new T.MeshBasicMaterial({name:'Water | '+['falling droplets','impact spray','rising water mist'][kind],color:0xffffff,transparent:true,opacity:[.34,.38,.085][kind],depthWrite:false,side:T.DoubleSide});
   material.forceSinglePass=true;
   material.onBeforeCompile=shader=>{
    Object.assign(shader.uniforms,{waterfallTime:time,fallOrigin:origin,fallShape:shape});
@@ -18,12 +18,12 @@ export function createWaterfallEffects({THREE:T,time,x,z,top,bottom,width,run,na
     varying vec2 fxUV; varying float fxFade; varying float fxPhase;\n`+shader.vertexShader;
    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`
     vec3 center;vec2 size;vec3 tangent=vec3(0.0,-1.0,0.0);
-    float phase=fract(waterfallTime*${kind===0?'(.34+fxSeed.y*.12)':kind===1?'(.85+fxSeed.y*.5)':'(.19+fxSeed.y*.09)'}+fxSeed.x);
+    float phase=fract(waterfallTime*${kind===0?'sqrt(4.9/max(fallOrigin.w,.1))*(.95+fxSeed.y*.10)':kind===1?'(.85+fxSeed.y*.5)':'(.19+fxSeed.y*.09)'}+fxSeed.x);
     fxPhase=phase;fxUV=position.xy*2.0;
     ${kind===0?`
       float v=phase*phase;
-      center=vec3((fxSeed.z*2.0-1.0)*fallShape.x*(1.0+v*.29),-fallOrigin.w*pow(v,1.055),fallShape.y*v*v+.10);
-      tangent=vec3(0.0,-fallOrigin.w*1.055*pow(max(v,.001),.055),2.0*fallShape.y*v);
+      center=vec3((fxSeed.z*2.0-1.0)*fallShape.x*(1.0+v*.29),-fallOrigin.w*v,fallShape.y*phase+.025);
+      tangent=vec3(0.0,-2.0*fallOrigin.w*phase,fallShape.y);
       size=vec2(.024+fxSeed.w*.038,.16+v*.39);
       fxFade=smoothstep(.02,.12,phase)*(1.0-smoothstep(.86,1.0,phase));
     `:kind===1?`
@@ -37,7 +37,7 @@ export function createWaterfallEffects({THREE:T,time,x,z,top,bottom,width,run,na
     `:`
       center=vec3((fxSeed.z*2.0-1.0)*fallShape.x+sin(fxSeed.w*6.2831853+phase)*phase*.8,
         -fallOrigin.w+.18+phase*(1.4+fxSeed.y),fallShape.y+.35+phase*1.4+(fxSeed.w-.5)*1.2);
-      size=vec2(1.0+phase*2.7)*( .75+fxSeed.z*.45);
+      size=vec2(.75+phase*1.8)*(.72+fxSeed.z*.32);
       fxFade=pow(sin(phase*3.14159265),2.0);
     `}
     center+=fallOrigin.xyz;
@@ -65,7 +65,7 @@ export function createWaterfallEffects({THREE:T,time,x,z,top,bottom,width,run,na
     #include <alphatest_fragment>
    `);
   };
-  material.customProgramCacheKey=()=> 'waterfall-particles-v1-'+kind;
+  material.customProgramCacheKey=()=> 'waterfall-particles-gravity-v2-'+kind;
   const mesh=new T.InstancedMesh(geometry,material,count);mesh.name=material.name;mesh.renderOrder=kind===2?4:3;
   // CPU positions stay static; this encloses every shader path and full quad.
   mesh.boundingSphere=new T.Sphere(new T.Vector3(x,(top+bottom)*.5,z+run*.5),Math.hypot(top-bottom,run,width*2)*.6+8);

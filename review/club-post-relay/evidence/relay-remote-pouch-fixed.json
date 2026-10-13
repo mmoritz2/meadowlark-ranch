@@ -1,0 +1,369 @@
+{
+  "phase": "remote-pouch-after-normal-reload",
+  "clients": {
+    "guest": {
+      "relay": {
+        "me": "courier-b",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": {
+          "id": "courier-a-mv5ibfbq-3hsxy",
+          "hostId": "courier-a",
+          "host": "Relay Host",
+          "hosted": false,
+          "localId": "courier-b",
+          "status": "riding",
+          "roster": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host",
+              "ready": true,
+              "slot": 0,
+              "online": true
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest",
+              "ready": true,
+              "slot": 1,
+              "online": true
+            }
+          ],
+          "ready": true,
+          "canJoin": false,
+          "canStart": false,
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "stage": "outbound",
+          "carrierId": "courier-a",
+          "cargo": "post",
+          "route": "road",
+          "returnRoute": "road",
+          "guide": {
+            "x": -3,
+            "z": -16,
+            "label": "Relay trail",
+            "radius": 0.8
+          },
+          "target": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "stations": {
+            "wren": {
+              "x": -11,
+              "z": -15.8,
+              "label": "Grandpa Wren"
+            },
+            "pines": {
+              "x": -30,
+              "z": -58,
+              "label": "Hollowpeak Pines"
+            },
+            "ada": {
+              "x": 39,
+              "z": -39,
+              "label": "Ada \u00b7 Cottonwood"
+            }
+          },
+          "interaction": {
+            "action": null,
+            "label": "Follow the relay",
+            "inReach": false,
+            "eligible": false,
+            "status": "riding",
+            "reason": "Ride together to the pines.",
+            "offerId": null
+          },
+          "paused": false,
+          "waitingForHost": false,
+          "startupWaiting": false,
+          "waitingForRiders": false,
+          "waitingNames": [],
+          "elapsed": 5.836000000000002,
+          "distance": 1.496312823572489,
+          "handoffs": 0,
+          "stateRev": 2,
+          "offer": null,
+          "partner": {
+            "id": "courier-a",
+            "name": "Relay Host",
+            "ready": true,
+            "slot": 0,
+            "kind": "input",
+            "n": "Relay Host",
+            "sid": "courier-a-mv5ibfbq-3hsxy",
+            "seq": 181,
+            "at": 1791825011332,
+            "x": -9.502625980741717,
+            "z": -15.387727664904139,
+            "speed": 0,
+            "active": true,
+            "grounded": true,
+            "canJump": true,
+            "online": true
+          },
+          "woodlandAvailable": false,
+          "savePending": false,
+          "riding": true
+        },
+        "lastResult": null,
+        "records": {
+          "plays": 1,
+          "bestTime": 660.27,
+          "lastRunId": "courier-a-mv5hrtpe-g2wh3",
+          "receipts": {
+            "courier-a-mv5hrtpe-g2wh3": {
+              "runId": "courier-a-mv5hrtpe-g2wh3",
+              "elapsed": 660.27,
+              "distance": 288.19,
+              "participants": [
+                {
+                  "id": "courier-a",
+                  "name": "Relay Host"
+                },
+                {
+                  "id": "courier-b",
+                  "name": "Relay Guest"
+                }
+              ],
+              "firstId": "courier-a",
+              "otherId": "courier-b",
+              "handoffs": 2,
+              "at": 1791824045090,
+              "newBest": true,
+              "bestTime": 660.27,
+              "saved": true
+            }
+          },
+          "closedBefore": 0
+        }
+      },
+      "player": {
+        "x": -7.728484477376007,
+        "z": -15.502264405200405,
+        "heading": 1.7023386728902345,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "relayUI": {
+        "open": false,
+        "receiptId": null,
+        "art": {
+          "parcelVisible": true,
+          "carrierId": "courier-a",
+          "logVisible": false
+        }
+      },
+      "driver": {
+        "active": false,
+        "status": "off",
+        "steps": 2119,
+        "target": {
+          "x": -3,
+          "z": -16,
+          "label": "Relay trail",
+          "distance": 5.625594327185607,
+          "guideRadius": 0.8,
+          "haltDistance": 0.5599999999999999,
+          "gait": "walk",
+          "stage": "outbound"
+        }
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    },
+    "host": {
+      "relay": {
+        "me": "courier-a",
+        "connected": true,
+        "code": "private-review-club",
+        "reason": "",
+        "notice": "",
+        "lobbies": [],
+        "current": {
+          "id": "courier-a-mv5ibfbq-3hsxy",
+          "hostId": "courier-a",
+          "host": "Relay Host",
+          "hosted": true,
+          "localId": "courier-a",
+          "status": "riding",
+          "roster": [
+            {
+              "id": "courier-a",
+              "name": "Relay Host",
+              "slot": 0,
+              "ready": true,
+              "online": true
+            },
+            {
+              "id": "courier-b",
+              "name": "Relay Guest",
+              "slot": 1,
+              "ready": true,
+              "online": true
+            }
+          ],
+          "ready": true,
+          "canJoin": false,
+          "canStart": false,
+          "firstId": "courier-a",
+          "otherId": "courier-b",
+          "stage": "outbound",
+          "carrierId": "courier-a",
+          "cargo": "post",
+          "route": "road",
+          "returnRoute": "road",
+          "guide": {
+            "x": -8,
+            "z": -15.5,
+            "label": "Relay trail",
+            "radius": 0.8
+          },
+          "target": {
+            "x": -30,
+            "z": -58,
+            "label": "Hollowpeak Pines"
+          },
+          "stations": {
+            "wren": {
+              "x": -11,
+              "z": -15.8,
+              "label": "Grandpa Wren"
+            },
+            "pines": {
+              "x": -30,
+              "z": -58,
+              "label": "Hollowpeak Pines"
+            },
+            "ada": {
+              "x": 39,
+              "z": -39,
+              "label": "Ada \u00b7 Cottonwood"
+            }
+          },
+          "interaction": {
+            "action": null,
+            "label": "Follow the relay",
+            "inReach": false,
+            "eligible": false,
+            "status": "riding",
+            "reason": "Ride together to the pines.",
+            "offerId": null
+          },
+          "paused": false,
+          "waitingForHost": false,
+          "startupWaiting": false,
+          "waitingForRiders": false,
+          "waitingNames": [],
+          "elapsed": 6.530000000000001,
+          "distance": 1.496312823572489,
+          "handoffs": 0,
+          "stateRev": 2,
+          "offer": null,
+          "partner": {
+            "id": "courier-b",
+            "name": "Relay Guest",
+            "slot": 1,
+            "ready": true,
+            "kind": "input",
+            "n": "Relay Guest",
+            "sid": "courier-a-mv5ibfbq-3hsxy",
+            "seq": 179,
+            "at": 1791825011634,
+            "x": -7.728484477376007,
+            "z": -15.502264405200405,
+            "speed": 0,
+            "active": true,
+            "grounded": true,
+            "canJump": true,
+            "online": true
+          },
+          "woodlandAvailable": true,
+          "savePending": false,
+          "riding": true
+        },
+        "lastResult": null,
+        "records": {
+          "plays": 1,
+          "bestTime": 660.27,
+          "lastRunId": "courier-a-mv5hrtpe-g2wh3",
+          "receipts": {
+            "courier-a-mv5hrtpe-g2wh3": {
+              "runId": "courier-a-mv5hrtpe-g2wh3",
+              "elapsed": 660.27,
+              "distance": 288.19,
+              "participants": [
+                {
+                  "id": "courier-a",
+                  "name": "Relay Host"
+                },
+                {
+                  "id": "courier-b",
+                  "name": "Relay Guest"
+                }
+              ],
+              "firstId": "courier-a",
+              "otherId": "courier-b",
+              "handoffs": 2,
+              "at": 1791824045090,
+              "newBest": true,
+              "bestTime": 660.27,
+              "saved": true
+            }
+          },
+          "closedBefore": 0
+        }
+      },
+      "player": {
+        "x": -9.502625980741717,
+        "z": -15.387727664904139,
+        "heading": 2.3587086145935574,
+        "speed": 0,
+        "onFoot": false,
+        "flying": false,
+        "y": 0,
+        "mounted": true,
+        "ready": true,
+        "loadingBreed": false
+      },
+      "relayUI": {
+        "open": false,
+        "receiptId": null,
+        "art": {
+          "parcelVisible": true,
+          "carrierId": "courier-a",
+          "logVisible": false
+        }
+      },
+      "driver": {
+        "active": false,
+        "status": "off",
+        "steps": 371,
+        "target": {
+          "x": -8,
+          "z": -15.5,
+          "label": "Relay trail",
+          "distance": 1.8658511788233,
+          "guideRadius": 0.8,
+          "haltDistance": 0.5599999999999999,
+          "gait": "walk",
+          "stage": "outbound"
+        }
+      },
+      "errors": [],
+      "runtime": [],
+      "fixture": []
+    }
+  }
+}

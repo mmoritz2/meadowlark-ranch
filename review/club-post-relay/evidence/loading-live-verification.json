@@ -1,0 +1,24 @@
+{
+  "commit": "317a50d17720de136a21a2c46a8469d42b83cd5f",
+  "pagesRun": 38280351284,
+  "checks": [
+    {
+      "path": "ranch3d.html",
+      "match": true,
+      "expected": "29e8049e3aa0e9898565425ad151f8dbacb10b935d210221ede00b9f1e717701",
+      "live": "29e8049e3aa0e9898565425ad151f8dbacb10b935d210221ede00b9f1e717701"
+    },
+    {
+      "path": "assets/horse-arrival.js",
+      "match": true,
+      "expected": "9e66d6e71d598eca582bb8ed2d70b83c07af89dd6121c507b07f9ddab2d88eb8",
+      "live": "9e66d6e71d598eca582bb8ed2d70b83c07af89dd6121c507b07f9ddab2d88eb8"
+    },
+    {
+      "path": "assets/game-loading.js",
+      "match": true,
+      "expected": "edddfcc0baf7132cf7af6b456c921f5461ba1888364bdda81e7be8fcd466439c",
+      "live": "edddfcc0baf7132cf7af6b456c921f5461ba1888364bdda81e7be8fcd466439c"
+    }
+  ]
+}

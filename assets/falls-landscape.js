@@ -1,5 +1,6 @@
+import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
-import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=hollowpeak-ridges-1';
+import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=cliff-landscape-4';
 // Hollowpeak's watercourse is cut into the same height field used by the horses.
 // Original landforms; the cliff material is Poly Haven / Amal Kumar, CC0.
 export const HOLLOWPEAK=Object.freeze({x:-150,z:-242.2,top:14.2,level:-.1,run:7.8,width:2.45,
@@ -46,6 +47,7 @@ function ridgeField(along,points,index,k){
  return (2*t3-3*t2+1)*a[k]+(t3-2*t2+t)*length*ridgeTangent(points,index-1,k)
   +(-2*t3+3*t2)*b[k]+(t3-t2)*length*ridgeTangent(points,index,k);
 }
+const RIDGE_EROSION_STATIONS=Object.freeze([.29,.61,.84]);
 function organicRidgeSection(along,across,points){
  if(along<=points[0][0]||along>=points[points.length-1][0])return 0;
  let index=1;while(along>points[index][0])index++;
@@ -58,46 +60,33 @@ function organicRidgeSection(along,across,points){
  const rounding=Math.min(8.6,width*(offset<0?.31:.24));
  const r=(Math.sqrt(offset*offset+rounding*rounding)-rounding)
   /(Math.sqrt(width*width+rounding*rounding)-rounding);
- const section=(1-r)**1.62;
- // Recess a few long channels down the flanks. Their crest and foot weight
- // vanishes, so they cannot turn the silhouette into random spikes or steps.
+ // Unequal bedrock faces meet a broad inset bench. Its tilted crest and
+ // lower rounded toe follow the swept ridge rather than concentric height
+ // shelves. Each bench spans several existing terrain cells, so its shape
+ // survives the exact physical/rendered grid without adding triangles.
  const seed=points[0][0]*.013+points[0][1]*.019;
- const channel=.5+.5*Math.sin(along*.17+absolute*.035+seed);
- const recess=.105*channel*channel*Math.sin(Math.PI*r)**2;
- return Math.max(0,height)*(section-recess);
-}
-// Round only the few metres nearest a crest or authored bend. Long sloping
-// faces stay directional; a whole-segment ease would turn the chain into domes.
-function ridgeSection(along,across,points){
- if(along<=points[0][0]||along>=points[points.length-1][0])return 0;
- let found=false,crest=0,height=0,negativeWidth=0,positiveWidth=0;
- for(let i=1;i<points.length-1;i++){
-  const a=points[i-1],p=points[i],b=points[i+1];
-  const radius=Math.min(3,(p[0]-a[0])*.3,(b[0]-p[0])*.3),d=along-p[0];
-  if(Math.abs(d)>=radius)continue;
-  const blend=smooth(-radius,radius,d);found=true;
-  for(let k=1;k<5;k++){
-   const left=p[k]+(p[k]-a[k])*d/(p[0]-a[0]);
-   const right=p[k]+(b[k]-p[k])*d/(b[0]-p[0]);
-   const value=mix(left,right,blend);
-   if(k===1)crest=value;else if(k===2)height=value;else if(k===3)negativeWidth=value;else positiveWidth=value;
-  }
-  break;
+ const bench=.48+.035*Math.sin(along*.052+seed);
+ const upperLoss=offset<0?.47:.58;
+ const section=1-upperLoss*smooth(.055,bench-.12,r)
+  -(1-upperLoss)*smooth(bench+.16,1,r);
+ // Three broad oblique gullies grow down each face, opening into the toe.
+ // Original ridge-local fractions are deterministic; no scene RNG or small
+ // surface noise supplies a summit. Both their crest and foot weights vanish.
+ const span=points[points.length-1][0]-points[0][0];let erosion=0;
+ for(const fraction of RIDGE_EROSION_STATIONS){
+  const station=points[0][0]+span*fraction+offset*.27;
+  erosion=Math.max(erosion,Math.exp(-(((along-station)/(3.8+5.2*r))**2)));
  }
- if(!found)for(let i=1;i<points.length;i++){
-  const a=points[i-1],b=points[i];if(along>b[0])continue;
-  const t=(along-a[0])/(b[0]-a[0]);found=true;crest=mix(a[1],b[1],t);height=mix(a[2],b[2],t);negativeWidth=mix(a[3],b[3],t);positiveWidth=mix(a[4],b[4],t);break;
- }
- if(!found)return 0;
- const offset=across-crest,width=offset<0?negativeWidth:positiveWidth,rounding=2.8;
- if(Math.abs(offset)>=width)return 0;
- const r=(Math.sqrt(offset*offset+rounding*rounding)-rounding)/(Math.sqrt(width*width+rounding*rounding)-rounding);
- return Math.max(0,height)*(1-r)**1.35;
+ const recess=.075*erosion*Math.sin(Math.PI*r)**2;
+ return Math.max(0,height)*Math.max(0,section-recess);
 }
+// A harmonic-mean width vanishes at the foot without a derivative cusp
+// when two low toes cross; the fillet never introduces an unrelated floor.
 function joinDryRidges(a,b){
- // A shallow fillet joins intersecting rock faces without adding a new floor.
- const blend=Math.max(0,2.4-Math.abs(a-b));
- return Math.max(a,b)+blend*blend/9.6*smooth(0,2,Math.min(a,b));
+ const span=2.4*smooth(0,2,a+b>0?2*a*b/(a+b):0);
+ if(span===0)return Math.max(a,b);
+ const blend=Math.max(0,span-Math.abs(a-b));
+ return Math.max(a,b)+blend*blend/(4*span);
 }
 export function alpineRelief(x,z){
  if(!within(x,z)||z>=-253)return 0;
@@ -147,36 +136,53 @@ function dryRidgeWeight(x,z){
  }
  return weight;
 }
+// Geological fronts are shaped in the direction seen from the basin as well
+// as across each ridge. Unequal inset benches separate two exposed faces from
+// a rounded toe; a single smooth longitudinal multiplier made V1 a dome.
+function bankFront(x,z,side){
+ const west=side<0;
+ const face=west?-267.0+.13*(x+179)+1.9*Math.sin((x+179)*.063+.7)
+  :-269.6+.11*(x+123)-3.1*Math.sin((x+123)*.056+.4);
+ const run=west?36:44,r=(z-face)/run;
+ return Math.max(0,1-(west?.42:.36)*smooth(.025,.33,r)
+  -(west?.46:.46)*smooth(.55,.81,r)-(west?.12:.18)*smooth(.79,1,r));
+}
 const FALLS_BUTTRESSES=[
- [[-313,-169,0,14,15],[-296,-175,20,12,13],[-278,-171,26,11,12],[-266,-179,32,12,13],[-253,-169,25,10,11],[-239,-174,17,11,10],[-224,-170,0,12,12]],
- [[-309,-130,0,12,15],[-288,-120,15,11,13],[-269,-123,29,14,12],[-257,-128,26,13,11],[-244,-119,18,11,11],[-225,-125,0,12,13]]
+ [[-313,-178,0,18,23],[-295,-184,19,18,23],[-279,-180,28,19,25],[-264,-177,31,18,26],[-249,-181,26,18,25],[-236,-176,16,18,22],[-223,-171,0,15,18]],
+ [[-311,-128,0,19,17],[-294,-124,17,22,18],[-278,-120,25,25,19],[-262,-126,29,25,20],[-248,-120,24,24,20],[-233,-124,13,20,17],[-222,-128,0,16,15]]
 ];
 export function fallsRelief(x,z){
- const alpine=alpineRelief(x,z);
- if(!withinFalls(x,z))return alpine;
- const keep=smooth(7,13,nearest(x,z,trail).d);
- if(!keep)return alpine;
- const dx=(x+146)/38,dz=(z+268)/45,r=Math.hypot(dx,dz);
- const edge=r+.042*Math.sin(x*.34+z*.16)+.027*Math.sin(z*.37-x*.18);
- const bulk=(1-smooth(.56,1.07,edge))*(20.7+1.6*Math.sin(x*.12+z*.07));
- const face=-241.5+Math.sin(x*.34)*1.8+Math.cos(x*.7)*.9;
- const front=1-.18*smooth(face-6,face-4,z)-.55*smooth(face-1,face+3,z)-.27*smooth(face+3,face+10,z);
- const shoulder=4.6*Math.exp(-(((x+168)/9)**2+((z+254)/15)**2))+6.5*Math.exp(-(((x+129)/12)**2+((z+260)/17)**2));
- const original=Math.max(0,(bulk+shoulder)*front*keep),weight=dryRidgeWeight(x,z);
- if(weight===0)return alpine+original;
- let banks=(bulk+shoulder)*.46;
- for(const spine of FALLS_BUTTRESSES)banks=joinDryRidges(banks,ridgeSection(z,x,spine));
- return alpine+mix(original,Math.max(0,banks*front*keep),weight);
+ const alpine=alpineRelief(x,z);if(!withinFalls(x,z))return alpine;
+ const keep=smooth(7,13,nearest(x,z,trail).d);if(!keep)return alpine;
+ // A broad spillway mass holds the fixed high channel. Its open southern
+ // face is a worn headwall, not the former high-frequency shelf/shoulder field.
+ const dx=(x+146)/41,dz=(z+269)/47,r=Math.hypot(dx,dz);
+ const edge=r+.022*Math.sin(x*.10+z*.063)+.014*Math.sin(z*.09-x*.052);
+ const bulk=(1-smooth(.54,1.13,edge))*(19.7+.018*(x+150)-.012*(z+269)+.42*Math.sin((x+z)*.052));
+ const coreFace=-244.1+.045*(x+150)+1.5*Math.sin((x+150)*.070+.25);
+ const core=(z-coreFace)/17;
+ let banks=bulk*Math.max(0,1-.64*smooth(0,.38,core)-.18*smooth(.52,.70,core)-.18*smooth(.70,1,core));
+ for(let i=0;i<FALLS_BUTTRESSES.length;i++)banks=joinDryRidges(banks,organicRidgeSection(z,x,FALLS_BUTTRESSES[i])*bankFront(x,z,i?1:-1));
+ // Reentrant faults split exposed faces and cut through their ledges. They
+ // recess continuous bedrock; they never add tips or isolated tall noise.
+ const gate=smooth(-291,-275,z)*(1-smooth(-244,-226,z));
+ const westFault=-181+.20*(z+263),eastFault=-126-.18*(z+264);
+ const recess=gate*(3.8*Math.exp(-(((x-westFault)/4.1)**2))+3.2*Math.exp(-(((x-eastFault)/4.6)**2)));
+ const hem=smooth(0,3,Math.min(x+202,-100-x,z+321,-214-z));
+ // Do not pin rectangular legacy bank corners. The physical pool/channel
+ // beds and the full falling-water ravine are owned by fallsTerrainHeight.
+ return alpine+Math.max(0,banks-recess)*keep*hem;
 }
 export function fallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;
  let h=height+fallsRelief(x,z);
  const flow=nearest(x,z,HOLLOWPEAK.channel);
- // Recess the ravine under the airborne sheet, including one terrain cell of
- // clearance at its lip; this keeps interpolated ground out of falling water.
- if(z>HOLLOWPEAK.z-1.5&&z<HOLLOWPEAK.z+HOLLOWPEAK.run+2){
+ // Cut fully beneath the airborne flow. Feather only the dry approach and
+ // downstream hem, avoiding a straight height discontinuity at either end.
+ const ravineWeight=smooth(HOLLOWPEAK.z-5.5,HOLLOWPEAK.z-1.5,z)*(1-smooth(HOLLOWPEAK.z+HOLLOWPEAK.run+2,HOLLOWPEAK.z+HOLLOWPEAK.run+6,z));
+ if(ravineWeight>0){
   const u=Math.max(0,Math.min(1,(z-HOLLOWPEAK.z+1.5)/(HOLLOWPEAK.run+1.5))),fallY=HOLLOWPEAK.top-(HOLLOWPEAK.top-HOLLOWPEAK.level)*Math.pow(Math.sqrt(u),1.055)-1.6;
-  h=mix(h,Math.min(h,fallY),1-smooth(4.4,8.0,Math.abs(x-HOLLOWPEAK.x)));
+  h=mix(h,Math.min(h,fallY),ravineWeight*(1-smooth(4.4,8.0,Math.abs(x-HOLLOWPEAK.x))));
  }
  for(const p of[HOLLOWPEAK.pool,HOLLOWPEAK.tarn]){const r=poolRadius(x,z,p);if(r>=1.55)continue;
   const bed=p.level-1.5+1.36*smooth(.3,1.02,r)+.55*smooth(.91,1.3,r);
@@ -192,32 +198,32 @@ export function fallsExcludesDryPlants(x,z,heightAt){
 }
 export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMaterial,colliders,loadTextures=true}){
  const group=new T.Group();group.name='Hollowpeak | mountain watercourse';
- const mat=new T.MeshStandardMaterial({name:'Hollowpeak | scanned marble cliffs',color:'#adb7c2',roughness:.92,normalScale:new T.Vector2(.48,.48),envMapIntensity:.65,vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+ const mat=new T.MeshStandardMaterial({name:'Hollowpeak | scanned marble cliffs',color:'#b7bbb9',roughness:.92,normalScale:new T.Vector2(.27,.27),envMapIntensity:.65,vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
  if(loadTextures){const loader=new T.TextureLoader(),tex=(suffix,srgb=false)=>{const t=loader.load(new URL('./textures/falls/marble_cliff_02_'+suffix+'.webp',import.meta.url).href);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=8;if(srgb)t.colorSpace=T.SRGBColorSpace;return t;};mat.map=tex('diff',true);mat.normalMap=tex('nor_gl');mat.roughnessMap=tex('arm');}
  applyHollowpeakRockSurface(mat);
  const step=terrainStep,x0=Math.floor((ALPINE_BOUNDS.x0+500)/step)*step-500,z0=Math.floor((ALPINE_BOUNDS.z0+500)/step)*step-500;
- const nx=Math.ceil((ALPINE_BOUNDS.x1-x0)/step),nz=Math.ceil((ALPINE_BOUNDS.z1-z0)/step),p=[],uv=[],colors=[],cover=[],weather=[],idx=[];
+ const nx=Math.ceil((ALPINE_BOUNDS.x1-x0)/step),nz=Math.ceil((ALPINE_BOUNDS.z1-z0)/step),p=[],uv=[],colors=[],cover=[],weather=[],landform=[],idx=[];
  for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
   const x=x0+ix*step,z=z0+iz*step,y=heightAt(x,z),slope=Math.hypot(heightAt(x+1,z)-heightAt(x-1,z),heightAt(x,z+1)-heightAt(x,z-1))/2;
   const relief=fallsRelief(x,z),wet=fallsContainsWater(x,z,2);
   const curvature=y-(heightAt(x+6,z)+heightAt(x-6,z)+heightAt(x,z+6)+heightAt(x,z-6))*.25;
   const surface=hollowpeakRockSurface({slope,curvature,relief,wet});
-  p.push(x,y+.012,z);uv.push(x/6.8,z/6.8);cover.push(hollowpeakSnowRockCover({...surface,relief,curvature,wet},hollowpeakSnowAt(x,z,heightAt),hollowpeakSnowWeight(x,z)));weather.push(surface.weather);
+  p.push(x,y+.012,z);uv.push(x/6.8,z/6.8);cover.push(hollowpeakSnowRockCover({...surface,relief,curvature,wet},hollowpeakSnowAt(x,z,heightAt),hollowpeakSnowWeight(x,z)));weather.push(surface.weather);landform.push(surface.toe,surface.scoured);
   const shade=wet?.61:1;colors.push(shade,shade,shade);
  }
  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const a=iz*(nx+1)+ix,b=a+nx+1,d=a+1,c=b+1;if(Math.max(cover[a],cover[b],cover[c],cover[d])>.001)idx.push(a,b,d,d,b,c);}
- const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(p,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('rockCover',new T.Float32BufferAttribute(cover,1));geometry.setAttribute('rockWeather',new T.Float32BufferAttribute(weather,1));geometry.setIndex(idx);geometry.computeVertexNormals();geometry.computeBoundingSphere();
+ const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(p,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('rockCover',new T.Float32BufferAttribute(cover,1));geometry.setAttribute('rockWeather',new T.Float32BufferAttribute(weather,1));geometry.setAttribute('rockLandform',new T.Float32BufferAttribute(landform,2));geometry.setIndex(idx);geometry.computeVertexNormals();geometry.computeBoundingSphere();
  const rock=new T.Mesh(geometry,mat);rock.name='Hollowpeak | grounded rock and snow';rock.receiveShadow=true;rock.renderOrder=1;group.add(rock);
  // A colourless copy of the full local terrain casts the mountain silhouette.
  // The material skin receives light but never casts its blended coverage mask.
- const shadowGeo=geometry.clone(),shadowIndex=[];
+ const shadowGeo=geometry.clone(),shadowIndex=[];shadowGeo.deleteAttribute('rockLandform');
  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const a=iz*(nx+1)+ix,b=a+nx+1,d=a+1,c=b+1;shadowIndex.push(a,b,d,d,b,c);}
  shadowGeo.setIndex(shadowIndex);shadowGeo.computeVertexNormals();
  const shadow=new T.Mesh(shadowGeo,new T.MeshBasicMaterial({colorWrite:false,depthWrite:false}));shadow.name='Hollowpeak | mountain shadow';shadow.castShadow=true;group.add(shadow);
  const waters=[];
  function water(p,uv,col,index,name,flow=false){const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('color',new T.Float32BufferAttribute(col,3));g.setIndex(index);g.computeVertexNormals();g.computeBoundingSphere();
-  const m=waterMaterial.clone();m.name='Hollowpeak | '+name;m.map=null;m.color.set(0xffffff);m.vertexColors=true;m.opacity=.96;m.roughness=.16;m.clearcoat=.36;
-  m.onBeforeCompile=(sh,r)=>{waterMaterial.userData.plainShader(sh,r);sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',(flow?'diffuseColor.a*=smoothstep(0.0,.025,waterBankUV.x)*smoothstep(0.0,.09,waterBankUV.y)*(1.0-smoothstep(.91,1.0,waterBankUV.y));':'diffuseColor.a*=1.0-smoothstep(.91,1.0,waterBankUV.y);')+'\n#include <alphatest_fragment>');};m.customProgramCacheKey=()=> 'hollowpeak-water-'+flow;
+  const m=waterMaterial.clone();m.name='Hollowpeak | '+name;m.map=null;m.color.set(0xffffff);m.vertexColors=true;m.opacity=name==='plunge pool'?.82:.96;m.roughness=name==='plunge pool'?.18:.16;m.clearcoat=.36;
+  m.onBeforeCompile=(sh,r)=>{waterMaterial.userData.plainShader(sh,r);if(name==='plunge pool')patchPlungePool(sh,{x:HOLLOWPEAK.x,z:HOLLOWPEAK.z+HOLLOWPEAK.run});sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',(flow?'diffuseColor.a*=smoothstep(0.0,.025,waterBankUV.x)*smoothstep(0.0,.09,waterBankUV.y)*(1.0-smoothstep(.91,1.0,waterBankUV.y));':'diffuseColor.a*=1.0-smoothstep(.91,1.0,waterBankUV.y);')+'\n#include <alphatest_fragment>');};m.customProgramCacheKey=()=> 'hollowpeak-water-'+flow+(name==='plunge pool'?'-impact-wave-1':'');
   const mesh=new T.Mesh(g,m);mesh.name='Hollowpeak | '+name;mesh.receiveShadow=true;mesh.renderOrder=2;group.add(mesh);waters.push(mesh);return mesh;
  }
  const deep=new T.Color('#244f53'),shallow=new T.Color('#507778'),tint=new T.Color();

@@ -77,7 +77,7 @@ function makeBodyMaterial(THREE,rig,base,neutral){
 function prepareHair(THREE,rig){
  const entries=[];
  rig.scene.traverse(mesh=>{
-  if(!mesh.isSkinnedMesh||mesh.geometry?.attributes.position.count!==rig.profile.hairVertexCount&&!mesh.userData.nativeEquestrianGroom)return;
+  if(!mesh.isSkinnedMesh&&!mesh.userData.nativeWorldHorseLOD||mesh.geometry?.attributes.position.count!==rig.profile.hairVertexCount&&!mesh.userData.nativeEquestrianGroom)return;
   const geometry=mesh.geometry,indices=geometry.attributes.skinIndex,weights=geometry.attributes.skinWeight;
   if(!geometry.attributes.nativeTailDye){
    const mask=new Float32Array(indices.count);

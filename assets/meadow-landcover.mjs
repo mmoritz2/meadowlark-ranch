@@ -1,4 +1,5 @@
-import {meadowGrazingAt} from './pastoral-fields.mjs?v=cold-landscape-1';
+import {ranchLandcoverTurfAt} from './ranch-grounds.mjs?v=ranch-actors-2';
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
 
 // Canvas rows increase with world Z. The terrain sampler already supplies the
 // corresponding texture Y flip; flipping here as well would mirror the fields.
@@ -18,7 +19,7 @@ export function createMeadowGrazingPixels(size=1024){
     const z=WORLD_MIN+(row+.5)*step;
     for(let column=0;column<size;column++){
       const x=WORLD_MIN+(column+.5)*step,index=(row*size+column)*4;
-      data[index+2]=Math.round(clamp01(meadowGrazingAt(x,z))*255);
+      data[index+2]=Math.round(clamp01(Math.max(meadowGrazingAt(x,z),ranchLandcoverTurfAt(x,z)))*255);
       data[index+3]=255;
     }
   }

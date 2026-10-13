@@ -7,9 +7,9 @@ import {createGrassTuftGeometry,createMeadowDistance} from '../assets/meadow-cov
 for(const blades of [4,6,8])test(`${blades} middle leaves cover gaps within the retained triangle tier`,()=>{
  const g=createGrassTuftGeometry(T,{bladeCount:blades,segments:2,profile:'middle-natural-v1'}),p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,c=g.attributes.color;
  try{
-  assert.equal(g.index.count/3,blades*3);assert.equal(p.count,blades*5);
-  const leaves=g.userData.middleCover.leafRanges;assert.equal(leaves.length,blades);
-  assert.equal(leaves.filter(l=>l.bent).length,blades);
+  assert.equal(g.index.count/3,blades*3);assert.equal(p.count,{4:24,6:38,8:48}[blades]);
+  const leaves=g.userData.middleCover.leafRanges;assert.equal(leaves.length,{4:6,6:10,8:12}[blades]);
+  assert.equal(leaves.filter(l=>l.bent).length,{4:3,6:4,8:6}[blades]);
   for(const a of Object.values(g.attributes)){assert.equal(a.count,p.count);assert(Array.from(a.array).every(Number.isFinite));}
   let projected=0,minDot=1,maxRadius=0;
   for(let i=0;i<p.count;i++){maxRadius=Math.max(maxRadius,Math.hypot(p.getX(i),p.getZ(i)));assert(Math.abs(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))-1)<1e-6);}
@@ -19,12 +19,13 @@ for(const blades of [4,6,8])test(`${blades} middle leaves cover gaps within the 
    projected+=Math.abs(f.y)*.5;f.normalize();for(const j of ids)minDot=Math.min(minDot,f.dot(new T.Vector3().fromBufferAttribute(n,j)));
   }
   assert(minDot>0,'No vertex normal points through its actual leaf surface');
-  assert(projected>blades*.013&&projected<blades*.020,'Long slender leaves supply real horizontal cover within a bounded footprint');
-  assert(maxRadius<=.60&&maxRadius>.40);assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y>=.85&&g.boundingBox.max.y<=1.15);
+  // Upright blades deliberately stop projecting broad horizontal fans.
+  assert(projected>blades*.0006&&projected<blades*.0012,'Narrow vertical blades retain a small real horizontal lean');
+  assert(maxRadius<=.15&&maxRadius>.10);assert.equal(g.boundingBox.min.y,0);assert(g.boundingBox.max.y>=1.0&&g.boundingBox.max.y<=1.15);
   for(const {vertexStart:s,vertexCount:count} of leaves){
    const tip=s+count-1;assert.equal(p.getY(s),0);assert.equal(p.getY(s+1),0);
    assert(Math.hypot(p.getX(s),p.getZ(s))<.15&&Math.hypot(p.getX(s+1),p.getZ(s+1))<.15,'Every root stays beside the unchanged parent root');
-   const width=new T.Vector3().fromBufferAttribute(p,s).distanceTo(new T.Vector3().fromBufferAttribute(p,s+1));assert(width>=.04&&width<=.06);
+   const width=new T.Vector3().fromBufferAttribute(p,s).distanceTo(new T.Vector3().fromBufferAttribute(p,s+1));assert(width>=.010&&width<=.028);
    assert.equal(uv.getY(s),0);assert.equal(uv.getY(tip),1);assert.equal(uv.getX(tip),.5);assert(p.getY(tip)>0);assert(c.getY(s)<.30&&c.getY(tip)>.90);
   }
  }finally{g.dispose();}

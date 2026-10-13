@@ -1,5 +1,5 @@
 {
-  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage. Detailed broadleaf meshes use a 0.22 runtime mip-coverage cutoff, including their shadow-depth materials; source view baking retains the authored cutout threshold. All six summer broadleaf albedo entries bind their shared pigment helper.",
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigmentation uses the shared summer-leaf-pigment helper after the retained [0.82,1,0.66] base tint; per-entry metadata binds helper provenance. Island leaf surfaces use the shared bounded surface-growth helper before canopy occlusion; both channels share its geometry and original source material cutout threshold. Detailed runtime may use a lower cutoff as a separate mip-coverage policy. Live directional lighting is applied by the game. normalProfile view-facing-material-v1 uses face-visible source material normals with the runtime normal map scale and canopy normal blend, in source-world coordinates; accepted normal samples are opaque before MSAA coverage.",
   "trees": [
     {
       "id": "fir_sapling_medium",
@@ -65,28 +65,6 @@
       },
       "source": "fir_sapling_medium.glb",
       "sourcePage": "https://polyhaven.com/a/fir_sapling_medium",
-      "license": "CC0-1.0"
-    },
-    {
-      "id": "pine_tree_01",
-      "variant": 0,
-      "width": 9.581309509277345,
-      "height": 21.774055141806603,
-      "bottom": -0.6957092228531837,
-      "sourceHeight": 20.54156145453453,
-      "viewCount": 8,
-      "views": {
-        "file": "pine_tree_01_0_views.webp",
-        "bytes": 1285968,
-        "sha256": "d687ee24e3366f04ceefdc620fa95d8b880442cce3973370df7a39675cc090d3"
-      },
-      "normals": {
-        "file": "pine_tree_01_0_normals.webp",
-        "bytes": 1707622,
-        "sha256": "7c070ca69aa7662987b7c5527b0be5d1043ddfb4b42dfa90d00911fa1f4929b2"
-      },
-      "source": "pine_tree_01.glb",
-      "sourcePage": "https://polyhaven.com/a/pine_tree_01",
       "license": "CC0-1.0"
     },
     {
@@ -289,7 +267,7 @@
           "limitedQuads": 11,
           "heldQuads": 8,
           "maxDisplacement": 0.012720527591643218,
-          "maxCenterError": 1.7881393432617188e-07,
+          "maxCenterError": 1.7881393432617188e-7,
           "positionFnv": "e75e6e86"
         }
       },
@@ -414,7 +392,7 @@
           "limitedQuads": 11,
           "heldQuads": 8,
           "maxDisplacement": 0.012720527591643218,
-          "maxCenterError": 1.7881393432617188e-07,
+          "maxCenterError": 1.7881393432617188e-7,
           "positionFnv": "e75e6e86"
         }
       },
@@ -424,6 +402,45 @@
         "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
         "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
         "sourceLicenseUnchanged": true
+      }
+    },
+    {
+      "id": "pine_tree_01",
+      "variant": 0,
+      "width": 9.581309509277345,
+      "height": 21.774055141806603,
+      "bottom": -0.6957092228531837,
+      "pineSprayCornerStats": {
+        "corners": 38360,
+        "triangles": 19180,
+        "mixed": 0
+      },
+      "sourceHeight": 20.54156145453453,
+      "viewCount": 8,
+      "views": {
+        "file": "pine_tree_01_0_views.webp",
+        "bytes": 1088942,
+        "sha256": "97f3f70048af3af8edc53d259910ec5a028a09998247c61547b8e9ab5b91c7d7"
+      },
+      "normals": {
+        "file": "pine_tree_01_0_normals.webp",
+        "bytes": 1329950,
+        "sha256": "ce0a257390067f0eaecf4f795cd35eae65f1326f86786f73943b2452b94e147f"
+      },
+      "source": "pine_tree_01.glb",
+      "sourcePage": "https://polyhaven.com/a/pine_tree_01",
+      "license": "CC0-1.0",
+      "pineSprayCutout": {
+        "profile": "pine-photo-island-1",
+        "helper": "assets/pine-spray-surfaces.mjs",
+        "helperSha256": "e93a01489d6b556d729ec9e2bd4b971a08b95b2b002801147b9f68b0ebe0f70c",
+        "sourceGLBSha256": "3d0a4ef03966d85f283baf0b579b11d26993fcdaa83e3e5a6c7ed91b5fb4139f",
+        "operation": "Shared runtime/baker photo-island guard on generated spray UV corners; neighboring opaque atlas padding removed in both color/normal channels. Original source geometry, needles/cones/wood, maps and framing retained.",
+        "stats": {
+          "corners": 38360,
+          "triangles": 19180,
+          "mixed": 0
+        }
       }
     }
   ]

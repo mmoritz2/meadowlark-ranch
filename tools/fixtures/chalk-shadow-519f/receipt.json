@@ -1,0 +1,10 @@
+{
+  "commit": "519f514d9aee9d0a2ca389c7c49677aee84b8365",
+  "nativeArtifact": "chalk-grazing-519f-baseline-native",
+  "files": {
+    "chalk-down.js": "23f8705fee991561d1df69220d5ec4aa8a34d2a92b7f55bf8f826306139f6cfb",
+    "chalk-downland.mjs": "abcd746cb09f3b6b61c39ec92c1b24664b30120b50939ecc0d18389fcf1919d1",
+    "terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "chalk-surface-source.json": "435a7efac2c4c0bb8f2f92c7f51b39b20b582bd588803833f420957958273399"
+  }
+}

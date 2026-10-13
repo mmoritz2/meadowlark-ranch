@@ -133,7 +133,7 @@ function makeDriftwood(THREE) {
   return b.finish();
 }
 
-export function installRiparian({ THREE, scene, terrainH, riverZ, riverLevel, pathDist }) {
+export function installRiparian({ THREE, scene, terrainH, planningHeightAt=terrainH, riverZ, riverLevel, pathDist }) {
   if (!THREE || !scene || [terrainH, riverZ, riverLevel, pathDist].some(f => typeof f !== 'function'))
     throw new TypeError('installRiparian requires THREE, scene and terrain/river/path samplers');
   const existing = scene.getObjectByName(GROUP_NAME);
@@ -188,18 +188,20 @@ export function installRiparian({ THREE, scene, terrainH, riverZ, riverLevel, pa
 
   const add = (kind, x, z, size, angle, variation = 1) => {
     const p = prototypes[kind], rd = Math.abs(z - riverZ(x));
-    const y = terrainH(x, z), water = riverLevel(x), pd = pathDist(x, z);
+    const y = terrainH(x, z), plannedY=planningHeightAt===terrainH?y:planningHeightAt(x,z), water = riverLevel(x), pd = pathDist(x, z);
     const bridgeMargin = kind === 'driftwood' ? 5.1 : 4.35;
-    if (!Number.isFinite(y) || !Number.isFinite(water) || !Number.isFinite(pd) ||
-        Math.abs(x) > 490 || Math.abs(x) < bridgeMargin || rd < 4.6 || rd > 10 || y <= water + .08 || pd < 2.35) {
+    if (!Number.isFinite(plannedY) || !Number.isFinite(water) || !Number.isFinite(pd) ||
+        Math.abs(x) > 490 || Math.abs(x) < bridgeMargin || rd < 4.6 || rd > 10 || plannedY <= water + .08 || pd < 2.35) {
       stats.rejected++; return false;
     }
-    const dx = (terrainH(x + .15, z) - terrainH(x - .15, z)) / .30;
-    const dz = (terrainH(x, z + .15) - terrainH(x, z - .15)) / .30;
+    let dx = (planningHeightAt(x + .15, z) - planningHeightAt(x - .15, z)) / .30;
+    let dz = (planningHeightAt(x, z + .15) - planningHeightAt(x, z - .15)) / .30;
     if (!Number.isFinite(dx) || !Number.isFinite(dz) || Math.hypot(dx, dz) > (kind === 'driftwood' ? .55 : 1.5)) {
       stats.rejected++; return false;
     }
     if (stats.triangles + p.triangles > TRIANGLE_BUDGET) { stats.budgetSkipped++; return false; }
+    // Original acceptance above; already-counted stones and timber follow live ground.
+    if(planningHeightAt!==terrainH){dx=(terrainH(x+.15,z)-terrainH(x-.15,z))/.30;dz=(terrainH(x,z+.15)-terrainH(x,z-.15))/.30;}
     q.identity(); yawQ.setFromAxisAngle(up, angle);
     if (kind === 'pebbles') {
       normal.set(-dx, 1, -dz).normalize(); q.setFromUnitVectors(up, normal).multiply(yawQ);

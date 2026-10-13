@@ -340,7 +340,7 @@ export function install(G){
    tick:(dt,t)=>{t.x=b.pos.x;t.z=b.pos.z;}});
  }
  function bountyUnmesh(b){
-  if(b.parts){try{scene.remove(b.parts.group);}catch(e){}b.parts=null;b.tag=null;}
+  if(b.parts){if(G.ranchSys?.disposeHorseEnt)G.ranchSys.disposeHorseEnt(b);else scene.remove(b.parts.group);b.parts=null;b.tag=null;}
   if(b.thing){const k=W.things.indexOf(b.thing);if(k>=0)W.things.splice(k,1);b.thing=null;}
  }
  /* Hoofprints. Five flattened discs on the line she came in on, dragged along as she drifts, and
@@ -444,8 +444,7 @@ export function install(G){
    if(b.parts){
     const A=G.anim, calm=b.rest>0&&!b.haltered&&b.spook<=0?1:0;
     if(A){A.animateHorse(b.parts,b.phase,amp,gait==='gallop'?A.GAITS.gallop:A.GAITS.walk,true,t,calm,dt);
-     if(d<60)H.dressWithRig(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed});
-     A.tickRig(b,mv,dt,t,calm);}
+     if(H.worldLOD?.supportsBreed?.(b.wb.breed))H.worldLOD.update(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed,interacting:!!(b.haltered||b.spook>0)},mv,dt,t,calm);else{if(d<60)H.dressWithRig(b,b.parts,{body:b.wb.body,mane:b.wb.mane},{breed:b.wb.breed});A.tickRig(b,mv,dt,t,calm);}}
     b.parts.group.position.set(b.pos.x,groundH(b.pos.x,b.pos.z),b.pos.z);
     b.parts.group.rotation.y=b.heading;
    }
