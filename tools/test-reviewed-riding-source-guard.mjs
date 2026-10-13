@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {normalizeReviewedRuntimeSource,normalizeReviewedWorldSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';
+import {normalizeProgressionLoopCacheSource} from './progression-loop-cache-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
 const root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);
 const read=file=>fs.readFileSync(new URL(file,root),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex');
@@ -12,7 +13,7 @@ const git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encodin
 
 test('merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained',()=>{
  for(const file of ['ranch3d.html','assets/features/index.js'])assert.equal(normalizeReviewedRuntimeSource(read(file),file),git(contract.incomingCommit,file));
- const current=read('ranch3d.html');for(const tag of ['fine-hair-20261013c','grass-arch-2','camera-authored-parts-4','physical-ride-2-starter-tack-2-fieldstone-walls-3'])assert(current.includes(tag));
+ const current=normalizeProgressionLoopCacheSource(read('ranch3d.html'),'ranch3d.html');for(const tag of ['fine-hair-20261013c','grass-arch-2','camera-authored-parts-4','physical-ride-2-starter-tack-2-fieldstone-walls-3'])assert(current.includes(tag));
 });
 test('original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes',()=>{
  for(const [file,hash]of Object.entries(contract.protectedGuardSHA256)){assert.equal(sha(read(file)),hash);assert.equal(read(file),git(contract.incomingCommit,file));}
@@ -23,7 +24,7 @@ test('each exact new cache edge and its original subject retain the same complet
  for(const edge of edges){
   // Start from the actual merged body, then test the declared cache subject in
   // isolation. For the shared FEATURES owner choose the matching suffix shape.
-  let subject=read(edge.file);
+  let subject=normalizeProgressionLoopCacheSource(read(edge.file),edge.file);
   if(edge.file==='ranch3d.html')subject=subject.replace("import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2-fieldstone-walls-3';",edge.after);
   assert.equal(subject.split(edge.after).length-1,1);
   assert.equal(normalizeStarterTackSource(subject,edge.file),normalizeStarterTackSource(subject.replace(edge.after,edge.before),edge.file));

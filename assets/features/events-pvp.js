@@ -656,14 +656,20 @@ export function install(G){
  function rankIdx(pts){let i=0;for(let k=0;k<RACE_RANKS.length;k++)if(pts>=RACE_RANKS[k].at)i=k;return i;}
  function rankNext(pts){const i=rankIdx(pts);return RACE_RANKS[i+1]||null;}
  function claimRank(i){
-  const tier=RACE_RANKS[i]; if(!tier)return;
-  let ok=false;
+  const tier=Number.isInteger(i)&&RACE_RANKS[i]; if(!tier)return false;
+  let attempted=false;
   G.save.sync(s=>{
    s.racing=s.racing||{pts:0,races:0,wins:0,claimed:{}};
    if(s.racing.claimed[i]||(s.racing.pts||0)<tier.at||!Object.keys(tier.r).length)return;
-   s.racing.claimed[i]=true; G.money.payReward(s,tier.r); ok=true;
+   s.racing.claimed[i]=true; G.money.payReward(s,tier.r); attempted=true;
   });
-  if(ok){G.money.refreshWallet();G.horse.refreshTack();G.sGem();toast(tier.icon+' '+tier.label+' claimed — '+G.money.rewardLabel(tier.r));G.ui.rerender('pvpPanel');}
+  if(!attempted)return false;
+  // sync catches storage errors. The claim and reward share that one write;
+  // announce only when its claim marker is present in the persisted readback.
+  let saved=null;try{saved=G.save.fresh();}catch(e){}
+  if(saved?.racing?.claimed?.[i]!==true){toast('Your rank reward could not be confirmed as saved. Please try again.');return false;}
+  G.money.refreshWallet();G.horse.refreshTack();G.sGem();toast(tier.icon+' '+tier.label+' claimed — '+G.money.rewardLabel(tier.r));G.ui.rerender('pvpPanel');
+  return true;
  }
 
  /* ================================================================= weekly boards ======== */

@@ -23,6 +23,7 @@
    hour (the horses are se-events' horseSvg and scene, and a card with a horse on it wears that horse's
    own coat). The ☰ Journey tile carries a red pip with how many things are waiting to be claimed.
    Nothing runs at import time. */
+import {eventRibbonProgress} from '../event-ribbon-progress.mjs?v=final-ribbon-1';
 export const id='se-journey';
 export function install(G){
  const K=G.seFrame, T=G.tables;
@@ -137,12 +138,7 @@ export function install(G){
   const L=G.vistas.LAND, been=s.vistas||{}, got=L.filter(l=>been[l.id]).length;
   return {pct:clampPct(100*got/L.length),x:got,y:L.length,sub:got+' of '+L.length+' landmarks',status:got+' of '+L.length+' landmarks visited'};
  };
- const ribbonsOf=(ev,s)=>{
-  const D=G.course.DIFFS, by=s.ribbonsBy||{}, best=(s.ribbons||{})[ev.id]||0;
-  const per=D.map(d=>Math.min(4,by[ev.id+':'+d.k]||0));
-  if(!per.some(Boolean)&&best){const oi=Math.max(0,D.findIndex(d=>d.k==='open'));per[oi]=Math.min(4,best);}
-  return {sum:per.reduce((a,b)=>a+b,0),max:4*D.length,best,gold:per.filter(v=>v>=4).length};
- };
+ const ribbonsOf=(ev,s)=>eventRibbonProgress(s,ev.id,G.course.DIFFS);
  const discEvents=k=>T.EVENTS3.filter(ev=>!ev.friendly&&G.events2.discOf(ev).k===k);
  const shortName=ev=>{const t=String(ev.town||'').split(' ')[0];let n=String(ev.name||'');if(t&&n.toLowerCase().startsWith(t.toLowerCase()+' '))n=n.slice(t.length+1);return n;};
  F.disc=(s,k)=>{

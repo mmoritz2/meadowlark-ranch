@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+ok 1 - actual announcement gate accepts modern completed races even with a zero or missing legacy counter
+  ---
+  duration_ms: 0.737625
+  ...
+# Subtest: positive legacy race history stays compatible with absent or zero modern ledger
+ok 2 - positive legacy race history stays compatible with absent or zero modern ledger
+  ---
+  duration_ms: 0.111167
+  ...
+# Subtest: points, placings, best times and ribbons alone do not invent a completed race
+ok 3 - points, placings, best times and ribbons alone do not invent a completed race
+  ---
+  duration_ms: 0.195667
+  ...
+# Subtest: missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+ok 4 - missing saves and pre-era-two stories remain quiet despite modern or legacy completions
+  ---
+  duration_ms: 0.18375
+  ...
+# Subtest: loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+ok 5 - loading, menu, dialogue and active-course suppression are unchanged for both ledgers
+  ---
+  duration_ms: 0.137542
+  ...
+# Subtest: the real gate reads fresh progress every time without mutating it or writing rewards
+ok 6 - the real gate reads fresh progress every time without mutating it or writing rewards
+  ---
+  duration_ms: 0.083583
+  ...
+# Subtest: first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+ok 7 - first-rides diagnostics expose real independent ledgers while preserving the legacy observation
+  ---
+  duration_ms: 1.267
+  ...
+# Subtest: exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+ok 8 - exactly one approved predicate reconstructs the independently pinned243dbfb complete body
+  ---
+  duration_ms: 28.188375
+  ...
+# Subtest: unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+ok 9 - unknown, duplicate, deleted and mixed eligibility changes cannot pass the exact adapter
+  ---
+  duration_ms: 4.244084
+  ...
+# Subtest: existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+ok 10 - existing complete-body guards still reject unrelated runtime/cache drift after the narrow reversal
+  ---
+  duration_ms: 79.585083
+  ...
+# Subtest: five exact live cache imports preserve the complete independently pinned243dbfb owners
+ok 11 - five exact live cache imports preserve the complete independently pinned243dbfb owners
+  ---
+  duration_ms: 47.849791
+  ...
+# Subtest: unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+ok 12 - unknown, renamed, deleted, duplicate and mixed cache imports still fail the complete preservation chain
+  ---
+  duration_ms: 44.438959
+  ...
+# Subtest: cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+ok 13 - cache compatibility cannot strip an unknown version, suppress body drift, or alter unrelated modules
+  ---
+  duration_ms: 68.810209
+  ...
+# Subtest: existing cache fixtures and source pins retain their original bytes
+ok 14 - existing cache fixtures and source pins retain their original bytes
+  ---
+  duration_ms: 112.832459
+  ...
+# Subtest: merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+ok 15 - merged live runtime projects to every exact incoming world owner byte with native hair, grass, camera and fieldstone imports retained
+  ---
+  duration_ms: 50.733542
+  ...
+# Subtest: original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+ok 16 - original pinned landscape/camera/crag guards remain exact, without dependency fixture or legacy source changes
+  ---
+  duration_ms: 204.275584
+  ...
+# Subtest: each exact new cache edge and its original subject retain the same complete old source body
+ok 17 - each exact new cache edge and its original subject retain the same complete old source body
+  ---
+  duration_ms: 181.859375
+  ...
+# Subtest: unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+ok 18 - unknown own edges and cache projections cannot erase unrelated rider, authorization, gear or world body drift
+  ---
+  duration_ms: 23.48125
+  ...
+# Subtest: merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+ok 19 - merged preservation observers reverse only exact compatibility calls and retain every incoming assertion and complete pinned body
+  ---
+  duration_ms: 52.778458
+  ...
+# Subtest: camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+ok 20 - camera guide compatibility restores only reviewed collision-aware guidance, with unchanged legacy whole-body hash
+  ---
+  duration_ms: 21.611
+  ...
+# Subtest: real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+ok 21 - real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+  ---
+  duration_ms: 6.942667
+  ...
+# Subtest: real legacy rail and trunk footprints cannot award nominal gallop travel
+ok 22 - real legacy rail and trunk footprints cannot award nominal gallop travel
+  ---
+  duration_ms: 2.357709
+  ...
+# Subtest: wall sliding credits only the actual tangent displacement after all collision substeps
+ok 23 - wall sliding credits only the actual tangent displacement after all collision substeps
+  ---
+  duration_ms: 0.979667
+  ...
+# Subtest: the terrain boundary produces no reward for an outward gallop
+ok 24 - the terrain boundary produces no reward for an outward gallop
+  ---
+  duration_ms: 0.741291
+  ...
+# Subtest: stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+ok 25 - stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+  ---
+  duration_ms: 0.808917
+  ...
+# Subtest: sampling is frame-local: fast travel between frames never contributes its relocation distance
+ok 26 - sampling is frame-local: fast travel between frames never contributes its relocation distance
+  ---
+  duration_ms: 0.430459
+  ...
+# Subtest: on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+ok 27 - on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+  ---
+  duration_ms: 3.243875
+  ...
+# Subtest: native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+ok 28 - native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+  ---
+  duration_ms: 0.593292
+  ...
+# Subtest: refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+ok 29 - refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+  ---
+  duration_ms: 0.743791
+  ...
+# Subtest: a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+ok 30 - a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+  ---
+  duration_ms: 0.7965
+  ...
+# Subtest: real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+ok 31 - real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+  ---
+  duration_ms: 0.768792
+  ...
+# Subtest: legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+ok 32 - legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+  ---
+  duration_ms: 1.350208
+  ...
+# Subtest: zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+ok 33 - zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+  ---
+  duration_ms: 1.646417
+  ...
+# Subtest: the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+ok 34 - the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+  ---
+  duration_ms: 0.529
+  ...
+# Subtest: straight actual travel produces the same accumulated metres across different frame sizes
+ok 35 - straight actual travel produces the same accumulated metres across different frame sizes
+  ---
+  duration_ms: 1.375167
+  ...
+# Subtest: the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+ok 36 - the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+  ---
+  duration_ms: 101.765459
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 602.57125

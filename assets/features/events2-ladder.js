@@ -1,3 +1,4 @@
+import {horseProgressSnapshot,horseFinishGrowth,nextHorseChallenge} from '../event-horse-growth.mjs?v=event-growth-1';
 /* Feature package 'events2-ladder'. Owned by that package: edit only this file and the inline hot spots
    assigned to it. See index.js for the contract. Nothing runs at import time.
 
@@ -44,6 +45,85 @@ export function install(G){
  const pc=v=>Math.round((v||0)*100);
  const DIFFS=()=>G.course.DIFFS||[{k:'open',label:'Open',icon:'🏇',parMul:1,rewMul:1}];
  const diffOf=k=>DIFFS().find(d=>d.k===k)||DIFFS()[1]||DIFFS()[0];
+
+ /* The course's horse stays fixed even if selection or save order changes.
+    The saved baseline starts with this observed ride (or resumed segment); the
+    delayed card reads disk, never the live horse or a proposed mutator value. */
+ const courseHorseIds=new WeakMap();
+ const courseHorseProgress=new WeakMap();
+ // Both finish listeners use one rounded projected-time ordering, even if a
+ // pickup adjusted the player clock or another listener later clears the field.
+ const finalFields=new WeakMap();
+ function finalField(c){
+  if(!c||typeof c!=='object')return null;
+  const cached=finalFields.get(c);if(cached)return cached;
+  let place=0,field=0,rows=[];
+  if(FIELD&&FIELD.c===c){
+   field=FIELD.rivals.length;
+   rows=FIELD.rivals.map(r=>({n:r.n,proj:+(r.gh?ghostProj(r,c):r.target+r.pen).toFixed(1)}));
+   rows.push({n:'You',proj:+(c.t||0).toFixed(1),me:true});
+   rows.sort((a,b)=>a.proj-b.proj);
+   place=placeIn(rows);
+  }else if((c.pvp||c.friendly)&&E().PVP){place=E().PVP.place||0;field=E().PVP.field||0;}
+  else return null;
+  const result=Object.freeze({place,field,rows:Object.freeze(rows.map(row=>Object.freeze(row)))});
+  finalFields.set(c,result);return result;
+ }
+ const maxHorseLevel=()=>G.xp?.MAX_LEVEL||50;
+ function savedHorseProgress(id,save){
+  const h=save?.horses?.find(h=>h.id===id);
+  return horseProgressSnapshot(h,{maxLevel:maxHorseLevel()});
+ }
+ function captureHorseBefore(ev){
+  const c=G.course.get();if(!c||c.ev?.id!==ev?.id)return null;
+  const horseId=courseHorseIds.get(c);if(horseId==null)return null;
+  return {course:c,eventId:ev.id,runId:c.ladRunId,horse:savedHorseProgress(horseId,G.save.fresh())};
+ }
+ function horseVenueReady(ev,save){
+  const rows=T.REGIONS||[],word=String(ev.town||'').split(' ')[0].toLowerCase(),match=r=>!!word&&r?.name?.toLowerCase().includes(word);
+  const region=rows.find(r=>r.venue&&match(r))||rows.find(r=>r.unlock&&match(r))||rows.find(match);
+  return !region?.unlock||!G.worldPkg?.regionUnlocked||G.worldPkg.regionUnlocked(region,save)===true;
+ }
+ function horseChallenge(L,save){
+  const growth=L.horseGrowth,h=save?.horses?.find(h=>h.id===growth?.horseId),ev=evById(L.ev.id);
+  if(!growth||!h||!ev||ev.friendly||['dance','fr'].includes(ev.id))return null;
+  return nextHorseChallenge({event:ev,difficulty:L.diff,events:T.EVENTS3,difficulties:DIFFS(),horse:h,
+   ready:(candidate,di,horse)=>horseVenueReady(candidate,save)&&!entryLock(candidate,{...save,evDiff:di},horse)});
+ }
+ function horseGrowthBlock(L,save){
+  if(L.ev.friendly||['dance','fr'].includes(L.ev.id))return '';
+  const growth=L.horseGrowth;
+  if(!growth)return '<section class="ladHorseGrowth"><div class="ph"><b>Your horse</b></div><div class="sub">Saved horse progress is unavailable for this round.</div></section>';
+  const g=growth,level=g.levels?'Horse level '+g.before.level+' → '+g.after.level:'Horse level '+g.after.level;
+  const scope=L.horseGrowthSegment==='resume'?'since resuming':'this ride';
+  const next=horseChallenge(L,save),same=save?.horses?.some(h=>h.id===g.horseId);
+  let html='<section class="ladHorseGrowth" aria-label="Saved horse progress"><div class="ph"><b>'+esc(g.name)+' · '+level+'</b></div>'
+   +'<div class="ladGrid">'+(g.horseXp>0?'<span class="ladChip on">+'+g.horseXp+' horse XP '+scope+'</span>':'')
+   +(g.bondGain>0?'<span class="ladChip on">+'+g.bondGain+' bond '+scope+'</span>':'')
+   +(g.after.bond!==null?'<span class="ladChip">Bond '+g.after.bond+' / 100</span>':'')+'</div>'
+   +'<div class="ladBar" role="progressbar" aria-label="Horse level progress" aria-valuemin="0" aria-valuemax="'+(g.atMax?100:g.nextLevelXp)+'" aria-valuenow="'+(g.atMax?100:g.after.xp)+'"><i style="width:'+g.percent+'%"></i></div>'
+   +'<div class="sub">'+(g.atMax?'Maximum horse level reached.':g.after.xp+' / '+g.nextLevelXp+' horse XP · '+g.remaining+' XP to Lv '+(g.after.level+1))+'</div>';
+  if(next&&same)html+='<button data-fx="lad:horse-next">'+esc(next.label)+'</button>';
+  else if(same&&G.seCare?.open)html+='<button data-fx="lad:horse-prepare">View horse & prepare</button>';
+  else if(!same)html+='<div class="sub">This horse is no longer in your stable.</div>';
+  return html+'</section>';
+ }
+ function rideHorseChallenge(){
+  if(!LAST?.horseGrowth)return;
+  const save=G.save.fresh(),h=save?.horses?.find(h=>h.id===LAST.horseGrowth.horseId),next=horseChallenge(LAST,save);
+  if(!h||!next){toast('Reopen Events to check your horse’s current requirements.');return;}
+  if(ridden()?.id!==h.id){toast('Choose '+h.name+' in My Horses before continuing this ride.');G.seCare?.open?.('myhorses');return;}
+  if(G.course.get()||G.course.drillActive?.()){toast('Finish your current ride first.');return;}
+  const rig=G.horse.RIG?.(),model=G.horse.breedModels?.resolve?.(h.breed);
+  if(player.onFoot||player.flying||player.y>.15||G.worldPkg?.vehicle?.()||rig?.heroJumpAge!=null){toast('Mount your horse and finish landing before entering the next event.');return;}
+  if(save.ridingHorseId!==h.id||ridden()?.breed!==h.breed||!rig?.ready||rig.loadingBreed||!player.mesh||rig.attachedTo!==player.mesh||model&&(rig.modelKey!==model||rig.requestedBreed!==h.breed)){
+   toast('Your selected horse is still getting ready. Choose it again in Events if its model does not load.');return;
+  }
+  const ev=evById(next.eventId);
+  if(!ev)return;
+  G.hidePanels();G.course.startCourse(ev,next.difficulty);
+ }
+
 
  /* ================================================================= data ================= */
  /* Three rivals is a field you can read at a glance on a HUD that has to stay under 44vw; four
@@ -113,6 +193,7 @@ export function install(G){
   +'.ladBar{position:relative;height:9px;border-radius:999px;background:rgba(59,42,30,.12);overflow:hidden;flex:1;min-width:60px}'
   +'.ladBar>i{display:block;height:100%;background:linear-gradient(90deg,#e9bb52,#ffd97a)}'
   +'.ladGrid{display:flex;gap:5px;flex-wrap:wrap;width:100%}'
+  +'.ladHorseGrowth{width:100%;padding:12px;border:1px solid #c8d5b6;border-radius:12px;background:#edf2e2;margin:4px 0}.ladHorseGrowth .ladBar{margin:10px 0 5px}.ladHorseGrowth button{min-height:44px;max-width:100%;white-space:normal}.ladHorseGrowth .ph{flex-wrap:wrap}.ladHorseGrowth .ladChip{white-space:normal}'
   +'.ladSheet{width:100%;font-size:11px;color:#6b5a45}.ladSheet div{display:flex;justify-content:space-between;gap:8px;padding:1px 0}';
  document.head.appendChild(style);
  const ladHud=document.createElement('div'); ladHud.id='ladHud'; document.body.appendChild(ladHud);
@@ -148,7 +229,7 @@ export function install(G){
    /* Everything the finish pays lands between this hook and the card, from half a dozen packages
       whose sums we have no business re-deriving. Snapshot the wallet here and subtract later. */
    const s=G.save.fresh()||{};
-   preFinish={coins:s.coins||0,gems:s.gems||0,keys:s.keys||0,pts:(s.racing&&s.racing.pts)||0,at:Date.now()};
+   preFinish={coins:s.coins||0,gems:s.gems||0,keys:s.keys||0,pts:(s.racing&&s.racing.pts)||0,at:Date.now(),horseBefore:captureHorseBefore(RB0.ev)};
    wasGold=!!RB0.gold; capture=[]; captureAt=Date.now();
   }catch(e){}
  });
@@ -321,8 +402,10 @@ export function install(G){
  G.on('courseStart',c=>{
   if(!c)return;
   try{
+   if(!courseHorseIds.has(c))courseHorseIds.set(c,ridden()?.id);
    const restored=resumeContext(c);
    c.ladRunId=restored?.runId||newRunId();
+   if(!courseHorseProgress.has(c))courseHorseProgress.set(c,Object.freeze({eventId:c.ev?.id,runId:c.ladRunId,resumed:!!restored,horse:savedHorseProgress(courseHorseIds.get(c),G.save.fresh())}));
    if(restored){c.tixSpent=!!restored.tix;c.ladRematch=!!restored.rematch;c.resumedStarted=true;}
    /* tixSpent is what the crash-saver reads to decide whether a round the game never tidied up
       owes the player a ticket back, and events-pvp only ever sets it on a challenge. The rematch
@@ -654,19 +737,15 @@ export function install(G){
   if(!c||!ev)return;
   if(ev.rush){clearRun(c.ladRunId);return;}
   try{
+   const horseBefore=preFinish?.horseBefore;
+   const savedBefore=horseBefore?.course===c&&horseBefore.eventId===ev.id&&horseBefore.runId===c.ladRunId?horseBefore.horse:null;
+   const observed=courseHorseProgress.get(c),rideBefore=observed?.eventId===ev.id&&observed.runId===c.ladRunId?observed.horse:null;
    const gold=goldOf(ev,RB);
    const S=(c&&c.ce)||{}, d=diffOf(S.diff&&S.diff.k||(c.rb&&c.rb.diff)||'open');
    const feat=!!(RB&&RB.featured);
    const before=preFinish&&Date.now()-preFinish.at<8000?preFinish:(()=>{const s=G.save.fresh()||{};return {coins:s.coins||0,gems:s.gems||0,pts:(s.racing&&s.racing.pts)||0};})();
    /* the field, settled on projected finish time: who actually crossed before you */
-   let place=0, field=0, rows=[];
-   if(FIELD&&FIELD.c===c){
-    field=FIELD.rivals.length;
-    rows=FIELD.rivals.map(r=>({n:r.n,proj:+(r.gh?ghostProj(r,c):r.target+r.pen).toFixed(1)}));
-    rows.push({n:'You',proj:+(c.t||0).toFixed(1),me:true});
-    rows.sort((a,b)=>a.proj-b.proj);
-    place=placeIn(rows);
-   }else if((c.pvp||c.friendly)&&E().PVP){ place=E().PVP.place||0; field=E().PVP.field||0; }
+   const standings=finalField(c),place=standings?.place||0,field=standings?.field||0,rows=standings?.rows||[];
    /* the weekly board — the thing that has been silently doing nothing */
    let wkNote='', wkPlace=0, wkRows=[];
    const judged=judgedOfWeek();
@@ -728,7 +807,7 @@ export function install(G){
     wkNote,wkPlace,wkRows:wkRows.slice(0,8).map(r=>({n:r.n,v:r.v,me:!!r.me})),
     traitMatch:(c.traitMatch||[]).slice(),traitMul:+(c.traitMul||1).toFixed(3),
     champ,ribTotal,coins0:before.coins||0,gems0:before.gems||0,pts0:before.pts||0,
-    notes:[],at:Date.now()};
+    horseBefore:rideBefore,finishHorseBefore:savedBefore,horseGrowthSegment:observed?.resumed?'resume':'ride',horseGrowth:null,horseGrowthRead:false,notes:[],at:Date.now()};
    clearRun(c.ladRunId);
    G.save.sync(s=>{ s.lastRun={ev:LAST.ev.id,name:LAST.ev.name,t:LAST.t,rib:LAST.rib,gold:LAST.gold,
     place:LAST.place,field:LAST.field,acc:+LAST.acc.toFixed(3),pay:LAST.pay,at:LAST.at}; });
@@ -740,6 +819,9 @@ export function install(G){
   if(!LAST)return;
   try{
    const now=G.save.fresh()||{};
+   if(!LAST.horseGrowthRead){
+    LAST.horseGrowthRead=true;LAST.horseGrowth=horseFinishGrowth(LAST.horseBefore,savedHorseProgress(LAST.horseBefore?.horseId,now),{maxLevel:maxHorseLevel()});
+   }
    LAST.coins1=now.coins||0; LAST.gems1=now.gems||0; LAST.pts1=(now.racing&&now.racing.pts)||0;
    /* The recap is every toast of the finish, and a finish says some things twice: two packages
       both announce a bond level, and our own board line is already the board section. A
@@ -749,6 +831,8 @@ export function install(G){
    {const seen=new Set();
     LAST.notes=(capture||[]).filter(n=>{const k=String(n).trim();if(!k||seen.has(k))return false;seen.add(k);
      if(LAST.wkNote&&k.indexOf(LAST.wkNote)===0)return false;
+     // Saved growth above replaces transient, possibly unconfirmed bond/level claims.
+     if(/trained up to level|\+\d+(?:\.\d+)? bond\b|\(bond Lv \d+\)/.test(k))return false;
      if(LAST.ev.show&&/^🧼 Turnout \d+% · handling \d+% · final \d+%/.test(k))return false;
      return true;});}
    capture=null; wasGold=false;
@@ -920,6 +1004,7 @@ export function install(G){
    +(L.dressage?'':' · allowance '+s1(L.allowed)+'s')+(L.featured?' · featured':'')+'</span></span>'
    +'<span class="ladChip'+(L.gold?' on':'')+'">'+(L.gold?'🥇 Gold ribbon':L.rib+' ribbon'+(L.rib===1?'':'s'))+'</span>'
    +'<span class="ladChip">'+'⭐'.repeat(clamp(L.stars,1,3))+'</span></div>';
+  h+=horseGrowthBlock(L,s);
   h+=fieldBlock(L);
   h+='<div class="ph"><b>📋 The score</b></div>'+scoreSheet(L);
   h+='<div class="ph"><b>💰 What the round paid</b></div><div class="ladGrid">'
@@ -1067,6 +1152,8 @@ export function install(G){
    pendingRematch={ev:ev.id,at:Date.now()};
    G.hidePanels(); G.course.startCourse(ev);
   }
+  else if(k==='horse-next')rideHorseChallenge();
+  else if(k==='horse-prepare'){if(LAST?.horseGrowth&&ridden()?.id===LAST.horseGrowth.horseId)G.seCare?.open?.('horse');else G.seCare?.open?.('myhorses');}
   else if(k==='rank'){ if(E().claimRank)E().claimRank(+a[1]); try{G.ui.renderLB();}catch(e){} G.ui.rerender('resultPanel'); }
   else if(k==='ribtier')claimRibTier(+a[1]);
   else if(k==='why'){ CARD={mode:'preview',ev:a[1]}; G.ui.open('resultPanel'); }
@@ -1193,7 +1280,7 @@ export function install(G){
  G.quest.addAch({id:'wkboard',icon:'📅',label:'On the board',desc:'Put a gold time on three weekly leaderboards',v:s=>Object.keys((s.weekly&&s.weekly.gold)||{}).length,goal:3,r:{g:6,k:2}});
 
  /* handles for QA and sister packages */
- G.ladder={FIELD:()=>FIELD,fieldRows,judgedOfWeek,judgedRows,placeIn,weekLeft,routeLen,goldOf,
+ G.ladder={FIELD:()=>FIELD,fieldRows,finalField,judgedOfWeek,judgedRows,placeIn,weekLeft,routeLen,goldOf,
   writeWeekly,tallyRibbons,RIB_TIERS,claimRibTier,ribTierReady,finalStandings,champPath,nextVenueHint,
   resumeRun,dropRun,checkpoint,resumeContext,openCard,last:()=>LAST,FIELD_N,featuredNow,entryLock};
 }

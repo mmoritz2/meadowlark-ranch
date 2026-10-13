@@ -1,0 +1,2632 @@
+{
+  "observedAt": "2026-10-13T18:45:48.010Z",
+  "phase": "first Elite completion from earned growth-button entry; before placement-module reload",
+  "result": "Pasture Pony Dash\n🎀🎀🎀\n21.0s\nMeadowlark Ranch · Race · 🔥 Elite · allowance 34.9s\n3 ribbons\n⭐⭐⭐\nBramble · Horse level 3\n+25 horse XP saved\n+15 bond saved\n44 / 200 horse XP · 156 XP to Lv 4\nRide again with Bramble\n🏁 The field — you finished P3 of 5\n👑 Redgate\n19.2s\n🥈 Fernmere\n20.8s\n🥉 You\n21.0s\n#4 Hollypark\n28.9s\n#5 Silverbirch\n32.1s\n📋 The score\n🏁 Race — the sheet\nPlacing\nP3/5 — Hollypark, Fernmere, Silverbirch, Redgate\nGates\n53% through the middle\nLine\nclean\nHazards hit\n0\n🎯 Accuracy 86%\n💰 What the round paid\nPurse 270🪙\n+297🪙 in the hand\n+2💎\n+30 racing points for the placing\n🎀 19 ribbons won all told\n🥈 Silver Stirrup\n500 racing points (+55 just now)\nNext: Gold Girth at 700 — 200 to go, and it pays 10💎 2🗝️ 5🎫.\n📝 Also this round\n💞 +1 breeding token from the race.\n🏇 +25 racing points\n🏁 Gates 53% · P3/5 of the field · line clean · 0 hazards — not tidy enough for the gold\n🏇 +30 racing points for finishing P3 of 5\n➡️ Next on the ladder\nCottonwood Welcome Jump is featured this week and still wants a gold ribbon from you — 1d 11h left. 🎫 Cottonwood is the next venue to sign off — ride Cottonwood Welcome Jump\nRide Cottonwood Welcome Jump\nWhat it pays\nRide it again\n🎟️ Rematch · faster field, double points\n🏅 The ladder\nClose",
+  "report": {
+    "ready": true,
+    "loading": false,
+    "status": "Flat race ended. Inspect the production result All fixture keys released; inspect the actual event before resuming.",
+    "controls": [],
+    "lastClick": null,
+    "errors": [],
+    "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+    "ridingDistance": {
+      "frames": 7878,
+      "travel": 758.9816554845623,
+      "ground": 758.9816554845623,
+      "gallop": 291.75430806637956,
+      "bond": 758.9816554845623,
+      "fastStationarySeconds": 0,
+      "frame": {
+        "mountId": 1,
+        "travel": 0,
+        "ground": 0,
+        "gallop": 0,
+        "bond": 0
+      },
+      "gait": "stand"
+    },
+    "story": {
+      "index": 1,
+      "progress": 300,
+      "saved": {
+        "index": 1,
+        "progress": 300,
+        "name": "Luna",
+        "era": 1,
+        "clues": []
+      },
+      "mission": {
+        "label": "Ride with {name}: gallop 300 m",
+        "type": "gallop",
+        "goal": 300,
+        "npc": "wren",
+        "talk": null
+      },
+      "guidance": {
+        "text": "Ride with Luna: gallop 300 m (300/300)\nReturn to Wren · reward ready",
+        "accessibleLabel": "Follow the marker back to Wren to collect your reward. Activate to open this action."
+      },
+      "target": null
+    },
+    "rescue": {
+      "definition": {
+        "id": "clover",
+        "name": "Bring Clover Home",
+        "description": "Follow the hoofprints, earn Clover’s trust, and lead her safely home.",
+        "minutes": "2–3 min",
+        "reward": {
+          "c": 180,
+          "xp": 60
+        },
+        "adoption": {
+          "name": "Clover",
+          "breed": "pinto"
+        },
+        "route": [
+          [
+            -60,
+            16
+          ],
+          [
+            -105,
+            14
+          ],
+          [
+            -105,
+            -41
+          ],
+          [
+            -70,
+            -41
+          ],
+          [
+            -42,
+            -34
+          ],
+          [
+            -40,
+            2
+          ],
+          [
+            -60,
+            16
+          ]
+        ]
+      },
+      "records": {
+        "version": 1,
+        "completions": 1,
+        "bestTime": 120.06,
+        "adopted": true,
+        "lastRunId": "clover-mv2ma7ni-1-x37f4",
+        "adoptedHorseId": 2,
+        "canAdopt": false
+      },
+      "lastResult": null,
+      "active": null
+    },
+    "journey": {
+      "chapters": [
+        {
+          "id": "first-partners",
+          "number": 1,
+          "name": "First Partners",
+          "description": "Find your stride and earn a lost horse’s trust.",
+          "goals": [
+            {
+              "id": "clover",
+              "label": "Bring Clover home",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rescue",
+                "id": "clover"
+              }
+            },
+            {
+              "id": "pasture",
+              "label": "Finish Pasture Dash",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 150,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "pad",
+              "style": "western",
+              "name": "Leaping Silver Pad of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-first-partners",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "steady-hands",
+          "number": 2,
+          "name": "Steady Hands",
+          "description": "Read the herd and keep a clean riding rhythm.",
+          "goals": [
+            {
+              "id": "three-home",
+              "label": "Pen all 3 horses in one beginner roundup",
+              "current": 3,
+              "target": 3,
+              "done": true,
+              "action": {
+                "kind": "roundup",
+                "mode": "beginner"
+              }
+            },
+            {
+              "id": "clean-chain",
+              "label": "Build a 4-obstacle chain in any Ranch Rush",
+              "current": 4,
+              "target": 4,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 200,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "bridle",
+              "style": "western",
+              "name": "Leaping Silver Bridle of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-steady-hands",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "river-rhythm",
+          "number": 3,
+          "name": "River Rhythm",
+          "description": "Take the river course and ride for a silver medal.",
+          "goals": [
+            {
+              "id": "river",
+              "label": "Finish River Run",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-river"
+              }
+            },
+            {
+              "id": "silver",
+              "label": "Earn silver or gold in any Ranch Rush",
+              "current": 2,
+              "target": 2,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 250,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "shoes",
+              "style": "western",
+              "name": "Leaping Silver Shoes of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-river-rhythm",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "trail-partners",
+          "number": 4,
+          "name": "Trail Partners",
+          "description": "Ride the longer trail and bring the whole herd home.",
+          "goals": [
+            {
+              "id": "trail",
+              "label": "Finish Trailblazer",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-trail"
+              }
+            },
+            {
+              "id": "five-home",
+              "label": "Pen all 5 horses in one full roundup",
+              "current": 4,
+              "target": 5,
+              "done": false,
+              "action": {
+                "kind": "roundup",
+                "mode": "full"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 350,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "saddle",
+              "style": "western",
+              "name": "Leaping Silver Saddle of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "active",
+          "gearId": "journey-trail-partners",
+          "owned": false,
+          "equipped": false
+        },
+        {
+          "id": "meadowlark-champion",
+          "number": 5,
+          "name": "Meadowlark Champion",
+          "description": "Put everything together: four gold medals and a champion’s saddle.",
+          "goals": [
+            {
+              "id": "pasture-gold",
+              "label": "Earn gold in Pasture Dash",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            },
+            {
+              "id": "river-gold",
+              "label": "Earn gold in River Run",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "rush",
+                "id": "rush-river"
+              }
+            },
+            {
+              "id": "trail-gold",
+              "label": "Earn gold in Trailblazer",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "rush",
+                "id": "rush-trail"
+              }
+            },
+            {
+              "id": "roundup-gold",
+              "label": "Earn gold in the 5-horse roundup",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "roundup",
+                "mode": "full"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 750,
+            "gear": {
+              "rarity": "Legendary",
+              "set": "Aurora",
+              "slot": "saddle",
+              "style": "western",
+              "name": "Leaping Aurora Saddle of Agility",
+              "bonus": {
+                "jump": 5,
+                "agility": 5,
+                "stamina": 2
+              }
+            }
+          },
+          "status": "locked",
+          "gearId": "journey-meadowlark-champion",
+          "owned": false,
+          "equipped": false
+        }
+      ],
+      "current": {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 4,
+            "target": 5,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "active",
+        "gearId": "journey-trail-partners",
+        "owned": false,
+        "equipped": false
+      },
+      "claimedCount": 3,
+      "complete": false,
+      "title": null,
+      "lastClaim": {
+        "id": "river-rhythm",
+        "name": "River Rhythm",
+        "coins": 250,
+        "gearId": "journey-river-rhythm",
+        "gearName": "Leaping Silver Shoes of Stamina",
+        "bonus": {
+          "jump": 3,
+          "stamina": 1
+        }
+      },
+      "nextAction": {
+        "kind": "roundup",
+        "mode": "full"
+      }
+    },
+    "rush": {
+      "definitions": [
+        {
+          "id": "rush-pasture",
+          "name": "Pasture Dash",
+          "subtitle": "Find your rhythm",
+          "description": "Follow the glowing gates and hold a clean chain around the home pasture.",
+          "route": "rush-pp",
+          "minutes": "30–60 sec",
+          "obstacles": 6,
+          "fences": 0,
+          "fenceLegs": [],
+          "targetTime": 30,
+          "reward": 150,
+          "town": "Home Ranch",
+          "medals": {
+            "bronze": 300,
+            "silver": 850,
+            "gold": 1200
+          }
+        },
+        {
+          "id": "rush-river",
+          "name": "River Run",
+          "subtitle": "Add a little airtime",
+          "description": "Chase the riverside gates and clear two low logs. Good jumps keep your chain alive.",
+          "route": "rr",
+          "minutes": "40–75 sec",
+          "obstacles": 8,
+          "fences": 2,
+          "fenceLegs": [
+            1,
+            3
+          ],
+          "targetTime": 40,
+          "reward": 210,
+          "town": "Loon Lake",
+          "medals": {
+            "bronze": 500,
+            "silver": 1350,
+            "gold": 1850
+          }
+        },
+        {
+          "id": "rush-trail",
+          "name": "Trailblazer",
+          "subtitle": "Put it all together",
+          "description": "Ride the open Barleyfold trail, link three log jumps, and beat your own best splits.",
+          "route": "xc1",
+          "minutes": "50–90 sec",
+          "obstacles": 10,
+          "fences": 3,
+          "fenceLegs": [
+            1,
+            3,
+            5
+          ],
+          "targetTime": 50,
+          "reward": 270,
+          "town": "Barleyfold",
+          "medals": {
+            "bronze": 600,
+            "silver": 1650,
+            "gold": 2350
+          }
+        }
+      ],
+      "records": {
+        "rush-pasture": {
+          "plays": 1,
+          "bestScore": 1271,
+          "bestTime": 35.9,
+          "medal": "gold",
+          "bestCombo": 6,
+          "splits": [
+            5.54,
+            11.68,
+            20.1,
+            25.65,
+            29.88,
+            35.9
+          ],
+          "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+          "lastRunId": "mv2mggc9-1-febb42"
+        },
+        "rush-river": {
+          "plays": 3,
+          "bestScore": 1400,
+          "bestTime": 95.46,
+          "medal": "silver",
+          "bestCombo": 6,
+          "splits": [
+            1.87,
+            7.44,
+            72.12,
+            75.16,
+            80.86,
+            85.56,
+            88.83,
+            95.46
+          ],
+          "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+          "lastRunId": "mv2r8fvw-1-zqlzum"
+        },
+        "rush-trail": {
+          "plays": 1,
+          "bestScore": 2034,
+          "bestTime": 50.77,
+          "medal": "silver",
+          "bestCombo": 7,
+          "splits": [
+            2.15,
+            9.47,
+            14.82,
+            17.77,
+            24.95,
+            32.11,
+            35.89,
+            43.72,
+            48.33,
+            50.77
+          ],
+          "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+          "lastRunId": "mv2req07-1-o7t2pz"
+        }
+      },
+      "lastResult": null,
+      "active": null
+    },
+    "rushCourse": null,
+    "eventCourse": {
+      "id": "pp",
+      "name": "Pasture Pony Dash",
+      "active": false,
+      "started": true,
+      "countdown": -0.08059999999403927,
+      "elapsed": 21.017800000011917,
+      "index": 6,
+      "total": 6,
+      "lap": 1,
+      "laps": 1,
+      "difficulty": "elite",
+      "timeAllowed": 34.85795717663246,
+      "target": null,
+      "gateGuide": null,
+      "faults": 0,
+      "lineOff": 0,
+      "accuracy": 1,
+      "raceAccuracy": 0.8591222271564691,
+      "horse": {
+        "id": 1,
+        "name": "Bramble",
+        "breed": "bay-sporthorse"
+      },
+      "player": {
+        "x": -41.114075781547434,
+        "z": -0.7538967270036376,
+        "heading": -6.574392668658201,
+        "speed": 0,
+        "stam": 1,
+        "blown": false,
+        "exhaustT": 0,
+        "landT": 0
+      },
+      "resultText": null
+    },
+    "eventTrace": [
+      {
+        "elapsed": 0,
+        "index": 0,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 0,
+          "target": {
+            "x": -60,
+            "z": 16
+          },
+          "waypoints": [
+            {
+              "x": -60,
+              "z": 16
+            }
+          ]
+        },
+        "player": {
+          "x": -50.01247661122155,
+          "z": 16.49937616943892,
+          "speed": 0
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0,
+          "ground": 0,
+          "gallop": 0,
+          "bond": 0
+        },
+        "driver": "Flat race ended. Inspect the production result"
+      },
+      {
+        "elapsed": 0.5891000000089407,
+        "index": 0,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 0,
+          "target": {
+            "x": -60,
+            "z": 16
+          },
+          "waypoints": [
+            {
+              "x": -60,
+              "z": 16
+            }
+          ]
+        },
+        "player": {
+          "x": -51.552787883150685,
+          "z": 16.422360605842464,
+          "speed": 4.320217522143634
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.3486415539854892,
+          "ground": 0.3486415539854892,
+          "gallop": 0,
+          "bond": 0.3486415539854892
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 1.0905,
+        "index": 0,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 0,
+          "target": {
+            "x": -60,
+            "z": 16
+          },
+          "waypoints": [
+            {
+              "x": -60,
+              "z": 16
+            }
+          ]
+        },
+        "player": {
+          "x": -53.777065578559046,
+          "z": 16.31114672107205,
+          "speed": 4.5201723738690225
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.36025773821083856,
+          "ground": 0.36025773821083856,
+          "gallop": 0,
+          "bond": 0.36025773821083856
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 1.5886000000089406,
+        "index": 1,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 1,
+          "target": {
+            "x": -100,
+            "z": 14
+          },
+          "waypoints": [
+            {
+              "x": -100,
+              "z": 14
+            }
+          ]
+        },
+        "player": {
+          "x": -56.05682869938305,
+          "z": 16.197158565030854,
+          "speed": 4.60613182957812
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.37033299905689754,
+          "ground": 0.37033299905689754,
+          "gallop": 0,
+          "bond": 0.37033299905689754
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 2.0914000000059607,
+        "index": 1,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 1,
+          "target": {
+            "x": -100,
+            "z": 14
+          },
+          "waypoints": [
+            {
+              "x": -100,
+              "z": 14
+            }
+          ]
+        },
+        "player": {
+          "x": -60.912605370982064,
+          "z": 15.95436973145091,
+          "speed": 12.292180906731879
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.0239386694941408,
+          "ground": 1.0239386694941408,
+          "gallop": 1.0239386694941408,
+          "bond": 1.0239386694941408
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 2.6609000000059604,
+        "index": 1,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 1,
+          "target": {
+            "x": -100,
+            "z": 14
+          },
+          "waypoints": [
+            {
+              "x": -100,
+              "z": 14
+            }
+          ]
+        },
+        "player": {
+          "x": -69.28312989155388,
+          "z": 15.535843505422331,
+          "speed": 15.839943782117494
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.3939150528263307,
+          "ground": 1.3939150528263307,
+          "gallop": 1.3939150528263307,
+          "bond": 1.3939150528263307
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 3.19370000000298,
+        "index": 1,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 1,
+          "target": {
+            "x": -100,
+            "z": 14
+          },
+          "waypoints": [
+            {
+              "x": -100,
+              "z": 14
+            }
+          ]
+        },
+        "player": {
+          "x": -78.12987360343834,
+          "z": 15.093506319828109,
+          "speed": 18.07803035061048
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.4281643976982374,
+          "ground": 1.4281643976982374,
+          "gallop": 1.4281643976982374,
+          "bond": 1.4281643976982374
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 2.988100000008941,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -96.23823158864349,
+          "z": 14.188088420567873,
+          "speed": 7.80587343822623
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5916852065942884,
+          "ground": 0.5916852065942884,
+          "gallop": 0,
+          "bond": 0.5916852065942884
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 3.523000000000001,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -96.93927976783688,
+          "z": 13.808823580200253,
+          "speed": 1.3330259085807254
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.12423801468369657,
+          "ground": 0.12423801468369657,
+          "gallop": 0,
+          "bond": 0.12423801468369657
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 4.102000000000001,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -97.38559523096453,
+          "z": 10.52090486559126,
+          "speed": 9.607640497774282
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.7741421431109876,
+          "ground": 0.7741421431109876,
+          "gallop": 0,
+          "bond": 0.7741421431109876
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 4.602400000005961,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -97.77900499403988,
+          "z": 5.121475401602682,
+          "speed": 10.51990656667076
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.8768624648128329,
+          "ground": 0.8768624648128329,
+          "gallop": 0,
+          "bond": 0.8768624648128329
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 5.10320000000298,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -98.65541892445263,
+          "z": 0.5427317985662927,
+          "speed": 8.878426421791673
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.736657168519962,
+          "ground": 0.736657168519962,
+          "gallop": 0,
+          "bond": 0.736657168519962
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 5.6697000000029805,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -99.76137295733835,
+          "z": -3.6582131876650386,
+          "speed": 6.313835954874344
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5183659318575523,
+          "ground": 0.5183659318575523,
+          "gallop": 0,
+          "bond": 0.5183659318575523
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 6.232900000005961,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 2,
+          "target": {
+            "x": -101.9559596426131,
+            "z": -9.313136779426468
+          },
+          "waypoints": [
+            {
+              "x": -101.9559596426131,
+              "z": -9.313136779426468
+            },
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -100.86439500880707,
+          "z": -6.488711753200301,
+          "speed": 5.012041324612421
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.40497293901374987,
+          "ground": 0.40497293901374987,
+          "gallop": 0,
+          "bond": 0.40497293901374987
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 6.773100000008942,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 2,
+          "target": {
+            "x": -102,
+            "z": -36
+          },
+          "waypoints": [
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -101.81252015621286,
+          "z": -8.921724643655775,
+          "speed": 4.746404518896811
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.3863573277957672,
+          "ground": 0.3863573277957672,
+          "gallop": 0,
+          "bond": 0.3863573277957672
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 7.329200000002983,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 2,
+          "target": {
+            "x": -102,
+            "z": -36
+          },
+          "waypoints": [
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -101.6836496586279,
+          "z": -13.149922388940404,
+          "speed": 10.148699041431602
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.8611046058567527,
+          "ground": 0.8611046058567527,
+          "gallop": 0,
+          "bond": 0.8611046058567527
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 7.901400000005962,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 2,
+          "target": {
+            "x": -102,
+            "z": -36
+          },
+          "waypoints": [
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -100.7978674151858,
+          "z": -20.099944020442912,
+          "speed": 12.35637341565872
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.0909385859301508,
+          "ground": 1.0909385859301508,
+          "gallop": 1.0909385859301508,
+          "bond": 1.0909385859301508
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 8.418500000000002,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 2,
+          "target": {
+            "x": -102,
+            "z": -36
+          },
+          "waypoints": [
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -101.95415370156361,
+          "z": -25.660232002064134,
+          "speed": 10.698262799406097
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.8800026110212045,
+          "ground": 0.8800026110212045,
+          "gallop": 0,
+          "bond": 0.8800026110212045
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 8.986500000000003,
+        "index": 2,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 2,
+          "target": {
+            "x": -102,
+            "z": -36
+          },
+          "waypoints": [
+            {
+              "x": -102,
+              "z": -36
+            }
+          ]
+        },
+        "player": {
+          "x": -101.59870657726194,
+          "z": -30.619074375146347,
+          "speed": 7.227557518319684
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5804738989259115,
+          "ground": 0.5804738989259115,
+          "gallop": 0,
+          "bond": 0.5804738989259115
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 9.231100000008945,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -83.17611061468565,
+            "z": -32.485133201678586
+          },
+          "waypoints": [
+            {
+              "x": -83.17611061468565,
+              "z": -32.485133201678586
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -101.42087851158264,
+          "z": -32.12674181177527,
+          "speed": 5.37629701281563
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.4123619808188717,
+          "ground": 0.4123619808188717,
+          "gallop": 0,
+          "bond": 0.4123619808188717
+        },
+        "driver": "waiting for current production gate route"
+      },
+      {
+        "elapsed": 9.758900000005964,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -83.17611061468565,
+            "z": -32.485133201678586
+          },
+          "waypoints": [
+            {
+              "x": -83.17611061468565,
+              "z": -32.485133201678586
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -101.25743006632116,
+          "z": -32.99895498692674,
+          "speed": 0.579690956891065
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.04614340016507583,
+          "ground": 0.04614340016507583,
+          "gallop": 0,
+          "bond": 0.04614340016507583
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 10.277900000005964,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -80.32826119835799,
+            "z": -39.385915109497866
+          },
+          "waypoints": [
+            {
+              "x": -80.32826119835799,
+              "z": -39.385915109497866
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -100.59071667665472,
+          "z": -33.10635318289477,
+          "speed": 2.780660103428858
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.2408051649403603,
+          "ground": 0.2408051649403603,
+          "gallop": 0,
+          "bond": 0.2408051649403603
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 10.653200000002984,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -86.75037320210812,
+            "z": -32.08415991861974
+          },
+          "waypoints": [
+            {
+              "x": -86.75037320210812,
+              "z": -32.08415991861974
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -99.08476230585588,
+          "z": -33.013054658269354,
+          "speed": 4.609531109636476
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.4093608592985706,
+          "ground": 0.4093608592985706,
+          "gallop": 0,
+          "bond": 0.4093608592985706
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 11.240100000008946,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -86.75037320210812,
+            "z": -32.08415991861974
+          },
+          "waypoints": [
+            {
+              "x": -86.75037320210812,
+              "z": -32.08415991861974
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -95.93638727116974,
+          "z": -33.27870955298549,
+          "speed": 6.255460664522811
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5822366832496405,
+          "ground": 0.5822366832496405,
+          "gallop": 0,
+          "bond": 0.5822366832496405
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 11.768700000002985,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -86.75037320210812,
+            "z": -32.08415991861974
+          },
+          "waypoints": [
+            {
+              "x": -86.75037320210812,
+              "z": -32.08415991861974
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -92.97576540181693,
+          "z": -32.76500674119441,
+          "speed": 5.223122465410685
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.48152225519216213,
+          "ground": 0.48152225519216213,
+          "gallop": 0,
+          "bond": 0.48152225519216213
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 12.293900000005966,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -86.75037320210812,
+            "z": -32.08415991861974
+          },
+          "waypoints": [
+            {
+              "x": -86.75037320210812,
+              "z": -32.08415991861974
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -90.33189319352256,
+          "z": -32.48149476164063,
+          "speed": 4.7930411877409975
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5142933194303355,
+          "ground": 0.5142933194303355,
+          "gallop": 0,
+          "bond": 0.5142933194303355
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 12.820200000002986,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "detour",
+          "gateIndex": 3,
+          "target": {
+            "x": -86.75037320210812,
+            "z": -32.08415991861974
+          },
+          "waypoints": [
+            {
+              "x": -86.75037320210812,
+              "z": -32.08415991861974
+            },
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -87.96894959816412,
+          "z": -32.22810777334662,
+          "speed": 4.701256653366604
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.3925549305560984,
+          "ground": 0.3925549305560984,
+          "gallop": 0,
+          "bond": 0.3925549305560984
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 12.991500000000006,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 3,
+          "target": {
+            "x": -70,
+            "z": -38
+          },
+          "waypoints": [
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -87.08354831280148,
+          "z": -32.13316299109688,
+          "speed": 4.6889864541072095
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.4782766183189387,
+          "ground": 0.4782766183189387,
+          "gallop": 0,
+          "bond": 0.4782766183189387
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 13.534200000002986,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 3,
+          "target": {
+            "x": -70,
+            "z": -38
+          },
+          "waypoints": [
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -84.12290671825639,
+          "z": -33.26839103677608,
+          "speed": 6.842804771306314
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.6046872726549775,
+          "ground": 0.6046872726549775,
+          "gallop": 0,
+          "bond": 0.6046872726549775
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 14.050000000000006,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 3,
+          "target": {
+            "x": -70,
+            "z": -38
+          },
+          "waypoints": [
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -80.72232347814806,
+          "z": -34.8288087486477,
+          "speed": 7.705866391161711
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.6326516307832883,
+          "ground": 0.6326516307832883,
+          "gallop": 0,
+          "bond": 0.6326516307832883
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 14.566700000002985,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 3,
+          "target": {
+            "x": -70,
+            "z": -38
+          },
+          "waypoints": [
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -76.96124822428885,
+          "z": -36.02515820523432,
+          "speed": 6.744308596510842
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5658474912874528,
+          "ground": 0.5658474912874528,
+          "gallop": 0,
+          "bond": 0.5658474912874528
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 15.092400000005966,
+        "index": 3,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 3,
+          "target": {
+            "x": -70,
+            "z": -38
+          },
+          "waypoints": [
+            {
+              "x": -70,
+              "z": -38
+            }
+          ]
+        },
+        "player": {
+          "x": -73.4983141701593,
+          "z": -36.81363215543895,
+          "speed": 5.000086311024531
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.071439387415627,
+          "ground": 1.071439387415627,
+          "gallop": 0,
+          "bond": 1.071439387415627
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 15.308400000005966,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -73.11443834627077,
+          "z": -36.70749615972923,
+          "speed": 4.933554747700678
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.39827816630012747,
+          "ground": 0.39827816630012747,
+          "gallop": 0,
+          "bond": 0.39827816630012747
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 15.884299999997022,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -69.59769955911898,
+          "z": -36.11265090530746,
+          "speed": 6.867182094975768
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.6922388569662432,
+          "ground": 0.6922388569662432,
+          "gallop": 0,
+          "bond": 0.6922388569662432
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 16.4065,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -65.10319606131111,
+          "z": -35.21106978946277,
+          "speed": 10.11200664655507
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.0005548277284197,
+          "ground": 1.0005548277284197,
+          "gallop": 0,
+          "bond": 1.0005548277284197
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 17.088299999997023,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -57.150085439637486,
+          "z": -35.5742739989716,
+          "speed": 9.263418125229897
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 2.279070877247311,
+          "ground": 2.279070877247311,
+          "gallop": 0,
+          "bond": 2.279070877247311
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 17.66129999999702,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -54.94163855131841,
+          "z": -36.27903951448247,
+          "speed": 5.252449172040145
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.5720899159631226,
+          "ground": 0.5720899159631226,
+          "gallop": 0,
+          "bond": 0.5720899159631226
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 18.212599999994037,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -51.17227975978273,
+          "z": -35.21241239198217,
+          "speed": 8.216089769240815
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.8598532734532406,
+          "ground": 0.8598532734532406,
+          "gallop": 0,
+          "bond": 0.8598532734532406
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 18.729499999999994,
+        "index": 4,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 4,
+          "target": {
+            "x": -42,
+            "z": -34
+          },
+          "waypoints": [
+            {
+              "x": -42,
+              "z": -34
+            }
+          ]
+        },
+        "player": {
+          "x": -47.45022794684075,
+          "z": -34.07425613886196,
+          "speed": 6.518317482767739
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.8098527982326754,
+          "ground": 0.8098527982326754,
+          "gallop": 0,
+          "bond": 0.8098527982326754
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 19.074099999994036,
+        "index": 5,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 5,
+          "target": {
+            "x": -40,
+            "z": 2
+          },
+          "waypoints": [
+            {
+              "x": -40,
+              "z": 2
+            }
+          ]
+        },
+        "player": {
+          "x": -45.64204665816531,
+          "z": -33.70700998217079,
+          "speed": 4.512303426718545
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.4968046073220507,
+          "ground": 0.4968046073220507,
+          "gallop": 0,
+          "bond": 0.4968046073220507
+        },
+        "driver": "waiting for current production gate route"
+      },
+      {
+        "elapsed": 19.623799999997015,
+        "index": 5,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 5,
+          "target": {
+            "x": -40,
+            "z": 2
+          },
+          "waypoints": [
+            {
+              "x": -40,
+              "z": 2
+            }
+          ]
+        },
+        "player": {
+          "x": -44.97719779661936,
+          "z": -33.54542227525581,
+          "speed": 0.3766751103942662
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.04388265036093587,
+          "ground": 0.04388265036093587,
+          "gallop": 0,
+          "bond": 0.04388265036093587
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 20.186700000002975,
+        "index": 5,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 5,
+          "target": {
+            "x": -40,
+            "z": 2
+          },
+          "waypoints": [
+            {
+              "x": -40,
+              "z": 2
+            }
+          ]
+        },
+        "player": {
+          "x": -44.504642497885214,
+          "z": -31.308332989358572,
+          "speed": 7.930568331514452
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 0.7906776626756253,
+          "ground": 0.7906776626756253,
+          "gallop": 0,
+          "bond": 0.7906776626756253
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 20.696599999994035,
+        "index": 5,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 5,
+          "target": {
+            "x": -40,
+            "z": 2
+          },
+          "waypoints": [
+            {
+              "x": -40,
+              "z": 2
+            }
+          ]
+        },
+        "player": {
+          "x": -43.60824771064488,
+          "z": -25.060758839568603,
+          "speed": 13.882046838658844
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 1.6589045972197374,
+          "ground": 1.6589045972197374,
+          "gallop": 1.6589045972197374,
+          "bond": 1.6589045972197374
+        },
+        "driver": "running Pasture Pony Dash"
+      },
+      {
+        "elapsed": 21.321000000014894,
+        "index": 5,
+        "lap": 1,
+        "guide": {
+          "phase": "direct",
+          "gateIndex": 5,
+          "target": {
+            "x": -40,
+            "z": 2
+          },
+          "waypoints": [
+            {
+              "x": -40,
+              "z": 2
+            }
+          ]
+        },
+        "player": {
+          "x": -42.13141538481585,
+          "z": -14.767727695524702,
+          "speed": 18.102743667808944
+        },
+        "frameTravel": {
+          "mountId": 1,
+          "travel": 2.3605977741204365,
+          "ground": 2.3605977741204365,
+          "gallop": 2.3605977741204365,
+          "bond": 2.3605977741204365
+        },
+        "driver": "running Pasture Pony Dash"
+      }
+    ],
+    "rushTrace": [],
+    "roundup": {
+      "active": false,
+      "shared": null,
+      "paused": false,
+      "mode": "beginner",
+      "name": "Gentle Roundup",
+      "timeLimit": 150,
+      "goldTimeLimit": 97.5,
+      "pending": null,
+      "countdown": 0,
+      "timeLeft": 0,
+      "elapsed": 0,
+      "total": 3,
+      "penned": 0,
+      "pen": {
+        "x": -44,
+        "z": -8,
+        "r": 7.5
+      },
+      "target": null,
+      "horses": [],
+      "records": {
+        "beginner": {
+          "plays": 2,
+          "score": 1118,
+          "penned": 3,
+          "time": 106.33,
+          "medal": "silver",
+          "lastRunId": "mv2p9xsk-k0bvgg"
+        },
+        "full": {
+          "plays": 1,
+          "score": 1200,
+          "penned": 4,
+          "time": null,
+          "medal": "bronze",
+          "lastRunId": "mv2rp0ef-bjlws1"
+        }
+      },
+      "lastResult": null
+    },
+    "roundupGeometry": {
+      "bounds": {
+        "x1": -110,
+        "x2": -33,
+        "z1": -45,
+        "z2": 25
+      },
+      "colliders": [
+        {
+          "x": -87.64860224851601,
+          "z": 25.78094539068095,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -93.12973646042448,
+          "z": -46.36608544852551,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -56.88463261379308,
+          "z": 4.901260265908657,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -33.71161564761253,
+          "z": -1.1511935441802794,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -48.39091115793126,
+          "z": -17.197444503655447,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -53.92684003505438,
+          "z": -15.772391704438535,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -50.33997945034867,
+          "z": -5.932979075008545,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -94.13306051041378,
+          "z": 17.838286945793286,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -105.99849233551768,
+          "z": 21.765920728565654,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -96.6647763558915,
+          "z": -20.65450736288069,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -68.65571067075663,
+          "z": -16.67737117228306,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -72.18134326553451,
+          "z": -30.533881376962718,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -63.47041401015627,
+          "z": 8.663664507648885,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -69.32549007638156,
+          "z": 27.79027043604206,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -85.18303164273318,
+          "z": 20.807348847199492,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -58.82627585379257,
+          "z": -12.811590218302591,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -67.50868235867229,
+          "z": -25.60674761729169,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -89.19519458089125,
+          "z": 26.59340845706155,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -60.61938410543736,
+          "z": 28.40387549466587,
+          "r": 1.4927745254123659,
+          "precise": false
+        },
+        {
+          "x": -40.70726711708648,
+          "z": -45.70557345991205,
+          "r": 0.75,
+          "precise": false
+        },
+        {
+          "x": -53.50568112705863,
+          "z": 4.921040195789571,
+          "r": 1.4208444068455564,
+          "precise": false
+        },
+        {
+          "x": -59,
+          "z": -19,
+          "r": 3.4,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 3.2,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 7.5,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 11.8,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -46,
+          "z": -6,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -36,
+          "z": -1,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -37,
+          "z": 10,
+          "r": 1.14,
+          "precise": false
+        },
+        {
+          "x": -38.8,
+          "z": 12.2,
+          "r": 1.212,
+          "precise": false
+        },
+        {
+          "x": -37.4,
+          "z": 14.4,
+          "r": 1.2839999999999998,
+          "precise": false
+        },
+        {
+          "x": -39.4,
+          "z": 9.2,
+          "r": 1.14,
+          "precise": false
+        },
+        {
+          "x": -38.7,
+          "z": 16.1,
+          "r": 1.212,
+          "precise": false
+        },
+        {
+          "x": -36.5,
+          "z": -9.5,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -50.7,
+          "z": -17.5,
+          "r": 1.4,
+          "precise": false
+        },
+        {
+          "x": -46,
+          "z": -4,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -31,
+          "z": -38,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -54.32627585379257,
+          "z": -9.711590218302591,
+          "r": 1.25,
+          "precise": false
+        },
+        {
+          "x": -113.0899431870042,
+          "z": 3.0667255050833604,
+          "r": 1.25,
+          "precise": false
+        }
+      ],
+      "walls": [
+        {
+          "x1": -110,
+          "z1": -45,
+          "x2": -33,
+          "z2": -45
+        },
+        {
+          "x1": -110,
+          "z1": 25,
+          "x2": -33,
+          "z2": 25
+        },
+        {
+          "x1": -110,
+          "z1": -45,
+          "x2": -110,
+          "z2": 25
+        },
+        {
+          "x1": -33,
+          "z1": -45,
+          "x2": -33,
+          "z2": -11.2
+        },
+        {
+          "x1": -33,
+          "z1": -6.8,
+          "x2": -33,
+          "z2": 25
+        }
+      ]
+    },
+    "roundupTrace": [],
+    "scenery": {
+      "undergrowth": "settled",
+      "photoscans": "settled",
+      "worldDetails": "settled",
+      "builder": "settled"
+    },
+    "adoptedMount": {
+      "available": true,
+      "name": "Clover",
+      "horseId": 2,
+      "selected": false,
+      "ready": false,
+      "loading": false,
+      "error": null
+    },
+    "player": {
+      "x": -41.114075781547434,
+      "z": -0.7538967270036376,
+      "heading": -6.574392668658201,
+      "speed": 0,
+      "stam": 1,
+      "blown": false,
+      "exhaustT": 0,
+      "landT": 0,
+      "rigReady": true,
+      "horseId": 1,
+      "horseName": "Bramble",
+      "breed": "bay-sporthorse",
+      "modelKey": "bay-sporthorse",
+      "loadingBreed": false
+    },
+    "ui": {
+      "blocked": true,
+      "bodyClasses": "se-hud se-frame-open se-screen-open",
+      "dialogVisible": false
+    },
+    "driver": {
+      "active": false,
+      "status": "Flat race ended. Inspect the production result",
+      "steps": 475,
+      "target": {
+        "x": -40,
+        "z": 2,
+        "distance": 5.61406399284856,
+        "checkpoint": 6,
+        "total": 6,
+        "lap": 1,
+        "kind": "gate",
+        "gait": "trot",
+        "guidePhase": "direct"
+      }
+    },
+    "networkConnected": false,
+    "networkStopped": false,
+    "featureErrors": [],
+    "saveSummary": {
+      "coins": 5773,
+      "gems": 66,
+      "bestTimes": {
+        "rush-pasture": 35.9,
+        "rush-river": 95.5,
+        "rush-trail": 50.8,
+        "pp": 21
+      },
+      "ribbons": {
+        "rush-pasture": 2,
+        "rush-river": 1,
+        "rush-trail": 2,
+        "pp": 3
+      },
+      "ribbonsBy": {
+        "rush-pasture:novice": 2,
+        "rush-river:novice": 1,
+        "rush-trail:novice": 2,
+        "pp:open": 4,
+        "pp:elite": 3
+      },
+      "ribbonGold": {},
+      "ribbonAwards": {
+        "version": 1,
+        "byDifficulty": {
+          "pp:open": {
+            "last": {
+              "id": "mv712kyn-3-qz6cde",
+              "eventId": "pp",
+              "diff": "open",
+              "rib": 3,
+              "stars": 3,
+              "gold": false,
+              "accuracy": 0.856,
+              "time": 23.57790000000597,
+              "faults": 0,
+              "refusals": 0,
+              "lineOff": 0,
+              "at": 1791916956204,
+              "saved": true
+            },
+            "bestRib": 3,
+            "bestGold": false
+          },
+          "pp:elite": {
+            "last": {
+              "id": "mv715kds-4-nn0g2d",
+              "eventId": "pp",
+              "diff": "elite",
+              "rib": 3,
+              "stars": 3,
+              "gold": false,
+              "accuracy": 0.859,
+              "time": 21.017800000011917,
+              "faults": 0,
+              "refusals": 0,
+              "lineOff": 0,
+              "at": 1791917092784,
+              "saved": true
+            },
+            "bestRib": 3,
+            "bestGold": false
+          }
+        }
+      },
+      "breedingWeek": {
+        "week": "2026-10-12",
+        "ribbons": 20
+      },
+      "horseCount": 2,
+      "riderCreated": true,
+      "ridingHorseId": 1,
+      "horseNames": [
+        {
+          "id": 1,
+          "name": "Bramble",
+          "breed": "bay-sporthorse",
+          "level": 3,
+          "bond": 93
+        },
+        {
+          "id": 2,
+          "name": "Clover",
+          "breed": "pinto",
+          "level": 2,
+          "bond": 58
+        }
+      ],
+      "totalRaces": 0,
+      "racing": {
+        "races": 13,
+        "points": 500,
+        "wins": 0,
+        "pvp": 0
+      },
+      "fieldRacing": {
+        "races": 8,
+        "wins": 4,
+        "podiums": 6
+      },
+      "ribbonTotal": 26,
+      "ladderRibbonTotal": 19,
+      "rescue": {
+        "completions": 1,
+        "adopted": true
+      },
+      "journey": {
+        "version": 1,
+        "claimed": {
+          "first-partners": {
+            "at": 1791650619995,
+            "gearId": "journey-first-partners"
+          },
+          "steady-hands": {
+            "at": 1791654968498,
+            "gearId": "journey-steady-hands"
+          },
+          "river-rhythm": {
+            "at": 1791656399494,
+            "gearId": "journey-river-rhythm"
+          }
+        },
+        "lastClaimId": "river-rhythm"
+      },
+      "rush": {
+        "rush-pasture": {
+          "plays": 1,
+          "bestScore": 1271,
+          "bestTime": 35.9,
+          "medal": "gold",
+          "bestCombo": 6,
+          "splits": [
+            5.54,
+            11.68,
+            20.1,
+            25.65,
+            29.88,
+            35.9
+          ],
+          "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+          "lastRunId": "mv2mggc9-1-febb42"
+        },
+        "rush-river": {
+          "plays": 3,
+          "bestScore": 1400,
+          "bestTime": 95.46,
+          "medal": "silver",
+          "bestCombo": 6,
+          "splits": [
+            1.87,
+            7.44,
+            72.12,
+            75.16,
+            80.86,
+            85.56,
+            88.83,
+            95.46
+          ],
+          "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+          "lastRunId": "mv2r8fvw-1-zqlzum"
+        },
+        "rush-trail": {
+          "plays": 1,
+          "bestScore": 2034,
+          "bestTime": 50.77,
+          "medal": "silver",
+          "bestCombo": 7,
+          "splits": [
+            2.15,
+            9.47,
+            14.82,
+            17.77,
+            24.95,
+            32.11,
+            35.89,
+            43.72,
+            48.33,
+            50.77
+          ],
+          "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+          "lastRunId": "mv2req07-1-o7t2pz"
+        }
+      }
+    }
+  }
+}

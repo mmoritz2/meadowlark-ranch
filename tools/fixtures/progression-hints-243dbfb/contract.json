@@ -1,0 +1,12 @@
+{
+  "baseline": "243dbfb43dccf9cd2df44016d5ea018298e589ef",
+  "file": "ranch3d.html",
+  "beforeSHA256": "23139ff6e2451b76f987fb9f27d20e6ddb1acc8086ad4babbe426f6dd478eb6c",
+  "afterSHA256": "9839a993664e37157e98c141d3a3e3f48aa8372218c85522bd64ce8a9c9d41b0",
+  "scope": "One announcement eligibility predicate only; no save mutation, counter migration, reward or event-entry changes.",
+  "change": {
+    "before": "s?.story?.era===2&&s.totalRaces>0&&!$('load')",
+    "after": "s?.story?.era===2&&(s.racing?.races>0||s.totalRaces>0)&&!$('load')",
+    "occurrences": 1
+  }
+}

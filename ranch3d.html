@@ -721,7 +721,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lash
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2-fieldstone-walls-3';
+import {FEATURES} from './assets/features/index.js?v=physical-ride-3-starter-tack-2-fieldstone-walls-3';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -15155,7 +15155,7 @@ function installFeatures(){
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth,dayT:()=>dayT},
   roundup:{start:startRoundup,cancel:()=>endRoundup(true),retrySave:retryRoundupSave,pending:()=>ROUND.pending?.proof||null,state:roundupState,shared:{start:startSharedRoundup,state:sharedRoundupState,setStartupWaiting:setSharedRoundupStartupWaiting,setRiders:setSharedRoundupRiders,applySnapshot:applySharedRoundupSnapshot,stop:stopSharedRoundup}},
   course:{get:()=>course,drillActive:()=>DRILL.on||!!DRILL.pending,drillState,cancelDrill,riddenGait:()=>gaitName(Math.abs(player.speed)),arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,retryDrillSave,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS,styleGates,ROUTE_REV,routeRev:routeRevOf,boardKey},
-  ui:{canAnnounce(){const s=freshSave();return s?.story?.era===2&&s.totalRaces>0&&!$('load')&&!document.body.classList.contains('se-screen-open')&&!G.dialogue?.active&&!course;},panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
+  ui:{canAnnounce(){const s=freshSave();return s?.story?.era===2&&(s.racing?.races>0||s.totalRaces>0)&&!$('load')&&!document.body.classList.contains('se-screen-open')&&!G.dialogue?.active&&!course;},panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
    shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
    careSection:f=>uiSection('care',f),careHeader:f=>uiSection('careHeader',f),stableRow:f=>uiSection('stableRow',f),stableHeader:f=>uiSection('stableHeader',f),
    eventCard:f=>uiSection('eventCard',f),eventRow:f=>uiSection('eventRow',f),onlineSection:f=>uiSection('online',f),moneyRow:f=>uiSection('money',f),

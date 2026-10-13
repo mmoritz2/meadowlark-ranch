@@ -7,6 +7,8 @@ const sha=source=>crypto.createHash('sha256').update(source).digest('hex');
 // exact bytes. This outer compatibility layer reverses only reviewed riding
 // and ribbon code before those complete-body preimages run.
 for(const [file,hash]of Object.entries(contract.protectedGuardSHA256))assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),hash,'Unchanged incoming/original guard '+file);
+const {normalizeProgressionLoopCacheSource}=require('./progression-loop-cache-source-guard.cjs');
+const {normalizeProgressionHintsSource}=require('./progression-hints-source-guard.cjs');
 const {normalizeRibbonAwardSource}=require('./ribbon-award-source-guard.cjs');
 const {normalizeRidingDistanceSource}=require('./riding-distance-source-guard.cjs');
 const {normalizeGrassArchSource}=require('./grass-arch-source-guard.cjs');
@@ -30,6 +32,8 @@ function normalizeReviewedCacheSource(source,file){
  return source;
 }
 function normalizeReviewedRuntimeSource(source,file){
+ source=normalizeProgressionLoopCacheSource(source,file);
+ source=normalizeProgressionHintsSource(source,file);
  return normalizeReviewedCacheSource(normalizeRidingDistanceSource(normalizeRibbonAwardSource(source,file),file),file);
 }
 function normalizeReviewedWorldSource(source,file){

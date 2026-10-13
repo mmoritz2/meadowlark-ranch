@@ -1,0 +1,40 @@
+{
+  "baseline": "243dbfb43dccf9cd2df44016d5ea018298e589ef",
+  "beforeSHA256": {
+    "assets/features/index.js": "97a76cb65b0c88e4a652c92bce4d75d797ed2702a9eae429b1ad4ca5b797ef16",
+    "ranch3d.html": "23139ff6e2451b76f987fb9f27d20e6ddb1acc8086ad4babbe426f6dd478eb6c"
+  },
+  "scope": "Five exact progression-loop cache imports only. Historical source subjects pass through to their unchanged preservation guards. Hint behavior is reversed separately.",
+  "changes": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2-fieldstone-walls-3';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=physical-ride-3-starter-tack-2-fieldstone-walls-3';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as events from './events-pvp.js?v=event-recovery-1';",
+      "after": "import * as events from './events-pvp.js?v=confirmed-rank-1';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as ev2ladder from './events2-ladder.js?v=final-ribbon-1';",
+      "after": "import * as ev2ladder from './events2-ladder.js?v=horse-growth-1';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as seJourney from './se-journey.js?v=menus-polish-20261008';",
+      "after": "import * as seJourney from './se-journey.js?v=final-ribbon-1';",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as ev2disc from './events2-disciplines.js?v=final-ribbon-1';",
+      "after": "import * as ev2disc from './events2-disciplines.js?v=final-ribbon-2';",
+      "occurrences": 1
+    }
+  ]
+}

@@ -1,0 +1,1129 @@
+{
+  "observedAt": "2026-10-13T19:09:00.883Z",
+  "text": "Offers\nHorses\nTack\nTack boutique\nTack Summoning Stall\n🐎 Tack\nCatalog\nRider\nRanches\nStore\nMore\nMarket / Tack\nTack locker\n13 items\n\nEquip your horses for the trail ahead.\n\n🗝️\nSilver Keys: 0\nA key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies. Tack also comes from the market stall below, world chests, Grandma's tack room, Bo's missions and the top rung of the weekly ⭐ Star Points ladder.\nOpen chest 🗝️\n🎁 Weekly key\nDressing\nRiding · Bramble\nAt grass · Clover\nany horse — in the barn, at grass or at a post\n🧰\nBo's Saddlery\nToolkits I·II·III: 0 · 0 · 0 — an upgrade needs one (I up to Lv 3, II to Lv 6, III to Lv 8). 🔧 Parts: 0 from stripped spares. Bigger kits drop from chests and quests.\nKit I · 180🪙\nKit II · 420🪙 + 10 parts\nKit III · 900🪙 + 30 parts\n🎁 Weekly kit\n🤝\nCottonwood market · today's tack\n🎁\nEnduring Trail Saddle\nUncommon · +2 Stamina\n225🪙\n🎁\nQuick Homestead Pad\nCommon · +1 Acceleration\n100🪙\n🎁\nLeaping Silver Bridle of Stamina\nRare · +3 Jump, +1 Stamina · Silver set\n500🪙\nBramble · equipped stats\nStat\tBase\tTack\tTotal\nSpeed\t4\t+0\t4\nStamina\t4\t+1\t5\nJump\t4\t+0\t4\nAcceleration\t4\t+0\t4\nAgility\t3\t+0\t3\nTack includes matching-set bonuses. Equipped totals count toward event stat requirements. Speed, acceleration and agility improve pace and handling; jump improves clearance, and stamina helps you last longer. Horse levels and ribbons are earned by playing.\n🎁\nGrandma's Old Saddle\nCommon · Lv 1/8 · +1 Stamina · worn\nNext level: +0.5 Stamina\nTake off\n⬆ 120🪙 + 🧰1\n🔀 250🪙\n🎁\n🟦 Saddle Pad\nBasic equipment · no stat bonus\nOrder plain · 150🪙\n🎁\n🪢 Bridle\nBasic equipment · no stat bonus\nOrder plain · 150🪙\n🎁\n🍀 Horseshoes\nnothing yet\nOrder plain · 150🪙\nLocker · 4 spare pieces · Common +1 · Uncommon +2 · Rare +3/+1 · Epic +4/+4 · Legendary +5/+5/+2\n🎁\nLeaping Silver Pad of Stamina\nRare · Lv 1/8 · +1 Stamina, +3 Jump · Silver set\nNext level: +0.25 Stamina, +0.5 Jump\nEquipping: Stamina +1, Jump +3 (includes set changes)\nPut on\n⬆ 264🪙 + 🧰1\n🔀 650🪙\n🔧 8 parts\n200🪙\n🎁\n🤠 Leaping Silver Bridle of Stamina\nRare · Lv 1/8 · +1 Stamina, +3 Jump · Silver set\nNext level: +0.25 Stamina, +0.5 Jump\nEquipping: Stamina +1, Jump +3 (includes set changes)\nPut on\n⬆ 264🪙 + 🧰1\n🔀 650🪙\n🔧 8 parts\n200🪙\n🎁\nLeaping Silver Shoes of Stamina\nRare · Lv 1/8 · +1 Stamina, +3 Jump · Silver set\nNext level: +0.25 Stamina, +0.5 Jump\nEquipping: Stamina +1, Jump +3 (includes set changes)\nPut on\n⬆ 264🪙 + 🧰1\n🔀 650🪙\n🔧 8 parts\n200🪙\n🎁\nLeaping Silver Saddle of Stamina\nRare · Lv 1/8 · +1 Stamina, +3 Jump · Silver set\nNext level: +0.25 Stamina, +0.5 Jump\nEquipping: Jump +3 (includes set changes)\nPut on\n⬆ 264🪙 + 🧰1\n🔀 650🪙\n🔧 8 parts\n200🪙\n✨\nTack sets · 11 Legendary, 10 Epic, 5 Rare\nEvery Rare or better piece belongs to a set named in its title — wear 2 for a bonus and all 4 for more. Legendary: Kestrel, Aurora, Meadowlark, Champion, Loon, Coyote, Falls, Sunrise, Comet, Wildfire, Moonlit. Epic: Starlit, Storm, Canyon, Hollowpeak, Ember, Thistle, Harvest, Bluebell, Ranger, Lantern. Rare: Cottonwood, Twilight, Basin, Silver, Prairie.\n🐎\nSaddle style · the worn saddle decides; this is the fallback\n🏇 English\n🤠 Western\nnow: 🏇 English — rises to the trot\n🎨\nSaddle paint · 150\n🪙\n Scarlet\n Lake Blue\n Royal Plum\n Meadow Green\n Sunshine",
+  "report": {
+    "ready": true,
+    "loading": false,
+    "status": "Ready. Inspect and complete the real onboarding before choosing an activity.",
+    "controls": [],
+    "lastClick": null,
+    "errors": [],
+    "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+    "ridingDistance": {
+      "frames": 2643,
+      "travel": 0,
+      "ground": 0,
+      "gallop": 0,
+      "bond": 0,
+      "fastStationarySeconds": 0,
+      "frame": {
+        "mountId": 1,
+        "travel": 0,
+        "ground": 0,
+        "gallop": 0,
+        "bond": 0
+      },
+      "gait": "stand"
+    },
+    "story": {
+      "index": 1,
+      "progress": 300,
+      "saved": {
+        "index": 1,
+        "progress": 300,
+        "name": "Luna",
+        "era": 1,
+        "clues": []
+      },
+      "mission": {
+        "label": "Ride with {name}: gallop 300 m",
+        "type": "gallop",
+        "goal": 300,
+        "npc": "wren",
+        "talk": null
+      },
+      "guidance": {
+        "text": "Ride with Luna: gallop 300 m (300/300)\nReturn to Wren · reward ready",
+        "accessibleLabel": "Follow the marker back to Wren to collect your reward. Activate to open this action."
+      },
+      "target": null
+    },
+    "rescue": {
+      "definition": {
+        "id": "clover",
+        "name": "Bring Clover Home",
+        "description": "Follow the hoofprints, earn Clover’s trust, and lead her safely home.",
+        "minutes": "2–3 min",
+        "reward": {
+          "c": 180,
+          "xp": 60
+        },
+        "adoption": {
+          "name": "Clover",
+          "breed": "pinto"
+        },
+        "route": [
+          [
+            -60,
+            16
+          ],
+          [
+            -105,
+            14
+          ],
+          [
+            -105,
+            -41
+          ],
+          [
+            -70,
+            -41
+          ],
+          [
+            -42,
+            -34
+          ],
+          [
+            -40,
+            2
+          ],
+          [
+            -60,
+            16
+          ]
+        ]
+      },
+      "records": {
+        "version": 1,
+        "completions": 1,
+        "bestTime": 120.06,
+        "adopted": true,
+        "lastRunId": "clover-mv2ma7ni-1-x37f4",
+        "adoptedHorseId": 2,
+        "canAdopt": false
+      },
+      "lastResult": null,
+      "active": null
+    },
+    "journey": {
+      "chapters": [
+        {
+          "id": "first-partners",
+          "number": 1,
+          "name": "First Partners",
+          "description": "Find your stride and earn a lost horse’s trust.",
+          "goals": [
+            {
+              "id": "clover",
+              "label": "Bring Clover home",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rescue",
+                "id": "clover"
+              }
+            },
+            {
+              "id": "pasture",
+              "label": "Finish Pasture Dash",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 150,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "pad",
+              "style": "western",
+              "name": "Leaping Silver Pad of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-first-partners",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "steady-hands",
+          "number": 2,
+          "name": "Steady Hands",
+          "description": "Read the herd and keep a clean riding rhythm.",
+          "goals": [
+            {
+              "id": "three-home",
+              "label": "Pen all 3 horses in one beginner roundup",
+              "current": 3,
+              "target": 3,
+              "done": true,
+              "action": {
+                "kind": "roundup",
+                "mode": "beginner"
+              }
+            },
+            {
+              "id": "clean-chain",
+              "label": "Build a 4-obstacle chain in any Ranch Rush",
+              "current": 4,
+              "target": 4,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 200,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "bridle",
+              "style": "western",
+              "name": "Leaping Silver Bridle of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-steady-hands",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "river-rhythm",
+          "number": 3,
+          "name": "River Rhythm",
+          "description": "Take the river course and ride for a silver medal.",
+          "goals": [
+            {
+              "id": "river",
+              "label": "Finish River Run",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-river"
+              }
+            },
+            {
+              "id": "silver",
+              "label": "Earn silver or gold in any Ranch Rush",
+              "current": 2,
+              "target": 2,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 250,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "shoes",
+              "style": "western",
+              "name": "Leaping Silver Shoes of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "claimed",
+          "gearId": "journey-river-rhythm",
+          "owned": true,
+          "equipped": false
+        },
+        {
+          "id": "trail-partners",
+          "number": 4,
+          "name": "Trail Partners",
+          "description": "Ride the longer trail and bring the whole herd home.",
+          "goals": [
+            {
+              "id": "trail",
+              "label": "Finish Trailblazer",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-trail"
+              }
+            },
+            {
+              "id": "five-home",
+              "label": "Pen all 5 horses in one full roundup",
+              "current": 4,
+              "target": 5,
+              "done": false,
+              "action": {
+                "kind": "roundup",
+                "mode": "full"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 350,
+            "gear": {
+              "rarity": "Rare",
+              "set": "Silver",
+              "slot": "saddle",
+              "style": "western",
+              "name": "Leaping Silver Saddle of Stamina",
+              "bonus": {
+                "jump": 3,
+                "stamina": 1
+              }
+            }
+          },
+          "status": "active",
+          "gearId": "journey-trail-partners",
+          "owned": false,
+          "equipped": false
+        },
+        {
+          "id": "meadowlark-champion",
+          "number": 5,
+          "name": "Meadowlark Champion",
+          "description": "Put everything together: four gold medals and a champion’s saddle.",
+          "goals": [
+            {
+              "id": "pasture-gold",
+              "label": "Earn gold in Pasture Dash",
+              "current": 1,
+              "target": 1,
+              "done": true,
+              "action": {
+                "kind": "rush",
+                "id": "rush-pasture"
+              }
+            },
+            {
+              "id": "river-gold",
+              "label": "Earn gold in River Run",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "rush",
+                "id": "rush-river"
+              }
+            },
+            {
+              "id": "trail-gold",
+              "label": "Earn gold in Trailblazer",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "rush",
+                "id": "rush-trail"
+              }
+            },
+            {
+              "id": "roundup-gold",
+              "label": "Earn gold in the 5-horse roundup",
+              "current": 0,
+              "target": 1,
+              "done": false,
+              "action": {
+                "kind": "roundup",
+                "mode": "full"
+              }
+            }
+          ],
+          "reward": {
+            "coins": 750,
+            "gear": {
+              "rarity": "Legendary",
+              "set": "Aurora",
+              "slot": "saddle",
+              "style": "western",
+              "name": "Leaping Aurora Saddle of Agility",
+              "bonus": {
+                "jump": 5,
+                "agility": 5,
+                "stamina": 2
+              }
+            }
+          },
+          "status": "locked",
+          "gearId": "journey-meadowlark-champion",
+          "owned": false,
+          "equipped": false
+        }
+      ],
+      "current": {
+        "id": "trail-partners",
+        "number": 4,
+        "name": "Trail Partners",
+        "description": "Ride the longer trail and bring the whole herd home.",
+        "goals": [
+          {
+            "id": "trail",
+            "label": "Finish Trailblazer",
+            "current": 1,
+            "target": 1,
+            "done": true,
+            "action": {
+              "kind": "rush",
+              "id": "rush-trail"
+            }
+          },
+          {
+            "id": "five-home",
+            "label": "Pen all 5 horses in one full roundup",
+            "current": 4,
+            "target": 5,
+            "done": false,
+            "action": {
+              "kind": "roundup",
+              "mode": "full"
+            }
+          }
+        ],
+        "reward": {
+          "coins": 350,
+          "gear": {
+            "rarity": "Rare",
+            "set": "Silver",
+            "slot": "saddle",
+            "style": "western",
+            "name": "Leaping Silver Saddle of Stamina",
+            "bonus": {
+              "jump": 3,
+              "stamina": 1
+            }
+          }
+        },
+        "status": "active",
+        "gearId": "journey-trail-partners",
+        "owned": false,
+        "equipped": false
+      },
+      "claimedCount": 3,
+      "complete": false,
+      "title": null,
+      "lastClaim": {
+        "id": "river-rhythm",
+        "name": "River Rhythm",
+        "coins": 250,
+        "gearId": "journey-river-rhythm",
+        "gearName": "Leaping Silver Shoes of Stamina",
+        "bonus": {
+          "jump": 3,
+          "stamina": 1
+        }
+      },
+      "nextAction": {
+        "kind": "roundup",
+        "mode": "full"
+      }
+    },
+    "rush": {
+      "definitions": [
+        {
+          "id": "rush-pasture",
+          "name": "Pasture Dash",
+          "subtitle": "Find your rhythm",
+          "description": "Follow the glowing gates and hold a clean chain around the home pasture.",
+          "route": "rush-pp",
+          "minutes": "30–60 sec",
+          "obstacles": 6,
+          "fences": 0,
+          "fenceLegs": [],
+          "targetTime": 30,
+          "reward": 150,
+          "town": "Home Ranch",
+          "medals": {
+            "bronze": 300,
+            "silver": 850,
+            "gold": 1200
+          }
+        },
+        {
+          "id": "rush-river",
+          "name": "River Run",
+          "subtitle": "Add a little airtime",
+          "description": "Chase the riverside gates and clear two low logs. Good jumps keep your chain alive.",
+          "route": "rr",
+          "minutes": "40–75 sec",
+          "obstacles": 8,
+          "fences": 2,
+          "fenceLegs": [
+            1,
+            3
+          ],
+          "targetTime": 40,
+          "reward": 210,
+          "town": "Loon Lake",
+          "medals": {
+            "bronze": 500,
+            "silver": 1350,
+            "gold": 1850
+          }
+        },
+        {
+          "id": "rush-trail",
+          "name": "Trailblazer",
+          "subtitle": "Put it all together",
+          "description": "Ride the open Barleyfold trail, link three log jumps, and beat your own best splits.",
+          "route": "xc1",
+          "minutes": "50–90 sec",
+          "obstacles": 10,
+          "fences": 3,
+          "fenceLegs": [
+            1,
+            3,
+            5
+          ],
+          "targetTime": 50,
+          "reward": 270,
+          "town": "Barleyfold",
+          "medals": {
+            "bronze": 600,
+            "silver": 1650,
+            "gold": 2350
+          }
+        }
+      ],
+      "records": {
+        "rush-pasture": {
+          "plays": 1,
+          "bestScore": 1271,
+          "bestTime": 35.9,
+          "medal": "gold",
+          "bestCombo": 6,
+          "splits": [
+            5.54,
+            11.68,
+            20.1,
+            25.65,
+            29.88,
+            35.9
+          ],
+          "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+          "lastRunId": "mv2mggc9-1-febb42"
+        },
+        "rush-river": {
+          "plays": 3,
+          "bestScore": 1400,
+          "bestTime": 95.46,
+          "medal": "silver",
+          "bestCombo": 6,
+          "splits": [
+            1.87,
+            7.44,
+            72.12,
+            75.16,
+            80.86,
+            85.56,
+            88.83,
+            95.46
+          ],
+          "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+          "lastRunId": "mv2r8fvw-1-zqlzum"
+        },
+        "rush-trail": {
+          "plays": 1,
+          "bestScore": 2034,
+          "bestTime": 50.77,
+          "medal": "silver",
+          "bestCombo": 7,
+          "splits": [
+            2.15,
+            9.47,
+            14.82,
+            17.77,
+            24.95,
+            32.11,
+            35.89,
+            43.72,
+            48.33,
+            50.77
+          ],
+          "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+          "lastRunId": "mv2req07-1-o7t2pz"
+        }
+      },
+      "lastResult": null,
+      "active": null
+    },
+    "rushCourse": null,
+    "eventCourse": null,
+    "eventTrace": [],
+    "rushTrace": [],
+    "roundup": {
+      "active": false,
+      "shared": null,
+      "paused": false,
+      "mode": "beginner",
+      "name": "Gentle Roundup",
+      "timeLimit": 150,
+      "goldTimeLimit": 97.5,
+      "pending": null,
+      "countdown": 0,
+      "timeLeft": 0,
+      "elapsed": 0,
+      "total": 3,
+      "penned": 0,
+      "pen": {
+        "x": -44,
+        "z": -8,
+        "r": 7.5
+      },
+      "target": null,
+      "horses": [],
+      "records": {
+        "beginner": {
+          "plays": 2,
+          "score": 1118,
+          "penned": 3,
+          "time": 106.33,
+          "medal": "silver",
+          "lastRunId": "mv2p9xsk-k0bvgg"
+        },
+        "full": {
+          "plays": 1,
+          "score": 1200,
+          "penned": 4,
+          "time": null,
+          "medal": "bronze",
+          "lastRunId": "mv2rp0ef-bjlws1"
+        }
+      },
+      "lastResult": null
+    },
+    "roundupGeometry": {
+      "bounds": {
+        "x1": -110,
+        "x2": -33,
+        "z1": -45,
+        "z2": 25
+      },
+      "colliders": [
+        {
+          "x": -30.628904335017108,
+          "z": 16.10713820636549,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -107.61957389223015,
+          "z": -41.16675930624277,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -45.1972833264409,
+          "z": -10.554166920586592,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -35.1201529348944,
+          "z": -22.710173210530872,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -70.00581337420927,
+          "z": -34.56186479603573,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -96.55063236646923,
+          "z": -32.390419947884986,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -31.59188112210141,
+          "z": 16.799594622741253,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -58.87188201562555,
+          "z": -26.00780661659485,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -59.93956373813432,
+          "z": -14.77555291139695,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -35.11540889226916,
+          "z": 8.395621499470288,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -34.43141482397562,
+          "z": 20.806332310178565,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -39.4930675073918,
+          "z": 24.100291743899216,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -58.05941109136794,
+          "z": -22.18674041822611,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -51.534858026584615,
+          "z": -15.357797713977458,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -95.20217034319641,
+          "z": -0.12768803763421702,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -64.47466921495085,
+          "z": -44.556724887949315,
+          "r": 1.3460205515521195,
+          "precise": false
+        },
+        {
+          "x": -62.89663334024846,
+          "z": -7.36510031665459,
+          "r": 1.4437552753269318,
+          "precise": false
+        },
+        {
+          "x": -71.30955362377956,
+          "z": -13.47470587649935,
+          "r": 0.8929151257239812,
+          "precise": false
+        },
+        {
+          "x": -34.57906655966047,
+          "z": -42.93582665028454,
+          "r": 1.2599411455622147,
+          "precise": false
+        },
+        {
+          "x": -75.71752801254299,
+          "z": -47.48173601344774,
+          "r": 0.75,
+          "precise": false
+        },
+        {
+          "x": -69.86568884971676,
+          "z": -45.79811994165286,
+          "r": 0.75,
+          "precise": false
+        },
+        {
+          "x": -53.37135459379459,
+          "z": -19.450198521292844,
+          "r": 1.1331240591885987,
+          "precise": false
+        },
+        {
+          "x": -84.77538835917213,
+          "z": 9.555450215930852,
+          "r": 1.010697266243481,
+          "precise": false
+        },
+        {
+          "x": -51.778059670116725,
+          "z": -42.792952731222435,
+          "r": 0.8664172427801008,
+          "precise": false
+        },
+        {
+          "x": -59,
+          "z": -19,
+          "r": 3.4,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 3.2,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 7.5,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -30,
+          "z": 11.8,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -46,
+          "z": -6,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -36,
+          "z": -1,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -37,
+          "z": 10,
+          "r": 1.14,
+          "precise": false
+        },
+        {
+          "x": -38.8,
+          "z": 12.2,
+          "r": 1.212,
+          "precise": false
+        },
+        {
+          "x": -37.4,
+          "z": 14.4,
+          "r": 1.2839999999999998,
+          "precise": false
+        },
+        {
+          "x": -39.4,
+          "z": 9.2,
+          "r": 1.14,
+          "precise": false
+        },
+        {
+          "x": -38.7,
+          "z": 16.1,
+          "r": 1.212,
+          "precise": false
+        },
+        {
+          "x": -36.5,
+          "z": -9.5,
+          "r": 1.1,
+          "precise": false
+        },
+        {
+          "x": -50.7,
+          "z": -17.5,
+          "r": 1.4,
+          "precise": false
+        },
+        {
+          "x": -46,
+          "z": -4,
+          "r": 0.8,
+          "precise": false
+        },
+        {
+          "x": -31,
+          "z": -38,
+          "r": 2.6,
+          "precise": true
+        },
+        {
+          "x": -29.931414823975622,
+          "z": 23.906332310178566,
+          "r": 1.25,
+          "precise": false
+        }
+      ],
+      "walls": [
+        {
+          "x1": -110,
+          "z1": -45,
+          "x2": -33,
+          "z2": -45
+        },
+        {
+          "x1": -110,
+          "z1": 25,
+          "x2": -33,
+          "z2": 25
+        },
+        {
+          "x1": -110,
+          "z1": -45,
+          "x2": -110,
+          "z2": 25
+        },
+        {
+          "x1": -33,
+          "z1": -45,
+          "x2": -33,
+          "z2": -11.2
+        },
+        {
+          "x1": -33,
+          "z1": -6.8,
+          "x2": -33,
+          "z2": 25
+        }
+      ]
+    },
+    "roundupTrace": [],
+    "scenery": {
+      "undergrowth": "settled",
+      "photoscans": "settled",
+      "worldDetails": "settled",
+      "builder": "settled"
+    },
+    "adoptedMount": {
+      "available": true,
+      "name": "Clover",
+      "horseId": 2,
+      "selected": false,
+      "ready": false,
+      "loading": false,
+      "error": null
+    },
+    "player": {
+      "x": -7,
+      "z": 10,
+      "heading": 3.141592653589793,
+      "speed": 0,
+      "stam": 1,
+      "blown": false,
+      "exhaustT": 0,
+      "landT": 0,
+      "rigReady": true,
+      "horseId": 1,
+      "horseName": "Bramble",
+      "breed": "bay-sporthorse",
+      "modelKey": "bay-sporthorse",
+      "loadingBreed": false
+    },
+    "ui": {
+      "blocked": true,
+      "bodyClasses": "se-hud se-market-open",
+      "dialogVisible": false
+    },
+    "driver": {
+      "active": false,
+      "status": "off",
+      "steps": 0,
+      "target": null
+    },
+    "networkConnected": false,
+    "networkStopped": false,
+    "featureErrors": [],
+    "saveSummary": {
+      "coins": 6370,
+      "gems": 69,
+      "bestTimes": {
+        "rush-pasture": 35.9,
+        "rush-river": 95.5,
+        "rush-trail": 50.8,
+        "pp": 21
+      },
+      "ribbons": {
+        "rush-pasture": 2,
+        "rush-river": 1,
+        "rush-trail": 2,
+        "pp": 3
+      },
+      "ribbonsBy": {
+        "rush-pasture:novice": 2,
+        "rush-river:novice": 1,
+        "rush-trail:novice": 2,
+        "pp:open": 4,
+        "pp:elite": 3
+      },
+      "ribbonGold": {},
+      "ribbonAwards": {
+        "version": 1,
+        "byDifficulty": {
+          "pp:open": {
+            "last": {
+              "id": "mv712kyn-3-qz6cde",
+              "eventId": "pp",
+              "diff": "open",
+              "rib": 3,
+              "stars": 3,
+              "gold": false,
+              "accuracy": 0.856,
+              "time": 23.57790000000597,
+              "faults": 0,
+              "refusals": 0,
+              "lineOff": 0,
+              "at": 1791916956204,
+              "saved": true
+            },
+            "bestRib": 3,
+            "bestGold": false
+          },
+          "pp:elite": {
+            "last": {
+              "id": "mv71s42m-1-mbp12l",
+              "eventId": "pp",
+              "diff": "elite",
+              "rib": 3,
+              "stars": 3,
+              "gold": false,
+              "accuracy": 0.876,
+              "time": 21.025999999999993,
+              "faults": 0,
+              "refusals": 0,
+              "lineOff": 0,
+              "at": 1791918145440,
+              "saved": true
+            },
+            "bestRib": 3,
+            "bestGold": false
+          }
+        }
+      },
+      "breedingWeek": {
+        "week": "2026-10-12",
+        "ribbons": 25
+      },
+      "horseCount": 2,
+      "riderCreated": true,
+      "ridingHorseId": 1,
+      "horseNames": [
+        {
+          "id": 1,
+          "name": "Bramble",
+          "breed": "bay-sporthorse",
+          "level": 3,
+          "bond": 100
+        },
+        {
+          "id": 2,
+          "name": "Clover",
+          "breed": "pinto",
+          "level": 2,
+          "bond": 58
+        }
+      ],
+      "totalRaces": 0,
+      "racing": {
+        "races": 15,
+        "points": 605,
+        "wins": 0,
+        "pvp": 0
+      },
+      "fieldRacing": {
+        "races": 10,
+        "wins": 4,
+        "podiums": 8
+      },
+      "ribbonTotal": 31,
+      "ladderRibbonTotal": 24,
+      "rescue": {
+        "completions": 1,
+        "adopted": true
+      },
+      "journey": {
+        "version": 1,
+        "claimed": {
+          "first-partners": {
+            "at": 1791650619995,
+            "gearId": "journey-first-partners"
+          },
+          "steady-hands": {
+            "at": 1791654968498,
+            "gearId": "journey-steady-hands"
+          },
+          "river-rhythm": {
+            "at": 1791656399494,
+            "gearId": "journey-river-rhythm"
+          }
+        },
+        "lastClaimId": "river-rhythm"
+      },
+      "rush": {
+        "rush-pasture": {
+          "plays": 1,
+          "bestScore": 1271,
+          "bestTime": 35.9,
+          "medal": "gold",
+          "bestCombo": 6,
+          "splits": [
+            5.54,
+            11.68,
+            20.1,
+            25.65,
+            29.88,
+            35.9
+          ],
+          "layout": "gate:-60.0,16.0|gate:-100.0,14.0|gate:-102.0,-41.0|gate:-70.0,-41.0|gate:-42.0,-34.0|gate:-40.0,2.0",
+          "lastRunId": "mv2mggc9-1-febb42"
+        },
+        "rush-river": {
+          "plays": 3,
+          "bestScore": 1400,
+          "bestTime": 95.46,
+          "medal": "silver",
+          "bestCombo": 6,
+          "splits": [
+            1.87,
+            7.44,
+            72.12,
+            75.16,
+            80.86,
+            85.56,
+            88.83,
+            95.46
+          ],
+          "layout": "gate:0.0,66.0|gate:26.0,96.0|fence:41.0,111.0|gate:56.0,126.0|gate:90.0,120.0|fence:93.0,98.0|gate:96.0,76.0|gate:54.0,74.0",
+          "lastRunId": "mv2r8fvw-1-zqlzum"
+        },
+        "rush-trail": {
+          "plays": 1,
+          "bestScore": 2034,
+          "bestTime": 50.77,
+          "medal": "silver",
+          "bestCombo": 7,
+          "splits": [
+            2.15,
+            9.47,
+            14.82,
+            17.77,
+            24.95,
+            32.11,
+            35.89,
+            43.72,
+            48.33,
+            50.77
+          ],
+          "layout": "gate:272.0,-60.0|gate:318.0,-46.0|fence:329.0,-65.0|gate:340.0,-84.0|gate:348.0,-130.0|fence:324.0,-145.0|gate:300.0,-160.0|gate:270.0,-128.0|fence:270.0,-110.0|gate:270.0,-92.0",
+          "lastRunId": "mv2req07-1-o7t2pz"
+        }
+      }
+    }
+  }
+}

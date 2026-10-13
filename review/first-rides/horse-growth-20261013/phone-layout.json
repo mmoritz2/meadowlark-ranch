@@ -1,0 +1,21 @@
+{
+  "button": {
+    "height": 44,
+    "width": 187.453125
+  },
+  "growth": {
+    "left": 29,
+    "right": 335,
+    "width": 306
+  },
+  "panel": {
+    "client": 364,
+    "scroll": 364,
+    "width": 364
+  },
+  "text": "Bramble · Horse level 2+24 horse XP saved+5 bond saved129 / 150 horse XP · 21 XP to Lv 3Ride again with Bramble",
+  "viewport": {
+    "height": 758,
+    "width": 364
+  }
+}

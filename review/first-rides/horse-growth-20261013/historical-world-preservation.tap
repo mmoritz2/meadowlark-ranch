@@ -1,0 +1,544 @@
+Historical guard subject: exact reviewed riding/ribbon/guide projection; live merged world geometry remains unchanged.
+TAP version 13
+# Subtest: near: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 1 - near: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 26.957
+  ...
+# Subtest: meadow: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 2 - meadow: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 6.625667
+  ...
+# Subtest: low: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 3 - low: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 5.272584
+  ...
+# Subtest: seeded: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 4 - seeded: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 10.358416
+  ...
+# Subtest: grazed: rooted creased arches, few upright tips, preserved source cap and triangle budget
+ok 5 - grazed: rooted creased arches, few upright tips, preserved source cap and triangle budget
+  ---
+  duration_ms: 16.771917
+  ...
+# Subtest: current family metadata agrees with actual physical leaves and seed stems
+ok 6 - current family metadata agrees with actual physical leaves and seed stems
+  ---
+  duration_ms: 2.277041
+  ...
+# Subtest: seeded model preserves original seed stem/head attributes and relative topology exactly
+ok 7 - seeded model preserves original seed stem/head attributes and relative topology exactly
+  ---
+  duration_ms: 2.182417
+  ...
+# Subtest: each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation
+ok 8 - each production factory keeps one geometry, four UUID draws and the future24 random sequence without material/texture allocation
+  ---
+  duration_ms: 14.533375
+  ...
+# Subtest: all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte
+ok 9 - all216 noncanonical public combinations, including middle tiers, retain every original attribute/index/bound and metadata byte
+  ---
+  duration_ms: 95.787208
+  ...
+# Subtest: actual arched/creased leaf normals follow real wind, retirement and rider-parting triangles
+ok 10 - actual arched/creased leaf normals follow real wind, retirement and rider-parting triangles
+  ---
+  duration_ms: 51.96475
+  ...
+# Subtest: actual new factory rejects invalid topology before allocating any Three resource
+ok 11 - actual new factory rejects invalid topology before allocating any Three resource
+  ---
+  duration_ms: 0.255917
+  ...
+# Subtest: reviewed leaf reversal pins every full original body and rejects duplicate, malformed or unrelated edits
+ok 12 - reviewed leaf reversal pins every full original body and rejects duplicate, malformed or unrelated edits
+  ---
+  duration_ms: 59.037917
+  ...
+# Subtest: actual source changes are limited to two finite fields with unchanged underlying terrain recipe and exterior contact grid
+ok 13 - actual source changes are limited to two finite fields with unchanged underlying terrain recipe and exterior contact grid
+  ---
+  duration_ms: 68.771542
+  ...
+# Subtest: original West/East decision grid, barriers and legacy callbacks remain exact while two bounded new islands retain old804 terrain
+ok 14 - original West/East decision grid, barriers and legacy callbacks remain exact while two bounded new islands retain old804 terrain
+  ---
+  duration_ms: 174.925041
+  ...
+# Subtest: fixed original scan foot, spring/shore, outpost, arena, actual road/crop and water support triangles remain protected
+ok 15 - fixed original scan foot, spring/shore, outpost, arena, actual road/crop and water support triangles remain protected
+  ---
+  duration_ms: 36.544833
+  ...
+# Subtest: all four original model/draw/material constructors and their future game RNG remain unchanged, with exact other-field buffers
+ok 16 - all four original model/draw/material constructors and their future game RNG remain unchanged, with exact other-field buffers
+  ---
+  duration_ms: 0.420917
+  ...
+# Subtest: every actual rock triangle including edges/interiors follows the same canonical Float32 hoof surface at12mm
+ok 17 - every actual rock triangle including edges/interiors follows the same canonical Float32 hoof surface at12mm
+  ---
+  duration_ms: 38.926334
+  ...
+# Subtest: actual new contour blockers remain finite, follow their two-metre recipe and preserve protected riding strips
+ok 18 - actual new contour blockers remain finite, follow their two-metre recipe and preserve protected riding strips
+  ---
+  duration_ms: 29.731458
+  ...
+# Subtest: real legacy mounted collision law stops at new owned circles and preserves deliberate above-top passage
+ok 19 - real legacy mounted collision law stops at new owned circles and preserves deliberate above-top passage
+  ---
+  duration_ms: 0.917708
+  ...
+# Subtest: actual Flora admission/slope/tree writer keeps pre-scan accepted roots and seeded state while source canopy/trunk Y follows live terrain
+ok 20 - actual Flora admission/slope/tree writer keeps pre-scan accepted roots and seeded state while source canopy/trunk Y follows live terrain
+  ---
+  duration_ms: 41.329667
+  ...
+# Subtest: historical collider occupancy substitutes only actual changed-cliff owner references and does not retire coincident unrelated objects
+ok 21 - historical collider occupancy substitutes only actual changed-cliff owner references and does not retire coincident unrelated objects
+  ---
+  duration_ms: 1.683084
+  ...
+# Subtest: numeric macroforms remain deterministic, with explicit prototype/index and decision-cache resources
+ok 22 - numeric macroforms remain deterministic, with explicit prototype/index and decision-cache resources
+  ---
+  duration_ms: 19.450541
+  ...
+# Subtest: fresh804 native grid is pinned, source reconstruction matches every changed vertex, and only the two finite owners change
+ok 23 - fresh804 native grid is pinned, source reconstruction matches every changed vertex, and only the two finite owners change
+  ---
+  duration_ms: 1.629042
+  ...
+# Subtest: whole source bodies normalize to804 only through precise declared height/planning/cache changes
+ok 24 - whole source bodies normalize to804 only through precise declared height/planning/cache changes
+  ---
+  duration_ms: 55.706584
+  ...
+# Subtest: original804 physical macro recipe and older historical planning relief remain exact without scene RNG
+ok 25 - original804 physical macro recipe and older historical planning relief remain exact without scene RNG
+  ---
+  duration_ms: 257.793125
+  ...
+# Subtest: all actual route3m hoof strips, Derby, water beds, landmarks and fixed principal scan-foot supports stay exact
+ok 26 - all actual route3m hoof strips, Derby, water beds, landmarks and fixed principal scan-foot supports stay exact
+  ---
+  duration_ms: 21.251542
+  ...
+# Subtest: same real four skin meshes and constructor stream retain resources and untouched West/East buffers
+ok 27 - same real four skin meshes and constructor stream retain resources and untouched West/East buffers
+  ---
+  duration_ms: 0.379291
+  ...
+# Subtest: every visible stone triangle matches the physical grid and has finite unit normals, with no floating toe or independent height proxy
+ok 28 - every visible stone triangle matches the physical grid and has finite unit normals, with no floating toe or independent height proxy
+  ---
+  duration_ms: 12.775542
+  ...
+# Subtest: rebuilt actual cliff contacts stay finite, follow dependent ground heights and retain all real riding clearances
+ok 29 - rebuilt actual cliff contacts stay finite, follow dependent ground heights and retain all real riding clearances
+  ---
+  duration_ms: 10.924167
+  ...
+# Subtest: new forms have unequal connected crowns, recessed curved benches and smooth exact scan-foot response
+ok 30 - new forms have unequal connected crowns, recessed curved benches and smooth exact scan-foot response
+  ---
+  duration_ms: 0.515125
+  ...
+# Subtest: assets/features/world-paths.js: exactly one live fieldstone import reverses to the complete a78 body
+ok 31 - assets/features/world-paths.js: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 2.901458
+  ...
+# Subtest: assets/features/index.js: exactly one live fieldstone import reverses to the complete a78 body
+ok 32 - assets/features/index.js: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 2.497167
+  ...
+# Subtest: ranch3d.html: exactly one live fieldstone import reverses to the complete a78 body
+ok 33 - ranch3d.html: exactly one live fieldstone import reverses to the complete a78 body
+  ---
+  duration_ms: 23.2935
+  ...
+# Subtest: assets/features/world-paths.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 34 - assets/features/world-paths.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 4.241084
+  ...
+# Subtest: assets/features/index.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 35 - assets/features/index.js: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 1.054958
+  ...
+# Subtest: ranch3d.html: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+ok 36 - ranch3d.html: unknown, missing, duplicate, mixed, owner and unrelated body changes are rejected
+  ---
+  duration_ms: 14.791125
+  ...
+# Subtest: fieldstone cache normalization preserves the existing four native cache states and exact historical camera state
+ok 37 - fieldstone cache normalization preserves the existing four native cache states and exact historical camera state
+  ---
+  duration_ms: 197.506791
+  ...
+# Subtest: new parent suffix preserves all six existing published cache positive and malformed-import contracts
+ok 38 - new parent suffix preserves all six existing published cache positive and malformed-import contracts
+  ---
+  duration_ms: 206.984542
+  ...
+# Subtest: new wall-cache adapter keeps every six d5 grass body hash and four original298 body hash
+ok 39 - new wall-cache adapter keeps every six d5 grass body hash and four original298 body hash
+  ---
+  duration_ms: 41.358291
+  ...
+# Subtest: all current test/guard adapters reverse exactly to their complete a78 source with every original assertion and hash retained
+ok 40 - all current test/guard adapters reverse exactly to their complete a78 source with every original assertion and hash retained
+  ---
+  duration_ms: 1.293916
+  ...
+# Subtest: a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain
+ok 41 - a singleton gap gets its exact jumpable source span; all original195 refs, bodies and order remain
+  ---
+  duration_ms: 10.141084
+  ...
+# Subtest: exact continuous capsule union skips covered old lines and detects curved or endpoint holes
+ok 42 - exact continuous capsule union skips covered old lines and detects curved or endpoint holes
+  ---
+  duration_ms: 28.395583
+  ...
+# Subtest: arbitrary rotated capsule coverage is rigid-transform invariant without source or geometry changes
+ok 43 - arbitrary rotated capsule coverage is rigid-transform invariant without source or geometry changes
+  ---
+  duration_ms: 29.179875
+  ...
+# Subtest: neighbor ownership uses only original snapshot and removes only the newly cleared unit identity
+ok 44 - neighbor ownership uses only original snapshot and removes only the newly cleared unit identity
+  ---
+  duration_ms: 5.86275
+  ...
+# Subtest: real future course clearing removes owned barriers along with the entire visible replacement
+ok 45 - real future course clearing removes owned barriers along with the entire visible replacement
+  ---
+  duration_ms: 12.15075
+  ...
+# Subtest: texture failure, clearing during load and precleared units leave old jumpable list exactly unchanged
+ok 46 - texture failure, clearing during load and precleared units leave old jumpable list exactly unchanged
+  ---
+  duration_ms: 3.26025
+  ...
+# Subtest: enabling actual missing-wall coverage changes no constructor RNG stream or geometry/material resources
+ok 47 - enabling actual missing-wall coverage changes no constructor RNG stream or geometry/material resources
+  ---
+  duration_ms: 12.32425
+  ...
+# Subtest: the actual current riding controller blocks both ground approaches and retains jump phase/height clearance
+ok 48 - the actual current riding controller blocks both ground approaches and retains jump phase/height clearance
+  ---
+  duration_ms: 5.810792
+  ...
+# Subtest: actual fieldstone lifecycle owner call is present exactly once and restores the complete original route owner
+ok 49 - actual fieldstone lifecycle owner call is present exactly once and restores the complete original route owner
+  ---
+  duration_ms: 1.275667
+  ...
+# Subtest: unknown wall array, malformed lifecycle call, duplicate/mixed call and unrelated route drift cannot normalize
+ok 50 - unknown wall array, malformed lifecycle call, duplicate/mixed call and unrelated route drift cannot normalize
+  ---
+  duration_ms: 10.556792
+  ...
+# Subtest: actual slab geometry preserves complete source records, unit ranges, resources and zero RNG
+ok 51 - actual slab geometry preserves complete source records, unit ranges, resources and zero RNG
+  ---
+  duration_ms: 287.206667
+  ...
+# Subtest: every new stone is a closed convex outward slab with physically planar fan normals
+ok 52 - every new stone is a closed convex outward slab with physically planar fan normals
+  ---
+  duration_ms: 1325.82725
+  ...
+# Subtest: broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles
+ok 53 - broad seated bearings, pronounced unequal shoulders and varied coping break the old rectangles
+  ---
+  duration_ms: 49.855875
+  ...
+# Subtest: actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner
+ok 54 - actual installer keeps constructor RNG stream, three resident maps and one mesh draw owner
+  ---
+  duration_ms: 8.248792
+  ...
+# Subtest: only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore
+ok 55 - only reviewed stone shape, PBR fields and child cache differ; entire original owner bodies restore
+  ---
+  duration_ms: 3.038667
+  ...
+# Subtest: both exact fine-hair imports are live once and restore the unchanged complete world preimage
+ok 56 - both exact fine-hair imports are live once and restore the unchanged complete world preimage
+  ---
+  duration_ms: 47.259875
+  ...
+# Subtest: all eight reviewed controller/library cache combinations retain the same complete source body
+ok 57 - all eight reviewed controller/library cache combinations retain the same complete source body
+  ---
+  duration_ms: 348.993625
+  ...
+# Subtest: each fine-hair cache rejects missing, unknown, duplicate and mixed approved literals
+ok 58 - each fine-hair cache rejects missing, unknown, duplicate and mixed approved literals
+  ---
+  duration_ms: 131.019875
+  ...
+# Subtest: cache approval cannot hide a changed owner, unrelated source, or a new query suffix
+ok 59 - cache approval cannot hide a changed owner, unrelated source, or a new query suffix
+  ---
+  duration_ms: 40.850459
+  ...
+# Subtest: pinned legacy render-batch registration genuinely misses the recorded opaque barn wall
+ok 60 - pinned legacy render-batch registration genuinely misses the recorded opaque barn wall
+  ---
+  duration_ms: 163.1405
+  ...
+# Subtest: native ranch audit reproduces interior-to-exterior occlusion and retracts behind the actual wall
+ok 61 - native ranch audit reproduces interior-to-exterior occlusion and retracts behind the actual wall
+  ---
+  duration_ms: 467.319083
+  ...
+# Subtest: barn sheltered bays remain open while inset doors, side walls, roof and cross-beam block
+ok 62 - barn sheltered bays remain open while inset doors, side walls, roof and cross-beam block
+  ---
+  duration_ms: 70.099917
+  ...
+# Subtest: authored open doorway remains clear after translation and oblique rotations; walls and roof still stop
+ok 63 - authored open doorway remains clear after translation and oblique rotations; walls and roof still stop
+  ---
+  duration_ms: 192.6
+  ...
+# Subtest: door approach and departure retain visible translated/rotated sightlines through smoothing
+ok 64 - door approach and departure retain visible translated/rotated sightlines through smoothing
+  ---
+  duration_ms: 616.711583
+  ...
+# Subtest: nested authored models and nonuniform parent transforms retain their own clear door and solid walls
+ok 65 - nested authored models and nonuniform parent transforms retain their own clear door and solid walls
+  ---
+  duration_ms: 56.964667
+  ...
+# Subtest: old unannotated meshes preserve wall fallback and translucent exclusion
+ok 66 - old unannotated meshes preserve wall fallback and translucent exclusion
+  ---
+  duration_ms: 0.47225
+  ...
+# Subtest: camera registration preserves authored models and consumes no seeded UUID/RNG values
+ok 67 - camera registration preserves authored models and consumes no seeded UUID/RNG values
+  ---
+  duration_ms: 54.63075
+  ...
+# Subtest: indexed camera conservatively matches scalar V2 at negative cells, exact boundaries, transformed parts and wide fallback
+ok 68 - indexed camera conservatively matches scalar V2 at negative cells, exact boundaries, transformed parts and wide fallback
+  ---
+  duration_ms: 385.038333
+  ...
+# Subtest: existing orbit/frame/input and builder/collision source contracts remain exact
+ok 69 - existing orbit/frame/input and builder/collision source contracts remain exact
+  ---
+  duration_ms: 1.150708
+  ...
+# Subtest: exact frozen runtime and one import reversal reject camera drift without changing historical main assertions
+ok 70 - exact frozen runtime and one import reversal reject camera drift without changing historical main assertions
+  ---
+  duration_ms: 18.754458
+  ...
+# Follow-camera input: menu/surface zoom, pointer ownership, 1.4s release grace, ownership resume, blur/visibility release and frame-rate parity passed.
+# Subtest: tools/test-follow-camera-input.mjs
+ok 11 - tools/test-follow-camera-input.mjs
+  ---
+  duration_ms: 60.379375
+  ...
+# Camera wall clearance, independent sightline, orbit framing, recovery and ground clearance passed.
+# wall direction -1: largest camera step 0.170 m
+# wall direction 1: largest camera step 0.170 m
+# doorway direction -1: largest camera step 0.345 m
+# doorway direction 1: largest camera step 0.345 m
+# corner direction -1: largest camera step 0.390 m
+# corner direction 1: largest camera step 0.390 m
+# Subtest: tools/test-follow-camera.mjs
+ok 12 - tools/test-follow-camera.mjs
+  ---
+  duration_ms: 295.938167
+  ...
+# Subtest: 4 middle leaves cover gaps within the retained triangle tier
+ok 73 - 4 middle leaves cover gaps within the retained triangle tier
+  ---
+  duration_ms: 3.16575
+  ...
+# Subtest: 6 middle leaves cover gaps within the retained triangle tier
+ok 74 - 6 middle leaves cover gaps within the retained triangle tier
+  ---
+  duration_ms: 0.754416
+  ...
+# Subtest: 8 middle leaves cover gaps within the retained triangle tier
+ok 75 - 8 middle leaves cover gaps within the retained triangle tier
+  ---
+  duration_ms: 0.35425
+  ...
+# Subtest: grass-only shader fade keeps original support and opaque lighting hooks
+ok 76 - grass-only shader fade keeps original support and opaque lighting hooks
+  ---
+  duration_ms: 7.264458
+  ...
+# Subtest: quality changes retain root rows, clear sites and stable recycled cells
+ok 77 - quality changes retain root rows, clear sites and stable recycled cells
+  ---
+  duration_ms: 793.482833
+  ...
+# Subtest: anisotropic retirement normals match independently deformed triangle crosses and remain finite at zero
+ok 78 - anisotropic retirement normals match independently deformed triangle crosses and remain finite at zero
+  ---
+  duration_ms: 26.718125
+  ...
+# Subtest: Historical d5 morphology: Long arching meadow: finite rooted geometry, valid normal/UV contract and budget
+ok 79 - Historical d5 morphology: Long arching meadow: finite rooted geometry, valid normal/UV contract and budget
+  ---
+  duration_ms: 13.686791
+  ...
+# Subtest: Historical d5 morphology: Low overlapping meadow: finite rooted geometry, valid normal/UV contract and budget
+ok 80 - Historical d5 morphology: Low overlapping meadow: finite rooted geometry, valid normal/UV contract and budget
+  ---
+  duration_ms: 15.3125
+  ...
+# Subtest: Historical d5 morphology: Long seeded meadow: finite rooted geometry, valid normal/UV contract and budget
+ok 81 - Historical d5 morphology: Long seeded meadow: finite rooted geometry, valid normal/UV contract and budget
+  ---
+  duration_ms: 0.880458
+  ...
+# Subtest: Historical d5 morphology: families have different physical silhouettes and repeat deterministically
+ok 82 - Historical d5 morphology: families have different physical silhouettes and repeat deterministically
+  ---
+  duration_ms: 7.393208
+  ...
+# Subtest: Historical d5 morphology: each narrow leaf is grounded, tapers to one point, and the stand has uneven upright tops
+ok 83 - Historical d5 morphology: each narrow leaf is grounded, tapers to one point, and the stand has uneven upright tops
+  ---
+  duration_ms: 11.362166
+  ...
+# Subtest: Historical d5 morphology: original geometry adds no texture/material allocation or import-time resources
+ok 84 - Historical d5 morphology: original geometry adds no texture/material allocation or import-time resources
+  ---
+  duration_ms: 0.240417
+  ...
+# Subtest: Historical d5 morphology: ordinary sward retains dark connected roots and lighter leaf shoulders
+ok 85 - Historical d5 morphology: ordinary sward retains dark connected roots and lighter leaf shoulders
+  ---
+  duration_ms: 4.446834
+  ...
+# Subtest: Historical d5 morphology: near and middle leaves retain their budgets and unequal upright curved forms
+ok 86 - Historical d5 morphology: near and middle leaves retain their budgets and unequal upright curved forms
+  ---
+  duration_ms: 1.290834
+  ...
+# Subtest: Historical d5 morphology: fine meadow 14: slim rooted leaves keep heights, budget and valid physical normals
+ok 87 - Historical d5 morphology: fine meadow 14: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 2.984917
+  ...
+# Subtest: Historical d5 morphology: fine low 14: slim rooted leaves keep heights, budget and valid physical normals
+ok 88 - Historical d5 morphology: fine low 14: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 3.753625
+  ...
+# Subtest: Historical d5 morphology: fine seeded 14: slim rooted leaves keep heights, budget and valid physical normals
+ok 89 - Historical d5 morphology: fine seeded 14: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 0.734708
+  ...
+# Subtest: Historical d5 morphology: fine near 8: slim rooted leaves keep heights, budget and valid physical normals
+ok 90 - Historical d5 morphology: fine near 8: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 0.356458
+  ...
+# Subtest: Historical d5 morphology: fine middle 4: slim rooted leaves keep heights, budget and valid physical normals
+ok 91 - Historical d5 morphology: fine middle 4: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 0.250167
+  ...
+# Subtest: Historical d5 morphology: fine middle 6: slim rooted leaves keep heights, budget and valid physical normals
+ok 92 - Historical d5 morphology: fine middle 6: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 0.189667
+  ...
+# Subtest: Historical d5 morphology: fine middle 8: slim rooted leaves keep heights, budget and valid physical normals
+ok 93 - Historical d5 morphology: fine middle 8: slim rooted leaves keep heights, budget and valid physical normals
+  ---
+  duration_ms: 0.301458
+  ...
+# Subtest: Historical d5 morphology: grazed growth points hold mostly upright narrow fans instead of low radial spokes
+ok 94 - Historical d5 morphology: grazed growth points hold mostly upright narrow fans instead of low radial spokes
+  ---
+  duration_ms: 0.667875
+  ...
+# Subtest: Historical d5 morphology: all finesse factories retain one geometry allocation, four UUID draws, deterministic data and no placement draws
+ok 95 - Historical d5 morphology: all finesse factories retain one geometry allocation, four UUID draws, deterministic data and no placement draws
+  ---
+  duration_ms: 6.333791
+  ...
+# Subtest: current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass
+ok 96 - current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass
+  ---
+  duration_ms: 4.138833
+  ...
+# Subtest: actual production near admissions preserve every original source row/color/count across quality and cell recycling without gameplay RNG
+ok 97 - actual production near admissions preserve every original source row/color/count across quality and cell recycling without gameplay RNG
+  ---
+  duration_ms: 7532.040084
+  ...
+# Subtest: every frozen combined runtime byte binds to the independently reviewed candidate
+ok 98 - every frozen combined runtime byte binds to the independently reviewed candidate
+  ---
+  duration_ms: 79.951292
+  ...
+# Subtest: complete old constructor/planning/controller/shader bodies survive only individually reviewed render hooks/prototype widths/cache literals
+ok 99 - complete old constructor/planning/controller/shader bodies survive only individually reviewed render hooks/prototype widths/cache literals
+  ---
+  duration_ms: 74.483334
+  ...
+# Subtest: Historical d5 morphology: accepted12 broad leaves change only lateral position/normals while original70-triangle bounds/root/height/UV/colors/index remain exact
+ok 100 - Historical d5 morphology: accepted12 broad leaves change only lateral position/normals while original70-triangle bounds/root/height/UV/colors/index remain exact
+  ---
+  duration_ms: 3.975375
+  ...
+# Subtest: frozen combined source binds only the exact twelve model and cache literals; original whole geology and main world bodies remain
+ok 101 - frozen combined source binds only the exact twelve model and cache literals; original whole geology and main world bodies remain
+  ---
+  duration_ms: 96.507042
+  ...
+# Subtest: actual full production placement loop retains all accepted sites, private RNG and constructor future stream; only two native circle heights change
+ok 102 - actual full production placement loop retains all accepted sites, private RNG and constructor future stream; only two native circle heights change
+  ---
+  duration_ms: 627.649708
+  ...
+# Subtest: actual two fieldstone shapes retain radius/collision ownership, finite unit normals, outward faces and ten closed physical masses
+ok 103 - actual two fieldstone shapes retain radius/collision ownership, finite unit normals, outward faces and ten closed physical masses
+  ---
+  duration_ms: 12.788625
+  ...
+# Subtest: actual full-grid terrain seats all source contact vertices, repeated grounding is byte-idempotent, and every contact triangle is audited continuously
+ok 104 - actual full-grid terrain seats all source contact vertices, repeated grounding is byte-idempotent, and every contact triangle is audited continuously
+  ---
+  duration_ms: 17.72925
+  ...
+# Subtest: actual production legacy controller preserves ground blocking and exterior footprints, while only the two measured tops permit deliberate overflight
+ok 105 - actual production legacy controller preserves ground blocking and exterior footprints, while only the two measured tops permit deliberate overflight
+  ---
+  duration_ms: 15.16625
+  ...
+1..105
+# tests 105
+# suites 0
+# pass 105
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8295.624458

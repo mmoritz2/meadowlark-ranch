@@ -1,0 +1,21 @@
+{
+  "button": {
+    "height": 44,
+    "width": 187.453125
+  },
+  "growth": {
+    "left": 29,
+    "right": 335,
+    "width": 306
+  },
+  "panel": {
+    "client": 364,
+    "scroll": 364,
+    "width": 364
+  },
+  "progress": {
+    "current": "105",
+    "maximum": "200"
+  },
+  "text": "Bramble · Horse level 3+35 horse XP this rideBond 100 / 100105 / 200 horse XP · 95 XP to Lv 4Ride again with Bramble"
+}

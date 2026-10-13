@@ -1211,6 +1211,14 @@ export function install(G){
  }
  G.ui.panel({id:'ev2ResultPanel',title:'🏁 Result',render(){return resultHtml();}});
  function starsOf(n){ return n>=3?'⭐⭐⭐':n>=2?'⭐⭐':'⭐'; }
+ // The ladder freezes final score-clock standings before either finish reader
+ // uses them. Live track order and the count of physically finished pace-setters
+ // can disagree with that result after a time pickup changes the rider's clock.
+ function finalPlace(c){
+  const field=G.ladder?.finalField?.(c);
+  if(field?.rows?.length)return {place:field.place,field:field.field+1,names:field.rows.filter(r=>!r.me).map(r=>r.n)};
+  return GH.on?{place:GH.list.filter(g=>g.done).length+1,field:GH.list.length+1,names:GH.list.map(g=>g.nm)}:null;
+ }
  function buildResult(c,ev,stars,RB,pay,dressage,pct){
   const d=discOf(ev), S=(c&&c.ce)||{}, rows=[];
   const diff=(S.diff&&(S.diff.icon+' '+S.diff.label))||(c&&c.ev2Diff)||'';
@@ -1231,7 +1239,7 @@ export function install(G){
    rows.push(['XC score',(CUR.xcTime+CUR.xcJump).toFixed(1)+((CUR.xcTime+CUR.xcJump)===0?' — a clear inside the time':'')]);
   }else if(S.kind==='race'){
    rows.push(['⏱ Time',(c.t||0).toFixed(1)+'s of '+Math.round(S.timeAllowed||0)+'s allowed']);
-   if(GH.on)rows.push(['Placing','P'+(GH.list.filter(g=>g.done).length+1)+'/'+(GH.list.length+1)+' — '+GH.list.map(g=>g.nm).join(', ')]);
+   const placing=finalPlace(c);if(placing)rows.push(['Placing','P'+placing.place+'/'+placing.field+' — '+placing.names.join(', ')]);
    rows.push(['Gates',Math.round(gateClean()*100)+'% through the middle']);
    rows.push(['Line',(S.lineOff||0)<1?'clean':'off for '+(S.lineOff||0).toFixed(1)+'s']);
    rows.push(['Hazards hit',String(CUR.hazHits)]);
@@ -1642,7 +1650,7 @@ export function install(G){
    if(!CUR.fenceFaults&&!(S.refusals||0)){G.save.sync(s=>{s.ev2=s.ev2||{};s.ev2.clean=(s.ev2.clean||0)+1;});G.quest.dailyEvt('ev2clear',1);}
    else toast('⤴️ '+ev.name+' — '+CUR.fenceFaults+' fence faults'+(S.refusals?' · '+S.refusals+' refusal'+(S.refusals>1?'s':''):''));
   }else if(S.kind==='race'&&CUR.raceAcc!=null){
-   const home=GH.on?(' · P'+(GH.list.filter(g=>g.done).length+1)+'/'+(GH.list.length+1)+' of the field'):'';
+   const placing=finalPlace(c),home=placing?(' · P'+placing.place+'/'+placing.field+' of the field'):'';
    toast('🏁 Gates '+Math.round((S.gateClean||1)*100)+'%'+home+' · '+((S.lineOff||0)<1?'line clean':'line +'+Math.floor((S.lineOff||0)/2)+'s')
     +' · '+CUR.hazHits+' hazard'+(CUR.hazHits===1?'':'s')+(CUR.demoted?' — not tidy enough for the gold':''));
   }
