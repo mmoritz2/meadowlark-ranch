@@ -282,7 +282,7 @@ export function install(G){
   try{if(routes&&W.colliders.some(c=>c&&c.landform)){reroute();build();}}catch(e){console.error('course-clear reroute',e);}
   try{mow();}catch(e){console.error('course-clear mow',e);}
   fieldWalls?.afterCourseClear?.();
-  submission?.captureAll();W.nearGroundCover?.invalidate?.();
+  submission?.captureAll();W.nearGroundCover?.invalidate?.();W.courseTurf?.invalidate?.();
   stats.ms=Math.round(performance.now()-t0);
  }
  clear(true);

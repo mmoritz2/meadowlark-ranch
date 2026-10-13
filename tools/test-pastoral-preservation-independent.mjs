@@ -1,6 +1,9 @@
-import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+import test from 'node:test';import assert from 'node:assert/strict';import rawFs from 'node:fs';import path from 'node:path';
+import {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';
 import {repo,sha,createNearReplay,cellsDigest,withoutRandom,positive} from './pastoral-production-fixture.mjs';
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
+// Only the exact approved course-clear hook is projected for the older physical/controller source hash.
+const fs={...rawFs,readFileSync:(filename,...args)=>{const value=rawFs.readFileSync(filename,...args);if(filename===path.join(repo,'assets/features/course-clear.js')){const restored=normalizeCourseTurfBladesSource(typeof value==='string'?value:value.toString('utf8'),'assets/features/course-clear.js');return Buffer.isBuffer(value)?Buffer.from(restored):restored;}return value;}};
 const fixture=new URL('./fixtures/pastoral-7fbd127/',import.meta.url),oldHTML=fs.readFileSync(new URL('ranch3d.html',fixture),'utf8'),html=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8');
 const contracts=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-7fbd127/untouched-source-contract.json',import.meta.url)));
 test('current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass',()=>{

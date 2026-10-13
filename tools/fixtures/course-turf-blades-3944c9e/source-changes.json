@@ -1,0 +1,113 @@
+[
+  {
+    "file": "assets/lush-meadow-geometry.mjs",
+    "before": "// A continuous original ribbon spends the same five triangles on three\n// successive bend stages rather than a broad lower fan and a hard hanging tip.\n// Seven real vertices are shared across adjoining surfaces; computed normals\n// follow their physical curvature. Authored roots and individual height caps are retained.\nexport function appendArchedMeadowLeaf(P,C,U,I,leaf){\n const {root,heading,height,reach,width,upright=false,sourceLeaf=0,dry=0}=leaf;\n const dx=Math.cos(heading),dz=Math.sin(heading),rise=upright?.77:.82+(sourceLeaf%3)*.025,tipRise=upright?.97:.56+(sourceLeaf%4)*.035;\n const direction=sourceLeaf%2?-1:1,base=P.length/3,indexStart=I.length;\n const samples=[0,.29,.68,1],peak=height*rise;\n const heights=upright?[0,height*.42,peak,height*tipRise]:[0,peak*.78,peak,peak*(.950+(sourceLeaf%3)*.008)];\n const halfWidths=[width*.40,width*(upright?.50:.58),width*(upright?.38:.46),0];\n for(let ring=0;ring<samples.length;ring++){\n  const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*(ring===1?.021:ring===2?-.011:0);\n  const headingAt=heading+direction*(ring===1?-.10:ring===2?.15:0),sx=-Math.sin(headingAt),sz=Math.cos(headingAt);\n  const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep;\n  for(const side of ring===3?[0]:[-1,1]){\n   P.push(x+sx*halfWidths[ring]*side,heights[ring],z+sz*halfWidths[ring]*side);U.push((side+1)/2,t);\n   const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));\n  }\n }\n for(const k of [0,1,2,1,3,2,2,3,4,3,5,4,4,5,6])I.push(base+k);\n return{vertexStart:base,vertexCount:7,indexStart,indexCount:15,segments:3,bent:!upright,creased:false,ribbon:true,sourceLeaf,upright};\n}\n\n",
+    "after": "// Selected blades spend seven triangles on four progressively rising stations.\n// Physical transverse roll and narrowing break the old broad shoulder fan.\n// Exact authored upright root/tip pairs use one triangle, balancing each tier.\n// Every drawn point belongs to a connected physical surface; no extent proxy.\nexport function appendArchedMeadowLeaf(P,C,U,I,leaf){\n const {root,heading,height,reach,width,upright=false,sourceLeaf=0,dry=0,progressive=false,preserveNearMinX=false}=leaf;\n const dx=Math.cos(heading),dz=Math.sin(heading),rise=upright?.77:.82+(sourceLeaf%3)*.025,tipRise=upright?.97:.56+(sourceLeaf%4)*.035;\n const direction=sourceLeaf%2?-1:1,base=P.length/3,indexStart=I.length,peak=height*rise,tipY=upright?height*tipRise:peak*(.950+(sourceLeaf%3)*.008);\n const emit=(x,y,z,side,t)=>{P.push(x,y,z);U.push((side+1)/2,t);const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));};\n const rootHalf=width*.40,sx=-Math.sin(heading),sz=Math.cos(heading);\n emit(root[0]-sx*rootHalf,0,root[1]-sz*rootHalf,-1,0);emit(root[0]+sx*rootHalf,0,root[1]+sz*rootHalf,1,0);\n if(upright){\n  emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);I.push(base,base+1,base+2);\n  return{vertexStart:base,vertexCount:3,indexStart,indexCount:3,segments:1,bent:false,creased:false,ribbon:false,sourceLeaf,upright:true,slenderStem:true};\n }\n if(progressive){\n  const samples=[.29,.55,.72],heights=[peak*.45,peak*.84,peak],widths=[width*.30,width*.225,width*.18];\n  for(let ring=0;ring<3;ring++){\n   const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*[.021,.005,-.011][ring],a=heading+direction*[-.10,.02,.15][ring],sx=-Math.sin(a),sz=Math.cos(a);\n   const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep,roll=widths[ring]*[.10,-.09,.08][ring];\n   for(const side of[-1,1]){\n    const xx=preserveNearMinX&&ring===0&&side===1?x+sx*(width*.58):x+sx*widths[ring]*side;\n    emit(xx,heights[ring]+(ring<2?direction*side*roll:-Math.abs(roll)*(1-direction*side)),z+sz*widths[ring]*side,side,t);\n   }\n  }\n  emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);\n  for(const k of[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6,5,7,6,6,7,8])I.push(base+k);\n  return{vertexStart:base,vertexCount:9,indexStart,indexCount:21,segments:4,bent:true,creased:false,ribbon:true,sourceLeaf,upright:false,progressive:true,transverseRoll:true};\n }\n const samples=[.29,.68],heights=[peak*.765,peak],widths=[width*.26,width*.205];\n for(let ring=0;ring<2;ring++){\n  const t=samples[ring],lean=reach*(.10*t+.90*t*t),sweep=direction*height*(ring===0?.021:-.011),a=heading+direction*(ring===0?-.10:.15),sx=-Math.sin(a),sz=Math.cos(a);\n  const x=root[0]+dx*lean-dz*sweep,z=root[1]+dz*lean+dx*sweep,roll=widths[ring]*(.035+(sourceLeaf%3)*.005);\n  for(const side of[-1,1])emit(x+sx*widths[ring]*side,heights[ring]+(ring===0?direction*side*roll:-roll*(1-direction*side)),z+sz*widths[ring]*side,side,t);\n }\n emit(root[0]+dx*reach,tipY,root[1]+dz*reach,0,1);\n for(const k of[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6])I.push(base+k);\n return{vertexStart:base,vertexCount:7,indexStart,indexCount:15,segments:3,bent:true,creased:false,ribbon:true,sourceLeaf,upright:false};\n}\n\n\n",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/lush-meadow-geometry.mjs",
+    "before": "dry:sourceLeaf%17===0?.15:0}",
+    "after": "dry:sourceLeaf%17===0?.15:0,progressive:[0,2,5,6,8,12,16].includes(sourceLeaf),preserveNearMinX:near&&sourceLeaf===8}",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/lush-meadow-geometry.mjs",
+    "before": "profile:'lush-meadow-ribbon-3'",
+    "after": "profile:'lush-meadow-progressive-4'",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/lush-meadow-geometry.mjs",
+    "before": "shape:'Tapered three-stage curved ribbons with unequal upright stems'",
+    "after": "shape:'Slender stems and original progressive four-stage twisted ribbons'",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/grazed-sward.mjs",
+    "before": "width,upright,sourceLeaf}",
+    "after": "width,upright,sourceLeaf,progressive:[0,2,5,8].includes(sourceLeaf)}",
+    "occurrences": 1
+  },
+  {
+    "file": "assets/grazed-sward.mjs",
+    "before": "profile:'grazed-sward-arch-2'",
+    "after": "profile:'grazed-sward-progressive-4'",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-3';",
+    "after": "import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-3';\nimport {installCourseTurf} from './assets/course-turf.mjs?v=mown-course-turf-4';"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " const okGrass=(x,z,shortVerge=false)=>{",
+    "after": " const okGrass=(x,z,shortVerge=false,mownCourse=false)=>{"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "  if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;",
+    "after": "  if(!mownCourse&&window.__onCourse&&window.__onCourse(x,z,3.4))return false;"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,",
+    "after": " const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,\n  canCourseTurf:(x,z,r)=>{\n   if(!Number.isFinite(x+z+r)||!(r>0&&r<=.5))return false;\n   if(pathDist(x,z)<PATH_W*.92+r||(G.worldPaths?.trackDist(x,z)??Infinity)<2.6+r)return false;\n   const d=r/Math.sqrt(2);\n   return [[0,0],[r,0],[-r,0],[0,r],[0,-r],[d,d],[-d,d],[d,-d],[-d,-d]].every(([dx,dz])=>{\n    const a=x+dx,b=z+dz;\n    return biomeAt(a,b)==='meadow'&&coldWoodlandWeights(a,b).weight<=.08&&coyoteCoverDryWeight(a,b)<.35&&okGrass(a,b,true,true);\n   });\n  },\n  courseTurfColor:(x,z,sample,color)=>meadowBladeColor(color,x,z,sample),"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "installPastoralCoverRefresh(G);",
+    "after": "installPastoralCoverRefresh(G);\nG.world.courseTurf=installCourseTurf(G);"
+  },
+  {
+    "file": "assets/meadow-cover.js",
+    "before": "'./lush-meadow-geometry.mjs?v=grass-ribbon-3'",
+    "after": "'./lush-meadow-geometry.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "assets/grass-families.mjs",
+    "before": "'./lush-meadow-geometry.mjs?v=grass-ribbon-3'",
+    "after": "'./lush-meadow-geometry.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "assets/grazed-sward.mjs",
+    "before": "'./lush-meadow-geometry.mjs?v=grass-ribbon-3'",
+    "after": "'./lush-meadow-geometry.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "assets/mixed-sward.mjs",
+    "before": "'./grazed-sward.mjs?v=grass-ribbon-3'",
+    "after": "'./grazed-sward.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "assets/mixed-sward.mjs",
+    "before": "'./grass-families.mjs?v=grass-ribbon-3'",
+    "after": "'./grass-families.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "'./assets/mixed-sward.mjs?v=grass-ribbon-3'",
+    "after": "'./assets/mixed-sward.mjs?v=grass-ribbon-5'"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "'./assets/meadow-cover.js?v=grass-ribbon-3'",
+    "after": "'./assets/meadow-cover.js?v=grass-ribbon-5'"
+  },
+  {
+    "file": "assets/features/course-clear.js",
+    "before": "  submission?.captureAll();W.nearGroundCover?.invalidate?.();",
+    "after": "  submission?.captureAll();W.nearGroundCover?.invalidate?.();W.courseTurf?.invalidate?.();"
+  },
+  {
+    "file": "assets/features/index.js",
+    "before": "'./course-clear.js?v=fine-meadows-1'",
+    "after": "'./course-clear.js?v=fine-meadows-1-mown-course-turf-4'"
+  },
+  {
+    "file": "ranch3d.html",
+    "before": "'./assets/features/index.js?v=programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4'",
+    "after": "'./assets/features/index.js?v=programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4'"
+  }
+]

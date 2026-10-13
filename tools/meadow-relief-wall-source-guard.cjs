@@ -3,6 +3,7 @@ const {normalizeActivityIncomingSource,normalizeActivityIncomingObserverSource}=
 const dir=path.join(__dirname,'fixtures/meadow-relief-wall-b1a73b1'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));
 const contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json');
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const {undoCourseTurfBladesSource,normalizeCourseTurfBladesTestSource}=require('./course-turf-blades-source-guard.cjs');
 for(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeActivityIncomingObserverSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact preceding projection dependency '+file);
 const {normalizeFieldstoneWallCacheSource:F}=require('./fieldstone-wall-cache-source-guard.cjs'),{normalizePublishedCacheSource:P}=require('./published-world-import-source-guard.cjs'),{normalizeAuthoredCameraSource:C}=require('./authored-camera-source-guard.cjs');
 const {normalizeRidingDistanceSource:distance}=require('./riding-distance-source-guard.cjs'),{normalizeRibbonAwardSource:awards}=require('./ribbon-award-source-guard.cjs');
@@ -43,14 +44,16 @@ function undo(source,file,group,label,compatibility=false){
 // Used at Reviewed's entry before its physical FEATURES cache is parsed.
 // This strictly undoes the eighteen exact new literals; the caller's unchanged
 // whole-body chain and the full source gate below still reject unrelated drift.
-function undoMeadowReliefWallSource(source,file){return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}
+function undoMeadowReliefWallSource(source,file){source=undoCourseTurfBladesSource(source,file);return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}
 function normalizeMeadowReliefWallSource(source,file){
+ source=undoCourseTurfBladesSource(source,file);
  const row=contract.files[file];if(!row)return source;
  source=undoMeadowReliefWallSource(source,file);
  assert.equal(sha(C(P(F(prior(source,file),file),file),file)),row.priorCanonicalSHA256,'Entire b1 material/wall/cache owner restored through exact prior source logic '+file);
  return source;
 }
 function normalizeMeadowReliefWallTestSource(source,file){
+ source=normalizeCourseTurfBladesTestSource(source,file);
  source=normalizeActivityIncomingObserverSource(source,file);
  const hash=contract.testAdapterPreimages[file];if(!hash)return source;
  if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source; // Earlier states require their exact complete source SHA.

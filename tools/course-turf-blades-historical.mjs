@@ -1,0 +1,10 @@
+import fs from 'node:fs';import {createHash} from 'node:crypto';import {undoCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';
+const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/course-turf-blades-3944c9e/contract.json',import.meta.url)));
+const source=file=>{const s=undoCourseTurfBladesSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);if(createHash('sha256').update(s).digest('hex')!==contract.files[file].rawSHA256)throw Error('Entire original3944 morphology owner '+file);return s;};
+const strip=s=>s.replace(/^import[^\n]*\n/gm,'').replaceAll('export ','');
+const lush=new Function(strip(source('assets/lush-meadow-geometry.mjs'))+'\nreturn {createLushMeadowGeometry,appendArchedMeadowLeaf};')();
+export const createLushMeadowGeometry=lush.createLushMeadowGeometry;
+export const createGrazedSwardGeometry=new Function('appendArchedMeadowLeaf',strip(source('assets/grazed-sward.mjs'))+'\nreturn createGrazedSwardGeometry;')(lush.appendArchedMeadowLeaf);
+export const createGrassFamilyGeometry=new Function('createLushMeadowGeometry',strip(source('assets/grass-families.mjs'))+'\nreturn createGrassFamilyGeometry;')(createLushMeadowGeometry);
+const cover=source('assets/meadow-cover.js'),start=cover.indexOf('function createMiddleCoverGeometry'),end=cover.indexOf('// Smooth world-space');if(start<0||end<=start)throw Error('Historical3944 cover factory absent');
+export const createGrassTuftGeometry=new Function('createLushMeadowGeometry',cover.slice(start,end).replaceAll('export function','function')+'\nreturn createGrassTuftGeometry;')(createLushMeadowGeometry);

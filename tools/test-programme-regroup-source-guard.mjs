@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -10,7 +11,7 @@ import {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource} from 
 import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
 const fixture='tools/fixtures/programme-regroup-05421c6/contract.json',contract=JSON.parse(read(fixture));
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});

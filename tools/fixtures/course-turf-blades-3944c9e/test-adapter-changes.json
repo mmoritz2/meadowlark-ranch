@@ -1,0 +1,200 @@
+[
+  {
+    "file": "tools/meadow-relief-wall-source-guard.cjs",
+    "before": "const sha=s=>crypto.createHash('sha256').update(s).digest('hex');",
+    "after": "const sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nconst {undoCourseTurfBladesSource,normalizeCourseTurfBladesTestSource}=require('./course-turf-blades-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/meadow-relief-wall-source-guard.cjs",
+    "before": "function undoMeadowReliefWallSource(source,file){return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}",
+    "after": "function undoMeadowReliefWallSource(source,file){source=undoCourseTurfBladesSource(source,file);return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/meadow-relief-wall-source-guard.cjs",
+    "before": "function normalizeMeadowReliefWallSource(source,file){",
+    "after": "function normalizeMeadowReliefWallSource(source,file){\n source=undoCourseTurfBladesSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/meadow-relief-wall-source-guard.cjs",
+    "before": "function normalizeMeadowReliefWallTestSource(source,file){",
+    "after": "function normalizeMeadowReliefWallTestSource(source,file){\n source=normalizeCourseTurfBladesTestSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "const {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');",
+    "after": "const {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\nconst {undoCourseTurfBladesSource}=require('./course-turf-blades-source-guard.cjs');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/grass-ribbon-source-guard.cjs",
+    "before": "function normalizeGrassRibbonOwnSource(source,file){",
+    "after": "function normalizeGrassRibbonOwnSource(source,file){\n source=undoCourseTurfBladesSource(source,file);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lupin-independent.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-lupin-independent.mjs",
+    "before": "course=fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8');",
+    "after": "course=normalizeCourseTurfBladesSource(fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8'),'assets/features/course-clear.js');",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "const read=file=>normalizeActivityIncomingObserverSource(normalizeActivityIncomingSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),sha=",
+    "after": "const read=file=>normalizeActivityIncomingObserverSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),file),file),sha=",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "test(`${file}: actual new owner is exact and only approved blocks restore the full228 body`",
+    "after": "test(`Historical3944 release: ${file}: actual new owner is exact and only approved blocks restore the full228 body`",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "test('five actual parent/child cache edges are live once and reject unknown versions or changed owners",
+    "after": "test('Historical3944 release: five actual parent/child cache edges are live once and reject unknown versions or changed owners",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "test('new observer reversals retain all complete228 bodies and previous14/38 fixture bytes",
+    "after": "test('Historical3944 release: new observer reversals retain all complete228 bodies and previous14/38 fixture bytes",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+    "before": "test('pure compatibility functions retain actual preceding cache/literal code without eager module cycles",
+    "after": "test('Historical3944 release: pure compatibility functions retain actual preceding cache/literal code without eager module cycles",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-activity-runtime-source-guard.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-activity-runtime-source-guard.mjs",
+    "before": "read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "after": "read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-activity-landscape-composition.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-activity-landscape-composition.mjs",
+    "before": "read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),sha=s=>createHash('sha256').update(s).digest('hex')",
+    "after": "read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex')",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-model.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {createGrassTuftGeometry as historicalTuft,createGrassFamilyGeometry as historicalFamily,createGrazedSwardGeometry as historicalGrazed} from './course-turf-blades-historical.mjs';\nconst historical3944=(form,T)=>form.name==='near'?historicalTuft(T,{profile:'near-folded-v1'}):form.name==='grazed'?historicalGrazed(T):historicalFamily(T,['meadow','low','seeded'].indexOf(form.name));",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-model.mjs",
+    "before": "  assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');",
+    "after": "  { // Historical3944 broad-ribbon area clause; actual progressive area has its separate physical contract.\n   const g=historical3944(form,T);try{assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');}finally{g.dispose();}\n  }",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-model.mjs",
+    "before": "   if(a.creased){\n    assert.equal(r.ribbon,true);assert.equal(r.creased,false);assert.equal(r.segments,3);\n    assert.equal(r.vertexCount,7);assert.equal(r.indexCount,15);\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+r.indexCount),id=>id-base),[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6],'Adjacent stages share real vertices and retain continuous winding');\n    const positions=Array.from({length:7},(_,i)=>data(p,base+i).join(','));assert.equal(new Set(positions).size,7,'No duplicated shoulder crease and no unused substitute vertices');\n    const widths=[];\n    for(const [left,right]of [[0,1],[2,3],[4,5]]){\n     const width=vector(p,base+left).distanceTo(vector(p,base+right));widths.push(width);\n     assert(width>0&&width<top*.25,'Real ribbon width remains bounded against its actual height');\n     assert.equal(p.getY(base+left),p.getY(base+right));\n    }\n    assert(widths[1]>widths[0]);assert(widths[2]<widths[1],'Upper stage tapers into the tip');\n    assert(p.getY(base+2)>0);assert(p.getY(base+4)>p.getY(base+2));\n    assert(g.attributes.uv.getY(base+2)>.28&&g.attributes.uv.getY(base+2)<.30);\n    assert(g.attributes.uv.getY(base+4)>.67&&g.attributes.uv.getY(base+4)<.69);\n    if(r.upright){upright++;assert.equal(r.bent,false);assert.equal(p.getY(tip),top);assert.equal(p.getY(tip),prior.getY(oldTip));}\n    else{bent++;assert.equal(r.bent,true);assert(p.getY(tip)<top);assert(p.getY(tip)>=top*.9499&&p.getY(tip)<=top*.9661,'The physical tip makes a gentle bow below its preserved peak');assert(p.getY(tip)>prior.getY(oldTip),'Remove the old deep hanging kink while retaining the original peak');}\n",
+    "after": "   if(a.creased){\n    // Historical3944 sevenvertex stage clauses. Root/roles/peak/endpoints, physical normals and costs above remain actual.\n    const historical=historical3944(form,T);try{const g=historical,r=ranges(historical)[leaf],p=historical.attributes.position,base=r.vertexStart,tip=base+r.vertexCount-1;\n    assert.equal(r.ribbon,true);assert.equal(r.creased,false);assert.equal(r.segments,3);\n    assert.equal(r.vertexCount,7);assert.equal(r.indexCount,15);\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+r.indexCount),id=>id-base),[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6],'Adjacent stages share real vertices and retain continuous winding');\n    const positions=Array.from({length:7},(_,i)=>data(p,base+i).join(','));assert.equal(new Set(positions).size,7,'No duplicated shoulder crease and no unused substitute vertices');\n    const widths=[];\n    for(const [left,right]of [[0,1],[2,3],[4,5]]){\n     const width=vector(p,base+left).distanceTo(vector(p,base+right));widths.push(width);\n     assert(width>0&&width<top*.25,'Real ribbon width remains bounded against its actual height');\n     assert.equal(p.getY(base+left),p.getY(base+right));\n    }\n    assert(widths[1]>widths[0]);assert(widths[2]<widths[1],'Upper stage tapers into the tip');\n    assert(p.getY(base+2)>0);assert(p.getY(base+4)>p.getY(base+2));\n    assert(g.attributes.uv.getY(base+2)>.28&&g.attributes.uv.getY(base+2)<.30);\n    assert(g.attributes.uv.getY(base+4)>.67&&g.attributes.uv.getY(base+4)<.69);\n    if(r.upright){upright++;assert.equal(r.bent,false);assert.equal(p.getY(tip),top);assert.equal(p.getY(tip),prior.getY(oldTip));}\n    else{bent++;assert.equal(r.bent,true);assert(p.getY(tip)<top);assert(p.getY(tip)>=top*.9499&&p.getY(tip)<=top*.9661,'The physical tip makes a gentle bow below its preserved peak');assert(p.getY(tip)>prior.getY(oldTip),'Remove the old deep hanging kink while retaining the original peak');}\n\n    }finally{historical.dispose();}",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-ribbon-grass-model.mjs",
+    "before": "assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');",
+    "after": "{const g=historicalFamily(T,family);try{assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');}finally{g.dispose();}}",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-activity-runtime-source-guard.mjs",
+    "before": "import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';",
+    "after": "import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges as normalizePriorActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeCourseTurfBladesFixtureChanges} from './course-turf-blades-source-guard.cjs';\nconst normalizeActivityFixtureChanges=(diff,baseline)=>normalizePriorActivityFixtureChanges(normalizeCourseTurfBladesFixtureChanges(diff,baseline),baseline);",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-grass-composition.mjs",
+    "before": "read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex')",
+    "after": "read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex')",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-progression-loop-cache-guard.mjs",
+    "before": "read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file)",
+    "after": "read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pastoral-preservation-independent.mjs",
+    "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';",
+    "after": "import test from 'node:test';import assert from 'node:assert/strict';import rawFs from 'node:fs';import path from 'node:path';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-pastoral-preservation-independent.mjs",
+    "before": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';",
+    "after": "import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\n// Only the exact approved course-clear hook is projected for the older physical/controller source hash.\nconst fs={...rawFs,readFileSync:(filename,...args)=>{const value=rawFs.readFileSync(filename,...args);if(filename===path.join(repo,'assets/features/course-clear.js')){const restored=normalizeCourseTurfBladesSource(typeof value==='string'?value:value.toString('utf8'),'assets/features/course-clear.js');return Buffer.isBuffer(value)?Buffer.from(restored):restored;}return value;}};",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-horse-training-source-guard.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-horse-training-source-guard.mjs",
+    "before": "read=file=>normalizeProgrammeRegroupAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file)",
+    "after": "read=file=>normalizeProgrammeRegroupAuditSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file)",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-programme-regroup-source-guard.mjs",
+    "before": "import test from 'node:test';",
+    "after": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';",
+    "occurrences": 1
+  },
+  {
+    "file": "tools/test-programme-regroup-source-guard.mjs",
+    "before": "read=file=>fs.readFileSync(new URL(file,root),'utf8')",
+    "after": "read=file=>normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file)",
+    "occurrences": 1
+  }
+]

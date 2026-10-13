@@ -1,5 +1,8 @@
-import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
+import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges as normalizePriorActivityFixtureChanges} from './activity-landscape-source-guard.cjs';
+import {normalizeCourseTurfBladesFixtureChanges} from './course-turf-blades-source-guard.cjs';
+const normalizeActivityFixtureChanges=(diff,baseline)=>normalizePriorActivityFixtureChanges(normalizeCourseTurfBladesFixtureChanges(diff,baseline),baseline);
 import test from 'node:test';
+import {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -7,7 +10,7 @@ import {execFileSync} from 'node:child_process';
 import {normalizeActivityRuntimeSource,normalizeActivityObserverSource} from './activity-runtime-source-guard.cjs';
 import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);
+const root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file);
 const contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));
 const sha=source=>createHash('sha256').update(source).digest('hex');
 const git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});
