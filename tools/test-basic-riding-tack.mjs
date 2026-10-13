@@ -1,7 +1,9 @@
 import {normalizeCoyoteCragCompositionSource as normalizeCragSource} from './coyote-crag-composition-source-guard.cjs';
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 const normalizeCoyoteCragCompositionSource=(source,file)=>normalizeCragSource(normalizeGrassArchSource(source,file),file);
-import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';
+import {normalizePublishedCacheSource as normalizePublishedSource} from './starter-tack-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
+const normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(source,file),file);
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

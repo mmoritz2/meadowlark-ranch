@@ -1,0 +1,37 @@
+[
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "const {normalizePublishedCacheSource}=require('./published-world-import-source-guard.cjs');",
+    "after": "const {normalizePublishedCacheSource}=require('./published-world-import-source-guard.cjs');\nconst {normalizeFieldstoneWallCacheSource}=require('./fieldstone-wall-cache-source-guard.cjs');"
+  },
+  {
+    "file": "tools/grass-arch-source-guard.cjs",
+    "before": "function normalizeGrassArchSource(source,file){\n source=normalizePublishedCacheSource(source,file);",
+    "after": "function normalizeGrassArchSource(source,file){\n source=normalizeFieldstoneWallCacheSource(source,file);\n source=normalizePublishedCacheSource(source,file);"
+  },
+  {
+    "file": "tools/test-basic-riding-tack.mjs",
+    "before": "import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';",
+    "after": "import {normalizePublishedCacheSource as normalizePublishedSource} from './starter-tack-source-guard.cjs';\nimport {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';\nconst normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(source,file),file);"
+  },
+  {
+    "file": "tools/test-coyote-crag-composition.mjs",
+    "before": "import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';",
+    "after": "import {normalizePublishedCacheSource as normalizePublishedSource} from './starter-tack-source-guard.cjs';\nimport {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';\nconst normalizePublishedCacheSource=(source,file)=>normalizePublishedSource(normalizeFieldstoneWallCacheSource(source,file),file);"
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';",
+    "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';"
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": "  const source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=",
+    "after": "  const source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected="
+  },
+  {
+    "file": "tools/test-starter-tack-catalog-preservation.mjs",
+    "before": " const file='ranch3d.html',source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=",
+    "after": " const file='ranch3d.html',source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected="
+  }
+]

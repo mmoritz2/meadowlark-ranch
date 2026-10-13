@@ -1,4 +1,4 @@
-import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-2';
+import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-3';
 /* Feature package 'world-paths' — the ground between places.
 
    The basin already had six worn tracks baked into ranch3d.html, and every one of them stops at
@@ -1000,7 +1000,7 @@ export function install(G){
   await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,
    W.ranchBuilderArt.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,courseCleanupReady]);
   try{
-  P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+  P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy()),walls:W.walls});
   }catch(error){P.fieldWallArt={status:'failed',unitCount:0,units:[],error:String(error)};G.errors.push({id:'world-paths:field-walls',error:String(error)});console.error('Field wall finish',error);}
 
   const box=renderedBatches.box,probe=new THREE.Matrix4();

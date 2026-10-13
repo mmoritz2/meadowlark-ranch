@@ -3,6 +3,7 @@ import {T,ROOT,nativeActor,stream} from './native-starter-tack-fixture.mjs';
 import {createTackCollection} from '../assets/tack-collection-models.js';
 import {TACK_PIECES,getTackPiece} from '../assets/tack-collection.mjs';
 import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';
+import {normalizeFieldstoneWallCacheSource} from './fieldstone-wall-cache-source-guard.cjs';
 const fixture=new URL('./fixtures/starter-tack-2986289/',import.meta.url),originalText=fs.readFileSync(new URL('tack-collection-models.js',fixture),'utf8'),sha=x=>createHash('sha256').update(x).digest('hex'),original=await import('data:text/javascript;base64,'+Buffer.from(originalText.replace("'./native-rider.js?v=tack-store-live-20261007'",JSON.stringify(new URL('../assets/native-rider.js?v=tack-store-live-20261007',import.meta.url).href))).toString('base64'));
 const snapshot=kit=>{const rows=[];kit.group.traverse(m=>{if(!m.isMesh)return;rows.push({name:m.name,uuid:m.uuid,geometryUUID:m.geometry.uuid,attributes:Object.fromEntries(Object.entries(m.geometry.attributes).map(([key,a])=>[key,sha(Buffer.from(a.array.buffer,a.array.byteOffset,a.array.byteLength))])),index:sha(Buffer.from(m.geometry.index.array.buffer)),material:{uuid:m.material.uuid,color:m.material.color.toArray(),roughness:m.material.roughness,metalness:m.material.metalness,key:m.material.customProgramCacheKey(),maps:['map','bumpMap'].map(k=>m.material[k]?sha(m.material[k].image.data):null)}});});return{rows,stats:structuredClone(kit.stats)};};
 test('already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream',()=>{
@@ -25,7 +26,7 @@ test('only exact reviewed cache edges are accepted; unknown, duplicate, mixed an
   ['assets/features/index.js',"import * as riderJourneyUI from './rider-journey-ui.js?v=journey-story-1';","import * as riderJourneyUI from './rider-journey-ui.js?v=rider-journey-1';"]
  ];
  for(const [file,after,before]of edges){
-  const source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');
+  const source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file.split('/').at(-1),fixture),'utf8');
   assert.equal(source.split(after).length-1,1,'Live reviewed import exists: '+after);
   assert.equal(normalizeStarterTackSource(source.replace(after,before),file),expected,'The historical cache also retains the same original body');
   assert.throws(()=>normalizeStarterTackSource(source.replace(after,after.replace(/\?v=[^']+/,'?v=unreviewed-version')),file),'Unknown cache is not stripped');
@@ -36,7 +37,7 @@ test('only exact reviewed cache edges are accepted; unknown, duplicate, mixed an
 });
 
 test('published native-groom cache chain accepts all three reviewed states and rejects an unknown next version or mixed history',()=>{
- const file='ranch3d.html',source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=fs.readFileSync(new URL(file,fixture),'utf8');
+ const file='ranch3d.html',source=normalizeFieldstoneWallCacheSource(fs.readFileSync(ROOT+'/'+file,'utf8'),file),expected=fs.readFileSync(new URL(file,fixture),'utf8');
  const latest="'./assets/game-hero-horse.js?v=full-groom-20261013c'",versions=['full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d'];
  assert.equal(source.split(latest).length-1,1);
  for(const version of versions){
