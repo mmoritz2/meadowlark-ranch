@@ -5,7 +5,7 @@ import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-
 import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=equestrian-style-20261012';
 export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=equestrian-style-20261012';
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-20261009';
-import {createNativeDraftFeathers} from './native-draft-feathers.js?v=horse-art-20261009b';
+import {createNativeDraftFeathers} from './native-draft-feathers.js?v=draft-feathers-20261013d';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.

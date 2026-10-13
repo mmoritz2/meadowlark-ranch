@@ -243,16 +243,24 @@ their true skinned positions. `draftShape.stirrupTailoring` and the numerical
 report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
-silky hair meshes to Shire, Clydesdale and Vanner instances, including aliases
-such as Tempest and Rosebloom. Vanner uses 72 overlapping locks per leg with a
-denser undercoat; Shire's 56 and Clydesdale's 62 retain their approved shapes.
-Vanner's alpha-aware front/side collar coverage is 69–81%, with four draw calls.
-Across 328 real gait poses its feathers clear the floor by at least 30.9 mm
-and stirrup treads by 353.9 mm; standing sole clearance is 50.5 mm. All follow
-sampled skin and native joints. Their
-strand roots follow the measured widened lower-leg surface. Percheron, Belgian
-and Suffolk keep clean legs. The groom facade owns their Hair visibility and
-idempotent disposal; these strands do not alter the source skin or animation.
+hair meshes to Percheron, Shire, Clydesdale and Vanner instances, including
+Belgian, Suffolk, Tempest and Rosebloom aliases. Two staggered layers of rounded
+locks give the fetlocks a fuller silhouette. Narrow embedded roots with a
+fiber-alpha fade blend into the leg, and varied fine tips leave the hoof toes
+visible. Percheron uses a shorter, lighter 64 locks per leg; Shire, Clydesdale
+and Vanner use 88, 92 and 96 respectively. All retain four draw calls, with
+6,144–9,216 triangles per horse and no per-frame geometry work.
+
+Roots fit sampled lower-leg skin after refreshing world and skin-bind matrices,
+including horses already translated, rotated or scaled within the ranch.
+`node tools/test-native-draft-feathers.mjs` checks all four foundations across
+production idle, walk, trot, both canter/gallop leads and jump clips with hoof
+flex, plus alpha-aware collar coverage, standing sole and moving hoof/tack
+clearance, alias inheritance, transformed-parent fitting and private resource
+lifecycle. These numerical checks complement the standing and moving visual
+review; they are not a claim of newly simulated hair dynamics. The groom facade
+owns Hair visibility and idempotent disposal. Source meshes, weights, binds and
+animation clips are unchanged.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat
@@ -365,7 +373,7 @@ the authored pose. Hair remains at least 127 mm above the local ground. The
 test also rejects malformed added skins, checks Hair visibility, and verifies
 reset, disposal and source immutability. These bounds complement visual review.
 
-Shire, Clydesdale and Vanner feathers remain runtime additions in
+Percheron, Shire, Clydesdale and Vanner feathers remain runtime additions in
 `assets/native-draft-feathers.js`, fitted to sampled lower-leg skin and attached
 to the native pastern bones. They are disposed with the groom facade. Vanner's
 fuller lower-leg fringe does not claim new knee-length skinned feathering.
