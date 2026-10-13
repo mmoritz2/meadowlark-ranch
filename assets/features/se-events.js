@@ -23,6 +23,7 @@
    ribbon banner, stub); each arena photograph and course map is the game's own world, pictured
    from above the venue on the frame the screen opens (se-frame's snap). Nothing runs at import
    time. */
+import {eventRibbonProgress} from '../event-ribbon-progress.mjs?v=final-ribbon-1';
 import {eventPreparation} from './event-preparation.js?v=event-training-1';
 import {eventHorseComparison,eventHorseById,createEventHorseSelection} from './event-horse-comparison.mjs?v=horse-choice-1';
 export const id='se-events';
@@ -205,13 +206,7 @@ export function install(G){
   const trainingCaps=Object.fromEntries(Object.keys(ev.req||{}).map(k=>[k,{level:G.xp.statCap?.(h),breed:G.xp.statCeil?.(h,k)}]));
   return eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id),trainingCaps});
  }
- function ribbonsOf(ev,s){
-  const D=DIFFS(), by=s.ribbonsBy||{}, best=(s.ribbons||{})[ev.id]||0, gold=!!(s.ribbonGold||{})[ev.id];
-  const per=D.map(d=>Math.min(4,by[ev.id+':'+d.k]||0));
-  if(!per.some(Boolean)&&best){const oi=Math.max(0,D.findIndex(d=>d.k==='open'));per[oi]=Math.min(4,best);}
-  const golds=per.filter(v=>v>=4).length||(gold?1:0);
-  return {per,best,gold,golds,sum:per.reduce((a,b)=>a+b,0),max:4*D.length};
- }
+ function ribbonsOf(ev,s){return eventRibbonProgress(s,ev.id,DIFFS());}
  const statLbl=k=>(T.STAT_LBL&&T.STAT_LBL[k])||k;
  const needText=m=>m.map(([k,need])=>k==='level'?'Lv '+need:statLbl(k).replace(/^\S+\s/,'')+' '+need).join(' · ');
  const featured=()=>{try{return (G.course&&G.course.weeklyFeatured?G.course.weeklyFeatured():[]).map(f=>f.id);}catch(e){return [];}};
@@ -323,7 +318,7 @@ export function install(G){
    :next?('Unlock next event: <span class="sev-lv">Lv '+next.lvl+'</span>'):(rb.golds>=DIFFS().length?'Every gold ribbon won':'All events open');
   const art=ticketSvg(ev,{town:T0.name,ribbons:rb?Math.min(3,rb.best):0,lock:!g.ok||!!lk,label:ev.special?D.t:null});
   const progress=ev.special?'<div class="sev-progress"><span>'+esc(ev.special==='roundup'?'130 coins per horse':'Free stat training')+'</span></div>'
-   :'<div class="sev-progress"><span>'+rb.golds+' of '+DIFFS().length+' gold ribbons</span><b>'+pct+'%</b><i><em style="width:'+pct+'%"></em></i></div>';
+   :'<div class="sev-progress"><span>'+rb.sum+'/'+rb.max+' ribbons · '+rb.golds+'/'+DIFFS().length+' gold</span><b>'+pct+'%</b><i><em style="width:'+pct+'%"></em></i></div>';
   const lock=lk?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>'+esc(T0.name)+'</b><span>'+esc(lk)+'</span></div>'
    :!g.ok?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>Needs '+esc(needText(g.missing))+'</b><span>'+esc(ridden().name||'Your horse')+' is Lv '+(ridden().level||1)+'</span></div>':'';
   return '<div class="sev-card'+cls+'" role="button" tabindex="'+(o===0?'0':'-1')+'"'+(Math.abs(o)>1?' aria-hidden="true"':'')+' aria-label="'+esc((o===0?'Open ':'Select ')+(ev.special?ev.name:shortName(ev))+(lk?', '+lk:!g.ok?', needs '+needText(g.missing):''))+'" style="--o:'+o+';--a:'+Math.abs(o)+';--c:'+D.c+'" data-card="'+i+'" data-ev="'+esc(ev.id)+'">'
@@ -450,10 +445,11 @@ export function install(G){
    main+='<div class="sev-prow"><div class="sev-map">'+snapImg(mv,'')+'<svg class="sev-course" id="sevCourse" viewBox="0 0 1000 625" preserveAspectRatio="xMidYMid slice"></svg></div><div class="sev-diffs">'
     +DF.map((x,i)=>{const l=x.lvlAdd&&lvl<ev.lvl+x.lvlAdd;const pay=Math.round((ev.reward||0)*x.rewMul*(featured().includes(ev.id)?1.5:1));
      return '<button class="sev-diff'+(i===di?' on':'')+(l?' lock':'')+'" data-sev="diff:'+i+'"><span class="d-ic">'+esc(x.icon||'')+'</span><span><span class="d-t">'+esc(x.label)+'</span>'
-      +'<span class="d-s">'+esc(l?('Opens at Lv '+(ev.lvl+x.lvlAdd)):(x.desc||''))+'</span><span class="d-rib">'+[0,1,2,3].map(k=>ribbonMini(k<rb.per[i],k===3)).join('')+'</span></span>'
+      +'<span class="d-s">'+esc(l?('Opens at Lv '+(ev.lvl+x.lvlAdd)):(x.desc||''))+'</span><span class="d-rib">'+[0,1,2,3].map(k=>ribbonMini(k<rb.per[i],k===3&&rb.perGold[i])).join('')+'</span></span>'
       +'<span class="d-pay">'+K.COIN+fmt(pay)+'</span></button>';}).join('')+'</div></div>';
-   main+='<div class="sev-ribs"><span>'+rb.per[di]+' of 4 ribbons earned</span>'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
+   main+='<div class="sev-ribs"><span>'+rb.per[di]+' of 4 ribbons earned</span>'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:(rb.per[di]>=4&&!rb.perGold[di]?'Older fourth ribbon record':ev.race?'Gold: 95% race accuracy, 90% gate centering, clean round':'Gold: 95% accuracy, nothing down'))+'">'+(k<3||!rb.perGold[di]?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
+   if(rb.historical[di])main+='<p class="sev-hint">Finish another judged round to confirm this older ribbon record.</p>';
    const best=(s.bestTimes||{})[ev.id], bestS=(ev.dressage||ev.kind==='show')?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
    const prep=preparationFor(ev,di,h,s),comparison=comparisonFor(ev,di,h,s);
    const req=prep.requirements.map(({key:k,have,need,base,tack,met})=>{

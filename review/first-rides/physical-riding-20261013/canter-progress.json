@@ -1,0 +1,65 @@
+{
+  "notes": "Existing production-created isolated save. Normal Canter selected and ordinary W held2 seconds; no save/position/time edits. Physical travel15.1656m; gallop credit0; existing story270.0890688828615 retained.",
+  "errors": [],
+  "featureErrors": [],
+  "method": "Production-created save and normal wall-time keys; no fixture writes to progression, position, heading, or clock.",
+  "player": {
+    "blown": false,
+    "breed": "pinto",
+    "exhaustT": 0,
+    "heading": 3.141592653589793,
+    "horseId": 2,
+    "horseName": "Clover",
+    "landT": 0,
+    "loadingBreed": false,
+    "modelKey": "pinto",
+    "rigReady": true,
+    "speed": 0,
+    "stam": 1,
+    "x": -7,
+    "z": -5.165637057809851
+  },
+  "ridingDistance": {
+    "bond": 15.16563705780985,
+    "fastStationarySeconds": 0,
+    "frame": {
+      "bond": 0,
+      "gallop": 0,
+      "ground": 0,
+      "mountId": 2,
+      "travel": 0
+    },
+    "frames": 1753,
+    "gait": "stand",
+    "gallop": 0,
+    "ground": 15.16563705780985,
+    "travel": 15.16563705780985
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Follow the south gate marker. Tap for Gallop. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (270/300)\nFollow the south gate marker. Tap for Gallop."
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 270.0890688828615,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 270.0890688828615
+    },
+    "target": {
+      "id": "prologue:south-gate",
+      "x": 0,
+      "z": 16
+    }
+  }
+}

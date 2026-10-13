@@ -645,6 +645,8 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';
+import {ridingTravelCredit} from './assets/riding-distance.mjs?v=physical-ride-1';
+import {createRibbonAward,recordRibbonAward,verifiedRibbonAward} from './assets/ribbon-awards.mjs?v=final-ribbon-1';
 import {createTravelMap} from './assets/travel-map.js?v=travel-map-resize-2';
 import {createNPCCharacters} from './assets/npc-characters.js?v=character-polish-20261009';
 import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-1';
@@ -719,7 +721,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lash
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';
+import {FEATURES} from './assets/features/index.js?v=physical-ride-2-starter-tack-2';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -9493,8 +9495,20 @@ function awardRibbons(ev,t,faults,extra){
  Object.assign(RB0,extra||{});
  G.run('ribbons',RB0);                                  // packages may add or take a ribbon (gold ribbons, bond ribbons)
  const rib=Math.max(0,Math.min(6,Math.round(RB0.rib)));
- let msg='',featured=false,newWeekly=0;
+ // A live course supplies one stable identity; direct independent awards get one
+ // fresh identity each. Repeating an already saved live award cannot award ribbons twice.
+ const active=course?.ev?.id===ev.id?course:null;
+ const ids=awardRibbons._ids||(awardRibbons._ids=new WeakMap());
+ let id=active?.ladRunId||(active&&ids.get(active));
+ if(!id){id='ribbon-'+Date.now().toString(36)+'-'+(awardRibbons._serial=(awardRibbons._serial||0)+1);if(active)ids.set(active,id);}
+ const receipt=createRibbonAward({...RB0,rib,stars},{id,at:Date.now()});
+ const before=freshSave(),last=before?.ribbonAwards?.byDifficulty?.[ev.id+':'+(RB0.diff||'open')]?.last;
+ const previous=receipt&&verifiedRibbonAward(before,{...receipt,at:last?.at});
+ if(previous)return {rib:previous.rib,stars:previous.stars,featured:weeklyFeatured().some(f=>f.id===ev.id),msg:'Previously saved result',gold:previous.gold,saved:true,receipt:previous};
+ let msg='',featured=false,newWeekly=0,newAward=false;
  syncSave(s=>{
+  if(!receipt||!recordRibbonAward(s,receipt))return;
+  newAward=true;
   ensureWeek(s);
   const prev=s.ribbons[ev.id]||0; s.ribbons[ev.id]=Math.max(prev,rib); s.ribbonTotal=(s.ribbonTotal||0)+rib;
   featured=weeklyFeatured().some(f=>f.id===ev.id);
@@ -9503,7 +9517,9 @@ function awardRibbons(ev,t,faults,extra){
   if(featured&&newWeekly)addSP(s,newWeekly,'featured');
   msg='🎀'.repeat(rib)+(rib>prev&&prev?' new best!':'')+(featured?' · featured this week':'');
  });
- return {rib,stars,featured,msg};
+ const saved=receipt&&verifiedRibbonAward(freshSave(),receipt);
+ if(newAward&&saved)G.run('ribbonsAwarded',Object.freeze({...saved,ev:Object.freeze({...ev}),featured,msg}));
+ return {rib:saved?rib:0,stars,featured,msg:saved?msg:'Ribbon result could not be saved.',gold:!!saved?.gold,saved:!!saved,receipt:saved};
 }
 /* Judging a fence. An inspiring jump is one met near the top of the arc, and it gives time
    back; a fence taken without lining up through the approach box in front of it is off the
@@ -13947,6 +13963,8 @@ function tick(stepSeconds){
  const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
  // Fast galloping and slow rendering must not skip across narrow fences.
  solidWorld.updateDynamic();
+ // Frame-local sampling excludes fast travel, scene relocation and later ride hooks.
+ const ridingTravelStart={x:player.pos.x,z:player.pos.z,speed:player.speed,mountId:myHorses[rideIdx]?.id,onFoot:!!player.onFoot,flying:!!player.flying,vehicle:!!G.worldPkg?.vehicle?.(),locked:!!ridingIntent.locked,grounded:player.y<=0};
  const travelSteps=Math.max(1,Math.ceil(Math.abs(player.speed)*dt/.3)),travelDt=dt/travelSteps;
  for(let travelStep=0;travelStep<travelSteps;travelStep++){
  // Preserve the preceding substep's absolute body slab on sloping surfaces.
@@ -14024,6 +14042,7 @@ function tick(stepSeconds){
  solidWorld.resolve(player.pos,{bottom:jumpAir?Math.max(bodyBottom,groundH(player.pos.x,player.pos.z)+1.45):bodyBottom,top:foot+(player.onFoot?1.75:2.65),radius:player.onFoot?.34:.55,previous:solidPrevious});
  }
  }
+ const ridingTravelEnd={x:player.pos.x,z:player.pos.z}; // final horizontal collision resolution
  const winged=!!(myHorses[rideIdx]&&myHorses[rideIdx].wings)||!!nativeCap?.canFly;
  if(!winged&&player.flying)player.flying=false;
  if(player.flying){
@@ -14113,6 +14132,8 @@ function tick(stepSeconds){
  const grounded=player.y<=0;
  animateHorse(player.parts,player.phase,player.amp,gait,grounded,t,0,dt);
  driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)
+ const ridingTravel=ridingTravelCredit(ridingTravelStart,ridingTravelEnd,{dt,mountId:myHorses[rideIdx]?.id,onFoot:!!player.onFoot,flying:!!player.flying,vehicle:!!G.worldPkg?.vehicle?.(),locked:!!ridingIntent.locked,grounded:player.y<=0&&(!nativeCap?.native||RIG.heroMotion?.state?.grounded===true),native:!!nativeCap?.native,gait:RIG.heroMotion?.state?.gait});
+ G.horse.frameTravel=ridingTravel; // immutable current-frame metrics for riding rewards
  driveRider(sp,t,dt);          // rest<->ride pose, posting, breathing, reins
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
  const gy=groundH(player.pos.x,player.pos.z);
@@ -14154,7 +14175,7 @@ function tick(stepSeconds){
   player.earA-=dt;
   player.parts.ears[0].rotation.x=Math.sin(player.earA*28)*0.35;
  }else{player.parts.ears[0].rotation.x*=0.9;}
- if(grounded&&sp>0.5&&!player.onFoot)distAcc+=sp*dt;   // walking is not riding
+ if(ridingTravel.ground>0)distAcc+=ridingTravel.ground;
  // The visible native clip owns contact timing, including its diagonal pairs.
  // Quiet turf, timber clops and small dry-soil puffs replace the old frame-rate
  // dependent dust stream. Animation poses and gameplay speeds are unchanged.
@@ -14342,10 +14363,12 @@ function tick(stepSeconds){
   toast('📜 Spot visited — tell '+giver.name+'!');
  }
  if(m&&m.type==='kestrel'&&!wild3&&Math.hypot(player.pos.x+160,player.pos.z+210)<150)spawnKestrel();
- if(m&&m.type==='gallop'&&sp>7&&grounded)questEvt('gallop',sp*dt);
- if(sp>7&&grounded)dailyEvt('gallop',sp*dt);
- /* training XP from riding */
- rideDistAcc+=sp*dt;
+ if(ridingTravel.gallop>0){
+  if(m&&m.type==='gallop')questEvt('gallop',ridingTravel.gallop);
+  dailyEvt('gallop',ridingTravel.gallop);
+ }
+ /* Riding XP retains real mounted jump/flight travel; walking and vehicles do not train a horse. */
+ rideDistAcc+=ridingTravel.travel;
  if(rideDistAcc>=200){rideDistAcc-=200;trainXp(8);}
  /* drinking at water */
  const nearWater=Math.hypot(player.pos.x-20,player.pos.z-16)<6.5||Math.hypot(player.pos.x+6,player.pos.z+18)<3.5;

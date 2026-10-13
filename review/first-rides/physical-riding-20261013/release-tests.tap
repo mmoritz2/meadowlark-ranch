@@ -1,0 +1,966 @@
+TAP version 13
+# Subtest: basic appearance is visual-only, absent slots only, and retains exact selected object identity
+ok 1 - basic appearance is visual-only, absent slots only, and retains exact selected object identity
+  ---
+  duration_ms: 0.956042
+  ...
+# Subtest: private synchronous basic construction restores global randomness on success, throw and nested calls
+ok 2 - private synchronous basic construction restores global randomness on success, throw and nested calls
+  ---
+  duration_ms: 0.588084
+  ...
+# Subtest: whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+ok 3 - whole source preimages allow only declared hooks; raw inventory, network and all actor bodies are preserved
+  ---
+  duration_ms: 51.065625
+  ...
+# Subtest: actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+ok 4 - actual empty native kit and basic kit retain original global UUID draws/future stream and native source buffers
+  ---
+  duration_ms: 1957.57425
+  ...
+# Subtest: actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+ok 5 - actual production resolver/seat/rein mode shares effective hero pieces and keeps raw inventory empty
+  ---
+  duration_ms: 1522.030875
+  ...
+# Subtest: invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+ok 6 - invalid/unauthorized explicit slot, dragons, herd and remote remain outside basic fallback
+  ---
+  duration_ms: 318.934375
+  ...
+# Subtest: new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+ok 7 - new basic geometry lifecycle owns each buffer/map once and restores original hidden guide objects on dispose
+  ---
+  duration_ms: 1617.993166
+  ...
+# Subtest: actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+ok 8 - actual generated irons and hand reins follow original animated677 contacts through bounded head/pelvis/root poses
+  ---
+  duration_ms: 1487.54225
+  ...
+# Subtest: only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+ok 9 - only the actual on-foot dress call marks its parked local horse; visible basic kit survives dismount and is released on remount
+  ---
+  duration_ms: 2825.983959
+  ...
+# Subtest: conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+ok 10 - conditional locker label reflects visible basic equipment and leaves the exact order/ownership action intact
+  ---
+  duration_ms: 1521.108917
+  ...
+# Subtest: real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+ok 11 - real saved premium item and live account verifier block unauthorized fallback while authorized/custom/remote identities remain exact
+  ---
+  duration_ms: 215.401625
+  ...
+# Subtest: nominal motion against obstacles, missing snapshots and invalid distances cannot earn bond
+ok 12 - nominal motion against obstacles, missing snapshots and invalid distances cannot earn bond
+  ---
+  duration_ms: 7.283625
+  ...
+# Subtest: wrong or missing current horse identity cannot contribute riding metres
+ok 13 - wrong or missing current horse identity cannot contribute riding metres
+  ---
+  duration_ms: 0.922083
+  ...
+# Subtest: 200 actual non-flying mounted metres award one riding bond and preserve the remainder
+ok 14 - 200 actual non-flying mounted metres award one riding bond and preserve the remainder
+  ---
+  duration_ms: 2.360625
+  ...
+# Subtest: replaying the same immutable frame snapshot cannot double-credit its metres
+ok 15 - replaying the same immutable frame snapshot cannot double-credit its metres
+  ---
+  duration_ms: 0.602167
+  ...
+# Subtest: actual jump travel builds riding bond but flight, vehicles and on-foot travel never do
+ok 16 - actual jump travel builds riding bond but flight, vehicles and on-foot travel never do
+  ---
+  duration_ms: 2.573125
+  ...
+# Subtest: the existing personality gain and eight-bond daily cap remain authoritative
+ok 17 - the existing personality gain and eight-bond daily cap remain authoritative
+  ---
+  duration_ms: 6.371584
+  ...
+# Subtest: normal daily rollover still opens the existing riding cap
+ok 18 - normal daily rollover still opens the existing riding cap
+  ---
+  duration_ms: 0.663625
+  ...
+# Subtest: a reordered fresh save pays the same measured horse ID rather than another horse at its old index
+ok 19 - a reordered fresh save pays the same measured horse ID rather than another horse at its old index
+  ---
+  duration_ms: 0.628333
+  ...
+# Subtest: a horse removed from the fresh save cannot redirect riding bond to a replacement
+ok 20 - a horse removed from the fresh save cannot redirect riding bond to a replacement
+  ---
+  duration_ms: 0.817167
+  ...
+# Subtest: exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+ok 21 - exact production installer uses the same constructor stream, circle identities/counts and unaffected seven scan recipes
+  ---
+  duration_ms: 768.174292
+  ...
+# Subtest: exact published caches and the original five crag reversals restore the full original7009 bodies
+ok 22 - exact published caches and the original five crag reversals restore the full original7009 bodies
+  ---
+  duration_ms: 26.569083
+  ...
+# Subtest: the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+ok 23 - the chosen scanned composition preserve the current primary peak scale and fit every actual triangle within the original circle
+  ---
+  duration_ms: 564.446292
+  ...
+# Subtest: both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+ok 24 - both real scanned mesh owners retain source materials and registered surfaces without resource retirement changes
+  ---
+  duration_ms: 0.319792
+  ...
+# Subtest: late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+ok 25 - late callback remains exactly unchanged outside the reserved footprint; terrain/other rocks are unchanged
+  ---
+  duration_ms: 5.444833
+  ...
+# Subtest: candidate gate and selected difficulty are evaluated for that horse, not the ridden one
+ok 26 - candidate gate and selected difficulty are evaluated for that horse, not the ridden one
+  ---
+  duration_ms: 4.011083
+  ...
+# Subtest: candidate equipped inventory bridges a real requirement and never leaks the ridden horse gear
+ok 27 - candidate equipped inventory bridges a real requirement and never leaks the ridden horse gear
+  ---
+  duration_ms: 0.989209
+  ...
+# Subtest: venue and championship locks remain blocking for a fully qualified candidate
+ok 28 - venue and championship locks remain blocking for a fully qualified candidate
+  ---
+  duration_ms: 0.493041
+  ...
+# Subtest: a real missing stat uses its actual trainable cap, while tack can remove the deficit
+ok 29 - a real missing stat uses its actual trainable cap, while tack can remove the deficit
+  ---
+  duration_ms: 0.199334
+  ...
+# Subtest: personality effects and milestones agree with production persMul at all thresholds
+ok 30 - personality effects and milestones agree with production persMul at all thresholds
+  ---
+  duration_ms: 1.677209
+  ...
+# Subtest: bond preparation shows existing stamina savings and actual preferred care gains without entry gates
+ok 31 - bond preparation shows existing stamina savings and actual preferred care gains without entry gates
+  ---
+  duration_ms: 0.2375
+  ...
+# Subtest: favoured numeric stats use real race helpers, including fractional bonuses below the match threshold
+ok 32 - favoured numeric stats use real race helpers, including fractional bonuses below the match threshold
+  ---
+  duration_ms: 0.365208
+  ...
+# Subtest: showmanship displays supplied production turnout/manners without claiming a final score
+ok 33 - showmanship displays supplied production turnout/manners without claiming a final score
+  ---
+  duration_ms: 0.121667
+  ...
+# Subtest: stable identity resolver rejects duplicate IDs, foals and eggs, while duplicate names stay valid
+ok 34 - stable identity resolver rejects duplicate IDs, foals and eggs, while duplicate names stay valid
+  ---
+  duration_ms: 0.33725
+  ...
+# Subtest: selection resolves the fresh saved ID after a reorder and ignores duplicate names
+ok 35 - selection resolves the fresh saved ID after a reorder and ignores duplicate names
+  ---
+  duration_ms: 0.8385
+  ...
+# Subtest: selection remains pending until the exact selected model is attached and saved
+ok 36 - selection remains pending until the exact selected model is attached and saved
+  ---
+  duration_ms: 0.339375
+  ...
+# Subtest: same pending choice is deduplicated; another ID cannot masquerade as its result
+ok 37 - same pending choice is deduplicated; another ID cannot masquerade as its result
+  ---
+  duration_ms: 0.234959
+  ...
+# Subtest: swallowed selection save failure keeps entry blocked and an ordinary retry can confirm it
+ok 38 - swallowed selection save failure keeps entry blocked and an ordinary retry can confirm it
+  ---
+  duration_ms: 1.012084
+  ...
+# Subtest: sold or duplicate IDs and a mismatched parallel roster never select an index
+ok 39 - sold or duplicate IDs and a mismatched parallel roster never select an index
+  ---
+  duration_ms: 1.072916
+  ...
+# Subtest: detached or wrong model cannot announce a prepared horse, and timeout leaves entry blocked
+ok 40 - detached or wrong model cannot announce a prepared horse, and timeout leaves entry blocked
+  ---
+  duration_ms: 1.525084
+  ...
+# Subtest: changing horse identity during an async load aborts without a success claim
+ok 41 - changing horse identity during an async load aborts without a success claim
+  ---
+  duration_ms: 0.176291
+  ...
+# Subtest: active ride, flight, pre-lift jump and action gates prevent normal selector dispatch
+ok 42 - active ride, flight, pre-lift jump and action gates prevent normal selector dispatch
+  ---
+  duration_ms: 0.431208
+  ...
+# Subtest: an already saved/attached candidate does not rebuild or grant anything
+ok 43 - an already saved/attached candidate does not rebuild or grant anything
+  ---
+  duration_ms: 0.267541
+  ...
+# Subtest: normal selection keeps event/difficulty, and Bond/tack return to that same context
+ok 44 - normal selection keeps event/difficulty, and Bond/tack return to that same context
+  ---
+  duration_ms: 3.071959
+  ...
+# Subtest: a deliberate candidate Train action uses the existing real bridge and same event return
+ok 45 - a deliberate candidate Train action uses the existing real bridge and same event return
+  ---
+  duration_ms: 0.248458
+  ...
+# Subtest: closing/navigating during selection cannot reopen care or a stale event
+ok 46 - closing/navigating during selection cannot reopen care or a stale event
+  ---
+  duration_ms: 0.086417
+  ...
+# Subtest: failed selection cannot open preparation or start a drill
+ok 47 - failed selection cannot open preparation or start a drill
+  ---
+  duration_ms: 0.112458
+  ...
+# Subtest: a tack change recomputes the same saved candidate entry without caching a previous deficit
+ok 48 - a tack change recomputes the same saved candidate entry without caching a previous deficit
+  ---
+  duration_ms: 0.309083
+  ...
+# Subtest: displayed bond stamina savings track the actual installed drain hook
+ok 49 - displayed bond stamina savings track the actual installed drain hook
+  ---
+  duration_ms: 0.646041
+  ...
+# Subtest: actual comparison renderer binds escaped stable IDs and states deficits rather than a match percentage
+ok 50 - actual comparison renderer binds escaped stable IDs and states deficits rather than a match percentage
+  ---
+  duration_ms: 0.845916
+  ...
+# Subtest: pending comparison disables all horse-changing/care/training controls while retaining Back
+ok 51 - pending comparison disables all horse-changing/care/training controls while retaining Back
+  ---
+  duration_ms: 0.691083
+  ...
+# Subtest: race preparation omits a zero pace bonus and explains the existing reward threshold plainly
+ok 52 - race preparation omits a zero pace bonus and explains the existing reward threshold plainly
+  ---
+  duration_ms: 0.15225
+  ...
+# Subtest: comparison portrait uses the real UI kit API rather than the seFrame kit
+ok 53 - comparison portrait uses the real UI kit API rather than the seFrame kit
+  ---
+  duration_ms: 0.286125
+  ...
+# Subtest: missing portrait API renders a deliberately sized fallback inside the same picture box
+ok 54 - missing portrait API renders a deliberately sized fallback inside the same picture box
+  ---
+  duration_ms: 0.757
+  ...
+# Subtest: effective tack meets the actual event requirement without changing the horse
+ok 55 - effective tack meets the actual event requirement without changing the horse
+  ---
+  duration_ms: 1.171166
+  ...
+# Subtest: missing effective stats direct preparation to equipment and do not add a care gate
+ok 56 - missing effective stats direct preparation to equipment and do not add a care gate
+  ---
+  duration_ms: 0.303167
+  ...
+# Subtest: selected difficulty adds the real Elite level requirement
+ok 57 - selected difficulty adds the real Elite level requirement
+  ---
+  duration_ms: 0.09525
+  ...
+# Subtest: venue and authoritative championship locks remain blocking at sufficient horse stats
+ok 58 - venue and authoritative championship locks remain blocking at sufficient horse stats
+  ---
+  duration_ms: 0.088125
+  ...
+# Subtest: listed purse follows event reward, selected difficulty, and the existing weekly multiplier
+ok 59 - listed purse follows event reward, selected difficulty, and the existing weekly multiplier
+  ---
+  duration_ms: 0.240333
+  ...
+# Subtest: judged disciplines use percentage presentation while timed events keep their clock
+ok 60 - judged disciplines use percentage presentation while timed events keep their clock
+  ---
+  duration_ms: 0.065584
+  ...
+# Subtest: trainable deficits account for equipped tack instead of training the full effective requirement
+ok 61 - trainable deficits account for equipped tack instead of training the full effective requirement
+  ---
+  duration_ms: 0.197166
+  ...
+# Subtest: a level cap explains the remaining gap and stops zero-growth training at that cap
+ok 62 - a level cap explains the remaining gap and stops zero-growth training at that cap
+  ---
+  duration_ms: 0.081542
+  ...
+# Subtest: partial training room remains useful without claiming it reaches an unattainable requirement
+ok 63 - partial training room remains useful without claiming it reaches an unattainable requirement
+  ---
+  duration_ms: 0.315
+  ...
+# Subtest: breed ceiling is distinguished from a level cap and tack can bridge that ceiling
+ok 64 - breed ceiling is distinguished from a level cap and tack can bridge that ceiling
+  ---
+  duration_ms: 0.64725
+  ...
+# Subtest: a separate selected-difficulty level gate is explained even when its missing stat is trainable
+ok 65 - a separate selected-difficulty level gate is explained even when its missing stat is trainable
+  ---
+  duration_ms: 0.144208
+  ...
+# Subtest: unknown or malformed training caps never advertise available training
+ok 66 - unknown or malformed training caps never advertise available training
+  ---
+  duration_ms: 0.095041
+  ...
+# Subtest: each missing stat uses its own breed ceiling and met stats do not offer training
+ok 67 - each missing stat uses its own breed ceiling and met stats do not offer training
+  ---
+  duration_ms: 0.212333
+  ...
+# Subtest: Prepare horse returns to the same event and difficulty with freshly painted horse stats
+ok 68 - Prepare horse returns to the same event and difficulty with freshly painted horse stats
+  ---
+  duration_ms: 0.260208
+  ...
+# Subtest: training launches the authoritative bridge with a stable event target and rechecked readiness on return
+ok 69 - training launches the authoritative bridge with a stable event target and rechecked readiness on return
+  ---
+  duration_ms: 0.257042
+  ...
+# Subtest: stale training controls cannot train an already-met stat, a capped horse, or an unrelated stat
+ok 70 - stale training controls cannot train an already-met stat, a capped horse, or an unrelated stat
+  ---
+  duration_ms: 0.138333
+  ...
+# Subtest: a refused drill start leaves the event page available, and return rechecks a changed horse
+ok 71 - a refused drill start leaves the event page available, and return rechecks a changed horse
+  ---
+  duration_ms: 0.159958
+  ...
+# Subtest: preparation navigation ignores a missing event or unavailable overview/bridge
+ok 72 - preparation navigation ignores a missing event or unavailable overview/bridge
+  ---
+  duration_ms: 0.098375
+  ...
+# Subtest: only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+ok 73 - only an actual all-gate flat race is eligible; other disciplines and malformed layouts never start
+  ---
+  duration_ms: 7.360708
+  ...
+# Subtest: start admission respects the offline owned-origin and visible unblocked game guards
+ok 74 - start admission respects the offline owned-origin and visible unblocked game guards
+  ---
+  duration_ms: 2.592333
+  ...
+# Subtest: countdown releases keys while production alone owns the clock and gate index
+ok 75 - countdown releases keys while production alone owns the clock and gate index
+  ---
+  duration_ms: 1.008875
+  ...
+# Subtest: real numbered gate centres select ordinary gaits and steering without writing game observations
+ok 76 - real numbered gate centres select ordinary gaits and steering without writing game observations
+  ---
+  duration_ms: 1.045208
+  ...
+# Subtest: UI, background, flight, unmounted state and rig loading stop an already running driver
+ok 77 - UI, background, flight, unmounted state and rig loading stop an already running driver
+  ---
+  duration_ms: 6.951833
+  ...
+# Subtest: course, event and mount identity changes halt rather than adopting another run
+ok 78 - course, event and mount identity changes halt rather than adopting another run
+  ---
+  duration_ms: 0.931792
+  ...
+# Subtest: a missing originally ridden horse cannot provide a valid mounted-race identity
+ok 79 - a missing originally ridden horse cannot provide a valid mounted-race identity
+  ---
+  duration_ms: 0.195583
+  ...
+# Subtest: missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+ok 80 - missing gates, invalid rider telemetry and invalid clocks halt without course repair or completion injection
+  ---
+  duration_ms: 3.873792
+  ...
+# Subtest: five seconds of held-forward physical stall stops input; observed movement resets that deadline
+ok 81 - five seconds of held-forward physical stall stops input; observed movement resets that deadline
+  ---
+  duration_ms: 11.179459
+  ...
+# Subtest: diagnostics preserve the course horse and actual result data after the course ends
+ok 82 - diagnostics preserve the course horse and actual result data after the course ends
+  ---
+  duration_ms: 0.671292
+  ...
+# Subtest: a real window keyup clears intent so the next forward request dispatches another keydown
+ok 83 - a real window keyup clears intent so the next forward request dispatches another keydown
+  ---
+  duration_ms: 0.21125
+  ...
+# Subtest: stamina diagnostics report actual raw exhaustion and landing values without changing them
+ok 84 - stamina diagnostics report actual raw exhaustion and landing values without changing them
+  ---
+  duration_ms: 0.557292
+  ...
+# Subtest: the driver follows the published detour waypoint rather than the numbered gate centre
+ok 85 - the driver follows the published detour waypoint rather than the numbered gate centre
+  ---
+  duration_ms: 0.199167
+  ...
+# Subtest: missing, blocked, stale and malformed guide targets stop input without inventing a path
+ok 86 - missing, blocked, stale and malformed guide targets stop input without inventing a path
+  ---
+  duration_ms: 0.748542
+  ...
+# Subtest: a gate crossing can wait for its next normal guide publication without steering toward a stale target
+ok 87 - a gate crossing can wait for its next normal guide publication without steering toward a stale target
+  ---
+  duration_ms: 0.229291
+  ...
+# Subtest: eligibility is limited to genuine all-gate unscored flat races
+ok 88 - eligibility is limited to genuine all-gate unscored flat races
+  ---
+  duration_ms: 1.583334
+  ...
+# Subtest: a clear route remains direct and never changes player, course or world observations
+ok 89 - a clear route remains direct and never changes player, course or world observations
+  ---
+  duration_ms: 1.206958
+  ...
+# Subtest: the actual rotated and scaled race hay blocks the early gate-three ray and its detour is physically clear
+ok 90 - the actual rotated and scaled race hay blocks the early gate-three ray and its detour is physically clear
+  ---
+  duration_ms: 210.3805
+  ...
+# Subtest: finite walls and multiple circle obstacles require real clearance along every segment
+ok 91 - finite walls and multiple circle obstacles require real clearance along every segment
+  ---
+  duration_ms: 5.173417
+  ...
+# Subtest: sealed destinations and riders inside a real solid are honestly blocked
+ok 92 - sealed destinations and riders inside a real solid are honestly blocked
+  ---
+  duration_ms: 30.520333
+  ...
+# Subtest: invalid geometry, nonfinite terrain and out-of-world travel fail closed
+ok 93 - invalid geometry, nonfinite terrain and out-of-world travel fail closed
+  ---
+  duration_ms: 0.2465
+  ...
+# Subtest: stable detours reuse their route, retain a waypoint until reached and reset for another course
+ok 94 - stable detours reuse their route, retain a waypoint until reached and reset for another course
+  ---
+  duration_ms: 3.579
+  ...
+# Subtest: gate changes and newly blocked cached legs never publish the stale unsafe target
+ok 95 - gate changes and newly blocked cached legs never publish the stale unsafe target
+  ---
+  duration_ms: 6.091208
+  ...
+# Subtest: actual course-guide plan displays the real hay detour and follows only externally changed gate indices
+ok 96 - actual course-guide plan displays the real hay detour and follows only externally changed gate indices
+  ---
+  duration_ms: 40.228625
+  ...
+# Subtest: actual formal scored-line plan preserves the exact scored segment without consulting detour geometry
+ok 97 - actual formal scored-line plan preserves the exact scored segment without consulting detour geometry
+  ---
+  duration_ms: 0.779375
+  ...
+# Subtest: an actual blocked plan cannot leave the old public target or rendered unsafe line visible
+ok 98 - an actual blocked plan cannot leave the old public target or rendered unsafe line visible
+  ---
+  duration_ms: 0.67025
+  ...
+# Subtest: actual plan clears old flat-race state when the current scope becomes a judged class or ends
+ok 99 - actual plan clears old flat-race state when the current scope becomes a judged class or ends
+  ---
+  duration_ms: 0.140167
+  ...
+# Subtest: the actual public gate-guide handle withdraws its target while disabled or finishing
+ok 100 - the actual public gate-guide handle withdraws its target while disabled or finishing
+  ---
+  duration_ms: 1.342458
+  ...
+# Follow-camera input: menu/surface zoom, pointer ownership, 1.4s release grace, ownership resume, blur/visibility release and frame-rate parity passed.
+# Subtest: tools/test-follow-camera-input.mjs
+ok 8 - tools/test-follow-camera-input.mjs
+  ---
+  duration_ms: 81.670583
+  ...
+# Subtest: rescue homecoming promotes actual Pasture Dash goal and chapter reward, without Roundup diversion
+ok 102 - rescue homecoming promotes actual Pasture Dash goal and chapter reward, without Roundup diversion
+  ---
+  duration_ms: 18.720209
+  ...
+# Subtest: already completed first chapter offers claim entry rather than replaying Pasture Dash
+ok 103 - already completed first chapter offers claim entry rather than replaying Pasture Dash
+  ---
+  duration_ms: 8.538
+  ...
+# Subtest: renamed adopted horse uses real escaped name and sold horse has no Ride action
+ok 104 - renamed adopted horse uses real escaped name and sold horse has no Ride action
+  ---
+  duration_ms: 3.417542
+  ...
+# Subtest: async preparation disables Ride, Stable and next while success closes without starting a course
+ok 105 - async preparation disables Ride, Stable and next while success closes without starting a course
+  ---
+  duration_ms: 3.420583
+  ...
+# Subtest: failed preparation keeps homecoming open with a retry and does not advertise an unready model
+ok 106 - failed preparation keeps homecoming open with a retry and does not advertise an unready model
+  ---
+  duration_ms: 2.676208
+  ...
+# Subtest: closing during preparation stays closed after either success or failure
+ok 107 - closing during preparation stays closed after either success or failure
+  ---
+  duration_ms: 4.762166
+  ...
+# Subtest: next action uses current journey state, never the goal previously rendered
+ok 108 - next action uses current journey state, never the goal previously rendered
+  ---
+  duration_ms: 0.64875
+  ...
+# Subtest: handler rejects an unready selected model even if its button was rendered enabled
+ok 109 - handler rejects an unready selected model even if its button was rendered enabled
+  ---
+  duration_ms: 0.552834
+  ...
+# Subtest: already-ready partner offers riding return instead of another switch and explicit next stays separate
+ok 110 - already-ready partner offers riding return instead of another switch and explicit next stays separate
+  ---
+  duration_ms: 0.685
+  ...
+# Subtest: closing and reopening Activities preserves the adopted partner action
+ok 111 - closing and reopening Activities preserves the adopted partner action
+  ---
+  duration_ms: 4.528958
+  ...
+# Subtest: successful old mount request refreshes rather than closes Activities reopened during loading
+ok 112 - successful old mount request refreshes rather than closes Activities reopened during loading
+  ---
+  duration_ms: 3.143125
+  ...
+# Subtest: later Pasture Dash recommendation explains its real combo goal without promising a reward for merely finishing
+ok 113 - later Pasture Dash recommendation explains its real combo goal without promising a reward for merely finishing
+  ---
+  duration_ms: 0.661667
+  ...
+# Subtest: first rescue headline survives adoption while repeat rescue uses the familiar-friend headline
+ok 114 - first rescue headline survives adoption while repeat rescue uses the familiar-friend headline
+  ---
+  duration_ms: 2.889916
+  ...
+# Subtest: old rescue, Rush and roundup records retroactively credit every goal without mutating history
+ok 115 - old rescue, Rush and roundup records retroactively credit every goal without mutating history
+  ---
+  duration_ms: 3.160416
+  ...
+# Subtest: exact chapter rewards are fixed, sequential and once-only
+ok 116 - exact chapter rewards are fixed, sequential and once-only
+  ---
+  duration_ms: 1.293792
+  ...
+# Subtest: selling or merging a reward cannot reopen its permanent claim
+ok 117 - selling or merging a reward cannot reopen its permanent claim
+  ---
+  duration_ms: 0.517291
+  ...
+# Subtest: explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+ok 118 - explicit equip targets the chosen horse, preserves replaced gear and moves only the awarded item
+  ---
+  duration_ms: 0.223667
+  ...
+# Subtest: each unfinished goal routes to the real activity and medal quality matters
+ok 119 - each unfinished goal routes to the real activity and medal quality matters
+  ---
+  duration_ms: 0.155417
+  ...
+# Subtest: malformed saves cannot create earned progress, crash the journey, or forge a claim
+ok 120 - malformed saves cannot create earned progress, crash the journey, or forge a claim
+  ---
+  duration_ms: 1.395792
+  ...
+# Subtest: runtime verifies persisted claims and does not announce failed storage writes
+ok 121 - runtime verifies persisted claims and does not announce failed storage writes
+  ---
+  duration_ms: 1.026959
+  ...
+# Subtest: runtime claim and explicit equip survive reload and forged finish events award nothing
+ok 122 - runtime claim and explicit equip survive reload and forged finish events award nothing
+  ---
+  duration_ms: 1.106166
+  ...
+# Subtest: confirmed First Partners claim exposes the optional real story action in panel and summary without auto-starting it
+ok 123 - confirmed First Partners claim exposes the optional real story action in panel and summary without auto-starting it
+  ---
+  duration_ms: 11.598209
+  ...
+# Subtest: failed claim writes and forged claim notifications never expose the bridge
+ok 124 - failed claim writes and forged claim notifications never expose the bridge
+  ---
+  duration_ms: 4.003917
+  ...
+# Subtest: a committed claim with failed readback recovers its bridge from saved state and reload without a second payment
+ok 125 - a committed claim with failed readback recovers its bridge from saved state and reload without a second payment
+  ---
+  duration_ms: 2.786666
+  ...
+# Subtest: the story button resolves the latest mission at click time instead of its rendered action
+ok 126 - the story button resolves the latest mission at click time instead of its rendered action
+  ---
+  duration_ms: 1.263125
+  ...
+# Subtest: missing, malformed, unreadable and live-mismatched story saves expose no action
+ok 127 - missing, malformed, unreadable and live-mismatched story saves expose no action
+  ---
+  duration_ms: 46.678625
+  ...
+# Subtest: a completed story has no bridge even when the Journey claim remains permanently earned
+ok 128 - a completed story has no bridge even when the Journey claim remains permanently earned
+  ---
+  duration_ms: 5.15875
+  ...
+# Subtest: renamed mares are read fresh and escaped, while the prologue bridge avoids later plot claims
+ok 129 - renamed mares are read fresh and escaped, while the prologue bridge avoids later plot claims
+  ---
+  duration_ms: 1.629958
+  ...
+# Subtest: busy rides and vehicles block the bridge without closing screens or changing progress
+ok 130 - busy rides and vehicles block the bridge without closing screens or changing progress
+  ---
+  duration_ms: 4.032292
+  ...
+# Subtest: the real panel keeps its earned receipt and current riding action before the optional story, with collection in the second column
+ok 131 - the real panel keeps its earned receipt and current riding action before the optional story, with collection in the second column
+  ---
+  duration_ms: 1.463333
+  ...
+# Subtest: real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+ok 132 - real authored barn contact cannot earn story, daily, lifetime, XP or bond while the horse presses forward
+  ---
+  duration_ms: 9.206875
+  ...
+# Subtest: real legacy rail and trunk footprints cannot award nominal gallop travel
+ok 133 - real legacy rail and trunk footprints cannot award nominal gallop travel
+  ---
+  duration_ms: 3.702417
+  ...
+# Subtest: wall sliding credits only the actual tangent displacement after all collision substeps
+ok 134 - wall sliding credits only the actual tangent displacement after all collision substeps
+  ---
+  duration_ms: 0.957875
+  ...
+# Subtest: the terrain boundary produces no reward for an outward gallop
+ok 135 - the terrain boundary produces no reward for an outward gallop
+  ---
+  duration_ms: 0.915458
+  ...
+# Subtest: stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+ok 136 - stationary scenery ejection and abnormal moving relocation are rejected rather than capped into rewards
+  ---
+  duration_ms: 0.915084
+  ...
+# Subtest: sampling is frame-local: fast travel between frames never contributes its relocation distance
+ok 137 - sampling is frame-local: fast travel between frames never contributes its relocation distance
+  ---
+  duration_ms: 0.499375
+  ...
+# Subtest: on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+ok 138 - on-foot, vehicle, locked and replaced/missing horses cannot train or earn riding-distance credit
+  ---
+  duration_ms: 9.4005
+  ...
+# Subtest: native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+ok 139 - native requested gallop downgraded to a refreshed canter earns physical riding credit but no gallop goal
+  ---
+  duration_ms: 0.722041
+  ...
+# Subtest: refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+ok 140 - refreshed native takeoff height and grounded state prevent stale grounded goal credit while physical jumping still trains
+  ---
+  duration_ms: 1.141291
+  ...
+# Subtest: a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+ok 141 - a native landing cannot retroactively turn a frame that started airborne into grounded gallop
+  ---
+  duration_ms: 0.975333
+  ...
+# Subtest: real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+ok 142 - real horizontal flight retains riding XP policy but earns no ground, gallop or riding bond
+  ---
+  duration_ms: 1.006667
+  ...
+# Subtest: legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+ok 143 - legacy gait threshold, reverse and coasting preserve actual physical travel semantics
+  ---
+  duration_ms: 1.203833
+  ...
+# Subtest: zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+ok 144 - zero and invalid frame times/speeds cannot send a zero daily event or change distance accumulators
+  ---
+  duration_ms: 29.720208
+  ...
+# Subtest: the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+ok 145 - the actual 200m XP and rounded lifetime save seams pay once from measured travel and retain the remainder
+  ---
+  duration_ms: 0.886541
+  ...
+# Subtest: straight actual travel produces the same accumulated metres across different frame sizes
+ok 146 - straight actual travel produces the same accumulated metres across different frame sizes
+  ---
+  duration_ms: 7.6365
+  ...
+# Subtest: the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+ok 147 - the six exact approved source changes restore the actual8733008 baseline and original protected bodies
+  ---
+  duration_ms: 158.944708
+  ...
+# Subtest: wrong side gets a clear path around a log end, never backward through it
+ok 148 - wrong side gets a clear path around a log end, never backward through it
+  ---
+  duration_ms: 4.49125
+  ...
+# Subtest: sideways missed approaches and post-skimming positions remain recoverable
+ok 149 - sideways missed approaches and post-skimming positions remain recoverable
+  ---
+  duration_ms: 1.79975
+  ...
+# Subtest: gradual side-skimming accumulates movement and replaces a stale route across the log
+ok 150 - gradual side-skimming accumulates movement and replaces a stale route across the log
+  ---
+  duration_ms: 2.463542
+  ...
+# Subtest: recovery persists through corner waypoints, asks rider to face forward, then releases
+ok 151 - recovery persists through corner waypoints, asks rider to face forward, then releases
+  ---
+  duration_ms: 1.494875
+  ...
+# Subtest: changing to face-the-log guidance invalidates the cached chevron spine immediately
+ok 152 - changing to face-the-log guidance invalidates the cached chevron spine immediately
+  ---
+  duration_ms: 0.78925
+  ...
+# Subtest: a refusal near the correct side creates space to rebuild the approach
+ok 153 - a refusal near the correct side creates space to rebuild the approach
+  ---
+  duration_ms: 0.530667
+  ...
+# Subtest: ordinary forward jumps do not trigger recovery at or after the plane
+ok 154 - ordinary forward jumps do not trigger recovery at or after the plane
+  ---
+  duration_ms: 0.133917
+  ...
+# Subtest: formal fences and gates retain their current guide, course/target changes clear recovery
+ok 155 - formal fences and gates retain their current guide, course/target changes clear recovery
+  ---
+  duration_ms: 21.882292
+  ...
+# Subtest: rotated logs preserve the correct approach side
+ok 156 - rotated logs preserve the correct approach side
+  ---
+  duration_ms: 21.016541
+  ...
+# Subtest: collider or wall on one side chooses the other, a sealed approach gives no false arrow
+ok 157 - collider or wall on one side chooses the other, a sealed approach gives no false arrow
+  ---
+  duration_ms: 1.309833
+  ...
+# Subtest: world clearance respects precise solid parts, bounds, water and steep ground
+ok 158 - world clearance respects precise solid parts, bounds, water and steep ground
+  ---
+  duration_ms: 0.243542
+  ...
+# Subtest: planning is cached, blocked forward checks are bounded, and snapshots are read-only
+ok 159 - planning is cached, blocked forward checks are bounded, and snapshots are read-only
+  ---
+  duration_ms: 1.45375
+  ...
+# Subtest: following recovery backward does not count; a real forward jump then advances exactly once
+ok 160 - following recovery backward does not count; a real forward jump then advances exactly once
+  ---
+  duration_ms: 17.429083
+  ...
+# Subtest: already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+ok 161 - already-equipped original catalog collections retain exact geometry, maps, UUIDs, costs and future random stream
+  ---
+  duration_ms: 7865.576
+  ...
+# Subtest: source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+ok 162 - source preimage adapters keep prior explicit-equipment contracts meaningful and reject any unrelated change
+  ---
+  duration_ms: 75.076167
+  ...
+# Subtest: only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+ok 163 - only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail
+  ---
+  duration_ms: 74.338292
+  ...
+# Subtest: published native-groom cache chain accepts all three reviewed states and rejects an unknown next version or mixed history
+ok 164 - published native-groom cache chain accepts all three reviewed states and rejects an unknown next version or mixed history
+  ---
+  duration_ms: 74.799917
+  ...
+# Subtest: gathering chooses a visible matching pickup, not a closer wrong food
+ok 165 - gathering chooses a visible matching pickup, not a closer wrong food
+  ---
+  duration_ms: 1.743958
+  ...
+# Subtest: carrot quests use carrot pickups; forage quests use the requested crop
+ok 166 - carrot quests use carrot pickups; forage quests use the requested crop
+  ---
+  duration_ms: 0.262208
+  ...
+# Subtest: finished tasks keep the existing giver/turn-in resolver
+ok 167 - finished tasks keep the existing giver/turn-in resolver
+  ---
+  duration_ms: 0.132625
+  ...
+# Subtest: place and conversation targets remain with the established resolver
+ok 168 - place and conversation targets remain with the established resolver
+  ---
+  duration_ms: 0.136375
+  ...
+# Subtest: action tasks suppress premature giver markers and expose the real action
+ok 169 - action tasks suppress premature giver markers and expose the real action
+  ---
+  duration_ms: 0.106625
+  ...
+# Subtest: opening gallop routes inside riders through the actual south gate only
+ok 170 - opening gallop routes inside riders through the actual south gate only
+  ---
+  duration_ms: 0.4825
+  ...
+# Subtest: builder checklist counts distinct required pieces and reacts to real placement events
+ok 171 - builder checklist counts distinct required pieces and reacts to real placement events
+  ---
+  duration_ms: 0.826375
+  ...
+# Subtest: training recommends useful owned food with current XP and actual XP multipliers
+ok 172 - training recommends useful owned food with current XP and actual XP multipliers
+  ---
+  duration_ms: 0.488875
+  ...
+# Subtest: practice guidance uses visible real fences and lines up before targeting rails
+ok 173 - practice guidance uses visible real fences and lines up before targeting rails
+  ---
+  duration_ms: 0.362333
+  ...
+# Subtest: current actions open Feeding and the visible required builder shelf without changing progression
+ok 174 - current actions open Feeding and the visible required builder shelf without changing progression
+  ---
+  duration_ms: 0.816791
+  ...
+# Subtest: active story card exposes action and reward, escapes text, and preserves exact progress
+ok 175 - active story card exposes action and reward, escapes text, and preserves exact progress
+  ---
+  duration_ms: 0.224917
+  ...
+# Subtest: witness instructions, quest pill and actual HUD target advance together without a cache delay
+ok 176 - witness instructions, quest pill and actual HUD target advance together without a cache delay
+  ---
+  duration_ms: 1.103209
+  ...
+# Subtest: witness resolver tolerates old and malformed clue ledgers without inventing discovered clues
+ok 177 - witness resolver tolerates old and malformed clue ledgers without inventing discovered clues
+  ---
+  duration_ms: 0.07125
+  ...
+# Subtest: moving or unavailable witnesses never produce a stale marker to another person
+ok 178 - moving or unavailable witnesses never produce a stale marker to another person
+  ---
+  duration_ms: 0.189459
+  ...
+# Subtest: talk tasks describe and target their named conversation partner before returning to the giver
+ok 179 - talk tasks describe and target their named conversation partner before returning to the giver
+  ---
+  duration_ms: 0.103834
+  ...
+# Subtest: one real finish satisfies only the current optional construction mission
+ok 180 - one real finish satisfies only the current optional construction mission
+  ---
+  duration_ms: 2.189667
+  ...
+# Subtest: cancelled, unstarted, replayed, malformed and unrelated results cannot satisfy a task
+ok 181 - cancelled, unstarted, replayed, malformed and unrelated results cannot satisfy a task
+  ---
+  duration_ms: 0.475917
+  ...
+# Subtest: a prior finish cannot be replayed after a construction mission becomes current
+ok 182 - a prior finish cannot be replayed after a construction mission becomes current
+  ---
+  duration_ms: 0.081708
+  ...
+# Subtest: regular events qualify too; task completion never mutates course or pays rewards
+ok 183 - regular events qualify too; task completion never mutates course or pays rewards
+  ---
+  duration_ms: 0.089125
+  ...
+# Subtest: original placement and snapshot counters still work beside the private ride signal
+ok 184 - original placement and snapshot counters still work beside the private ride signal
+  ---
+  duration_ms: 6.356417
+  ...
+# Subtest: guidance exposes both choices without changing progress or spending money
+ok 185 - guidance exposes both choices without changing progress or spending money
+  ---
+  duration_ms: 0.821209
+  ...
+# Subtest: a missing Rush module falls back to events; a completed task points to its giver
+ok 186 - a missing Rush module falls back to events; a completed task points to its giver
+  ---
+  duration_ms: 0.247834
+  ...
+# Subtest: training reducers run on one supplied draft, return summaries, and never auto-confirm
+ok 187 - training reducers run on one supplied draft, return summaries, and never auto-confirm
+  ---
+  duration_ms: 1.787625
+  ...
+# Subtest: reducer errors propagate and stop later rewards rather than being swallowed by the event bus
+ok 188 - reducer errors propagate and stop later rewards rather than being swallowed by the event bus
+  ---
+  duration_ms: 0.3415
+  ...
+# Subtest: one reducer credits active dailies and lifetime progress without claiming a reward
+ok 189 - one reducer credits active dailies and lifetime progress without claiming a reward
+  ---
+  duration_ms: 2.726166
+  ...
+# Subtest: claimed goals stay claimed and aliases preserve independent long-haul goals
+ok 190 - claimed goals stay claimed and aliases preserve independent long-haul goals
+  ---
+  duration_ms: 1.450792
+  ...
+# Subtest: unselected daily types still count for lifetime while rollovers choose one stable new roll
+ok 191 - unselected daily types still count for lifetime while rollovers choose one stable new roll
+  ---
+  duration_ms: 0.503875
+  ...
+1..191
+# tests 191
+# suites 0
+# pass 191
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11708.469125

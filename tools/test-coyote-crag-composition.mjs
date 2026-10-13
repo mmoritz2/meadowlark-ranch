@@ -1,7 +1,9 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
 import {normalizeCoyoteCragCompositionSource} from './coyote-crag-composition-source-guard.cjs';
 import {normalizePublishedCacheSource} from './starter-tack-source-guard.cjs';
-const normalizePublishedCompositionSource=(source,file)=>normalizeCoyoteCragCompositionSource(normalizePublishedCacheSource(source,file),file);
+import {normalizeRidingDistanceSource} from './riding-distance-source-guard.cjs';
+import {normalizeRibbonAwardSource} from './ribbon-award-source-guard.cjs';
+const normalizePublishedCompositionSource=(source,file)=>normalizeCoyoteCragCompositionSource(normalizePublishedCacheSource(normalizeRidingDistanceSource(normalizeRibbonAwardSource(source,file),file),file),file);
 const ROOT=path.resolve(process.env.COYOTE_CRAG_SOURCE_ROOT||path.join(path.dirname(fileURLToPath(import.meta.url)),'..'));
 const DEPENDENCIES=path.resolve(process.env.COYOTE_CRAG_DEPENDENCY_ROOT||ROOT);
 const T=await import(pathToFileURL(path.join(DEPENDENCIES,'assets/vendor/three/build/three.module.js')));

@@ -1,0 +1,96 @@
+{
+  "driver": {
+    "active": false,
+    "status": "Flat race ended. Inspect the production result",
+    "steps": 117,
+    "target": {
+      "checkpoint": 6,
+      "distance": 5.199297852306158,
+      "gait": "trot",
+      "guidePhase": "direct",
+      "kind": "gate",
+      "lap": 1,
+      "total": 6,
+      "x": -40,
+      "z": 2
+    }
+  },
+  "errors": [],
+  "eventCourse": {
+    "accuracy": 0.11370532119321052,
+    "active": false,
+    "countdown": -0.004500000014900418,
+    "difficulty": "open",
+    "elapsed": 257.61679999999734,
+    "faults": 55,
+    "gateGuide": null,
+    "horse": {
+      "breed": "bay-sporthorse",
+      "id": 1,
+      "name": "Bramble"
+    },
+    "id": "pp",
+    "index": 6,
+    "lap": 1,
+    "laps": 1,
+    "lineOff": 0,
+    "name": "Pasture Pony Dash",
+    "player": {
+      "blown": false,
+      "exhaustT": 0,
+      "heading": -6.096660308411411,
+      "landT": 0,
+      "speed": 0,
+      "stam": 1,
+      "x": -40.55425716766686,
+      "z": -0.7328654797072327
+    },
+    "raceAccuracy": 0.4521736990814106,
+    "resultText": null,
+    "started": true,
+    "target": null,
+    "timeAllowed": 41.00936138427348,
+    "total": 6
+  },
+  "featureErrors": [],
+  "ridingDistance": {
+    "bond": 193.80826453438925,
+    "fastStationarySeconds": 0,
+    "frame": {
+      "bond": 0,
+      "gallop": 0,
+      "ground": 0,
+      "mountId": 1,
+      "travel": 0
+    },
+    "frames": 3706,
+    "gait": "stand",
+    "gallop": 82.97397090697261,
+    "ground": 193.80826453438925,
+    "travel": 193.80826453438925
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Follow the marker back to Wren to collect your reward. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (300/300)\nReturn to Wren · reward ready"
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 300,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 300
+    },
+    "target": null
+  },
+  "result": "Pasture Pony Dash\n🎀\n257.6s\nMeadowlark Ranch · Race · 🏇 Open · allowance 41.0s\n1 ribbon\n⭐\n🏁 The field — you finished P4 of 4\n👑 Fernmere\n28.3s\n🥈 Hollypark\n32.7s\n🥉 Silverbirch\n36.7s\n#4 You\n257.6s\n📋 The score\n🏁 Race — the sheet\nPlacing\nP4/4 — Hollypark, Fernmere, Silverbirch\nGates\n65% through the middle\nLine\nclean\nHazards hit\n0\n🎯 Accuracy 45%\n⏱ Time faults 55\n💰 What the round paid\nPurse 180🪙\n+198🪙 in the hand\n+1💎\n🎀 2 ribbons won all told\n🥉 Bronze Bit\n115 racing points (+15 just now)\nNext: Silver Stirrup at 300 — 185 to go, and it pays 5💎 Rare tack.\n🥉 Claim Bronze Bit — 300🪙 3🎫\n📝 Also this round\n🎀 +2 bond for the ribbon\n🏇 +15 racing points\n🏁 Gates 65% · P4/4 of the field · line clean · 0 hazards\n➡️ Next on the ladder\nCottonwood Welcome Jump is featured this week and still wants a gold ribbon from you — 1d 12h left. 🎫 Cottonwood is the next venue to sign off — ride Cottonwood Welcome Jump\nRide Cottonwood Welcome Jump\nWhat it pays\nRide it again\n🎟️ Rematch · faster field, double points\n🏅 The ladder\nClose"
+}

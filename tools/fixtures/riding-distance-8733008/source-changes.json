@@ -1,0 +1,38 @@
+[
+  {
+    "file": "ranch3d.html",
+    "before": "import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';",
+    "after": "import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';\nimport {ridingTravelCredit} from './assets/riding-distance.mjs?v=physical-ride-1';",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " solidWorld.updateDynamic();\n const travelSteps=",
+    "after": " solidWorld.updateDynamic();\n // Frame-local sampling excludes fast travel, scene relocation and later ride hooks.\n const ridingTravelStart={x:player.pos.x,z:player.pos.z,speed:player.speed,mountId:myHorses[rideIdx]?.id,onFoot:!!player.onFoot,flying:!!player.flying,vehicle:!!G.worldPkg?.vehicle?.(),locked:!!ridingIntent.locked,grounded:player.y<=0};\n const travelSteps=",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " }\n const winged=!!(myHorses[rideIdx]",
+    "after": " }\n const ridingTravelEnd={x:player.pos.x,z:player.pos.z}; // final horizontal collision resolution\n const winged=!!(myHorses[rideIdx]",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)\n driveRider",
+    "after": " driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)\n const ridingTravel=ridingTravelCredit(ridingTravelStart,ridingTravelEnd,{dt,mountId:myHorses[rideIdx]?.id,onFoot:!!player.onFoot,flying:!!player.flying,vehicle:!!G.worldPkg?.vehicle?.(),locked:!!ridingIntent.locked,grounded:player.y<=0&&(!nativeCap?.native||RIG.heroMotion?.state?.grounded===true),native:!!nativeCap?.native,gait:RIG.heroMotion?.state?.gait});\n G.horse.frameTravel=ridingTravel; // immutable current-frame metrics for riding rewards\n driveRider",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " if(grounded&&sp>0.5&&!player.onFoot)distAcc+=sp*dt;   // walking is not riding",
+    "after": " if(ridingTravel.ground>0)distAcc+=ridingTravel.ground;",
+    "occurrences": 1
+  },
+  {
+    "file": "ranch3d.html",
+    "before": " if(m&&m.type==='gallop'&&sp>7&&grounded)questEvt('gallop',sp*dt);\n if(sp>7&&grounded)dailyEvt('gallop',sp*dt);\n /* training XP from riding */\n rideDistAcc+=sp*dt;",
+    "after": " if(ridingTravel.gallop>0){\n  if(m&&m.type==='gallop')questEvt('gallop',ridingTravel.gallop);\n  dailyEvt('gallop',ridingTravel.gallop);\n }\n /* Riding XP retains real mounted jump/flight travel; walking and vehicles do not train a horse. */\n rideDistAcc+=ridingTravel.travel;",
+    "occurrences": 1
+  }
+]

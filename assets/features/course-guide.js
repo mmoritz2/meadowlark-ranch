@@ -36,8 +36,10 @@
    changes, while riding mostly updates projection, visible instance count and opacity. Free
    routes can be relaid after the rider drifts off the cached line. Rush log recovery also
    caches its waypoints, checks accumulated movement and path clearance at bounded 300 ms
-   intervals, and rebuilds the route when needed. It creates no new meshes during riding;
+   intervals, and rebuilds the route when needed. Unscored flat races also cache a
+   solid-aware steering route and validate it every 300 ms. It creates no new meshes during riding;
    recovery planning and changed snapshots may allocate small temporary objects. */
+import {createFlatRaceGuidance} from '../flat-race-guidance.mjs?v=flat-race-guide-1';
 export const id='course-guide';
 const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12], TO_SHOW=2.2;
 const JUMP_CUES={early:'Wait',good:'Jump',perfect:'Jump now',late:'Too close',lineup:'Line up'};
@@ -213,6 +215,7 @@ export function install(G){
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  const groundH=(x,z)=>{try{const h=W.groundH(x,z);return h===h?h:0;}catch(e){return 0;}};
  const fenceRecovery=createRushFenceRecovery({clearSegment:(a,b,c,j)=>rushRecoverySegmentClear(a,b,{world:W,course:c,skip:j}),isJumping:p=>(p.y||0)>.05||(p.vy||0)>0||G.horse.RIG?.()?.heroJumpAge!=null});
+ const flatGuide=createFlatRaceGuidance({world:W});
 
  /* ---------------------------------------------------------------- the look ------------- */
  /* Six biomes and four seasons of ground under one ribbon: meadow green, farm stubble, forest
@@ -448,6 +451,7 @@ export function install(G){
   circle:false,cx:0,cz:0,cr:0,letter:'',dir:1};
  function plan(c){
   PL.ok=false;
+  const flat=flatGuide.update(c,player,performance.now());
   if(!c)return PL;
   /* A judged class has no fences: the next thing asked for is a letter, and ARENA_LETTERS is
      read live because events2-disciplines moves the whole arena to the town on the card. */
@@ -490,7 +494,7 @@ export function install(G){
    PL.n=2; PL.tx=at[0]; PL.tz=at[1]; PL.scored=false; PL.mode=0; PL.a=c.fi|0; PL.b=0; PL.ok=true;
    return PL;
   }
-  const j=c.jumps&&c.jumps[c.idx]; if(!j)return PL;
+  const j=c.jumps&&c.jumps[c.idx]; if(!j){flatGuide.reset();return PL;}
   PL.circle=false;
   const recovery=fenceRecovery.update(c,player,performance.now());
   if(recovery){
@@ -499,6 +503,12 @@ export function install(G){
    if(recovery.phase==='lineup'){PL.pts[1][0]=j.x;PL.pts[1][1]=j.z;PL.n=2;}
    else for(let i=fenceRecovery.cursor;i<fenceRecovery.path.length&&PL.n<5;i++){const p=fenceRecovery.path[i];PL.pts[PL.n][0]=p.x;PL.pts[PL.n++][1]=p.z;}
    PL.tx=recovery.target.x;PL.tz=recovery.target.z;PL.scored=false;PL.mode=5;PL.a=c.idx;PL.b=fenceRecovery.revision;PL.ok=true;return PL;
+  }
+  if(flat){
+   if(!flat.target)return PL;
+   PL.pts[0][0]=player.pos.x;PL.pts[0][1]=player.pos.z;PL.n=1;
+   for(const p of flat.waypoints){if(PL.n>=5)break;PL.pts[PL.n][0]=p.x;PL.pts[PL.n++][1]=p.z;}
+   PL.tx=flat.target.x;PL.tz=flat.target.z;PL.scored=false;PL.mode=6;PL.a=c.idx;PL.b=flat.revision;PL.ok=true;return PL;
   }
   const S=c.ce, lap=(S&&S.lap)||1;
   const L=S&&S.line&&c.idx>0?S.line[c.idx]:null;    // the same condition course-engine lays and penalises on
@@ -523,10 +533,10 @@ export function install(G){
  /* A new course means a new first leg whatever the indices happen to say, and the finish means
     the ribbon should already be going before cancelCourse pulls the course object out from under
     it on the next turn of the loop. */
- G.on('courseStart',()=>{fenceRecovery.reset();SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});
+ G.on('courseStart',()=>{fenceRecovery.reset();flatGuide.reset();SP.mode=-1;SP.a=-1;SP.b=-1;closing=false;STATS.lays=0;});
  /* Sister packages replay a finish without a live course object to re-pay a round; only the
     finish of the course actually being ridden should take the ribbon down. */
- G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get())closing=true;});
+ G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get()){closing=true;flatGuide.reset();}});
  function hide(){
   core.count=rim.count=0; core.visible=rim.visible=ring.visible=bigRing.visible=false; tx=tz=null; circ=null;
   reticle.visible=false; toGrade=''; toCue='';
@@ -541,8 +551,12 @@ export function install(G){
   try{
    if(!enabled){if(fade!==0){fade=0;hide();}return;}
    const c=G.course.get();
-   if(lastCourse!==c){lastCourse=c;SP.mode=-1;SP.a=-1;SP.b=-1;if(c)closing=false;}
+   if(lastCourse!==c){lastCourse=c;flatGuide.reset();SP.mode=-1;SP.a=-1;SP.b=-1;if(c)closing=false;}
    const P=c&&!closing?plan(c):null;
+   // Never fade an old unsafe ray while a blocked route is being reported.
+   if(c&&!closing&&flatGuide.snapshot()?.phase==='blocked'){
+    fade=0;hide();if(distEl){distEl.textContent='· Find a clear way to the gate';distEl.style.display='';}return;
+   }
    const want=!!(P&&P.ok);
    fade=clamp(fade+(want?dt/FADE_IN:-dt/FADE_OUT),0,1);
    if(!want&&fade<=0){hide();return;}
@@ -580,7 +594,7 @@ export function install(G){
         as nothing — and only its size. The line beside this already says 'Canter a circle at B',
         and on a phone every word here is squeezed out of that line: the long version squeezed it to
         130 px and three or four lines, the last of them under the green stamina bar. */
-     distEl.textContent=fenceRecovery.snapshot()?'· '+({around:'Circle around',approach:'Return to approach',lineup:'Face the log',blocked:'Find a clear approach'}[fenceRecovery.snapshot().phase]):circ?'· big circle':toCue?'· '+JUMP_CUES[toCue]:'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
+     distEl.textContent=fenceRecovery.snapshot()?'· '+({around:'Circle around',approach:'Return to approach',lineup:'Face the log',blocked:'Find a clear approach'}[fenceRecovery.snapshot().phase]):flatGuide.snapshot()?.phase==='detour'?'· Follow the clear route':circ?'· big circle':toCue?'· '+JUMP_CUES[toCue]:'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
      if(distEl.style.display!=='')distEl.style.display='';}
     else if(distEl.style.display!=='none')distEl.style.display='none';
    }
@@ -590,7 +604,7 @@ export function install(G){
  /* ---------------------------------------------------------------- state + handles ------ */
  G.on('state',o=>{
   o.guide={on:fade>0.01,fade:+fade.toFixed(2),chevrons:core.count,built:SP.built,
-   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,recovery:fenceRecovery.snapshot(),
+   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,recovery:fenceRecovery.snapshot(),gateGuide:enabled&&!closing?flatGuide.snapshot():null,
    spacing:+SP.spacing.toFixed(2),legLen:+SP.len.toFixed(1),onScoredLine:!SP.free&&SP.n>0,
    lays:STATS.lays,target:tx===null?null:[+tx.toFixed(1),+tz.toFixed(1)],
    dist:tx===null?null:+Math.hypot(player.pos.x-tx,player.pos.z-tz).toFixed(1),
@@ -601,7 +615,7 @@ export function install(G){
     setEnabled is the honest way to measure what the ribbon costs: the same page, the same
     course, the feature on and off. */
  G.courseGuide={core,rim,ring,bigRing,CIRC,reticle,SP,STATS,plan,
-  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,recovery:()=>fenceRecovery.snapshot(),TO_PERFECT,TO_GOOD,TO_SHOW,
+  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,recovery:()=>fenceRecovery.snapshot(),gateGuide:()=>enabled&&!closing?flatGuide.snapshot():null,TO_PERFECT,TO_GOOD,TO_SHOW,
   mats:{core:coreMat,rim:rimMat,ringLit:ringLitMat,ringDark:ringDarkMat},
   setEnabled(b){enabled=!!b;if(!enabled){fade=0;hide();}},
   isEnabled:()=>enabled,isOn:()=>fade>0.01,fadeNow:()=>fade,

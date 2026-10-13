@@ -24,7 +24,7 @@ function fixture(){
  const w={document:{hidden:false,activeElement:{blur(){trace.blurs++;}},body:{classList:{contains:k=>k==='freecam'&&flags.freecam}},getElementById:id=>id==='dlg'?{getClientRects:()=>dialog.visible?[{}]:[],get textContent(){return dialog.text;}}:null,
  dispatchEvent(event){trace.events.push({type:event.type,code:event.code});if(event.bubbles)for(const fn of listeners.get(event.type)||[])fn(event);return true;}},
  KeyboardEvent:class{constructor(type,options){this.type=type;Object.assign(this,options);}},addEventListener(type,fn){const rows=listeners.get(type)||[];rows.push(fn);listeners.set(type,rows);},advanceTime:forbidden('advanceTime')};
- const G={course:{get:()=>observe(current,'course'),startCourse:forbidden('startCourse'),cancelCourse:forbidden('cancelCourse')},
+ const G={courseGuide:{gateGuide:()=>{const j=current?.jumps?.[current.idx];return j?observe({phase:'direct',gateIndex:current.idx,gate:{x:j.x,z:j.z},target:{x:j.x,z:j.z},waypoints:[{x:j.x,z:j.z}]},'guide'):null;}},course:{get:()=>observe(current,'course'),startCourse:forbidden('startCourse'),cancelCourse:forbidden('cancelCourse')},
  horse:{player:observe(player,'player'),RIG:()=>observe(rig,'rig'),ridden:()=>observe(ridden,'horse')},
  riding:{selectGait:gait=>trace.gaits.push(gait),releaseAll(){trace.releases++;}},input:{blocked:()=>flags.input},get photoPause(){return flags.photo;},onFoot:{get on(){return flags.onFoot;}},worldPkg:{vehicle:()=>flags.vehicle},
  save:{fresh:()=>observe(saved,'save'),sync:forbidden('save.sync')}};
@@ -98,4 +98,26 @@ test('stamina diagnostics report actual raw exhaustion and landing values withou
  Object.assign(f.player,{stam:0,blown:false,exhaustT:0,landT:0});before=f.observations();assert.deepEqual(fields(f.api.readEventCourse().player),{stam:0,blown:false,exhaustT:0,landT:0});assert.deepEqual(f.observations(),before);
  for(const invalid of [undefined,null,NaN,Infinity,-Infinity,'2.4']){Object.assign(f.player,{stam:invalid,blown:undefined,exhaustT:invalid,landT:invalid});before=f.observations();assert.deepEqual(fields(f.api.readEventCourse().player),{stam:null,blown:false,exhaustT:0,landT:0});assert.deepEqual(f.observations(),before);}
  assert.deepEqual(f.trace.gaits,[]);assert.deepEqual(f.trace.events,[]);assert.equal(f.timers.size,0);clean(f);
+});
+
+
+test('the driver follows the published detour waypoint rather than the numbered gate centre',()=>{
+ const f=fixture(),gate=f.course.jumps[0],before=f.observations();
+ f.G.courseGuide.gateGuide=()=>({phase:'detour',gateIndex:0,gate:{x:gate.x,z:gate.z},target:{x:-4,z:8},waypoints:[{x:-4,z:8},{x:gate.x,z:gate.z}]});
+ f.api.startFlatRaceDriver();f.tick();
+ assert.deepEqual([f.api.state().target.x,f.api.state().target.z],[-4,8]);assert.equal(f.api.state().target.guidePhase,'detour');assert.equal(f.course.idx,0);assert.deepEqual(f.observations(),before);clean(f);
+});
+
+test('missing, blocked, stale and malformed guide targets stop input without inventing a path',()=>{
+ const invalid=[null,{phase:'blocked',gateIndex:0,gate:{x:0,z:40},target:null},{phase:'direct',gateIndex:1,gate:{x:0,z:40},target:{x:0,z:40}},{phase:'direct',gateIndex:0,gate:{x:8,z:40},target:{x:0,z:40}},{phase:'detour',gateIndex:0,gate:{x:0,z:40},target:{x:NaN,z:8}},{phase:'unvalidated',gateIndex:0,gate:{x:0,z:40},target:{x:0,z:40}}];
+ for(const guide of invalid){const f=fixture(),before=f.observations();f.G.courseGuide.gateGuide=()=>guide;f.api.startFlatRaceDriver();f.tick();assert.equal(!!f.api.state().held.KeyW,false);assert.equal(f.api.state().active,true);f.tick(2001);halted(f,/safe production gate route/);assert.deepEqual(f.observations(),before);assert.equal(f.trace.gaits.length,0);}
+ const absent=fixture();delete absent.G.courseGuide;absent.api.startFlatRaceDriver();absent.tick();assert.equal(!!absent.api.state().held.KeyW,false);absent.tick(2001);halted(absent,/safe production gate route/);
+});
+
+
+test('a gate crossing can wait for its next normal guide publication without steering toward a stale target',()=>{
+ const f=fixture();f.api.startFlatRaceDriver();f.tick();assert.equal(f.api.state().held.KeyW,true);
+ f.course.idx=1;const stale={phase:'direct',gateIndex:0,gate:{x:0,z:40},target:{x:0,z:40}};f.G.courseGuide.gateGuide=()=>stale;
+ const before=f.observations();f.tick();assert.equal(f.api.state().active,true);assert.equal(f.api.state().held.KeyW,false);assert.equal(f.api.state().target,null);assert.match(f.api.state().status,/waiting for current production gate route/);assert.deepEqual(f.observations(),before);
+ f.G.courseGuide.gateGuide=()=>({phase:'detour',gateIndex:1,gate:{x:18,z:62},target:{x:0,z:20}});f.tick(500);assert.equal(f.api.state().active,true);assert.equal(f.api.state().held.KeyW,true);assert.deepEqual([f.api.state().target.x,f.api.state().target.z],[0,20]);assert.deepEqual(f.observations(),before);clean(f);
 });

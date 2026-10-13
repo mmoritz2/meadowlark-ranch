@@ -8,6 +8,7 @@
 
    Owned by this package: this file, the breed3 delegation, the foal ride gate in renderStable
    and horseSel, and the companion sync in reloadHorses. Nothing runs at import time. */
+import {verifiedRibbonAward} from '../ribbon-awards.mjs?v=final-ribbon-1';
 export const id='breeding';
 
 /* ---------------------------------------------------------------------------------------
@@ -361,7 +362,19 @@ export function install(G){
   if(n)setTimeout(()=>addBtok(n,why.join(' + ')),900);
   if(stars>=3&&Math.random()<(RB&&RB.featured?0.4:0.2)){const k=POT_KEYS[Math.floor(Math.random()*POT_KEYS.length)];sync(s=>{s.items['pot_'+k]=(s.items['pot_'+k]||0)+1;});setTimeout(()=>{try{toast(POTIONS[k].emoji+' A '+POTIONS[k].label+' for the foaling barn!');}catch(e){}},1600);}
  });
- G.on('ribbons',RB0=>{ sync(s=>{const wk=G.time.isoWeekKey();s.brw=(s.brw&&s.brw.wk===wk)?s.brw:{wk,n:0};s.brw.n+=(RB0&&RB0.rib)||1;}); });
+ G.on('ribbonsAwarded',receipt=>{
+  const wk=G.time.isoWeekKey();
+  if(!verifiedRibbonAward(fresh(),receipt)||G.time.isoWeekKey(receipt.at)!==wk)return;
+  sync(s=>{
+   if(!verifiedRibbonAward(s,receipt))return;
+   s.brw=(s.brw&&s.brw.wk===wk)?s.brw:{wk,n:0};
+   const key=receipt.eventId+':'+receipt.diff;
+   s.brw.awards=s.brw.awards||{};
+   if(s.brw.awards[key]===receipt.id)return;
+   s.brw.awards[key]=receipt.id;
+   s.brw.n+=receipt.rib;
+  });
+ });
  G.on('weekRoll',s=>{ const n=(s.brw&&s.brw.n)||0; if(n>=8){s.btok=(s.btok||0)+2;s.items=s.items||{};s.items.pot_mirror=(s.items.pot_mirror||0)+1;setTimeout(()=>{try{toast('📅 A ribbon-rich week: +2 💞 breeding tokens and a Mirror Draught!');}catch(e){}},2000);} s.brw={wk:G.time.isoWeekKey(),n:0}; });
  G.on('passClaim',(sv,r,i,gold)=>{ if(!gold&&[9,19,29].includes(i)){sv.btok=(sv.btok||0)+1;} if(gold&&[4,14,24].includes(i)){sv.btok=(sv.btok||0)+1;} });
  G.on('wallet',s=>{ const n=s.btok||0; G.ui.hud.stat('btokEl',(n||(s.flags&&s.flags.bredOnce))?'<span title="Breeding tokens — earned from races, clean rounds, the week, dailies and the pass">💞 '+n+'</span>':''); });

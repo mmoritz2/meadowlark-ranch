@@ -152,7 +152,7 @@ export function install(G){
    wasGold=!!RB0.gold; capture=[]; captureAt=Date.now();
   }catch(e){}
  });
- const goldOf=(ev,RB)=>!!((RB&&RB.gold)||(lastRB&&lastRB.id===(ev&&ev.id)&&lastRB.gold));
+ const goldOf=(ev,RB)=>RB?.saved===false?false:!!((RB&&RB.gold)||(lastRB&&lastRB.id===(ev&&ev.id)&&lastRB.gold));
 
  /* ================================================================= the synthetic field === */
  /* Every race in this game was run against a clock and nothing else: pvpField only ever reads live

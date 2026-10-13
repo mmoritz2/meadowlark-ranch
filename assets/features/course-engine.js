@@ -17,6 +17,7 @@
      event card   time allowed, laps, stat prerequisites and the full reward line before you enter
      first person KeyT rides from the saddle */
 import {createNativeJumpCrossingSampler} from '../native-jump-crossing.mjs';
+import {verifiedRibbonAward} from '../ribbon-awards.mjs?v=final-ribbon-1';
 export const id='course-engine';
 export function install(G){
  const THREE=G.THREE, $=G.$, toast=G.toast, T=G.tables, W=G.world, player=G.horse.player;
@@ -404,9 +405,17 @@ export function install(G){
  G.on('ribbons',RB=>{
   const acc=RB.acc||0, gold=acc>=0.95&&(RB.faults||0)===0&&(RB.refusals||0)===0&&(RB.lineOff||0)<1;
   RB.gold=gold; RB.rib=1+(RB.stars>=2?1:0)+(RB.stars>=3?1:0)+(gold?1:0);
-  const ev=RB.ev, rib=RB.rib, diff=RB.diff||'open';
-  G.save.sync(s=>{ s.ribbonGold=s.ribbonGold||{}; s.ribbonsBy=s.ribbonsBy||{}; if(gold)s.ribbonGold[ev.id]=true; const k=ev.id+':'+diff; s.ribbonsBy[k]=Math.max(s.ribbonsBy[k]||0,rib); });
-  G.quest.questEvt('ribbons',rib); if(gold){G.quest.questEvt('gold',ev.id);G.quest.dailyEvt('gold',1);}
+ });
+ // Only a confirmed final award may advance ribbon/gold goals. Modifiers above
+ // stay pure so later gate grades cannot leave premature awards in the save.
+ const creditedRibbonAwards=new Map();
+ G.on('ribbonsAwarded',receipt=>{
+  if(!receipt?.saved||!receipt.eventId||!receipt.id)return;
+  const key=receipt.eventId+':'+receipt.diff;
+  if(!verifiedRibbonAward(G.save.fresh(),receipt)||creditedRibbonAwards.get(key)===receipt.id)return;
+  creditedRibbonAwards.set(key,receipt.id);
+  G.quest.questEvt('ribbons',receipt.rib);
+  if(receipt.gold){G.quest.questEvt('gold',receipt.eventId);G.quest.dailyEvt('gold',1);}
  });
  G.quest.types.ribbons=(m,val,prog)=>prog+(typeof val==='number'?val:1);
  G.quest.types.gold=(m,val,prog)=>(!m.ev||val===m.ev)?m.goal:prog;

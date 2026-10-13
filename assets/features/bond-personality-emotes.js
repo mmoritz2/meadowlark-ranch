@@ -103,9 +103,9 @@ export function install(G){
  }
  function flushToasts(){while(levelToasts.length){try{toast(levelToasts.shift());}catch(e){}}}
  function ensureBondDay(h){const d=new Date().toDateString();if(!h.bondDay||h.bondDay.date!==d)h.bondDay={date:d,n:0};return h.bondDay;}
- let rideAcc=0;
- function bondRide(){
-  G.save.sync(s=>{const h=s.horses[G.horse.rideIdx()];if(!h)return;const bd=ensureBondDay(h);if(bd.n>=RIDE_BOND_CAP)return;
+ let rideAcc=0,lastRideTravel=null;
+ function bondRide(horseId){
+  G.save.sync(s=>{const h=s.horses.find(h=>h.id===horseId);if(!h)return;const bd=ensureBondDay(h);if(bd.n>=RIDE_BOND_CAP)return;
    const g=Math.min(RIDE_BOND_CAP-bd.n,addBond(s,h,1,'ride'));bd.n+=g;});
   flushToasts();
  }
@@ -511,7 +511,17 @@ export function install(G){
   if(Math.abs(player.speed)>8&&player.y<=0&&!player.flying&&bondLevel()>=5){sparkT-=dt;if(sparkT<=0){sparkT=0.35;if(bursts.length<6)burst(player.pos.x-Math.sin(player.heading)*1.4,G.world.groundH(player.pos.x,player.pos.z)+1.2,player.pos.z-Math.cos(player.heading)*1.4,'heart',2);}}
   tickWhistle(dt);
   tickSpooks(dt);
-  if(!player.flying&&Math.abs(player.speed)>0.5){rideAcc+=Math.abs(player.speed)*dt;if(rideAcc>=200){rideAcc-=200;bondRide();}}
+  // Consume the core's immutable collision-resolved frame once, for this horse.
+  // Jumping can build riding bond; walking on foot, flight and vehicles cannot.
+  const frameTravel=G.horse.frameTravel;
+  if(frameTravel!==lastRideTravel){
+   lastRideTravel=frameTravel;
+   const horse=ridden();
+   if(horse?.id!=null&&frameTravel?.mountId===horse.id&&Number.isFinite(frameTravel.bond)&&frameTravel.bond>0){
+    rideAcc+=frameTravel.bond;
+    if(rideAcc>=200){rideAcc-=200;bondRide(frameTravel.mountId);}
+   }
+  }
   if(player.riderEmote&&Math.abs(player.speed)>1.5){player.riderEmote=null;hideGuitar(player.rider);}
   if(t-hintT>45&&player.y<=0&&Math.abs(player.speed)<2){hintT=t;for(const a of G.horse.herd()){if(Math.hypot(a.pos.x-player.pos.x,a.pos.z-player.pos.z)<3.2){if(!petHinted){petHinted=true;toast('💗 Press '+String(G.key('pet')||'G').replace('Key','')+' to pet '+((G.horse.myHorses[a.idx]||{}).name||'the horse'));}break;}}}
  });

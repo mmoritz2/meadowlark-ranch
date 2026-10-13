@@ -1596,7 +1596,6 @@ export function install(G){
    const want=RB.acc>=0.95&&(RB.faults||0)===0&&(RB.refusals||0)===0&&(RB.lineOff||0)<1&&gateClean()>=0.9;
    if(RB.gold&&!want){
     RB.gold=false; RB.rib=Math.max(1,(RB.rib|0)-1); CUR.demoted=true;
-    if(!CUR.goldBefore)G.save.sync(s=>{if(s.ribbonGold)delete s.ribbonGold[ev.id];});
    }
   }
   if(S.xcModel){ RB.xcTime=CUR.xcTime; RB.xcJump=CUR.xcJump; RB.xcTotal=+(CUR.xcTime+CUR.xcJump).toFixed(1); }

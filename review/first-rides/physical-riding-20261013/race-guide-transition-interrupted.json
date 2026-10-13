@@ -1,0 +1,119 @@
+{
+  "notes": "Old QA controller stopped on transient guide publication after gate crossings; no physical stalls. Explicit normal-input resumes. Do not use this paused time as competitive evidence. Fixture controller now releases input and waits up to2 seconds for current guide.",
+  "driver": {
+    "active": false,
+    "status": "Stopped: a safe production gate route is unavailable",
+    "steps": 90,
+    "target": {
+      "checkpoint": 4,
+      "distance": 5.319352027613816,
+      "gait": "trot",
+      "guidePhase": "direct",
+      "kind": "gate",
+      "lap": 1,
+      "total": 6,
+      "x": -70,
+      "z": -38
+    }
+  },
+  "errors": [],
+  "eventCourse": {
+    "accuracy": 1,
+    "active": true,
+    "countdown": -0.004500000014900418,
+    "difficulty": "open",
+    "elapsed": 248.63960000002433,
+    "faults": 0,
+    "gateGuide": {
+      "gate": {
+        "x": -42,
+        "z": -34
+      },
+      "gateIndex": 4,
+      "phase": "direct",
+      "revision": 17,
+      "target": {
+        "x": -42,
+        "z": -34
+      },
+      "waypoints": [
+        {
+          "x": -42,
+          "z": -34
+        }
+      ]
+    },
+    "horse": {
+      "breed": "bay-sporthorse",
+      "id": 1,
+      "name": "Bramble"
+    },
+    "id": "pp",
+    "index": 4,
+    "lap": 1,
+    "laps": 1,
+    "lineOff": 0,
+    "name": "Pasture Pony Dash",
+    "player": {
+      "blown": false,
+      "exhaustT": 0,
+      "heading": -4.376515884535179,
+      "landT": 0,
+      "speed": 0,
+      "stam": 1,
+      "x": -72.59948388988275,
+      "z": -36.95661368839818
+    },
+    "raceAccuracy": 0.45492968651688864,
+    "resultText": null,
+    "started": true,
+    "target": {
+      "distance": 30.741990482556872,
+      "kind": "gate",
+      "x": -42,
+      "z": -34
+    },
+    "timeAllowed": 41.00936138427348,
+    "total": 6
+  },
+  "featureErrors": [],
+  "ridingDistance": {
+    "bond": 130.62458720543904,
+    "fastStationarySeconds": 0,
+    "frame": {
+      "bond": 0,
+      "gallop": 0,
+      "ground": 0,
+      "mountId": 1,
+      "travel": 0
+    },
+    "frames": 2800,
+    "gait": "stand",
+    "gallop": 52.492681265540185,
+    "ground": 130.62458720543904,
+    "travel": 130.62458720543904
+  },
+  "story": {
+    "guidance": {
+      "accessibleLabel": "Follow the marker back to Wren to collect your reward. Activate to open this action.",
+      "text": "Ride with Luna: gallop 300 m (300/300)\nReturn to Wren · reward ready"
+    },
+    "index": 1,
+    "mission": {
+      "goal": 300,
+      "label": "Ride with {name}: gallop 300 m",
+      "npc": "wren",
+      "talk": null,
+      "type": "gallop"
+    },
+    "progress": 300,
+    "saved": {
+      "clues": [],
+      "era": 1,
+      "index": 1,
+      "name": "Luna",
+      "progress": 300
+    },
+    "target": null
+  }
+}
