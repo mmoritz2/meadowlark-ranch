@@ -7,6 +7,9 @@ const changes=JSON.parse(fs.readFileSync(path.join(fixture,'source-changes.json'
 // pass the original whole-source preimages. Keep the crag normalizer itself
 // unchanged because its independent contract pins that file's SHA.
 const publishedCaches=[
+ // 074a42157c5ca21b2d951392efd0e1ada870cd23, published on main 885e882.
+ // Newest edge first so the known cache chain reverses to the pinned fixture.
+ {file:'ranch3d.html',before:"'./assets/game-hero-horse.js?v=feather-sway-20261013a'",after:"'./assets/game-hero-horse.js?v=full-groom-20261013c'"},
  // 80dfb836171e9becc206cd4e9fb2c99a8d32fe9a, also on origin/main a59b76e.
  {file:'ranch3d.html',before:"'./assets/game-hero-horse.js?v=draft-feathers-20261013d'",after:"'./assets/game-hero-horse.js?v=feather-sway-20261013a'"},
  // Approved story/events release 1780193, merged by e138d34.

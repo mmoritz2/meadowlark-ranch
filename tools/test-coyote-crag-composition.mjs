@@ -38,7 +38,7 @@ test('exact production installer uses the same constructor stream, circle identi
 test('exact published caches and the original five crag reversals restore the full original7009 bodies',()=>{
  for(const file of Object.keys(contract.baselineSHA256)){const s=fs.readFileSync(path.join(ROOT,file),'utf8');assert.equal(sha(normalizePublishedCompositionSource(s,file)),contract.baselineSHA256[file]);}
  const approved=JSON.parse(fs.readFileSync(new URL('./fixtures/coyote-crag-7009c41/source-changes.json',import.meta.url)));assert.equal(approved.length,5);assert.equal(contract.approvedSourceLiterals,5);
- const main=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),nativeCache="'./assets/game-hero-horse.js?v=feather-sway-20261013a'";assert.equal(main.split(nativeCache).length,2);
+ const main=fs.readFileSync(path.join(ROOT,'ranch3d.html'),'utf8'),nativeCache="'./assets/game-hero-horse.js?v=full-groom-20261013c'";assert.equal(main.split(nativeCache).length,2);
  assert.throws(()=>normalizePublishedCompositionSource(main+'\n// duplicate '+nativeCache,'ranch3d.html'));
  assert.throws(()=>normalizePublishedCompositionSource(main.replace(nativeCache,"'./assets/game-hero-horse.js?v=draft-feathers-unreviewed'"),'ranch3d.html'));
 
