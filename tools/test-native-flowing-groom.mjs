@@ -31,15 +31,15 @@ const library=createBreedLibrary({THREE:cpuTHREE,GLTFLoader:FileLoader,clone});
 let checks=0,frames=0;const report=[],failures=[];
 function check(ok,label){assert(ok,label);checks++;}
 function equal(a,b,label){assert.deepEqual(a,b,label);checks++;}
-function roleComponents(mesh,scene){
+function roleComponents(mesh,scene,profile){
  const count=mesh.geometry.attributes.position.count,parent=Int32Array.from({length:count},(_,i)=>i),find=i=>{while(parent[i]!==i){parent[i]=parent[parent[i]];i=parent[i];}return i;};
  const index=mesh.geometry.index.array;
  for(let i=0;i<index.length;i+=3){const a=find(index[i]);parent[find(index[i+1])]=a;parent[find(index[i+2])]=a;}
  const groups=new Map();for(let i=0;i<count;i++){const key=find(i);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(i);}
- const p=posedPoints(mesh).map(v=>scene.worldToLocal(v)),out=[];
+ const p=posedPoints(mesh).map(v=>scene.worldToLocal(v)),out=[],authored=new Map();for(const c of profile?.nativeVariant?.groom?.equestrian?.cards||[])authored.set(c.start,c.role);for(const c of profile?.nativeVariant?.groom?.equestrian?.eyelashCards||[])authored.set(c.start,'eyelashes');
  for(const ids of groups.values()){
   const box=new THREE.Box3().setFromPoints(ids.map(i=>p[i])),size=box.getSize(new THREE.Vector3()),zs=ids.map(i=>p[i].z).sort((a,b)=>a-b);
-  const role=zs[Math.floor(zs.length/2)]<-.6?'tail':Math.max(size.x,size.y,size.z)<.04?'eyelashes':zs[Math.floor(zs.length/2)]>1.12?'forelock':'mane';
+  const role=authored.get(ids[0])||(zs[Math.floor(zs.length/2)]<-.6?'tail':Math.max(size.x,size.y,size.z)<.04?'eyelashes':zs[Math.floor(zs.length/2)]>1.12?'forelock':'mane');
   const anchor=ids.reduce((a,i)=>p[i].y>p[a].y?i:a,ids[0]);out.push({ids,role,anchor});
  }
  return out;
@@ -53,10 +53,46 @@ function roleMetrics(mesh,roles){
  }
  return out;
 }
-function snapshotGeometry(meshes){return meshes.map(m=>({mesh:m,geometry:m.geometry,hash:geometryHash(m.geometry),material:m.material,bind:m.bindMatrix.toArray(),inverse:m.skeleton.boneInverses.map(b=>b.toArray()),position:m.geometry.attributes.position.array.slice(),normal:m.geometry.attributes.normal.array.slice()}));}
+function materialFingerprint(material){
+ return (Array.isArray(material)?material:[material]).map(m=>({material:m,compile:m.onBeforeCompile,key:m.customProgramCacheKey(),color:m.color?.getHex(),roughness:m.roughness,metalness:m.metalness,alphaTest:m.alphaTest,side:m.side,transparent:m.transparent,depthWrite:m.depthWrite,map:m.map,mapHash:m.map?.image?.data?hash(bytes(m.map.image.data)):null}));
+}
+function assertMaterialFingerprint(rows,label){for(const row of rows)equal(materialFingerprint(row.material),row.finish,label);}
+function snapshotGeometry(meshes){return meshes.map(m=>({mesh:m,geometry:m.geometry,hash:geometryHash(m.geometry),material:m.material,finish:materialFingerprint(m.material),bind:m.bindMatrix.toArray(),inverse:m.skeleton.boneInverses.map(b=>b.toArray()),position:m.geometry.attributes.position.array.slice(),normal:m.geometry.attributes.normal.array.slice()}));}
 function arrays(meshes){return meshes.map(m=>({position:m.geometry.attributes.position.array.slice(),normal:m.geometry.attributes.normal.array.slice()}));}
 function assertArrays(meshes,expected,label){for(let m=0;m<meshes.length;m++)for(const key of ['position','normal'])assert.deepEqual(meshes[m].geometry.attributes[key].array,expected[m][key],label);checks++;}
 function shader(){return {uniforms:{},vertexShader:THREE.ShaderLib.physical.vertexShader,fragmentShader:THREE.ShaderLib.physical.fragmentShader};}
+
+// Execute the bundled renderer's real shadow-material selection. A shader-only
+// discard could look fine in color while leaving a solid chunky shadow.
+const threeSource=fs.readFileSync(new URL(threeURL),'utf8'),shadowStart=threeSource.indexOf('\tfunction getDepthMaterial( object, material, light, type )'),shadowEnd=threeSource.indexOf('\n\tfunction renderObject(',shadowStart);
+assert(shadowStart>=0&&shadowEnd>shadowStart);
+const depth=new THREE.MeshDepthMaterial(),distance=new THREE.MeshDistanceMaterial(),shadowCache={};
+const getShadowMaterial=new Function('_depthMaterial','_distanceMaterial','_renderer','_materialCache','onMaterialDispose','VSMShadowMap','shadowSide',threeSource.slice(shadowStart,shadowEnd)+';return getDepthMaterial;')(depth,distance,{localClippingEnabled:false,properties:{get:()=>({})}},shadowCache,()=>{},THREE.VSMShadowMap,{[THREE.FrontSide]:THREE.BackSide,[THREE.BackSide]:THREE.FrontSide,[THREE.DoubleSide]:THREE.DoubleSide});
+function ringArea(g,ids){
+ const p=g.attributes.position,center=new THREE.Vector3();for(const i of ids)center.add(new THREE.Vector3().fromBufferAttribute(p,i));center.divideScalar(ids.length);
+ const area=new THREE.Vector3();for(let j=0;j<ids.length;j++){const a=new THREE.Vector3().fromBufferAttribute(p,ids[j]).sub(center),b=new THREE.Vector3().fromBufferAttribute(p,ids[(j+1)%ids.length]).sub(center);area.add(a.cross(b));}return area.length()*.5;
+}
+function inspectFineAppearance(rig,before,metricsBefore,metricsAfter){
+ const shell=before.find(r=>r.mesh.userData.nativeEquestrianGroom);if(!shell)return null;
+ const m=shell.mesh.material,image=m.map?.image;
+ check(image?.data?.length===image.width*image.height*4,'Fine draft layers have actual RGBA strand pixels');
+ check(m.alphaTest>0&&m.alphaTest<.7&&!m.transparent&&m.depthWrite,'Strand cutouts avoid sorted transparent shell artifacts');
+ check(m.roughness>=.65&&m.specularIntensity<=.4,'Layered hair retains restrained matte highlights');
+ const alpha=(x,y)=>image.data[(Math.min(image.height-1,Math.max(0,y))*image.width+x)*4+3]/255;
+ const rows=[];for(const ratio of [0,.2,.5,.8,.95,1]){const y=Math.round((image.height-1)*ratio),bits=Array.from({length:image.width},(_,x)=>alpha(x,y)>=m.alphaTest);rows.push({ratio,coverage:bits.filter(Boolean).length/bits.length,transitions:bits.reduce((n,b,i)=>n+(i&&b!==bits[i-1]?1:0),0)});}
+ equal(rows[0].coverage,0,'Opaque root cap is removed from the strand layer');equal(rows.at(-1).coverage,0,'Strand tips finish transparently');
+ const mid=rows.find(r=>r.ratio===.5);check(mid.coverage>.2&&mid.coverage<.85&&mid.transitions>=24,'Mid-length layer contains many visible strands separated by real gaps');
+ check(rows.find(r=>r.ratio===.95).coverage<mid.coverage*.65,'Uneven strand ends taper out rather than forming a square cap');
+ check(new Set(Array.from(image.data).filter((_,i)=>i%4===3)).size>32,'Alpha has graded fiber edges');
+ for(const point of [false,true]){const shadow=getShadowMaterial(shell.mesh,m,{isPointLight:point},THREE.PCFSoftShadowMap);check(shadow.map===m.map&&shadow.alphaMap===m.alphaMap&&shadow.alphaTest===m.alphaTest,'Actual '+(point?'distance':'depth')+' shadow uses matching alpha cutoff and texture');}
+ const ratios=[],uv=shell.mesh.geometry.attributes.uv;
+ for(const lock of rig.profile.nativeVariant.groom.equestrian.locks){const levels=new Map();for(let i=lock.start;i<lock.start+lock.count;i++){const t=uv.getY(i);if(t<=.2||t>=.8)continue;if(!levels.has(t))levels.set(t,[]);levels.get(t).push(i);}for(const ids of levels.values())ratios.push(ringArea(shell.mesh.geometry,ids)/ringArea(shell.geometry,ids));}
+ check(ratios.length>60&&ratios.every(n=>Number.isFinite(n)&&n>.02&&n<.4),'Every interior shell cross-section is physically thin, not a recolored solid lobe');
+ check(metricsAfter.mane.reach/metricsBefore.mane.reach>1.8,'Fine source mane cards cover the length of the layered silhouette');
+ const shaderState=shader();m.onBeforeCompile(shaderState);check(shaderState.fragmentShader.includes('#include <map_fragment>')&&shaderState.fragmentShader.includes('#include <alphatest_fragment>'),'Color shader retains standard texture alpha and alpha-test pipeline');
+ return {rows,maxRingAreaRatio:Math.max(...ratios),meanRingAreaRatio:ratios.reduce((a,b)=>a+b,0)/ratios.length,sourceManeReachRatio:metricsAfter.mane.reach/metricsBefore.mane.reach};
+}
+
 try{
  await library.manifestReady;
  for(const row of [...NEW_BREEDS,...EXPANSION_HORSE_BREEDS])library.register(row);
@@ -70,7 +106,7 @@ try{
   const motion=createNativeHorseMotion({THREE,root:rig.nativeRoot,clips:rig.animations,profile:rig.profile}),plain=createNativeHorseMotion({THREE,root:peer.nativeRoot,clips:peer.animations,profile:peer.profile});
   rig.scene.updateMatrixWorld(true);peer.scene.updateMatrixWorld(true);
   const meshes=meshList(rig.scene),peerMeshes=meshList(peer.scene),hair=meshes.find(m=>m.geometry.attributes.position.count===23514),crest=meshes.find(m=>m.userData.nativeFjordCrest);
-  const sourceRows=snapshotGeometry(meshList(asset.scene)),before=snapshotGeometry(meshes),peerBefore=snapshotGeometry(peerMeshes),roles=roleComponents(hair,rig.scene),metricsBefore=roleMetrics(hair,roles);
+  const sourceRows=snapshotGeometry(meshList(asset.scene)),before=snapshotGeometry(meshes),peerBefore=snapshotGeometry(peerMeshes),roles=roleComponents(hair,rig.scene,rig.profile),metricsBefore=roleMetrics(hair,roles);
   const fileURLs=[new URL(rig.profile.file,new URL('../assets/',import.meta.url)),...(rig.profile.nativeVariant?[new URL(rig.profile.nativeVariant.file,new URL('../assets/',import.meta.url))]:[])];
   const sourceFiles=fileURLs.map(url=>[url,hash(fs.readFileSync(url))]);
   const boneBefore=rig.bones.map(b=>[b.name,b.parent?.name,b.position.toArray(),b.quaternion.toArray(),b.scale.toArray()]);
@@ -94,7 +130,8 @@ try{
    }
   }
   for(const row of [...sourceRows,...peerBefore])check(geometryHash(row.geometry)===row.hash,id+' shared prepared asset and peer remain immutable');
-  const metricsAfter=roleMetrics(hair,roles),oldHair=before.find(r=>r.mesh===hair);
+  const metricsAfter=roleMetrics(hair,roles),oldHair=before.find(r=>r.mesh===hair),fineAppearance=inspectFineAppearance(rig,before,metricsBefore,metricsAfter);
+  assertMaterialFingerprint([...sourceRows,...peerBefore],id+' prepared asset/peer appearance stays immutable');
   for(const card of roles){
    if(card.role==='eyelashes'||id==='fjord'&&card.role!=='tail')for(const i of card.ids)for(let c=0;c<3;c++)assert.equal(hair.geometry.attributes.position.array[i*3+c],oldHair.position[i*3+c],id+' preserves lashes and Fjord mane/forelock');
   }checks++;
@@ -162,15 +199,17 @@ try{
   if(rig.profile.nativeRoster){
    const dyes=configureNativeCustomization({THREE:cpuTHREE,rig,horse:{id:'groom-qa',breed:id,colors:{body:rig.profile.nativeRosterColors?.body||'#a46e42',mane:'#894ad4'},tailCol:'#33b6ab'}});
    check(dyes?.applied.mane&&dyes?.applied.tail,id+' separate saved dyes remain supported');
-   for(const entry of dyes.hair)for(const m of entry.materials){const s=shader();m.onBeforeCompile(s);check(s.uniforms.nrManeOn?.value===1&&s.uniforms.nrTailOn?.value===1,id+' compiled dye uniforms retain both channels');}
+   for(const entry of dyes.hair)for(let n=0;n<entry.materials.length;n++){const m=entry.materials[n],s=shader();m.onBeforeCompile(s);check(s.uniforms.nrManeOn?.value===1&&s.uniforms.nrTailOn?.value===1,id+' compiled dye uniforms retain both channels');check(m.map===entry.originals[n].map&&m.alphaTest===entry.originals[n].alphaTest,id+' dye preserves strand mask and cutoff');check(s.fragmentShader.includes('#include <alphatest_fragment>'),id+' dye composes with alpha-tested hair');}
    dyes.dispose();
   }
   for(const row of [...sourceRows,...peerBefore])check(geometryHash(row.geometry)===row.hash,id+' animation/dyes never mutate shared asset/peer arrays');
+  assertMaterialFingerprint([...sourceRows,...peerBefore],id+' animation/dyes preserve asset/peer materials and texture bytes');
   let disposed=0;for(const g of privateGeometry)g.addEventListener('dispose',()=>disposed++);
   groom.dispose();groom.dispose();equal(disposed,privateGeometry.length,id+' each private geometry disposed once');
-  for(const row of before)check(row.mesh.geometry===row.geometry,id+' dispose restores original geometry identity');
+  for(const row of before){check(row.mesh.geometry===row.geometry,id+' dispose restores original geometry identity');check(row.mesh.material===row.material,id+' dispose preserves original material identity');}
+  assertMaterialFingerprint([...sourceRows,...peerBefore],id+' disposal never releases or mutates shared strand textures');
   motion.dispose();plain.dispose();for(const [url,digest]of sourceFiles)check(hash(fs.readFileSync(url))===digest,id+' source/model bytes stay unchanged');
-  report.push({id,buildMs:Math.round(buildMs),updateTiming:{calls:updateCalls,meanMs:updateTotalMs/updateCalls,maxMs:updateMaxMs},before:metricsBefore,after:metricsAfter,minimumHairY:minimumY,baselineMinimumY,minimumPose,maxProtectedDeltaM:maxProtected,maxHairDifferenceM:maxHairDelta,maxAddedTipOffsetM:maxAdded,maxActualSwayM:maxActualSway,rateAgreement,stats:groom.inspect()});
+  report.push({id,fineAppearance,buildMs:Math.round(buildMs),updateTiming:{calls:updateCalls,meanMs:updateTotalMs/updateCalls,maxMs:updateMaxMs},before:metricsBefore,after:metricsAfter,minimumHairY:minimumY,baselineMinimumY,minimumPose,maxProtectedDeltaM:maxProtected,maxHairDifferenceM:maxHairDelta,maxAddedTipOffsetM:maxAdded,maxActualSwayM:maxActualSway,rateAgreement,stats:groom.inspect()});
   console.log(`CHECKED ${id}: private geometry, preserved rig/dyes, real clips and lifecycle`);
  }
  check(createNativeFlowingGroom({THREE,scene:new THREE.Group(),profile:{nativeBreed:true,nativeKind:'dragon'}})===null,'non-equine is excluded');

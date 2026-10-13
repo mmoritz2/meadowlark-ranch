@@ -22,6 +22,14 @@ function transferNormals(from,to,authored,out,weights){
   const u=ky*z-kz*y,v=kz*x-kx*z,w=kx*y-ky*x,q=1/(1+d),nx=x+u+(ky*w-kz*v)*q,ny=y+v+(kz*u-kx*w)*q,nz=z+w+(kx*v-ky*u)*q,l=Math.hypot(nx,ny,nz)||1;out[i]=nx/l;out[i+1]=ny/l;out[i+2]=nz/l;
  }
 }
+function flattenLock(raw,ids,uv,role){
+ const levels=new Map();for(const i of ids){const t=uv.getY(i);if(!levels.has(t))levels.set(t,[]);levels.get(t).push(i);}
+ for(const [t,ring]of levels){if(t===0)continue;let x=0,y=0,z=0;for(const i of ring){x+=raw[i*3];y+=raw[i*3+1];z+=raw[i*3+2];}x/=ring.length;y/=ring.length;z/=ring.length;
+  const a=ring.find(i=>uv.getX(i)===0);if(a===undefined)continue;let ax=raw[a*3]-x,ay=raw[a*3+1]-y,az=raw[a*3+2]-z,l=Math.hypot(ax,ay,az);if(l<1e-8)continue;ax/=l;ay/=l;az/=l;
+  const blend=smooth(t/.20),width=1-blend*.45,depth=1-blend*(role==='tail'?.82:.85);
+  for(const i of ring){const n=i*3,dx=raw[n]-x,dy=raw[n+1]-y,dz=raw[n+2]-z,across=dx*ax+dy*ay+dz*az;raw[n]=x+ax*across*width+(dx-ax*across)*depth;raw[n+1]=y+ay*across*width+(dy-ay*across)*depth;raw[n+2]=z+az*across*width+(dz-az*across)*depth;}
+ }
+}
 export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
  if(!THREE||!scene||!skin||!profile?.nativeBreed||profile.nativeKind!=='horse'||skin.skeleton?.bones.length!==677)return null;
  const previous=owned.get(skin);if(previous&&!previous.disposed)return previous;
@@ -36,17 +44,21 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
  for(const mesh of hair){
   const original=mesh.geometry,g=original.clone(),position=g.attributes.position,raw=position.array,originalPosition=raw.slice(),weights=new Float32Array(position.count),parts=new Int8Array(position.count);parts.fill(-1);
   const oldGeo=new Float32Array(raw.length),newGeo=new Float32Array(raw.length),originalNormal=g.attributes.normal.array.slice();geometricNormals(g,oldGeo);
+  const authoredRoles=new Map();for(const c of shellMeta?.cards||[])authoredRoles.set(c.start,c.role);
   const shell=!!mesh.userData.nativeEquestrianGroom,groups=shell&&shellMeta?.locks?shellMeta.locks.map(l=>Array.from({length:l.count},(_,i)=>l.start+i)):islands(g),groupsOut=[];
   for(let k=0;k<groups.length;k++){
    const ids=groups[k];let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity,root=ids[0];
    for(const i of ids){const n=i*3,x=raw[n],y=raw[n+1],z=raw[n+2];minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);minZ=Math.min(minZ,z);maxZ=Math.max(maxZ,z);if(y>maxY){maxY=y;root=i;}}
    // Native cards use the same authoring centimetre frame, independent of the
    // current animation or actor transform. Tiny eyelash islands are protected.
-   const role=shell?(shellMeta.locks[k].part==='tail'?'tail':k>=12?'forelock':'mane'):(maxZ+minZ)*.5< -60?'tail':Math.max(maxX-minX,maxY-minY,maxZ-minZ)<4?'lash':(maxZ+minZ)*.5>112?'forelock':'mane';
+   const role=shell?(shellMeta.locks[k].part==='tail'?'tail':k>=12?'forelock':'mane'):authoredRoles.get(ids[0])||((maxZ+minZ)*.5< -60?'tail':Math.max(maxX-minX,maxY-minY,maxZ-minZ)<4?'lash':(maxZ+minZ)*.5>112?'forelock':'mane');
    if(role==='lash'||fjord&&role!=='tail'){protectedVertices+=ids.length;continue;}
    const part=role==='tail'?2:role==='forelock'?1:0,uv=g.attributes.uv,roots=shell?ids.filter(i=>uv.getY(i)===0):ids.filter(i=>maxY-raw[i*3+1]<.12);
    if(!roots.length)roots.push(root);let rx=0,ry=0,rz=0;for(const i of roots){rx+=raw[i*3];ry+=raw[i*3+1];rz+=raw[i*3+2];}rx/=roots.length;ry/=roots.length;rz/=roots.length;
-   const rootSet=new Set(roots),height=Math.max(.01,ry-minY),length=role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):role==='forelock'?.08:shell?.30:.24,width=role==='tail'?.32:role==='forelock'?.15:shell?.24:.22;
+   if(shell)flattenLock(raw,ids,uv,role);
+   const rootSet=new Set(roots),height=Math.max(.01,ry-minY),fineDraft=!shell&&!!shellMeta,
+    length=role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):shell?.08:role==='forelock'?(fineDraft?1.2:.08):fineDraft?1.9:.24,
+    width=shell?0:role==='tail'?.32:role==='forelock'?.15:fineDraft?.35:.22;
    const group={ids,part,root,roots,weights:[],gain:.93+.14*((k*37%101)/100)};
    for(const i of ids){const n=i*3,t=rootSet.has(i)?0:shell?clamp(uv.getY(i),0,1):clamp((ry-raw[n+1])/height,0,1),w=t*t*(.8+.2*t);weights[i]=w;parts[i]=part;group.weights.push(w);
     // Preserve the whole root ring; broaden a lock gradually, without moving
@@ -63,7 +75,7 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
  const inverseScene=new THREE.Matrix4(),matrix=new THREE.Matrix4(),blend=new THREE.Matrix4(),joint=new THREE.Matrix4(),inverse=new THREE.Matrix4(),temp=new THREE.Matrix4();
  const activeBones=[...new Set(records.flatMap(r=>Array.from(r.g.attributes.skinIndex.array)))],skinFrames=new Float64Array(skin.skeleton.bones.length*12);
  let visibleOffset=false;
- const stats={version:2,frames:0,cardCount,lockCount,protectedVertices,maxTipOffsetM:0,maneTipOffsetM:0,tailTipOffsetM:0,finite:true,groundCorrections:0};
+ const stats={version:3,frames:0,cardCount,lockCount,protectedVertices,maxTipOffsetM:0,maneTipOffsetM:0,tailTipOffsetM:0,finite:true,groundCorrections:0};
  function sample(d,dt,paused){matrix.multiplyMatrices(inverseScene,d.bone.matrixWorld);const e=matrix.elements,len=Math.hypot(e[4],e[5],e[6])||1,x=e[12],y=e[13],z=e[14],ux=e[4]/len,uy=e[5]/len,uz=e[6]/len;
   if(paused){d.vx=d.vy=d.vz=0;d.ready=true;}else if(d.ready){const mx=x-d.px,my=y-d.py,mz=z-d.pz,filter=1-Math.exp(-dt/.055);if(Math.hypot(mx,my,mz)>.45){d.x=d.y=d.z=d.dx=d.dy=d.dz=d.vx=d.vy=d.vz=0;d.tx=d.ty=d.tz=0;}else{const vx=d.vx+(clamp(mx/dt,-5,5)-d.vx)*filter,vy=d.vy+(clamp(my/dt,-5,5)-d.vy)*filter,vz=d.vz+(clamp(mz/dt,-5,5)-d.vz)*filter,ax=clamp((vx-d.vx)/dt,-35,35),ay=clamp((vy-d.vy)/dt,-35,35),az=clamp((vz-d.vz)/dt,-35,35),gain=d.name==='tail'?3.1:d.name==='mane'?2.7:1;
     d.tx=(-.024*vx-.0010*ax+.018*(d.ux-ux)/dt)*gain;d.ty=(-.009*vy-.0005*ay+.008*(d.uy-uy)/dt)*gain;d.tz=(-.021*vz-.0010*az+.018*(d.uz-uz)/dt)*gain;const length=Math.hypot(d.tx,d.ty,d.tz);if(length>d.cap){const q=d.cap/length;d.tx*=q;d.ty*=q;d.tz*=q;}d.vx=vx;d.vy=vy;d.vz=vz;
