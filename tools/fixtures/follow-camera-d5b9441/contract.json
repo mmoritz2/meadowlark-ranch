@@ -1,0 +1,67 @@
+{
+  "sourceHead": "d5b94418c63743e71648fdd792e1adf94b72b3cf",
+  "fixtureRole": "forced interior occlusion reproduction; not proof of a reachable riding route",
+  "barn": {
+    "kind": "barn",
+    "position": [
+      -16,
+      0,
+      -14
+    ],
+    "rotationY": 0
+  },
+  "player": {
+    "position": [
+      -17,
+      0,
+      -15
+    ],
+    "meshPosition": [
+      -17,
+      0,
+      -15
+    ],
+    "speed": 0,
+    "flying": false,
+    "heading": -2.05,
+    "groundError": 0
+  },
+  "camera": {
+    "position": [
+      -11.385783137060413,
+      2.8531835978881195,
+      -15.172951937330696
+    ],
+    "quaternion": [
+      -0.06379234887675157,
+      0.6487441974863697,
+      0.05471651165135266,
+      0.7563515094222133
+    ],
+    "groundClearance": 2.8531835978881195
+  },
+  "subjectLookOffsetY": 1.6,
+  "sourceNativeReceipt": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/world-riding-audit-d5b9441-native/ranch-riding-current-riding-owners.json",
+  "sourceHashes": {
+    "assets/ranch-architecture.js": "998f3397d436700e650c0d3393403651e444db939790f2ac0a0fe0c42311eacb",
+    "assets/solid-collisions.js": "c06e7bad9f1c59e6ff9a42a98843f2eca408171fa05c173c2c26ed7112c48e1e",
+    "assets/follow-camera.js": "0dc2ad4009ffcad37cecaad0b904491a6077765b765d0e3ef1d80cabfedfc4a6",
+    "assets/features/course-guide.js": "9255a396788faa1210870a79c19fb2aa15d47fa0b60fcf84b2a1f5c04dc84ee4",
+    "tools/test-follow-camera.mjs": "6cbf46bd7cf6086ae661b14e7b8d315c326224166f1b48b60fc91a511ff47f8b",
+    "tools/test-follow-camera-input.mjs": "32b958d382824cb623abdc3c7a589a9115f2b1cb5e544d77bedfd33909173a7c"
+  },
+  "unchangedResolveFrameAndReturnSHA256": "de910cb0b0e65534718de4129f337c2bd1f0b57ec80c40e9b55d2e23e7115cac",
+  "scope": "Registration and part-local visibility clipping only; preserve orbit, resolve, frame, input, authored builder geometry/material/source and world collision source.",
+  "reviewedRuntimeSHA256": {
+    "assets/follow-camera.js": "9b8b8ec43b9f65c8dfec842802d901a00ed1ac02aab100ad7ed8593f86f106f8",
+    "ranch3d.html": "7a330938f2c2775504695e9a7ab3475cec2068355296d55bf6fc0c511398696a"
+  },
+  "baselineMainSHA256": "82885eea7f96108d3949e75efb3569423d3eadbcc2b2ad88698284b2263d26ad",
+  "cameraCache": {
+    "before": "'./assets/follow-camera.js?v=riding-stability-1'",
+    "after": "'./assets/follow-camera.js?v=camera-authored-parts-4'",
+    "occurrences": 1
+  },
+  "guardSHA256": "eeff7e2e7979d63ffa8d424aa113c1242c83f058f90a320b3a98b2488859f065",
+  "scalarV2SHA256": "ff9bc0fc6afb1921951154ab7c7befd6a8623349cb46a8530368a610aad66c86"
+}

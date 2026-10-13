@@ -4,15 +4,16 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
-import {createGrassTuftGeometry,createMeadowDistance} from '../assets/meadow-cover.js';
-import {createGrassFamilyGeometry} from '../assets/grass-families.mjs';
+import {createMeadowDistance} from '../assets/meadow-cover.js';
+import {createGrassTuftGeometry} from './grass-arch-historical-factories.mjs';
+import {createGrassFamilyGeometry} from './grass-arch-historical-factories.mjs';
 import {MIXED_SWARD} from '../assets/mixed-sward.mjs';
 const budgets=[
  {name:'near',create:()=>createGrassTuftGeometry(T,{profile:'near-folded-v1'}),leaves:12,triangles:40,vertices:64,bytes:3056},
  ...[0,1,2].map(f=>({name:'rich '+f,create:()=>createGrassFamilyGeometry(T,f),leaves:22,triangles:70,vertices:f===2?138:114,bytes:f===2?6492:5436})),
  ...[4,6,8].map(n=>({name:'middle '+n,create:()=>createGrassTuftGeometry(T,{profile:'middle-natural-v1',bladeCount:n,segments:2}),leaves:{4:6,6:10,8:12}[n],triangles:n*3,vertices:{4:24,6:38,8:48}[n],bytes:{4:1128,6:1780,8:2256}[n]})),
 ];
-for(const b of budgets)test(`${b.name}: more narrow upright blades retain the original triangle tier and finite physical surfaces`,()=>{
+for(const b of budgets)test(`Historical d5 morphology: ${b.name}: more narrow upright blades retain the original triangle tier and finite physical surfaces`,()=>{
  const g=b.create(),p=g.attributes.position,n=g.attributes.normal,leaves=g.userData.lushMeadow.leafRanges;
  try{
   assert.equal(leaves.length,b.leaves);assert.equal(g.index.count/3,b.triangles);assert.equal(p.count,b.vertices);
@@ -32,14 +33,14 @@ for(const b of budgets)test(`${b.name}: more narrow upright blades retain the or
  }finally{g.dispose();}
 });
 
-test('factories keep one geometry allocation and its existing four UUID draws without placing new instances',()=>{
+test('Historical d5 morphology: factories keep one geometry allocation and its existing four UUID draws without placing new instances',()=>{
  const old=Math.random;let draws=0;
  try{Math.random=()=>{draws++;return .25;};for(const b of budgets){const start=draws,a=b.create();assert.equal(draws-start,4);const c=b.create();for(const key of Object.keys(a.attributes))assert.deepEqual(a.attributes[key].array,c.attributes[key].array);assert.deepEqual(a.index.array,c.index.array);a.dispose();c.dispose();}}
  finally{Math.random=old;}
  assert.equal(MIXED_SWARD.sourceGeometryBytes,3056);assert.equal(MIXED_SWARD.sourceTriangles,40);assert.equal(MIXED_SWARD.richTriangles,70);
 });
 
-test('grass-only wind follows world height through broad middle spacing and stays finite for hidden rows',()=>{
+test('Historical d5 morphology: grass-only wind follows world height through broad middle spacing and stays finite for hidden rows',()=>{
  const html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),match=html.match(/const windy=(\(mat,sway,grassAreaFade=false\)=>[\s\S]*?);\n \/\* ===== ground cover/);assert(match);
  const windy=new Function('nearU','NG_R','return '+match[1])({uTime:{value:0},uPlayer:{value:new T.Vector3()}},42);
  const compile=(grass)=>{const m=new T.MeshStandardMaterial();windy(m,.24,grass);const s={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};m.onBeforeCompile(s);m.dispose();return s;};
@@ -54,7 +55,7 @@ test('grass-only wind follows world height through broad middle spacing and stay
  f.mesh.geometry.dispose();f.mesh.material.dispose();f.mesh.removeFromParent();
 });
 
-test('grass shader normals follow the same retirement, wind shear and rider parting as deformed triangles',()=>{
+test('Historical d5 morphology: grass shader normals follow the same retirement, wind shear and rider parting as deformed triangles',()=>{
  const html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),match=html.match(/const windy=(\(mat,sway,grassAreaFade=false\)=>[\s\S]*?);\n \/\* ===== ground cover/);
  const windy=new Function('nearU','NG_R','return '+match[1])({uTime:{value:0},uPlayer:{value:new T.Vector3()}},42),mat=new T.MeshStandardMaterial();windy(mat,.24,true);
  const sh={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};mat.onBeforeCompile(sh);

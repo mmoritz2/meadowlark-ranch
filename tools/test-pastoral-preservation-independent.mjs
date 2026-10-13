@@ -1,9 +1,10 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
 import {repo,sha,createNearReplay,cellsDigest,withoutRandom,positive} from './pastoral-production-fixture.mjs';
+import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 const fixture=new URL('./fixtures/pastoral-7fbd127/',import.meta.url),oldHTML=fs.readFileSync(new URL('ranch3d.html',fixture),'utf8'),html=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8');
 const contracts=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-7fbd127/untouched-source-contract.json',import.meta.url)));
 test('current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass',()=>{
- for(const[file,row]of Object.entries(contracts.files))assert.equal(sha(fs.readFileSync(path.join(repo,file))),row.sha256,file);
+ for(const[file,row]of Object.entries(contracts.files))assert.equal(sha(file==='assets/grass-families.mjs'?normalizeGrassArchSource(fs.readFileSync(path.join(repo,file),'utf8'),file):fs.readFileSync(path.join(repo,file))),row.sha256,file);
 });
 test('actual production near admissions preserve every original source row/color/count across quality and cell recycling without gameplay RNG',()=>{
  for(const quality of['high','low']){

@@ -1,0 +1,73 @@
+{
+  "release": "df9b34ca4108a29490cc38c762e6ccb713610b88",
+  "pagesRun": 38424580992,
+  "pagesRunURL": "https://github.com/mmoritz2/meadowlark-ranch/actions/runs/38424580992",
+  "deployment": "success",
+  "allMatch": true,
+  "files": [
+    {
+      "path": "ranch3d.html",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/ranch3d.html?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "f4ca5806c7c077c66be5dd54918ba8b715edc58fbebed765b30a595695cccd1f",
+      "liveSHA256": "f4ca5806c7c077c66be5dd54918ba8b715edc58fbebed765b30a595695cccd1f",
+      "matches": true
+    },
+    {
+      "path": "assets/features/index.js",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/index.js?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "6222be7a1a97c17f96d6ea73685a05d4288011cea4b86f2428335476cc55f804",
+      "liveSHA256": "6222be7a1a97c17f96d6ea73685a05d4288011cea4b86f2428335476cc55f804",
+      "matches": true
+    },
+    {
+      "path": "assets/features/story-guidance.js",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/story-guidance.js?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "fa4d2be10fd2a8cad4438862dee8ac785c0c54e4f976fa558ef531dc5ad9ddef",
+      "liveSHA256": "fa4d2be10fd2a8cad4438862dee8ac785c0c54e4f976fa558ef531dc5ad9ddef",
+      "matches": true
+    },
+    {
+      "path": "assets/features/rider-journey-ui.js",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/rider-journey-ui.js?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "ea69ca356cfbad9e7a5ec34a913a51cc69ecd000142620c28cb42fbe3a187b94",
+      "liveSHA256": "ea69ca356cfbad9e7a5ec34a913a51cc69ecd000142620c28cb42fbe3a187b94",
+      "matches": true
+    },
+    {
+      "path": "assets/features/se-frame.js",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-frame.js?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "8f6757db05d15b50661042c329883d5a73c05a269f981eedecd2c750610e9dac",
+      "liveSHA256": "8f6757db05d15b50661042c329883d5a73c05a269f981eedecd2c750610e9dac",
+      "matches": true
+    },
+    {
+      "path": "assets/features/se-events.js",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-events.js?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "74dcd10026a38673f5fe9591510716570d5b2a11db32caa0e5f45205870ac28e",
+      "liveSHA256": "74dcd10026a38673f5fe9591510716570d5b2a11db32caa0e5f45205870ac28e",
+      "matches": true
+    },
+    {
+      "path": "assets/features/event-horse-comparison.mjs",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/event-horse-comparison.mjs?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "7667bbd2fe772e03095dcd073d2ec9288785043d79bc3b0bad838b6cc137890f",
+      "liveSHA256": "7667bbd2fe772e03095dcd073d2ec9288785043d79bc3b0bad838b6cc137890f",
+      "matches": true
+    },
+    {
+      "path": "assets/event-horse-comparison.css",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/event-horse-comparison.css?release=df9b34ca4108a29490cc38c762e6ccb713610b88",
+      "status": 200,
+      "expectedSHA256": "d41bd7284cbf40c04299a261730b93f64feb92508b1b40730df02d1226e80f87",
+      "liveSHA256": "d41bd7284cbf40c04299a261730b93f64feb92508b1b40730df02d1226e80f87",
+      "matches": true
+    }
+  ]
+}

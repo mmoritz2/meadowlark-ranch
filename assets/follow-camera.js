@@ -3,31 +3,72 @@
 export function createFollowCamera({THREE,groundHeight,clearance=.3}) {
  const bounds=[],direction=new THREE.Vector3(),candidate=new THREE.Vector3();
  const orbit=new THREE.Vector3(),base=new THREE.Vector3(),previousOrigin=new THREE.Vector3(),futureOrigin=new THREE.Vector3(),probe=new THREE.Vector3();let hasOrigin=false;let avoidanceAngle=0,avoidanceTarget=0,clearTime=0,reach=1;
+ const localOrigin=new THREE.Vector3(),localEnd=new THREE.Vector3(),localDirection=new THREE.Vector3();
+ // Registration stays static. A small uniform grid avoids scanning every panel
+ // in distant buildings on each orbit/sweep query; no per-query Set allocation.
+ const cameraCells=new Map(),wideBounds=[],nearBounds=[],cameraCellSize=12;let queryStamp=0;
+ const cellKey=(x,z)=>x+','+z;
+ function addBound(b){
+  b.cameraRegistrationOrder=bounds.length;bounds.push(b);const x0=Math.floor(b.min.x/cameraCellSize),x1=Math.floor(b.max.x/cameraCellSize),z0=Math.floor(b.min.z/cameraCellSize),z1=Math.floor(b.max.z/cameraCellSize);
+  if((x1-x0+1)*(z1-z0+1)>256){wideBounds.push(b);return;}
+  for(let x=x0;x<=x1;x++)for(let z=z0;z<=z1;z++){const k=cellKey(x,z);if(!cameraCells.has(k))cameraCells.set(k,[]);cameraCells.get(k).push(b);}
+ }
+ function queryBounds(minX,maxX,minZ,maxZ){
+  queryStamp++;nearBounds.length=0;
+  for(let x=Math.floor(minX/cameraCellSize);x<=Math.floor(maxX/cameraCellSize);x++)for(let z=Math.floor(minZ/cameraCellSize);z<=Math.floor(maxZ/cameraCellSize);z++){
+   for(const b of cameraCells.get(cellKey(x,z))||[]){if(b.cameraQueryStamp===queryStamp)continue;b.cameraQueryStamp=queryStamp;nearBounds.push(b);}
+  }
+  for(const b of wideBounds)nearBounds.push(b);
+  // The existing slab margin uses the preceding result; retain original order.
+  nearBounds.sort((a,b)=>a.cameraRegistrationOrder-b.cameraRegistrationOrder);return nearBounds;
+ }
+
  function register(root){
   root.updateWorldMatrix(true,true);
-  root.traverse(mesh=>{
-   if(!mesh.isMesh||!mesh.geometry||mesh.material?.transparent&&mesh.material.opacity<.7)return;
-   mesh.geometry.computeBoundingBox();
-   const b=mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld);
-   const size=b.getSize(new THREE.Vector3());
-   // Tiny fittings cannot hide the rider. Keep walls, beams, roofs and canopies.
-   if(Math.max(size.x,size.y,size.z)<1.4)return;
-   bounds.push(b.expandByScalar(clearance));
-  });
+  const addPart=(owner,part)=>{
+   const matrix=new THREE.Matrix4().fromArray(part.matrix).premultiply(owner.matrixWorld),inverse=matrix.clone().invert();
+   // A world-space clearance sphere projects to these extents on each local axis.
+   // Testing the original oriented box preserves rotated door/window openings.
+   const e=inverse.elements,pad=new THREE.Vector3(
+    clearance*Math.hypot(e[0],e[4],e[8]),clearance*Math.hypot(e[1],e[5],e[9]),clearance*Math.hypot(e[2],e[6],e[10]));
+   const local=new THREE.Box3(new THREE.Vector3().fromArray(part.min),new THREE.Vector3().fromArray(part.max));
+   // Authored parts already passed recordSolidPart's physical acceptance.
+   // Small opaque window recesses and lower panels can still hide the rider.
+   local.min.sub(pad);local.max.add(pad);
+   const b=local.clone().applyMatrix4(matrix);b.cameraPart={local,inverse};addBound(b);
+  };
+  const visit=o=>{
+   if(o.userData.solidParts?.length){
+    for(const part of o.userData.solidParts)addPart(o,part);
+    // Rendered material batches enclose disconnected walls. Their authored
+    // parts already describe the openings; nested models retain their own parts.
+    for(const child of o.children)if(!child.isMesh)visit(child);
+    return;
+   }
+   if(o.isMesh&&o.geometry&&!(o.material?.transparent&&o.material.opacity<.7)){
+    o.geometry.computeBoundingBox();
+    const b=o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld),size=b.getSize(new THREE.Vector3());
+    if(Math.max(size.x,size.y,size.z)>=1.4)addBound(b.expandByScalar(clearance));
+   }
+   for(const child of o.children)visit(child);
+  };visit(root);
  }
  function limit(origin,end){
   direction.subVectors(end,origin);let result=1;
   const minX=Math.min(origin.x,end.x),maxX=Math.max(origin.x,end.x),minZ=Math.min(origin.z,end.z),maxZ=Math.max(origin.z,end.z);
-  for(const b of bounds){
+  for(const b of queryBounds(minX,maxX,minZ,maxZ)){
    if(b.max.x<minX||b.min.x>maxX||b.max.z<minZ||b.min.z>maxZ)continue;
    // When the subject stands under a canopy, an enclosing surface must not
    // collapse the camera into the rider. Only crossing an outside face clips.
-   if(b.containsPoint(origin))continue;
+   const part=b.cameraPart,box=part?.local||b;
+   let at=origin,travel=direction;
+   if(part){localOrigin.copy(origin).applyMatrix4(part.inverse);localEnd.copy(end).applyMatrix4(part.inverse);localDirection.subVectors(localEnd,localOrigin);at=localOrigin;travel=localDirection;}
+   if(box.containsPoint(at))continue;
    let near=0,far=result;
    for(const axis of ['x','y','z']){
-    const delta=direction[axis];
-    if(Math.abs(delta)<1e-8){if(origin[axis]<b.min[axis]||origin[axis]>b.max[axis]){far=-1;break;}}
-    else{let a=(b.min[axis]-origin[axis])/delta,c=(b.max[axis]-origin[axis])/delta;if(a>c)[a,c]=[c,a];near=Math.max(near,a);far=Math.min(far,c);if(near>far)break;}
+    const delta=travel[axis];
+    if(Math.abs(delta)<1e-8){if(at[axis]<box.min[axis]||at[axis]>box.max[axis]){far=-1;break;}}
+    else{let a=(box.min[axis]-at[axis])/delta,c=(box.max[axis]-at[axis])/delta;if(a>c)[a,c]=[c,a];near=Math.max(near,a);far=Math.min(far,c);if(near>far)break;}
    }
    if(near<=far&&far>=0)result=Math.min(result,Math.max(0,near-.015));
   }

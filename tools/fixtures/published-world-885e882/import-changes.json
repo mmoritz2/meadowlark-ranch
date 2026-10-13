@@ -1,0 +1,52 @@
+{
+  "baseCommit": "d5b94418c63743e71648fdd792e1adf94b72b3cf",
+  "remoteCommit": "885e8821e2e77aa8009844c36b8d11daf3f1f09b",
+  "currentChanges": [
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/game-hero-horse.js?v=draft-feathers-20261013d'",
+      "after": "'./assets/game-hero-horse.js?v=full-groom-20261013c'"
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {FEATURES} from './assets/features/index.js?v=starter-tack-2';",
+      "after": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as storyGuidance from './story-guidance.js?v=ranch-rush-1';",
+      "after": "import * as storyGuidance from './story-guidance.js?v=story-witness-1';"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as seFrame from './se-frame.js?v=horse-actions-20261009';",
+      "after": "import * as seFrame from './se-frame.js?v=story-events-20261013';"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as seEvents from './se-events.js?v=event-training-1';",
+      "after": "import * as seEvents from './se-events.js?v=horse-choice-1';"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as riderJourneyUI from './rider-journey-ui.js?v=rider-journey-1';",
+      "after": "import * as riderJourneyUI from './rider-journey-ui.js?v=journey-story-1';"
+    }
+  ],
+  "historicalAliases": [
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/game-hero-horse.js?v=draft-feathers-20261013d'",
+      "after": "'./assets/game-hero-horse.js?v=feather-sway-20261013a'",
+      "publishedCommit": "80dfb836171e9becc206cd4e9fb2c99a8d32fe9a"
+    }
+  ],
+  "baselineSHA256": {
+    "ranch3d.html": "82885eea7f96108d3949e75efb3569423d3eadbcc2b2ad88698284b2263d26ad",
+    "assets/features/index.js": "0d3ddc41324096d90ee2f81fcb4673b6fec6fddcca75745b47f20de8dacc78bb"
+  },
+  "remoteSHA256": {
+    "ranch3d.html": "047bf52fb2bfd9bb188d7af8a0bf25345905794c56f3287f281321e57dd26fbc",
+    "assets/features/index.js": "6222be7a1a97c17f96d6ea73685a05d4288011cea4b86f2428335476cc55f804"
+  }
+}

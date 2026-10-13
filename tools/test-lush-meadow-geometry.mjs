@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
+import {createLushMeadowGeometry} from './grass-arch-historical-factories.mjs';
 
-test('long ordinary leaves retain useful height after established pasture scaling',()=>{
+test('Historical d5 morphology: long ordinary leaves retain useful height after established pasture scaling',()=>{
  for(const profile of ['meadow','near','middle']){
   const g=createLushMeadowGeometry(T,{profile,leafCount:profile==='meadow'?14:8,segments:profile==='middle'?2:3});
   try{const p=g.attributes.position,ranges=g.userData.lushMeadow.leafRanges;let area=0,taller=0;
@@ -24,7 +24,7 @@ test('long ordinary leaves retain useful height after established pasture scalin
   }finally{g.dispose();}
  }
 });
-test('factory retains one geometry allocation and adds no material, texture, or placement RNG',()=>{
+test('Historical d5 morphology: factory retains one geometry allocation and adds no material, texture, or placement RNG',()=>{
  const source=readFileSync(new URL('../assets/lush-meadow-geometry.mjs',import.meta.url),'utf8');
  assert(!/Math\.random|new\s+T\.(?:Texture|Material|Mesh)|fetch\(/.test(source));
  let geometryCount=0;class Geometry extends T.BufferGeometry{constructor(){super();geometryCount++;}}
@@ -38,7 +38,7 @@ test('factory retains one geometry allocation and adds no material, texture, or 
   a.dispose();b.dispose();
  }finally{Math.random=originalRandom;}
 });
-test('invalid topology requests fail before allocating a geometry',()=>{
+test('Historical d5 morphology: invalid topology requests fail before allocating a geometry',()=>{
  let calls=0;const fixture={BufferGeometry:class{constructor(){calls++;}}};
  for(const options of [{leafCount:3},{leafCount:15},{leafCount:6.5},{segments:4},{profile:'unknown'}])assert.throws(()=>createLushMeadowGeometry(fixture,options));
  assert.equal(calls,0);

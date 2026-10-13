@@ -1,0 +1,61 @@
+{
+  "baseCommit": "a78ed79707f8668c84d8bb57fe6e90843a973350",
+  "version": "fieldstone-wall-caches-3",
+  "state": "Exact unpublishedV3parent caches plus author-provided provisional V2 optional lifecycle-owner call (walls last); source SHA binding under verification",
+  "files": {
+    "assets/features/world-paths.js": {
+      "change": {
+        "file": "assets/features/world-paths.js",
+        "before": "import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-2';",
+        "after": "import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-3';",
+        "occurrences": 1
+      },
+      "a78RawSHA256": "f49e63d9decb1a86a052d0d5af4344375b4e206181f536d4a3b05e613251b3a5",
+      "priorPublishedCameraProjectionSHA256": "f49e63d9decb1a86a052d0d5af4344375b4e206181f536d4a3b05e613251b3a5",
+      "compatibilityAliases": [],
+      "ownerSourceChanges": [
+        {
+          "file": "assets/features/world-paths.js",
+          "before": "  P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});",
+          "after": "  P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy()),walls:W.walls});",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/features/index.js": {
+      "change": {
+        "file": "assets/features/index.js",
+        "before": "import * as wPaths from './world-paths.js?v=skyline-fieldstone-1';",
+        "after": "import * as wPaths from './world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-3';",
+        "occurrences": 1
+      },
+      "a78RawSHA256": "6222be7a1a97c17f96d6ea73685a05d4288011cea4b86f2428335476cc55f804",
+      "priorPublishedCameraProjectionSHA256": "0d3ddc41324096d90ee2f81fcb4673b6fec6fddcca75745b47f20de8dacc78bb",
+      "compatibilityAliases": []
+    },
+    "ranch3d.html": {
+      "change": {
+        "file": "ranch3d.html",
+        "before": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';",
+        "after": "import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2-fieldstone-walls-3';",
+        "occurrences": 1
+      },
+      "a78RawSHA256": "500d477c8f73b2d0dfb1add027eb812d29d22af6d931fb51e3552a90ebf16f07",
+      "priorPublishedCameraProjectionSHA256": "d448c22a28b4da2521a05b23bf0753b3f9b7382dae82ee4888b3ad62473dd297",
+      "compatibilityAliases": [
+        "import {FEATURES} from './assets/features/index.js?v=starter-tack-2';"
+      ]
+    }
+  },
+  "projection": "Whole a78 bodies after only pre-existing exact Published/Camera import normalization; this retains historical cache-positive assertions without accepting unrelated body drift",
+  "dependencySHA256": {
+    "tools/published-world-import-source-guard.cjs": "1fd68937f868b264f314ec2ac01da704567fe018ed05c76f3e7a95abf051c804",
+    "tools/authored-camera-source-guard.cjs": "eeff7e2e7979d63ffa8d424aa113c1242c83f058f90a320b3a98b2488859f065"
+  },
+  "testAdapterPreimages": {
+    "tools/test-basic-riding-tack.mjs": "ae878788af58cb896f07e8d8e6988633fd386c10222562a2bc206fde67884fcb",
+    "tools/test-coyote-crag-composition.mjs": "afe8215e44f99fb48f329d263d7c35acef93dd51abd3f1d7cead84a77e933bef",
+    "tools/test-starter-tack-catalog-preservation.mjs": "d81924ce652ae08c375ff80e6d2b3abe4f9ebf041d390cdbac3329828af2dd68",
+    "tools/grass-arch-source-guard.cjs": "4d57febd7fcb1571c9a9fe9fd0c80c36ca90ca5227ea7cee7d0d1230cb626bd1"
+  }
+}
