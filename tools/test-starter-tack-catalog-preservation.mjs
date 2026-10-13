@@ -15,7 +15,7 @@ test('source preimage adapters keep prior explicit-equipment contracts meaningfu
 
 // Each declared cache is checked independently of the adapter's table. A version
 // change may pass only if all remaining source bytes restore the pinned fixture.
-test('six current reviewed import edges retain their original bodies; unknown, duplicate, mixed and import-owner mutations fail',()=>{
+test('only exact reviewed cache edges are accepted; unknown, duplicate, mixed and import-owner mutations fail',()=>{
  const edges=[
   ['ranch3d.html',"'./assets/game-hero-horse.js?v=full-groom-20261013c'","'./assets/game-hero-horse.js?v=draft-feathers-20261013d'"],
   ['ranch3d.html',"import {FEATURES} from './assets/features/index.js?v=story-events-1-starter-tack-2';","import {FEATURES} from './assets/features/index.js?v=starter-tack-2';"],
@@ -33,4 +33,16 @@ test('six current reviewed import edges retain their original bodies; unknown, d
   assert.throws(()=>normalizeStarterTackSource(source+'\n// mixed '+before,file),'Mixed version declarations cannot be normalized');
   if(after.startsWith('import '))assert.throws(()=>normalizeStarterTackSource(source.replace(after,after.replace(/FEATURES|storyGuidance|seFrame|seEvents|riderJourneyUI/,'unreviewedOwner')),file),'Changing an import owner is not a cache edge');
  }
+});
+
+test('published native-groom cache chain accepts all three reviewed states and rejects an unknown next version or mixed history',()=>{
+ const file='ranch3d.html',source=fs.readFileSync(ROOT+'/'+file,'utf8'),expected=fs.readFileSync(new URL(file,fixture),'utf8');
+ const latest="'./assets/game-hero-horse.js?v=full-groom-20261013c'",versions=['full-groom-20261013c','feather-sway-20261013a','draft-feathers-20261013d'];
+ assert.equal(source.split(latest).length-1,1);
+ for(const version of versions){
+  const literal="'./assets/game-hero-horse.js?v="+version+"'",candidate=source.replace(latest,literal);
+  assert.equal(normalizeStarterTackSource(candidate,file),expected,'Known exact native cache '+version);
+  for(const other of versions.filter(v=>v!==version))assert.throws(()=>normalizeStarterTackSource(candidate+"\n// mixed './assets/game-hero-horse.js?v="+other+"'",file),'Mixed reviewed native versions fail before whole-body comparison');
+ }
+ assert.throws(()=>normalizeStarterTackSource(source.replace(latest,"'./assets/game-hero-horse.js?v=full-groom-20261013d'"),file),'The next unreviewed cache cannot inherit approval');
 });
