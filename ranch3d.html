@@ -668,6 +668,7 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
+import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';
 import {installMixedSward} from './assets/mixed-sward.mjs?v=chalk-grazing-1';
 import {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';
@@ -689,10 +690,10 @@ import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=hollowpeak-cascades-1';
 import {loadCascadeFoamTexture} from './assets/cascade-foam-texture.mjs?v=hollowpeak-cascades-1';
-import {installRiparian} from './assets/riparian.js';
+import {installRiparian} from './assets/riparian.js?v=river-ecotone-1';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=northern-watershed-2';
 import {hollowpeakSnowAttribute} from './assets/hollowpeak-snow.mjs?v=cold-landscape-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=chalk-grazing-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=river-ecotone-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=world-cohesion-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
@@ -715,7 +716,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-fine-lashes80-20261012';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=chalk-grazing-1';
+import {FEATURES} from './assets/features/index.js?v=river-ecotone-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';
@@ -1498,7 +1499,7 @@ const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
 const STREAM_JOIN=160;                          // it meets the river around z≈160
 const riverLevel=x=>0.50-x*0.009;
 const streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));
-function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief){
+function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
  const far=1-THREE.MathUtils.smoothstep(d,380,460);
@@ -1516,6 +1517,7 @@ function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief){
  const rd=Math.abs(z-riverZ(x));
  const riverBed=riverLevel(x)-0.85+THREE.MathUtils.smoothstep(rd,0,7)*1.30;
  h=THREE.MathUtils.lerp(riverBed,h,THREE.MathUtils.smoothstep(rd,7.5,19));
+ h=riverHeight(x,z,h);
  if(z<STREAM_JOIN+3){
   const sd=Math.abs(x-streamX(z));
   const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;
@@ -1577,6 +1579,8 @@ function pathDist(x,z){
 }
 // Sample the collision surface from the same triangles used by the visible terrain.
 const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
+const riverBankPlacement=configureRiverBanks({terrainStep:TERRAIN_STEP,
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
 const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
@@ -1589,9 +1593,9 @@ function terrainH(x,z){
 }
 // Preserve authored planting decisions while every rendered/physical root uses terrainH.
 const hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight),heightAt:(x,z)=>groundH(x,z)});
+ rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});
 const canyonPlacement=createCanyonPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief),heightAt:hollowpeakPlacement.heightAt});
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt});
 const groundSurfaces=[];
 const colliders=[];
 const walls=[];
@@ -4681,7 +4685,7 @@ let waterMat=null;   // hoisted: the pond reuses it
  // reeds along the banks
  const reedMat=new THREE.MeshStandardMaterial({color:0x8aa84e,roughness:1});
  const m4r=new THREE.Matrix4(),er=new THREE.Euler(),qr=new THREE.Quaternion(),vr=new THREE.Vector3(),sr=new THREE.Vector3();
- installRiparian({THREE,scene,terrainH,riverZ,riverLevel,pathDist});
+ installRiparian({THREE,scene,terrainH,planningHeightAt:riverBankPlacement.heightAt,riverZ,riverLevel,pathDist});
  const brookReeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,80);
  for(let i=0;i<80;i++){
   const z=-320+Math.random()*470;
@@ -15087,7 +15091,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},

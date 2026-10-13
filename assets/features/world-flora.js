@@ -44,7 +44,7 @@ export function install(G){
  // cannot advance the sequential seed stream for the rest of the whole basin.
  // Writers below still use live groundH, including all local root transforms.
  const planning=W.hollowpeakPlacement;
- const underlyingPlanningH=W.canyonPlacement?.heightAt||planning?.heightAt||groundH;
+ const underlyingPlanningH=W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt||planning?.heightAt||groundH;
  const chalkPlanning=G.vistas?.chalkDown;
  const planningH=(x,z)=>{const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
  const plantingExcluded=planning?.excludesDryPlants||((x,z)=>fallsExcludesDryPlants(x,z,groundH));

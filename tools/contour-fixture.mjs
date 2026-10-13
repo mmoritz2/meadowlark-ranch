@@ -1,3 +1,4 @@
+import {legacyRiverBankHeight} from '../assets/riverbank-terrain.mjs?v=river-banks-1';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
@@ -6,7 +7,7 @@ import * as candidate from '../assets/falls-landscape.js';
 const html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8');
 const {pastureRise}=await import('../assets/pastoral-fields.mjs'),{canyonRelief}=await import('../assets/canyon-landscape.js'),{oasisTerrainHeight}=await import('../assets/oasis-art.js');
 const code=html.slice(html.indexOf('function ihash(ix,iz){'),html.indexOf('/* ===== Roads ====='));
-const preFalls=new Function('THREE','pastureRise','canyonRelief','oasisTerrainHeight','fallsTerrainHeight',code+'return rawH;')(T,pastureRise,canyonRelief,oasisTerrainHeight,(x,z,h)=>h);
+const preFalls=new Function('THREE','pastureRise','canyonRelief','oasisTerrainHeight','fallsTerrainHeight','riverBankTerrainHeight',code+'return rawH;')(T,pastureRise,canyonRelief,oasisTerrainHeight,(x,z,h)=>h,legacyRiverBankHeight);
 const buf=fs.readFileSync(new URL('./fixtures/hollowpeak-contours-6edee7c/terrain-grid.f32',import.meta.url)),before=new Float32Array(buf.buffer,buf.byteOffset,buf.byteLength/4),after=new Float32Array(before),n=513,step=1000/512,delta=new Float64Array(n*n);
 let changed=0,maxChange=0,maxBaseError=0,oldReconstructed=0;
 const random=Math.random;Math.random=()=>{throw Error('Terrain shaping consumed scene RNG');};

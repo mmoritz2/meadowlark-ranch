@@ -15,7 +15,11 @@ function withoutChalkRenderResponse(source){
   assert.equal(source.split(added).length,2,'Exactly one declared Chalk render addition');
   source=source.replace(added,added.startsWith(' //')?'\n':'');
  }
- return source;
+ // Only the declared River decision-sampler prefix is normalized here.
+ // Independent river fixtures exercise its actual reference grid and seating.
+ const river='W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt';
+ assert.equal(source.split(river).length,2,'Exactly one original-planning River adapter');
+ return source.replace(river,'W.canyonPlacement?.heightAt');
 }
 let flora=once(withoutChalkRenderResponse(rawFlora),"import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';");if(flora.includes(' F.treeOwners=[];'))for(const [after,before]of original.approvedNonRandomOwnershipEdits)flora=once(flora,after,before);
 const plan=next.createCanyonPlacementPlan({rawHeightAt:f.oldRaw,heightAt:f.oldHeight,terrainStep:f.step});
@@ -85,8 +89,8 @@ test('actual generated cactus pruning preserves original keyed survivors, collid
 });
 
 test('actual raw terrain and installer binding route reference decisions separately from physical ground',()=>{
- assert(html.includes('function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief)'));assert(html.includes('h+=canyonHeight(x,z)'));
- assert(html.includes('rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief),heightAt:hollowpeakPlacement.heightAt'));
- assert(html.includes('terrainH,riverZ'));assert(html.includes('hollowpeakPlacement,canyonPlacement,canyonLandscape'));
+ assert(html.includes('function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight)'));assert(html.includes('h+=canyonHeight(x,z)'));
+ assert(html.includes('rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),heightAt:hollowpeakPlacement.heightAt'));
+ assert(html.includes('terrainH,riverZ'));assert(html.includes('hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape'));
  assert.equal(f.sha(f.before),'d02a78010bd9cccc401f52e5862cb200578eee51f172230c0e109a2844b2de38');assert.equal(f.maxBaseError,0);assert.equal(f.sha(f.after),'671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f');
 });

@@ -1,0 +1,697 @@
+import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
+import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
+import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
+import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-2';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-cascades-1';
+import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
+import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
+// Snow02 is photographed over two metres. Wind relief is independent of its
+// albedo tile, smooth across noise cells, and small enough to remain powder.
+export const COLD_SNOW_SURFACE=Object.freeze({textureMetres:2.25,albedoExposure:1.85,across:4.2,along:11.2,depth:.14,windX:.8574929257125441,windZ:.5144957554275265});
+const coldFract=v=>v-Math.floor(v);
+function coldHash(x,z){let a=coldFract(x*.1031),b=coldFract(z*.1031),c=a;const d=a*(b+33.33)+b*(c+33.33)+c*(a+33.33);a+=d;b+=d;c+=d;return coldFract((a+b)*c);}
+// Also available to static art QA: height and its analytic world derivatives.
+// This does not modify the terrain's visible silhouette or riding height.
+export function coldSnowDrift(x,z){
+ const q=COLD_SNOW_SURFACE,u=(x*q.windX+z*q.windZ)/q.across-17.3,v=(-x*q.windZ+z*q.windX)/q.along+41.9;
+ const ix=Math.floor(u),iz=Math.floor(v),fx=coldFract(u),fz=coldFract(v),sx=fx*fx*(3-2*fx),sz=fz*fz*(3-2*fz);
+ const a=coldHash(ix,iz),b=coldHash(ix+1,iz),c=coldHash(ix,iz+1),d=coldHash(ix+1,iz+1);
+ const value=(a+(b-a)*sx)*(1-sz)+(c+(d-c)*sx)*sz;
+ const du=((b-a)*(1-sz)+(d-c)*sz)*6*fx*(1-fx)/q.across;
+ const dv=((c-a)*(1-sx)+(d-b)*sx)*6*fz*(1-fz)/q.along;
+ return {height:(value-.5)*q.depth,dx:(q.windX*du-q.windZ*dv)*q.depth,dz:(q.windZ*du+q.windX*dv)*q.depth};
+}
+const COLD_SNOW_GLSL=`
+ vec3 snowNoiseGradient(vec2 p){
+  vec2 i=floor(p),f=fract(p),w=f*f*(3.0-2.0*f),dw=6.0*f*(1.0-f);
+  float a=tHash(i),b=tHash(i+vec2(1.0,0.0)),c=tHash(i+vec2(0.0,1.0)),d=tHash(i+vec2(1.0,1.0));
+  return vec3(mix(mix(a,b,w.x),mix(c,d,w.x),w.y),mix(b-a,d-c,w.y)*dw.x,mix(c-a,d-b,w.x)*dw.y);
+ }
+ vec3 coldSnowDrift(vec2 p){
+  vec2 flow=vec2(p.x*${COLD_SNOW_SURFACE.windX}+p.y*${COLD_SNOW_SURFACE.windZ},-p.x*${COLD_SNOW_SURFACE.windZ}+p.y*${COLD_SNOW_SURFACE.windX});
+  vec3 drift=snowNoiseGradient(flow/vec2(${COLD_SNOW_SURFACE.across},${COLD_SNOW_SURFACE.along})+vec2(-17.3,41.9));
+  vec2 g=drift.yz/vec2(${COLD_SNOW_SURFACE.across},${COLD_SNOW_SURFACE.along});
+  return vec3(drift.x-.5,${COLD_SNOW_SURFACE.windX}*g.x-${COLD_SNOW_SURFACE.windZ}*g.y,${COLD_SNOW_SURFACE.windZ}*g.x+${COLD_SNOW_SURFACE.windX}*g.y)*${COLD_SNOW_SURFACE.depth};
+ }
+`;
+/* Ground materials authored for Star Ranch. Distances and texture scales are metres. */
+export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()=>0}) {
+  const loader = new THREE.TextureLoader();
+  function load(name) {
+    const source={rock:'rock_boulder_cracked',forest_floor:'forest_ground_04'}[name];
+    const t = loader.load(`./assets/textures/scanned/${source}_diff.webp`);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    return t;
+  }
+  /* One mask texture carries tree cover in red, walked ground in green, and the same authored
+     grazing field used by every grass distance layer in blue. Packing wear into the spare channel of a texture the shader
+     already fetches is the whole reason a worn bridleway costs nothing here — the alternative
+     was a second sampler and a second fetch on every square metre of the basin to serve a
+     feature that touches maybe two per cent of it. Canvas has no way to clear one channel and
+     leave the other, so both lists are kept and the whole mask is redrawn whenever either
+     changes; that happens twice in a session, at boot. */
+  const MASK = 1024, MPM = MASK / 1000;                   // pixels per metre: the basin is 1000 m across
+  const canvas = document.createElement('canvas'); canvas.width = canvas.height = MASK;
+  const ctx = canvas.getContext('2d');
+  let treeList = [], pathList = [];
+  // Cache blue once at native mask resolution; later tree/path updates retain it.
+  const grazingStarted=performance.now(),grazingPixels=ctx.createImageData(MASK,MASK);
+  grazingPixels.data.set(createMeadowGrazingPixels(MASK));
+  const fieldSurface={maskSize:MASK,grazingBuildMs:performance.now()-grazingStarted,sharedGrazing:true,skirtTexels:0};
+  const forest = new THREE.CanvasTexture(canvas);
+  forest.colorSpace = THREE.NoColorSpace;
+  function redrawMask() {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.putImageData(grazingPixels,0,0);
+    /* 'lighten' is a per-channel max, so a red-only blob never touches the green field and two
+       overlapping paths do not darken each other into a bruise at the crossing. */
+    ctx.globalCompositeOperation = 'lighten';
+    for(const tree of treeList){
+      const x=(tree.x+500)*MPM, y=(tree.z+500)*MPM, r=(2.0+(tree.s||1)*1.7)*MPM;
+      const g=ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0,'rgba(255,0,0,.96)');g.addColorStop(.35,'rgba(255,0,0,.88)');g.addColorStop(1,'rgba(255,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);
+    }
+    // Keep every original trunk-core texel. Only the added skirt is suppressed
+    // in grazed interiors, maintained yards/roads and reserved village plots.
+    const woodedPixels=ctx.getImageData(0,0,MASK,MASK);
+    const extended=extendWoodlandMask(woodedPixels.data,MASK,treeList,(x,z)=>
+      cottonwoodReserved(x,z,0)?1:managedAt(x,z));
+    fieldSurface.skirtTexels=extended.texelsRaised;
+    fieldSurface.northPastureTexels=applyNorthPastureGrazingPixels(woodedPixels.data,MASK);
+    fieldSurface.northPastureProfile=NORTH_PASTURE_PROFILE;
+    fieldSurface.chalkDownTexels=applyChalkGrazingPixels(woodedPixels.data,MASK);
+    ctx.putImageData(woodedPixels,0,0);
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    for(const {pts,width,strength} of pathList){
+      /* Two strokes: a broad faint shoulder where the grass is merely thinned, and a narrower
+         core where it has gone. A single stroke gives a hard-edged stripe, which is the decal
+         look this is here to cure. */
+      for(const [mul,alpha] of [[2.9,0.34],[1.15,1.0]]){
+        ctx.strokeStyle='rgba(0,'+Math.round(255*Math.min(1,alpha*strength))+',0,1)';
+        ctx.lineWidth=Math.max(1,width*mul*MPM);
+        ctx.beginPath();
+        for(let i=0;i<pts.length;i++){
+          const x=(pts[i][0]+500)*MPM, y=(pts[i][1]+500)*MPM;
+          if(i)ctx.lineTo(x,y); else ctx.moveTo(x,y);
+        }
+        ctx.stroke();
+      }
+    }
+    ctx.globalCompositeOperation='source-over';
+    forest.needsUpdate=true;
+  }
+  redrawMask();
+  function detail(path) {
+    const t=loader.load(path);t.wrapS=t.wrapT=THREE.RepeatWrapping;
+    t.colorSpace=THREE.NoColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+    return {value:t};
+  }
+  const wetWeather={value:0},soilReady={value:0};
+  const soilSurface={asset:'sandy_gravel_02',textureMetres:2.53,loaded:0,errors:[]};
+  const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest},
+    meadowDetail:detail('./assets/textures/pasture/grass_nor_gl.webp'),
+    stoneDetail:detail('./assets/textures/scanned/rock_boulder_cracked_nor_gl.webp'),
+    litterDetail:detail('./assets/textures/scanned/forest_ground_04_nor_gl.webp'),
+    meadowARM:detail('./assets/textures/pasture/grass_arm.webp'),
+    stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
+    litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),
+    soilDetail:{value:null},soilReady,wetWeather};
+  // Texture UUID allocation follows the synchronous seeded world construction.
+  // Albedo still loads in the original slot; optional detail stays inactive until
+  // the matching detail map is ready, retaining a valid fallback during loading.
+  queueMicrotask(()=>{
+    const t=loader.load('./assets/textures/dry-ground/sandy_gravel_02_surface.png',()=>{
+      soilSurface.loaded=1;soilReady.value=1;
+    },undefined,error=>soilSurface.errors.push(String(error?.message||'Failed soil surface texture')));
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.NoColorSpace;
+    t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());uniforms.soilDetail.value=t;
+  });
+  for(const [key,path] of [['terrainSoil','./assets/textures/dry-ground/sandy_gravel_02_diff_1k.jpg'],['terrainSnow','./assets/textures/cold/snow_02_diff_2k.webp']]){
+    const t=loader.load(path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;uniforms[key]={value:t};
+  }
+  const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
+  material.envMapIntensity = .45;
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE+'-'+HOLLOWPEAK_SNOW_PROFILE;
+  material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0],hollowSnow:[-1]};
+  material.userData.wetWeather=wetWeather;
+  material.userData.fieldSurface=fieldSurface;
+  material.userData.soilSurface=soilSurface;
+  material.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, uniforms);
+    sh.vertexShader = 'attribute float hollowSnow; varying float terrainHollowSnow; attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
+    sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      terrainHollowSnow = hollowSnow;
+      terrainChalkRelief = chalkRelief;
+      terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;
+      terrainNormal = normalize(mat3(modelMatrix) * normal);`);
+    sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+`varying float terrainHollowSnow; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
+      uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
+      uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
+      uniform sampler2D meadowDetail, stoneDetail, litterDetail;
+      uniform sampler2D meadowARM, stoneARM, litterARM;
+      uniform sampler2D soilDetail;
+      uniform float wetWeather,soilReady;
+      /* A multiply-and-fract hash rather than fract(sin(dot(...))). It is a handful of cheap
+         arithmetic ops instead of a transcendental, which matters once the ground asks for eight
+         noise lookups a pixel and the ground is most of the screen; it is also better behaved
+         out at the rim of the basin, where sin's argument gets large enough to lose bits. */
+      float tHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
+      vec2 tHash2(vec2 p){vec3 q=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));q+=dot(q,q.yzx+33.33);return fract((q.xx+q.yz)*q.zy);}
+      float tNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(tHash(i),tHash(i+vec2(1,0)),f.x),mix(tHash(i+vec2(0,1)),tHash(i+vec2(1,1)),f.x),f.y);}
+      // Right-angle UV rotations keep footprint area and use no additional samples.
+      vec2 turfQuarterTurn(vec2 v,float turn){
+        if(turn<0.5)return vec2(v.x,v.y);
+        if(turn<1.5)return vec2(-v.y,v.x);
+        if(turn<2.5)return vec2(-v.x,-v.y);
+        return vec2(v.y,-v.x);
+      }
+      ${COYOTE_DRY_GLSL}
+      ${COLD_SNOW_GLSL}
+      ` + sh.fragmentShader;
+    sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
+      vec2 p = terrainPosition.xz;
+      vec3 fieldMask=texture2D(forestMask,vec2((p.x+500.0)/1000.0,(500.0-p.y)/1000.0)).rgb;
+      float fieldGrazing=0.0;
+      #ifndef OUTER_LANDSCAPE
+        fieldGrazing=fieldMask.b;
+      #endif
+      vec2 uv = p / 1.4;
+      vec3 turf;
+      #ifdef CHEAP_GROUND
+        turf = texture2D(map,uv).rgb;
+      #else
+        vec2 cell = floor(uv*.22), f=fract(uv*.22); f=f*f*(3.0-2.0*f);
+        turf=vec3(0.0);
+        for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
+          vec2 corner=vec2(float(x),float(y));
+          float w=(x==1?f.x:1.0-f.x)*(y==1?f.y:1.0-f.y);
+          vec2 turfSeed=tHash2(cell+corner);
+          float turfTurn=floor(turfSeed.x*4.0);
+          turf += texture2D(map,turfQuarterTurn(uv,turfTurn)+turfSeed*61.7).rgb*w;
+        }
+      #endif
+
+      /* Read the surface, not just the point on it. grade is the true gradient — rise over run —
+         because the old thresholds were written against 1-|n.y|, and in this basin that number
+         has a median of 0.0014 and a 99th percentile of 0.15. Asking it for 0.14 before showing
+         any stone meant stone appeared on well under one per cent of the map, which is why the
+         hillsides here have always been grass all the way up. */
+      vec3 wn = normalize(terrainNormal);
+      float grade = length(wn.xz)/max(abs(wn.y),1e-3);
+      float hgt = terrainPosition.y;
+      float upClose = 1.0-smoothstep(14.0,74.0,distance(terrainPosition,cameraPosition));
+
+      /* Four scales, shared by everything below. region is the drift across the whole basin,
+         macro the field-sized mottle this shader already had, stand the size of one stand of
+         rushes, grain the size of a hoofprint — and grain is only fetched where the eye could
+         resolve it, because a metre-scale pattern seen from two hundred metres is just aliasing.
+         'patch' would have been the obvious name for the mid scale. It is a reserved word in
+         GLSL ES 3 and the shader will not compile with it, which is worth a line here so the
+         next person does not rediscover that from a wall of driver output. */
+      float region = tNoise(p*0.0041+31.0);
+      float macro  = tNoise(p*0.017)*0.62 + tNoise(p*0.047+11.0)*0.38;
+      float stand  = tNoise(p*0.055+53.0)*0.62 + tNoise(p*0.185+7.0)*0.38;
+      float grain  = 0.5; if(upClose>0.004) grain = tNoise(p*0.63+5.0);
+      /* Two more fields exist for one purpose: to break boundaries. Adding noise to a distance
+         BEFORE the smoothstep, rather than softening the smoothstep, is what turns a gradient
+         into an ecotone — fingers of the new country reaching out into the old, islands of the
+         old left stranded inside it. Six regions share these two lookups, mixed in different
+         proportions so that no two boundaries in the basin bulge in the same places. */
+      float edgeLo = tNoise(p*0.0165+71.0);
+      float edgeHi = tNoise(p*0.074+13.0);
+      float ecoA = (edgeLo-0.5)*62.0+(edgeHi-0.5)*19.0;
+      float ecoB = (edgeHi-0.5)*52.0+(edgeLo-0.5)*24.0;
+
+      /* Pasture is not a ramp from green to straw; it is patches of different things growing
+         next to each other. Dryness drifts with the basin and the field; the smoothstep rather
+         than a plain sum is there because two noise fields added together pile up around their
+         mean and the result was a landscape that varied on paper and read as one colour from
+         forty metres — this pushes the common middle out towards both ends. */
+      float dryness = smoothstep(0.17,0.83, macro*0.55 + region*0.45);
+      vec3 tint = mix(vec3(.72,.85,.50), vec3(.87,.93,.64), dryness);
+      /* How heavy the sward is, which the eye reads as VALUE rather than hue: thin turf over
+         hard ground is paler and greyer, a deep bite of grass is darker. This is the term that
+         carries the middle distance — forty to two hundred metres, where the albedo has mipped
+         to a flat colour and the near-field tufts have already stopped — and without it that
+         whole band goes back to being one painted green however much the hue drifts. */
+      float vigour = smoothstep(0.34,0.70, stand*0.66+macro*0.34);
+      // Broad field variation carries the distance; several strong, independent
+      // five-metre patterns made the pasture look pieced together underfoot.
+      tint *= mix(1.07,0.92,vigour);
+      tint = mix(tint, tint*vec3(.94,1.02,.96), vigour*0.40);
+      /* A distinct clump of something coarser, off edgeHi rather than stand so it does not
+         simply repeat the vigour pattern — and it is free, because edgeHi is already fetched
+         for the region boundaries below. */
+      float clump = smoothstep(0.54,0.66,edgeHi)*(1.0-dryness*0.45);
+      tint = mix(tint, tint*vec3(.84,.97,.88)*1.04, clump*0.35);
+      // Fine grazed interiors follow the planted sward's greener character;
+      // rougher margins retain their warmer stand variation and photo detail.
+      tint*=mix(vec3(1.0),vec3(.88,.99,1.02),fieldGrazing);
+      tint *= 1.0+(grain-0.5)*0.14*upClose;
+      /* Water runs downhill and stands in the flats. The low ground of this basin is within a
+         couple of metres of the river's own level and should read damp: darker, greener, not
+         bleached. The ridges go the other way and burn off first, and burn off faster where
+         they are also steep enough to shed what rain they get. */
+      float damp = (1.0-smoothstep(-2.8,1.7,hgt))*(1.0-smoothstep(0.09,0.33,grade));
+      float dry  = smoothstep(3.4,8.6,hgt)*(0.5+0.5*smoothstep(0.03,0.19,grade));
+      tint = mix(tint, tint*vec3(.67,.85,.70), damp*0.55);
+      tint = mix(tint, tint*vec3(1.18,1.11,0.90), dry*0.45);
+      float foothillDry=coyoteDryWeight(p,terrainChalkRelief);
+      tint=mix(tint,tint*vec3(1.22,1.07,.74),foothillDry*.70);
+      turf *= tint;
+      turf=mix(vec3(dot(turf,vec3(.2126,.7152,.0722))),turf,.93);
+
+      /* One fetch, two fields — see the mask canvas above. The canopy edge is pushed around by
+         stand so the treeline on the ground is ragged rather than a set of soft circles. */
+      float canopy = smoothstep(.10,.80, fieldMask.r + (stand-0.5)*0.30);
+      float wear = fieldMask.g;
+
+      /* The jitter is deliberately most of a metre either way at the water and several metres at
+         the top of the bank, so the shingle line wanders in and out of the grass the way a real
+         one does instead of running parallel to the channel. */
+      float riverDistance = abs(p.y-(120.0+sin(p.x*.012)*45.0)) + (edgeHi-0.5)*5.4 + (grain-0.5)*1.1;
+      float streamDistance = abs(p.x-(118.0+sin(p.y*.03)*14.0+sin(p.y*.011+3.0)*8.0)) + (edgeHi-0.5)*2.6;
+      float streamLive = 1.0-smoothstep(158.0,166.0,p.y);
+      float bank = max(1.0-smoothstep(3.8,9.8,riverDistance),(1.0-smoothstep(1.3,5.0,streamDistance))*streamLive);
+      float wet  = max(1.0-smoothstep(1.0,3.4,riverDistance),(1.0-smoothstep(0.5,2.0,streamDistance))*streamLive);
+
+      /* Rock is a slope story. rough makes the stone/grass line ragged instead of a contour, and
+         scree is the band of loose gravel that always sits below bare rock on a real hillside. */
+      float rough = (macro-0.5)*0.30+(stand-0.5)*0.36;
+      // Rideable meadow slopes keep their continuous turf. The old 22% grade
+      // threshold put gravel under healthy grass on most of the new hills.
+      float scree = smoothstep(0.50,0.88, grade+rough*0.24);
+      float stone = smoothstep(0.80,1.35, grade+rough*0.30);
+      // This chalk down keeps a close turf over its rounded slopes; loose stone
+      // remains a small accent. Other landforms retain their existing exposure.
+      float chalkTurf=smoothstep(.12,1.7,terrainChalkRelief);
+      scree *= mix(1.0,.20,chalkTurf);
+      stone *= mix(1.0,.25,chalkTurf);
+      float rocky = max(scree,stone);
+
+      float canyon = foothillDry;
+      // The chalk down rises above the desert's edge. Keep its raised turf green,
+      // blending back into the underlying biome at the foot of the same mesh.
+
+      float alpineClimate=1.0-smoothstep(.65,1.10,length((p-vec2(-150.0,-333.0))/vec2(100.0,92.0)));
+      float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);
+      snowRegion=max(snowRegion,alpineClimate);
+      // A broken thaw margin leads into the continuous northern snowfield.
+      // Snow gathers in sheltered drifts; mineral/litter islands remain visible
+      // at its warmer southern edge. The core region retains full winter cover.
+      float winterCore=1.0-smoothstep(66.0,112.0,length(p-vec2(-160.0,-210.0)));
+      winterCore=max(winterCore,alpineClimate);
+      float drift=smoothstep(.32,.70,stand*.62+edgeHi*.38);
+      float lie=mix(.28+.55*drift,1.0,winterCore);
+      float thawLitter=0.0;
+      #ifndef OUTER_LANDSCAPE
+        // Warm edges leave real gaps between sheltered snow deposits. The same
+        // region/core envelopes remain fixed; the full winter core stays white.
+        float sheltered=smoothstep(.35,.69,stand*.58+edgeHi*.42);
+        lie=mix(sheltered,1.0,winterCore);
+        thawLitter=snowRegion*(1.0-winterCore)*(1.0-smoothstep(.58,.90,grade));
+      #endif
+      float snow=snowRegion*(1.0-smoothstep(.20,.58,grade))*lie;
+      #ifndef OUTER_LANDSCAPE
+        // HOLLOWPEAK_SNOW_DEPOSITS_V1: shared actual-terrain deposits, not a
+        // low-slope contour. Scoured flats retain cold litter instead of turf.
+        float hollowWeight=hollowpeakSnowWeight(p)*step(0.0,terrainHollowSnow);
+        float hollowDeposit=clamp(terrainHollowSnow,0.0,1.0);
+        snow=mix(snow,hollowDeposit,hollowWeight);
+        thawLitter=max(thawLitter,snowRegion*hollowWeight*(1.0-hollowDeposit));
+        // The former climate-only annulus whitened level ground behind the
+        // riding fields. A continuous elevation/latitude thaw lets forest
+        // litter and mineral soil connect the meadow to the raised snowbanks.
+        // It only removes snow; no ridge or snow contour is introduced.
+        float foothillThaw=hollowpeakFoothillThaw(p,hgt);
+        snow*=1.0-foothillThaw;
+        thawLitter=max(thawLitter,snowRegion*foothillThaw);
+      #endif
+      float amber  = 1.0-smoothstep(86.0,132.0, length(p-vec2( 300.0,-300.0))+ecoA);
+      float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);
+      float tundra = 1.0-smoothstep(80.0,128.0, length(p-vec2(-300.0,-320.0))+ecoB*0.85+ecoA*0.40);
+      float ochre  = 1.0-smoothstep(80.0,128.0, length(p-vec2(-330.0, 300.0))+ecoA*0.90+ecoB*0.35);
+      #ifdef OUTER_LANDSCAPE
+        // Continue each region into the foothills, blending away from the exact
+        // inner edge. This material is used only outside the riding terrain.
+        float outside=length(max(abs(p)-vec2(500.0),vec2(0.0)));
+        float extend=smoothstep(15.0,145.0,outside);
+        vec2 compass=normalize(p);
+        float cold=smoothstep(.25,.65,-compass.y)*(1.0-smoothstep(-.18,.22,compass.x));
+        float arid=smoothstep(.25,.75,-compass.x)*smoothstep(-.08,.38,compass.y);
+        canyon=max(canyon,extend*arid*.94);
+        snow=max(snow,extend*cold*(.38*smoothstep(.36,.72,stand*.55+macro*.45)+.35*smoothstep(18.0,42.0,hgt))*(1.0-smoothstep(.24,.75,grade)));
+        // The small in-basin river texture must not draw a stripe over every
+        // distant hillside. The real channel is continuous at the shared edge.
+        bank*=1.0-extend;wet*=1.0-extend;
+        canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*(1.0-arid)*.68);
+      #endif
+      float quarters = amber+marsh+tundra+ochre;
+      float coldPowder=snow;
+      #ifndef OUTER_LANDSCAPE
+        // Frostpine's surface is the later snow/lichen/stone blend below. Its
+        // powder share replaces grass relief in proportion to that real mix;
+        // steep, scoured ground keeps the mineral portion instead of full snow.
+        coldPowder=snow*(1.0-tundra*.88)+tundra*.88*(.66-.46*smoothstep(.06,.36,grade+rough*.3));
+      #endif
+
+      /* Fifteen texture fetches a pixel, everywhere, was this shader's real cost: forest floor,
+         rock three ways, canyon sand, snow and all four quarters were sampled on every square
+         metre of ordinary pasture and then multiplied by a weight of zero. Every one of those
+         grounds is a contiguous patch tens of metres across, so a whole quad of fragments takes
+         the same branch and the divergence that normally makes this a bad trade does not happen.
+         Every UV is computed OUTSIDE its branch on purpose — a texture fetch whose coordinate
+         was only computed on the lanes that took the branch has no well-defined derivative, and
+         picks its mip level out of a hat. Ordinary pasture now costs five fetches, not fifteen. */
+      vec2 rockUVy = p/3.2, rockUVx = terrainPosition.yz/3.2, rockUVz = terrainPosition.xy/3.2;
+      vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/2.53;
+      vec2 earthUV = p/3.2, snowUV = mat2(.91,-.414,.414,.91)*p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV;
+      #ifndef OUTER_LANDSCAPE
+        // A continuous low-frequency warp breaks photographic alignment while
+        // keeping derivatives valid and the photographed grain near its scale.
+        snowUV=mat2(.91,-.414,.414,.91)*p/${COLD_SNOW_SURFACE.textureMetres}+vec2(edgeLo-.5,edgeHi-.5)*.34;
+      #endif
+      vec3 earth=vec3(0.0), rock=vec3(0.0), sand=vec3(0.0), snowTex=vec3(0.0);
+      if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003) earth=texture2D(terrainForest,earthUV).rgb;
+      if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){
+        #ifdef CHEAP_GROUND
+          rock=texture2D(terrainRock,rockUVy).rgb;
+        #else
+          vec3 w=pow(abs(wn),vec3(5.0)); w/=max(dot(w,vec3(1.0)),.001);
+          rock=texture2D(terrainRock,rockUVx).rgb*w.x
+             +texture2D(terrainRock,rockUVy).rgb*w.y
+             +texture2D(terrainRock,rockUVz).rgb*w.z;
+        #endif
+        /* One albedo, three ways — otherwise a whole cliff is a single flat pale grey that
+           reads as poured concrete. The value swing comes from the field-scale noise so it
+           varies across a face rather than per pixel, and the two beds are warm and cool
+           rather than light and dark, which is what makes stratified rock look like rock. */
+        rock*=(0.80+0.34*macro)*mix(vec3(1.08,1.00,0.90),vec3(0.90,0.95,1.05),stand);
+      }
+      if(bank>0.003||canyon>0.003) sand=texture2D(terrainSoil,soilUV).rgb*1.45;
+      // One shared photographed snow source, still four samples on high/medium
+      // and two on low. Independent sample orientations avoid a common tile axis.
+      vec2 snowCell=floor(snowUV*.31),snowF=fract(snowUV*.31);
+      snowF=snowF*snowF*(3.0-2.0*snowF);
+      if(snow>0.003||tundra>0.003){
+        #ifdef CHEAP_GROUND
+          #ifdef OUTER_LANDSCAPE
+            snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,snowUV*.713+vec2(.37,.61)).rgb,.48);
+          #else
+            snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,mat2(.626,-.780,.780,.626)*snowUV*.873+vec2(.37,.61)).rgb,.48);
+          #endif
+        #else
+          for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
+            vec2 corner=vec2(float(x),float(y));
+            float weight=(x==1?snowF.x:1.0-snowF.x)*(y==1?snowF.y:1.0-snowF.y);
+            #ifdef OUTER_LANDSCAPE
+              snowTex+=texture2D(terrainSnow,snowUV+tHash2(snowCell+corner)*53.1).rgb*weight;
+            #else
+              vec2 seed=tHash2(snowCell+corner),basis=seed*2.0-1.0;
+              basis/=max(length(basis),.01);
+              snowTex+=texture2D(terrainSnow,mat2(basis.x,-basis.y,basis.y,basis.x)*snowUV+seed*53.1).rgb*weight;
+            #endif
+          }
+        #endif
+        // Snow02's photographed exposure is darker than loose winter powder.
+        // Calibrate its shared albedo energy while retaining all photographed
+        // grain; the cap avoids super-white energy on the brightest source texels.
+        float snowValue=clamp(dot(snowTex,vec3(.2126,.7152,.0722))*${COLD_SNOW_SURFACE.albedoExposure},0.0,.98);
+        #ifdef OUTER_LANDSCAPE
+          snowTex=mix(vec3(.78),vec3(snowValue),.52);
+        #else
+          snowTex=mix(vec3(.78),vec3(snowValue),.68);
+        #endif
+      }
+
+      /* Under the trees the ground is litter rather than grass, and it is in shade. */
+      vec3 surface = turf;
+      // Carry the sandy fraction through the same ordered blends as albedo.
+      // Rock, snow and litter must suppress its microdetail as well as its color.
+      float soilWeight=0.0;
+      if(canopy>0.003) surface = mix(turf, earth*(0.78+0.26*stand), canopy*0.60);
+      /* The margin in three parts rather than one painted stripe: wet silt at the waterline,
+         pale shingle above it with a coarse speckle of stones, and a ragged line where the grass
+         gives up. The jitter is already in riverDistance, so the line wanders. */
+      if(bank>0.003){
+        vec3 shingle = sand*vec3(.99,.96,.90)*(0.90+0.46*smoothstep(0.54,0.74,stand));
+        vec3 silt    = earth*vec3(.60,.65,.60);
+        surface = mix(surface, mix(shingle,silt,wet), bank*0.95);
+        soilWeight=bank*.95*(1.0-wet);
+      }
+      /* Where hooves go, grass does not. The bridleway is already a ribbon mesh laid on top of
+         the ground, and without this the grass runs up to its edge untouched and the whole thing
+         reads as a decal on a lawn. This is the shoulder: thinned grass over trodden soil. */
+      if(wear>0.004){
+        surface = mix(surface, earth*vec3(0.90,0.86,0.78), wear*0.78);
+        soilWeight*=1.0-wear*.78;
+      }
+      /* Gravel first, then bare rock standing out of it. Scree is only half stone by weight:
+         the other half is whatever was growing there, which is what stops a hillside going from
+         meadow to quarry in the space of one smoothstep. */
+      if(rocky>0.003){
+        surface = mix(surface, mix(surface,rock,0.50)*vec3(1.02,1.01,0.96), scree*0.72);
+        surface = mix(surface, rock, stone*0.94);
+        soilWeight*=(1.0-scree*.36)*(1.0-stone*.94);
+      }
+      if(canyon>0.003){
+        vec3 dust = sand*vec3(.74,.79,.79)*(0.86+0.30*macro);
+        surface = mix(surface, mix(dust, rock*vec3(1.07,.94,.82), max(stone,scree*0.55)), smoothstep(.08,.96,canyon)*0.96);
+        soilWeight=mix(soilWeight,1.0-max(stone,scree*.55),smoothstep(.08,.96,canyon)*.96);
+      }
+      /* Lying snow is drifted, not poured: deeper in the lee and scoured thin on the crowns.
+         Without a value swing at these scales the snow texture's own tiling grid is the only
+         thing the eye can find in a hundred metres of white. */
+      /* Snow reads as paper unless it is cold. This albedo is very nearly neutral, and against a
+         warm sky the eye needs the blue put back — it belongs in the shadowed hollows, which is
+         what damp is already measuring. */
+      #ifndef OUTER_LANDSCAPE
+        if(thawLitter>0.003){
+          // Exposed edge islands are cold litter and occasional existing stone,
+          // not saturated pasture seen through a thin white blanket.
+          vec3 edgeGround=earth*vec3(.89,.92,.91)*(0.84+0.12*macro);
+          if(rocky>.003)edgeGround=mix(edgeGround,rock*vec3(.91,.94,1.0),rocky*.48);
+          surface=mix(surface,edgeGround,thawLitter*.68);
+          soilWeight*=1.0-thawLitter*.68;
+        }
+      #endif
+      if(snow>0.003){
+        vec3 c=snowTex*vec3(.84,.90,.99)*(0.82+0.32*(stand*0.55+macro*0.45));
+        c=mix(c,c*vec3(.84,.91,1.08),damp*0.7);
+        #ifdef OUTER_LANDSCAPE
+          surface=mix(surface,c,snow*0.98);
+          soilWeight*=1.0-snow*.98;
+        #else
+          // Photographed powder carries the small detail; broad value changes
+          // stay restrained, and a fully covered core hides the turf completely.
+          c=snowTex*vec3(.90,.94,1.0)*(0.92+0.16*(stand*0.55+macro*0.45));
+          c=mix(c,c*vec3(.89,.94,1.04),damp*.45);
+          surface=mix(surface,c,snow);
+          soilWeight*=1.0-snow;
+        #endif
+      }
+      /* The four quarters past the old fence. Each re-tints ground the shader already samples,
+         so a new country still costs a smoothstep rather than another download — and the whole
+         block is skipped on the nine tenths of the basin that is none of them. */
+      if(quarters>0.003){
+        if(amber>0.003){
+          /* Leaf drift, banked deeper in the low sheltered ground the way it actually falls. */
+          vec3 c=texture2D(terrainForest,amberUV).rgb*vec3(1.34,.94,.55)*(0.90+macro*0.18);
+          c=mix(c,c*vec3(.84,.80,.72),damp*0.55);
+          surface=mix(surface,c,amber*0.90);
+          soilWeight*=1.0-amber*.90;
+        }
+        if(marsh>0.003){
+          /* Standing water in the hollows is what makes a marsh a marsh, so the damp field does
+             most of the work here and the slope term keeps it off anything that drains. */
+          vec3 c=texture2D(terrainForest,marshUV).rgb*vec3(.72,.86,.66)*(0.76+macro*0.14);
+          c=mix(c,c*vec3(.52,.66,.60),damp*0.85);
+          surface=mix(surface,c,marsh*0.92*(1.0-smoothstep(0.28,0.60,grade)));
+          soilWeight*=1.0-marsh*.92*(1.0-smoothstep(.28,.60,grade));
+        }
+        if(tundra>0.003){
+          /* Snow where it can lie, scoured rock where the wind gets at it. */
+          vec3 c=mix(snowTex*vec3(.80,.88,1.00),rock*vec3(.95,.97,1.05),0.34+0.46*smoothstep(0.06,0.36,grade+rough*0.3));
+          c*=0.78+0.36*(stand*0.6+macro*0.4);
+          c=mix(c,c*vec3(.83,.90,1.08),damp*0.75);
+          surface=mix(surface,c,tundra*0.88);
+          soilWeight*=1.0-tundra*.88;
+        }
+        if(ochre>0.003){
+          /* A badland cuts itself into bands, and the bands only show where there is a face to
+             show them on — hence the slope term on an otherwise purely height-driven stripe. */
+          vec3 c=texture2D(terrainSoil,ochreUV).rgb*1.45*vec3(1.22,.72,.52)*(0.90+macro*0.16);
+          c*=1.0+sin(hgt*2.3+region*6.2)*0.11*smoothstep(0.05,0.30,grade);
+          surface=mix(surface,mix(c,rock*vec3(1.18,.80,.62),stone),ochre*0.94);
+          soilWeight=mix(soilWeight,1.0-stone,ochre*.94);
+        }
+      }
+      soilWeight*=soilReady;
+      vec2 granularUV=soilUV;
+      // One lossless RGBA texture packs normal XY, roughness, and occlusion.
+      // Together with the existing sun shadow, the terrain stays at 16 samplers.
+      vec4 soilProperties=vec4(.5,.5,.85,1.0);
+      #ifndef CHEAP_GROUND
+        if(soilWeight>.003&&upClose>.005)soilProperties=texture2D(soilDetail,granularUV);
+      #endif
+      // Moist ground darkens before it becomes glossy. Hollows retain rain
+      // while exposed slopes drain; snow keeps its powder response.
+      float rainWet=wetWeather*(1.0-snow)*mix(.30,.72,damp);
+      surface*=1.0-rainWet*.26;
+      diffuseColor.rgb*=surface;
+    `);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
+      #ifndef CHEAP_GROUND
+        vec3 groundARM=texture2D(meadowARM,uv).rgb;
+        if(canopy>.1)groundARM=mix(groundARM,texture2D(litterARM,earthUV).rgb,canopy);
+        if(rocky>.1)groundARM=mix(groundARM,texture2D(stoneARM,rockUVy).rgb,rocky);
+        if(soilWeight>.003)groundARM=mix(groundARM,vec3(soilProperties.a,soilProperties.b,0.0),soilWeight);
+        #ifndef OUTER_LANDSCAPE
+          float groundRoughness=clamp(groundARM.g,.65,1.0);
+          // Dry grass keeps the base material's broad, matte response. Fade
+          // back to the sampled substrate at woodland, soil, mineral and
+          // winter edges, before the existing water/rain response below.
+          float dryTurf=(1.0-smoothstep(0.0,1.0,canopy))
+                       *(1.0-smoothstep(0.0,1.0,wear))
+                       *(1.0-smoothstep(0.0,1.0,bank))
+                       *(1.0-smoothstep(0.0,1.0,rocky))
+                       *(1.0-smoothstep(0.0,1.0,canyon))
+                       *(1.0-smoothstep(0.0,1.0,quarters))
+                       *(1.0-smoothstep(0.0,1.0,snow))
+                       *(1.0-smoothstep(0.0,1.0,thawLitter))
+                       *(1.0-smoothstep(0.0,.30,wet*.42))
+                       *(1.0-smoothstep(0.0,.30,rainWet));
+          groundRoughness=mix(groundRoughness,roughnessFactor,dryTurf);
+          roughnessFactor=mix(roughnessFactor,groundRoughness,upClose*(1.0-snow));
+        #else
+          roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));
+        #endif
+        diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));
+      #endif
+      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));
+      #ifndef OUTER_LANDSCAPE
+        roughnessFactor=mix(roughnessFactor,.97,snow);
+      #endif`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      #ifndef CHEAP_GROUND
+        if(upClose>.005){
+          vec3 detailN=vec3(0.0);
+          // Match the albedo's sample coordinates and inverse normal orientation.
+          for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
+            vec2 corner=vec2(float(x),float(y));
+            float w=(x==1?f.x:1.0-f.x)*(y==1?f.y:1.0-f.y);
+            vec2 turfSeed=tHash2(cell+corner);
+            float turfTurn=floor(turfSeed.x*4.0);
+            vec3 sampledN=texture2D(meadowDetail,turfQuarterTurn(uv,turfTurn)+turfSeed*61.7).xyz*2.0-1.0;
+            // On flat ground the retained frame is tangent=-X, bitangent=+Z.
+            // Its sign matrix D=diag(-1,1) makes inverse UV rotation D*R^T*D=R.
+            sampledN.xy=turfQuarterTurn(sampledN.xy,turfTurn);
+            detailN+=sampledN*w;
+          }
+          if(canopy>.1)detailN=mix(detailN,texture2D(litterDetail,earthUV).xyz*2.0-1.0,canopy);
+          if(rocky>.1)detailN=mix(detailN,texture2D(stoneDetail,rockUVy).xyz*2.0-1.0,rocky);
+          if(soilWeight>.003){
+            vec3 granularN=vec3(soilProperties.rg*2.0-1.0,1.0);
+            // The retained ground basis is -X/+Z: D*R^T*D equals this UV rotation.
+            granularN.xy=mat2(.819,-.574,.574,.819)*granularN.xy;
+            detailN=mix(detailN,granularN,soilWeight);
+          }
+          // Orthogonal world-space tangents follow the terrain slope, including
+          // bank faces. Relief fades before its texels become subpixel noise.
+          vec3 tangent=normalize(cross(vec3(0.0,0.0,1.0),wn));
+          vec3 bitangent=normalize(cross(wn,tangent));
+          vec3 relief=normalize(wn+(.34*detailN.x*tangent+.34*detailN.y*bitangent)*upClose*(1.0-snow*.82));
+          normal=normalize(mat3(viewMatrix)*relief);
+        }
+      #endif
+      #ifndef OUTER_LANDSCAPE
+        if(coldPowder>.003){
+          // Replace grass/bump relief under powder on every tier. Analytic
+          // gradients are C1 across cells and fade before subpixel detail.
+          vec3 powderField=coldSnowDrift(p);
+          vec3 powderNormal=normalize(wn+vec3(-powderField.y,0.0,-powderField.z)*upClose);
+          normal=normalize(mix(normal,normalize(mat3(viewMatrix)*powderNormal),coldPowder));
+        }
+      #endif`);
+    patchPastureMesoSurface(sh);
+  };
+  function setTrees(trees) { treeList = trees || []; redrawMask(); }
+  /* For whoever lays out the tracks. Give it the polylines in world metres — the same shape
+     ranch3d.html's PATHS has, [[x,z],[x,z],...] — and the ground under and beside them goes to
+     trodden soil. width is the metres of the worn core; the soft shoulder is about three times
+     that. Also hung on material.userData so a feature package can reach it without an inline
+     change: G.scene.getObjectByName('Pasture terrain').material.userData.setPaths(lines, 2.9). */
+  function setPaths(polylines, width = 2.9, strength = 1) {
+    pathList = (polylines || []).filter(pl => pl && pl.length > 1).map(pts => ({pts, width, strength}));
+    redrawMask();
+  }
+  material.userData.setPaths = setPaths;
+  material.userData.setTrees = setTrees;
+  material.userData.refreshGrazing = redrawMask;
+  return {material, setTrees, setPaths};
+}
+
+export function createRiverMaterial({THREE, map}) {
+  const time={value:0};
+  const reflection={map:{value:null},matrix:{value:new THREE.Matrix4()},amount:{value:0},level:{value:0}};
+  const material=new THREE.MeshPhysicalMaterial({map,color:0x285b52,roughness:.095,metalness:0,
+    ior:1.333,clearcoat:.72,clearcoatRoughness:.13,side:THREE.DoubleSide,transparent:true,opacity:.94,depthWrite:false});
+  material.envMapIntensity=1.15;
+  const shader=fade=>sh=>{
+    sh.uniforms.waterTime=time;
+    sh.uniforms.waterReflection=reflection.map;sh.uniforms.waterReflectionMatrix=reflection.matrix;
+    sh.uniforms.waterReflectionAmount=reflection.amount;
+    sh.uniforms.waterReflectionLevel=reflection.level;
+    sh.vertexShader='varying vec3 waterWorld; varying vec2 waterBankUV;\n'+sh.vertexShader;
+    sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      waterWorld=(modelMatrix*vec4(position,1.0)).xyz;waterBankUV=uv;`);
+    sh.fragmentShader='varying vec3 waterWorld; varying vec2 waterBankUV; uniform float waterTime; uniform sampler2D waterReflection; uniform mat4 waterReflectionMatrix; uniform float waterReflectionAmount,waterReflectionLevel;\n'+sh.fragmentShader;
+    sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`
+      // Two advecting wave fields produce moving specular reflections at real world scale.
+      float wx=waterWorld.x, wz=waterWorld.z, wt=waterTime;
+      float rip=sin(wx*2.7+wz*1.4-wt*1.8)*sin(wx*.7-wz*3.2-wt*.85);
+      float swell=sin(wx*.48+wz*.63-wt*.55);
+      float fresnel=pow(1.0-abs(dot(normalize(cameraPosition-waterWorld),vec3(0,1,0))),4.0);
+      diffuseColor.rgb*=.86+rip*.025+swell*.035;
+      diffuseColor.a*=mix(.72,1.0,fresnel);
+      ${fade?`float bankDepth=smoothstep(0.0,.32,min(waterBankUV.y,1.0-waterBankUV.y));
+      diffuseColor.rgb=mix(diffuseColor.rgb*vec3(1.28,1.13,.85),diffuseColor.rgb,bankDepth);
+      diffuseColor.a*=mix(.45,1.0,bankDepth);`:''}
+    `);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      float micro=1.0-smoothstep(16.0,85.0,length(vViewPosition));
+      float dx=.032*cos(wx*.48+wz*.63-wt*.55)+micro*(.045*cos(wx*2.7+wz*1.4-wt*1.8)+.025*cos(wx*6.7-wz*3.1+wt*2.1));
+      float dz=.024*cos(wx*.48+wz*.63-wt*.55)+micro*(.038*cos(wx*1.2+wz*4.1-wt*1.3)+.018*sin(wx*4.3+wz*7.1-wt*2.4));
+      normal=normalize(mat3(viewMatrix)*vec3(-dx,1.0,-dz));
+    `);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <clearcoat_normal_fragment_maps>',`#include <clearcoat_normal_fragment_maps>
+      #ifdef USE_CLEARCOAT
+        clearcoatNormal=normal;
+      #endif`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
+      if(waterReflectionAmount>.5){
+        vec4 projected=waterReflectionMatrix*vec4(waterWorld,1.0);
+        vec2 reflectionUV=projected.xy/max(projected.w,.001)+vec2(dx,dz)*.009;
+        float edge=smoothstep(0.0,.06,reflectionUV.x)*smoothstep(0.0,.06,reflectionUV.y)
+          *(1.0-smoothstep(.94,1.0,reflectionUV.x))*(1.0-smoothstep(.94,1.0,reflectionUV.y));
+        vec3 reflected=texture2D(waterReflection,clamp(reflectionUV,0.0,1.0)).rgb;
+        float localReflection=(1.0-smoothstep(.12,.65,abs(waterWorld.y-waterReflectionLevel)))
+          *(1.0-smoothstep(55.0,110.0,length(cameraPosition-waterWorld)));
+        outgoingLight=mix(outgoingLight,reflected,edge*(.28+.58*fresnel)*localReflection);
+      }
+      #include <opaque_fragment>`);
+    if(fade) sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',`#include <alphatest_fragment>
+      diffuseColor.a*=smoothstep(0.0,.055,waterBankUV.y)*(1.0-smoothstep(.945,1.0,waterBankUV.y));`);
+  };
+  material.onBeforeCompile=shader(true);
+  material.userData.plainShader=shader(false);
+  material.userData.waterTime=time;
+  // Uniform objects cannot go in userData: Material.clone JSON-serializes it.
+  // Share the live reflection through the shader closure and a non-enumerable key.
+  Object.defineProperty(material.userData,'reflection',{value:reflection});
+  material.customProgramCacheKey=()=> 'ripple-water-v4-clear-reflection';
+  return material;
+}

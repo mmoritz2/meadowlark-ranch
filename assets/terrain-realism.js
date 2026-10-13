@@ -139,6 +139,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
   material.userData.soilSurface=soilSurface;
+  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'attribute float hollowSnow; varying float terrainHollowSnow; attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;

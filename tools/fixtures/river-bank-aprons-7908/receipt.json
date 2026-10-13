@@ -1,0 +1,9 @@
+{
+  "base": "7908e80a1b9bd99b4636867fd38527d9cacefb46",
+  "nativeWaterSourceSHA256": "b8024da2a4dfe6c3ebbe813b5d31679f80d4147163262eb11498166139c5a3f3",
+  "files": {
+    "aprons.json": "d794b790c2bc63313ebf0634b4611dd0d7eda8adaa6485e19215f7a9b72ce469",
+    "terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "bed.json": "97887a3969fb935726c2ef7640abcb0256933144ae64432fb2bc437e5e96676c"
+  }
+}

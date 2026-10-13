@@ -167,7 +167,9 @@ test('original seed constructor stream, sequential flora admissions and full gro
  const oldHTML=read('ranch3d.html').toString(),html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),oldFlora=read('assets/features/world-flora.js').toString(),flora=fs.readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8'),oldTerrain=read('assets/terrain-realism.js').toString(),terrainSource=fs.readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');
  const between=(s,a,b)=>{const start=s.indexOf(a),end=s.indexOf(b,start);assert(start>=0&&end>start,a+' actual source block');return s.slice(start,end);};
  assert.equal(between(html,'function meadowBladeTexture('," /* ===== near grass:"),between(oldHTML,'function meadowBladeTexture('," /* ===== near grass:"));
- assert.equal(between(flora,'export function install(G){',' /* ---- 6j.'),between(oldFlora,'export function install(G){',' /* ---- 6j.'));
+ const riverPlanning='W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt';
+ assert.equal(flora.split(riverPlanning).length,2,'Exactly one declared River planning adapter');
+ assert.equal(between(flora.replace(riverPlanning,'W.canyonPlacement?.heightAt'),'export function install(G){',' /* ---- 6j.'),between(oldFlora,'export function install(G){',' /* ---- 6j.'));
  assert.equal(between(terrainSource,'  material.onBeforeCompile = sh => {','  function setTrees('),between(oldTerrain,'  material.onBeforeCompile = sh => {','  function setTrees('));
  proof.checks.originalFullSourceBodies={seedTextureGeometryAcceptanceAndDraws:true,sequentialFloraPlanningOccupancyAndDraws:true,completeTerrainShader:true};
 });

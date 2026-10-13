@@ -1,0 +1,27 @@
+[
+  [
+    "ranch3d.html",
+    "./assets/features/index.js?v=chalk-grazing-1",
+    "./assets/features/index.js?v=river-ecotone-1"
+  ],
+  [
+    "ranch3d.html",
+    "./assets/terrain-realism.js?v=chalk-grazing-1",
+    "./assets/terrain-realism.js?v=river-ecotone-1"
+  ],
+  [
+    "assets/features/index.js",
+    "./world-water.js?v=hollowpeak-cascades-1",
+    "./world-water.js?v=river-ecotone-1"
+  ],
+  [
+    "assets/features/index.js",
+    "./world-flora.js?v=chalk-grazing-1",
+    "./world-flora.js?v=river-ecotone-1"
+  ],
+  [
+    "ranch3d.html",
+    "'./assets/riparian.js'",
+    "'./assets/riparian.js?v=river-ecotone-1'"
+  ]
+]

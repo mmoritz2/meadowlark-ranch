@@ -13,7 +13,11 @@ function withoutChalkRenderResponse(source){
   assert.equal(source.split(added).length,2,'Exactly one declared Chalk render addition');
   source=source.replace(added,added.startsWith(' //')?'\n':'');
  }
- return source;
+ // Only the declared River decision-sampler prefix is normalized here.
+ // Independent river fixtures exercise its actual reference grid and seating.
+ const river='W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt';
+ assert.equal(source.split(river).length,2,'Exactly one original-planning River adapter');
+ return source.replace(river,'W.canyonPlacement?.heightAt');
 }
 const source=exactCache(withoutChalkRenderResponse(read('../assets/features/world-flora.js')),[["import {canyonCliffAt} from '../canyon-landscape.js?v=regional-landmarks-1';","import {canyonCliffAt} from '../canyon-landscape.js?v=countryside-banks-1';"]]),baseline=read('./fixtures/steep-flora-11fb567/world-flora.js');
 const photo=exactCache(read('../assets/world-photoscans.js'),[["import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';","import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=steep-flora-roots-1';"],["import {OASIS_FACE} from './canyon-landscape.js?v=regional-landmarks-1';","import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';"]]),oldPhoto=read('./fixtures/steep-flora-11fb567/world-photoscans.js');
