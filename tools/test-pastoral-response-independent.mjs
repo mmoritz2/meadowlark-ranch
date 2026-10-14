@@ -1,7 +1,7 @@
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import path from'node:path';
 import {repo,moduleAt,T,positive,transformedVerticalBounds,withoutRandom,cellsDigest}from'./pastoral-production-fixture.mjs';
 import {meta,terrainH,groundH,down,worldOptions,nativeFixture}from'./pastoral-world-fixture.mjs';
-const P=await moduleAt('assets/pastoral-cover.mjs','?v=pastoral-cover-1'),grass=await moduleAt('assets/meadow-cover.js'),families=await moduleAt('assets/grass-families.mjs'),mixed=await moduleAt('assets/mixed-sward.mjs'),grazed=await moduleAt('assets/grazed-sward.mjs');
+const P=await moduleAt('assets/pastoral-cover.mjs','?v=pastoral-cover-1-commons-landscape-1'),grass=await moduleAt('assets/meadow-cover.js'),families=await moduleAt('assets/grass-families.mjs'),mixed=await moduleAt('assets/mixed-sward.mjs'),grazed=await moduleAt('assets/grazed-sward.mjs');
 const source=new T.InstancedMesh(grass.createGrassTuftGeometry(T,{profile:'near-folded-v1'}),new T.MeshStandardMaterial(),3);source.setColorAt(0,new T.Color('#65974a'));
 const m=new T.Matrix4().compose(new T.Vector3(30,groundH(30,40)-.03,40),new T.Quaternion().setFromEuler(new T.Euler(.15,.3,-.18)),new T.Vector3(1.7,2.1,1.4));source.setMatrixAt(0,m);source.setMatrixAt(1,new T.Matrix4().makeScale(0,0,0).setPosition(30,groundH(30,40),40));source.setMatrixAt(2,m.clone().setPosition(360,groundH(360,-350),-350));
 let field;

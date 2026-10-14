@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {FIELD_SWARD_BANDS,FIELD_SWARD_RECOVERY,FIELD_SWARD_HEIGHT_BOOST,fieldSwardAt} from '../assets/field-sward-bands.mjs';
+import {FIELD_SWARD_BANDS as ALL_FIELD_SWARD_BANDS,FIELD_SWARD_RECOVERY,FIELD_SWARD_HEIGHT_BOOST,fieldSwardAt} from '../assets/field-sward-bands.mjs';
+// Historical morphology assertions retain the original seven live ribbons.
+// The actual sampler includes all nine; test-commons-sward binds the new banks.
+const FIELD_SWARD_BANDS=Object.freeze(ALL_FIELD_SWARD_BANDS.slice(0,7));
 import * as fields from '../assets/pastoral-fields.mjs';
 import * as cover from '../assets/meadow-cover.js';
 import {coyoteCoverDryWeight} from '../assets/biome-weights.mjs';

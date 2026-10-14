@@ -1,5 +1,5 @@
-import {fieldSwardAt} from './field-sward-bands.mjs?v=field-sward-bands-3';
-import {meadowMarginAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {fieldSwardAt} from './field-sward-bands.mjs?v=field-sward-bands-4';
+import {meadowMarginAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {coldWoodlandWeights} from './cold-woodland.mjs?v=cold-woodland-1';
 import {coyoteDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 

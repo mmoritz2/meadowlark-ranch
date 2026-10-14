@@ -1,5 +1,5 @@
 import {dressBotanicalPetals} from '../botanical-petals.mjs?v=botanical-petals-1';
-import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1';
+import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollowpeak-cascades-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
@@ -34,7 +34,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollo
 import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-5';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
 import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
-import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1';
+import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';

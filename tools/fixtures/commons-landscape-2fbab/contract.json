@@ -1,0 +1,700 @@
+{
+  "baseline": "2fbab480a14a5356722bc2efaad31bd31cea4290",
+  "releaseScope": "four-real-standards-and-two-sward-banks",
+  "scope": "Four live-admitted real resident tree standards, exactly two additive rendered grass-bank data rows, coherent cache-parent literals and narrow source-history observers. No low-shrub module or hook. Whole frozen parent source restoration leaves all original physics, selector, resource, terrain and model authorities exact. Actual commons tests import live modules.",
+  "files": {
+    "assets/world-photoscans.js": {
+      "beforeSHA256": "550aa52860da6e113dd6f5302a7cf2933498bb00430cd61ccf97c67e7da3bfd2",
+      "changes": [
+        {
+          "before": "import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';",
+          "after": "import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';\nimport {COMMONS_STANDARDS_PROFILE,COMMONS_STANDARDS_LIMIT,commonsStandardCandidates,commonsTreeCell,withCommonsStandardResources} from './commons-standard-trees.mjs?v=commons-standard-trees-1';",
+          "occurrences": 1
+        },
+        {
+          "before": "    state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);",
+          "after": "    // Four authored standards frame the commons margins; every live original\n    // terrain-aware wood, route, water, prop and vista guard remains authoritative.\n    const commonsStandards=state.commonsStandards={profile:COMMONS_STANDARDS_PROFILE,maximum:COMMONS_STANDARDS_LIMIT,trees:[],skipped:[],detailBudgetChanged:false,additionalDistantTrianglesMax:COMMONS_STANDARDS_LIMIT*2};\n    for(const site of commonsStandardCandidates()){\n      if(commonsStandards.trees.length>=COMMONS_STANDARDS_LIMIT)break;\n      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);\n      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);\n      if(rejection){commonsStandards.skipped.push({id:site.id,x:site.x,z:site.z,reason:rejection});continue;}\n      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredCommonsStandard:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);\n      if(trees.includes(t)){edge.trees.push(t);commonsStandards.trees.push(t);}\n    }\n    state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);",
+          "occurrences": 1
+        },
+        {
+          "before": "    const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}",
+          "after": "    const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}\n    const commonsNewCells=[...cells].filter(([,records])=>records.every(t=>t.authoredCommonsStandard)).map(([key])=>key);commonsStandards.newCells=commonsNewCells;",
+          "occurrences": 1
+        },
+        {
+          "before": "    for(const records of cells.values()){\n      const source=records[0].source;\n      const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);\n      // Camera-facing atlases contain the same baked canopy shading; receiving their\n      // own differently oriented shadow card creates false dark triangles.\n      card.receiveShadow=false;\n      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});\n      for(const p of source.parts){\n        const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);\n        records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));\n        mesh.count=0;treeMeshes.push({mesh,records});\n      }\n    }\n",
+          "after": "    for(const records of cells.values()){\n      const buildCell=()=>{\n      const source=records[0].source;\n      const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);\n      // Camera-facing atlases contain the same baked canopy shading; receiving their\n      // own differently oriented shadow card creates false dark triangles.\n      card.receiveShadow=false;\n      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});\n      for(const p of source.parts){\n        const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);\n        records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));\n        mesh.count=0;treeMeshes.push({mesh,records});\n      }\n      };\n      const key=commonsTreeCell(records[0].source.key,records[0].x,records[0].z);\n      if(commonsNewCells.includes(key))withCommonsStandardResources(key,buildCell);else buildCell();\n    }\n",
+          "occurrences": 1
+        },
+        {
+          "before": "    northValley.plantsProposed=plants.filter(p=>northValley.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)).length;",
+          "after": "    northValley.plantsProposed=plants.filter(p=>northValley.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)).length;\n    commonsStandards.trees=commonsStandards.trees.map(t=>({id:t.id,x:t.x,z:t.z,height:t.height,yaw:t.yaw,margin:t.margin,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,matrix:t.matrix.toArray()}));\n    commonsStandards.woodPartsRegistered=commonsStandards.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "d3373246c4707a8dda038d8cc87035fbc9231acd08d068b2d752daf9075d25d6",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/world-photoscans.js"
+    },
+    "assets/field-sward-bands.mjs": {
+      "beforeSHA256": "5adf795a7b1e841becdfbfc2bc48ccbcee851e789320a18b5313e09f9bf05267",
+      "changes": [
+        {
+          "before": "  ['north-ranch',[[0,-264,4,.35],[20,-275,8,.88],[43,-271,9,.98],[63,-253,7,.78],[75,-243,3,.35]]],\n",
+          "after": "  ['north-ranch',[[0,-264,4,.35],[20,-275,8,.88],[43,-271,9,.98],[63,-253,7,.78],[75,-243,3,.35]]],\n  // Two visible, open commons banks join the planted field shoulders. Their\n  // long tapered tails keep the existing 9 m fade outside the main shrub run.\n  ['north-commons-west-bank',[[36,257,2,.60],[45,248,2.6,.85],[48,245,2.9,.95],[55,241,2.7,.92],[60,244,2.2,.76],[62,247,2,.60]]],\n  ['north-commons-east-bank',[[83,247,2,.60],[75,242,2.4,.78],[70,238,2.7,.94],[69,233,2.9,.95],[68,228,2.6,.86],[65,220,2,.60]]],\n",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "4659ce2f86ec9be314f4d443329391f44c6bdc97099a62ba0fc2719a210dc1f9",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/field-sward-bands.mjs"
+    },
+    "assets/features/index.js": {
+      "beforeSHA256": "1dfda37caea70c2e2efb04ef13fb0916e2804bd4fd76aae833bee4f1084e707b",
+      "changes": [
+        {
+          "before": "./world-flora.js?v=coyote-macroform-5",
+          "after": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "8a0ff27c36ea58b4c28fe80ef32efd04e1db439c9ae4f01f44d437548f36166e",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/features/index.js"
+    },
+    "assets/features/world-flora.js": {
+      "beforeSHA256": "739b5314323eb35958d3119aec2deb02907ade54103abeb1f2e52c797d93eb28",
+      "changes": [
+        {
+          "before": "../meadow-tufts.mjs?v=hollowpeak-cascades-1",
+          "after": "../meadow-tufts.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "../pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "b6c47f7828fbb467c19737e14a9a363dd6137d8b1058bec78decb3027b14bb7f",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/features/world-flora.js"
+    },
+    "assets/grazed-sward.mjs": {
+      "beforeSHA256": "bdecab433537c54ad48f77bf6b34b99ba7ffbd85ec432243aa11ae9e44993c1c",
+      "changes": [
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "2e548d98a4afec8c487e82595764405002b892a4b4c23312f011762990eae0ef",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/grazed-sward.mjs"
+    },
+    "assets/meadow-cover.js": {
+      "beforeSHA256": "58d74d61c5a991dcdc65c448cadd3c4901104bc13f3e0c700d27fb96ad18ccf3",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+          "after": "./field-sward-bands.mjs?v=field-sward-bands-4",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "65bc106d112e2c47b36621735dc8eb55d7a092ab2d87442d6ad6711fc26bfab8",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/meadow-cover.js"
+    },
+    "assets/meadow-landcover.mjs": {
+      "beforeSHA256": "a5c1fe014c1e2d6ba762103a7675d389bd625e9939dbb9899374e51e40e34c56",
+      "changes": [
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "a3c85a917db22c6b6e6d3735738e70f6c5c741ff55c0de76def940f795cdcffc",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/meadow-landcover.mjs"
+    },
+    "assets/meadow-tufts.mjs": {
+      "beforeSHA256": "f8d5a39f4f24ca41f3c42e615d82591d695d0fcb97d1e95d67572664c28dfb30",
+      "changes": [
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "9d16b1b8a588fbebcca43c30e68a28e431aa650160825f28a5bd2553661071ac",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/meadow-tufts.mjs"
+    },
+    "assets/mixed-sward.mjs": {
+      "beforeSHA256": "b45cb2198a9b2aef1bde19dd0acb7211b02134ca8247293bb13a75ab55960570",
+      "changes": [
+        {
+          "before": "./grazed-sward.mjs?v=grass-ribbon-5",
+          "after": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "300067d8e3eaff0582a830da55b894bad7959a59addb9e766ad939ea27932ccc",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/mixed-sward.mjs"
+    },
+    "assets/pastoral-cover-refresh.mjs": {
+      "beforeSHA256": "c8ffcd54e1c8043cd97a660b456e962caebf8d4e8df9907d5a3e8ce006b1b559",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "7debb89d4240336fecb55bb2d156970a53e7c36cdc3982af0e9c861b0658ce73",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/pastoral-cover-refresh.mjs"
+    },
+    "assets/pastoral-cover.mjs": {
+      "beforeSHA256": "495ea3cc969f55f5f7ca43c696e826ea55eb306f5ffdea6faa55fc1aa20c7e0e",
+      "changes": [
+        {
+          "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+          "after": "./field-sward-bands.mjs?v=field-sward-bands-4",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "db0a282bc17f7c794d2a14da1541e9307e306cd2f947675ebcf597c4985daa7c",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/pastoral-cover.mjs"
+    },
+    "assets/pastoral-fields.mjs": {
+      "beforeSHA256": "3ff95754438e715fc5ecbf8186ecead5a22e97f5d5b0a8776976eee71eb4e423",
+      "changes": [
+        {
+          "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+          "after": "./field-sward-bands.mjs?v=field-sward-bands-4",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "7a28359e489c581c5fa212d480b12aea67bb6354fbc0fcb7936e9fb774e162df",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/pastoral-fields.mjs"
+    },
+    "assets/terrain-realism.js": {
+      "beforeSHA256": "0c30d850306445e375ae5729c36c09ebbbd4be08bdbcf55abb5608ddea8285af",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./meadow-landcover.mjs?v=hollowpeak-cascades-1",
+          "after": "./meadow-landcover.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "b2b6ab9f4fb400d063d2cc9e62319c7738a31744fa00bfb0a9fcbeb4c650d518",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/terrain-realism.js"
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "1e596ab8d732fe12db89939ae3f8029d8fa85f6233d73305050a8f0eff6553b5",
+      "changes": [
+        {
+          "before": "./assets/mixed-sward.mjs?v=grass-ribbon-5",
+          "after": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/meadow-cover.js?v=grass-ribbon-5",
+          "after": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1",
+          "after": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/pastoral-fields.mjs?v=hollowpeak-cascades-1",
+          "after": "./assets/pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1",
+          "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/world-photoscans.js?v=leaf-camera-clearance-1",
+          "after": "./assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5",
+          "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "ce95ff26eab21572cd7f9e751633c63ad1ae268e5a93a12edfe6e2ea1139f80a",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/ranch3d.html"
+    }
+  },
+  "observers": {
+    "tools/roof-courses-source-guard.cjs": {
+      "beforeSHA256": "6637c42105e689a60f19a4411b410051f5d77dafe4bcfef08a91ef2abcf3eecd",
+      "changes": [
+        {
+          "before": "const fs=require('node:fs')",
+          "after": "const {normalizeCommonsLandscapeAuditSource,normalizeCommonsLandscapeFixtureChanges}=require('./commons-landscape-source-guard.cjs');\nconst fs=require('node:fs')",
+          "occurrences": 1
+        },
+        {
+          "before": "function view(source,file,kind){const row=",
+          "after": "function view(source,file,kind){source=normalizeCommonsLandscapeAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function assertRoofCoursesCurrent(source,file){const row=",
+          "after": "function assertRoofCoursesCurrent(source,file){source=normalizeCommonsLandscapeAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeRoofCoursesFixtureChanges(diff){const rows=",
+          "after": "function normalizeRoofCoursesFixtureChanges(diff){diff=normalizeCommonsLandscapeFixtureChanges(diff);const rows=",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "8952727868c7908bd6633ff0f61abf8acb7c9edf8066e9066d0d68337a0dd2bb",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/roof-courses-source-guard.cjs"
+    },
+    "tools/test-roof-courses-source-guard.mjs": {
+      "beforeSHA256": "5f18dbf7ebda0b11a348bea7adbfa8b8a0f64e0628464a1be2cdb5b7820747ad",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "import {normalizeCommonsLandscapeAuditSource} from './commons-landscape-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "raw=f=>fs.readFileSync(new URL(f,root),'utf8')",
+          "after": "raw=f=>normalizeCommonsLandscapeAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f)",
+          "occurrences": 1
+        },
+        {
+          "before": "const prior=f=>execFileSync(",
+          "after": "const protectedBytes=f=>{const b=fs.readFileSync(new URL(f,root));return /\\.(?:js|mjs|cjs|html)$/.test(f)?normalizeCommonsLandscapeAuditSource(b.toString('utf8'),f):b;};\nconst prior=f=>execFileSync(",
+          "occurrences": 1
+        },
+        {
+          "before": "sha(fs.readFileSync(new URL(f,root)))",
+          "after": "sha(protectedBytes(f))",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "d61803be73ac7228f60c1a6b99d6fbaeed9b91feaaf45600a5f18dd76aee9e86",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-roof-courses-source-guard.mjs"
+    },
+    "tools/test-field-sward-bands.mjs": {
+      "beforeSHA256": "e4409016924ce0cd33a33287a97d6bdedf782fb1f08f90dfc84f7a04bff7012e",
+      "changes": [
+        {
+          "before": "import {FIELD_SWARD_BANDS,FIELD_SWARD_RECOVERY,FIELD_SWARD_HEIGHT_BOOST,fieldSwardAt} from '../assets/field-sward-bands.mjs';",
+          "after": "import {FIELD_SWARD_BANDS as ALL_FIELD_SWARD_BANDS,FIELD_SWARD_RECOVERY,FIELD_SWARD_HEIGHT_BOOST,fieldSwardAt} from '../assets/field-sward-bands.mjs';\n// Historical morphology assertions retain the original seven live ribbons.\n// The actual sampler includes all nine; test-commons-sward binds the new banks.\nconst FIELD_SWARD_BANDS=Object.freeze(ALL_FIELD_SWARD_BANDS.slice(0,7));",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "aa25119afef43d1e489b9ceb558f4bfd8ae1b4eb579f051401b116a4bd358628",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-field-sward-bands.mjs"
+    },
+    "tools/test-meadow-tufts.mjs": {
+      "beforeSHA256": "ffa15dfe25957be410901eba9717757ce57a65166a6c37e5cd0c205e4939195c",
+      "changes": [
+        {
+          "before": "import {FIELD_SWARD_BANDS,fieldSwardAt} from '../assets/field-sward-bands.mjs';",
+          "after": "import {FIELD_SWARD_BANDS as ALL_FIELD_SWARD_BANDS,fieldSwardAt} from '../assets/field-sward-bands.mjs';\n// Preserve the original seven-bank .65/m gradient survey. The actual nine-bank\n// composed response receives its own bound/convergence test in commons-sward.\nconst FIELD_SWARD_BANDS=Object.freeze(ALL_FIELD_SWARD_BANDS.slice(0,7));",
+          "occurrences": 1
+        },
+        {
+          "before": "import test from 'node:test';",
+          "after": "import test from 'node:test';\nimport {readFileSync} from 'node:fs';",
+          "occurrences": 1
+        },
+        {
+          "before": "test('uncut ribbon height response converges continuously at centimetre and millimetre steps',()=>{\n // This slope bound checks actual composed production output rather than a\n // duplicated smoothstep expression. A height jump would not shrink with h.\n // The quarter-metre guard above remains .09 everywhere outside the ribbons.\n const points=[[98.03,-153.43],[96.75,-157],[75,-162],[78,-157]];\n for(const band of FIELD_SWARD_BANDS){\n  const b=band.bounds;\n  for(let x=b.minX;x<=b.maxX;x+=1)for(let z=b.minZ;z<=b.maxZ;z+=1)points.push([x,z]);\n }\n let checks=0,active=0;\n for(const [x,z] of points){\n  if(fieldSwardAt(x,z).cover>0)active++;\n  const original=grazedTuftScale(x,z,1.3);\n  for(const h of [.01,.001])for(const [dx,dz] of [[h,0],[0,h]]){\n   const next=grazedTuftScale(x+dx,z+dz,1.3);\n   assert.ok(Math.abs(next-original)<.65*h,'bounded small-step response at '+[x,z,dx,dz]);checks++;\n  }\n }\n assert(checks>50000&&active>4000,'survey includes real band interiors and both axes at multiple spatial scales');\n});\n",
+          "after": "// Reproduce the original seven-bank gradient with the actual unchanged current\n// field and tuft function bodies. Only the data dependency points to the full\n// frozen 2fbab seven-bank module; all other tests above use the actual nine-bank\n// response. The new banks have an independent .75/m three-scale live test.\nconst fieldsURL=new URL('../assets/pastoral-fields.mjs',import.meta.url),originalBandsURL=new URL('./fixtures/commons-landscape-2fbab/field-sward-bands.mjs',import.meta.url);\nconst originalFieldsSource=readFileSync(fieldsURL,'utf8').replace(/(from\\s+['\"])(\\.\\.?\\/[^'\"]+)(['\"])/g,(_,a,p,b)=>a+(p.startsWith('./field-sward-bands.mjs')?originalBandsURL.href:new URL(p,fieldsURL).href)+b);\nconst originalFields=await import('data:text/javascript;base64,'+Buffer.from(originalFieldsSource).toString('base64'));\nconst tuftBody=readFileSync(new URL('../assets/meadow-tufts.mjs',import.meta.url),'utf8').replace(/^import .*\\n/gm,'').replace('export function grazedTuftScale','function grazedTuftScale');\nconst originalSevenTuftScale=new Function('meadowSwardGrazingAt',tuftBody+';return grazedTuftScale;')(originalFields.meadowSwardGrazingAt);\n\ntest('uncut ribbon height response converges continuously at centimetre and millimetre steps',()=>{\n // This slope bound checks actual composed production output rather than a\n // duplicated smoothstep expression. A height jump would not shrink with h.\n // The quarter-metre guard above remains .09 everywhere outside the ribbons.\n const points=[[98.03,-153.43],[96.75,-157],[75,-162],[78,-157]];\n for(const band of FIELD_SWARD_BANDS){\n  const b=band.bounds;\n  for(let x=b.minX;x<=b.maxX;x+=1)for(let z=b.minZ;z<=b.maxZ;z+=1)points.push([x,z]);\n }\n let checks=0,active=0;\n for(const [x,z] of points){\n  if(fieldSwardAt(x,z).cover>0)active++;\n  const original=originalSevenTuftScale(x,z,1.3);\n  for(const h of [.01,.001])for(const [dx,dz] of [[h,0],[0,h]]){\n   const next=originalSevenTuftScale(x+dx,z+dz,1.3);\n   assert.ok(Math.abs(next-original)<.65*h,'bounded small-step response at '+[x,z,dx,dz]);checks++;\n  }\n }\n assert(checks>50000&&active>4000,'survey includes real band interiors and both axes at multiple spatial scales');\n});\n",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "ab8fe8847270a833486cb4a6255de92c575f7a6fa708cce5f1972f451ffa2a79",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-meadow-tufts.mjs"
+    },
+    "tools/pastoral-production-fixture.mjs": {
+      "beforeSHA256": "bcf7045ee975eb2545c34c289e3ef11dcedc749c124dc6837044f5ff16f68649",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "82eab42cde1cba1ee1fd93589d8e1095a36b482b5d281710017a3313f511cda3",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/pastoral-production-fixture.mjs"
+    },
+    "tools/test-pastoral-response-independent.mjs": {
+      "beforeSHA256": "d511d7ee9f613d92f80f8aa737a3c03c0f791a7ffe1ec91f48b62af11c7423e6",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "1344593d683ab345dd2bafddca88ff7424ae8e21c86504c38850364472628e37",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-response-independent.mjs"
+    },
+    "tools/test-pastoral-integration-independent.mjs": {
+      "beforeSHA256": "3588da6c31c930219c05de9f22f82bf10fcddcd0508c185d0490a62e61e5188d",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "bec9de0602e324b98cf2707ee0e695e3208db021fbc3a4e3fd74a8fc5201b4f8",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-integration-independent.mjs"
+    },
+    "tools/test-pastoral-cover.mjs": {
+      "beforeSHA256": "0ce8e48e04c5b742610114f095a69afce099e17ce844efad2a8c2cf7285a4358",
+      "changes": [
+        {
+          "before": "../assets/pastoral-cover.mjs?v=pastoral-cover-1",
+          "after": "../assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        },
+        {
+          "before": "../assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1",
+          "after": "../assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "2f60216bff6af30a0c3fbb3c05e4707392fad91d5d1acae22df931fb27c882e7",
+      "parentFixture": "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-cover.mjs"
+    }
+  },
+  "cacheEdges": [
+    {
+      "file": "assets/features/index.js",
+      "child": "assets/features/world-flora.js",
+      "before": "./world-flora.js?v=coyote-macroform-5",
+      "after": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "child": "assets/meadow-tufts.mjs",
+      "before": "../meadow-tufts.mjs?v=hollowpeak-cascades-1",
+      "after": "../meadow-tufts.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "../pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "child": "assets/field-sward-bands.mjs",
+      "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+      "after": "./field-sward-bands.mjs?v=field-sward-bands-4"
+    },
+    {
+      "file": "assets/meadow-landcover.mjs",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/meadow-tufts.mjs",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "child": "assets/grazed-sward.mjs",
+      "before": "./grazed-sward.mjs?v=grass-ribbon-5",
+      "after": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1"
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/pastoral-cover-refresh.mjs",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/pastoral-cover.mjs",
+      "child": "assets/field-sward-bands.mjs",
+      "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+      "after": "./field-sward-bands.mjs?v=field-sward-bands-4"
+    },
+    {
+      "file": "assets/pastoral-cover.mjs",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/pastoral-fields.mjs",
+      "child": "assets/field-sward-bands.mjs",
+      "before": "./field-sward-bands.mjs?v=field-sward-bands-3",
+      "after": "./field-sward-bands.mjs?v=field-sward-bands-4"
+    },
+    {
+      "file": "assets/terrain-realism.js",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/terrain-realism.js",
+      "child": "assets/meadow-landcover.mjs",
+      "before": "./meadow-landcover.mjs?v=hollowpeak-cascades-1",
+      "after": "./meadow-landcover.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "assets/world-photoscans.js",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/mixed-sward.mjs",
+      "before": "./assets/mixed-sward.mjs?v=grass-ribbon-5",
+      "after": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/meadow-cover.js",
+      "before": "./assets/meadow-cover.js?v=grass-ribbon-5",
+      "after": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/pastoral-cover.mjs",
+      "before": "./assets/pastoral-cover.mjs?v=pastoral-cover-1",
+      "after": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/pastoral-cover-refresh.mjs",
+      "before": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1",
+      "after": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/pastoral-fields.mjs",
+      "before": "./assets/pastoral-fields.mjs?v=hollowpeak-cascades-1",
+      "after": "./assets/pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/terrain-realism.js",
+      "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1",
+      "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/world-photoscans.js",
+      "before": "./assets/world-photoscans.js?v=leaf-camera-clearance-1",
+      "after": "./assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1"
+    },
+    {
+      "file": "ranch3d.html",
+      "child": "assets/features/index.js",
+      "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5",
+      "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1"
+    }
+  ],
+  "addedFiles": {
+    "assets/commons-standard-trees.mjs": {
+      "sha256": "159c872c101b0c9a8ae2da78d2c07bf25a35761ad5e2fe6c57e9f3de569a2684"
+    },
+    "tools/test-commons-standard-trees.mjs": {
+      "sha256": "e1bc51ee45c8dcabcefac78bc15366fe1820ed708c1319bbf1ab01f23ed54f5e"
+    },
+    "tools/test-commons-sward.mjs": {
+      "sha256": "cd7e983af1485cfbd838cf6cd3f0bdea2958b974a1f9759f4e08ddfd6c8492fb"
+    },
+    "tools/test-commons-landscape-source-guard.mjs": {
+      "sha256": "9bf4246009cab049c508440e75ac8a99212f21f64f782f9b7af1d0d5d415982d"
+    }
+  },
+  "addedFixtureSHA256": {
+    "tools/fixtures/commons-landscape-2fbab/world-photoscans.js": "550aa52860da6e113dd6f5302a7cf2933498bb00430cd61ccf97c67e7da3bfd2",
+    "tools/fixtures/commons-landscape-2fbab/field-sward-bands.mjs": "5adf795a7b1e841becdfbfc2bc48ccbcee851e789320a18b5313e09f9bf05267",
+    "tools/fixtures/commons-landscape-2fbab/features/index.js": "1dfda37caea70c2e2efb04ef13fb0916e2804bd4fd76aae833bee4f1084e707b",
+    "tools/fixtures/commons-landscape-2fbab/features/world-flora.js": "739b5314323eb35958d3119aec2deb02907ade54103abeb1f2e52c797d93eb28",
+    "tools/fixtures/commons-landscape-2fbab/grazed-sward.mjs": "bdecab433537c54ad48f77bf6b34b99ba7ffbd85ec432243aa11ae9e44993c1c",
+    "tools/fixtures/commons-landscape-2fbab/meadow-cover.js": "58d74d61c5a991dcdc65c448cadd3c4901104bc13f3e0c700d27fb96ad18ccf3",
+    "tools/fixtures/commons-landscape-2fbab/meadow-landcover.mjs": "a5c1fe014c1e2d6ba762103a7675d389bd625e9939dbb9899374e51e40e34c56",
+    "tools/fixtures/commons-landscape-2fbab/meadow-tufts.mjs": "f8d5a39f4f24ca41f3c42e615d82591d695d0fcb97d1e95d67572664c28dfb30",
+    "tools/fixtures/commons-landscape-2fbab/mixed-sward.mjs": "b45cb2198a9b2aef1bde19dd0acb7211b02134ca8247293bb13a75ab55960570",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-cover-refresh.mjs": "c8ffcd54e1c8043cd97a660b456e962caebf8d4e8df9907d5a3e8ce006b1b559",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-cover.mjs": "495ea3cc969f55f5f7ca43c696e826ea55eb306f5ffdea6faa55fc1aa20c7e0e",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-fields.mjs": "3ff95754438e715fc5ecbf8186ecead5a22e97f5d5b0a8776976eee71eb4e423",
+    "tools/fixtures/commons-landscape-2fbab/terrain-realism.js": "0c30d850306445e375ae5729c36c09ebbbd4be08bdbcf55abb5608ddea8285af",
+    "tools/fixtures/commons-landscape-2fbab/parent/ranch3d.html": "1e596ab8d732fe12db89939ae3f8029d8fa85f6233d73305050a8f0eff6553b5",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/roof-courses-source-guard.cjs": "6637c42105e689a60f19a4411b410051f5d77dafe4bcfef08a91ef2abcf3eecd",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-roof-courses-source-guard.mjs": "5f18dbf7ebda0b11a348bea7adbfa8b8a0f64e0628464a1be2cdb5b7820747ad",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-field-sward-bands.mjs": "e4409016924ce0cd33a33287a97d6bdedf782fb1f08f90dfc84f7a04bff7012e",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-meadow-tufts.mjs": "ffa15dfe25957be410901eba9717757ce57a65166a6c37e5cd0c205e4939195c",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/pastoral-production-fixture.mjs": "bcf7045ee975eb2545c34c289e3ef11dcedc749c124dc6837044f5ff16f68649",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-response-independent.mjs": "d511d7ee9f613d92f80f8aa737a3c03c0f791a7ffe1ec91f48b62af11c7423e6",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-integration-independent.mjs": "3588da6c31c930219c05de9f22f82bf10fcddcd0508c185d0490a62e61e5188d",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-cover.mjs": "0ce8e48e04c5b742610114f095a69afce099e17ce844efad2a8c2cf7285a4358",
+    "tools/fixtures/commons-landscape-2fbab/integration-edit.json": "9f9e2e79cc410beb15d7df30e9d4fca4d38a0322e6cb79cb154c9edac2bdccb4"
+  },
+  "protectedExistingFixtureSHA256": {
+    "tools/fixtures/north-rim-planar-22b72cc/added-fixture-sha.json": "22d33eff0fdde272fb069e36bdd5841a861b5b101483906348dcc76a9d88ddc6",
+    "tools/fixtures/north-rim-planar-22b72cc/contract.json": "9cbf330484ada3ba80423534b686eae56099e214413aa6999d08c2a0c90f669c",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/observer-changes.json": "df10830c91f75599a7a66a8e7c2d93341cf893adab9c7daaf117f3f27c4417d8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/contract.json": "4e8d087da58ffbe47445206fe3c979a6f6ea4bf447dc3c23667a24b803f87deb",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/coyote-macroform.mjs": "311700d1760eb7a85c6fec29ebd9d58d986c30f545c2d188c4118684b17d06c0",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/canyon-landscape.js": "43428250634073f7c8482e4644a8ebfd12b40c91c5bb7695a0a3965de5b38b82",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/coyote-macroform.mjs": "824a424a212b666d0d3ba6a4d41dec85e94ef0bd41e90cb4860e993b62b14668",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/full-floor-source184.json": "9db2eb6d66bbb47ec185d0682705e6d62dc2cbc41ee878faab723fc1f9caa76a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-baseline.json": "499fa610fc4f2442a85986c2eb42d24f5b2b59e3e28f54ba7773ceb01bde77fe",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-current-routes.json": "c6786e94857a6cbe5588d78ce3d2a91fb40b51f8900b9adeff42141c7fa0e378",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/numeric-source-changes.json": "76a3cad1d8538c21d75cfc9c526e818ec50234ecc31e236249458e3171346b0d",
+    "tools/fixtures/north-rim-planar-22b72cc/source-changes.json": "410f700866216ec47cd1ce6f63f2ba10a2c9a90fd3a8304ffddfbd8dcd40876b",
+    "tools/fixtures/formal-turf-ff10ddd/contract.json": "7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279",
+    "tools/fixtures/formal-approach-resume-5e173bf/contract.json": "ce3842a217c8ecaf4ba4da5b73c6399296a0235755de683d32ff6add4dd6e9cd",
+    "tools/fixtures/pasture-passage-7a6bacd/contract.json": "5b2cdcd9b14261bc878dcee501202078fff6b09bf8c6b672a04c3f7c56028b3c",
+    "tools/fixtures/north-formal-7a6bacd/contract.json": "aaa1e34f2b4e6f59c75df2b7f3157b479f8573e901746541b0146cf1d052e146",
+    "tools/fixtures/canopy-depth-8f5ad05/contract.json": "c68b308774c0807cec57c6fad36d40bdbe35e9b2d988caf9869a7efa976c5e69",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-architecture.js": "2ca011543add5908da50620edd4037ab419346e323aef9c5a022a3b53eff92c5",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-builder-art.js": "ee72c9da7a55013e3b2975eb10cc3edb09486e9deafc93618a3050b42d0d2d7b",
+    "tools/fixtures/ranch-model-b5d22a6/terrain-grid.f32": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+    "tools/fixtures/ranch-model-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/ranch-model-b5d22a6/fieldstone-contract.json": "0fe2d51edc69f62593f0b4b55e74282912b08bc4f79d341e46d2e9b80633993c",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-timber-contract.json": "c487f587f0a3c379515f12120c4c3d13d39f78f4267750826961b1dd9db34e58",
+    "tools/fixtures/fieldstones-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/fieldstones-b5d22a6/native-supports.json": "cfbdefb188147d5bd713d0e9ff667825fd1756bbb720a637763858e9142e94e4",
+    "tools/fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs": "9ccc02118cee8f1a4f1d99c11e2b86c6f8a2ecc97babc4cb0cfccbb2ba20d378",
+    "tools/fixtures/fieldstone-wall-a78ed79/test-adapter-changes.json": "f958443990a1b2f9687aa1be4440f17a9fc28778b3dfc69c7b921c8d6df85087",
+    "tools/fixtures/fieldstone-wall-a78ed79/preimage-SHA.json": "2e941013ae93d73f43ad962ae2341b0f794746397192150689c639108eb92c6c",
+    "tools/fixtures/fieldstone-wall-a78ed79/contract.json": "2e0d648595155c17dcd2c9b03ae416372a33d3eef13f3b392f9343f8277bb1c6",
+    "tools/fixtures/fieldstone-wall-a78ed79/source-changes.json": "4337b7840c319f3d0368347360b9651c0849f205c1c63b91be3f653cf98ee37c",
+    "tools/fixtures/leaf-camera-clearance-0f9cd99/contract.json": "3c9c30690568740a3c95c484a8fd12767460e2fbcdd4fae9110910b785b0502b",
+    "tools/fixtures/ranch-joinery-b5d22a6.json": "aa40860f03f03b051e6f629a2e1dedc02d941b52ea2381426a67ac745909a8f3",
+    "tools/fixtures/roof-courses-efded6f/contract.json": "1827d1b82188984c0bc38754de0e469c6e25fbc02c0b3d7944d5f31159183acd",
+    "tools/fixtures/roof-courses-efded6f/ranch-architecture.js": "998f3397d436700e650c0d3393403651e444db939790f2ac0a0fe0c42311eacb"
+  },
+  "protectedSourceSHA256": {
+    "assets/features/course-guide.js": "062d55873509bef4d58734ec8be0570ddc71199aec881369cf2f0a880343db56",
+    "assets/features/club-rides.js": "e122bbbc2db6c386c8976377952334b1ed9f17705d7e1a2b63ef705d69a0a416",
+    "assets/formal-fence-guidance.mjs": "2d800f02041caf7f64696ff595aec0715adacf375334ae37ad0da357c8a12437",
+    "assets/features/tack-summon.js": "0899006df0fe173eada4abfef496d3bb8e4936d58ad28209de4de73daa62674e",
+    "assets/features/tack-summon-stall.js": "8ecbd02dc5691cd42486651c5b70038d7860926757c0c8387a8172dbe1201d38",
+    "assets/models/world/realism/island_tree_01.glb": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "assets/island-leaf-surfaces.mjs": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "assets/mature-leaf-patches.mjs": "8d1e4c6c8125f5477494689c7c2808d7fafdd1d2b5c64bcd3e8fee5cad223e59",
+    "assets/woodland-edge-wood-proxies.mjs": "d2c61aa9b857902ac7bc9d4b0643f95b645e5478c9f44dfe7e82ef0f3464cce5",
+    "assets/upright-broadleaf-wood-proxies.mjs": "5c594865b3ad1487a17bbc05ff55cbd78dd6708797c101e1b116b683c0564a94",
+    "assets/tree-impostors.js": "034419c407aa311f3e3ee8e2011408847525dee5182ecd67558e0e8fcc8f3de5",
+    "tools/asset-gen/tree-normal-material.mjs": "50fe0505cf701887f81c85d88d9e7520fa5352eed8a83e5047e29a0ede2842a2",
+    "tools/asset-gen/bake-world-tree.cjs": "ede58937a6c1e3531769e4ca927b99301cfb7d202161000304c41ae88b906ec8",
+    "assets/models/world/realism/tree-impostors.json": "798a79ba9606c51037175b6332662ed282f546940911020b870cf6cfd73f04c3",
+    "assets/models/world/realism/island_tree_01_views.webp": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec",
+    "assets/models/world/realism/island_tree_01_normals.webp": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d",
+    "assets/models/world/realism/orchard_apple_views.webp": "bbfd6ab8ef3464c2bb71f64fb7ea7c0d1932c9dcd0a1638b035dad7ef1a1df39",
+    "assets/models/world/realism/orchard_apple_normals.webp": "fc969164c3132f2e0ce27ebe9e61c519d10c9745cd3318b16de91e79d65e9ebf",
+    "assets/solid-collisions.js": "c06e7bad9f1c59e6ff9a42a98843f2eca408171fa05c173c2c26ed7112c48e1e",
+    "assets/follow-camera.js": "9b8b8ec43b9f65c8dfec842802d901a00ed1ac02aab100ad7ed8593f86f106f8",
+    "assets/ranch-builder-art.js": "9af66c9d8808fecad774a626ec27ef8628e878708d8818db6bc844b2a75a22d2",
+    "assets/ranch-timber-joinery.mjs": "4e3a78a321afd35ce15997652ae9ef24b8623a79d158ab7c85b5a66d49cc5a05",
+    "assets/geology.js": "3e73418720389026b7bd3e7d9c2c4ced18473fd26404d385e68049b641c3e051",
+    "assets/ranch-fieldstones.mjs": "b46f46c4f25af56115a04287256a466058c7e3d112e11473ee851827a4a3499f",
+    "assets/landscape-surface.js": "7f0b21b6bebd4ee4a905f6651f7a4fd56ef0d1d8fb979d6b7349275c288c88dd",
+    "assets/features/world.js": "0dc5ca447dd4b43501837f03c141b7ec886df4dd204bea47fc9b61dda457054e",
+    "assets/features/ranch.js": "60293d377566d75704075e7baa885f4816db296c1accba025b12f7d6759684ad",
+    "sw.js": "0c23433510faeeb45709c7741fd5b12f2edd4d2cf71b532b1ff9104c9a9c9096",
+    "assets/undergrowth.js": "173b90645ba7ade7d32b23bbc3920da103ce37be6e2cabe5b4ad2dbda2bddf6a",
+    "assets/undergrowth-models.js": "99c21fd6ea4450787e3c9142d93c0fc70d23e89d6d947b0465b2de92e213b292",
+    "assets/pastoral-woodland.mjs": "f3f3c9d04612cd194fc567b239ec843e4fdfb9d6f7919df1a2fe3971a0330dc5",
+    "assets/settlement-woodland.mjs": "4c8f50ffd5b77cffb6353331577420863563d894c1109e1a324490783c06ab1b",
+    "assets/north-valley-woodland.mjs": "1dae63fa0c52794b446b85eac331b4cee8be7e5d061061758f42ebc557e653bb",
+    "assets/features/course-clear.js": "e4ffadb134ee1aa647e440ff1ef58e897714716f0146a466fcefbffe1360a1b5",
+    "assets/features/course-engine.js": "dac0e526fca0ea043563546a576b698f5600ab2c7fa896824d8500c784ef0584",
+    "assets/features/ranch-rush-rules.mjs": "fdd575879707bade3180995dea5192915002a3ece9e1b10583de85e34cad040a"
+  }
+}

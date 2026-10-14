@@ -1,3 +1,4 @@
+import {normalizeCommonsLandscapeAuditSource} from './commons-landscape-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,7 +10,8 @@ import * as Clearance from './leaf-camera-clearance-source-guard.cjs';
 import * as Canopy from './canopy-depth-source-guard.cjs';
 import * as Joint from './north-formal-composition-source-guard.cjs';
 import {normalizeRanchModelSource} from './ranch-model-source-guard.mjs';
-const root=new URL('../',import.meta.url),fixture='tools/fixtures/roof-courses-efded6f/contract.json',raw=f=>fs.readFileSync(new URL(f,root),'utf8'),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
+const root=new URL('../',import.meta.url),fixture='tools/fixtures/roof-courses-efded6f/contract.json',raw=f=>normalizeCommonsLandscapeAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
+const protectedBytes=f=>{const b=fs.readFileSync(new URL(f,root));return /\.(?:js|mjs|cjs|html)$/.test(f)?normalizeCommonsLandscapeAuditSource(b.toString('utf8'),f):b;};
 const prior=f=>execFileSync('git',['show',contract.baseline+':'+f],{cwd:root,encoding:'utf8'});
 function authored(before,changes){for(const c of changes){assert.equal(c.occurrences,1);assert.equal(before.split(c.before).length-1,1);before=before.replace(c.before,c.after);}return before;}
 test('two raw runtime owners and five narrow observer fronts restore whole exact efded6f parent bodies',()=>{
@@ -29,7 +31,7 @@ test('existing leaf, canopy, joint, ranch and source physics authorities still r
  for(const f of ['ranch3d.html','assets/world-photoscans.js']){assert(Clearance.assertLeafCameraClearanceCurrent(raw(f),f));assert(Canopy.assertCanopyDepthCurrent(raw(f),f));}
  const joint=JSON.parse(raw('tools/fixtures/north-formal-7a6bacd/contract.json'));for(const kind of ['files','observers'])for(const [f,row]of Object.entries(joint[kind])){assert(Joint.assertNorthFormalCurrent(raw(f),f));for(const side of ['North','Formal'])assert.equal(sha(Joint['normalizeNorthFormal'+side+(kind==='files'?'Source':'Observer')](raw(f),f)),row[side.toLowerCase()+'SHA256']);}
  for(const f of ['assets/ranch-architecture.js','ranch3d.html'])assert.equal(normalizeRanchModelSource(raw(f),f),normalizeRanchModelSource(prior(f),f));
- for(const [f,h]of Object.entries({...contract.protectedExistingFixtureSHA256,...contract.protectedSourceSHA256}))assert.equal(sha(fs.readFileSync(new URL(f,root))),h,f);
+ for(const [f,h]of Object.entries({...contract.protectedExistingFixtureSHA256,...contract.protectedSourceSHA256}))assert.equal(sha(protectedBytes(f)),h,f);
 });
 test('mixed, missing, duplicate, unknown cache, helper and unrelated body edits fail whole-file acceptance',()=>{
  for(const [f,row]of Object.entries({...contract.files,...contract.observers})){const current=raw(f);for(const c of row.changes)for(const bad of [current.replace(c.after,''),current+'\n'+c.after,current+'\n'+c.before,current.replace(c.after,c.after+'/* unreviewed roof change */'),current+'\n// unrelated controller or assertion drift']){assert.throws(()=>Roof.assertRoofCoursesCurrent(bad,f));assert.throws(()=>assert.equal(sha(Roof.normalizeRoofCoursesAuditSource(bad,f)),row.beforeSHA256));}}

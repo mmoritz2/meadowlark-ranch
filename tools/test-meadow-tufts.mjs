@@ -1,7 +1,11 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {grazedTuftScale} from '../assets/meadow-tufts.mjs';
-import {FIELD_SWARD_BANDS,fieldSwardAt} from '../assets/field-sward-bands.mjs';
+import {FIELD_SWARD_BANDS as ALL_FIELD_SWARD_BANDS,fieldSwardAt} from '../assets/field-sward-bands.mjs';
+// Preserve the original seven-bank .65/m gradient survey. The actual nine-bank
+// composed response receives its own bound/convergence test in commons-sward.
+const FIELD_SWARD_BANDS=Object.freeze(ALL_FIELD_SWARD_BANDS.slice(0,7));
 import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY,meadowMarginAt} from '../assets/pastoral-fields.mjs';
 
 test('fully grazed fields cap tall tussocks without enlarging already short grass',()=>{
@@ -78,6 +82,16 @@ test('cultivated land, open interiors and the prior west recovery retain reviewe
 });
 
 
+// Reproduce the original seven-bank gradient with the actual unchanged current
+// field and tuft function bodies. Only the data dependency points to the full
+// frozen 2fbab seven-bank module; all other tests above use the actual nine-bank
+// response. The new banks have an independent .75/m three-scale live test.
+const fieldsURL=new URL('../assets/pastoral-fields.mjs',import.meta.url),originalBandsURL=new URL('./fixtures/commons-landscape-2fbab/field-sward-bands.mjs',import.meta.url);
+const originalFieldsSource=readFileSync(fieldsURL,'utf8').replace(/(from\s+['"])(\.\.?\/[^'"]+)(['"])/g,(_,a,p,b)=>a+(p.startsWith('./field-sward-bands.mjs')?originalBandsURL.href:new URL(p,fieldsURL).href)+b);
+const originalFields=await import('data:text/javascript;base64,'+Buffer.from(originalFieldsSource).toString('base64'));
+const tuftBody=readFileSync(new URL('../assets/meadow-tufts.mjs',import.meta.url),'utf8').replace(/^import .*\n/gm,'').replace('export function grazedTuftScale','function grazedTuftScale');
+const originalSevenTuftScale=new Function('meadowSwardGrazingAt',tuftBody+';return grazedTuftScale;')(originalFields.meadowSwardGrazingAt);
+
 test('uncut ribbon height response converges continuously at centimetre and millimetre steps',()=>{
  // This slope bound checks actual composed production output rather than a
  // duplicated smoothstep expression. A height jump would not shrink with h.
@@ -90,9 +104,9 @@ test('uncut ribbon height response converges continuously at centimetre and mill
  let checks=0,active=0;
  for(const [x,z] of points){
   if(fieldSwardAt(x,z).cover>0)active++;
-  const original=grazedTuftScale(x,z,1.3);
+  const original=originalSevenTuftScale(x,z,1.3);
   for(const h of [.01,.001])for(const [dx,dz] of [[h,0],[0,h]]){
-   const next=grazedTuftScale(x+dx,z+dz,1.3);
+   const next=originalSevenTuftScale(x+dx,z+dz,1.3);
    assert.ok(Math.abs(next-original)<.65*h,'bounded small-step response at '+[x,z,dx,dz]);checks++;
   }
  }

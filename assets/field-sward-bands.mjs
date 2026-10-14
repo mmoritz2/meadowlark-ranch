@@ -12,6 +12,10 @@ const authored=[
   ['north-meadow',[[11,214,4,.35],[24,207,7,.72],[46,207,8,.97],[66,215,7,.90],[80,233,4,.42]]],
   ['riverside',[[217,116,4,.40],[232,108,7,.90],[251,113,8,.96],[266,128,4,.45]]],
   ['north-ranch',[[0,-264,4,.35],[20,-275,8,.88],[43,-271,9,.98],[63,-253,7,.78],[75,-243,3,.35]]],
+  // Two visible, open commons banks join the planted field shoulders. Their
+  // long tapered tails keep the existing 9 m fade outside the main shrub run.
+  ['north-commons-west-bank',[[36,257,2,.60],[45,248,2.6,.85],[48,245,2.9,.95],[55,241,2.7,.92],[60,244,2.2,.76],[62,247,2,.60]]],
+  ['north-commons-east-bank',[[83,247,2,.60],[75,242,2.4,.78],[70,238,2.7,.94],[69,233,2.9,.95],[68,228,2.6,.86],[65,220,2,.60]]],
 ];
 export const FIELD_SWARD_RECOVERY=.92;
 export const FIELD_SWARD_HEIGHT_BOOST=.22;

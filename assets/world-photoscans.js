@@ -2,6 +2,7 @@ import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regiona
 import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
 import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
+import {COMMONS_STANDARDS_PROFILE,COMMONS_STANDARDS_LIMIT,commonsStandardCandidates,commonsTreeCell,withCommonsStandardResources} from './commons-standard-trees.mjs?v=commons-standard-trees-1';
 import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
 import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
 import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
@@ -29,7 +30,7 @@ import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=vill
 import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {applyPineSprayCutout} from './pine-spray-surfaces.mjs?v=pine-spray-surfaces-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -492,6 +493,17 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(trees.includes(t)){edge.trees.push(t);northValley.trees.push(t);valleyCounts.set(site.grove,valleyCounts.get(site.grove)+1);}
     }
     northValley.groups=NORTH_VALLEY_WOODLAND_GROUPS.map(g=>({id:g.id,count:valleyCounts.get(g.id),cap:g.cap}));
+    // Four authored standards frame the commons margins; every live original
+    // terrain-aware wood, route, water, prop and vista guard remains authoritative.
+    const commonsStandards=state.commonsStandards={profile:COMMONS_STANDARDS_PROFILE,maximum:COMMONS_STANDARDS_LIMIT,trees:[],skipped:[],detailBudgetChanged:false,additionalDistantTrianglesMax:COMMONS_STANDARDS_LIMIT*2};
+    for(const site of commonsStandardCandidates()){
+      if(commonsStandards.trees.length>=COMMONS_STANDARDS_LIMIT)break;
+      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);
+      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);
+      if(rejection){commonsStandards.skipped.push({id:site.id,x:site.x,z:site.z,reason:rejection});continue;}
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredCommonsStandard:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);
+      if(trees.includes(t)){edge.trees.push(t);commonsStandards.trees.push(t);}
+    }
     state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
@@ -538,7 +550,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
     const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
+    const commonsNewCells=[...cells].filter(([,records])=>records.every(t=>t.authoredCommonsStandard)).map(([key])=>key);commonsStandards.newCells=commonsNewCells;
     for(const records of cells.values()){
+      const buildCell=()=>{
       const source=records[0].source;
       const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);
       // Camera-facing atlases contain the same baked canopy shading; receiving their
@@ -550,6 +564,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));
         mesh.count=0;treeMeshes.push({mesh,records});
       }
+      };
+      const key=commonsTreeCell(records[0].source.key,records[0].x,records[0].z);
+      if(commonsNewCells.includes(key))withCommonsStandardResources(key,buildCell);else buildCell();
     }
     edge.collision={rootNames:[],owners:0,parts:0,registeredParts:0,sourceHash:WOODLAND_WOOD_SOURCE_SHA,leavesExcluded:true,allWoodHeights:true,renderChildren:0};
     if(edge.trees.length){
@@ -647,6 +664,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     northValley.woodPartsRegistered=northValley.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
     northValley.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
     northValley.plantsProposed=plants.filter(p=>northValley.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)).length;
+    commonsStandards.trees=commonsStandards.trees.map(t=>({id:t.id,x:t.x,z:t.z,height:t.height,yaw:t.yaw,margin:t.margin,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,matrix:t.matrix.toArray()}));
+    commonsStandards.woodPartsRegistered=commonsStandards.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
 
     W.nearGroundCover?.invalidate?.();
   }

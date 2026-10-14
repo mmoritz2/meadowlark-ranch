@@ -1,0 +1,984 @@
+import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';
+import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
+import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
+import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
+import {installOuterSunShadows} from './outer-sun-shadows.mjs?v=outer-sun-shadow-4';
+import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-outer-woodland-3';
+import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
+import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
+import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
+import {patchLeafCameraClearance} from './leaf-camera-clearance.mjs?v=leaf-camera-clearance-1';
+import {patchSummerLeafPigment,isSummerLeafMaterial} from './summer-leaf-pigment.mjs?v=summer-leaf-pigment-1';
+import {SETTLEMENT_WOODLAND_BELTS,SETTLEMENT_WOODLAND_MAX,terrainAwareWoodEnvelope,settlementWoodlandCandidates,settlementWoodlandPlants} from './settlement-woodland.mjs?v=settlement-woodland-1';
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
+import {selectPastoralWoodland,isOrdinaryTrunkCircle} from './pastoral-woodland.mjs?v=pastoral-woodland-1';
+import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=full-crown-2';
+import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
+import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
+import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
+import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-5';
+import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
+import {installThunderOak} from './thunder-oak-art.js?v=landmark-fields-1';
+import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
+import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
+import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
+import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
+import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
+import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
+import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
+import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
+import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
+import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
+import {applyPineSprayCutout} from './pine-spray-surfaces.mjs?v=pine-spray-surfaces-1';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
+
+// One authored mixed-age edge frames the Clover approach. Existing scatter stays intact.
+const WOODLAND_EDGE_TREES=[
+  {x:16,z:-98,height:8.0,yaw:.42}, {x:23,z:-104,height:10.2,yaw:1.18,upright:true},
+  {x:29,z:-111,height:11.2,yaw:2.10}, {x:36,z:-111,height:8.2,yaw:-1.95},
+  {x:36,z:-102,height:10.4,yaw:-.24,upright:true}, {x:20,z:-89,height:8.1,yaw:-.71},
+  {x:29,z:-91,height:9.7,yaw:2.82,upright:true}, {x:38,z:-88,height:8.3,yaw:1.61},
+];
+const WOODLAND_EDGE_PLANTS=[
+  ['shrub_03',17,-111,1.04,.3],['shrub_04',20,-110,.92,1.4],['fern_02',17,-105,.68,.2],
+  ['shrub_03',21,-107,1.12,2.1],['fern_02',24,-108,.72,1.2],['shrub_04',26,-110,.96,-.5],
+  ['fern_02',27,-107,.64,2.8],['shrub_03',31,-110,1.18,.9],['shrub_04',33,-112,.98,1.8],
+  ['fern_02',34,-108,.71,2.4],['shrub_03',37,-108,1.03,-.4],['shrub_04',38,-104,.86,.7],
+  ['fern_02',33,-103,.78,1.6],['shrub_03',35,-99,1.19,2.3],['shrub_04',38,-98,1.02,1.1],
+  ['fern_02',31,-99,.69,-.8],['shrub_03',30,-96,1.13,.6],['shrub_04',34,-94,.94,2.7],
+  ['fern_02',37,-92,.75,1.5],['shrub_03',38,-90,1.02,-1.2],['shrub_04',35,-87,.98,2.0],
+  ['fern_02',32,-89,.72,-.3],['shrub_03',27,-90,1.12,1.7],['shrub_04',26,-94,.90,.4],
+  ['fern_02',24,-92,.73,2.3],['shrub_03',21,-92,1.04,.8],['shrub_04',18,-92,1.01,-.8],
+  ['fern_02',18,-87,.71,1.2],['shrub_03',21,-86,.97,2.8],['shrub_04',23,-88,.87,.5],
+  ['fern_02',23,-100,.70,-1.3],['shrub_03',26,-101,1.03,1.4],['shrub_04',29,-104,.92,2.2],
+  ['fern_02',31,-106,.70,.1],['shrub_03',16,-101,1.03,2.6],['fern_02',17,-97,.71,.8],
+];
+
+// Licensed CC0 assets and original derivatives. The world stays available until each
+// replacement has loaded; detailed crowns are budgeted around the rider.
+export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
+  const {THREE,scene,world:W,horse:H,renderer}=G;
+  const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
+  // Assigned synchronously: details starts first, but yields before consuming this.
+  // The narrow promise never rejects and photoscans never awaits worldDetails.
+  const edge=state.woodlandEdge={trees:[],plants:[],skipped:[],physicsReady:false,artOnly:true,ready:null};
+  let finishEdge;edge.ready=new Promise(resolve=>{finishEdge=data=>{if(edge.settled)return;edge.settled=true;Object.assign(edge,data);resolve(data);};});
+  const loader=new GLTFLoader(),wind={value:0},group=new THREE.Group();
+  group.name='Poly Haven environment';scene.add(group);
+  const loaded=new Map(),trees=[],detailPatches=[];
+  let outerRockParts=null;
+  let youngOuterSources=[];
+  const zero=new THREE.Matrix4().makeScale(0,0,0),UP=new THREE.Vector3(0,1,0),WHITE=new THREE.Color(0xffffff);
+  const q=new THREE.Quaternion(),v=new THREE.Vector3(),s=new THREE.Vector3();
+  const rnd=(x,z,k=0)=>{const n=Math.sin(x*127.1+z*311.7+k*74.7)*43758.5453;return n-Math.floor(n);};
+  const protectedPoints=[...Object.values(W.things||{}),...Object.values(W.mapMarkers||{}),...Object.values(W.FORAGE_SPOTS||{})].filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.z));
+  const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
+  function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
+  function clear(x,z,r=1){
+    if(inMeadowOpening(x,z)||fallsContainsWater(x,z,r+1.5))return false;
+    if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
+    if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
+    if(W.sceneryArt.containsWaterfall(x,z,r))return false;
+    if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
+    if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
+    if(Math.hypot(x-20,z-16)<r+19||oasisContainsWater(x,z,r+.7))return false;
+    if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return false;
+    if(W.colliders.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.r||0)+.3))return false;
+    for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;
+    return Math.abs(W.groundH(x+r,z)-W.groundH(x-r,z))<r*.40&&Math.abs(W.groundH(x,z+r)-W.groundH(x,z-r))<r*.40;
+  }
+  function configureMaterial(mat,foliage=false){
+    mat.envMapIntensity=foliage?.48:.68;
+    for(const key of ['map','normalMap','roughnessMap','metalnessMap','aoMap'])if(mat[key])mat[key].anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+    if(!foliage)return;
+    // Detailed scan textures lose small leaves under mip filtering. The lower
+    // coverage threshold retains those sprays; wood and source-bake masks stay exact.
+    // The custom depth material below inherits this same runtime threshold.
+    if(isSummerLeafMaterial(mat.name))mat.alphaTest=.22;
+    enableOpaqueFoliageCoverage(THREE,mat);mat.side=THREE.DoubleSide;mat.shadowSide=THREE.DoubleSide;
+    // Thin needle cards receive light across a canopy, not like solid bark.
+    mat.aoMapIntensity=.45;mat.normalScale.multiplyScalar(.55);
+    const deform=sh=>{
+      sh.uniforms.scanWind=wind;
+      sh.vertexShader='uniform float scanWind;\n'+sh.vertexShader;
+      sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+        #ifdef USE_INSTANCING
+          float scanPhase=instanceMatrix[3].x*.17+instanceMatrix[3].z*.23;
+          float scanTip=max(0.0,position.y);
+          transformed.x+=sin(scanWind*.85+scanPhase+position.y*.4)*scanTip*.006;
+          transformed.z+=sin(scanWind*1.1+scanPhase)*scanTip*.004;
+        #endif`);
+    };
+    mat.onBeforeCompile=(sh,activeRenderer)=>{
+      deform(sh);patchSummerLeafPigment(sh,mat.name);patchSeasonalFoliage(sh);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
+      sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+        vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
+        normal=normalize(mix(normal,canopyUp,.42));`);
+      sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
+        #if NUM_DIR_LIGHTS > 0
+          float scanBack=pow(max(0.0,dot(-normal,directionalLights[0].direction)),2.0);
+          outgoingLight+=diffuseColor.rgb*directionalLights[0].color*scanBack*.055;
+        #endif
+        #include <opaque_fragment>`);
+      if(mat.name==='island_tree_01_leaves')patchLeafCameraClearance(sh);
+      patchFoliageCoverage(sh,activeRenderer);
+    };
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves');
+    const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
+    depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
+    mat.userData.scanDepth=depth;
+  }
+  async function load(id){
+    if(loaded.has(id))return loaded.get(id);
+    const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb'+(id==='upright_broadleaf_01'?'?v=full-crown-2':''));
+    asset.scene.updateMatrixWorld(true);
+    if(id==='island_tree_01')asset.scene.traverse(o=>{if(o.isMesh&&o.material.name==='island_tree_01_leaves'){
+      (state.leafSurfaces??={})[id]=applyIslandLeafSurfaces(THREE,o.geometry);
+    }});
+    const canopyStarted=performance.now(),canopyShade=prepareCanopyShade(THREE,asset.scene);
+    if(canopyShade)(state.canopyShading??={})[id]={...canopyShade,prepareMs:performance.now()-canopyStarted};
+    const mats=new Set();asset.scene.traverse(o=>{if(o.isMesh)for(const mat of Array.isArray(o.material)?o.material:[o.material])mats.add(mat);});
+    for(const mat of mats){
+      // Match the mature crown to the daylight pasture exposure; bark stays raw.
+      if(id==='pine_tree_01'&&/twig/.test(mat.name))mat.color.setRGB(1.7,2.1,1.5);
+      mat.userData.hasCanopyShade=!!canopyShade&&/leaves/.test(mat.name);
+      configureMaterial(mat,/leaves|twig/.test(mat.name));
+      if(id==='pine_tree_01'&&mat.name==='pine_tree_01_twig'){
+        applyPineSprayCutout(mat);applyPineSprayCutout(mat.userData.scanDepth);
+      }
+    }
+    loaded.set(id,asset.scene);state.assets.push(id);return asset.scene;
+  }
+  // Collection nodes have gallery translations. Bake rotation/scale, retaining
+  // their authored local origin rather than the source file's contact-sheet grid.
+  function pieces(root,collection=false){
+    const result=[];
+    root.traverse(o=>{
+      if(!o.isMesh)return;
+      const geo=o.geometry.clone(),matrix=o.matrixWorld.clone();
+      deinterleaveGeometry(geo);
+      if(collection)matrix.setPosition(0,0,0);
+      geo.applyMatrix4(matrix);geo.computeBoundingBox();geo.computeBoundingSphere();
+      result.push({geo,mat:o.material,name:o.name,bounds:geo.boundingBox.clone()});
+    });
+    return result;
+  }
+  function instances(piece,points,label){
+    const mesh=new THREE.InstancedMesh(piece.geo,piece.mat,points.length);
+    mesh.name=label;mesh.castShadow=true;mesh.receiveShadow=true;
+    mesh.customDepthMaterial=piece.mat.userData.scanDepth;
+    for(let i=0;i<points.length;i++)mesh.setMatrixAt(i,points[i]);
+    mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh);return mesh;
+  }
+  function placement(piece,x,z,scale,yaw=0,sink=.04){
+    q.setFromAxisAngle(UP,yaw);s.setScalar(scale);
+    v.set(x,W.groundH(x,z)-piece.bounds.min.y*scale-sink,z);
+    return new THREE.Matrix4().compose(v,q,s);
+  }
+  function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
+  let treeMeshes=[],treeCards=[];
+  async function installTrees(){
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=pine-photo-island-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
+    const specs=[['tree_small_02',-1,broad,'broadleaf'],
+      ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
+      ['pine_tree_01',0,mature.children[0],'mature-pine'],
+      ['island_tree_01',-1,leafy,'canopy-broadleaf'],
+      ['jacaranda_tree',-1,woodland,'woodland-broadleaf']];
+    const variants=specs.map(([id,variant,root,key])=>{
+      const parts=pieces(root,variant>=0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
+      const meta=catalog.trees.find(t=>t.id===id&&t.variant===variant);
+      if(!meta)throw Error('Missing tree view metadata: '+id);
+      const triangles=parts.reduce((n,p)=>n+(p.geo.index?.count||p.geo.attributes.position.count)/3,0);
+      return {parts,bounds,key,meta,triangles};
+    });
+    const island=variants.find(v=>v.key==='canopy-broadleaf');
+    const fruit=createOrchardFruit({THREE,branchGeometry:island.parts.find(p=>p.mat.name.endsWith('_branches')).geo,sourceHeight:island.meta.sourceHeight,forageArt:W.forageArt});
+    const orchardParts=[...island.parts,...pieces(fruit.root)],orchardBounds=new THREE.Box3();orchardParts.forEach(p=>orchardBounds.union(p.bounds));
+    const orchardMeta=catalog.trees.find(t=>t.id==='orchard_apple');if(!orchardMeta)throw Error('Missing orchard view metadata');
+    const orchardSource={parts:orchardParts,bounds:orchardBounds,key:'orchard-broadleaf',meta:orchardMeta,triangles:island.triangles+fruit.stats.triangles};
+    variants.push(orchardSource);
+    // Mature fallbacks retain the original wood and its collision envelope.
+    // Only the leaf surface patches grow; the material/depth preparation stays shared.
+    let matureLeafPart;const matureStarted=performance.now(),identity=new THREE.Matrix4();
+    broad.traverse(o=>{
+      if(!o.isMesh||o.material.name!=='tree_small_02_leaves')return;
+      if(matureLeafPart||!o.matrixWorld.equals(identity))throw Error('Unexpected mature leaf source frame');
+      const originalLeafPart=variants[0].parts.find(p=>p.mat.name===o.material.name);
+      const geo=createMatureLeafGeometry(THREE,o.geometry,originalLeafPart.geo);
+      // Shade density depends on geometry, not pigment. The throwaway facade
+      // absorbs prepareCanopyShade's pigment multiply without retinting the real material.
+      const leaf={isMesh:true,geometry:geo,matrixWorld:identity,material:{name:o.material.name,color:o.material.color.clone()}};
+      const facade={updateMatrixWorld(){},traverse(fn){fn(leaf);}};
+      const shade=prepareCanopyShade(THREE,facade);
+      (state.canopyShading??={})[MATURE_LEAF_ALIAS]={...shade,prepareMs:performance.now()-matureStarted};
+      matureLeafPart={geo,mat:o.material,name:o.name,bounds:geo.boundingBox.clone()};
+    });
+    if(!matureLeafPart)throw Error('Missing original mature leaf primitive');
+    const matureLeafParts=variants[0].parts.map(p=>p.mat.name==='tree_small_02_leaves'?matureLeafPart:p),matureLeafBounds=new THREE.Box3();
+    matureLeafParts.forEach(p=>matureLeafBounds.union(p.bounds));
+    const matureLeafMeta=catalog.trees.find(t=>t.id===MATURE_LEAF_ALIAS&&t.variant===-1);
+    if(!matureLeafMeta)throw Error('Missing mature leaf view metadata');
+    const matureLeafSource={parts:matureLeafParts,bounds:matureLeafBounds,key:'mature-leaf-broadleaf',meta:matureLeafMeta,triangles:variants[0].triangles};
+    variants.push(matureLeafSource);
+    // A second growth form gives the Clover edge upright crowns. Whole photo
+    // leaf surfaces retain their UVs; all detail tiers use the same baked model.
+    const uprightRoot=await load('upright_broadleaf_01'),uprightParts=pieces(uprightRoot),uprightBounds=new THREE.Box3();
+    uprightParts.forEach(p=>uprightBounds.union(p.bounds));
+    const uprightMeta=catalog.trees.find(t=>t.id==='upright_broadleaf_01'&&t.variant===-1);
+    if(!uprightMeta)throw Error('Missing upright broadleaf view metadata');
+    const uprightSource={parts:uprightParts,bounds:uprightBounds,key:'upright-broadleaf',meta:uprightMeta,
+      triangles:uprightParts.reduce((n,p)=>n+(p.geo.index?.count||p.geo.attributes.position.count)/3,0)};
+    variants.push(uprightSource);
+    const sourceFor=t=>{
+      if(t.authoredOrchard)return orchardSource;
+      if(t.authoredWoodlandEdge)return t.upright?uprightSource:t.height>=9?matureLeafSource:variants[0];
+      if(alpineSnowAt(t.x,t.z)>.35)return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
+      // Related trees grow in groves. Young roadside trees stay slender; mature
+      // oak sites carry full crowns. Broad trees define meadow and woodland edges.
+      const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
+      if(roadEdge<8.5&&!['pine','snowpine','cold'].includes(t.kind))return ['oak','blossom'].includes(t.kind)&&t.height>=7.2?variants[5]:variants[0];
+      if(t.kind==='woodland')return variants[6];
+      if(t.kind==='willow')return variants[5];
+      const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
+      if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28){
+        const village=Math.hypot(t.x-47,t.z+50)<34;
+        const grove=Math.sin(t.x*.034+t.z*.011)+Math.cos(t.z*.047-t.x*.009);
+        const spreading=!village&&grove+rnd(t.x,t.z,53)*.65>-.32;
+        if(spreading)return grove>.55?variants[6]:variants[5];
+        // Keep earlier grove choices, young trees, village and cold margins exact.
+        const matureFallback=!village&&!t.authoredVillage&&['oak','birch','blossom'].includes(t.kind)
+          &&t.height>=7.2&&t.height<=12.5&&coldWoodlandWeights(t.x,t.z).weight<=.08;
+        return matureFallback?matureLeafSource:variants[0];
+      }
+      return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
+    };
+    const onRoad=(x,z)=>(G.worldPaths?.trackDist(x,z)??Infinity)<3.7||W.pathDist(x,z)<3.2;
+    const clearTrunk=(x,z)=>{
+      for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if(c.r<=1.2&&Math.hypot(c.x-x,c.z-z)<.15)W.colliders.splice(i,1);}
+      for(let i=(W.forestPoints?.length||0)-1;i>=0;i--)if(Math.hypot(W.forestPoints[i].x-x,W.forestPoints[i].z-z)<.15)W.forestPoints.splice(i,1);
+    };
+    state.roadClearedTrees=0;state.roadClearedSnags=0;state.meadowClearings=[];
+    const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
+    const coldStats=state.coldWoodland={trees:0,mature:0,regeneration:0,mixedMargin:0,sourceChanges:0,sourceCounts:{}};
+    const add=t=>{
+      const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
+      const cleared=!t.authoredOrchard&&((road&&!t.authoredVillage)||(meadow&&!t.allowMeadowMargin)||G.vistas?.clearZones?.some(test=>test(t.x,t.z)));
+      if(cleared){
+        if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
+        clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
+        if(meadow)state.meadowClearings.push({x:t.x,z:t.z,kind:t.kind});
+        return;
+      }
+      // Blossom placements share the scanned broadleaf canopy pipeline too;
+      // keeping their old cards left disconnected leaves and bare forked poles.
+      if(t.root&&!t.root.visible)return;
+      if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
+      t.source=sourceFor(t);
+      const autumn=1-THREE.MathUtils.smoothstep(Math.hypot(t.x-300,t.z+300),110,145);
+      if(autumn>0&&t.source.key.includes('broadleaf')){
+        // Neighbouring trees share seasonal patches; no random-sequence changes.
+        const patch=rnd(Math.floor(t.x/24),Math.floor(t.z/24),91);
+        t.tint=autumnPalette[Math.floor(patch*autumnPalette.length)].clone().lerp(WHITE,1-autumn);
+      }else t.tint=WHITE;
+      // Broad crowns occupy the old tree sites; trunks and route clearances stay fixed.
+      if(t.source.key==='canopy-broadleaf')t.height=Math.min(t.height,12.5);
+      if(t.source.key==='woodland-broadleaf'&&t.kind!=='woodland')t.height=Math.min(14,Math.max(8,t.height*1.35));
+      // Keep the older source/crown rules exact outside the established cold
+      // climate. Evergreen age patches alter crowns, never their trunk sites.
+      if(!t.authoredOrchard&&!t.authoredVillage&&coldWoodlandWeights(t.x,t.z).weight>.08){
+        const elevation=W.groundH(t.x,t.z),grade=Math.hypot(W.groundH(t.x+1,t.z)-W.groundH(t.x-1,t.z),W.groundH(t.x,t.z+1)-W.groundH(t.x,t.z-1))*.5;
+        const profile=coldWoodlandProfile({x:t.x,z:t.z,height:t.height,source:t.source.key,elevation,grade});
+        const source=variants.find(v=>v.key===profile.source);
+        if(!source)throw Error('Missing cold woodland source: '+profile.source);
+        coldStats.sourceChanges+=source!==t.source;t.source=source;
+        t.height=profile.height;t.crownWidth=profile.crownWidth;
+        coldStats.trees++;coldStats.sourceCounts[source.key]=(coldStats.sourceCounts[source.key]||0)+1;
+        if(source.key==='mature-pine')coldStats.mature++;
+        else if(source.key.startsWith('pine-'))coldStats.regeneration++;
+        else coldStats.mixedMargin++;
+      }
+      trees.push(t);
+    };
+    // Respect cleared placements in both the original seed batches and new landmark zones.
+    state.hollowpeakMownSeeds=[];state.hollowpeakCliffSeeds=[];
+    const seedMatrix=new THREE.Matrix4();
+    for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','blossom','pine','snowpine'].includes(o.userData.treeSpecies))){
+      const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
+      if(!leaves)continue;
+      const kind=stem.userData.treeSpecies,height=kind==='pine'?7.4:kind==='snowpine'?7.2:6.2;
+      stem.userData.treePoints.forEach((p,i)=>{
+        stem.getMatrixAt(i,seedMatrix);const woodHidden=seedMatrix.determinant()===0;
+        leaves.getMatrixAt(i,seedMatrix);const leavesHidden=seedMatrix.determinant()===0;
+        if(woodHidden||leavesHidden){
+          const retired=retireHiddenHollowpeakSeed(W,p,kind,true,ALPINE_BOUNDS);
+          if(retired)state.hollowpeakMownSeeds.push(retired);
+          return;
+        }
+        const cliffSeed=retireSteepFallsSeed(W,p,kind);
+        if(cliffSeed){
+          stem.setMatrixAt(i,zero);leaves.setMatrixAt(i,zero);
+          stem.instanceMatrix.needsUpdate=leaves.instanceMatrix.needsUpdate=true;
+          state.hollowpeakCliffSeeds.push(cliffSeed);
+          return;
+        }
+        add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind});
+      });
+    }
+    const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[],floraOwners=new Map();
+    for(const owner of G.floraPkg?.treeOwners||[]){
+      if(!floraOwners.has(owner.canopy))floraOwners.set(owner.canopy,new Map());
+      floraOwners.get(owner.canopy).set(owner.canopyIndex,owner);
+    }
+    if(banks?.trunk){
+      const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
+      for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
+      for(const kind of ['oak','birch','blossom','pine','cold','willow']){
+        const bank=banks[kind];if(!bank)continue;floraCanopies.push(bank.im);
+        for(let i=0;i<bank.n;i++){
+          bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
+          const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;
+          add({x:pos.x,z:pos.z,height:scale.y,yaw:new THREE.Euler().setFromQuaternion(rot).y,kind,
+            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i,floraOwner:floraOwners.get(bank.im)?.get(i)});
+        }
+      }
+    }
+    for(const t of G.quartersPkg?.scanTrees||[])add({...t});
+    state.replacedQuarterTrees=(G.quartersPkg?.scanTrees||[]).length;
+    const snags=banks?.snag;
+    if(snags){
+      const matrix=new THREE.Matrix4(),pos=new THREE.Vector3();
+      for(let i=0;i<snags.n;i++){
+        snags.im.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())<1e-8)continue;
+        pos.setFromMatrixPosition(matrix);const road=onRoad(pos.x,pos.z),meadow=inMeadowOpening(pos.x,pos.z);if(!road&&!meadow)continue;
+        snags.im.setMatrixAt(i,zero);clearTrunk(pos.x,pos.z);if(road)state.roadClearedSnags++;
+        if(meadow)state.meadowClearings.push({x:pos.x,z:pos.z,kind:'snag'});
+      }
+      snags.im.instanceMatrix.needsUpdate=true;
+    }
+    const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree','Natural pine pine','Natural snowpine pine'].includes(o.name)&&o.parent===scene)natural.push(o);});
+    for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
+      add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
+    }
+    // These authored food trees are nested under Forage decor, so the legacy
+    // scene-root tree scan above cannot discover them. Keep their picking sites.
+    const orchard=[];scene.traverse(o=>{if(o.userData.orchard)orchard.push(o);});
+    for(const original of orchard){const p=original.getWorldPosition(new THREE.Vector3()),a=original.userData.orchard;
+      add({x:p.x,z:p.z,height:a.height,yaw:a.yaw,root:original,kind:'orchard',authoredOrchard:true});
+    }
+    // Irregular groves frame the new bridleway, with gaps between them for views
+    // across the hill. Every trunk respects paths, courses, water and buildings.
+    const trail=G.worldPaths?.tracks.find(t=>t.id==='clover');
+    state.trailTrees=[];
+    if(trail)for(let i=8;i<trail.pts.length-8;i+=9){
+      const [x,z]=trail.pts[i],a=trail.pts[i-1],b=trail.pts[i+1];
+      const length=Math.hypot(b[0]-a[0],b[1]-a[1])||1,nx=-(b[1]-a[1])/length,nz=(b[0]-a[0])/length;
+      const side=rnd(x,z,82)>.5?1:-1;
+      for(const edgeSide of [side,-side])for(let j=0;j<4;j++){
+        const off=edgeSide*(9+j*2.6+rnd(x+j,z,83)*3.5),tx=x+nx*off+(rnd(x,z+j,84)-.5)*11,tz=z+nz*off+(rnd(x+j,z,85)-.5)*11;
+        if(!clear(tx,tz,2.6)||trees.some(t=>Math.hypot(tx-t.x,tz-t.z)<5.5))continue;
+        const height=9+rnd(tx,tz,86)*4;
+        add({x:tx,z:tz,height,yaw:rnd(tx,tz,87)*Math.PI*2,kind:'woodland'});
+        state.trailTrees.push({x:tx,z:tz,height});
+      }
+    }
+    // Mix upright crowns with the resident young/mature trees, sharing the
+    // existing detailed-tree budget and matching eight-view lighting/depth.
+    function edgeWoodRadius(source,height){
+      const scale=height/source.meta.sourceHeight;let radius=0;
+      for(const part of source.parts)if(!/leaves|twig/.test(part.mat.name)){
+        const p=part.geo.attributes.position;
+        for(let i=0;i<p.count;i++)radius=Math.max(radius,Math.hypot(p.getX(i),p.getZ(i))*scale);
+      }
+      return radius;
+    }
+    function edgeFootClear(x,z,r){
+      if(!clear(x,z,2.6)||cottonwoodReserved(x,z,r+1)||coldWoodlandWeights(x,z).weight>.08)return false;
+      if(window.__onCourse?.(x,z,r+2))return false;
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;
+      if(W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
+      for(const wall of W.walls||[])if(segmentDistance(x,z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return false;
+      const h=W.groundH(x,z),probe=new THREE.Vector3(x,0,z);
+      W.solidWorld?.resolve(probe,{bottom:h+.38,top:h+2.65,radius:2.6});
+      return Math.hypot(probe.x-x,probe.z-z)<.001;
+    }
+    for(const site of WOODLAND_EDGE_TREES){
+      const source=site.upright?uprightSource:site.height>=9?matureLeafSource:variants[0],woodRadius=edgeWoodRadius(source,site.height);
+      if(!edgeFootClear(site.x,site.z,woodRadius)||trees.some(t=>Math.hypot(t.x-site.x,t.z-site.z)<6.4)){
+        edge.skipped.push({...site,reason:'current world, town, route, solid or neighbouring trunk clearance'});continue;
+      }
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,woodRadius};add(t);
+      if(trees.includes(t))edge.trees.push(t);
+    }
+    // Upright stands break up repeated forked crowns around the inhabited fields.
+    // Root, yaw and post-legacy height stay fixed; replace wood contact with the model.
+    const pastoral=state.pastoralWoodland={trees:[],skipped:[],collision:null};
+    const canReplace=t=>{
+      const r=edgeWoodRadius(uprightSource,t.height);
+      if(cottonwoodReserved(t.x,t.z,r+1)||W.pathDist(t.x,t.z)<r+3||(G.worldPaths?.trackDist(t.x,t.z)??Infinity)<r+3)return false;
+      if(window.__onCourse?.(t.x,t.z,r+2))return false;
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(t.x,t.z,route[i],route[(i+1)%route.length])<r+5)return false;
+      for(const wall of W.walls||[])if(segmentDistance(t.x,t.z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return false;
+      // Only known ordinary trunk circles can be replaced. Never remove a landmark or solid owner.
+      const own=W.colliders.filter(c=>Math.hypot(c.x-t.x,c.z-t.z)<.15);
+      if(!own.length||own.some(c=>!isOrdinaryTrunkCircle(c)))return false;
+      const h=W.groundH(t.x,t.z),probe=new THREE.Vector3(t.x,0,t.z);
+      W.solidWorld.resolve(probe,{bottom:h+.38,top:h+2.65,radius:.55});
+      if(Math.hypot(probe.x-t.x,probe.z-t.z)>.001)return false;
+      t.pastoralLegacyCircles=own;
+      return true;
+    };
+    for(const {tree:t,grove} of selectPastoralWoodland(trees,{coldAt:(x,z)=>coldWoodlandWeights(x,z).weight,canReplace})){
+      t.previousSource=t.source.key;t.source=uprightSource;t.pastoralGrove=grove;
+      pastoral.trees.push(t);
+    }
+    // Original settlement/field-shoulder belts. Detailed tree geometry shares the
+    // existing near-tree budget; all distances use the same licensed source views.
+    // Only accepted trunks receive geometry, wood contacts, litter and camera roots.
+    const settlement=state.settlementWoodland={version:1,trees:[],skipped:[],belts:[],budget:{maximum:SETTLEMENT_WOODLAND_MAX,additionalDistantTrianglesMax:SETTLEMENT_WOODLAND_MAX*2,detailBudgetChanged:false}};
+    const beltCounts=new Map(SETTLEMENT_WOODLAND_BELTS.map(b=>[b.id,0]));
+    function settlementRiderRadius(site,source,fullRadius){
+      const boxes=source===uprightSource?UPRIGHT_HYBRID_WOOD_BOXES:WOODLAND_WOOD_BOXES;
+      return terrainAwareWoodEnvelope({x:site.x,z:site.z,height:site.height,sourceHeight:source.meta.sourceHeight,
+        sourceBottom:source.bounds.min.y,sourceRadius:fullRadius,boxes,heightAt:W.groundH,terrainStep:W.terrainStep});
+    }
+    function settlementFootRejection(site,source,fullRadius,ride){
+      const x=site.x,z=site.z,r=ride.radius,h=W.groundH(x,z);
+      if(coldWoodlandWeights(x,z).weight>.08||coyoteCoverDryWeight(x,z)>.25)return 'climate';
+      if(inMeadowOpening(x,z)&&!site.allowMeadowMargin)return 'open meadow';
+      if(G.vistas?.clearZones?.some(test=>test(x,z)))return 'landmark vista';
+      if(cottonwoodReserved(x,z,fullRadius+1)||G.villageCourts?.contains(x,z,fullRadius+2))return 'village court/building';
+      if(Math.hypot(x,z)<33||Math.hypot(x-20,z-16)<r+19)return 'ranch/lake';
+      if(fallsContainsWater(x,z,r+1.5)||oasisContainsWater(x,z,r+.7)||W.sceneryArt.containsWaterfall(x,z,r)||G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return 'water/landmark';
+      if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return 'waterway';
+      if(W.pathDist(x,z)<r+4||(G.worldPaths?.trackDist(x,z)??Infinity)<r+4)return 'riding path';
+      if(window.__onCourse?.(x,z,r+2))return 'course';
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return 'race corridor';
+      for(const wall of W.walls||[])if(segmentDistance(x,z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return 'wall';
+      if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return 'interaction';
+      if(W.colliders.some(c=>Math.hypot(x-c.x,z-c.z)<(c.trunk?r:fullRadius)+(c.r||0)+.3))return 'registered prop';
+      if(trees.some(t=>Math.hypot(t.x-x,t.z-z)<5.4))return 'resident tree';
+      // Full wood envelope stays away from existing solid models. Only path,
+      // race and low fence tests use the proven terrain-aware rider interval.
+      const probe=new THREE.Vector3(x,0,z);W.solidWorld.resolve(probe,{bottom:h+.03,top:h+site.height,radius:fullRadius});
+      if(Math.hypot(probe.x-x,probe.z-z)>.001)return 'solid model';
+      return null;
+    }
+
+    for(const site of settlementWoodlandCandidates()){
+      const belt=SETTLEMENT_WOODLAND_BELTS.find(b=>b.id===site.belt);
+      if(beltCounts.get(site.belt)>=belt.cap||settlement.trees.length>=SETTLEMENT_WOODLAND_MAX)continue;
+      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);
+      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);
+      if(rejection){settlement.skipped.push({x:site.x,z:site.z,belt:site.belt,reason:rejection,fullWoodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise});continue;}
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredSettlementWoodland:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);
+      if(trees.includes(t)){edge.trees.push(t);settlement.trees.push(t);beltCounts.set(site.belt,beltCounts.get(site.belt)+1);}
+    }
+    settlement.belts=SETTLEMENT_WOODLAND_BELTS.map(b=>({id:b.id,count:beltCounts.get(b.id),cap:b.cap}));
+    // Unequal original northern grove shoulders frame the open meadow. New
+    // trees share exact source views, terrain-aware clearance and wood proxies.
+    const northValley=state.northValleyWoodland={profile:NORTH_VALLEY_WOODLAND_PROFILE,trees:[],skipped:[],groups:[],budget:{maximum:NORTH_VALLEY_WOODLAND_MAX,additionalDistantTrianglesMax:NORTH_VALLEY_WOODLAND_MAX*2,detailBudgetChanged:false,plantsMaximum:NORTH_VALLEY_WOODLAND_MAX*5}};
+    const valleyCounts=new Map(NORTH_VALLEY_WOODLAND_GROUPS.map(g=>[g.id,0]));
+    for(const site of northValleyWoodlandCandidates()){
+      const grove=NORTH_VALLEY_WOODLAND_GROUPS.find(g=>g.id===site.grove);
+      if(valleyCounts.get(site.grove)>=grove.cap||northValley.trees.length>=NORTH_VALLEY_WOODLAND_MAX)continue;
+      const source=site.upright?uprightSource:matureLeafSource,woodRadius=edgeWoodRadius(source,site.height);
+      const ride=settlementRiderRadius(site,source,woodRadius),rejection=settlementFootRejection(site,source,ride.fullRadius,ride);
+      if(rejection){northValley.skipped.push({x:site.x,z:site.z,grove:site.grove,reason:rejection});continue;}
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,authoredNorthValley:true,woodRadius:ride.fullRadius,riderWoodRadius:ride.radius,maxGroundRise:ride.maxGroundRise};add(t);
+      if(trees.includes(t)){edge.trees.push(t);northValley.trees.push(t);valleyCounts.set(site.grove,valleyCounts.get(site.grove)+1);}
+    }
+    northValley.groups=NORTH_VALLEY_WOODLAND_GROUPS.map(g=>({id:g.id,count:valleyCounts.get(g.id),cap:g.cap}));
+    state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
+    state.villageTrees=COTTONWOOD_TREES;
+    const textureLoader=new THREE.TextureLoader();
+    // Load all views before hiding any original tree. Missing data leaves the
+    // existing forest intact, instead of empty silhouettes during a slow load.
+    for(const source of variants){
+      const m=source.meta;
+      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v='+m.views.sha256),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file+'?v='+m.normals.sha256)]);
+      atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
+      source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom,normalProfile:m.normalProfile};
+      source.card=treeImpostor(source.impostor);
+    }
+    // The same lit, eight-angle source atlases continue woodland beyond the
+    // riding terrain. These static groves never consume the nearby model budget.
+    const outer=W.outerLandscape;
+    if(outer){const groves=new Map(),cards=new Map();outer.canopyFootprints=[];
+      for(const site of outer.woodlandSites){const source=variants.find(v=>v.key===site.source),scale=site.height/source.meta.sourceHeight;
+        const crownSpan=Math.max(source.bounds.max.x-source.bounds.min.x,source.bounds.max.z-source.bounds.min.z);
+        outer.canopyFootprints.push({x:site.x,z:site.z,radius:Math.max(1.8,crownSpan*scale*.43),source:site.source});
+        q.setFromAxisAngle(UP,site.yaw);s.setScalar(scale);v.set(site.x,site.y-source.bounds.min.y*scale-.035,site.z);
+        const key=source.key+':'+(site.x<0?0:1)+':'+(site.z<0?0:1);
+        if(!groves.has(key))groves.set(key,{source,matrices:[]});groves.get(key).matrices.push(new THREE.Matrix4().compose(v,q,s));
+      }
+      const meshes=[];for(const {source,matrices} of groves.values()){
+        if(!cards.has(source.key)){
+          const base=source.card.mat,mat=base.clone();mat.userData={...base.userData};
+          mat.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterFog(shader);};
+          mat.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-haze';
+          cards.set(source.key,{...source.card,mat});
+        }
+        const mesh=instances(cards.get(source.key),matrices,'Outer woodland | '+source.key);mesh.receiveShadow=false;meshes.push(mesh);
+      }
+      // Plain resident references only; the young pocket installer allocates late.
+      youngOuterSources=variants.filter(s=>s.key==='broadleaf'||s.key==='canopy-broadleaf').map(s=>({key:s.key,card:s.card,outerMaterial:cards.get(s.key)?.mat,sourceHeight:s.meta.sourceHeight,bottom:s.bounds.min.y,crownSpan:Math.max(s.bounds.max.x-s.bounds.min.x,s.bounds.max.z-s.bounds.min.z)}));
+      state.outerWoodland={trees:outer.woodlandSites.length,draws:meshes.length,triangles:outer.woodlandSites.length*2,meshes};
+      outer.stats.woodlandDraws=meshes.length;outer.stats.woodlandTriangles=outer.woodlandSites.length*2;
+    }
+    for(const t of trees){
+      const scale=t.height/t.source.meta.sourceHeight,crownWidth=t.crownWidth||1;
+      // Detailed geometry, distant views and shadow depth use this same matrix.
+      q.setFromAxisAngle(UP,t.yaw);s.set(scale*crownWidth,scale,scale*crownWidth);
+      v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
+      t.matrix=new THREE.Matrix4().compose(v,q,s);
+    }
+    if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
+    const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
+    for(const records of cells.values()){
+      const source=records[0].source;
+      const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);
+      // Camera-facing atlases contain the same baked canopy shading; receiving their
+      // own differently oriented shadow card creates false dark triangles.
+      card.receiveShadow=false;
+      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});
+      for(const p of source.parts){
+        const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);
+        records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));
+        mesh.count=0;treeMeshes.push({mesh,records});
+      }
+    }
+    edge.collision={rootNames:[],owners:0,parts:0,registeredParts:0,sourceHash:WOODLAND_WOOD_SOURCE_SHA,leavesExcluded:true,allWoodHeights:true,renderChildren:0};
+    if(edge.trees.length){
+    // One persistent, visible, non-rendering owner keeps wood contact active at
+    // every tree LOD. Small source-local boxes cover original wood, never leaves.
+    const edgeOwner=new THREE.Group();edgeOwner.name='Clover woodland edge wood';
+    edgeOwner.userData.woodlandEdge=true;group.add(edgeOwner);edgeOwner.updateWorldMatrix(true,false);
+    if(!edgeOwner.matrixWorld.equals(identity))throw Error('Unexpected woodland wood owner frame');
+    edgeOwner.userData.solidParts=[];let maxSourceBoxSide=0,maxWorldEdgeLength=0;
+    const sourceHashes=new Set();
+    for(const t of edge.trees){
+      const matrix=t.matrix.toArray(),scale=t.height/t.source.meta.sourceHeight;
+      const upright=t.source===uprightSource,boxes=upright?UPRIGHT_HYBRID_WOOD_BOXES:WOODLAND_WOOD_BOXES;
+      sourceHashes.add(upright?UPRIGHT_HYBRID_WOOD_SOURCE_SHA:WOODLAND_WOOD_SOURCE_SHA);
+      const side=Math.max(...boxes.flatMap(b=>b.max.map((v,i)=>v-b.min[i])));
+      maxSourceBoxSide=Math.max(maxSourceBoxSide,side);maxWorldEdgeLength=Math.max(maxWorldEdgeLength,side*scale);
+      let lowRadius=0;
+      for(const box of boxes){
+        edgeOwner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+        const lo=(box.min[1]-t.source.bounds.min.y)*scale-.07,hi=(box.max[1]-t.source.bounds.min.y)*scale-.07;
+        if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
+      }
+      t.lowWoodRadius=lowRadius;
+    }
+    const parts=edgeOwner.userData.solidParts.length,registered=W.solidWorld.register(edgeOwner);
+    if(registered!==parts){W.solidWorld.unregister(edgeOwner);edgeOwner.removeFromParent();throw Error('Incomplete woodland wood contacts');}
+    for(const t of edge.trees){
+      W.colliders.push({x:t.x,z:t.z,r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,authoredWoodlandEdge:true});
+      W.forestPoints.push({x:t.x,z:t.z,s:t.height/8,authoredWoodlandEdge:true});
+    }
+    edge.collision={rootNames:[edgeOwner.name],owners:1,parts,registeredParts:registered,sourceHash:WOODLAND_WOOD_SOURCE_SHA,
+      sourceHashes:[...sourceHashes],maxSourceBoxSide,maxWorldEdgeLength,maxHorizontalAirFillBound:Math.SQRT2*maxWorldEdgeLength,
+      leavesExcluded:true,allWoodHeights:true,renderChildren:0};
+    G.followCam.invalidateTrees();edge.cameraInvalidated=true;
+    }
+    if(pastoral.trees.length){
+      const owner=new THREE.Group();owner.name='Pastoral woodland wood';group.add(owner);
+      owner.userData.solidParts=[];owner.updateWorldMatrix(true,false);
+      if(!owner.matrixWorld.equals(identity))throw Error('Unexpected pastoral wood owner frame');
+      for(const t of pastoral.trees){
+        const matrix=t.matrix.toArray(),scale=t.height/uprightSource.meta.sourceHeight;
+        let lowRadius=0;
+        for(const box of UPRIGHT_HYBRID_WOOD_BOXES){
+          owner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+          const lo=(box.min[1]-uprightSource.bounds.min.y)*scale-.07,hi=(box.max[1]-uprightSource.bounds.min.y)*scale-.07;
+          if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
+        }
+        t.lowWoodRadius=lowRadius;
+      }
+      const parts=owner.userData.solidParts.length,registered=W.solidWorld.register(owner);
+      if(registered!==parts){W.solidWorld.unregister(owner);owner.removeFromParent();throw Error('Incomplete pastoral wood contacts');}
+      for(const t of pastoral.trees){
+        // Keep exact existing records/order and tree-camera/litter points. The
+        // registered wood now owns contact instead of the old circular envelope.
+        for(const circle of t.pastoralLegacyCircles)Object.assign(circle,{r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,pastoralGrove:t.pastoralGrove});
+      }
+      pastoral.collision={owners:1,parts,registeredParts:registered,sourceHash:UPRIGHT_HYBRID_WOOD_SOURCE_SHA,leavesExcluded:true};
+      G.followCam.invalidateTrees();
+    }
+    pastoral.trees=pastoral.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,grove:t.pastoralGrove,previousSource:t.previousSource,source:t.source.key,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()}));
+    edge.physicsReady=true;edge.artOnly=false;
+    for(const t of trees){if(t.root)t.root.visible=false;else if(t.stem){
+      t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
+    }}
+    const orchardRecords=trees.filter(t=>t.authoredOrchard);
+    state.orchardFruit={...fruit.stats,trees:orchardRecords.length,clusters:fruit.stats.clusters*orchardRecords.length,apples:fruit.stats.apples*orchardRecords.length,triangles:fruit.stats.triangles*orchardRecords.length,integratedLOD:true};
+    state.orchardTrees=orchardRecords.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key}));
+    // Commit new trunk collisions only after all tree views have loaded.
+    for(const t of COTTONWOOD_TREES)W.colliders.push({x:t.x,z:t.z,r:.34,height:t.height,trunk:true});
+    for(const t of state.trailTrees)W.colliders.push({x:t.x,z:t.z,r:.62,height:t.height,trunk:true});
+    // A zero-scale instance still runs every vertex and shadow vertex shader.
+    // These seed batches are wholly replaced; stop submitting their old meshes.
+    const retired=new Set();
+    for(const t of trees)if(t.stem?.userData.treePoints){retired.add(t.stem);retired.add(t.leaves);}
+    for(const mesh of retired){mesh.visible=false;mesh.userData.photoscanReplaced=true;}
+    state.retiredBatches=retired.size;
+    floraCanopies.forEach(m=>{m.visible=false;});
+    state.trees=trees.length+COTTONWOOD_TREES.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.woodlandCanopies=trees.filter(t=>t.source.key==='woodland-broadleaf').length;
+    state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
+    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+    state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
+    // Regenerate leaf litter from surviving trunks; cleared meadows must not
+    // keep the old brown forest-floor circles or camera obstacles.
+    // Existing plant capture consumes these points after wood contacts are ready.
+    const plants=[...WOODLAND_EDGE_PLANTS,...settlementWoodlandPlants(settlement.trees),...northValleyWoodlandPlants(northValley.trees)].map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
+      .filter(p=>edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)&&clear(p.x,p.z,.45)
+        &&!cottonwoodReserved(p.x,p.z,1)&&!edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<1.25));
+    finishEdge({trees:edge.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key,woodRadius:t.woodRadius,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()})),plants,collision:edge.collision,cameraInvalidated:edge.cameraInvalidated,physicsReady:edge.physicsReady,artOnly:false});
+    scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+    settlement.trees=settlement.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,belt:t.belt,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,allowMeadowMargin:!!t.allowMeadowMargin,matrix:t.matrix.toArray()}));
+    settlement.woodPartsRegistered=settlement.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
+    settlement.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
+    northValley.trees=northValley.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,grove:t.grove,lobe:t.lobe,source:t.source.key,lowWoodRadius:t.lowWoodRadius,fullWoodRadius:t.woodRadius,riderWoodRadius:t.riderWoodRadius,maxGroundRise:t.maxGroundRise,matrix:t.matrix.toArray()}));
+    northValley.woodPartsRegistered=northValley.trees.reduce((n,t)=>n+(t.source==='upright-broadleaf'?UPRIGHT_HYBRID_WOOD_BOXES.length:WOODLAND_WOOD_BOXES.length),0);
+    northValley.totalEdgeOwnerRegisteredParts=edge.collision.registeredParts;
+    northValley.plantsProposed=plants.filter(p=>northValley.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)).length;
+
+    W.nearGroundCover?.invalidate?.();
+  }
+  // Complete scanned stones form the village skyline and adjoining river crags.
+  // The original circles still reserve space when roads are laid out; gameplay
+  // uses the registered stone surfaces after the replacement is ready.
+  function installVillageCrags(parts){
+    const specs=[
+      {seed:1116,primary:3,yaw:-.42,shoulder:0,angle:-.70,shoulderOffset:.43,shoulderReach:.55,shoulderYaw:1.07},
+      {seed:1122,primary:3,yaw:.68,shoulder:5,angle:2.13},
+      // This overlapping older mesa and its spires belong to the same outcrop.
+      {seed:1113,primary:2,yaw:1.12},
+      {seed:3528,primary:3,yaw:1.72},{seed:3529,primary:2,yaw:.32},
+      {seed:3531,primary:4,yaw:2.10},{seed:3534,primary:5,yaw:1.23},
+      {seed:3537,primary:3,yaw:.56}
+    ];
+    const material=parts[3].mat.clone();material.name='Countryside | scanned weathered crags';
+    dressCragMineral({material,source:W.geology.canyonMaterial});
+    const records=state.villageCrags=[],surfaces=[];
+    // All source triangles stay inside their original route circle. Most
+    // ground samples can therefore skip the detailed stone index completely.
+    const cragHeight=(x,z)=>{
+      let height=-Infinity;
+      for(const {mesh,cx,cz,r} of surfaces){
+        if((x-cx)**2+(z-cz)**2>r*r)continue;
+        height=Math.max(height,W.solidWorld.surfaceHeight(x,z,mesh));
+      }
+      return height;
+    };
+    W.groundSurfaces.push(cragHeight);
+    state.excludesGroundCover=(x,z)=>{
+      const height=cragHeight(x,z);
+      return height>-Infinity&&height>W.terrainH(x,z)+.15;
+    };
+    for(const spec of specs){
+      let original;
+      scene.traverse(o=>{if(o.isGroup&&o.userData.geology?.seed===spec.seed)original=o;});
+      if(!original)continue;
+      const {x,z}=original.position;
+      const collider=W.colliders.find(c=>Math.hypot(c.x-x,c.z-z)<.001&&Math.abs(c.r-original.userData.geology.radius*.95)<.001);
+      if(!collider)continue;
+      const meshes=[],details=[];
+      try{
+        const composition=[[spec.primary,0,collider.r*.94,spec.yaw]];
+        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*(spec.shoulderOffset??.51),collider.r*(spec.shoulderReach??.42),spec.shoulderYaw??spec.yaw+1.57]);
+        for(const [partIndex,offset,reach,yaw] of composition){
+          const piece=parts[partIndex],p=piece.geo.attributes.position,b=piece.bounds;
+          const cx=(b.min.x+b.max.x)/2,cz=(b.min.z+b.max.z)/2;
+          let sourceRadius=0;
+          for(let i=0;i<p.count;i++)sourceRadius=Math.max(sourceRadius,Math.hypot(p.getX(i)-cx,p.getZ(i)-cz));
+          const scale=reach/sourceRadius,co=Math.cos(yaw),sn=Math.sin(yaw);
+          const px=x+Math.sin(spec.angle||0)*offset,pz=z+Math.cos(spec.angle||0)*offset;
+          let ty=Infinity,footVertices=0;const lowBand=(b.max.y-b.min.y)*.075;
+          // Plant every low source vertex below the canonical terrain. This
+          // retains the photographed shape instead of stretching it to a skirt.
+          for(let i=0;i<p.count;i++){
+            const sy=p.getY(i);if(sy>b.min.y+lowBand)continue;
+            const sx=p.getX(i)-cx,sz=p.getZ(i)-cz;
+            const wx=px+scale*(co*sx+sn*sz),wz=pz+scale*(-sn*sx+co*sz);
+            ty=Math.min(ty,W.terrainH(wx,wz)-scale*sy-.16);footVertices++;
+          }
+          if(!footVertices||!Number.isFinite(ty))throw Error('No finite scanned crag footing');
+          const mesh=new THREE.Mesh(piece.geo,spec.seed===1116?piece.mat:material);
+          mesh.name='Countryside scanned crag '+spec.seed+' | '+partIndex;
+          mesh.matrixAutoUpdate=false;
+          mesh.matrix.set(scale*co,0,scale*sn,px-scale*(co*cx+sn*cz),0,scale,0,ty,
+            -scale*sn,0,scale*co,pz-scale*(-sn*cx+co*cz),0,0,0,1);
+          mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);meshes.push(mesh);
+          const contactTriangles=W.solidWorld.registerSurface(mesh);
+          if(!contactTriangles)throw Error('Empty scanned crag surface');
+          details.push({name:mesh.name,source:'rock_moss_set_01',part:partIndex,matrix:mesh.matrix.toArray(),scale,footVertices,contactTriangles});
+        }
+      }catch(error){
+        for(const mesh of meshes){W.solidWorld.unregisterSurface(mesh);mesh.removeFromParent();}
+        if(!records.length)material.dispose();
+        throw error;
+      }
+      for(const mesh of meshes){
+        surfaces.push({mesh,cx:x,cz:z,r:collider.r});
+      }
+      collider.precise=true;
+      original.removeFromParent();original.traverse(o=>o.geometry?.dispose());
+      records.push({seed:spec.seed,x,z,routeRadius:collider.r,meshes:details});
+    }
+    if(!records.length)material.dispose();
+    W.nearGroundCover?.invalidate();
+  }
+  async function installRocks(){
+    const parts=pieces(await load('rock_moss_set_01'),true);
+    outerRockParts=parts;
+    rocks.forEach((rock,i)=>{
+      const piece=parts[i%parts.length],p=rock.userData.scanPlacement;
+      if(!p)return;
+      const old=rock.geometry,geo=piece.geo.clone();
+      // Keep existing position, orientation and collision footprint.
+      const size=piece.bounds.getSize(new THREE.Vector3()),scale=(p.s*1.8)/Math.max(size.x,size.z);
+      geo.translate(-(piece.bounds.min.x+piece.bounds.max.x)/2,-piece.bounds.min.y,-(piece.bounds.min.z+piece.bounds.max.z)/2);
+      geo.scale(scale,scale,scale);geo.translate(0,-.10,0);
+      rock.geometry=geo;rock.material=piece.mat;rock.name='Scanned mossy boulder';old.dispose();state.rocks++;
+    });
+    // The travelling ground-cover layer used an untextured low-poly sphere.
+    // This small scan LOD costs about the same but retains real weathered UVs.
+    if(W.nearGroundCover?.rock){
+      try{
+        const response=await fetch('./assets/models/world/realism/ground-stone.json');
+        if(!response.ok)throw Error('Ground stone LOD unavailable');
+        const data=await response.json(),geo=new THREE.BufferGeometry();
+        for(const [key,name,size]of [['POSITION','position',3],['NORMAL','normal',3],['TEXCOORD_0','uv',2]])
+          geo.setAttribute(name,new THREE.Float32BufferAttribute(data.attributes[key],size));
+        geo.setIndex(data.index);geo.applyMatrix4(new THREE.Matrix4().fromArray(data.matrix));geo.computeBoundingBox();
+        // The same compact rock scan gives roadside dry-stone courses proper
+        // surfaces and rounded, asymmetric silhouettes without a full rock mesh.
+        const pathStone=scene.getObjectByName('worldPaths:stone');
+        if(pathStone){
+          const pathGeo=geo.clone(),box=geo.boundingBox,size=box.getSize(new THREE.Vector3()),centre=box.getCenter(new THREE.Vector3());
+          pathGeo.translate(-centre.x,-centre.y,-centre.z);pathGeo.scale(1/size.x,1/size.y,1/size.z);pathGeo.computeBoundingSphere();
+          pathStone.geometry.dispose();pathStone.geometry=pathGeo;pathStone.material.dispose();
+          const mat=parts[0].mat.clone();mat.name='Bridleway | scanned dry stone';
+          mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+            float stoneLuma=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
+            diffuseColor.rgb=mix(vec3(stoneLuma),diffuseColor.rgb,.18)*1.18;`);};
+          mat.customProgramCacheKey=()=> 'bridleway-stone-v1';pathStone.material=mat;
+          for(let i=0;i<pathStone.count;i++)pathStone.setColorAt(i,new THREE.Color().setScalar(.88+rnd(i,42)*.18));
+          pathStone.instanceColor.needsUpdate=true;pathStone.computeBoundingSphere();state.pathStoneTriangles=data.index.length/3;
+        }
+        const b=geo.boundingBox,size=b.getSize(new THREE.Vector3()),scale=1/Math.max(size.x,size.z);
+        geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(scale,scale,scale);geo.translate(0,-.08,0);
+        geo.computeBoundingSphere();const layer=W.nearGroundCover.rock;layer.geometry.dispose();layer.geometry=geo;
+        const mat=parts[0].mat.clone();mat.name='Ground cover | scanned moss stone';
+        mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`
+          #if defined(USE_COLOR) || defined(USE_INSTANCING_COLOR)
+            diffuseColor.rgb*=clamp(vColor*1.5+.35,vec3(.75),vec3(1.1));
+          #endif`);};
+        mat.customProgramCacheKey=()=> 'ground-stone-scan-v1';layer.material.dispose();layer.material=mat;
+        layer.name='Scanned ground stones';state.groundStoneTriangles=data.index.length/3;
+      }catch(e){state.errors.push('ground stone: '+e.message);}
+    }
+    // Replace each already-sited outcrop in place, preserving its collider and
+    // climbable mesh reference. Six scans give natural asymmetry within the heap.
+    for(const [i,at] of (G.worldOutcrops?.placed||[]).entries()){
+      const mesh=G.worldOutcrops.group.children[i];if(!mesh?.isMesh)continue;
+      const geos=[];
+      for(let j=0;j<5;j++){
+        const piece=parts[(i+j)%parts.length],geo=piece.geo.clone(),b=piece.bounds;
+        const a=j*2.39996+i*.7,d=j===0?0:at.r*.65,size=b.getSize(new THREE.Vector3());
+        const scale=(j===0?at.r*1.4:at.r*.85)/Math.max(size.x,size.z);
+        geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);
+        geo.scale(scale,scale*(j===0?1.25:1),scale);geo.rotateY(a);
+        const x=Math.cos(a)*d,z=Math.sin(a)*d;
+        geo.translate(x,W.groundH(at.x+x,at.z+z)-mesh.position.y-.14,z);geos.push(geo);
+      }
+      const merged=mergeGeometries(geos,false);geos.forEach(g=>g.dispose());
+      if(merged){mesh.geometry.dispose();mesh.geometry=merged;mesh.material=parts[0].mat;mesh.name='Outcrop | scanned mossy stone';state.outcrops++;}
+    }
+    installVillageCrags(parts);
+  }
+  async function installWillows(){
+    const roots=G.quartersPkg?.willowTrees||[];if(roots.length)state.willows=await installWillowArt(G,roots,wind);
+  }
+  async function installOak(){state.thunderOak=await installThunderOak(G,wind);}
+  async function installDeadwood(){
+    const bank=G.floraPkg?.bank.snag;if(!bank)return;
+    const catalog=await fetch('./assets/models/world/realism/deadwood-lods.json?v=weathered-deadwood-1').then(r=>{if(!r.ok)throw Error('Deadwood mesh catalog unavailable');return r.json();});
+    const sources=[];for(const variant of catalog.variants)sources.push(await load(variant.id));
+    state.deadwood=installDeadwoodArt(G,{bank,catalog,sources});
+  }
+  async function installForestFloor(){
+    const root=await load('pine_sapling_small');
+    // Each collection child is a complete sapling, with both bark and needles.
+    for(let variant=0;variant<root.children.length;variant++){
+      const child=root.children[variant],parts=pieces(child,true),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
+      const cells=new Map();let count=0;
+      for(let i=variant;i<pinePoints.length;i+=3){
+        const p=pinePoints[i],x=p.x+2.8+2*rnd(p.x,p.z),z=p.z-3.4+2*rnd(p.x,p.z,1);
+        if(!clear(x,z,.65))continue;
+        const scale=(.75+rnd(x,z)*.85)/(bounds.max.y-bounds.min.y);
+        const key=Math.floor(x/45)+','+Math.floor(z/45);
+        if(!cells.has(key))cells.set(key,{x:Math.floor(x/45)*45+22.5,z:Math.floor(z/45)*45+22.5,points:[]});
+        cells.get(key).points.push(placement({bounds},x,z,scale,rnd(x,z,2)*Math.PI*2));count++;
+      }
+      for(const cell of cells.values())for(const p of parts){
+        const mesh=instances(p,cell.points,'Photoscan pine saplings');mesh.castShadow=false;
+        patch(mesh,cell.x,cell.z,95);mesh.userData.groundPlant=true;
+      }
+      state.saplings+=count;
+    }
+    const log=pieces(await load('dead_tree_trunk_02'))[0];
+    let placed=0;
+    for(const p of W.forestPoints){
+      if(placed>=32)break;
+      if(Math.hypot(p.x,p.z)>260||rnd(p.x,p.z,2)>.45)continue;
+      const x=p.x+4.5,z=p.z+3.1;if(!clear(x,z,2.4))continue;
+      const scale=.48+rnd(x,z)*.25,mat=placement(log,x,z,scale,rnd(x,z,5)*Math.PI*2,.10);
+      const mesh=instances(log,[mat],'Photoscan fallen timber');patch(mesh,x,z);
+      W.colliders.push({x,z,r:1.25});placed++;
+    }
+    state.logs=placed;
+  }
+  // The surveyed scan and terrain seat share a fixed transform. Its detailed
+  // contact surface stays active independently of visibility and graphics quality.
+  function installPrincipalOasisFace(piece){
+    const {x,z,yaw}=OASIS_FACE,size=piece.bounds.getSize(new THREE.Vector3());
+    const scale=OASIS_FACE.width/size.x,co=Math.cos(yaw),sn=Math.sin(yaw);
+    const cx=(piece.bounds.min.x+piece.bounds.max.x)/2,cz=(piece.bounds.min.z+piece.bounds.max.z)/2;
+    // Fixed survey elevation: cutting the backing must not sink the scan.
+    const position=piece.geo.attributes.position,ty=OASIS_FACE.baseY;let footVertices=0,footGapMin=Infinity,footGapMax=-Infinity;
+    for(let i=0;i<position.count;i++){
+      const sy=position.getY(i);if(sy>piece.bounds.min.y+.45)continue;
+      const sx=position.getX(i)-cx,sz=position.getZ(i)-cz;
+      const wx=x+scale*(co*sx+sn*sz),wz=z+scale*(-sn*sx+co*sz);
+      const ground=W.terrainH(wx,wz);if(!Number.isFinite(ground))throw Error('Principal cliff footing is outside canonical terrain');
+      const gap=ty+scale*sy-ground;footGapMin=Math.min(footGapMin,gap);footGapMax=Math.max(footGapMax,gap);footVertices++;
+    }
+    if(!footVertices)throw Error('Principal cliff source has no finite low footing');
+    const matrix=new THREE.Matrix4().set(scale*co,0,scale*sn,x-scale*(co*cx+sn*cz),
+      0,scale,0,ty,-scale*sn,0,scale*co,z-scale*(-sn*cx+co*cz),0,0,0,1);
+    const mesh=new THREE.Mesh(piece.geo,piece.mat);mesh.name='Photoscan principal organic Oasis cliff face';
+    mesh.matrixAutoUpdate=false;mesh.matrix.copy(matrix);mesh.castShadow=true;mesh.receiveShadow=true;
+    group.add(mesh);mesh.updateWorldMatrix(true,false);
+    const contactTriangles=W.solidWorld.registerSurface(mesh);
+    W.groundSurfaces.push((wx,wz)=>W.solidWorld.surfaceHeight(wx,wz,mesh));
+    state.cliffs++;
+    state.principalCliff={name:mesh.name,x,z,yaw,scale,width:size.x*scale,height:size.y*scale,depth:size.z*scale,
+      matrix:matrix.toArray(),footVertices,lowBand:.45,originalBurial:.18,source:'namaqualand_cliff_02',
+      sourceGeometry:piece.geo.uuid,sourceMaterial:piece.mat.uuid,footGapMin,footGapMax,contactTriangles};
+  }
+  async function installRockFaces(){
+    for(const [id,stride] of [['rock_face_02',3],['namaqualand_cliff_02',4]]){
+      const piece=pieces(await load(id))[0],size=piece.bounds.getSize(new THREE.Vector3());
+      for(const [i,at] of (G.worldOutcrops?.placed||[]).entries()){
+        if(i%stride!==0)continue;
+        // The center lies inside the existing solid outcrop, never across a trail.
+        const scale=at.r*(id==='rock_face_02'?1.2:1.8)/Math.max(size.x,size.z);
+        const matrix=placement(piece,at.x,at.z,scale,rnd(at.x,at.z,8)*Math.PI*2,size.y*scale*.48);
+        // Center the scan horizontally; its source origin need not be its center.
+        matrix.multiply(new THREE.Matrix4().makeTranslation(-(piece.bounds.min.x+piece.bounds.max.x)/2,0,-(piece.bounds.min.z+piece.bounds.max.z)/2));
+        const mesh=instances(piece,[matrix],'Photoscan weathered rock face');patch(mesh,at.x,at.z,240);state.cliffs++;
+        W.climbables.push({mesh,x:at.x,z:at.z,r:at.r*1.95,y:W.groundH(at.x,at.z),kind:'outcrop'});
+      }
+      if(id==='namaqualand_cliff_02')installPrincipalOasisFace(piece);
+    }
+  }
+  let previousSelection=new Set(),previousNearSelection=new Set(),previousMiddleSelection=new Set(),previousMode=null;
+  const crownView=new THREE.Vector3();
+  function updateTrees(){
+    if(!treeMeshes.length)return;
+    const p=H.player.pos,tier=G.gfx.get(),enabled=!renderer.xr.isPresenting;
+    const range=tier==='high'?58:tier==='low'?26:40,budget=tier==='high'?12:tier==='low'?4:6;
+    const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
+    const triangleBudget=tier==='high'?1800000:750000;
+    const authoredTriangles=(state.villageEvergreens?.triangles||0)+(state.willows?.triangles||0)+(state.thunderOak?.triangles||0);
+    const middleRange=tier==='high'?105:tier==='low'?70:85,middleLimit=tier==='high'?14:tier==='low'?6:10;
+    if(G.camera?.getWorldDirection)G.camera.getWorldDirection(crownView);
+    else crownView.set(Math.sin(H.player.heading||0),0,Math.cos(H.player.heading||0));
+    const viewLength=Math.hypot(crownView.x,crownView.z)||1,fx=crownView.x/viewLength,fz=crownView.z/viewLength;
+    const facing=t=>{const dx=t.x-p.x,dz=t.z-p.z;return (dx*fx+dz*fz)/(Math.hypot(dx,dz)||1);};
+    // A complete photographed pine crown has real branch parallax. Reserve
+    // feasible space for visible middle crowns instead of spending the entire
+    // fixed pool on small nearby firs and flattening the mature trees ahead.
+    const middleCandidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&t.source.key==='mature-pine'&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15)
+      .sort((a,b)=>distance(a)/(1+Math.max(0,facing(a))*2)*(previousMiddleSelection.has(a)?.72:1)-distance(b)/(1+Math.max(0,facing(b))*2)*(previousMiddleSelection.has(b)?.72:1)):[];
+    const candidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&distance(t)<(range+(previousNearSelection.has(t)?5:0))**2)
+      .sort((a,b)=>distance(a)*(previousNearSelection.has(a)?.72:1)-distance(b)*(previousNearSelection.has(b)?.72:1)):[];
+    const nearest=candidates.find(t=>authoredTriangles+t.source.triangles<=triangleBudget);
+    const nearCeiling=middleCandidates.length?Math.max(triangleBudget*2/3,authoredTriangles+(nearest?.source.triangles||0)):triangleBudget;
+    const near=[],middle=[];let triangles=authoredTriangles;
+    for(const t of candidates){if(near.length>=budget)break;if(triangles+t.source.triangles>nearCeiling)continue;near.push(t);triangles+=t.source.triangles;}
+    const nearSet=new Set(near);
+    for(const t of middleCandidates){if(middle.length>=middleLimit)break;if(nearSet.has(t)||triangles+t.source.triangles>triangleBudget)continue;middle.push(t);triangles+=t.source.triangles;}
+    // Spend any remaining space on the original near candidates; an absent or
+    // unaffordable middle crown never leaves a usable part of the pool idle.
+    for(const t of candidates){if(near.length>=budget)break;if(nearSet.has(t)||middle.includes(t)||triangles+t.source.triangles>triangleBudget)continue;near.push(t);nearSet.add(t);triangles+=t.source.triangles;}
+    const selected=[...near,...middle],set=new Set(selected),mode=tier+':'+renderer.xr.isPresenting,tierChanged=previousMode!==mode;
+    state.activeTreeTriangles=triangles;state.treeTriangleBudget=triangleBudget;
+    state.activeTrees=selected.length;state.activeNearTrees=near.length;state.activeMiddleTrees=middle.length;state.activeRenderedTrees=selected.length;
+    state.treeCrownLOD={profile:'volumetric-middle-pines-1',nearTrees:near.length,middleTrees:middle.length,middleRange,middleLimit,authoredTriangles,triangles,triangleBudget,middleSites:middle.map(t=>({x:t.x,z:t.z,source:t.source.key,triangles:t.source.triangles,distance:Math.sqrt(distance(t))}))};
+    previousNearSelection=nearSet;previousMiddleSelection=new Set(middle);
+    if(!tierChanged&&set.size===previousSelection.size&&selected.every(t=>previousSelection.has(t)))return;
+    const changed=records=>tierChanged||records.some(t=>set.has(t)!==previousSelection.has(t));
+    for(const {mesh,records} of treeMeshes){
+      if(!changed(records))continue;
+      let count=0;for(const t of records)if(set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves|twig/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;}
+      mesh.count=count;mesh.visible=count>0;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;mesh.castShadow=!renderer.xr.isPresenting;
+      if(count)mesh.computeBoundingSphere();
+    }
+    for(const {mesh,records} of treeCards){
+      if(!changed(records))continue;
+      let count=0;for(const t of records)if(!t.retiredFallsFlora&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
+      mesh.count=count;mesh.visible=count>0;mesh.castShadow=!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
+      if(count)mesh.computeBoundingSphere();
+    }
+    previousSelection=set;previousMode=mode;state.detailRebuilds=(state.detailRebuilds||0)+1;
+    state.distantTrees=trees.length-(state.hollowpeakCliffFlora?.retired.length||0)-selected.length;
+  }
+  state.ready=(async()=>{
+    await H.arrivalReady;
+    for(const install of [installRocks,installTrees,installWillows,installOak,installDeadwood,installForestFloor,installRockFaces]){
+      try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
+      finally{if(install===installTrees&&!edge.settled)finishEdge({trees:[],plants:[],failed:true,error:state.errors.at(-1)||'tree setup incomplete',physicsReady:false,artOnly:true});}
+    }
+    state.willows?.update();state.thunderOak?.update();updateTrees();
+    try{installOuterRockClusters(G,outerRockParts,mergeGeometries);}catch(e){state.errors.push(e.message);console.warn('Scenic rock setup unavailable:',e);}
+    installYoungOuterWoodland(G,youngOuterSources);
+    try{installOuterCanopyShade(G);}catch(e){state.errors.push(e.message);console.warn('Outer woodland shelter unavailable:',e);}
+    installOuterSunShadows(G);
+    return state.assets;
+  })();
+  // Keep the narrow scan/detail dependency contract: scans never await details.
+  // Retirement separately waits every late planting/capture, so removing an
+  // occupancy record cannot change its layout or advance a different RNG stream.
+  // Capture dependencies after the synchronous installers: undergrowth follows scans.
+  state.floraRetirementReady=Promise.resolve().then(()=>Promise.allSettled([state.ready,G.worldDetails?.ready,G.undergrowth?.ready])).then(()=>{
+    // All synchronous/scan/details/undergrowth layout is finished. Source rows
+    // and capacities stay fixed; model/card submissions omit only retired owners.
+    state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(G,trees,zero);
+    if(state.hollowpeakCliffFlora.retired.length){
+      const active=trees.filter(t=>!t.retiredFallsFlora);
+      state.trees=active.length+COTTONWOOD_TREES.length;
+      state.conifers=active.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;
+      state.matureTrees=active.filter(t=>t.source.key==='mature-pine').length;
+      state.treePositions=active.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+      state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
+      scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+      G.followCam.invalidateTrees();previousMode=null;updateTrees();
+    }
+    return state.hollowpeakCliffFlora;
+  });
+  let timer=0;
+  G.on('tick',(dt,t)=>{
+    wind.value=t;timer+=dt;if(timer<.35)return;timer=0;
+    state.willows?.update();state.thunderOak?.update();updateTrees();state.deadwood?.update();const p=H.player.pos,tier=G.gfx.get();
+    for(const d of detailPatches){d.mesh.visible=Math.hypot(d.x-p.x,d.z-p.z)<d.range*(tier==='low'?.6:1);d.mesh.castShadow=tier==='high'&&!d.mesh.userData.groundPlant;}
+  });
+  state.update=()=>{state.willows?.update();state.thunderOak?.update();updateTrees();state.deadwood?.update();};
+}

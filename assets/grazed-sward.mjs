@@ -1,7 +1,7 @@
 import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-ribbon-5';
-import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1';
+import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1';
 
 // A short turf stand uses the same seventy triangles as an existing rich root.
 // Only the already-counted rich rows inside grazed ground can use this shape.

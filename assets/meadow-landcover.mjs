@@ -1,5 +1,5 @@
 import {ranchLandcoverTurfAt} from './ranch-grounds.mjs?v=ranch-actors-2';
-import {meadowGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1';
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 
 // Canvas rows increase with world Z. The terrain sampler already supplies the
 // corresponding texture Y flip; flipping here as well would mirror the fields.
