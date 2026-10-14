@@ -36,3 +36,17 @@ test('upright atlas metadata declares the matched normal profile and exact publi
   assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');assert.equal(bytes.readUInt32LE(4)+8,bytes.length);
  }
 });
+
+// Current matched Island asset metadata is checked raw, outside historical views.
+import * as IslandNormal from './island-normal-source-guard.cjs';
+test('matched Island atlas binds current bytes, unchanged albedo/frame, minimal source inverse and all240 old fixtures',()=>{
+ const root=new URL('../',import.meta.url),read=f=>fs.readFileSync(new URL(f,root)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+ const fixture='tools/fixtures/island-normal-7a11/source-contract.json',contract=JSON.parse(read(fixture));
+ const catalog=JSON.parse(read('assets/models/world/realism/tree-impostors.json')),entry=catalog.trees.find(t=>t.id==='island_tree_01'&&t.variant===-1);
+ assert.equal(entry.normalProfile,'view-facing-material-v1');assert.deepEqual(entry.views,contract.preservedAlbedo);assert.deepEqual(Object.fromEntries(['width','height','bottom','sourceHeight','viewCount'].map(k=>[k,entry[k]])),contract.frame);
+ assert.equal(entry.normals.file,'island_tree_01_normals_matched.webp');const body=read('assets/models/world/realism/'+entry.normals.file);assert.equal(sha(body),entry.normals.sha256);assert.equal(body.length,entry.normals.bytes);assert.equal(entry.normals.sha256,'c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84');
+ for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const current=read(f);assert(IslandNormal.assertIslandNormalCurrent(current,f));assert.equal(sha(IslandNormal.normalizeIslandNormalAuditSource(current,f)),row.beforeSHA256);assert.throws(()=>IslandNormal.assertIslandNormalCurrent(Buffer.concat([current,Buffer.from('drift')]),f));}
+ for(const[f,h]of Object.entries(contract.protectedSourceSHA256))assert.equal(sha(read(f)),h,f);
+ const owner=contract.protectedFixtures.owner,ownerBytes=read(owner);assert.equal(sha(ownerBytes),contract.protectedFixtures.ownerSHA256);const previous=JSON.parse(ownerBytes),old={...previous.protectedExistingFixtureSHA256,[owner]:contract.protectedFixtures.ownerSHA256};assert.equal(Object.keys(old).length,240);for(const[f,h]of Object.entries(old))assert.equal(sha(read(f)),h,f);
+ assert.equal(IslandNormal.normalizeIslandNormalFixtureChanges(fixture+'\n'),'');assert.throws(()=>IslandNormal.normalizeIslandNormalFixtureChanges(fixture+'\n'+fixture+'\n'));
+});

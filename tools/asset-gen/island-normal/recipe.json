@@ -1,0 +1,121 @@
+{
+  "profile": "island-matched-normal-only-v1",
+  "id": "island_tree_01",
+  "variant": -1,
+  "rootRevision": "7a11ae2",
+  "catalogFile": "assets/models/world/realism/tree-impostors.json",
+  "albedoFile": "assets/models/world/realism/island_tree_01_views.webp",
+  "normalTile": 512,
+  "frame": {
+    "width": 5.976401657669513,
+    "height": 5.328658712878823,
+    "bottom": -0.17113899525254964,
+    "sourceHeight": 5.0270365215837955,
+    "viewCount": 8
+  },
+  "leafSurfaces": {
+    "profile": "island-leaf-surfaces-1",
+    "helper": "assets/island-leaf-surfaces.mjs",
+    "helperSha256": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "operation": "Shared runtime/baker island leaf quad surface growth; original centers, UVs, topology, wood and source/view extrema retained. Both atlas channels and canopy shade rebuilt.",
+    "stats": {
+      "profile": "island-leaf-surfaces-1",
+      "factor": 1.25,
+      "quads": 44168,
+      "vertices": 176672,
+      "triangles": 88336,
+      "fullFactorQuads": 44157,
+      "limitedQuads": 11,
+      "heldQuads": 8,
+      "maxDisplacement": 0.012720527591643218,
+      "maxCenterError": 1.7881393432617188e-07,
+      "positionFnv": "e75e6e86"
+    }
+  },
+  "canopyShading": {
+    "triangles": 88336,
+    "area": 77.38306358449803,
+    "cell": 0.10960687832398848,
+    "occupied": 16104,
+    "min": 0.37225621938705444,
+    "max": 1
+  },
+  "sourceLeafCutoff": 0.38,
+  "currentRuntimeLeafCutoff": 0.22,
+  "sourceLoaderLeafNormalScale": [
+    1,
+    -1
+  ],
+  "bakeLeafNormalScale": [
+    0.55,
+    -0.55
+  ],
+  "bindings": [
+    {
+      "file": "assets/models/world/realism/island_tree_01.glb",
+      "sha256": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+      "bytes": 9036864
+    },
+    {
+      "file": "assets/models/world/realism/tree-impostors.json",
+      "sha256": [
+        "798a79ba9606c51037175b6332662ed282f546940911020b870cf6cfd73f04c3",
+        "f5c1b78751e7fe53e7a4a5030e7e42fec575398b4c324ee25ef1c0b275b1cf3e"
+      ]
+    },
+    {
+      "file": "assets/models/world/realism/island_tree_01_views.webp",
+      "sha256": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec",
+      "bytes": 2489702
+    },
+    {
+      "file": "assets/models/world/realism/island_tree_01_normals.webp",
+      "sha256": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d",
+      "bytes": 1838042
+    },
+    {
+      "file": "assets/island-leaf-surfaces.mjs",
+      "sha256": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+      "bytes": 5326
+    },
+    {
+      "file": "assets/canopy-shading.js",
+      "sha256": "25fb60e346320b74bc0eee5867c5c920a9abda8431ccf4cd89f2f15ca970f446",
+      "bytes": 4383
+    },
+    {
+      "file": "tools/asset-gen/tree-normal-material.mjs",
+      "sha256": "50fe0505cf701887f81c85d88d9e7520fa5352eed8a83e5047e29a0ede2842a2",
+      "bytes": 2369
+    },
+    {
+      "file": "assets/vendor/three/build/three.module.js",
+      "sha256": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495",
+      "bytes": 1272972
+    },
+    {
+      "file": "assets/vendor/three/examples/jsm/loaders/GLTFLoader.js",
+      "sha256": "d073b438e6a07e1359741dd5d6c76c953420cc0d4fd84eb1bdde94315540e6a3",
+      "bytes": 108522
+    }
+  ],
+  "preserve": "Only new normal RGBA/profile in fresh output; no albedo rendering/source writes. Root owns actual native execution.",
+  "outputFile": "island_tree_01_normals_matched.webp",
+  "canonicalOutput": {
+    "file": "assets/models/world/realism/island_tree_01_normals_matched.webp",
+    "sha256": "c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84",
+    "bytes": 1840458,
+    "normalProfile": "view-facing-material-v1"
+  },
+  "toolFiles": {
+    "bake.html": "75814bb77c6ff946a3b6a16764ad02d799f6876bc4a638c41098a091b5ef928a",
+    "run-bake.cjs": "a78ee7e09332f1e0c213c10a9b616eac4251592463cd9ffc4aef193bae7d4364"
+  },
+  "commands": [
+    "node tools/asset-gen/island-normal/run-bake.cjs output/island-normal-rebuild --preflight",
+    "node tools/asset-gen/island-normal/run-bake.cjs output/island-normal-rebuild"
+  ],
+  "dependencies": "Node builtins, resident tools/qa-platform.cjs+Playwright/Chromium/nativeGPU, localpreviewserver; Python3/Pillow for exact RGBA WebP roundtrip. No asset downloads.",
+  "catalogBindingPolicy": "Only exact pre-adoption and candidate catalog bodies accepted. Both retain identical Island source/albedo/frame. No arbitrary catalog drift.",
+  "reproducibility": "Geometry/frame/helper/source bytes are pinned; native GPU/MSAA may change resulting PNG/WebP bytes. Rebuild outputs a separate catalog and copy-exact albedo; never modifies repository assets."
+}

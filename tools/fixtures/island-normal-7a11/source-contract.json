@@ -1,0 +1,191 @@
+{
+  "profile": "island-source-matched-normals-1",
+  "baseline": "7a11ae2f58e393a08bb1ee692d2471ed545e8119",
+  "files": {
+    "assets/models/world/realism/README.md": {
+      "beforeSHA256": "1ea149d271222ceb0a6da89b8f8b6e2a55fd199a778bc587d58537fe6a708140",
+      "afterSHA256": "bbffa2c5768fd70361d25c55b794e4e42a0a14c003d70dec73c8e78a41d356ee",
+      "changes": [
+        {
+          "before": "e generated into an explicit\noutput directory. Native MSAA/GPU differences can alter regenerated PNG bytes,\nso cross-GPU byte-identical baking is not promised.\n",
+          "after": "e generated into an explicit\noutput directory. Native MSAA/GPU differences can alter regenerated PNG bytes,\nso cross-GPU byte-identical baking is not promised.\n\n### Island far-card material normals\n\n`island_tree_01_normals_matched.webp` is a source-derived normal-only atlas of\nIsland Tree 01 (Rob Tuytel and Rico Cilliers, Poly Haven, CC0). It retains the\noriginal eight camera frames, grown leaf geometry and albedo/cutout bytes. The\nnormal bake uses the source material normal maps, the runtime foliage normal\nscale and canopy-up blend, with opaque accepted samples before MSAA coverage.\nThe original `island_tree_01_normals.webp` remains unchanged for provenance.\n\nRebuild into a fresh output directory with the local preview server running:\n`node tools/asset-gen/island-normal/run-bake.cjs output/island-normal-rebuild`.\nThe adjacent recipe and `island_tree_01_normals_matched.provenance.json` bind\nsource assets, framing, helper versions and canonical output. GPU/MSAA changes\ncan alter regenerated texture bytes. This normal-only change adds no geometry\nor tint/exposure compensation; card self-shadow/parallax and exact LOD color\nequality remain separate limits.\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/models/world/realism/tree-impostors.json": {
+      "beforeSHA256": "798a79ba9606c51037175b6332662ed282f546940911020b870cf6cfd73f04c3",
+      "afterSHA256": "f5c1b78751e7fe53e7a4a5030e7e42fec575398b4c324ee25ef1c0b275b1cf3e",
+      "changes": [
+        {
+          "before": "{\n      \"id\": \"island_tree_01\",\n      \"variant\": -1,\n      \"width\": 5.976401657669513,\n      \"height\": 5.328658712878823,\n      \"bottom\": -0.17113899525254964,\n      \"sourceHeight\": 5.0270365215837955,\n      \"viewCount\": 8,\n      \"canopyShading\": {\n        \"triangles\": 88336,\n        \"area\": 77.38306358449803,\n        \"cell\": 0.10960687832398848,\n        \"occupied\": 16104,\n        \"min\": 0.37225621938705444,\n        \"max\": 1\n      },\n      \"views\": {\n        \"file\": \"island_tree_01_views.webp\",\n        \"bytes\": 2489702,\n        \"sha256\": \"4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec\"\n      },\n      \"normals\": {\n        \"file\": \"island_tree_01_normals.webp\",\n        \"bytes\": 1838042,\n        \"sha256\": \"53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d\"\n      },\n      \"source\": \"island_tree_01.glb\",\n      \"sourcePage\": \"https://polyhaven.com/a/island_tree_01\",\n      \"license\": \"CC0-1.0\",\n      \"leafSurfaces\": {\n        \"profile\": \"island-leaf-surfaces-1\",\n        \"helper\": \"assets/island-leaf-surfaces.mjs\",\n        \"helperSha256\": \"4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee\",\n        \"operation\": \"Shared runtime/baker island leaf quad surface growth; original centers, UVs, topology, wood and source/view extrema retained. Both atlas channels and canopy shade rebuilt.\",\n        \"stats\": {\n          \"profile\": \"island-leaf-surfaces-1\",\n          \"factor\": 1.25,\n          \"quads\": 44168,\n          \"vertices\": 176672,\n          \"triangles\": 88336,\n          \"fullFactorQuads\": 44157,\n          \"limitedQuads\": 11,\n          \"heldQuads\": 8,\n          \"maxDisplacement\": 0.012720527591643218,\n          \"maxCenterError\": 1.7881393432617188e-7,\n          \"positionFnv\": \"e75e6e86\"\n        }\n      },\n      \"pigment\": {\n        \"profile\": \"summer-leaf-pigment-1\",\n        \"helper\": \"assets/summer-leaf-pigment.mjs\",\n        \"helperSha256\": \"94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944\",\n        \"operation\": \"Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.\",\n        \"sourceLicenseUnchanged\": true\n      }\n    }",
+          "after": "{\n      \"id\": \"island_tree_01\",\n      \"variant\": -1,\n      \"width\": 5.976401657669513,\n      \"height\": 5.328658712878823,\n      \"bottom\": -0.17113899525254964,\n      \"sourceHeight\": 5.0270365215837955,\n      \"viewCount\": 8,\n      \"canopyShading\": {\n        \"triangles\": 88336,\n        \"area\": 77.38306358449803,\n        \"cell\": 0.10960687832398848,\n        \"occupied\": 16104,\n        \"min\": 0.37225621938705444,\n        \"max\": 1\n      },\n      \"views\": {\n        \"file\": \"island_tree_01_views.webp\",\n        \"bytes\": 2489702,\n        \"sha256\": \"4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec\"\n      },\n      \"normals\": {\n        \"file\": \"island_tree_01_normals_matched.webp\",\n        \"bytes\": 1840458,\n        \"sha256\": \"c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84\"\n      },\n      \"source\": \"island_tree_01.glb\",\n      \"sourcePage\": \"https://polyhaven.com/a/island_tree_01\",\n      \"license\": \"CC0-1.0\",\n      \"leafSurfaces\": {\n        \"profile\": \"island-leaf-surfaces-1\",\n        \"helper\": \"assets/island-leaf-surfaces.mjs\",\n        \"helperSha256\": \"4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee\",\n        \"operation\": \"Shared runtime/baker island leaf quad surface growth; original centers, UVs, topology, wood and source/view extrema retained. Both atlas channels and canopy shade rebuilt.\",\n        \"stats\": {\n          \"profile\": \"island-leaf-surfaces-1\",\n          \"factor\": 1.25,\n          \"quads\": 44168,\n          \"vertices\": 176672,\n          \"triangles\": 88336,\n          \"fullFactorQuads\": 44157,\n          \"limitedQuads\": 11,\n          \"heldQuads\": 8,\n          \"maxDisplacement\": 0.012720527591643218,\n          \"maxCenterError\": 1.7881393432617188e-7,\n          \"positionFnv\": \"e75e6e86\"\n        }\n      },\n      \"pigment\": {\n        \"profile\": \"summer-leaf-pigment-1\",\n        \"helper\": \"assets/summer-leaf-pigment.mjs\",\n        \"helperSha256\": \"94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944\",\n        \"operation\": \"Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.\",\n        \"sourceLicenseUnchanged\": true\n      },\n      \"normalProfile\": \"view-facing-material-v1\"\n    }",
+          "occurrences": 1
+        },
+        {
+          "before": "\"maxCenterError\": 1.7881393432617188e-7",
+          "after": "\"maxCenterError\": 1.7881393432617188e-07",
+          "occurrences": 2
+        }
+      ]
+    },
+    "assets/world-photoscans.js": {
+      "beforeSHA256": "827dfaf51f2630fca8d29ae800d033fa5d130a5ddbf7e9907306d9221fa81060",
+      "afterSHA256": "30b512a8a1f8b216aad56b4ba11ec8110c8038efd4eedcc23d173f78dde0d196",
+      "changes": [
+        {
+          "before": "tree-impostors.json?v=pine-photo-island-1",
+          "after": "tree-impostors.json?v=pine-photo-island-1-island-matched-normal-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "9c8744c87d80362df4d478ef65381614c0cc4b46e39981e0479ecf5df52d5205",
+      "afterSHA256": "12f49a86f11ee37647eadd876fa605f29047d2cad96379e6575ff0dfcd27c456",
+      "changes": [
+        {
+          "before": "world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1",
+          "after": "world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "observers": {
+    "tools/medium-canopy-source-guard.cjs": {
+      "beforeSHA256": "3731ffaec9459b913f49c1aed2e4a6d463f04fecccd233936b5b0f2c970cd7a2",
+      "afterSHA256": "046525ee157e8b810b420b15b635dfce87968adcec5588740c38a98048cd24f3",
+      "changes": [
+        {
+          "before": "const fs=require('node:fs')",
+          "after": "const {normalizeIslandNormalAuditSource,normalizeIslandNormalFixtureChanges}=require('./island-normal-source-guard.cjs');\nconst fs=require('node:fs')",
+          "occurrences": 1
+        },
+        {
+          "before": "function view(source,file,kind){const row=",
+          "after": "function view(source,file,kind){source=normalizeIslandNormalAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function assertMediumCanopyCurrent(source,file){const row=",
+          "after": "function assertMediumCanopyCurrent(source,file){source=normalizeIslandNormalAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeMediumCanopyFixtureChanges(diff){const rows=",
+          "after": "function normalizeMediumCanopyFixtureChanges(diff){diff=normalizeIslandNormalFixtureChanges(diff);const rows=",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-island-medium-source-guard.mjs": {
+      "beforeSHA256": "62664e52971820c1377745df450c3479d88181685ce62006acf02efcca720ad1",
+      "afterSHA256": "6bf2c893e1aca76e3e18b63168691dce611e23eb43da40c1018189e8616100af",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "// Explicit7a11 parent view for whole-source history; raw normal behavior is tested separately.\nimport {normalizeIslandNormalAuditSource} from './island-normal-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "bytes=f=>fs.readFileSync(new URL(f,root))",
+          "after": "bytes=f=>normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f)",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-tree-normal-bake.mjs": {
+      "beforeSHA256": "a3afa09435e14c4b9140f441689816babca7424be9fdbb71d483ac4850ac79e6",
+      "afterSHA256": "faee76a1a8adcfc51badda3e8c161b7ba0543616e51ea66e4399ae4d3202fe31",
+      "changes": [
+        {
+          "before": "ascii',8,12),'WEBP');assert.equal(bytes.readUInt32LE(4)+8,bytes.length);\n }\n});\n",
+          "after": "ascii',8,12),'WEBP');assert.equal(bytes.readUInt32LE(4)+8,bytes.length);\n }\n});\n\n// Current matched Island asset metadata is checked raw, outside historical views.\nimport * as IslandNormal from './island-normal-source-guard.cjs';\ntest('matched Island atlas binds current bytes, unchanged albedo/frame, minimal source inverse and all240 old fixtures',()=>{\n const root=new URL('../',import.meta.url),read=f=>fs.readFileSync(new URL(f,root)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');\n const fixture='tools/fixtures/island-normal-7a11/source-contract.json',contract=JSON.parse(read(fixture));\n const catalog=JSON.parse(read('assets/models/world/realism/tree-impostors.json')),entry=catalog.trees.find(t=>t.id==='island_tree_01'&&t.variant===-1);\n assert.equal(entry.normalProfile,'view-facing-material-v1');assert.deepEqual(entry.views,contract.preservedAlbedo);assert.deepEqual(Object.fromEntries(['width','height','bottom','sourceHeight','viewCount'].map(k=>[k,entry[k]])),contract.frame);\n assert.equal(entry.normals.file,'island_tree_01_normals_matched.webp');const body=read('assets/models/world/realism/'+entry.normals.file);assert.equal(sha(body),entry.normals.sha256);assert.equal(body.length,entry.normals.bytes);assert.equal(entry.normals.sha256,'c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84');\n for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const current=read(f);assert(IslandNormal.assertIslandNormalCurrent(current,f));assert.equal(sha(IslandNormal.normalizeIslandNormalAuditSource(current,f)),row.beforeSHA256);assert.throws(()=>IslandNormal.assertIslandNormalCurrent(Buffer.concat([current,Buffer.from('drift')]),f));}\n for(const[f,h]of Object.entries(contract.protectedSourceSHA256))assert.equal(sha(read(f)),h,f);\n const owner=contract.protectedFixtures.owner,ownerBytes=read(owner);assert.equal(sha(ownerBytes),contract.protectedFixtures.ownerSHA256);const previous=JSON.parse(ownerBytes),old={...previous.protectedExistingFixtureSHA256,[owner]:contract.protectedFixtures.ownerSHA256};assert.equal(Object.keys(old).length,240);for(const[f,h]of Object.entries(old))assert.equal(sha(read(f)),h,f);\n assert.equal(IslandNormal.normalizeIslandNormalFixtureChanges(fixture+'\\n'),'');assert.throws(()=>IslandNormal.normalizeIslandNormalFixtureChanges(fixture+'\\n'+fixture+'\\n'));\n});\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-commons-landscape-source-guard.mjs": {
+      "beforeSHA256": "8f5c325c77c1dd6fb7155f58775d6453eb069764665ecf5395dca3c16c6d2404",
+      "afterSHA256": "1c47bcd3d0ddf395380ef0318468f0c210a2adbb85f8b5580179dcd15cd42cf8",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "// Explicit7a11 parent bytes for protected historical owners; currentnormal tests remain raw.\nimport {normalizeIslandNormalAuditSource} from './island-normal-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "sha(fs.readFileSync(new URL(f,root)))",
+          "after": "sha(normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f))",
+          "occurrences": 2
+        }
+      ]
+    },
+    "tools/test-leaf-camera-clearance-source-guard.mjs": {
+      "beforeSHA256": "57ae1dda98ce86758a7ea0afdbbf72a9a20a77ab8698507cd823cfc44e00594e",
+      "afterSHA256": "748e6c2819aa64c72c43085ea7cdd86f739b373d61e106a25cc11d7f2ae12e58",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "// Explicit7a11 parent bytes for protected historical owners; currentnormal tests remain raw.\nimport {normalizeIslandNormalAuditSource} from './island-normal-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "sha(fs.readFileSync(new URL(f,root)))",
+          "after": "sha(normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f))",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "preservedAlbedo": {
+    "file": "island_tree_01_views.webp",
+    "bytes": 2489702,
+    "sha256": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec"
+  },
+  "legacyNormalPreserved": {
+    "file": "island_tree_01_normals.webp",
+    "bytes": 1838042,
+    "sha256": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d"
+  },
+  "frame": {
+    "width": 5.976401657669513,
+    "height": 5.328658712878823,
+    "bottom": -0.17113899525254964,
+    "sourceHeight": 5.0270365215837955,
+    "viewCount": 8
+  },
+  "protectedSourceSHA256": {
+    "assets/tree-impostors.js": "034419c407aa311f3e3ee8e2011408847525dee5182ecd67558e0e8fcc8f3de5",
+    "assets/island-medium-canopy.mjs": "08c3820da4fe3d18f31409e5ee589fde201cb461b9b188fed1a1a6c441d7f025",
+    "assets/island-leaf-surfaces.mjs": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "assets/canopy-shading.js": "25fb60e346320b74bc0eee5867c5c920a9abda8431ccf4cd89f2f15ca970f446",
+    "assets/summer-leaf-pigment.mjs": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+    "assets/models/world/realism/island_tree_01.glb": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "assets/models/world/realism/island_tree_01_views.webp": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec",
+    "assets/models/world/realism/island_tree_01_normals.webp": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d",
+    "tools/asset-gen/tree-normal-material.mjs": "50fe0505cf701887f81c85d88d9e7520fa5352eed8a83e5047e29a0ede2842a2"
+  },
+  "protectedFixtures": {
+    "owner": "tools/fixtures/medium-canopy-08d4/source-contract.json",
+    "ownerSHA256": "80bb196caf297ba8dee543d3c899d3b730a4b1cd39613de94397f97be46ca4f7",
+    "countIncludingOwner": 240,
+    "policy": "Reuse exact immutable parentinventory239 +owner; no oldfixture edits or duplicate parentcopies."
+  },
+  "cacheEdges": [
+    {
+      "file": "assets/world-photoscans.js",
+      "before": "tree-impostors.json?v=pine-photo-island-1",
+      "after": "tree-impostors.json?v=pine-photo-island-1-island-matched-normal-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1",
+      "after": "world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1",
+      "occurrences": 1
+    }
+  ],
+  "scope": "Only Islandnormal metadata/profile+newfile, onecatalogfetchquery and oneHTMLimportcachequery. No geometry/materialshader/pose/physics/LODpolicy changes. Whole-source history only, currentnormal tests read raw."
+}

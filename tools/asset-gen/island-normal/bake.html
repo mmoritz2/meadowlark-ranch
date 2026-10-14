@@ -1,0 +1,29 @@
+<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><script type="module">
+import * as T from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {createMatchedTreeNormalMaterial} from '/tools/asset-gen/tree-normal-material.mjs';
+import {applyIslandLeafSurfaces} from '/assets/island-leaf-surfaces.mjs';
+import {prepareCanopyShade} from '/assets/canopy-shading.js';
+const inputs=await fetch('/__island_normal_bake_v1/inputs.json').then(r=>{if(!r.ok)throw Error('Frozen inputs missing');return r.json();}),frame=inputs.frame,assert=(ok,message)=>{if(!ok)throw Error(message);};
+assert(inputs.id==='island_tree_01'&&frame.viewCount===8&&inputs.normalTile===512,'Only frozen Island eight-view normals supported');
+const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.setPixelRatio(1);renderer.setSize(512,512);
+const asset=await new GLTFLoader().loadAsync('/assets/models/world/realism/island_tree_01.glb'),root=asset.scene,scene=new T.Scene();scene.add(root);root.updateMatrixWorld(true);
+let leaf=null,growth=null;root.traverse(o=>{if(o.isMesh&&o.material.name==='island_tree_01_leaves'){assert(!leaf,'Ambiguous leaf source');leaf=o;growth=applyIslandLeafSurfaces(T,o.geometry);}});assert(leaf,'Leaf source missing');
+assert(!leaf.geometry.getAttribute('tangent'),'Unexpected source tangents would change derivative normal convention');assert(leaf.material.alphaTest===.38,'Source leaf cutoff changed');assert(leaf.material.normalScale.x===1&&leaf.material.normalScale.y===-1,'Actual loader derivative source normal scale must be [1,-1]');
+assert(JSON.stringify(growth)===JSON.stringify(inputs.leafSurfaces.stats),'Current grown source stats differ from catalog');
+const shade=prepareCanopyShade(T,root);assert(JSON.stringify(shade)===JSON.stringify(inputs.canopyShading),'Current full-crown shade/source geometry changed');
+root.updateMatrixWorld(true);const bounds=new T.Box3().setFromObject(root),height=bounds.max.y-bounds.min.y;assert(Math.abs(height-frame.sourceHeight)<1e-9,'Original source height changed');
+const rows=[],materials=[];root.traverse(o=>{if(!o.isMesh)return;const old=o.material,normal=createMatchedTreeNormalMaterial(T,old);rows.push({mesh:o.name,material:old.name,sourceAlphaTest:old.alphaTest,sourceNormalScale:old.normalScale.toArray(),bakeNormalScale:normal.normalScale.toArray(),sourceMatrix:o.matrixWorld.toArray()});materials.push([o,old,normal]);o.material=normal;});assert(materials.length===3,'Expected complete original three-part model');
+const camera=new T.OrthographicCamera(-frame.width/2,frame.width/2,frame.bottom+frame.height,frame.bottom,.1,100),gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');
+window.bakeIslandNormals=()=>{
+ const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=1024;const ctx=canvas.getContext('2d'),views=[];
+ for(let view=0;view<8;view++){
+  const angle=view*Math.PI/4;camera.position.set(Math.sin(angle)*30,0,Math.cos(angle)*30);camera.lookAt(0,0,0);camera.updateMatrixWorld(true);renderer.render(scene,camera);gl.finish();
+  const pixels=new Uint8Array(512*512*4);gl.readPixels(0,0,512,512,gl.RGBA,gl.UNSIGNED_BYTE,pixels);let nonzero=0,opaque=0;for(let i=3;i<pixels.length;i+=4){if(pixels[i])nonzero++;if(pixels[i]===255)opaque++;}
+  const programs=renderer.info.programs.map(p=>({linked:gl.getProgramParameter(p.program,gl.LINK_STATUS),vertex:gl.getShaderParameter(p.vertexShader,gl.COMPILE_STATUS),fragment:gl.getShaderParameter(p.fragmentShader,gl.COMPILE_STATUS)})),error=gl.getError();assert(nonzero>0&&opaque>0,'Empty accepted coverage in view'+view);assert(error===0&&programs.length&&programs.every(p=>p.linked&&p.vertex&&p.fragment),'Invalid GL/program in view'+view);
+  ctx.drawImage(renderer.domElement,(view%4)*512,Math.floor(view/4)*512);views.push({view,angle,cameraMatrix:camera.matrixWorld.toArray(),projection:camera.projectionMatrix.toArray(),nonzeroAlphaPixels:nonzero,opaqueAlphaPixels:opaque,programs,gl:error});
+ }
+ return{png:canvas.toDataURL('image/png'),views,frame,growth,canopyShading:shade,materials:rows,sourceBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):null,gl:gl.getError(),semantics:'Source face-visible normalMap at current foliage .55 scale, canopy-up .42 blend, source-world encoding. Accepted fragments alpha1, MSAA coverage only. No albedo rendering or source-origin changes.'};
+};
+window.__islandNormalBakeReady=true;
+</script>

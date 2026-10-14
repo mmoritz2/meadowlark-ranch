@@ -1,0 +1,42 @@
+{
+  "id": "island_tree_01_normals_matched",
+  "source": "island_tree_01.glb",
+  "sourceSHA256": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+  "sourcePage": "https://polyhaven.com/a/island_tree_01",
+  "authors": {
+    "Rob Tuytel": "scanning, processing",
+    "Rico Cilliers": "cleanup, processing"
+  },
+  "license": "CC0-1.0",
+  "output": {
+    "file": "assets/models/world/realism/island_tree_01_normals_matched.webp",
+    "sha256": "c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84",
+    "bytes": 1840458,
+    "normalProfile": "view-facing-material-v1"
+  },
+  "retainedAlbedo": {
+    "file": "island_tree_01_views.webp",
+    "bytes": 2489702,
+    "sha256": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec"
+  },
+  "legacyNormalPreserved": {
+    "file": "island_tree_01_normals.webp",
+    "bytes": 1838042,
+    "sha256": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d"
+  },
+  "frame": {
+    "width": 5.976401657669513,
+    "height": 5.328658712878823,
+    "bottom": -0.17113899525254964,
+    "sourceHeight": 5.0270365215837955,
+    "viewCount": 8
+  },
+  "normalContract": "Face-visible original material normalMap; loader[1,-1], foliage*.55, canopyUp.42, sourceworldRGB. Accepted normal samples alpha1 beforeMSAA. Newprofile skipslegacy.30upbias. Albedo/visiblecoverage unchanged.",
+  "sourceGeometry": "Current bounded Island leaf growth1.25; same original3partscan/no geometry added.",
+  "recipe": "tools/asset-gen/island-normal/recipe.json",
+  "recipeSHA256": "39e1643b520bd8f103fcde40c46bc1a794de4c7743fa117bbc54efb9a974f2ec",
+  "nativeBakeReceiptSHA256": "e3f32397b342a25f68e04ef467f04bf6136b4efa71e855a1b46e1bfe74a17bba",
+  "galleryArtReceiptSHA256": "f145dd4201c5f73a84487057239cc1af5175febad55077d239388675a525d3e2",
+  "scope": "Source-matched Island normal-only derivative. Actualworld art/release acceptance is separate; gallery alone doesnot prove IBL/allcamera equality.",
+  "limits": "No tint/exposure changes. Missingfarself-shadow and2tri card parallax remain. Original source/albedo/legacy normal bytes remain in place."
+}

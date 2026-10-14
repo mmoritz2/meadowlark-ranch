@@ -1,4 +1,6 @@
 import {normalizeGrazedNaturalAuditSource} from './grazed-natural-source-guard.cjs';
+// Explicit7a11 parent bytes for protected historical owners; currentnormal tests remain raw.
+import {normalizeIslandNormalAuditSource} from './island-normal-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,7 +25,7 @@ test('runtime adoption is exactly four real managed standards, two data rows and
 });
 test('roof, leaf and canopy authorities still bind exact complete source and unchanged historical fixtures and physics owners',()=>{
  for(const f of ['ranch3d.html','assets/world-photoscans.js']){assert(Clearance.assertLeafCameraClearanceCurrent(raw(f),f));assert(Canopy.assertCanopyDepthCurrent(raw(f),f));}for(const f of ['ranch3d.html','assets/ranch-architecture.js'])assert(Roof.assertRoofCoursesCurrent(raw(f),f));
- for(const [f,h]of Object.entries(contract.protectedExistingFixtureSHA256))assert.equal(sha(fs.readFileSync(new URL(f,root))),h,f);for(const [f,h]of Object.entries(contract.protectedSourceSHA256))assert.equal(sha(fs.readFileSync(new URL(f,root))),h,f);
+ for(const [f,h]of Object.entries(contract.protectedExistingFixtureSHA256))assert.equal(sha(normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f)),h,f);for(const [f,h]of Object.entries(contract.protectedSourceSHA256))assert.equal(sha(normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f)),h,f);
  for(const f of ['tools/test-commons-standard-trees.mjs','tools/test-commons-sward.mjs']){assert.doesNotMatch(raw(f),/source-guard|normalizeCommons|normalizeRoof/);assert(raw(f).includes("../assets/"));}
  assert(raw('tools/test-commons-standard-trees.mjs').includes("../assets/world-photoscans.js"));assert(raw('tools/test-commons-sward.mjs').includes("../assets/field-sward-bands.mjs"));
 });

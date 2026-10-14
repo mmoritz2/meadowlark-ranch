@@ -280,3 +280,20 @@ atlases, RGB-only transparent gutters and final GLB using the existing pinned
 Meshoptimizer 1.2.0 dependency. Intermediate arrays are generated into an explicit
 output directory. Native MSAA/GPU differences can alter regenerated PNG bytes,
 so cross-GPU byte-identical baking is not promised.
+
+### Island far-card material normals
+
+`island_tree_01_normals_matched.webp` is a source-derived normal-only atlas of
+Island Tree 01 (Rob Tuytel and Rico Cilliers, Poly Haven, CC0). It retains the
+original eight camera frames, grown leaf geometry and albedo/cutout bytes. The
+normal bake uses the source material normal maps, the runtime foliage normal
+scale and canopy-up blend, with opaque accepted samples before MSAA coverage.
+The original `island_tree_01_normals.webp` remains unchanged for provenance.
+
+Rebuild into a fresh output directory with the local preview server running:
+`node tools/asset-gen/island-normal/run-bake.cjs output/island-normal-rebuild`.
+The adjacent recipe and `island_tree_01_normals_matched.provenance.json` bind
+source assets, framing, helper versions and canonical output. GPU/MSAA changes
+can alter regenerated texture bytes. This normal-only change adds no geometry
+or tint/exposure compensation; card self-shadow/parallax and exact LOD color
+equality remain separate limits.

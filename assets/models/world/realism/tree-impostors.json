@@ -245,9 +245,9 @@
         "sha256": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec"
       },
       "normals": {
-        "file": "island_tree_01_normals.webp",
-        "bytes": 1838042,
-        "sha256": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d"
+        "file": "island_tree_01_normals_matched.webp",
+        "bytes": 1840458,
+        "sha256": "c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84"
       },
       "source": "island_tree_01.glb",
       "sourcePage": "https://polyhaven.com/a/island_tree_01",
@@ -267,7 +267,7 @@
           "limitedQuads": 11,
           "heldQuads": 8,
           "maxDisplacement": 0.012720527591643218,
-          "maxCenterError": 1.7881393432617188e-7,
+          "maxCenterError": 1.7881393432617188e-07,
           "positionFnv": "e75e6e86"
         }
       },
@@ -277,7 +277,8 @@
         "helperSha256": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
         "operation": "Shared runtime/baker broadleaf-only linear-luminance-preserving summer pigment; 58% authored chroma blend, original texture contrast, alpha, wood, fruit and normals retained.",
         "sourceLicenseUnchanged": true
-      }
+      },
+      "normalProfile": "view-facing-material-v1"
     },
     {
       "id": "orchard_apple",
@@ -392,7 +393,7 @@
           "limitedQuads": 11,
           "heldQuads": 8,
           "maxDisplacement": 0.012720527591643218,
-          "maxCenterError": 1.7881393432617188e-7,
+          "maxCenterError": 1.7881393432617188e-07,
           "positionFnv": "e75e6e86"
         }
       },

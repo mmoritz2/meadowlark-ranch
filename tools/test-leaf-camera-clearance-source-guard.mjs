@@ -1,4 +1,6 @@
 import {normalizeRoofCoursesAuditSource} from './roof-courses-source-guard.cjs';
+// Explicit7a11 parent bytes for protected historical owners; currentnormal tests remain raw.
+import {normalizeIslandNormalAuditSource} from './island-normal-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -18,7 +20,7 @@ test('the historical canopy and both Joint parent authorities still receive exac
  const joint=JSON.parse(raw('tools/fixtures/north-formal-7a6bacd/contract.json'));for(const kind of ['files','observers'])for(const [f,row]of Object.entries(joint[kind])){assert(Joint.assertNorthFormalCurrent(raw(f),f));for(const side of ['North','Formal'])assert.equal(sha(Joint['normalizeNorthFormal'+side+(kind==='files'?'Source':'Observer')](raw(f),f)),row[side.toLowerCase()+'SHA256']);}
 });
 test('raw selector, material policy, depth, scan, wood, atlases, baker and every prior fixture stay unchanged',()=>{
- assert.equal(Object.keys(contract.protectedExistingFixtureSHA256).filter(f=>f.startsWith('tools/fixtures/north-rim-planar-22b72cc/')).length,22);for(const [f,h]of Object.entries({...contract.protectedExistingFixtureSHA256,...contract.protectedSourceSHA256}))assert.equal(sha(fs.readFileSync(new URL(f,root))),h,f);
+ assert.equal(Object.keys(contract.protectedExistingFixtureSHA256).filter(f=>f.startsWith('tools/fixtures/north-rim-planar-22b72cc/')).length,22);for(const [f,h]of Object.entries({...contract.protectedExistingFixtureSHA256,...contract.protectedSourceSHA256}))assert.equal(sha(normalizeIslandNormalAuditSource(fs.readFileSync(new URL(f,root)),f)),h,f);
  const f='assets/world-photoscans.js',current=raw(f),before=Clearance.normalizeLeafCameraClearanceSource(current,f),start='  let previousSelection=new Set()';assert(current.includes(start));assert.equal(current.slice(current.indexOf(start)),before.slice(before.indexOf(start)));
  assert.equal(current.match(/mat\.normalScale\.multiplyScalar\(\.55\)/g).length,1);assert.equal(current.match(/normal=normalize\(mix\(normal,canopyUp,\.42\)\);/g).length,1);assert.equal(current.match(/mat\.alphaTest=\.22;/g).length,1);assert(current.includes('tree-impostors.json?v=pine-photo-island-1'));assert(!current.includes('applyIslandLeafCurvature'));
  const depth='    const depth=new THREE.MeshDepthMaterial(',tail='  async function load(id){';assert.equal(current.slice(current.indexOf(depth),current.indexOf(tail)),before.slice(before.indexOf(depth),before.indexOf(tail)));
