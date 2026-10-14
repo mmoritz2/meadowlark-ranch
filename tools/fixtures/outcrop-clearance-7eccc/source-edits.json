@@ -1,0 +1,29 @@
+{
+  "parentSHA256": "9c4cec77b4255fe7db66e64b8937bfdfd266f39088223497766cd10d6453961a",
+  "edits": [
+    {
+      "before": "import {mergeGeometries,mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';",
+      "after": "import {mergeGeometries,mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';\nimport {relocateCompletedOutcrops} from '../outcrop-track-clearance.mjs?v=outcrop-track-clearance-1';"
+    },
+    {
+      "before": "function ok(x,z,R){",
+      "after": "function ok(x,z,R,ignored=null){"
+    },
+    {
+      "before": "for(const c of cols)if(Math.hypot(x-c.x,z-c.z)<R+(c.r||0)+4)return false;",
+      "after": "for(const c of cols)if(c!==ignored?.collider&&Math.hypot(x-c.x,z-c.z)<R+(c.r||0)+4)return false;"
+    },
+    {
+      "before": "for(const q of placed)if(Math.hypot(x-q.x,z-q.z)<48)return false;",
+      "after": "for(const q of placed)if(q!==ignored?.placed&&Math.hypot(x-q.x,z-q.z)<48)return false;"
+    },
+    {
+      "before": " for(const k in BASE)BASE[k].dispose();",
+      "after": " const relocations=relocateCompletedOutcrops({placements:placed,meshes:group.children,colliders:cols,climbables:W.climbables||[],tracks:G.worldPaths?.tracks||[],heightAt:W.groundH,isAllowed:ok});\n for(const k in BASE)BASE[k].dispose();"
+    },
+    {
+      "before": "G.worldOutcrops={group,placed,material:mat};",
+      "after": "G.worldOutcrops={group,placed,material:mat,relocations};"
+    }
+  ]
+}

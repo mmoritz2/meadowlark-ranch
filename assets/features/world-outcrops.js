@@ -23,6 +23,7 @@
 
    Nothing runs at import time. */
 import {mergeGeometries,mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
+import {relocateCompletedOutcrops} from '../outcrop-track-clearance.mjs?v=outcrop-track-clearance-1';
 export const id='world-outcrops';
 export function install(G){
  const THREE=G.THREE, W=G.world, T=G.tables||{};
@@ -127,7 +128,7 @@ export function install(G){
  const wallD=(x,z)=>{let m=1e9;for(const w of walls){const d=segD(x,z,[w.x1,w.z1],[w.x2,w.z2]);if(d<m)m=d;}return m;};
  const OTHER=[[-220,130,175],[-160,-210,165],[300,-300,150],[310,300,145],[-300,-320,150],[-330,300,150]];   // canyon, peaks, the four quarters
  const placed=[];
- function ok(x,z,R){
+ function ok(x,z,R,ignored=null){
   const r0=Math.hypot(x,z);
   if(r0<60||r0>330)return false;                                   // clear of the ranch, inside the basin
   for(const [ox,oz,orad] of OTHER)if(Math.hypot(x-ox,z-oz)<orad)return false;
@@ -139,10 +140,10 @@ export function install(G){
   for(const v of venues)if(Math.hypot(x-v.x,z-v.z)<R+60)return false;
   for(const p of npcs)if(Math.hypot(x-p.x,z-p.z)<R+16)return false;
   for(const q of spots)if(Math.hypot(x-q.x,z-q.z)<R+q.r)return false;
-  for(const c of cols)if(Math.hypot(x-c.x,z-c.z)<R+(c.r||0)+4)return false;
+  for(const c of cols)if(c!==ignored?.collider&&Math.hypot(x-c.x,z-c.z)<R+(c.r||0)+4)return false;
   for(const t of trees)if(Math.hypot(x-t.x,z-t.z)<R+3.5)return false;
   if(wallD(x,z)<R+6)return false;
-  for(const q of placed)if(Math.hypot(x-q.x,z-q.z)<48)return false;
+  for(const q of placed)if(q!==ignored?.placed&&Math.hypot(x-q.x,z-q.z)<48)return false;
   return true;
  }
 
@@ -206,9 +207,10 @@ export function install(G){
   m.updateMatrixWorld(true);
   if(W.climbables)W.climbables.push({mesh:m,x,z,r:R*1.95,y:m.position.y,kind:'outcrop'});
  }
+ const relocations=relocateCompletedOutcrops({placements:placed,meshes:group.children,colliders:cols,climbables:W.climbables||[],tracks:G.worldPaths?.tracks||[],heightAt:W.groundH,isAllowed:ok});
  for(const k in BASE)BASE[k].dispose();                              // only ever cloned from
  G.scene.add(group);
 
- G.worldOutcrops={group,placed,material:mat};
+ G.worldOutcrops={group,placed,material:mat,relocations};
  G.on('state',o=>{o.outcrops={count:placed.length,avoided:spots.length};});
 }
