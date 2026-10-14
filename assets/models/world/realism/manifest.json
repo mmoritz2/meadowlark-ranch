@@ -1035,5 +1035,51 @@
       "textures": 9
     },
     "processing": "All 116,084 authored leaves fitted to individual original-UV quads; 8-bit normals and 12-bit UVs; Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "island_tree_01_medium",
+    "page": "https://polyhaven.com/a/island_tree_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "authors": {
+      "Rob Tuytel": "scanning, processing",
+      "Rico Cilliers": "cleanup, processing"
+    },
+    "derivative": true,
+    "sourceRecord": "island_tree_01",
+    "sourceFiles": [
+      {
+        "file": "island_tree_01.glb",
+        "bytes": 9036864,
+        "sha256": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+        "origin": "Existing resident source; upstream URLs and download checksums recorded in sourceRecord"
+      }
+    ],
+    "output": {
+      "file": "island_tree_01_medium.glb",
+      "bytes": 4003784,
+      "sha256": "890fd735f290b42683195ea39952507e044fc6ac1f5d8565fee43092ec4c2500",
+      "trianglesBefore": 104150,
+      "triangles": 8355,
+      "primitives": [
+        {
+          "material": "island_tree_01",
+          "triangles": 1647
+        },
+        {
+          "material": "island_tree_01_branches",
+          "triangles": 845
+        },
+        {
+          "material": "island_tree_01_leaves",
+          "triangles": 5863
+        }
+      ],
+      "materials": 3,
+      "textures": 8
+    },
+    "processing": "Source-preserving2492trianglewood plus5863triangle spatial leafcluster proxy. Current1.25grown44168sourceleaves\u2192976occupiedcells,18representatives\u00d73orthographicviews,1024\u00d7896 rawalbedo/tangentnormal atlases; target canopyShade and explicitTANGENT/-1. OriginalwoodPBR retained; leafARM replaced by roughness1/metallic0 approximation. Rawmetres/+Yup/sourceframe retained. Bounded40\u2013100m mediumtier; fullnear and physicalproxies remain original owners.",
+    "provenance": "island_tree_01_medium.provenance.json",
+    "recipe": "tools/asset-gen/island-medium/recipe.json"
   }
 ]

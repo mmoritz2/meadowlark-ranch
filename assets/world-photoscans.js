@@ -1,3 +1,4 @@
+import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1';
 import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';
 import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
@@ -1040,6 +1041,31 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     return state.hollowpeakCliffFlora;
   });
+  // Preserve the original planner and its private histories. The source-derived
+  // medium tier restores actual full/card buffers after the same original calls.
+  const originalUpdateTrees=updateTrees;
+  let mediumCanopy=null;
+  function restoreOriginalCanopy(error){
+    mediumCanopy?.dispose();mediumCanopy=null;state.mediumCanopy=null;
+    state.mediumCanopyError=String(error?.message||error);previousMode=null;originalUpdateTrees();
+    for(const key of ['activeFullTrees','activeMediumTrees','activeTreeFullTriangles','activeTreeMediumTriangles','activeTreeCardTriangles','activeTreeRenderTriangles'])delete state[key];
+  }
+  updateTrees=function updateCanopyTiers(){
+    originalUpdateTrees();
+    if(!mediumCanopy)return;
+    state.treePlannerLOD=originalCanopyPlannerLedger(state,trees,previousSelection);
+    try{mediumCanopy.update();publishMediumCanopyLedger(state,mediumCanopy);}catch(error){restoreOriginalCanopy(error);}
+  };
+  // This late owner never participates in scans.ready or another layout chain.
+  state.mediumCanopy=null;state.mediumCanopyError=null;
+  state.mediumCanopyReady=(async()=>{
+    try{
+      await waitForMediumCanopyWorld(G,state);
+      mediumCanopy=await installIslandMediumCanopy(G,{trees,treeMeshes,treeCards,group,GLTFLoader,configureMaterial,
+        originalSelection:()=>({selected:[...previousSelection],near:[...previousNearSelection],middle:[...previousCrownSelection],planningMiddle:[...previousMiddleSelection]})});
+      state.mediumCanopy=mediumCanopy;updateTrees();return state.mediumCanopy;
+    }catch(error){restoreOriginalCanopy(error);return null;}
+  })();
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;

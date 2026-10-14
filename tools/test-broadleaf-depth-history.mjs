@@ -1,3 +1,5 @@
+// Explicit historical08d4 source/updater comparison. Actual medium runtime is tested raw separately.
+import {normalizeMediumCanopySource} from './medium-canopy-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -8,10 +10,10 @@ import {register} from 'node:module';
 register('./broadleaf-depth-cpu-loader.mjs',import.meta.url);
 const {selectMiddleCrownModels}=await import('../assets/world-photoscans.js');
 import {loadCrownInputs,rawBroadleafSource,historicalParentComparison,broadleafSourceEdits} from './broadleaf-depth-test-fixture.mjs';
-const source=rawBroadleafSource(),historical=historicalParentComparison(source),parent=historical.source,edits=broadleafSourceEdits,sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const source=normalizeMediumCanopySource(rawBroadleafSource(),'assets/world-photoscans.js'),historical=historicalParentComparison(source),parent=historical.source,edits=broadleafSourceEdits,sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 const rosterBytes=fs.readFileSync(new URL('./fixtures/broadleaf-depth-60cb73c/actual-tree-roster.json',import.meta.url)),capture=JSON.parse(JSON.stringify(loadCrownInputs().capture));
 const inputs=loadCrownInputs(),authored=Object.values(capture.authoredTriangles).reduce((a,b)=>a+b,0),trees=inputs.trees.map(t=>({...t,tint:new T.Color(.7,.8,.5)}));
-const report={scope:'CPU executes exact current and candidate updateTrees closures with actual captured source costs/placements and upload recorders. No renderer or native frame claim.',parentSHA256:sha(parent),candidateSHA256:sha(source),rosterSHA256:sha(rosterBytes),rosterCount:trees.length,frames:0,nearExact:0,planningExact:0,tierSwitches:0,xrFrames:0,retiredTransitions:0,maxHighTriangles:0,maxOtherTriangles:0,changedMiddleFrames:0};
+const report={scope:'CPU executes frozen60cb and reconstructed historical08d4 updater components with captured costs/placements. Current medium behavior is tested separately against raw runtime. No renderer/native frame claim.',parentSHA256:sha(parent),candidateSHA256:sha(source),rosterSHA256:sha(rosterBytes),rosterCount:trees.length,frames:0,nearExact:0,planningExact:0,tierSwitches:0,xrFrames:0,retiredTransitions:0,maxHighTriangles:0,maxOtherTriangles:0,changedMiddleFrames:0};
 function create(code){
  const a=code.indexOf('  let previousSelection=new Set()'),b=code.indexOf('  state.ready=(async()=>{',a);assert(a>=0&&b>a);
  const factory=new Function('THREE','H','G','state','trees','treeMeshes','treeCards','renderer','WHITE','selectMiddleCrownModels',code.slice(a,b)+';return{update:updateTrees,near:()=>[...previousNearSelection],planning:()=>[...previousMiddleSelection],middle:()=>typeof previousCrownSelection===\'undefined\'?[...previousMiddleSelection]:[...previousCrownSelection],selected:()=>[...previousSelection]};');
@@ -23,8 +25,8 @@ function create(code){
  const set=new Set(api.selected());assert.equal(set.size,api.selected().length);for(const [list,full]of[[models,true],[cards,false]])for(const{records,mesh}of list){const want=records.filter(t=>full?set.has(t):!t.retiredFallsFlora&&!set.has(t));assert.equal(mesh.count,want.length);for(let i=0;i<want.length;i++)assert.equal(mesh.matrices[i],want[i].matrix);assert.equal(mesh.castShadow,!xr);}
  assert.equal(state.activeTreeTriangles,authored+api.selected().reduce((n,t)=>n+t.source.triangles,0));assert(state.activeTreeTriangles<=state.treeTriangleBudget);assert(state.activeNearTrees<=(quality==='high'?12:quality==='low'?4:6));assert(state.activeMiddleTrees<=(quality==='high'?14:quality==='low'?6:10));assert(api.selected().every(t=>!t.retiredFallsFlora));if(xr)assert.equal(api.selected().length,0);return api.selected();}};
 }
-test('current source inverse and all five changes exactly bind the frozen prototype',()=>{assert.equal(sha(parent),edits.beforeSHA256);assert.equal(sha(source),edits.afterSHA256);assert.equal(edits.changes.length,5);let restored=source;for(const c of edits.changes.toReversed()){assert.equal(restored.split(c.after).length-1,1);restored=restored.replace(c.after,c.before);}assert.equal(restored,parent);});
-test('actual 2818-tree roster preserves original near and planning histories through moving cameras quality changes retirement and XR',()=>{
+test('historical08d4: current source inverse and all five changes exactly bind the frozen prototype',()=>{assert.equal(sha(parent),edits.beforeSHA256);assert.equal(sha(source),edits.afterSHA256);assert.equal(edits.changes.length,5);let restored=source;for(const c of edits.changes.toReversed()){assert.equal(restored.split(c.after).length-1,1);restored=restored.replace(c.after,c.before);}assert.equal(restored,parent);});
+test('historical08d4: actual 2818-tree roster preserves original near and planning histories through moving cameras quality changes retirement and XR',()=>{
  const a=create(historical.updater+'  state.ready=(async()=>{'),b=create(source),before=JSON.stringify(trees);report.parentUpdaterSHA256=a.updaterSHA256;report.candidateUpdaterSHA256=b.updaterSHA256;const retired=new Map();let previousTier;
  for(let i=0;i<220;i++){
   for(const[t,v]of retired)t.retiredFallsFlora=v;retired.clear();if(i%19===8){for(const t of a.api.near().slice(0,2)){retired.set(t,t.retiredFallsFlora);t.retiredFallsFlora=true;report.retiredTransitions++;}}

@@ -1,0 +1,149 @@
+{
+  "id": "island_tree_01_medium",
+  "sourceFile": "assets/models/world/realism/island_tree_01.glb",
+  "sourceSHA256": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+  "sourceAuthors": {
+    "Rob Tuytel": "scanning, processing",
+    "Rico Cilliers": "cleanup, processing"
+  },
+  "sourcePage": "https://polyhaven.com/a/island_tree_01",
+  "license": "CC0-1.0",
+  "outputFile": "assets/models/world/realism/island_tree_01_medium.glb",
+  "canonicalAcceptedOutput": {
+    "sourceGLBSHA256": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "modelSHA256": "890fd735f290b42683195ea39952507e044fc6ac1f5d8565fee43092ec4c2500",
+    "modelBytes": 4003784,
+    "triangles": 8355,
+    "woodTriangles": 2492,
+    "leafTriangles": 5863,
+    "primitives": 3,
+    "clusterPlanSHA256": "2a92456a47f9a91a1179ebbf03e2867980de6f74bd8e17a0507680f1c5f3f7c3",
+    "leafGeometrySHA256": "60e94af51bb45f0f557872c3919eab2d2b9efefd3ed534fe8f375d6ecb65fac8",
+    "woodGeometrySHA256": "33e46b811dea86ad53827591d9af736b566ad6154cc091267774e60d81279516",
+    "rawAlbedoSHA256": "25ba9ed1cc7b48afbbb4708362f1950c486988011e27dd24bf9b3ff551c35dfc",
+    "rawNormalSHA256": "b515d86ddbe1e4a6bae447225f0cbf15f636c478c64e47b32b839b14c5366024",
+    "dilatedAlbedoSHA256": "867465cfa0d3ee2bc6a2bb0a8406dbf27a2020cfc93e74fd2f761ffdfa3b8f00",
+    "dilatedNormalSHA256": "eee7ceb21723773e0f903cab51f0b81be787a622dcd7140d53e7d89b889cd4d4"
+  },
+  "sourceHelpersSHA256": {
+    "assets/island-leaf-surfaces.mjs": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "assets/canopy-shading.js": "25fb60e346320b74bc0eee5867c5c920a9abda8431ccf4cd89f2f15ca970f446",
+    "assets/summer-leaf-pigment.mjs": "94b76f3a8616f83a7bff6bdff59515745ead3f9c5595b66a8706f2a42ea7e944",
+    "assets/vendor/three/build/three.module.js": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495",
+    "assets/vendor/three/examples/jsm/loaders/GLTFLoader.js": "d073b438e6a07e1359741dd5d6c76c953420cc0d4fd84eb1bdde94315540e6a3"
+  },
+  "toolFiles": {
+    "build-cluster-plan.mjs": "246f146ba0c5d2b9bdb0a1ea9a8f34c313213287c7b993746c0a49dae0b1a4dc",
+    "build-wood.mjs": "4fb148e34e4f95000bc979f901d184e9adbfc86f4a7ead857ba3630de85fa376",
+    "glb-utils.mjs": "24edfe1424d5a4df51496bebcaaae7a10f1996dcd3293b09c929672ef53dc2a7",
+    "assemble-medium.mjs": "c4fe501ee929adb8e949723cedc38702467f1d5dcd44808f7607f33d92e037b7",
+    "bake.html": "85e146d1f76067a58f54a6b4cfe097320fa9e6cfa3cefd818ba27afa6f313cfa",
+    "run-bake.cjs": "1f8e0e10d17326f00c6a4f0e0151a1cbea90d8372966528d9a375c4ec9d85510",
+    "dilate-atlases.py": "ac1a07e8d7e536a115d67c0ba3fa7d6441318a2bb0f5a5529d7061c9c96e6338"
+  },
+  "portedFrom": {
+    "build-cluster-plan.mjs": {
+      "source": "cpu-model/build-cluster-plan.mjs",
+      "sha256": "e0f7ea047a4a0dbf4019bbe3cde413d5b33d4d39c3f3d77dbce709db797025b1"
+    },
+    "build-wood.mjs": {
+      "source": "cpu-wood/build-wood.mjs",
+      "sha256": "445119f1a75536e27e95177a1a330f232c68c6bddfa93dc2264d133e39418f62"
+    },
+    "glb-utils.mjs": {
+      "source": "cpu-wood/glb-utils.mjs",
+      "sha256": "24edfe1424d5a4df51496bebcaaae7a10f1996dcd3293b09c929672ef53dc2a7"
+    },
+    "assemble-medium.mjs": {
+      "source": "cpu-wood/assemble-medium.mjs",
+      "sha256": "ba60347b42610bb97b3faa813c7ec40bf49a01dc443412a014a4c7bd672d56d5"
+    },
+    "bake.html": {
+      "source": "bake/index.html",
+      "sha256": "85e146d1f76067a58f54a6b4cfe097320fa9e6cfa3cefd818ba27afa6f313cfa"
+    },
+    "run-bake.cjs": {
+      "source": "bake/run-bake.cjs",
+      "sha256": "350283051cb8f1b2fbd642fb2c6e103634cc7801ce57f7e4ea6838bbb8d35765"
+    },
+    "dilate-atlases.py": {
+      "source": "bake/dilate-atlases.py",
+      "sha256": "ac1a07e8d7e536a115d67c0ba3fa7d6441318a2bb0f5a5529d7061c9c96e6338"
+    }
+  },
+  "dependencies": {
+    "node": "Node builtins + current vendoredThree; tools/asset-gen/package.json andpackage-lock.json already pin meshoptimizer1.2.0. Run npm ci there if dependencies are not installed, or set GLTF_PIPELINE_MODULES to that node_modules. No newdependency/vendor added.",
+    "python": "NumPy andPillow",
+    "native": "Existing tools/qa-platform.cjs +Playwright/Chromium/nativeGPU and localpreviewserver; QA_URL/QA_PORT selectserver. Runtime root/tree helpers must match sourceHashes.",
+    "packageJSONSHA256": "222c009b3340ed695e82fc12a8466573a06e013c2d1cf6238c88afd89240748b",
+    "packageLockSHA256": "bbd7c043a905b65f4833b280ddaa16efed437a330ce149f873de5994ed84917b"
+  },
+  "commandsFromRepoRoot": [
+    "node tools/asset-gen/island-medium/build-cluster-plan.mjs output/island-medium-rebuild/cpu",
+    "node tools/asset-gen/island-medium/build-wood.mjs output/island-medium-rebuild/cpu",
+    "node tools/asset-gen/island-medium/run-bake.cjs output/island-medium-rebuild/cpu/cluster-plan.json output/island-medium-rebuild/raw",
+    "python3 tools/asset-gen/island-medium/dilate-atlases.py output/island-medium-rebuild/raw output/island-medium-rebuild/dilated output/island-medium-rebuild/cpu/cluster-plan.json",
+    "node tools/asset-gen/island-medium/assemble-medium.mjs --color output/island-medium-rebuild/dilated/albedo.png --normal output/island-medium-rebuild/dilated/normal.png --leaf output/island-medium-rebuild/cpu/leaf-geometry.json --plan output/island-medium-rebuild/cpu/cluster-plan.json --wood output/island-medium-rebuild/cpu/wood-geometry.json --output output/island-medium-rebuild/island_tree_01_medium.glb"
+  ],
+  "configuration": {
+    "sourceFrame": "rawmetres,+Yup,identity; sourceHeight5.0270365215837955",
+    "growth": 1.25,
+    "targetHeightForCellSize": 10,
+    "worldCellMetres": 0.6,
+    "cells": 976,
+    "representatives": 18,
+    "orthographicViewsPerCell": 3,
+    "atlas": [
+      1024,
+      896
+    ],
+    "tilePixels": 128,
+    "gutterPixels": 4,
+    "woodTriangles": 2492,
+    "leafTriangles": 5863,
+    "totalTriangles": 8355,
+    "shade": "Full grownsource shade first\u2192areamean pertargetcell scalar; no shade in representativeatlas",
+    "normal": "TANGENT(U,-1),UVvdown/B=-V; sourceNormal*.55 before canopyup blend; mediumscale1/.55 thenruntime*.55",
+    "leafPBR": "roughness1/metallic0; no old ARM due differentUVs",
+    "woodSelectedTrial": {
+      "target": 2000,
+      "errorLimit": 0.012,
+      "actualTriangles": 2492
+    }
+  },
+  "runtimeContract": {
+    "mediumRangeMetres": [
+      40,
+      100
+    ],
+    "retainedOuterRangeMetres": 108,
+    "sourceFrame": "Use original fullsource placement matrix/sourceHeight; original fullnear/closefullmiddle and farviews/proxies remain runtime owners",
+    "shade": "Original grown fullcrown canopyShade computed once, areaweighted targetcell mean emitted as_SCALAR _CANOPY_SHADE; alias loader _canopy_shade\u2192canopyShade. Do not regrow derivative or recompute canopyShade on proxy area.",
+    "material": "Apply current preparedsource leafbase[.82,1,.66], shared summer/seasonal pigment, target canopyShade, wind, live canopy normal blend and depth deformation once; normalTexture scale1/.55 becomes[1,1] after current configureMaterial*.55.",
+    "leafPBRApproximation": "New clusterUVs use baked albedo+normal only. Original leaf ARM/AO/roughness textureUVs cannot transfer: derivative uses roughness1, metallic0 and no source leaf ARM map. Wood original PBR channels/images remain exact.",
+    "limits": "Representative alpha coverage, roughness and fixedplane parallax approximate fullscan. Existing full\u2194far brightness difference also remains; seamless transition and globalperformance are not claimed."
+  },
+  "bakeProvenance": {
+    "recipe": "tools/asset-gen/island-medium/recipe.json",
+    "originalPlannerSHA256": "e0f7ea047a4a0dbf4019bbe3cde413d5b33d4d39c3f3d77dbce709db797025b1",
+    "originalWoodBuilderSHA256": "445119f1a75536e27e95177a1a330f232c68c6bddfa93dc2264d133e39418f62",
+    "originalAssemblerSHA256": "ba60347b42610bb97b3faa813c7ec40bf49a01dc443412a014a4c7bd672d56d5",
+    "originalGLBUtilitiesSHA256": "24edfe1424d5a4df51496bebcaaae7a10f1996dcd3293b09c929672ef53dc2a7",
+    "bakeHTMLSHA256": "85e146d1f76067a58f54a6b4cfe097320fa9e6cfa3cefd818ba27afa6f313cfa",
+    "bakeRunnerSHA256": "350283051cb8f1b2fbd642fb2c6e103634cc7801ce57f7e4ea6838bbb8d35765",
+    "bakeReceiptSHA256": "3ac877818d0db023de2f67d8a90f2f281d518750e08de0940fc65959934981c2",
+    "dilationScriptSHA256": "ac1a07e8d7e536a115d67c0ba3fa7d6441318a2bb0f5a5529d7061c9c96e6338",
+    "dilationReceiptSHA256": "5723a03dedc9eec5a237b9719f4f0b672ea7972ef8f97d350226e82e15fd065b",
+    "assemblyReceiptSHA256": "72ec6d9fc54d9c1347d24318451466d18289d1c5b861c552f7ad37176e48fcfd",
+    "meshoptimizerVersion": "1.2.0"
+  },
+  "acceptance": {
+    "scope": "Source-derived mediumgeometry/material accepted for bounded40\u2013100m Island tier after18actualseasonframes and pairedworldtrial review; runtimeintegration/physical/resourcechecks are separately owned.",
+    "seasonReviewSHA256": "dbe2f5e971a801aed09b21f74fdf63761a4fcff6e60f6700751460523008bcce",
+    "worldReviewSHA256": "4a732785a918fc94725fbe4d2a490b0f05977b054edc86542c64db6be5f29130",
+    "modelGalleryReportSHA256": "83d7bdaa21913613db2e0dc8567dd68500dccd1cf8853442e77b530de89548e5",
+    "limits": "Not fullsource color/coverage equivalence, seamless LOD, allforest improvement or fixedFPS claim. Internal model extras preserve the historical trial productionAccepted:false flag because accepted model bytes stay exact."
+  },
+  "reproducibility": "CPU numerical/geometry bodies preserved by port. Source file metadata is now reporelative, so regenerated plan/GLB provenance hashes may differ from historical canonicaltrial even with identicalgeometry. NativePNG crossGPU byteidentity is not promised; compare actualgeometry/attributes/counts and canonicalatlas hashes. CanonicalacceptedPNGbytes are embedded in the exact acceptedGLB.",
+  "largeIntermediates": "No source arrays/node_modules/generatedwoodpreview tracked; scripts emit intermediates under explicit output directories."
+}

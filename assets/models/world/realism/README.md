@@ -243,3 +243,40 @@ The committed model SHA-256 is `5393f0c370b385920b840850881d4fbb25afc965f3e1dc24
 The upright normal atlas uses `view-facing-material-v1`: the same sided leaf normal map and canopy blend as the detailed model. Accepted normal samples are opaque before MSAA resolution, preventing canvas unpremultiplication from corrupting partial-alpha normal directions. Only flagged atlases bypass the legacy second canopy blend. Existing foliage coverage and finite-normal guards remain in place. Dynamic self-shadows and silhouette filtering still differ between detailed geometry and distant cards.
 
 CPU checks: `node --test tools/test-pastoral-woodland.mjs tools/test-woodland-wood-proxies.mjs tools/test-tree-normal-bake.mjs`.
+
+
+## Island Tree 01 spatial medium canopy
+
+`island_tree_01_medium.glb` is a local derivative of [Island Tree 01 by Rob Tuytel
+and Rico Cilliers](https://polyhaven.com/a/island_tree_01), under the same
+[CC0 1.0 license](https://polyhaven.com/license). Its exact SHA-256 is
+`890fd735f290b42683195ea39952507e044fc6ac1f5d8565fee43092ec4c2500`.
+The 4,003,784-byte model has three primitives and 8,355 triangles: 2,492 triangles of source-derived
+wood and a 5,863-triangle spatial foliage proxy. It retains the original
+metre scale, root, source height and frame.
+
+The current 1.25 leaf growth is applied to all 44,168 source quads before
+clustering into 976 occupied cells. Eighteen original geometry clusters supply
+54 orthographic atlas views at 128px each, with 4px gutters. Three fixed spatial
+planes per occupied cell retain local crown depth. Raw albedo and tangent normal
+atlases occupy 1024×896 pixels. Original full-crown shade is averaged per target
+cell into `_CANOPY_SHADE`; explicit tangents preserve the atlas normal convention.
+The runtime aliases the shade attribute and applies the existing summer pigment,
+wind and depth deformation once. It must not regrow or recompute shading from
+the proxy geometry.
+
+This derivative is accepted for a bounded 40–100m medium tier. Original close
+full models, planted matrices, distant views and physical proxies remain separate
+owners. Representative sprites approximate leaf coverage and parallax; the
+source full/distant brightness transition is still visible. Original wood PBR
+channels remain exact. The new leaf UVs use albedo and normals with roughness 1
+and metallic 0; the source leaf ARM map is deliberately not reused with
+incompatible atlas UVs. No seamless-transition or fixed-FPS claim is made.
+
+`island_tree_01_medium.provenance.json` records source authors/URLs, hashes,
+helper configuration, bake inputs and these limits. The compact recipe in
+`tools/asset-gen/island-medium/recipe.json` rebuilds the CPU geometry, native
+atlases, RGB-only transparent gutters and final GLB using the existing pinned
+Meshoptimizer 1.2.0 dependency. Intermediate arrays are generated into an explicit
+output directory. Native MSAA/GPU differences can alter regenerated PNG bytes,
+so cross-GPU byte-identical baking is not promised.
