@@ -1,0 +1,20 @@
+// Execute the actual current updater without a renderer/GPU or source projection.
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const source=fs.readFileSync(__dirname+'/../assets/world-photoscans.js','utf8'),a=source.indexOf('  let previousSelection=new Set()'),b=source.indexOf('  state.ready=(async()=>{',a),block=source.slice(a,b);
+function fixture(tier='high',withPines=true){
+ const trees=[];for(let i=0;i<16;i++)trees.push({x:(i%2?1:-1)*(i+2),z:i+2,source:{key:'pine-1',triangles:125308},matrix:{id:i},tint:null});
+ if(withPines)for(let i=0;i<36;i++)trees.push({x:(i%2?1:-1)*(3+i%8),z:35+i*2,source:{key:'mature-pine',triangles:90650},matrix:{id:100+i},tint:null});
+ const state={villageEvergreens:{triangles:406764}},H={player:{pos:{x:0,z:0},heading:0}},G={gfx:{get:()=>tier}},renderer={xr:{isPresenting:false}},meshes=[];
+ const row=(key,card)=>{const records=trees.filter(t=>t.source.key===key),mesh={material:{name:'tree_twigs'},count:0,visible:false,instanceMatrix:{array:[],needsUpdate:false},instanceColor:{needsUpdate:false},setMatrixAt(i,m){this.instanceMatrix.array[i]=m.id;},setColorAt(){},computeBoundingSphere(){}};meshes.push({key,card,mesh,records});return meshes.at(-1);};
+ const treeMeshes=[row('pine-1',false),row('mature-pine',false)],treeCards=[row('pine-1',true),row('mature-pine',true)];
+ class Vector3{set(x,y,z){this.x=x;this.y=y;this.z=z;return this;}}
+ const update=Function('THREE','H','G','state','trees','treeMeshes','treeCards','renderer','WHITE',block+';return updateTrees;')({Vector3},H,G,state,trees,treeMeshes,treeCards,renderer,{});
+ return {trees,state,H,G,renderer,meshes,update};
+}
+function check(f){const selected=[],cards=[];for(const row of f.meshes){const target=row.card?cards:selected;for(let i=0;i<row.mesh.count;i++){const t=row.records.find(t=>t.matrix.id===row.mesh.instanceMatrix.array[i]);assert(t);target.push(t);}}
+ assert.equal(new Set(selected).size,selected.length);assert.equal(new Set(cards).size,cards.length);assert.equal(selected.length+cards.length,f.trees.length);assert(selected.every(t=>!cards.includes(t)));
+ const tris=406764+selected.reduce((n,t)=>n+t.source.triangles,0);assert.equal(tris,f.state.activeTreeTriangles);assert(tris<=f.state.treeTriangleBudget);assert.equal(selected.length,f.state.activeRenderedTrees);assert.equal(selected.length,f.state.activeNearTrees+f.state.activeMiddleTrees);return selected;}
+test('Low draws the nearest full fir and two actual 3D middle crowns within the unchanged750k pool',()=>{const f=fixture('low');f.update();const s=check(f);assert(s.includes(f.trees[0]));assert.equal(f.state.activeMiddleTrees,2);assert.equal(s.length,3);assert.equal(f.state.activeTreeTriangles,713372);});
+test('High and Medium add visible mature crowns, preserve every source/site and allocate no geometry',()=>{for(const tier of ['high','medium']){const f=fixture(tier),before=JSON.stringify(f.trees);f.update();check(f);assert(f.state.activeMiddleTrees>0);assert.equal(JSON.stringify(f.trees),before);const changes=f.state.detailRebuilds;for(let i=0;i<30;i++)f.update();check(f);assert.equal(f.state.detailRebuilds,changes);}});
+test('without eligible middle pines, the previous nearest-N recipe remains exact',()=>{for(const tier of ['high','medium','low']){const f=fixture(tier,false);f.update();const s=check(f),budget=tier==='high'?1800000:750000,limit=tier==='high'?12:tier==='low'?4:6;let n=406764;const expected=[];for(const t of f.trees){if(expected.length>=limit)break;if(n+t.source.triangles>budget)continue;expected.push(t);n+=t.source.triangles;}assert.deepEqual(s,expected);assert.equal(f.state.activeMiddleTrees,0);}});
+test('travel, reversal and XR never duplicate rows, exceed the original cap or retain retired trees',()=>{for(const tier of ['high','low']){const f=fixture(tier);for(let i=0;i<160;i++){f.H.player.pos.x=Math.sin(i*.1)*8;f.H.player.pos.z=i*.23;f.H.player.heading=i<80?0:Math.PI;f.update();check(f);}f.renderer.xr.isPresenting=true;f.update();assert.equal(f.state.activeRenderedTrees,0);check(f);}});

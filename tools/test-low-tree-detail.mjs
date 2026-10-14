@@ -10,12 +10,12 @@ function inferRoot(){let p=path.dirname(fileURLToPath(import.meta.url));while(!f
 const ROOT=path.resolve(process.env.TREE_DETAIL_REPO||inferRoot());
 const runtimePath=path.resolve(process.env.TREE_DETAIL_RUNTIME||path.join(ROOT,'assets/world-photoscans.js'));
 const runtime=fs.readFileSync(runtimePath,'utf8');
-const start=runtime.indexOf('  let previousSelection=new Set(),previousMode=null;');
+const start=runtime.indexOf('  let previousSelection=new Set()');
 const end=runtime.indexOf('  state.ready=(async()=>{',start);
 assert(start>=0&&end>start,'actual updateTrees source owner required');
 const updater=runtime.slice(start,end);
 const T=await import(pathToFileURL(path.join(ROOT,'assets/vendor/three/build/three.module.js')));
-const construct=new Function('H','G','renderer','trees','treeMeshes','treeCards','state','WHITE',updater+'\nreturn {update:updateTrees,selected:()=>[...previousSelection],mode:()=>previousMode};');
+const construct=new Function('THREE','H','G','renderer','trees','treeMeshes','treeCards','state','WHITE',updater+'\nreturn {update:updateTrees,selected:()=>[...previousSelection],mode:()=>previousMode};');
 const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/models/world/realism/manifest.json'),'utf8'));
 const COST={pine:manifest.find(r=>r.id==='pine_tree_01').output.triangles,island:manifest.find(r=>r.id==='island_tree_01').output.triangles,jacaranda:manifest.find(r=>r.id==='jacaranda_tree').output.triangles};
 const WHITE=new T.Color(0xffffff),digest=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -26,7 +26,7 @@ function fixture(rows,{tier='low',reserve=0,xr=false}={}){
  for(const t of trees){if(!bySource.has(t.source.key))bySource.set(t.source.key,[]);bySource.get(t.source.key).push(t);}
  function mesh(records,name){const m=new T.InstancedMesh(geometry,new T.MeshStandardMaterial({name}),records.length);m.setColorAt(0,WHITE);return {mesh:m,records};}
  for(const [key,records]of bySource){treeMeshes.push(mesh(records,key+'_bark'),mesh(records,key+'_twig'));treeCards.push(mesh(records,key+'_views'));}
- const H={player:{pos:new T.Vector3(0,0,0)}},G={gfx:{get:()=>position.value}},api=construct(H,G,renderer,trees,treeMeshes,treeCards,state,WHITE);
+ const H={player:{pos:new T.Vector3(0,0,0)}},G={gfx:{get:()=>position.value}},api=construct(T,H,G,renderer,trees,treeMeshes,treeCards,state,WHITE);
  const identities=trees.map(t=>({record:t,source:t.source,matrix:t.matrix,values:t.matrix.toArray(),tint:t.tint.toArray()}));
  const resources=[...treeMeshes,...treeCards].map(({mesh:m})=>({m,geometry:m.geometry,material:m.material,instanceMatrix:m.instanceMatrix,instanceColor:m.instanceColor,position:digest(bytes(m.geometry.attributes.position.array)),index:digest(bytes(m.geometry.index.array))}));
  function step({tier:next,at,xr:presenting}={}){if(next)position.value=next;if(at)H.player.pos.set(at[0],0,at[1]??0);if(presenting!==undefined)renderer.xr.isPresenting=presenting;const random=Math.random;try{Math.random=()=>{throw Error('tree updater consumed source/world RNG');};api.update();}finally{Math.random=random;}
