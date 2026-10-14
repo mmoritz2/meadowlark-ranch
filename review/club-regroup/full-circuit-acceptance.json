@@ -1,0 +1,336 @@
+{
+  "schema": 1,
+  "scope": "One actual two-client Basin regroup circuit with resumed earned stops, passage repair, ordinary individual trail payouts, and host reload verification.",
+  "source": {
+    "baseRevision": "7a6bacd72d73821e795a30b130d9e9927fb670b2",
+    "status": "Reviewed uncommitted passage patch; final release commit pending.",
+    "cacheVersion": "pasture-passage-1",
+    "placementIntegrationSha256": {
+      "ranch3d.html": "16e9cf49194530cbedb2fa514b2edb606982228740475e2c4684deb201403ba8",
+      "assets/features/index.js": "a95976e41ace9016ba1c445462a8260f72a80c2e6e4a5c5d6df58bc529f5f15c",
+      "assets/features/tack-summon.js": "0899006df0fe173eada4abfef496d3bb8e4936d58ad28209de4de73daa62674e",
+      "assets/features/tack-summon-stall.js": "8ecbd02dc5691cd42486651c5b70038d7860926757c0c8387a8172dbe1201d38"
+    }
+  },
+  "method": {
+    "independentClients": 2,
+    "distinctOriginsVerified": true,
+    "sameProductionSessionVerified": true,
+    "route": "Basin",
+    "mode": "regroup-v1",
+    "controls": "Normal game forms and visible Ready, Continue and Join controls; ordinary key-driving controls. During the repaired passage and return, the operator activated visible fixed riding buttons with Enter.",
+    "noControllerStatePositionHeadingClockProgressOrSaveInjection": true,
+    "noSyntheticNetworkPacketInjection": true,
+    "operatorMethodAttestation": "Provided by the browser operator; corroborated by visible-control and physical-player diagnostic snapshots.",
+    "privateIdentifiersOmitted": true
+  },
+  "route": {
+    "stops": [
+      {
+        "label": "Ranch",
+        "x": 0,
+        "z": 5
+      },
+      {
+        "label": "Loon Lake",
+        "x": 20,
+        "z": 16
+      },
+      {
+        "label": "Home Pasture",
+        "x": -70,
+        "z": -10
+      },
+      {
+        "label": "Ranch",
+        "x": 0,
+        "z": 5
+      }
+    ],
+    "unchangedAcrossCapturedTrails": true,
+    "meetingRadiusMetres": 8
+  },
+  "checkpointEvidence": {
+    "firstTwoStops": {
+      "bothReadyAndContinuedChecksPassedAtIndices": [
+        0,
+        1
+      ],
+      "bothOwnTrailsReachedIndex": 2,
+      "source": "first-two-stops.json"
+    },
+    "reloadAndRejoin": {
+      "previouslyEarnedIndexPreserved": 2,
+      "explicitJoinRequired": true,
+      "normalSpawn": {
+        "x": -7,
+        "z": 10
+      },
+      "observed": {
+        "host": {
+          "x": -7,
+          "z": 10,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 2
+        },
+        "guest": {
+          "x": -7,
+          "z": 10,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 2
+        }
+      }
+    },
+    "homePasture": {
+      "bothPhysicallyArrivedBeforeReady": true,
+      "hostReadyAloneDidNotEnableContinue": true,
+      "bothReadyEnabledHostContinue": true,
+      "afterContinueHostIndex": 3,
+      "subsequentlyObservedBothIndex": 3,
+      "deliveryTimingNote": "The immediate Continue report still showed guest index 2; the return-crossing report and guest transition trace confirm index 3 afterward.",
+      "observedArrival": {
+        "host": {
+          "x": -63.30221270813253,
+          "z": -9.750815034003738,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 2
+        },
+        "guest": {
+          "x": -63.47933888600002,
+          "z": -5.6731149597906825,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 2
+        }
+      }
+    },
+    "returnPassage": {
+      "bothMountedActorsReturnedAcrossRepairedOpeningAndGate": true,
+      "observed": {
+        "host": {
+          "x": -27.98099584118085,
+          "z": -11.99400579552347,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 3
+        },
+        "guest": {
+          "x": -27.67084502978868,
+          "z": -12.434462000556747,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 3
+        }
+      }
+    },
+    "finalRanch": {
+      "guestReadyWhileHostOutsideDidNotEnableContinue": true,
+      "bothSettledAndExplicitlyReadyBeforeFinalContinue": true,
+      "beforeFinish": {
+        "host": {
+          "x": -1.417640936003053,
+          "z": 3.264174072616531,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 3
+        },
+        "guest": {
+          "x": -1.928775376102907,
+          "z": 3.393923246471587,
+          "y": 0,
+          "speed": 0,
+          "mounted": true,
+          "ready": true,
+          "trailIndex": 3
+        }
+      },
+      "bothProgressAfterFinish": 4,
+      "bothTrailsCleared": true
+    }
+  },
+  "fullCircuitCompleted": true,
+  "rewards": {
+    "kind": "Existing ordinary personal trail rewards; no additional regroup economy.",
+    "comparison": "Each own saved summary immediately before final Continue versus confirmed completion.",
+    "clients": {
+      "host": {
+        "beforeFinalContinue": {
+          "coins": 328,
+          "gems": 7,
+          "starPoints": 0,
+          "trails": 0,
+          "expeditions": 0,
+          "expDone": {}
+        },
+        "afterConfirmedFinish": {
+          "coins": 628,
+          "gems": 8,
+          "starPoints": 6,
+          "trails": 1,
+          "expeditions": 1,
+          "expDone": {
+            "basin": 1
+          }
+        },
+        "delta": {
+          "coins": 300,
+          "gems": 1,
+          "starPoints": 6,
+          "trails": 1,
+          "expeditions": 1,
+          "basinCompletions": 1
+        }
+      },
+      "guest": {
+        "beforeFinalContinue": {
+          "coins": 325,
+          "gems": 7,
+          "starPoints": 3,
+          "trails": 0,
+          "expeditions": 0,
+          "expDone": {}
+        },
+        "afterConfirmedFinish": {
+          "coins": 625,
+          "gems": 8,
+          "starPoints": 9,
+          "trails": 1,
+          "expeditions": 1,
+          "expDone": {
+            "basin": 1
+          }
+        },
+        "delta": {
+          "coins": 300,
+          "gems": 1,
+          "starPoints": 6,
+          "trails": 1,
+          "expeditions": 1,
+          "basinCompletions": 1
+        }
+      }
+    },
+    "singleObservedPaymentPerClient": true,
+    "failureInjectionOrGeneralAtomicityTest": false
+  },
+  "reload": {
+    "host": {
+      "verified": true,
+      "ownSummaryExactlyMatchesConfirmedFinish": true,
+      "trailAbsent": true,
+      "finishedProgress": 4,
+      "normalSpawnObserved": {
+        "x": -7,
+        "z": 10
+      }
+    },
+    "guest": {
+      "verified": false,
+      "status": "pending",
+      "reloadActivated": true,
+      "latestObservedState": {
+        "booted": false,
+        "status": "Loading",
+        "save": null
+      },
+      "reason": "The operator activated the visible native accessibility Reload control with Return. A fresh own-client report showed loading. Subsequent observations of the same live tab repeatedly hit CDP deadlines or snapshot timeouts; no post-load saved state has been verified.",
+      "observationSource": "Browser operator report; no restart or terminal guest state assumed."
+    }
+  },
+  "errorCounts": {
+    "host": {
+      "game": 0,
+      "world": 0,
+      "runtime": 0,
+      "fixture": 0
+    },
+    "guest": {
+      "game": 0,
+      "world": 0,
+      "runtime": 0,
+      "fixture": 0
+    }
+  },
+  "limitations": [
+    "The circuit included reloads, explicit rejoins, substantial operator pauses and a reviewed passage repair. It is not one uninterrupted unchanged-build speed or usability run.",
+    "The parent fixture lost its accumulated baseline/verifications on reload. Earlier first-two-stop checks and later raw own-client summaries were independently joined by the same private production session identity; the final fixture did not produce a single automatic end-to-end verdict.",
+    "Reward deltas use the fresh final-Continue baseline, not the initial wallet: unrelated earlier coin and Star Point changes are excluded.",
+    "Guest reload actually started and was observed loading, but later observations timed out. Guest reward persistence remains pending; host reload is verified.",
+    "This does not prove adverse-network handling, save-write failure atomicity, physical-device performance, human usability, or broad multiplayer/parity readiness."
+  ],
+  "sources": [
+    {
+      "file": "first-two-stops.json",
+      "sha256": "47dc3bee2565e3a1eed57fb4966670a53677f9c9bce0ab9b28a9bbd46747d564"
+    },
+    {
+      "file": "passage-fix-rejoined.json",
+      "sha256": "bdeb88bd9eafe3e97d713a7d6dabba5030cc2ab042d61db0e98864b1f8486cb4"
+    },
+    {
+      "file": "repaired-crossing-observation.json",
+      "sha256": "1973d0a03a1dfbc627536013c7f03d107c84d82249312c6def85c876c899d6ca"
+    },
+    {
+      "file": "passage-gate-cleared.json",
+      "sha256": "a94f44e97b2e35ff59cf23b9833ea45a7c918bde814b5def26fe4b1a0b90bd5a"
+    },
+    {
+      "file": "pasture-arrived-before-ready.json",
+      "sha256": "03b134fbadaf47d4dab267f6a62770371032d8ee2f2542d8da979f648cc0c011"
+    },
+    {
+      "file": "pasture-host-ready.json",
+      "sha256": "8a9a1b5003efb8209342e7a35af076e0335e53552c833515961e1c06ecfa6865"
+    },
+    {
+      "file": "pasture-both-ready.json",
+      "sha256": "12e1a393a48cda4b53484f22ac6f7bb3e85dace88e74d543e51dd304635ae273"
+    },
+    {
+      "file": "pasture-continue-to-ranch.json",
+      "sha256": "a86df7807201843face7bd965d7b0ddfd9c154811ec147debbf1f5bbe2b4925e"
+    },
+    {
+      "file": "passage-return-cleared.json",
+      "sha256": "2d08ecb30135940aeae9d685ebbb3388c5ce3c2cbc227947445d4d301e655036"
+    },
+    {
+      "file": "ranch-guest-ready-host-outside.json",
+      "sha256": "ccfcf6acf2eff0ff194f0993daf9fe55d8d2131a457cca0a0caeca9eb101b732"
+    },
+    {
+      "file": "ranch-arrived-before-finish.json",
+      "sha256": "7f598a29e3576cc9f5d9674d3bb9bf8775490577427f5076c1e4f83cc7352fb9"
+    },
+    {
+      "file": "final-continue-baseline.json",
+      "sha256": "0c77f2a1b2d5cfea26d79026ba32f9292687f03b46c48b64880077a366db7fcf"
+    },
+    {
+      "file": "circuit-finished-confirmed.json",
+      "sha256": "d48cd5f6b50e01564e8518cef3633c921a1459334836f6b28c04bb9bee17a769"
+    },
+    {
+      "file": "circuit-host-reloaded.json",
+      "sha256": "f1c533047da00f49bf40d0ce863b725faec957f968427ac40a0ac7fcba1b2a94"
+    }
+  ]
+}

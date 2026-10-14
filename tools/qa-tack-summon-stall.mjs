@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {register} from 'node:module';
+import {COTTONWOOD_TRACKS} from '../assets/cottonwood-routes.mjs';
 const threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;
 register('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);
 const THREE=await import(threeURL);
@@ -9,7 +10,7 @@ const {installTackSummonStall,TACK_SUMMON_STALL:P}=await import('../assets/featu
 const source=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');
 function object(name){const match=source.match(new RegExp('const '+name+'=(\\{[^;]+\\});'));assert(match,name+' source placement');return Function('return ('+match[1]+')')();}
 const summon=object('SUMMON_STALL'),barn=object('BARN_ROW'),pasture=object('PAST');
-const paths=Function('return ('+source.match(/const PATHS=(\[[\s\S]*?\]);/)[1]+')')();
+const paths=Function('COTTONWOOD_TRACKS','return ('+source.match(/const PATHS=(\[[\s\S]*?\]);/)[1]+')')(COTTONWOOD_TRACKS);
 const pathWidth=Number(source.match(/const PATH_W=([\d.]+)/)[1]);
 const scene=new THREE.Scene(),buildings=[],things=[],colliders=[],mapMarkers=[],miniMarkers=[];
 const G={THREE,scene,nameSprite(text){const sprite=new THREE.Sprite(new THREE.SpriteMaterial());sprite.userData.text=text;return sprite;},world:{things,colliders,mapMarkers,miniMarkers,
@@ -46,7 +47,7 @@ assert(!rectOverlap(b,stall),'separate from existing horse summoning shell');ass
 assert(!rectOverlap(b,{minX:summon.x-1.5,maxX:summon.x+1.5,minZ:summon.z-4.7,maxZ:summon.z-1.5}),'horse door/summoning approach stays open');
 for(let i=0;i<barn.n;i++){const z=barn.z0+i*barn.step;assert(!rectOverlap(b,{minX:barn.x-1.35,maxX:barn.x+1.45,minZ:z-1.82,maxZ:z+1.82}),'separate from every barn-row roof');}
 assert(b.minX>pasture.x2+.55,'outside pasture fence');assert(b.maxX< -25-.55,'outside the arena rail, including rider clearance');
-assert(Math.abs(P.z+9)>P.radius+.55+.25,'pasture gate centerline retains a horse-width passage');
+assert(Math.hypot(P.x-pasture.x2,P.z+9)>=P.radius+.55+.25,'pasture gate centre has mounted clearance from the tack blocker');
 assert(Math.hypot(P.x+30,P.z-3.2)>P.radius+2.6,'clear of nearest grandstand collision region');
 function segmentDistance(p,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz);}
 let roadDistance=Infinity;for(const path of paths)for(let i=1;i<path.length;i++)roadDistance=Math.min(roadDistance,segmentDistance([P.x,P.z],path[i-1],path[i]));

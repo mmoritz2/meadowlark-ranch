@@ -1,3 +1,4 @@
+import {normalizePasturePassageAuditSource} from './pasture-passage-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,7 +10,7 @@ import * as Merge from './formal-turf-composition-source-guard.cjs';
 import {normalizeFormalApproachResumeSource} from './formal-approach-resume-source-guard.cjs';
 import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';
 import {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');
+const root=new URL('../',import.meta.url),read=file=>normalizePasturePassageAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file);
 const fixture='tools/fixtures/formal-turf-ff10ddd/contract.json',contract=JSON.parse(read(fixture));
 const sha=s=>createHash('sha256').update(s).digest('hex');
 const git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});

@@ -1,9 +1,9 @@
 import {mergeGeometries} from '../vendor/three/examples/jsm/utils/BufferGeometryUtils.js';
 
-// A permanent, quiet workbench in the nook north of the horse summoning stall.
-// The pasture gate at (-33,-9), arena rail x=-25 and barn-row roof stay clear.
+// A quiet workbench beside the pasture approach. The mounted lane across the
+// barn row's north end stays open, as does the original horse-stall arrival.
 export const TACK_SUMMON_STALL=Object.freeze({
- x:-27.2,z:-11.55,rotation:Math.PI/2,radius:1.5,reach:3.2,
+ x:-29.8,z:-9.4,rotation:Math.PI/2,radius:1.5,reach:3.2,
  width:2.5,depth:1.3,label:'Tack Summoning Stall',
 });
 const installed=new WeakMap();

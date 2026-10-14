@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const fixture='tools/fixtures/pasture-passage-7a6bacd/contract.json',sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8');assert.equal(sha(text),'5b2cdcd9b14261bc878dcee501202078fff6b09bf8c6b672a04c3f7c56028b3c','Exact approved pasture passage contract');const contract=JSON.parse(text);
+// A leaf-only exact prior-input view. Current collision/geometry suites run
+// unprojected production; no runtime behavior is replaced by this audit layer.
+function reverse(source,rows,file){for(const c of rows.toReversed()){assert.equal(source.split(c.after).length-1,c.occurrences,'Unique approved passage literal '+file);assert.equal(source.replace(c.after,'').split(c.before).length-1,0,'No mixed old/new passage literal '+file);source=source.replace(c.after,c.before);}return source;}
+function project(source,file,rows,record){if(!record)return source;if(sha(source)===record.beforeSHA256)return source;if(!rows.some(c=>source.includes(c.after)))return source;assert.equal(sha(source),record.afterSHA256,'Complete approved passage body '+file);source=reverse(source,rows,file);assert.equal(sha(source),record.beforeSHA256,'Entire historical passage preimage '+file);return source;}
+const normalizePasturePassageSource=(s,f)=>project(s,f,contract.changes.filter(c=>c.file===f),contract.files[f]);
+const normalizePasturePassageObserver=(s,f)=>project(s,f,contract.observers[f]?.changes||[],contract.observers[f]);
+const normalizePasturePassageAuditSource=(s,f)=>normalizePasturePassageObserver(normalizePasturePassageSource(s,f),f);
+function normalizePasturePassageFixtures(diff,baseline){assert.equal(baseline,contract.fixtureBaseline,'Exact historical fixture baseline');const rows=diff.trim()?diff.trim().split('\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate fixture rows');const kept=rows.filter(file=>{if(file!==fixture)return true;assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),sha(text),'Exact named passage fixture');return false;});return kept.length?kept.join('\n')+'\n':'';}
+function assertPasturePassageCurrent(source,file){const record=contract.files[file]||contract.observers[file]||contract.addedFiles[file];assert(record,'Declared current passage source '+file);assert.equal(sha(source),record.afterSHA256||record.sha256,'Entire current approved passage source '+file);return true;}
+module.exports={normalizePasturePassageSource,normalizePasturePassageObserver,normalizePasturePassageAuditSource,normalizePasturePassageFixtures,assertPasturePassageCurrent};
