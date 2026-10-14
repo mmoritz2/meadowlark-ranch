@@ -1,3 +1,4 @@
+import {installBarleyfoldFarmWall,waitForBarleyfoldWallTextures} from '../barleyfold-farm-wall.mjs?v=barleyfold-farm-wall-1';
 import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5';
 import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
@@ -266,6 +267,7 @@ export function install(G){
     {id:'hp_bjorn',name:'Bjørn',icon:'🧔',hat:'#3a3a4a',shirt:'#4a6a8a',idle:'Snow on the pass by morning. The falls freeze at the edges — beautiful, and treacherous.',path:[[-160,-200],[-152,-194],[-146,-208],[-158,-214]]},
    ]},
  ];
+ const farmWallRecords=[],farmWallGroups=[];
  P.TOWNS=TOWNS; P.LANDMARKS=[]; P.townsfolk=[];
  function buildTown(tn){
   const rg=regionById(tn.region);
@@ -291,9 +293,9 @@ export function install(G){
      const gy=groundH(x,z),ry=Math.atan2(r[2]-r[0],r[3]-r[1])+Math.PI/2;
      const seg=box(6.1,2.2,0.9,'#b8a98a',0,0,0,g);seg.position.set(x,gy+1.1,z);seg.rotation.y=ry;seg.castShadow=true;seg.receiveShadow=true;
      const cap=box(6.2,0.25,1.1,'#8a7a62',0,0,0,g);cap.position.set(x,gy+2.3,z);cap.rotation.y=ry;
-     W.colliders.push({x,z,r:3.0});n++;}}
+     W.colliders.push({x,z,r:3.0});n++;farmWallRecords.push({run:runs.indexOf(r),x,z,groundY:gy,rotation:ry,body:seg,cap});}}
    for(const gp of w.gaps){const gx=(gp[0]+gp[2])/2,gz=(gp[1]+gp[3])/2;post(gp[0],gp[1],g,3.2,'#8a7a62');post(gp[2],gp[3],g,3.2,'#8a7a62');const arch=sign('BARLEYFOLD',3.2,0.5);arch.position.set(gx,groundH(gx,gz)+3.4,gz);arch.rotation.y=Math.atan2(gp[2]-gp[0],gp[3]-gp[1])+Math.PI/2;g.add(arch);}
-   scene.add(g);W.followCamera.register(g);tn.wallSegs=n;
+   scene.add(g);W.followCamera.register(g);tn.wallSegs=n;farmWallGroups.push(g);
   }
   if(tn.rail){const g=new THREE.Group();post(-1.4,0,g,1.1,'#6b4a2a');post(1.4,0,g,1.1,'#6b4a2a');box(3.2,0.09,0.09,'#8a6a4a',0,1.05,0,g);g.position.set(tn.rail.x,groundH(tn.rail.x,tn.rail.z),tn.rail.z);scene.add(g);}
   if(tn.oasis){   // a desert pond ringed with palms: the herd drinks here, and so can you
@@ -1204,4 +1206,9 @@ export function install(G){
   try{P.labelsFound=scanLabels();P.tagsFixed=fixNpcTags();P.fluttersFixed=fixFlutters();P.buntingFixed=fixBunting();}catch(e){console.error('world labels',e);}
   const s=S.fresh();if(s?.story?.era===2&&S.flag(s,'seen-world')){S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-world']=1;});setTimeout(()=>{try{if(G.ui.canAnnounce())toast('🗺️ Kestrel Basin has grown: towns, a ferry, balloons and wild herds. Press M for the map.');}catch(e){}},6000);}});
  Object.assign(P,{boardBalloon,boardFerry,vehicle:()=>P.veh,landVehicle,findCompanion,tameMember,offerCarrot,openSanctuary,collectBottle,regionOf,refreshFtLocks,ftRegion,VENUE_OF});
+ P.barleyfoldWallArtReady=Promise.resolve().then(()=>Promise.all([W.countrysideFieldsReady,G.photoscans?.countrysideVistaReady,W.ranchBuilderArt?.ready,W.courseTurf?.ready])).then(async()=>{
+  await waitForBarleyfoldWallTextures(W.ranchBuilderArt.materials.stone,{errors:()=>W.ranchBuilderArt.errors||[]});
+  if(farmWallGroups.length!==1)throw Error('Expected one original Barleyfold wall group');
+  P.barleyfoldWallArt=installBarleyfoldFarmWall(G,{group:farmWallGroups[0],records:farmWallRecords});return P.barleyfoldWallArt;
+ }).catch(error=>{P.barleyfoldWallArtError=error.message;console.warn('Barleyfold keeps original wall render',error);return null;});
 }
