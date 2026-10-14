@@ -59,6 +59,7 @@ function normalizeReviewedObserverSource(source,file){
 }
 function normalizeReviewedGuideSource(source,file){
  if(file!=='assets/features/course-guide.js')return source;
+ source=require('./formal-approach-resume-source-guard.cjs').normalizeFormalApproachResumeSource(source,file);
  if(sha(source)!==contract.guideBeforeSHA256)source=reverseExact(source,file,guide);
  assert.equal(sha(source),contract.guideBeforeSHA256,'Whole pre-flat-race camera guide restored');return source;
 }

@@ -1,3 +1,5 @@
+import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';
+import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -11,7 +13,7 @@ import {normalizeGrassRibbonOwnSource as normalizePriorRibbonOwnSource,normalize
 import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';
 const normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);
 const root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);
-const read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');
+const read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');
 const contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));
 const git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});
 

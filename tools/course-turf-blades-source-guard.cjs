@@ -1,3 +1,4 @@
+const {normalizeFormalTurfIncomingSource,normalizeFormalTurfIncomingObserver,normalizeFormalTurfIncomingFixtures}=require('./formal-turf-composition-source-guard.cjs');
 const {undoNorthRimSource,undoNorthRimObserverSource,undoNorthRimFixtureChanges}=require('./north-rim-source-guard.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const dir=path.join(__dirname,'fixtures/course-turf-blades-3944c9e'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));
@@ -15,12 +16,14 @@ function reverse(source,file,rows,label){
 // a complete prior owner; unknown versions and body drift are never discarded.
 function undoCourseTurfBladesSource(source,file){
  source=undoNorthRimSource(source,file);
+ source=normalizeFormalTurfIncomingSource(source,file);
  const rows=changes.filter(c=>c.file===file);if(!rows.length)return source;
  if(!rows.some(c=>source.includes(c.after)))return source;
  return reverse(source,file,changes,'course turf/blade source');
 }
 function normalizeCourseTurfBladesTestSource(source,file){
  source=undoNorthRimObserverSource(source,file);
+ source=normalizeFormalTurfIncomingObserver(source,file);
  const hash=contract.testAdapterPreimages[file];if(!hash)return source;
  if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source;
  source=reverse(source,file,adapters,'course turf/blade observer');
@@ -29,6 +32,7 @@ function normalizeCourseTurfBladesTestSource(source,file){
 for(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeCourseTurfBladesTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact3944 prior source dependency '+file);
 function normalizeCourseTurfBladesSource(source,file){
  source=undoNorthRimSource(source,file);
+ source=normalizeFormalTurfIncomingSource(source,file);
  const row=contract.files[file];if(!row)return source;
  if(row.new){assert.equal(sha(source),row.candidateSHA256,'Complete new original course turf owner '+file);return source;}
  source=undoCourseTurfBladesSource(source,file);
@@ -41,6 +45,7 @@ function normalizeCourseTurfBladesSource(source,file){
 }
 function normalizeCourseTurfBladesFixtureChanges(diff,baseline){
  diff=undoNorthRimFixtureChanges(diff);
+ diff=normalizeFormalTurfIncomingFixtures(diff,baseline);
  assert.equal(baseline,contract.fixtureDiffBaseline,'Exact prior activity fixture baseline');
  const rows=diff.trim()?diff.trim().split('\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate own fixture diff rows');
  const own='tools/fixtures/course-turf-blades-3944c9e/contract.json',allowed={...contract.approvedAddedFixtureSHA256,[own]:sha(fs.readFileSync(path.join(dir,'contract.json')))};

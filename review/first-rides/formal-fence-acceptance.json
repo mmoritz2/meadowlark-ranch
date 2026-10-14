@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "scope": "One production-web Cottonwood Welcome Jump (H1) Novice run and subsequent normal reload.",
+  "method": {
+    "entry": "Operator entered the event through normal production UI, then explicitly started the opt-in fixture key driver.",
+    "riding": "Ordinary wall-time riding keys and production gait selection followed published formal approach targets and live jump cues.",
+    "data": "Read-only snapshots of actual course, native crossing grades, saved reward ledger, wallet and horse XP.",
+    "fixtureWritesToPositionHeadingClockProgressOrSave": false
+  },
+  "result": {
+    "eventId": "h1",
+    "difficulty": "novice",
+    "cleared": 5,
+    "total": 5,
+    "grades": [
+      "perfect",
+      "perfect",
+      "perfect",
+      "perfect",
+      "perfect"
+    ],
+    "faults": 0,
+    "refusals": 0,
+    "lineOff": 0,
+    "accuracy": 1,
+    "scoreSeconds": 34.5365,
+    "clockNote": "Production Perfect fences subtract 0.8 seconds each; this is adjusted score time, not unadjusted wall time.",
+    "gold": true,
+    "ribbons": 4,
+    "savedReceipt": true,
+    "nativeCrossings": [
+      {
+        "fence": 1,
+        "grade": "perfect",
+        "frameAge": 0.9220999999940397,
+        "railAge": 0.918618087333,
+        "interpolated": true
+      },
+      {
+        "fence": 2,
+        "grade": "perfect",
+        "frameAge": 0.836,
+        "railAge": 0.811365122252,
+        "interpolated": true
+      },
+      {
+        "fence": 3,
+        "grade": "perfect",
+        "frameAge": 0.8667999999970197,
+        "railAge": 0.86611818967,
+        "interpolated": true
+      },
+      {
+        "fence": 4,
+        "grade": "perfect",
+        "frameAge": 0.8839000000059604,
+        "railAge": 0.851090219759,
+        "interpolated": true
+      },
+      {
+        "fence": 5,
+        "grade": "perfect",
+        "frameAge": 0.9587000000029802,
+        "railAge": 0.925464425135,
+        "interpolated": true
+      }
+    ]
+  },
+  "savedChanges": {
+    "coins": {
+      "before": 8004,
+      "after": 8178,
+      "delta": 174,
+      "reloaded": 8178
+    },
+    "gems": {
+      "before": 81,
+      "after": 86,
+      "delta": 5,
+      "reloaded": 86
+    },
+    "riddenHorseXp": {
+      "before": 122,
+      "after": 144,
+      "delta": 22,
+      "reloaded": 144,
+      "levelBefore": 4,
+      "levelAfter": 4
+    },
+    "storyRidingAlternative": {
+      "missionIndex": 8,
+      "missionType": "build2",
+      "before": 0,
+      "after": 2,
+      "goal": 2,
+      "reloaded": 2,
+      "rewardReady": true,
+      "cursorAdvanced": false
+    }
+  },
+  "reload": {
+    "normalBootReady": true,
+    "loading": false,
+    "sameSavedReceipt": true,
+    "walletHorseAndRecordValuesMatchFinish": true,
+    "sameStoryProgress": true,
+    "activeH1Course": false
+  },
+  "evidence": {
+    "traceSamples": 181,
+    "allFiveCrossingTimingsObserved": true,
+    "courseIndexNeverDecreased": true,
+    "browserErrors": [],
+    "featureErrors": [],
+    "sourceFiles": [
+      {
+        "file": "formal-fence-five-clear-result.json",
+        "sha256": "e265ded0d986d0a1b241064bc29aba0d8977d24c2380d20279a0322bccee2cd9"
+      },
+      {
+        "file": "formal-fence-five-clear-reloaded.json",
+        "sha256": "6bfe7dfd3e1262158945b5379d8ae126bb003af1b2b7d8779e476a1894610eb3"
+      }
+    ]
+  },
+  "limits": [
+    "This is a fixture-assisted normal-input acceptance run, not a human usability study.",
+    "No mobile-device, broader course, or multiplayer parity claim.",
+    "Story alternative is ready for its existing NPC claim; this run did not advance or claim that story mission."
+  ]
+}

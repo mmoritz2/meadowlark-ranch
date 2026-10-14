@@ -136,3 +136,64 @@ test('low-lift native jump frames cannot ready or consume an accepted departure'
  b.rig.heroJumpAge=.95;b.rig.heroMotion.state.grounded=false;b.player.y=.08;b.step();assert.equal(b.G.trail.ride.idx,0);a.step();
  b.rig.heroJumpAge=null;b.rig.heroMotion.state.grounded=true;b.player.y=0;b.step();assert.equal(b.G.trail.ride.idx,0,'landing does not restore expired Ready proof');assert(b.api.readyAtStop().ok);f.flush();b.step();assert.equal(b.G.trail.ride.idx,1);
 });
+
+function expiredGuest(f,{departAhead=false}={}){
+ const {a,b,id}=f.setup();for(let i=0;i<2;i++){f.arrive(a,b,i);f.depart(a,b);}
+ const packet=()=>{const p=f.retained.get('srf1/club-a/clubride2/session/'+id);return {topic:p.topic,m:copy(p.m)};};
+ const saved=b.data(),oldPacket=packet();
+ if(departAhead){f.arrive(a,b,2);assert(a.api.readyAtStop().ok);assert(b.api.readyAtStop().ok);f.flush();assert(a.api.continueTogether().ok);f.flush();a.step();f.flush();assert.equal(a.G.trail.ride.idx,3);assert.equal(b.G.trail.ride.idx,2);}
+ b.G.net.net.client.connected=false;
+ for(let i=0;i<91;i++){f.advance(2000);a.step(2);f.flush();}
+ const livePacket=packet();
+ assert(saved.clubRideResume.session.expiresAt<f.now());assert(livePacket.m.expiresAt>f.now());
+ return {a,b,id,saved,oldPacket,livePacket};
+}
+
+test('expired saved lobby resumes only after fresh matching host evidence and an explicit local trail start',t=>{
+ const f=fixture(t),{a,id,saved,oldPacket,livePacket}=expiredGuest(f),c=f.client('guest','guest',saved),spawn=copy(c.player);
+ assert.equal(c.api.snapshot().current,null);c.receive(oldPacket);assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);
+ const lowRevision=copy(livePacket);lowRevision.m.rev=saved.clubRideResume.session.rev-1;c.receive(lowRevision);assert.equal(c.api.snapshot().current,null);
+ c.receive(livePacket);assert.equal(c.api.snapshot().current.id,id);assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.G.trail.ride,null);assert.deepEqual(c.player,spawn);assert.equal(c.rewards.length,0);
+ assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);c.step();assert.equal(c.G.trail.ride.idx,2,'spawn proximity cannot replay the first two earned stops');assert.equal(c.api.readyAtStop().ok,false);
+ f.flush();for(let i=2;i<4;i++){f.arrive(a,c,i);f.depart(a,c);}
+ assert.equal(c.rewards.length,1);assert.equal(c.events.filter(e=>e==='trailStop').length,1);assert.equal(c.events.filter(e=>e==='trailDone').length,1);assert.equal(c.data().stats.trails,1);assert.equal(c.data().coins,300);
+ const done=c.data();c.G.net.net.client.connected=false;const again=f.client('guest','guest',done);again.receive(livePacket);assert.equal(again.api.rejoin().ok,false);assert.equal(again.G.trail.ride,null);assert.equal(again.rewards.length,0);assert.equal(again.data().stats.trails,1);
+});
+
+test('stale-session resume rejects changed identity, crew, route, departure proof, finished and left history',t=>{
+ const f=fixture(t),{saved,livePacket,id}=expiredGuest(f),mutations=[
+  s=>s.clubRideResume.code='other',s=>s.clubRideResume.id='host-other',s=>s.clubRideResume.session.hostId='third',
+  s=>s.clubRideResume.session.routeId='cottonwood',s=>s.clubRideResume.session.mode='unknown',s=>s.clubRideResume.session.createdAt--,
+  s=>s.clubRideResume.session.planId='another-plan',s=>s.clubRideResume.session.regroup.crew.push('third'),
+  s=>s.clubRideResume.session.regroup.departures[0].token='different-departure',
+  s=>delete s.clubRideResume.session.regroup.departures[0].ready.guest,
+  s=>{s.clubRideResume.participant.progress=3;s.clubRideHistory['club-a|'+id].progress=3;},
+  s=>s.clubRideResume.participant.left=true,s=>s.clubRideResume.participant.finished=true,
+  s=>s.clubRideHistory['club-a|'+id].finished=true,s=>s.clubRideHistory['club-a|'+id].progress=3
+ ];
+ for(const mutate of mutations){const initial=copy(saved);mutate(initial);const c=f.client('guest','guest',initial);c.receive(livePacket);assert.equal(c.api.snapshot().current,null,mutate.toString());assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.rewards.length,0);c.G.net.net.client.connected=false;}
+ const late=f.client('third');late.receive(livePacket);assert.equal(late.api.join(id).ok,false,'a genuinely new late joiner is still rejected');assert.equal(late.G.trail.ride,null);
+});
+
+test('a cancelled or wrong-room retained session cannot restore an expired saved participant',t=>{
+ const f=fixture(t),{saved,livePacket}=expiredGuest(f),c=f.client('guest','guest',saved);
+ c.receive({...livePacket,topic:livePacket.topic.replace('club-a','other')});assert.equal(c.api.snapshot().current,null);
+ c.receive({...livePacket,m:{...livePacket.m,status:'cancelled'}});assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.rewards.length,0);
+});
+
+test('resumed saved progress behind the latest departure needs a fresh physical Ready acknowledgment',t=>{
+ const f=fixture(t),{a,saved,livePacket}=expiredGuest(f,{departAhead:true}),c=f.client('guest','guest',saved);c.receive(livePacket);f.flush();assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);assert.equal(a.G.trail.ride.idx,3);
+ const p=EXPEDITIONS[0].stops[2];c.position(p[1],p[2]);c.step();f.flush();assert.equal(c.G.trail.ride.idx,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.rewards.length,0);
+ assert(c.api.readyAtStop().ok);assert.equal(c.G.trail.ride.idx,2);c.step();assert.equal(c.G.trail.ride.idx,2,'local Ready alone cannot consume the stale saved nonce');
+ f.flush();c.step();f.flush();assert.equal(c.G.trail.ride.idx,3);assert.equal(a.G.trail.ride.idx,3);assert.equal(c.events.filter(e=>e==='trailStop').length,1);assert.equal(c.rewards.length,0);c.step();assert.equal(c.G.trail.ride.idx,3);
+});
+
+
+test('a hydrated lobby that expires during disconnection keeps only its dormant resume proof',t=>{
+ const f=fixture(t),{a,b,id}=f.setup();for(let i=0;i<2;i++){f.arrive(a,b,i);f.depart(a,b);}
+ const saved=b.data();b.G.net.net.client.connected=false;f.advance(1000);const c=f.client('guest','guest',saved);assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.G.trail.ride,null);c.G.net.net.client.connected=false;
+ for(let i=0;i<91;i++){f.advance(2000);a.step(2);f.flush();}
+ assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.data().clubRideResume.participant.progress,2);assert.equal(c.rewards.length,0);
+ c.G.net.net.client.connected=true;c.emit('connect');assert.equal(c.api.snapshot().current,null);c.receive(f.retained.get('srf1/club-a/clubride2/session/'+id));assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.G.trail.ride,null);assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.rewards.length,0);
+ assert(c.api.leave().ok);assert.equal(c.data().clubRideResume,null);assert.equal(c.G.trail.ride,null);c.receive(f.retained.get('srf1/club-a/clubride2/session/'+id));assert.equal(c.api.snapshot().current,null,'explicit leave cannot be undone by host heartbeat');
+});

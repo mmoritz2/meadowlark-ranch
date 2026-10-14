@@ -131,7 +131,7 @@ function readH1Course(){
  return {id:c.ev?.id,name:c.ev?.name,active,started:!!c.started,countdown:c.cd,elapsed:c.t,index:c.idx,total:c.jumps?.length||0,
   difficulty:c.ce?.diff?.k||null,timeAllowed:c.ce?.timeAllowed??null,lap:c.ce?.lap||1,laps:c.ce?.laps||1,horse:h1Horse,
   target:j?{x:j.x,z:j.z,heading:j.rotY,kind:j.kind,label:j.fenceLabel||'fence',distance:Math.hypot(dx,dz),across:dx*sn+dz*cs,lateral:dx*cs-dz*sn}:null,
-  publishedTarget:target?{x:target[0],z:target[1]}:null,cue:active?G.courseGuide?.jumpCue?.()||null:null,
+  publishedTarget:target?{x:target[0],z:target[1]}:null,formalApproach:active?G.courseGuide?.formalApproach?.()||null:null,cue:active?G.courseGuide?.jumpCue?.()||null:null,
   player:{x:p.pos.x,z:p.pos.z,heading:p.heading,speed:p.speed,height:p.y,jumpAge:rig.heroJumpAge??null},
   grades:[...(c.ce?.grades||[])],lastGrade:c.ce?.lastGrade||null,refusals:c.ce?.refusals||0,faults:c.faults||0,
   lastJumpTiming:c.ce?.lastJumpTiming?{...c.ce.lastJumpTiming}:null,ribbons:c.rb?.rib??null,accuracy:c.rb?.acc??c.ce?.acc??null};
@@ -142,17 +142,20 @@ function recordH1(event=null){
  if(event||signature!==h1LastTraceKey||Date.now()-h1LastTraceAt>=500){h1Trace.push({...row,event,assistance:$('jumpAssist').value==='on',driverStatus});if(h1Trace.length>300)h1Trace.shift();h1LastTraceKey=signature;h1LastTraceAt=Date.now();}
 }
 function haltH1(reason){stop();driverStatus=reason;status(reason+' Fixture keys released. Inspect the actual course; formal refusals need a manual reapproach.');recordH1('driver stopped');report();}
-function h1DirectRouteClear(c,j,from,to){
+function h1DirectRouteClear(c,j,from,to,skipCurrent=true){
  // Two existing production validators: registered scenery/positive contacts,
  // then other course rails. Only this intended jump is exempt from the rail test.
- return flatRaceSegmentClear(from,to,{world:G.world})&&rushRecoverySegmentClear(from,to,{world:G.world,course:c,skip:j});
+ return flatRaceSegmentClear(from,to,{world:G.world})&&rushRecoverySegmentClear(from,to,{world:G.world,course:c,skip:skipCurrent?j:null});
+}
+function h1FormalMatches(guide,c,j){
+ return !!guide&&guide.courseId===c.ev.id&&guide.index===c.idx&&guide.lap===(c.ce.lap??1)&&Number.isInteger(guide.lap)&&guide.lap>0&&guide.fence?.kind==='fence'&&guide.fence.x===j.x&&guide.fence.z===j.z&&guide.fence.rotY===j.rotY&&Number.isInteger(guide.revision)&&guide.revision>0;
 }
 function startH1Driver(){
  const c=G?.course?.get?.(),h=G?.horse?.ridden?.();
  if(networkStopped||!ready||!storageOwned||h?.id==null||!h1CourseSupported(c)){status('Enter Cottonwood Welcome Jump through its actual Events card first.');return;}
  if(blocked()&&c.started){status('Close the current game dialog before driving the active round.');return;}
- stop();w.document.activeElement?.blur?.();const course=c,event=c.ev,horseId=h.id,breed=h.breed;
- let lastIndex=c.idx,refusals=c.ce.refusals||0,jumpRequestedAt=0,jumpSeen=false,guideWaitingAt=null,landing=null;
+ stop();w.document.activeElement?.blur?.();const course=c,event=c.ev,horseId=h.id,breed=h.breed,usesFormal=typeof G.courseGuide?.formalApproach==='function';
+ let lastIndex=c.idx,refusals=c.ce.refusals||0,jumpRequestedAt=0,jumpSeen=false,guideWaitingAt=null,landing=null,routeKey='';
  let lastMovedAt=Date.now(),lastPosition={x:G.horse.player.pos.x,z:G.horse.player.pos.z},routeCheckedAt=-Infinity,startedAt=null;
  readH1Course();driverStatus='waiting for real Ready/countdown';status('First attempt only: click the production Ready button if its card is open. Ordinary keys follow the real target and jump cue.');recordH1('driver started');
  driver=setInterval(()=>{try{
@@ -189,29 +192,42 @@ function startH1Driver(){
   if(jumpRequestedAt&&rig.heroJumpAge!=null)jumpSeen=true;
   if(jumpRequestedAt&&!jumpSeen&&Date.now()-jumpRequestedAt>800){haltH1('Stopped: Space was requested but no native jump began');return;}
   const sn=Math.sin(j.rotY),cs=Math.cos(j.rotY),dx=p.pos.x-j.x,dz=p.pos.z-j.z,across=dx*sn+dz*cs,lateral=dx*cs-dz*sn;
-  if(across>.05){haltH1('Stopped: the current fence is behind the rider without a scored crossing');return;}
-  const published=G.courseGuide?.target?.(),cue=G.courseGuide?.jumpCue?.()||'';
+  const published=G.courseGuide?.target?.(),cue=G.courseGuide?.jumpCue?.()||'',formal=usesFormal?G.courseGuide.formalApproach?.():null;
   if(G.courseGuide?.isEnabled?.()!==true||G.courseGuide?.recovery?.()){haltH1('Stopped: ordinary formal guidance is unavailable');return;}
-  // The guide runs before the crossing judge. After idx advances its previous
-  // cue/target can persist for one frame; never use that cue for the next fence.
-  if(!published||published.length!==2||![published[0],published[1]].every(Number.isFinite)||Math.hypot(published[0]-j.x,published[1]-j.z)>.001){
+  // Production hides its ground guide during a genuine native jump. Continue
+  // only the already-requested flight, never invent a route or another Space.
+  if(usesFormal&&jumpSeen&&(rig.heroJumpAge!=null||p.y>=.05)){
+   if(Date.now()-jumpRequestedAt>2500){haltH1('Stopped: the requested native jump did not finish within 2.5 seconds');return;}
+   const delta=Math.atan2(Math.sin(j.rotY-p.heading),Math.cos(j.rotY-p.heading));
+   G.riding.selectGait('trot');key('KeyA',delta>.04);key('KeyD',delta<-.04);key('KeyW',true);key('KeyS',false);
+   driverSteps++;driverStatus='waiting for actual native jump crossing';driverTarget={phase:'jumping',checkpoint:current.idx+1,total:5,heading:j.rotY,gait:'trot'};recordH1();return;
+  }
+  // The guide runs before the crossing judge. Changed idx/lap/rail metadata or
+  // target can lag by one frame: release input until the real publication agrees.
+  const matching=!usesFormal||h1FormalMatches(formal,current,j);
+  if(usesFormal&&matching&&['blocked','paused'].includes(formal.phase)){haltH1('Stopped: the production formal approach is '+formal.phase);return;}
+  const phase=usesFormal?formal?.phase:'run-in',centre=phase==='run-in'||phase==='lineup';
+  const validTarget=Array.isArray(published)&&published.length===2&&[published[0],published[1]].every(Number.isFinite)&&(!usesFormal||formal?.target&&[formal.target.x,formal.target.z].every(Number.isFinite)&&Math.hypot(published[0]-formal.target.x,published[1]-formal.target.z)<.001);
+  const validRoute=!usesFormal||['approach','around','lineup','run-in'].includes(phase)&&Array.isArray(formal.waypoints)&&Array.from(formal.waypoints).every(q=>q&&[q.x,q.z].every(Number.isFinite))&&(!['approach','around'].includes(phase)||formal.waypoints.length>0&&formal.waypoints[0].x===formal.target?.x&&formal.waypoints[0].z===formal.target?.z);
+  if(!matching||!validTarget||!validRoute||centre&&Math.hypot(published[0]-j.x,published[1]-j.z)>.001){
    release();guideWaitingAt??=Date.now();lastMovedAt=Date.now();lastPosition={x:p.pos.x,z:p.pos.z};driverTarget=null;driverStatus='waiting for current published fence target';
-   if(Date.now()-guideWaitingAt>1000)haltH1('Stopped: the current fence target was not published');return;
+   if(Date.now()-guideWaitingAt>(usesFormal?2000:1000))haltH1('Stopped: the current fence target was not published');return;
   }
   guideWaitingAt=null;
+  if(across>.05&&(!usesFormal||phase==='run-in')){haltH1('Stopped: the current fence is behind the rider without a scored crossing');return;}
   if(!['','early','good','perfect','late','lineup'].includes(cue)){haltH1('Stopped: the published jump cue is invalid');return;}
-  if(cue==='lineup'||cue==='late'&&!jumpRequestedAt&&$('jumpAssist').value==='on'){haltH1('Stopped: the published cue requires a manual reapproach');return;}
-  const x=published[0],z=published[1],distance=Math.hypot(x-p.pos.x,z-p.pos.z);
-  if(Date.now()-routeCheckedAt>=350){
-   routeCheckedAt=Date.now();if(!h1DirectRouteClear(current,j,{x:p.pos.x,z:p.pos.z},{x,z})){haltH1('Stopped: the direct published approach is blocked');return;}
+  if((!usesFormal||phase==='run-in')&&(cue==='lineup'||cue==='late'&&!jumpRequestedAt&&$('jumpAssist').value==='on')){haltH1('Stopped: the published cue requires a manual reapproach');return;}
+  const x=published[0],z=published[1],distance=Math.hypot(x-p.pos.x,z-p.pos.z),nextRouteKey=JSON.stringify([current.idx,current.ce.lap??1,phase,x,z,j.x,j.z,j.rotY]);
+  if(nextRouteKey!==routeKey||Date.now()-routeCheckedAt>=350){
+   routeKey=nextRouteKey;routeCheckedAt=Date.now();if(!h1DirectRouteClear(current,j,{x:p.pos.x,z:p.pos.z},{x,z},centre)){haltH1('Stopped: the direct published approach is blocked');return;}
   }
-  const angle=distance<.4?j.rotY:Math.atan2(x-p.pos.x,z-p.pos.z),delta=Math.atan2(Math.sin(angle-p.heading),Math.cos(angle-p.heading));
-  G.riding.selectGait('trot');key('KeyA',delta>.04);key('KeyD',delta<-.04);key('KeyW',Math.abs(delta)<.65);key('KeyS',Math.abs(delta)>1&&p.speed>1.2);
-  if($('jumpAssist').value==='on'&&!jumpRequestedAt&&['perfect','good'].includes(cue)&&rig.heroJumpAge==null&&p.y<.05){pulseJump();jumpRequestedAt=Date.now();recordH1('Space from current '+cue+' cue');}
+  const angle=phase==='lineup'||distance<.4?j.rotY:Math.atan2(x-p.pos.x,z-p.pos.z),delta=Math.atan2(Math.sin(angle-p.heading),Math.cos(angle-p.heading)),gait=phase==='run-in'?'trot':'walk';
+  G.riding.selectGait(gait);key('KeyA',delta>.04);key('KeyD',delta<-.04);key('KeyW',phase!=='lineup'&&Math.abs(delta)<.65);key('KeyS',phase==='lineup'?p.speed>.4:Math.abs(delta)>1&&p.speed>1.2);
+  if(phase==='run-in'&&$('jumpAssist').value==='on'&&!jumpRequestedAt&&['perfect','good'].includes(cue)&&rig.heroJumpAge==null&&p.y<.05){pulseJump();jumpRequestedAt=Date.now();recordH1('Space from current '+cue+' cue');}
   if(jumpSeen&&rig.heroJumpAge==null&&p.y<.05){haltH1('Stopped: the native jump ended before this fence was scored');return;}
   if(!held.KeyW||Math.hypot(p.pos.x-lastPosition.x,p.pos.z-lastPosition.z)>.25){lastMovedAt=Date.now();lastPosition={x:p.pos.x,z:p.pos.z};}
   if(held.KeyW&&Date.now()-lastMovedAt>5000){haltH1('Stopped: forward input made no physical progress for five seconds');return;}
-  driverSteps++;driverStatus='running Welcome Jump first attempt';driverTarget={x,z,distance,checkpoint:current.idx+1,total:5,kind:'fence',gait:'trot',cue,across,lateral,routeClear:true,jumpRequested:!!jumpRequestedAt};
+  driverSteps++;driverStatus='running Welcome Jump first attempt';driverTarget={x,z,distance,checkpoint:current.idx+1,total:5,kind:'fence',gait,phase,cue,across,lateral,routeClear:true,formalRevision:formal?.revision??null,jumpRequested:!!jumpRequestedAt};
  }catch(e){stop();fail(e);}},100);
 }
 

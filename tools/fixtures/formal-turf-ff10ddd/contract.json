@@ -1,0 +1,706 @@
+{
+  "version": 1,
+  "commonBase": "5e173bf0e0077058c96e9b6c147b25cdcdcd0ffa",
+  "formalParent": "ff10ddd21d0b57c40dd05b8eb188462e18ba9258",
+  "incomingParent": "22b72cc2d182c921b5605f5d1fc00edac7f5d4ee",
+  "scope": "Exact merge of frozen formal/regroup and independent pasture/turf parents. Two complete owner views and explicit whole observer views precede unchanged prior pins. Production grass and formal behavior remain raw parent bytes outside the combined core/index imports.",
+  "files": {
+    "ranch3d.html": {
+      "formalSHA256": "6e68e171d8774ab251a578dccceffa1fbaede780c8712189fdacb034e570a3ed",
+      "incomingSHA256": "b76c6787cb6af63d747b9f5692f55e62a574d04f1d6e0367a8f349987f870c76",
+      "baseSHA256": "020b6ee5aa528b437e054305769aad0b2b4397b4572b878a590f2e84aea96182",
+      "mergedSHA256": "4d785e456285b596de778ca7da12ea525b9f221e53b9ad6604bef989b2ed50c4"
+    },
+    "assets/features/index.js": {
+      "formalSHA256": "192e6a8a6378cdf4ca9105a81cdc1c1e43b35e54f5e462d4285a404b26ada406",
+      "incomingSHA256": "b94e0886c7206af03649ba9e2701991fc2609dcb98d4938430cd0d186983f2c2",
+      "baseSHA256": "85b9e78f297f851d6adfd06283124e0ddd5d48c22958e8a8d483ec0f6938b567",
+      "mergedSHA256": "08b6750073b2d4734d48546debd5d3dcf8e592f44b22f67d5482509f4e9b9075"
+    }
+  },
+  "toFormal": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';\nimport {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';\nimport {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';\nimport {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-3';\nimport {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';\nimport {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';\nimport {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-ribbon-3';\nimport {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';\nimport {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';\nimport {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';\n",
+      "after": "import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';\nimport {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';\nimport {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1';\nimport {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-5';\nimport {installCourseTurf} from './assets/course-turf.mjs?v=mown-course-turf-4';\nimport {installPastureLighting} from './assets/pasture-lighting.mjs?v=grass-volume-1';\nimport {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';\nimport {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grass-ribbon-5';\nimport {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';\nimport {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';\nimport {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "after": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": " const lupinCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_LU*16),colors:new Float32Array(NG_LU*3)}));\n for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}\n rock.castShadow=quality==='high';\n const okGrass=(x,z,shortVerge=false)=>{\n  if(G.photoscans?.excludesGroundCover?.(x,z))return false;\n  if(alpineSnowAt(x,z)>.35)return false;\n  const winterCover=coldPastureCover(x,z);\n",
+      "after": " const lupinCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_LU*16),colors:new Float32Array(NG_LU*3)}));\n for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}\n rock.castShadow=quality==='high';\n const okGrass=(x,z,shortVerge=false,mownCourse=false)=>{\n  if(G.photoscans?.excludesGroundCover?.(x,z))return false;\n  if(alpineSnowAt(x,z)>.35)return false;\n  const winterCover=coldPastureCover(x,z);\n",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "  if(G.quartersPkg?.pondContains(x,z))return false;\n  if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;\n  if(window.__chalkCut?.(x,z))return false;\n  if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down\n  return true;};\n /* Which country you are standing in, and therefore what grows here. */\n const biomeAt=(x,z)=>{\n",
+      "after": "  if(G.quartersPkg?.pondContains(x,z))return false;\n  if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;\n  if(window.__chalkCut?.(x,z))return false;\n  if(!mownCourse&&window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down\n  return true;};\n /* Which country you are standing in, and therefore what grows here. */\n const biomeAt=(x,z)=>{\n",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": " };\n let swardAccentColliders=null;\n const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,\n  canBasal:(x,z)=>biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35&&managedGrass(x,z)<.58,\n  beginAccentQuery:(x,z,r)=>{swardAccentColliders=G.world.colliders.filter(c=>Math.abs(c.x-x)<=r+c.r+.77&&Math.abs(c.z-z)<=r+c.r+.77);},\n  canAccent:(x,z,r)=>{\n",
+      "after": " };\n let swardAccentColliders=null;\n const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,\n  canCourseTurf:(x,z,r)=>{\n   if(!Number.isFinite(x+z+r)||!(r>0&&r<=.5))return false;\n   if(pathDist(x,z)<PATH_W*.92+r||(G.worldPaths?.trackDist(x,z)??Infinity)<2.6+r)return false;\n   const d=r/Math.sqrt(2);\n   return [[0,0],[r,0],[-r,0],[0,r],[0,-r],[d,d],[-d,d],[d,-d],[-d,-d]].every(([dx,dz])=>{\n    const a=x+dx,b=z+dz;\n    return biomeAt(a,b)==='meadow'&&coldWoodlandWeights(a,b).weight<=.08&&coyoteCoverDryWeight(a,b)<.35&&okGrass(a,b,true,true);\n   });\n  },\n  courseTurfColor:(x,z,sample,color)=>meadowBladeColor(color,x,z,sample),\n  canBasal:(x,z)=>biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35&&managedGrass(x,z)<.58,\n  beginAccentQuery:(x,z,r)=>{swardAccentColliders=G.world.colliders.filter(c=>Math.abs(c.x-x)<=r+c.r+.77&&Math.abs(c.z-z)<=r+c.r+.77);},\n  canAccent:(x,z,r)=>{\n",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "G.world.mixedSward=installMixedSward(G);\ninstallChalkCoverRefresh(G);\ninstallPastoralCoverRefresh(G);\nG.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});\nconst reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);\nconst waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,\n",
+      "after": "G.world.mixedSward=installMixedSward(G);\ninstallChalkCoverRefresh(G);\ninstallPastoralCoverRefresh(G);\nG.world.courseTurf=installCourseTurf(G);\nG.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});\nconst reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);\nconst waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,\n",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as onFoot from './on-foot.js?v=starter-tack-2';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her\nimport * as seMarket from './se-market.js?v=menus-polish-20261008';\nimport * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot\nimport * as courseClear from './course-clear.js?v=fine-meadows-1';   // a mown, cleared track on every event course; routes bent round what cannot be cleared\nimport * as seFrame from './se-frame.js?v=story-events-20261013';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use\nimport * as seEvents from './se-events.js?v=programme-club-regroup-1';\nimport * as seJourney from './se-journey.js?v=final-ribbon-1';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are\n",
+      "after": "import * as onFoot from './on-foot.js?v=starter-tack-2';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her\nimport * as seMarket from './se-market.js?v=menus-polish-20261008';\nimport * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot\nimport * as courseClear from './course-clear.js?v=fine-meadows-1-mown-course-turf-4';   // a mown, cleared track on every event course; routes bent round what cannot be cleared\nimport * as seFrame from './se-frame.js?v=story-events-20261013';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use\nimport * as seEvents from './se-events.js?v=programme-club-regroup-1';\nimport * as seJourney from './se-journey.js?v=final-ribbon-1';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are\n",
+      "occurrences": 1
+    }
+  ],
+  "toIncoming": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "after": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as social from './social-play.js?v=offline-expeditions-1';\nimport * as clubActivities from './club-activities.js?v=club-rally-1';\nimport * as clubMembership from './club-membership.js?v=clubhouse-2';\nimport * as clubRides from './club-rides.js?v=programme-club-regroup-1';\nimport * as clubHerd from './club-herd.js?v=club-post-relay-1';\nimport * as clubHerdUI from './club-herd-ui.js?v=club-herd-2';\nimport * as clubFriends from './club-friends.js?v=club-rally-1';\n",
+      "after": "import * as social from './social-play.js?v=offline-expeditions-1';\nimport * as clubActivities from './club-activities.js?v=club-rally-1';\nimport * as clubMembership from './club-membership.js?v=clubhouse-2';\nimport * as clubRides from './club-rides.js?v=formal-approach-resume-1';\nimport * as clubHerd from './club-herd.js?v=club-post-relay-1';\nimport * as clubHerdUI from './club-herd-ui.js?v=club-herd-2';\nimport * as clubFriends from './club-friends.js?v=club-rally-1';\n",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as seasonQuests from './season-quests.js?v=horse-training-plan-1';\nimport * as ev2disc from './events2-disciplines.js?v=programme-club-regroup-1';\nimport * as ev2ladder from './events2-ladder.js?v=programme-club-regroup-1';\nimport * as courseGuide from './course-guide.js?v=flat-race-guide-1';\nimport * as wVistas from './world-vistas.js?v=coyote-macroform-3';\nimport * as wFlora from './world-flora.js?v=coyote-macroform-3';\nimport * as wWater from './world-water.js?v=river-ecotone-1';\n",
+      "after": "import * as seasonQuests from './season-quests.js?v=horse-training-plan-1';\nimport * as ev2disc from './events2-disciplines.js?v=programme-club-regroup-1';\nimport * as ev2ladder from './events2-ladder.js?v=programme-club-regroup-1';\nimport * as courseGuide from './course-guide.js?v=formal-approach-resume-1';\nimport * as wVistas from './world-vistas.js?v=coyote-macroform-3';\nimport * as wFlora from './world-flora.js?v=coyote-macroform-3';\nimport * as wWater from './world-water.js?v=river-ecotone-1';\n",
+      "occurrences": 1
+    }
+  ],
+  "observers": {
+    "tools/activity-landscape-source-guard.cjs": {
+      "formal": {
+        "beforeSHA256": "7eb615a49e5f0dd12ae701794f5e67ef83d0862b85fc4dfef0a0c930a4156ad1",
+        "afterSHA256": "c86e49d69b1b16a89f1fed9b0bffba4a40141211f0196457464b0ff209f4778b",
+        "changes": [
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeFormalApproachResumeSource,normalizeFormalApproachResumeObserverSource,normalizeFormalApproachResumeFixtureChanges}=require('./formal-approach-resume-source-guard.cjs');\nconst {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeFormalTurfFormalSource,normalizeFormalTurfFormalObserver,normalizeFormalTurfFormalFixtures}=require('./formal-turf-composition-source-guard.cjs');\nconst {normalizeFormalApproachResumeSource,normalizeFormalApproachResumeObserverSource,normalizeFormalApproachResumeFixtureChanges}=require('./formal-approach-resume-source-guard.cjs');\nconst {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n",
+            "after": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeFormalTurfFormalSource(source,file);\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n",
+            "after": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeFormalTurfFormalSource(source,file);\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);\n",
+            "after": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeFormalTurfFormalObserver(source,file);\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n",
+            "after": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeFormalTurfFormalObserver(source,file);\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": "// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeFormalApproachResumeFixtureChanges(diff);\n diff=normalizeProgrammeRegroupFixtureChanges(diff);\n diff=normalizeHorseTrainingFixtureChanges(diff);\n",
+            "after": "// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeFormalTurfFormalFixtures(diff,baseline);\n diff=normalizeFormalApproachResumeFixtureChanges(diff);\n diff=normalizeProgrammeRegroupFixtureChanges(diff);\n diff=normalizeHorseTrainingFixtureChanges(diff);\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "2d136f4a83448a5737abafbb6565e28f491b6df4f94d731bf29d3460b3949cdb",
+        "afterSHA256": "c86e49d69b1b16a89f1fed9b0bffba4a40141211f0196457464b0ff209f4778b",
+        "changes": [
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\nconst fixture='tools/fixtures/activity-landscape-6a82f3f/contract.json';\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeFormalTurfFormalSource,normalizeFormalTurfFormalObserver,normalizeFormalTurfFormalFixtures}=require('./formal-turf-composition-source-guard.cjs');\nconst {normalizeFormalApproachResumeSource,normalizeFormalApproachResumeObserverSource,normalizeFormalApproachResumeFixtureChanges}=require('./formal-approach-resume-source-guard.cjs');\nconst {normalizeProgrammeRegroupSource,normalizeProgrammeRegroupObserverSource,normalizeProgrammeRegroupFixtureChanges}=require('./programme-regroup-source-guard.cjs');\nconst {normalizeHorseTrainingSource,normalizeHorseTrainingObserverSource,normalizeHorseTrainingFixtureChanges}=require('./horse-training-source-guard.cjs');\nconst fixture='tools/fixtures/activity-landscape-6a82f3f/contract.json';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file];if(!row)return source;\n",
+            "after": " return source;\n}\nfunction normalizeActivityIncomingSource(source,file){\n source=normalizeFormalTurfFormalSource(source,file);\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file];if(!row)return source;\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file],group=contract.toActivity.filter(c=>c.file===file);if(!row||!group.length||sha(source)===row.activitySHA256)return source;\n",
+            "after": " assert([row.incomingSHA256,row.baselineSHA256].includes(sha(source)),'Complete incoming or df owner restored '+file);return source;\n}\nfunction normalizeActivityParentSource(source,file){\n source=normalizeFormalTurfFormalSource(source,file);\n source=normalizeFormalApproachResumeSource(source,file);\n source=normalizeProgrammeRegroupSource(source,file);\n source=normalizeHorseTrainingSource(source,file);\n const row=contract.files[file],group=contract.toActivity.filter(c=>c.file===file);if(!row||!group.length||sha(source)===row.activitySHA256)return source;\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);\n const prior=activity.observers[file];\n",
+            "after": " source=reverse(source,file,row.changes,'merged observer');assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' observer restored '+file);return source;\n}\nfunction normalizeActivityIncomingObserverSource(source,file){\n source=normalizeFormalTurfFormalObserver(source,file);\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);\n const prior=activity.observers[file];\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/activity-landscape-source-guard.cjs",
+            "before": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n// The original assertion still rejects any original fixture drift. The only\n// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeProgrammeRegroupFixtureChanges(diff);\n diff=normalizeHorseTrainingFixtureChanges(diff);\n assert.equal(baseline,contract.baseline,'Exact original fixture baseline');\n",
+            "after": " return observer(source,file,'incoming');\n}\nfunction normalizeActivityParentObserverSource(source,file){\n source=normalizeFormalTurfFormalObserver(source,file);\n source=normalizeFormalApproachResumeObserverSource(source,file);\n source=normalizeProgrammeRegroupObserverSource(source,file);\n source=normalizeHorseTrainingObserverSource(source,file);return observer(source,file,'activity');}\n// The original assertion still rejects any original fixture drift. The only\n// added files omitted from its diff are the exact new parent declarations and\n// this explicitly named new composition contract; unknown additions remain.\nfunction normalizeActivityFixtureChanges(diff,baseline){\n diff=normalizeFormalTurfFormalFixtures(diff,baseline);\n diff=normalizeFormalApproachResumeFixtureChanges(diff);\n diff=normalizeProgrammeRegroupFixtureChanges(diff);\n diff=normalizeHorseTrainingFixtureChanges(diff);\n assert.equal(baseline,contract.baseline,'Exact original fixture baseline');\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/course-turf-blades-source-guard.cjs": {
+      "incoming": {
+        "beforeSHA256": "e6ff9f0ab1db8ee81d70563e3d30dd0b25e07bf2551811f7c8cccf26d97fd755",
+        "afterSHA256": "4e95dc7fd8075f49731cc32a822b6010015cdf8e47f82996a2198607b1037781",
+        "changes": [
+          {
+            "file": "tools/course-turf-blades-source-guard.cjs",
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst dir=path.join(__dirname,'fixtures/course-turf-blades-3944c9e'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nfunction reverse(source,file,rows,label){\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeFormalTurfIncomingSource,normalizeFormalTurfIncomingObserver,normalizeFormalTurfIncomingFixtures}=require('./formal-turf-composition-source-guard.cjs');\nconst dir=path.join(__dirname,'fixtures/course-turf-blades-3944c9e'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nfunction reverse(source,file,rows,label){\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/course-turf-blades-source-guard.cjs",
+            "before": "// precise new addition exists. Every public full source gate below still pins\n// a complete prior owner; unknown versions and body drift are never discarded.\nfunction undoCourseTurfBladesSource(source,file){\n const rows=changes.filter(c=>c.file===file);if(!rows.length)return source;\n if(!rows.some(c=>source.includes(c.after)))return source;\n return reverse(source,file,changes,'course turf/blade source');\n}\nfunction normalizeCourseTurfBladesTestSource(source,file){\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source;\n source=reverse(source,file,adapters,'course turf/blade observer');\n",
+            "after": "// precise new addition exists. Every public full source gate below still pins\n// a complete prior owner; unknown versions and body drift are never discarded.\nfunction undoCourseTurfBladesSource(source,file){\n source=normalizeFormalTurfIncomingSource(source,file);\n const rows=changes.filter(c=>c.file===file);if(!rows.length)return source;\n if(!rows.some(c=>source.includes(c.after)))return source;\n return reverse(source,file,changes,'course turf/blade source');\n}\nfunction normalizeCourseTurfBladesTestSource(source,file){\n source=normalizeFormalTurfIncomingObserver(source,file);\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source;\n source=reverse(source,file,adapters,'course turf/blade observer');\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/course-turf-blades-source-guard.cjs",
+            "before": "}\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeCourseTurfBladesTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact3944 prior source dependency '+file);\nfunction normalizeCourseTurfBladesSource(source,file){\n const row=contract.files[file];if(!row)return source;\n if(row.new){assert.equal(sha(source),row.candidateSHA256,'Complete new original course turf owner '+file);return source;}\n source=undoCourseTurfBladesSource(source,file);\n",
+            "after": "}\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeCourseTurfBladesTestSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact3944 prior source dependency '+file);\nfunction normalizeCourseTurfBladesSource(source,file){\n source=normalizeFormalTurfIncomingSource(source,file);\n const row=contract.files[file];if(!row)return source;\n if(row.new){assert.equal(sha(source),row.candidateSHA256,'Complete new original course turf owner '+file);return source;}\n source=undoCourseTurfBladesSource(source,file);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/course-turf-blades-source-guard.cjs",
+            "before": " }return source;\n}\nfunction normalizeCourseTurfBladesFixtureChanges(diff,baseline){\n assert.equal(baseline,contract.fixtureDiffBaseline,'Exact prior activity fixture baseline');\n const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate own fixture diff rows');\n const own='tools/fixtures/course-turf-blades-3944c9e/contract.json',allowed={...contract.approvedAddedFixtureSHA256,[own]:sha(fs.readFileSync(path.join(dir,'contract.json')))};\n",
+            "after": " }return source;\n}\nfunction normalizeCourseTurfBladesFixtureChanges(diff,baseline){\n diff=normalizeFormalTurfIncomingFixtures(diff,baseline);\n assert.equal(baseline,contract.fixtureDiffBaseline,'Exact prior activity fixture baseline');\n const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate own fixture diff rows');\n const own='tools/fixtures/course-turf-blades-3944c9e/contract.json',allowed={...contract.approvedAddedFixtureSHA256,[own]:sha(fs.readFileSync(path.join(dir,'contract.json')))};\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/grass-ribbon-source-guard.cjs": {
+      "formal": {
+        "beforeSHA256": "500368512ee4097a6686cbed76520705c8ba3f946544f7cb11557fe71158ecea",
+        "afterSHA256": "e1912657b769d3e8f5903673289fa17395281df03354b40f58c6bb649c777072",
+        "changes": [
+          {
+            "file": "tools/grass-ribbon-source-guard.cjs",
+            "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\nconst directory=path.join(__dirname,'fixtures/grass-ribbon-d9b168e');\nconst contract=JSON.parse(fs.readFileSync(path.join(directory,'contract.json')));\nconst changes=JSON.parse(fs.readFileSync(path.join(directory,'source-changes.json')));\n",
+            "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizeMeadowReliefWallTestSource}=require('./meadow-relief-wall-source-guard.cjs');\nconst {normalizeProgressionGuardSource}=require('./progression-grass-source-guard.cjs');\nconst {undoCourseTurfBladesSource}=require('./course-turf-blades-source-guard.cjs');\nconst directory=path.join(__dirname,'fixtures/grass-ribbon-d9b168e');\nconst contract=JSON.parse(fs.readFileSync(path.join(directory,'contract.json')));\nconst changes=JSON.parse(fs.readFileSync(path.join(directory,'source-changes.json')));\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/grass-ribbon-source-guard.cjs",
+            "before": "// Reviewed itself imports Grass, so eager loading here would create a cycle.\nconst reviewedRuntime=(source,file)=>require('./reviewed-riding-source-guard.cjs').normalizeReviewedRuntimeSource(source,file);\nfunction normalizeGrassRibbonOwnSource(source,file){\n const row=contract.files[file];if(!row)return source;\n source=reverseExactGroup(source,file,changes,'ribbon/verge source');\n const projected=normalizeAuthoredCameraSource(normalizePublishedCacheSource(normalizeFieldstoneWallCacheSource(reviewedRuntime(source,file),file),file),file);\n",
+            "after": "// Reviewed itself imports Grass, so eager loading here would create a cycle.\nconst reviewedRuntime=(source,file)=>require('./reviewed-riding-source-guard.cjs').normalizeReviewedRuntimeSource(source,file);\nfunction normalizeGrassRibbonOwnSource(source,file){\n source=undoCourseTurfBladesSource(source,file);\n const row=contract.files[file];if(!row)return source;\n source=reverseExactGroup(source,file,changes,'ribbon/verge source');\n const projected=normalizeAuthoredCameraSource(normalizePublishedCacheSource(normalizeFieldstoneWallCacheSource(reviewedRuntime(source,file),file),file),file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/meadow-relief-wall-source-guard.cjs": {
+      "formal": {
+        "beforeSHA256": "7b41b6cd85aa7d2a52145f9489e1ae6653eedd2e6177237274c0f91e09f06e10",
+        "afterSHA256": "2927deac9190827de82e500c15fc54bb28fda950285d429ec56e32f457e198f2",
+        "changes": [
+          {
+            "file": "tools/meadow-relief-wall-source-guard.cjs",
+            "before": "const dir=path.join(__dirname,'fixtures/meadow-relief-wall-b1a73b1'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json');\nconst sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeActivityIncomingObserverSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact preceding projection dependency '+file);\nconst {normalizeFieldstoneWallCacheSource:F}=require('./fieldstone-wall-cache-source-guard.cjs'),{normalizePublishedCacheSource:P}=require('./published-world-import-source-guard.cjs'),{normalizeAuthoredCameraSource:C}=require('./authored-camera-source-guard.cjs');\nconst {normalizeRidingDistanceSource:distance}=require('./riding-distance-source-guard.cjs'),{normalizeRibbonAwardSource:awards}=require('./ribbon-award-source-guard.cjs');\n",
+            "after": "const dir=path.join(__dirname,'fixtures/meadow-relief-wall-b1a73b1'),load=name=>JSON.parse(fs.readFileSync(path.join(dir,name),'utf8'));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json');\nconst sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nconst {undoCourseTurfBladesSource,normalizeCourseTurfBladesTestSource}=require('./course-turf-blades-source-guard.cjs');\nfor(const[file,hash]of Object.entries(contract.dependencySHA256))assert.equal(sha(normalizeActivityIncomingObserverSource(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),file)),hash,'Exact preceding projection dependency '+file);\nconst {normalizeFieldstoneWallCacheSource:F}=require('./fieldstone-wall-cache-source-guard.cjs'),{normalizePublishedCacheSource:P}=require('./published-world-import-source-guard.cjs'),{normalizeAuthoredCameraSource:C}=require('./authored-camera-source-guard.cjs');\nconst {normalizeRidingDistanceSource:distance}=require('./riding-distance-source-guard.cjs'),{normalizeRibbonAwardSource:awards}=require('./ribbon-award-source-guard.cjs');\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/meadow-relief-wall-source-guard.cjs",
+            "before": "// Used at Reviewed's entry before its physical FEATURES cache is parsed.\n// This strictly undoes the eighteen exact new literals; the caller's unchanged\n// whole-body chain and the full source gate below still reject unrelated drift.\nfunction undoMeadowReliefWallSource(source,file){return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}\nfunction normalizeMeadowReliefWallSource(source,file){\n const row=contract.files[file];if(!row)return source;\n source=undoMeadowReliefWallSource(source,file);\n assert.equal(sha(C(P(F(prior(source,file),file),file),file)),row.priorCanonicalSHA256,'Entire b1 material/wall/cache owner restored through exact prior source logic '+file);\n return source;\n}\nfunction normalizeMeadowReliefWallTestSource(source,file){\n source=normalizeActivityIncomingObserverSource(source,file);\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source; // Earlier states require their exact complete source SHA.\n",
+            "after": "// Used at Reviewed's entry before its physical FEATURES cache is parsed.\n// This strictly undoes the eighteen exact new literals; the caller's unchanged\n// whole-body chain and the full source gate below still reject unrelated drift.\nfunction undoMeadowReliefWallSource(source,file){source=undoCourseTurfBladesSource(source,file);return undo(normalizeActivityIncomingSource(source,file),file,changes,'meadow/wall source',true);}\nfunction normalizeMeadowReliefWallSource(source,file){\n source=undoCourseTurfBladesSource(source,file);\n const row=contract.files[file];if(!row)return source;\n source=undoMeadowReliefWallSource(source,file);\n assert.equal(sha(C(P(F(prior(source,file),file),file),file)),row.priorCanonicalSHA256,'Entire b1 material/wall/cache owner restored through exact prior source logic '+file);\n return source;\n}\nfunction normalizeMeadowReliefWallTestSource(source,file){\n source=normalizeCourseTurfBladesTestSource(source,file);\n source=normalizeActivityIncomingObserverSource(source,file);\n const hash=contract.testAdapterPreimages[file];if(!hash)return source;\n if(sha(source)===hash||(contract.historicalTestSHA256[file]||[]).includes(sha(source)))return source; // Earlier states require their exact complete source SHA.\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/run-reviewed-world-guards.mjs": {
+      "incoming": {
+        "beforeSHA256": "4a4f8e1c289337ee6a205feba3aa497e9abe1402120c1f147e1048ca0a2b9971",
+        "afterSHA256": "8cb52b4cf2151b6ead0f2ada68d7994b92d230d6aeecdf7a7750f78baf5a0f9d",
+        "changes": [
+          {
+            "file": "tools/run-reviewed-world-guards.mjs",
+            "before": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport {normalizeHorseTrainingSource} from './horse-training-source-guard.cjs';\nconst root=path.resolve(fileURLToPath(new URL('../',import.meta.url)));\nconst projection=mkdtempSync(path.join(tmpdir(),'meadowlark-reviewed-world-'));\nconst observers=new Set(['tools/test-basic-riding-tack.mjs','tools/test-coyote-crag-composition.mjs','tools/test-starter-tack-catalog-preservation.mjs']);\n",
+            "after": "import {normalizeReviewedRuntimeSource,normalizeReviewedObserverSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeActivityRuntimeSource} from './activity-runtime-source-guard.cjs';\nimport {normalizeHorseTrainingSource} from './horse-training-source-guard.cjs';\nimport {normalizeFormalApproachResumeSource} from './formal-approach-resume-source-guard.cjs';\nconst root=path.resolve(fileURLToPath(new URL('../',import.meta.url)));\nconst projection=mkdtempSync(path.join(tmpdir(),'meadowlark-reviewed-world-'));\nconst observers=new Set(['tools/test-basic-riding-tack.mjs','tools/test-coyote-crag-composition.mjs','tools/test-starter-tack-catalog-preservation.mjs']);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/run-reviewed-world-guards.mjs",
+            "before": "   if(['assets','tools','assets/features'].includes(name))tree(name);else symlinkSync(src,dest,'dir');\n  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(normalizeHorseTrainingSource(readFileSync(src,'utf8'),name),name));\n  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(readFileSync(src,'utf8'),name));\n  // Incoming live observers now perform their own complete historical adapter\n  // reversal; pre-projecting these copies would incorrectly reverse twice.\n  else if(observers.has(name))copyFileSync(src,dest);\n",
+            "after": "   if(['assets','tools','assets/features'].includes(name))tree(name);else symlinkSync(src,dest,'dir');\n  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));\n  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(normalizeHorseTrainingSource(readFileSync(src,'utf8'),name),name));\n  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(normalizeFormalApproachResumeSource(readFileSync(src,'utf8'),name),name));\n  // Incoming live observers now perform their own complete historical adapter\n  // reversal; pre-projecting these copies would incorrectly reverse twice.\n  else if(observers.has(name))copyFileSync(src,dest);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-activity-landscape-composition.mjs": {
+      "formal": {
+        "beforeSHA256": "8453ef09975b76131f431233f66fa6c83b091e172a90967ab8eda6320c1b2844",
+        "afterSHA256": "171ad0b238da43bb607d95f507916a656414f516b9f22fcebdf930dd1747b5e3",
+        "changes": [
+          {
+            "file": "tools/test-activity-landscape-composition.mjs",
+            "before": "import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-activity-landscape-composition.mjs",
+            "before": "import {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+            "after": "import {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "21970555d323fd2283107389440da8db9c7971e8d81a93cd88261f95faa084cb",
+        "afterSHA256": "171ad0b238da43bb607d95f507916a656414f516b9f22fcebdf930dd1747b5e3",
+        "changes": [
+          {
+            "file": "tools/test-activity-landscape-composition.mjs",
+            "before": "import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport {normalizeHorseTrainingAuditSource} from './horse-training-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeHorseTrainingAuditSource(normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(read('tools/fixtures/activity-landscape-6a82f3f/contract.json'));\nconst git=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:root,encoding:'utf8'});\nconst names=(rev,folder)=>execFileSync('git',['ls-tree','-r','--name-only',rev,folder],{cwd:root,encoding:'utf8'}).trim().split('\\n');\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-activity-runtime-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "c6e38eb94376cc6ca094aa73143f02f06689c4187a7702608df00513a99e25a0",
+        "afterSHA256": "e8dfe8ea78a8218891b9a04ef8379febfe3ecfe54ca534b901f230c5ab97dfb9",
+        "changes": [
+          {
+            "file": "tools/test-activity-runtime-source-guard.mjs",
+            "before": "import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import {normalizeActivityParentSource,normalizeActivityParentObserverSource,normalizeActivityFixtureChanges as normalizePriorActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeCourseTurfBladesFixtureChanges} from './course-turf-blades-source-guard.cjs';\nconst normalizeActivityFixtureChanges=(diff,baseline)=>normalizePriorActivityFixtureChanges(normalizeCourseTurfBladesFixtureChanges(diff,baseline),baseline);\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-activity-runtime-source-guard.mjs",
+            "before": "import {normalizeActivityRuntimeSource,normalizeActivityObserverSource} from './activity-runtime-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));\nconst sha=source=>createHash('sha256').update(source).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityRuntimeSource,normalizeActivityObserverSource} from './activity-runtime-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeActivityParentObserverSource(normalizeActivityParentSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file);\nconst contract=JSON.parse(read('tools/fixtures/activity-runtime-df065bd/contract.json'));\nconst sha=source=>createHash('sha256').update(source).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-club-regroup.mjs": {
+      "incoming": {
+        "beforeSHA256": "d84a6d507c8a8a29c45f7573a3203cdacf55e9cb746b12cd5b197d37f27f0401",
+        "afterSHA256": "453d56812924ddffa868dd0ff6e1f5c1a7a07f07fe1287da40b504af3f086a5a",
+        "changes": [
+          {
+            "file": "tools/test-club-regroup.mjs",
+            "before": " b.rig.heroJumpAge=.95;b.rig.heroMotion.state.grounded=false;b.player.y=.08;b.step();assert.equal(b.G.trail.ride.idx,0);a.step();\n b.rig.heroJumpAge=null;b.rig.heroMotion.state.grounded=true;b.player.y=0;b.step();assert.equal(b.G.trail.ride.idx,0,'landing does not restore expired Ready proof');assert(b.api.readyAtStop().ok);f.flush();b.step();assert.equal(b.G.trail.ride.idx,1);\n});\n",
+            "after": " b.rig.heroJumpAge=.95;b.rig.heroMotion.state.grounded=false;b.player.y=.08;b.step();assert.equal(b.G.trail.ride.idx,0);a.step();\n b.rig.heroJumpAge=null;b.rig.heroMotion.state.grounded=true;b.player.y=0;b.step();assert.equal(b.G.trail.ride.idx,0,'landing does not restore expired Ready proof');assert(b.api.readyAtStop().ok);f.flush();b.step();assert.equal(b.G.trail.ride.idx,1);\n});\n\nfunction expiredGuest(f,{departAhead=false}={}){\n const {a,b,id}=f.setup();for(let i=0;i<2;i++){f.arrive(a,b,i);f.depart(a,b);}\n const packet=()=>{const p=f.retained.get('srf1/club-a/clubride2/session/'+id);return {topic:p.topic,m:copy(p.m)};};\n const saved=b.data(),oldPacket=packet();\n if(departAhead){f.arrive(a,b,2);assert(a.api.readyAtStop().ok);assert(b.api.readyAtStop().ok);f.flush();assert(a.api.continueTogether().ok);f.flush();a.step();f.flush();assert.equal(a.G.trail.ride.idx,3);assert.equal(b.G.trail.ride.idx,2);}\n b.G.net.net.client.connected=false;\n for(let i=0;i<91;i++){f.advance(2000);a.step(2);f.flush();}\n const livePacket=packet();\n assert(saved.clubRideResume.session.expiresAt<f.now());assert(livePacket.m.expiresAt>f.now());\n return {a,b,id,saved,oldPacket,livePacket};\n}\n\ntest('expired saved lobby resumes only after fresh matching host evidence and an explicit local trail start',t=>{\n const f=fixture(t),{a,id,saved,oldPacket,livePacket}=expiredGuest(f),c=f.client('guest','guest',saved),spawn=copy(c.player);\n assert.equal(c.api.snapshot().current,null);c.receive(oldPacket);assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);\n const lowRevision=copy(livePacket);lowRevision.m.rev=saved.clubRideResume.session.rev-1;c.receive(lowRevision);assert.equal(c.api.snapshot().current,null);\n c.receive(livePacket);assert.equal(c.api.snapshot().current.id,id);assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.G.trail.ride,null);assert.deepEqual(c.player,spawn);assert.equal(c.rewards.length,0);\n assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);c.step();assert.equal(c.G.trail.ride.idx,2,'spawn proximity cannot replay the first two earned stops');assert.equal(c.api.readyAtStop().ok,false);\n f.flush();for(let i=2;i<4;i++){f.arrive(a,c,i);f.depart(a,c);}\n assert.equal(c.rewards.length,1);assert.equal(c.events.filter(e=>e==='trailStop').length,1);assert.equal(c.events.filter(e=>e==='trailDone').length,1);assert.equal(c.data().stats.trails,1);assert.equal(c.data().coins,300);\n const done=c.data();c.G.net.net.client.connected=false;const again=f.client('guest','guest',done);again.receive(livePacket);assert.equal(again.api.rejoin().ok,false);assert.equal(again.G.trail.ride,null);assert.equal(again.rewards.length,0);assert.equal(again.data().stats.trails,1);\n});\n\ntest('stale-session resume rejects changed identity, crew, route, departure proof, finished and left history',t=>{\n const f=fixture(t),{saved,livePacket,id}=expiredGuest(f),mutations=[\n  s=>s.clubRideResume.code='other',s=>s.clubRideResume.id='host-other',s=>s.clubRideResume.session.hostId='third',\n  s=>s.clubRideResume.session.routeId='cottonwood',s=>s.clubRideResume.session.mode='unknown',s=>s.clubRideResume.session.createdAt--,\n  s=>s.clubRideResume.session.planId='another-plan',s=>s.clubRideResume.session.regroup.crew.push('third'),\n  s=>s.clubRideResume.session.regroup.departures[0].token='different-departure',\n  s=>delete s.clubRideResume.session.regroup.departures[0].ready.guest,\n  s=>{s.clubRideResume.participant.progress=3;s.clubRideHistory['club-a|'+id].progress=3;},\n  s=>s.clubRideResume.participant.left=true,s=>s.clubRideResume.participant.finished=true,\n  s=>s.clubRideHistory['club-a|'+id].finished=true,s=>s.clubRideHistory['club-a|'+id].progress=3\n ];\n for(const mutate of mutations){const initial=copy(saved);mutate(initial);const c=f.client('guest','guest',initial);c.receive(livePacket);assert.equal(c.api.snapshot().current,null,mutate.toString());assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.rewards.length,0);c.G.net.net.client.connected=false;}\n const late=f.client('third');late.receive(livePacket);assert.equal(late.api.join(id).ok,false,'a genuinely new late joiner is still rejected');assert.equal(late.G.trail.ride,null);\n});\n\ntest('a cancelled or wrong-room retained session cannot restore an expired saved participant',t=>{\n const f=fixture(t),{saved,livePacket}=expiredGuest(f),c=f.client('guest','guest',saved);\n c.receive({...livePacket,topic:livePacket.topic.replace('club-a','other')});assert.equal(c.api.snapshot().current,null);\n c.receive({...livePacket,m:{...livePacket.m,status:'cancelled'}});assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.rewards.length,0);\n});\n\ntest('resumed saved progress behind the latest departure needs a fresh physical Ready acknowledgment',t=>{\n const f=fixture(t),{a,saved,livePacket}=expiredGuest(f,{departAhead:true}),c=f.client('guest','guest',saved);c.receive(livePacket);f.flush();assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);assert.equal(a.G.trail.ride.idx,3);\n const p=EXPEDITIONS[0].stops[2];c.position(p[1],p[2]);c.step();f.flush();assert.equal(c.G.trail.ride.idx,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.rewards.length,0);\n assert(c.api.readyAtStop().ok);assert.equal(c.G.trail.ride.idx,2);c.step();assert.equal(c.G.trail.ride.idx,2,'local Ready alone cannot consume the stale saved nonce');\n f.flush();c.step();f.flush();assert.equal(c.G.trail.ride.idx,3);assert.equal(a.G.trail.ride.idx,3);assert.equal(c.events.filter(e=>e==='trailStop').length,1);assert.equal(c.rewards.length,0);c.step();assert.equal(c.G.trail.ride.idx,3);\n});\n\n\ntest('a hydrated lobby that expires during disconnection keeps only its dormant resume proof',t=>{\n const f=fixture(t),{a,b,id}=f.setup();for(let i=0;i<2;i++){f.arrive(a,b,i);f.depart(a,b);}\n const saved=b.data();b.G.net.net.client.connected=false;f.advance(1000);const c=f.client('guest','guest',saved);assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.G.trail.ride,null);c.G.net.net.client.connected=false;\n for(let i=0;i<91;i++){f.advance(2000);a.step(2);f.flush();}\n assert.equal(c.api.snapshot().current,null);assert.equal(c.api.rejoin().ok,false);assert.equal(c.G.trail.ride,null);assert.equal(c.data().clubRideResume.participant.progress,2);assert.equal(c.rewards.length,0);\n c.G.net.net.client.connected=true;c.emit('connect');assert.equal(c.api.snapshot().current,null);c.receive(f.retained.get('srf1/club-a/clubride2/session/'+id));assert.equal(c.api.snapshot().current.progress,2);assert.equal(c.G.trail.ride,null);assert(c.api.rejoin().ok);assert.equal(c.G.trail.ride.idx,2);assert.equal(c.api.snapshot().current.regroup.ready,false);assert.equal(c.rewards.length,0);\n assert(c.api.leave().ok);assert.equal(c.data().clubRideResume,null);assert.equal(c.G.trail.ride,null);c.receive(f.retained.get('srf1/club-a/clubride2/session/'+id));assert.equal(c.api.snapshot().current,null,'explicit leave cannot be undone by host heartbeat');\n});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-course-turf-blades-source-guard.mjs": {
+      "incoming": {
+        "beforeSHA256": "8b8ce946217f98e3412a3b9c3021dfa49e3e1a754dc96b80da81d359a44b0a46",
+        "afterSHA256": "cd0cabca72a18e01cad8bd047ea22393ed00698b9afbbc3cef7953b7e802fa1c",
+        "changes": [
+          {
+            "file": "tools/test-course-turf-blades-source-guard.mjs",
+            "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createHash} from 'node:crypto';import {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nconst read=f=>fs.readFileSync(new URL('../'+f,import.meta.url),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex'),fixture='tools/fixtures/course-turf-blades-3944c9e/',contract=JSON.parse(read(fixture+'contract.json')),changes=JSON.parse(read(fixture+'source-changes.json')),adapters=JSON.parse(read(fixture+'test-adapter-changes.json'));\nfor(const[file,row]of Object.entries(contract.files))test(file+': current complete owned source pins actual candidate and restores only approved full prior body',()=>{\n const source=read(file);assert.equal(sha(source),row.candidateSHA256);const prior=normalizeCourseTurfBladesSource(source,file);assert.equal(sha(prior),row.new?row.candidateSHA256:row.rawSHA256);assert.equal(normalizeCourseTurfBladesSource(prior,file),prior);assert.throws(()=>normalizeCourseTurfBladesSource(source+'\\n// unrelated body change',file));\n const rows=changes.filter(c=>c.file===file);\n",
+            "after": "import {normalizeFormalTurfIncomingAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createHash} from 'node:crypto';import {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nconst read=f=>normalizeFormalTurfIncomingAuditSource(fs.readFileSync(new URL('../'+f,import.meta.url),'utf8'),f),sha=s=>createHash('sha256').update(s).digest('hex'),fixture='tools/fixtures/course-turf-blades-3944c9e/',contract=JSON.parse(read(fixture+'contract.json')),changes=JSON.parse(read(fixture+'source-changes.json')),adapters=JSON.parse(read(fixture+'test-adapter-changes.json'));\nfor(const[file,row]of Object.entries(contract.files))test(file+': current complete owned source pins actual candidate and restores only approved full prior body',()=>{\n const source=read(file);assert.equal(sha(source),row.candidateSHA256);const prior=normalizeCourseTurfBladesSource(source,file);assert.equal(sha(prior),row.new?row.candidateSHA256:row.rawSHA256);assert.equal(normalizeCourseTurfBladesSource(prior,file),prior);assert.throws(()=>normalizeCourseTurfBladesSource(source+'\\n// unrelated body change',file));\n const rows=changes.filter(c=>c.file===file);\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-first-rides-h1-input.mjs": {
+      "incoming": {
+        "beforeSHA256": "033482d797a5f4a87cd68d0c6a0fd5b646d0704e219698a6c8a372564a25c8d2",
+        "afterSHA256": "2ec9c885396f4001aa60c1206776e99c1cc1af25e91341eb0df7c99287cda6d8",
+        "changes": [
+          {
+            "file": "tools/test-first-rides-h1-input.mjs",
+            "before": "const copy=value=>structuredClone(value);\nfunction course(){return {ev:{id:'h1',name:'Cottonwood Welcome Jump'},started:true,cd:0,t:2,idx:0,faults:0,ce:{kind:'jump',diff:{k:'open'},lap:1,laps:1,timeAllowed:60,grades:[],refusals:0},\n jumps:[{kind:'fence',x:0,z:0,rotY:0},{kind:'fence',x:40,z:20,rotY:0},{kind:'fence',x:40,z:0,rotY:0},{kind:'fence',x:20,z:-30,rotY:0},{kind:'fence',x:-20,z:20,rotY:0}]};}\nfunction fixture(){\n let now=100000,current=course(),horse={id:17,name:'Bramble',breed:'bay-sporthorse'},cue='early',published=null,timerId=0;\n const mesh={},player={pos:{x:0,z:-10},mesh,heading:0,speed:3.5,y:0,onFoot:false,flying:false},rig={ready:true,loadingBreed:false,attachedTo:mesh,heroMotion:{},heroJumpAge:null};\n const world={colliders:[],walls:[],groundH:()=>0},save={coins:100,story:{idx:7,prog:0},ribbons:{},horses:[copy(horse)]};\n const flags={input:false,photo:false,onFoot:false,vehicle:null},timers=new Map(),listeners=new Map();\n",
+            "after": "const copy=value=>structuredClone(value);\nfunction course(){return {ev:{id:'h1',name:'Cottonwood Welcome Jump'},started:true,cd:0,t:2,idx:0,faults:0,ce:{kind:'jump',diff:{k:'open'},lap:1,laps:1,timeAllowed:60,grades:[],refusals:0},\n jumps:[{kind:'fence',x:0,z:0,rotY:0},{kind:'fence',x:40,z:20,rotY:0},{kind:'fence',x:40,z:0,rotY:0},{kind:'fence',x:20,z:-30,rotY:0},{kind:'fence',x:-20,z:20,rotY:0}]};}\nfunction fixture({formal=false}={}){\n let now=100000,current=course(),horse={id:17,name:'Bramble',breed:'bay-sporthorse'},cue='early',published=null,timerId=0,formalGuide;\n const mesh={},player={pos:{x:0,z:-10},mesh,heading:0,speed:3.5,y:0,onFoot:false,flying:false},rig={ready:true,loadingBreed:false,attachedTo:mesh,heroMotion:{},heroJumpAge:null};\n const world={colliders:[],walls:[],groundH:()=>0},save={coins:100,story:{idx:7,prog:0},ribbons:{},horses:[copy(horse)]};\n const flags={input:false,photo:false,onFoot:false,vehicle:null},timers=new Map(),listeners=new Map();\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-first-rides-h1-input.mjs",
+            "before": "  courseGuide:{target:()=>published??(current?.jumps[current.idx]?[current.jumps[current.idx].x,current.jumps[current.idx].z]:null),jumpCue:()=>cue,isEnabled:()=>true,recovery:()=>null,plan:forbid('plan')},\n  input:{blocked:()=>flags.input},get photoPause(){return flags.photo;},onFoot:{get on(){return flags.onFoot;}},worldPkg:{vehicle:()=>flags.vehicle},\n  riding:{selectGait:g=>trace.gaits.push(g),releaseAll(){trace.releases++;}},save:{fresh:()=>readonly(save,'save'),sync:forbid('save.sync')}};\n const clock=class extends Date{static now(){return now;}};\n const api=Function('G','w','Date','setInterval','clearInterval','setTimeout','clearTimeout','flatRaceSegmentClear','rushRecoverySegmentClear','trace',\n  `let ready=true,storageOwned=true,networkStopped=false,manualTimer=null,jumpTimer=null,driver=null,driverStatus='off',driverSteps=0,driverTarget=null,h1Course=null,h1Horse=null,h1LastTraceKey='',h1LastTraceAt=-Infinity;const held={},h1Trace=[];const $=()=>({value:'on'});const status=s=>trace.statuses.push(s),report=()=>trace.reports++,fail=e=>trace.errors.push(String(e));`+\n  controls+driver+keyup+`return {startH1Driver,readH1Course,state:()=>({active:!!driver,status:driverStatus,target:driverTarget,held:{...held}}),setSafety(k,v){if(k==='ready')ready=v;if(k==='storageOwned')storageOwned=v;if(k==='networkStopped')networkStopped=v;},trace:()=>structuredClone(h1Trace)};`)(\n   G,w,clock,(fn)=>{const id=++timerId;timers.set(id,{kind:'interval',fn});return id;},id=>timers.delete(id),fn=>{const id=++timerId;timers.set(id,{kind:'timeout',fn});return id;},id=>timers.delete(id),flatRaceSegmentClear,rushRecoverySegmentClear,trace);\n return {G,w,api,player,rig,world,flags,trace,save,timers,get course(){return current;},set course(v){current=v;},get horse(){return horse;},set horse(v){horse=v;},set cue(v){cue=v;},set published(v){published=v;},\n  observations:()=>copy({course:current,player,rig,horse,save}),tick(ms=100){now+=ms;for(const item of [...timers.values()])if(item.kind==='interval')item.fn();},flushJump(){for(const [id,item]of [...timers])if(item.kind==='timeout'){timers.delete(id);item.fn();}}};\n}\nfunction clean(f){assert.deepEqual(f.trace.writes,[]);assert.deepEqual(f.trace.forbidden,[]);assert.deepEqual(f.trace.errors,[]);}\n",
+            "after": "  courseGuide:{target:()=>published??(current?.jumps[current.idx]?[current.jumps[current.idx].x,current.jumps[current.idx].z]:null),jumpCue:()=>cue,isEnabled:()=>true,recovery:()=>null,plan:forbid('plan')},\n  input:{blocked:()=>flags.input},get photoPause(){return flags.photo;},onFoot:{get on(){return flags.onFoot;}},worldPkg:{vehicle:()=>flags.vehicle},\n  riding:{selectGait:g=>trace.gaits.push(g),releaseAll(){trace.releases++;}},save:{fresh:()=>readonly(save,'save'),sync:forbid('save.sync')}};\n if(formal)G.courseGuide.formalApproach=()=>readonly(formalGuide===undefined?{courseId:current.ev.id,index:current.idx,lap:current.ce.lap??1,fence:{...current.jumps[current.idx]},phase:'run-in',target:{x:current.jumps[current.idx].x,z:current.jumps[current.idx].z},waypoints:[],revision:1}:formalGuide,'formalGuide');\n const clock=class extends Date{static now(){return now;}};\n const api=Function('G','w','Date','setInterval','clearInterval','setTimeout','clearTimeout','flatRaceSegmentClear','rushRecoverySegmentClear','trace',\n  `let ready=true,storageOwned=true,networkStopped=false,manualTimer=null,jumpTimer=null,driver=null,driverStatus='off',driverSteps=0,driverTarget=null,h1Course=null,h1Horse=null,h1LastTraceKey='',h1LastTraceAt=-Infinity;const held={},h1Trace=[];const $=()=>({value:'on'});const status=s=>trace.statuses.push(s),report=()=>trace.reports++,fail=e=>trace.errors.push(String(e));`+\n  controls+driver+keyup+`return {startH1Driver,readH1Course,state:()=>({active:!!driver,status:driverStatus,target:driverTarget,held:{...held}}),setSafety(k,v){if(k==='ready')ready=v;if(k==='storageOwned')storageOwned=v;if(k==='networkStopped')networkStopped=v;},trace:()=>structuredClone(h1Trace)};`)(\n   G,w,clock,(fn)=>{const id=++timerId;timers.set(id,{kind:'interval',fn});return id;},id=>timers.delete(id),fn=>{const id=++timerId;timers.set(id,{kind:'timeout',fn});return id;},id=>timers.delete(id),flatRaceSegmentClear,rushRecoverySegmentClear,trace);\n return {G,w,api,player,rig,world,flags,trace,save,timers,get course(){return current;},set course(v){current=v;},get horse(){return horse;},set horse(v){horse=v;},set cue(v){cue=v;},set published(v){published=v;},set formalGuide(v){formalGuide=v;},\n  observations:()=>copy({course:current,player,rig,horse,save}),tick(ms=100){now+=ms;for(const item of [...timers.values()])if(item.kind==='interval')item.fn();},flushJump(){for(const [id,item]of [...timers])if(item.kind==='timeout'){timers.delete(id);item.fn();}}};\n}\nfunction clean(f){assert.deepEqual(f.trace.writes,[]);assert.deepEqual(f.trace.forbidden,[]);assert.deepEqual(f.trace.errors,[]);}\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-first-rides-h1-input.mjs",
+            "before": " assert.equal(f.api.state().held.KeyW,false);f.tick();assert.equal(f.trace.events.filter(e=>e.type==='keydown'&&e.code==='KeyW').length,2);clean(f);\n});\ntest('both guarded review pages expose the explicit h1 first-attempt control',()=>{\n for(const page of ['index.html','native-preview.html']){const html=fs.readFileSync(new URL('../review/first-rides/'+page,import.meta.url),'utf8');assert.match(html,/id=\"driveH1\" disabled>Drive Welcome Jump · first attempt/);assert.match(html,/review.js\\?v=h1-landing-input-2/);}\n assert.match(source,/location.port!=='18800'/);assert.match(source,/X-First-Rides-Offline/);assert.match(source,/Refusing unmarked storage/);\n});\n",
+            "after": " assert.equal(f.api.state().held.KeyW,false);f.tick();assert.equal(f.trace.events.filter(e=>e.type==='keydown'&&e.code==='KeyW').length,2);clean(f);\n});\ntest('both guarded review pages expose the explicit h1 first-attempt control',()=>{\n for(const page of ['index.html','native-preview.html']){const html=fs.readFileSync(new URL('../review/first-rides/'+page,import.meta.url),'utf8');assert.match(html,/id=\"driveH1\" disabled>Drive Welcome Jump · first attempt/);assert.match(html,/review.js\\?v=h1-formal-input-3/);}\n assert.match(source,/location.port!=='18800'/);assert.match(source,/X-First-Rides-Offline/);assert.match(source,/Refusing unmarked storage/);\n});\n\n\nfunction formalPlan(f,phase,target){\n const j=f.course.jumps[f.course.idx],to=target||{x:j.x,z:j.z};\n return {courseId:f.course.ev.id,index:f.course.idx,lap:f.course.ce.lap??1,fence:{...j},phase,target:{...to},waypoints:['approach','around'].includes(phase)?[{...to}]:[],revision:1};\n}\nfunction publishFormal(f,phase,target){const plan=formalPlan(f,phase,target);f.formalGuide=plan;f.published=[plan.target.x,plan.target.z];return plan;}\n\ntest('formal approach and around follow only their published ground waypoint, even with an old perfect cue',()=>{\n for(const phase of ['approach','around']){const f=fixture({formal:true});const plan=publishFormal(f,phase,{x:3,z:-8});f.player.heading=Math.atan2(3,2);f.cue='perfect';const before=f.observations(),planBefore=copy(plan);f.api.startH1Driver();f.tick();\n  assert.equal(f.api.state().active,true);assert.equal(f.api.state().target.phase,phase);assert.deepEqual([f.api.state().target.x,f.api.state().target.z],[3,-8]);assert.deepEqual(f.trace.gaits,['walk']);assert.equal(f.api.state().held.KeyW,true);assert.equal(f.trace.events.some(e=>e.code==='Space'),false);assert.deepEqual(f.observations(),before);assert.deepEqual(plan,planBefore);clean(f);\n }\n const f=fixture({formal:true});f.player.pos={x:0,z:3};f.player.heading=Math.PI/2;publishFormal(f,'around',{x:5,z:3});f.api.startH1Driver();f.tick();assert.equal(f.api.state().active,true);assert.equal(f.api.state().held.KeyW,true);assert.equal(f.course.idx,0);assert.deepEqual(f.course.ce.grades,[]);clean(f);\n});\n\ntest('formal lineup uses turn/brake only, then run-in alone permits the real good cue jump',()=>{\n const f=fixture({formal:true});f.player.heading=.6;publishFormal(f,'lineup');f.cue='perfect';f.api.startH1Driver();f.tick();assert.equal(f.api.state().held.KeyW,false);assert.equal(f.api.state().held.KeyD,true);assert.equal(f.api.state().held.KeyS,true);assert.equal(f.trace.events.some(e=>e.code==='Space'),false);assert.deepEqual(f.trace.gaits,['walk']);\n f.player.heading=0;f.cue='good';publishFormal(f,'run-in');const before=f.observations();f.tick();assert.equal(f.api.state().target.phase,'run-in');assert.equal(f.trace.gaits.at(-1),'trot');assert.equal(f.trace.events.filter(e=>e.type==='keydown'&&e.code==='Space').length,1);assert.deepEqual(f.observations(),before);clean(f);\n});\n\ntest('formal stale course/index/lap/fence and malformed targets release keys then stop without fallback',()=>{\n const changes=[p=>p.courseId='h2',p=>p.index=1,p=>p.lap=2,p=>p.fence.x=1,p=>p.fence.rotY=.1,p=>p.fence.kind='gate',p=>p.revision=0,p=>p.target.x=NaN,p=>p.target=null,p=>p.waypoints=null,p=>p.waypoints=new Array(1),p=>p.phase='invented'];\n for(const change of changes){const f=fixture({formal:true});f.api.startH1Driver();f.tick();const plan=formalPlan(f,'approach',{x:3,z:-8});change(plan);f.formalGuide=plan;f.published=[3,-8];f.cue='perfect';const before=f.observations();f.tick();assert.equal(f.api.state().active,true);assert.equal(f.api.state().held.KeyW,false);assert.equal(f.api.state().target,null);assert.equal(f.trace.events.some(e=>e.code==='Space'),false);f.tick(2001);stopped(f,/target was not published/);assert.deepEqual(f.observations(),before);}\n for(const value of [null,undefined,'xy']){const f=fixture({formal:true});f.formalGuide=null;f.published=value;f.api.startH1Driver();f.tick();assert.equal(!!f.api.state().held.KeyW,false);f.tick(2001);stopped(f,/target was not published/);}\n const f=fixture({formal:true});publishFormal(f,'run-in',{x:3,z:-8});f.cue='perfect';f.api.startH1Driver();f.tick();assert.equal(f.api.state().held.KeyW,undefined);f.tick(2001);stopped(f,/target was not published/);\n});\n\ntest('formal target and metadata must agree; a transient stale fence cannot leak its cue to the next fence',()=>{\n const f=fixture({formal:true});f.api.startH1Driver();f.tick();const previous=formalPlan(f,'run-in');f.course.idx=1;f.formalGuide=previous;f.cue='perfect';f.tick();assert.equal(f.api.state().held.KeyW,false);assert.equal(f.trace.events.some(e=>e.code==='Space'),false);\n publishFormal(f,'approach',{x:4,z:-5});f.published=[5,-5];f.tick();assert.equal(f.api.state().target,null);f.published=[4,-5];f.cue='';f.tick();assert.equal(f.api.state().active,true);assert.equal(f.api.state().target.checkpoint,2);assert.equal(f.api.state().target.phase,'approach');assert.equal(f.trace.events.some(e=>e.code==='Space'),false);clean(f);\n});\n\ntest('formal ground detours include the current rail and recheck immediately when the published waypoint changes',()=>{\n const rail=fixture({formal:true});publishFormal(rail,'around',{x:0,z:5});rail.api.startH1Driver();rail.tick();stopped(rail,/approach is blocked/);\n const f=fixture({formal:true});publishFormal(f,'approach',{x:0,z:-8});f.api.startH1Driver();f.tick();f.world.walls.push({x1:1,z1:-20,x2:1,z2:10});publishFormal(f,'around',{x:3,z:-8});f.tick(1);stopped(f,/approach is blocked/);assert.equal(f.course.idx,0);assert.deepEqual(f.course.ce.grades,[]);\n for(const phase of ['blocked','paused']){const x=fixture({formal:true});const plan=formalPlan(x,phase);plan.target=null;x.formalGuide=plan;x.api.startH1Driver();x.tick();stopped(x,new RegExp(phase));assert.deepEqual(x.trace.gaits,[]);}\n});\n\ntest('formal guide disappearance during the genuine requested jump or scored landing cannot invent a ground turn',()=>{\n const f=fixture({formal:true});f.cue='perfect';f.api.startH1Driver();f.tick();f.rig.heroJumpAge=.3;f.player.y=.3;f.formalGuide=null;const airborne=f.observations();f.tick();assert.equal(f.api.state().target.phase,'jumping');assert.equal(f.api.state().held.KeyW,true);assert.equal(!!f.api.state().held.KeyA,false);assert.equal(!!f.api.state().held.KeyD,false);assert.deepEqual(f.observations(),airborne);\n f.course.ce.grades.push('perfect');f.course.idx=1;f.rig.heroJumpAge=.95;f.player.pos.z=.8;f.world.walls.push({x1:10,z1:-10,x2:10,z2:30});f.tick();assert.equal(f.api.state().target.phase,'landing');assert.equal(f.api.state().held.KeyW,true);assert.equal(f.trace.events.filter(e=>e.type==='keydown'&&e.code==='Space').length,1);\n f.rig.heroJumpAge=null;f.player.y=0;f.tick();assert.equal(f.api.state().held.KeyW,false);assert.equal(f.api.state().active,true);f.formalGuide=formalPlan(f,'blocked');f.tick();stopped(f,/approach is blocked/);assert.deepEqual(f.course.ce.grades,['perfect']);assert.equal(f.course.idx,1);clean(f);\n});\n\ntest('formal waypoint driving retains first-refusal, fixed-mount, native-flight and wall-clock bounds',()=>{\n const refusal=fixture({formal:true});publishFormal(refusal,'approach',{x:3,z:-8});refusal.api.startH1Driver();refusal.tick();refusal.course.ce.refusals=1;const before=refusal.observations();refusal.tick();stopped(refusal,/first actual formal refusal/);assert.deepEqual(refusal.observations(),before);\n const mounted=fixture({formal:true});publishFormal(mounted,'around',{x:3,z:-8});mounted.api.startH1Driver();mounted.tick();mounted.horse={...mounted.horse,id:18};mounted.tick();stopped(mounted,/original native mounted horse/);\n const flight=fixture({formal:true});flight.cue='perfect';flight.api.startH1Driver();flight.tick();flight.rig.heroJumpAge=.5;flight.player.y=.4;flight.formalGuide=null;flight.tick();flight.tick(2501);stopped(flight,/did not finish within 2.5 seconds/);\n const bounded=fixture({formal:true});publishFormal(bounded,'lineup');bounded.api.startH1Driver();bounded.tick();bounded.tick(180001);stopped(bounded,/three-minute input run expired/);\n});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-flat-race-guidance.mjs": {
+      "incoming": {
+        "beforeSHA256": "0f655f85b9b0ff9ac66d7b15906288dc679cc2523cb4a3238e0f1c9f5a563810",
+        "afterSHA256": "9f47f497c45131422acd5e11f3f090141899ffd39d4902ccc1783a91bfcd2832",
+        "changes": [
+          {
+            "file": "tools/test-flat-race-guidance.mjs",
+            "before": "import {createRanchArchitecture} from '../assets/ranch-architecture.js';\nimport {createSolidWorld} from '../assets/solid-collisions.js';\nimport {flatRaceEligible,flatRaceSegmentClear,planFlatRaceRoute,createFlatRaceGuidance} from '../assets/flat-race-guidance.mjs';\n\nconst threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;\nregister('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);\n",
+            "after": "import {createRanchArchitecture} from '../assets/ranch-architecture.js';\nimport {createSolidWorld} from '../assets/solid-collisions.js';\nimport {flatRaceEligible,flatRaceSegmentClear,planFlatRaceRoute,createFlatRaceGuidance} from '../assets/flat-race-guidance.mjs';\nimport {createFormalFenceGuidance} from '../assets/formal-fence-guidance.mjs';\nimport {rushRecoverySegmentClear} from '../assets/features/course-guide.js';\n\nconst threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;\nregister('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-flat-race-guidance.mjs",
+            "before": "function sourceSection(start,end){const a=courseGuideSource.indexOf(start),b=courseGuideSource.indexOf(end,a+start.length);assert(a>=0&&b>a,`missing actual course-guide boundary: ${start}`);return courseGuideSource.slice(a,b);}\nconst actualPlanSource=sourceSection(' const PL={',' /* ---------------------------------------------------------------- per frame');\nfunction actualPlanFixture(world,player){\n let now=1000;const flatGuide=createFlatRaceGuidance({world}),G={course:{ARENA_LETTERS:{A:[0,-18],X:[0,0]}}},fenceRecovery={update:()=>null,reset(){},snapshot:()=>null};\n const api=Function('G','player','flatGuide','fenceRecovery','performance','CIRC','\"use strict\";\\n'+actualPlanSource+'\\nreturn {plan,PL};')(G,player,flatGuide,fenceRecovery,{now:()=>now},{r:6.5,inset:3.7});\n return {...api,flatGuide,G,setNow:value=>{now=value;}};\n}\nconst plannedPoints=plan=>plan.pts.slice(0,plan.n).map(([x,z])=>point(x,z));\n",
+            "after": "function sourceSection(start,end){const a=courseGuideSource.indexOf(start),b=courseGuideSource.indexOf(end,a+start.length);assert(a>=0&&b>a,`missing actual course-guide boundary: ${start}`);return courseGuideSource.slice(a,b);}\nconst actualPlanSource=sourceSection(' const PL={',' /* ---------------------------------------------------------------- per frame');\nfunction actualPlanFixture(world,player){\n let now=1000;const flatGuide=createFlatRaceGuidance({world}),G={course:{ARENA_LETTERS:{A:[0,-18],X:[0,0]}},horse:{RIG:()=>({heroJumpAge:null,heroJumpGrace:0})}},fenceRecovery={update:()=>null,reset(){},snapshot:()=>null};\n const binding=courseGuideSource.split('\\n').find(line=>line.trim().startsWith('const formalGuide=createFormalFenceGuidance'));if(!binding)throw Error('The real formal-guide installation binding is missing');\n const formalGuide=Function('createFormalFenceGuidance','rushRecoverySegmentClear','flatRaceSegmentClear','W','G',binding+'return formalGuide;')(createFormalFenceGuidance,rushRecoverySegmentClear,flatRaceSegmentClear,world,G);\n const api=Function('G','player','flatGuide','fenceRecovery','formalGuide','performance','CIRC','\"use strict\";\\n'+actualPlanSource+'\\nreturn {plan,PL};')(G,player,flatGuide,fenceRecovery,formalGuide,{now:()=>now},{r:6.5,inset:3.7});\n return {...api,flatGuide,G,setNow:value=>{now=value;}};\n}\nconst plannedPoints=plan=>plan.pts.slice(0,plan.n).map(([x,z])=>point(x,z));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-formal-approach-resume-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "eb7a1be677b607c3d0bf5cef569ef37d6235162aa5fa2d48765ddef93b15edd7",
+        "afterSHA256": "3e51ecfe74c54943438349acac32cb4ff13ba4a05cb73aa7abbae17b7501d8a1",
+        "changes": [
+          {
+            "file": "tools/test-formal-approach-resume-source-guard.mjs",
+            "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-formal-approach-resume-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');\nconst fixture='tools/fixtures/formal-approach-resume-5e173bf/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource,normalizeReviewedGuideSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file);\nconst fixture='tools/fixtures/formal-approach-resume-5e173bf/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-horse-training-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "0886fb790749741186237e3ecc1a69590669da17c1ac5b3ea0acf14357d950b3",
+        "afterSHA256": "0327af19fcbf6ddaa255c6e0ee527a6c990388f52a4f7355b221ff06a018e60f",
+        "changes": [
+          {
+            "file": "tools/test-horse-training-source-guard.mjs",
+            "before": "import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport test from 'node:test';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport test from 'node:test';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-horse-training-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "eb4f19b35d3e8f294262360f0facf112be6c470c8ec030437d85ce476506f28c",
+        "afterSHA256": "0327af19fcbf6ddaa255c6e0ee527a6c990388f52a4f7355b221ff06a018e60f",
+        "changes": [
+          {
+            "file": "tools/test-horse-training-source-guard.mjs",
+            "before": "import {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeProgrammeRegroupAuditSource} from './programme-regroup-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-horse-training-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeProgrammeRegroupAuditSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst fixture='tools/fixtures/horse-training-dc405f3/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-lupin-independent.mjs": {
+      "formal": {
+        "beforeSHA256": "9effbff04533ae4db1b20e2e3d727dcecb7e533f92487349c73d42d2c7138f99",
+        "afterSHA256": "cca39354eea24853aaa3056ea6da6a58a79c07090a9e4464a17c262674fe1e9a",
+        "changes": [
+          {
+            "file": "tools/test-lupin-independent.mjs",
+            "before": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport path from 'node:path';\n",
+            "after": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonSource=(source,file)=>normalizePriorRibbonSource(normalizeMeadowReliefWallSource(source,file),file);\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport path from 'node:path';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-lupin-independent.mjs",
+            "before": "const fixture=new URL('./fixtures/lupin-e8b5cf4/',import.meta.url),read=n=>fs.readFileSync(new URL(n,fixture),'utf8');\nconst contract=JSON.parse(read('source.json')),native=JSON.parse(read('native-prototype.json')),views=JSON.parse(read('native-rows.json'));\nconst original=await import(new URL('../lupin-original-e8b5cf4.mjs',fixture)),current=await moduleAt('assets/meadow-flowers.mjs');\nconst source=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8'),course=fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8');\nconst old=original.createMeadowLupinGeometry(T),next=current.createMeadowLupinGeometry(T);\nconst bytes=a=>Buffer.from(a.buffer,a.byteOffset,a.byteLength);\nconst rows=v=>{const b=fs.readFileSync(new URL(v.file,fixture));assert.equal(sha(b),v.sha256);return new Float32Array(b.buffer,b.byteOffset,b.byteLength/4);};\n",
+            "after": "const fixture=new URL('./fixtures/lupin-e8b5cf4/',import.meta.url),read=n=>fs.readFileSync(new URL(n,fixture),'utf8');\nconst contract=JSON.parse(read('source.json')),native=JSON.parse(read('native-prototype.json')),views=JSON.parse(read('native-rows.json'));\nconst original=await import(new URL('../lupin-original-e8b5cf4.mjs',fixture)),current=await moduleAt('assets/meadow-flowers.mjs');\nconst source=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8'),course=normalizeCourseTurfBladesSource(fs.readFileSync(path.join(repo,'assets/features/course-clear.js'),'utf8'),'assets/features/course-clear.js');\nconst old=original.createMeadowLupinGeometry(T),next=current.createMeadowLupinGeometry(T);\nconst bytes=a=>Buffer.from(a.buffer,a.byteOffset,a.byteLength);\nconst rows=v=>{const b=fs.readFileSync(new URL(v.file,fixture));assert.equal(sha(b),v.sha256);return new Float32Array(b.buffer,b.byteOffset,b.byteLength/4);};\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-meadow-relief-wall-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "fb3cd92b0385b2e24fa3217e5a09050c70b60eb64622568e79ed2ebc2f85dc8e",
+        "afterSHA256": "ac7a11ca86032d9bc7445c1def70d2f0164a78965c0d234df4c40b9b2e50f2df",
+        "changes": [
+          {
+            "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityIncomingObserverSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityIncomingObserverSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+            "before": "import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst fixture=new URL('./fixtures/meadow-relief-wall-b1a73b1/',import.meta.url),load=file=>JSON.parse(fs.readFileSync(new URL(file,fixture)));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),functions=load('prior-projection-functions.json');\nconst read=file=>normalizeActivityIncomingObserverSource(normalizeActivityIncomingSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nfor(const[file,row]of Object.entries(contract.files))test(`${file}: actual new owner is exact and only approved blocks restore the full228 body`,()=>{\n const source=read(file);assert.equal(sha(source),row.candidateSHA256);\n const before=normalizeMeadowReliefWallSource(source,file);assert.equal(sha(before),row.rawSHA256);\n assert.equal(normalizeMeadowReliefWallSource(before,file),before);\n",
+            "after": "import {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nconst fixture=new URL('./fixtures/meadow-relief-wall-b1a73b1/',import.meta.url),load=file=>JSON.parse(fs.readFileSync(new URL(file,fixture)));\nconst contract=load('contract.json'),changes=load('source-changes.json'),adapters=load('test-adapter-changes.json'),functions=load('prior-projection-functions.json');\nconst read=file=>normalizeActivityIncomingObserverSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nfor(const[file,row]of Object.entries(contract.files))test(`Historical3944 release: ${file}: actual new owner is exact and only approved blocks restore the full228 body`,()=>{\n const source=read(file);assert.equal(sha(source),row.candidateSHA256);\n const before=normalizeMeadowReliefWallSource(source,file);assert.equal(sha(before),row.rawSHA256);\n assert.equal(normalizeMeadowReliefWallSource(before,file),before);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+            "before": "  for(const input of[source.replace(c.after,''),source+'\\n'+c.after,source+'\\n'+c.before,source.replace(c.after,c.after+'/* unreviewed */')])assert.throws(()=>normalizeMeadowReliefWallSource(input,file));\n }\n});\ntest('five actual parent/child cache edges are live once and reject unknown versions or changed owners',()=>{\n const edges=changes.filter(c=>c.before.includes('?v='));assert.equal(edges.length,5);assert.equal(changes.length,18);\n for(const c of edges){const source=read(c.file);assert.equal(source.split(c.after).length,2);assert.equal(source.split(c.before).length,1);\n  assert.throws(()=>normalizeMeadowReliefWallSource(source.replace(c.after,c.after.replace('?v=','?v=unknown-')),c.file));\n",
+            "after": "  for(const input of[source.replace(c.after,''),source+'\\n'+c.after,source+'\\n'+c.before,source.replace(c.after,c.after+'/* unreviewed */')])assert.throws(()=>normalizeMeadowReliefWallSource(input,file));\n }\n});\ntest('Historical3944 release: five actual parent/child cache edges are live once and reject unknown versions or changed owners',()=>{\n const edges=changes.filter(c=>c.before.includes('?v='));assert.equal(edges.length,5);assert.equal(changes.length,18);\n for(const c of edges){const source=read(c.file);assert.equal(source.split(c.after).length,2);assert.equal(source.split(c.before).length,1);\n  assert.throws(()=>normalizeMeadowReliefWallSource(source.replace(c.after,c.after.replace('?v=','?v=unknown-')),c.file));\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+            "before": "  assert.throws(()=>normalizeMeadowReliefWallSource(source.replace(first,first.replace('import ','import /* owner drift */ ')),c.file));\n }\n});\ntest('new observer reversals retain all complete228 bodies and previous14/38 fixture bytes',()=>{\n for(const[file,hash]of Object.entries(contract.testAdapterPreimages)){\n  const source=read(file),prior=normalizeMeadowReliefWallTestSource(source,file);assert.equal(sha(prior),hash);\n  assert.equal(normalizeMeadowReliefWallTestSource(prior,file),prior);\n",
+            "after": "  assert.throws(()=>normalizeMeadowReliefWallSource(source.replace(first,first.replace('import ','import /* owner drift */ ')),c.file));\n }\n});\ntest('Historical3944 release: new observer reversals retain all complete228 bodies and previous14/38 fixture bytes',()=>{\n for(const[file,hash]of Object.entries(contract.testAdapterPreimages)){\n  const source=read(file),prior=normalizeMeadowReliefWallTestSource(source,file);assert.equal(sha(prior),hash);\n  assert.equal(normalizeMeadowReliefWallTestSource(prior,file),prior);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-meadow-relief-wall-source-guard.mjs",
+            "before": " assert.equal(JSON.parse(read('tools/fixtures/grass-ribbon-d9b168e/test-adapter-changes.json')).length,38);\n assert.equal(adapters.length,56);\n});\ntest('pure compatibility functions retain actual preceding cache/literal code without eager module cycles',()=>{\n const reviewed=normalizeMeadowReliefWallTestSource(read('tools/reviewed-riding-source-guard.cjs'),'tools/reviewed-riding-source-guard.cjs');\n const ribbon=normalizeMeadowReliefWallTestSource(read('tools/grass-ribbon-source-guard.cjs'),'tools/grass-ribbon-source-guard.cjs');\n assert.equal(functions.cache,reviewed.slice(reviewed.indexOf('function normalizeReviewedCacheSource('),reviewed.indexOf('function normalizeReviewedRuntimeSource(')));\n",
+            "after": " assert.equal(JSON.parse(read('tools/fixtures/grass-ribbon-d9b168e/test-adapter-changes.json')).length,38);\n assert.equal(adapters.length,56);\n});\ntest('Historical3944 release: pure compatibility functions retain actual preceding cache/literal code without eager module cycles',()=>{\n const reviewed=normalizeMeadowReliefWallTestSource(read('tools/reviewed-riding-source-guard.cjs'),'tools/reviewed-riding-source-guard.cjs');\n const ribbon=normalizeMeadowReliefWallTestSource(read('tools/grass-ribbon-source-guard.cjs'),'tools/grass-ribbon-source-guard.cjs');\n assert.equal(functions.cache,reviewed.slice(reviewed.indexOf('function normalizeReviewedCacheSource('),reviewed.indexOf('function normalizeReviewedRuntimeSource(')));\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-pastoral-preservation-independent.mjs": {
+      "formal": {
+        "beforeSHA256": "7488e8545170a1dc2db93a953334fca75a8517aa917afa0a7bef22d8b2f15f8f",
+        "afterSHA256": "3636d0574126d145e2fafe8c478ebca6aedece43a47a5c1e50d38eb82ae57ef9",
+        "changes": [
+          {
+            "file": "tools/test-pastoral-preservation-independent.mjs",
+            "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';\nimport {repo,sha,createNearReplay,cellsDigest,withoutRandom,positive} from './pastoral-production-fixture.mjs';\nimport {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\nconst fixture=new URL('./fixtures/pastoral-7fbd127/',import.meta.url),oldHTML=fs.readFileSync(new URL('ranch3d.html',fixture),'utf8'),html=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8');\nconst contracts=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-7fbd127/untouched-source-contract.json',import.meta.url)));\ntest('current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass',()=>{\n",
+            "after": "import test from 'node:test';import assert from 'node:assert/strict';import rawFs from 'node:fs';import path from 'node:path';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';\nimport {repo,sha,createNearReplay,cellsDigest,withoutRandom,positive} from './pastoral-production-fixture.mjs';\nimport {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';\n// Only the exact approved course-clear hook is projected for the older physical/controller source hash.\nconst fs={...rawFs,readFileSync:(filename,...args)=>{const value=rawFs.readFileSync(filename,...args);if(filename===path.join(repo,'assets/features/course-clear.js')){const restored=normalizeCourseTurfBladesSource(typeof value==='string'?value:value.toString('utf8'),'assets/features/course-clear.js');return Buffer.isBuffer(value)?Buffer.from(restored):restored;}return value;}};\nconst fixture=new URL('./fixtures/pastoral-7fbd127/',import.meta.url),oldHTML=fs.readFileSync(new URL('ranch3d.html',fixture),'utf8'),html=fs.readFileSync(path.join(repo,'ranch3d.html'),'utf8');\nconst contracts=JSON.parse(fs.readFileSync(new URL('./fixtures/pastoral-7fbd127/untouched-source-contract.json',import.meta.url)));\ntest('current unchanged physical/contact/controller and resident grass-source bytes survive the presentation pass',()=>{\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-programme-regroup-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "cdab61caf2c5fcf356f51821972ec677b4de81a3407190ab18efcdabee81a414",
+        "afterSHA256": "4414f8b1711c9dad2a6514f63a228bd5e39e3d01104b5ae96f2974abff8d4e18",
+        "changes": [
+          {
+            "file": "tools/test-programme-regroup-source-guard.mjs",
+            "before": "import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-programme-regroup-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file);\nconst fixture='tools/fixtures/programme-regroup-05421c6/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst fixture='tools/fixtures/programme-regroup-05421c6/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "836751f8ac85b45b535c67e0b15553beda8074aeae5d130ca5b60342783120a6",
+        "afterSHA256": "4414f8b1711c9dad2a6514f63a228bd5e39e3d01104b5ae96f2974abff8d4e18",
+        "changes": [
+          {
+            "file": "tools/test-programme-regroup-source-guard.mjs",
+            "before": "import test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {createHash} from 'node:crypto';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-programme-regroup-source-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst fixture='tools/fixtures/programme-regroup-05421c6/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeActivityIncomingSource,normalizeActivityParentSource,normalizeActivityIncomingObserverSource,normalizeActivityFixtureChanges} from './activity-landscape-source-guard.cjs';\nimport {normalizeReviewedWorldSource} from './reviewed-riding-source-guard.cjs';\nimport {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);\nconst fixture='tools/fixtures/programme-regroup-05421c6/contract.json',contract=JSON.parse(read(fixture));\nconst sha=value=>createHash('sha256').update(value).digest('hex');\nconst git=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-progression-grass-composition.mjs": {
+      "formal": {
+        "beforeSHA256": "7de03b54e97e6b8a594b582a0e8a4bd0328d6bffef2874f816e75a82cc1ba67c",
+        "afterSHA256": "a3ef64c5a4f8e7509b1ca9b695f65bd62f6b58a99759cb20c65168e1cefd3100",
+        "changes": [
+          {
+            "file": "tools/test-progression-grass-composition.mjs",
+            "before": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {normalizeLashCacheSource,normalizeLashObserverSource} from './lash-cache-source-guard.cjs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-progression-grass-composition.mjs",
+            "before": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\nconst caches=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-loop-243dbfb/contract.json',import.meta.url))).changes;\nconst hint=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-hints-243dbfb/contract.json',import.meta.url))).change;\n",
+            "after": "import {normalizeGrassRibbonSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource,normalizeMeadowReliefWallTestSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),directory=new URL('./fixtures/progression-grass-9c9ae98/',import.meta.url);\nconst read=file=>normalizeLashObserverSource(normalizeLashCacheSource(normalizeMeadowReliefWallTestSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file),file),file),sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',directory))),changes=JSON.parse(fs.readFileSync(new URL('observer-changes.json',directory)));\nconst caches=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-loop-243dbfb/contract.json',import.meta.url))).changes;\nconst hint=JSON.parse(fs.readFileSync(new URL('./fixtures/progression-hints-243dbfb/contract.json',import.meta.url))).change;\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-progression-loop-cache-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "32ebca10f8969f75a63a668903d15740ee5f38432f834a16e6259f7fe41e8d79",
+        "afterSHA256": "dc639e0283da32967358c5cf462af7e1023bccb7a6eb890a1492b9a35206bdea",
+        "changes": [
+          {
+            "file": "tools/test-progression-loop-cache-guard.mjs",
+            "before": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\n",
+            "after": "import {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport test from 'node:test';\nimport {normalizeCourseTurfBladesSource,normalizeCourseTurfBladesTestSource} from './course-turf-blades-source-guard.cjs';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {normalizeLashCacheSource} from './lash-cache-source-guard.cjs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-progression-loop-cache-guard.mjs",
+            "before": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\nconst sha=s=>createHash('sha256').update(s).digest('hex');\nconst original=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "after": "import {normalizeStarterTackSource} from './starter-tack-source-guard.cjs';\nimport {normalizeGrassRibbonOwnSource} from './grass-ribbon-source-guard.cjs';\nimport {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeActivityIncomingSource(normalizeCourseTurfBladesTestSource(normalizeCourseTurfBladesSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file),file);\nconst contract=JSON.parse(read('tools/fixtures/progression-loop-243dbfb/contract.json'));\nconst sha=s=>createHash('sha256').update(s).digest('hex');\nconst original=file=>execFileSync('git',['show',contract.baseline+':'+file],{cwd:root,encoding:'utf8'});\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-reviewed-riding-source-guard.mjs": {
+      "formal": {
+        "beforeSHA256": "20c940468c07a74457e27a53364fce3ddc8c8aab01fc25fb3683b4ea5771a3f4",
+        "afterSHA256": "642b3ddbf1609caabeff5fb7fe8c841c3f2e414bfa56e0493d78cfc4bbce3b96",
+        "changes": [
+          {
+            "file": "tools/test-reviewed-riding-source-guard.mjs",
+            "before": "import {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-reviewed-riding-source-guard.mjs",
+            "before": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeFormalApproachResumeAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n\n",
+            "after": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n\n",
+            "occurrences": 1
+          }
+        ]
+      },
+      "incoming": {
+        "beforeSHA256": "5a049fefc32b6229a37e37c8baef59aa2168e1bf67593a50cf7aa8d4f97a0ec6",
+        "afterSHA256": "642b3ddbf1609caabeff5fb7fe8c841c3f2e414bfa56e0493d78cfc4bbce3b96",
+        "changes": [
+          {
+            "file": "tools/test-reviewed-riding-source-guard.mjs",
+            "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+            "after": "import {normalizeFormalTurfFormalAuditSource} from './formal-turf-composition-source-guard.cjs';\nimport {normalizeFormalApproachResumeAuditSource} from './formal-approach-resume-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-reviewed-riding-source-guard.mjs",
+            "before": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(fs.readFileSync(new URL(file,root),'utf8'),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n\n",
+            "after": "import {normalizeMeadowReliefWallSource} from './meadow-relief-wall-source-guard.cjs';\nconst normalizeGrassRibbonOwnSource=(source,file)=>normalizePriorRibbonOwnSource(normalizeMeadowReliefWallSource(source,file),file);\nconst root=new URL('../',import.meta.url),fixture=new URL('./fixtures/reviewed-riding-4e346b2/',import.meta.url);\nconst read=file=>{const source=normalizeLashCacheSource(normalizeMeadowReliefWallSource(normalizeFormalApproachResumeAuditSource(normalizeFormalTurfFormalAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file),file),file),file);return file==='ranch3d.html'||file==='assets/features/index.js'?normalizeGrassRibbonOwnSource(source,file):normalizeGrassRibbonTestSource(source,file);},sha=s=>createHash('sha256').update(s).digest('hex');\nconst contract=JSON.parse(fs.readFileSync(new URL('contract.json',fixture))),edges=JSON.parse(fs.readFileSync(new URL('cache-changes.json',fixture)));\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    },
+    "tools/test-ribbon-grass-model.mjs": {
+      "formal": {
+        "beforeSHA256": "984fad23549a9fb5ffd1c08833e46c734d3cf8504641c7b1935fd80d0dbb79b0",
+        "afterSHA256": "3ed767ef02aa71c9f0f3303bf3389f69b701f9a3a3f70cdf2a8b61143ab7112f",
+        "changes": [
+          {
+            "file": "tools/test-ribbon-grass-model.mjs",
+            "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport * as T from '../assets/vendor/three/build/three.module.js';\nimport {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';\n",
+            "after": "import test from 'node:test';\nimport {createGrassTuftGeometry as historicalTuft,createGrassFamilyGeometry as historicalFamily,createGrazedSwardGeometry as historicalGrazed} from './course-turf-blades-historical.mjs';\nconst historical3944=(form,T)=>form.name==='near'?historicalTuft(T,{profile:'near-folded-v1'}):form.name==='grazed'?historicalGrazed(T):historicalFamily(T,['meadow','low','seeded'].indexOf(form.name));\nimport assert from 'node:assert/strict';\nimport * as T from '../assets/vendor/three/build/three.module.js';\nimport {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-ribbon-grass-model.mjs",
+            "before": "  assert.equal(p.count,form.vertices);assert(p.count<prior.count);\n  assert.equal(bytes(g),form.bytes);assert(bytes(g)<bytes(old));\n  assert.equal(g.boundingBox.max.y,old.boundingBox.max.y,'Original maximum height cap is exact');\n  assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');\n  let bent=0,upright=0;const tops=[];\n  for(let leaf=0;leaf<leaves.length;leaf++){\n   const r=leaves[leaf],a=previous[leaf],base=r.vertexStart,oldBase=a.vertexStart,tip=base+r.vertexCount-1,oldTip=oldBase+a.vertexCount-1;\n",
+            "after": "  assert.equal(p.count,form.vertices);assert(p.count<prior.count);\n  assert.equal(bytes(g),form.bytes);assert(bytes(g)<bytes(old));\n  assert.equal(g.boundingBox.max.y,old.boundingBox.max.y,'Original maximum height cap is exact');\n  { // Historical3944 broad-ribbon area clause; actual progressive area has its separate physical contract.\n   const g=historical3944(form,T);try{assert(projectedArea(g)>projectedArea(old)*.70,'Retain meaningful drawn horizontal leaf area rather than replacing the tuft with invisible needles');}finally{g.dispose();}\n  }\n  let bent=0,upright=0;const tops=[];\n  for(let leaf=0;leaf<leaves.length;leaf++){\n   const r=leaves[leaf],a=previous[leaf],base=r.vertexStart,oldBase=a.vertexStart,tip=base+r.vertexCount-1,oldTip=oldBase+a.vertexCount-1;\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-ribbon-grass-model.mjs",
+            "before": "   const root=vector(p,base).add(vector(p,base+1)).multiplyScalar(.5),deflection=Math.hypot(p.getX(tip)-root.x,p.getZ(tip)-root.z);\n   assert.equal(root.y,0);assert(top>deflection*1.35,'Reject a low radial rosette using actual height and deflection');\n   if(a.creased){\n    assert.equal(r.ribbon,true);assert.equal(r.creased,false);assert.equal(r.segments,3);\n    assert.equal(r.vertexCount,7);assert.equal(r.indexCount,15);\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+r.indexCount),id=>id-base),[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6],'Adjacent stages share real vertices and retain continuous winding');\n",
+            "after": "   const root=vector(p,base).add(vector(p,base+1)).multiplyScalar(.5),deflection=Math.hypot(p.getX(tip)-root.x,p.getZ(tip)-root.z);\n   assert.equal(root.y,0);assert(top>deflection*1.35,'Reject a low radial rosette using actual height and deflection');\n   if(a.creased){\n    // Historical3944 sevenvertex stage clauses. Root/roles/peak/endpoints, physical normals and costs above remain actual.\n    const historical=historical3944(form,T);try{const g=historical,r=ranges(historical)[leaf],p=historical.attributes.position,base=r.vertexStart,tip=base+r.vertexCount-1;\n    assert.equal(r.ribbon,true);assert.equal(r.creased,false);assert.equal(r.segments,3);\n    assert.equal(r.vertexCount,7);assert.equal(r.indexCount,15);\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+r.indexCount),id=>id-base),[0,1,2,1,3,2,2,3,4,3,5,4,4,5,6],'Adjacent stages share real vertices and retain continuous winding');\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-ribbon-grass-model.mjs",
+            "before": "    assert(g.attributes.uv.getY(base+4)>.67&&g.attributes.uv.getY(base+4)<.69);\n    if(r.upright){upright++;assert.equal(r.bent,false);assert.equal(p.getY(tip),top);assert.equal(p.getY(tip),prior.getY(oldTip));}\n    else{bent++;assert.equal(r.bent,true);assert(p.getY(tip)<top);assert(p.getY(tip)>=top*.9499&&p.getY(tip)<=top*.9661,'The physical tip makes a gentle bow below its preserved peak');assert(p.getY(tip)>prior.getY(oldTip),'Remove the old deep hanging kink while retaining the original peak');}\n   }else{\n    upright++;assert.equal(r.upright,true);assert.equal(r.vertexCount,3);assert.equal(r.indexCount,3);\n    for(const key of Object.keys(g.attributes))for(let i=0;i<3;i++)assert.deepEqual(data(g.attributes[key],base+i),data(old.attributes[key],oldBase+i),'Fine original upright tip attributes remain exact');\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+3),id=>id-base),[0,1,2]);\n",
+            "after": "    assert(g.attributes.uv.getY(base+4)>.67&&g.attributes.uv.getY(base+4)<.69);\n    if(r.upright){upright++;assert.equal(r.bent,false);assert.equal(p.getY(tip),top);assert.equal(p.getY(tip),prior.getY(oldTip));}\n    else{bent++;assert.equal(r.bent,true);assert(p.getY(tip)<top);assert(p.getY(tip)>=top*.9499&&p.getY(tip)<=top*.9661,'The physical tip makes a gentle bow below its preserved peak');assert(p.getY(tip)>prior.getY(oldTip),'Remove the old deep hanging kink while retaining the original peak');}\n\n    }finally{historical.dispose();}   }else{\n    upright++;assert.equal(r.upright,true);assert.equal(r.vertexCount,3);assert.equal(r.indexCount,3);\n    for(const key of Object.keys(g.attributes))for(let i=0;i<3;i++)assert.deepEqual(data(g.attributes[key],base+i),data(old.attributes[key],oldBase+i),'Fine original upright tip attributes remain exact');\n    assert.deepEqual(Array.from(g.index.array.subarray(r.indexStart,r.indexStart+3),id=>id-base),[0,1,2]);\n",
+            "occurrences": 1
+          },
+          {
+            "file": "tools/test-ribbon-grass-model.mjs",
+            "before": " assert.deepEqual(GRASS_FAMILIES.map(f=>f.leaves),[14,14,10]);assert.deepEqual(GRASS_FAMILIES.map(f=>f.seedStems),[0,0,2]);\n assert.equal(GRAZED_SWARD.leaves,14);assert.equal(GRAZED_SWARD.bentLeaves,12);\n assert.equal(MIXED_SWARD.sourceGeometryBytes,2704);assert.equal(MIXED_SWARD.sourceTriangles,40);assert.equal(MIXED_SWARD.richTriangles,70);assert.equal(MIXED_SWARD.maxTriangleRatio,1.20);\n for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(T,family);try{assert.equal(g.userData.grassFamily.leaves,ranges(g).length);assert.equal(g.userData.grassFamily.vertices,g.attributes.position.count);assert.equal(g.userData.grassFamily.triangles,g.index.count/3);assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');}finally{g.dispose();}}\n});\nfunction sampleConstructor(create){\n let allocated=0,draws=0,state=123456789;const saved=Math.random;\n",
+            "after": " assert.deepEqual(GRASS_FAMILIES.map(f=>f.leaves),[14,14,10]);assert.deepEqual(GRASS_FAMILIES.map(f=>f.seedStems),[0,0,2]);\n assert.equal(GRAZED_SWARD.leaves,14);assert.equal(GRAZED_SWARD.bentLeaves,12);\n assert.equal(MIXED_SWARD.sourceGeometryBytes,2704);assert.equal(MIXED_SWARD.sourceTriangles,40);assert.equal(MIXED_SWARD.richTriangles,70);assert.equal(MIXED_SWARD.maxTriangleRatio,1.20);\n for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(T,family);try{assert.equal(g.userData.grassFamily.leaves,ranges(g).length);assert.equal(g.userData.grassFamily.vertices,g.attributes.position.count);assert.equal(g.userData.grassFamily.triangles,g.index.count/3);{const g=historicalFamily(T,family);try{assert.equal(g.userData.lushMeadow.profile,'lush-meadow-ribbon-3');}finally{g.dispose();}}}finally{g.dispose();}}\n});\nfunction sampleConstructor(create){\n let allocated=0,draws=0,state=123456789;const saved=Math.random;\n",
+            "occurrences": 1
+          }
+        ]
+      }
+    }
+  },
+  "strictFormalFiles": {
+    "assets/features/club-rides.js": "e122bbbc2db6c386c8976377952334b1ed9f17705d7e1a2b63ef705d69a0a416",
+    "assets/features/course-guide.js": "062d55873509bef4d58734ec8be0570ddc71199aec881369cf2f0a880343db56",
+    "assets/formal-fence-guidance.mjs": "2d800f02041caf7f64696ff595aec0715adacf375334ae37ad0da357c8a12437",
+    "review/first-rides/formal-fence-acceptance.json": "e68296576e67dd47eab6a89d9b17263854b4dd1b58538dc1f4ff94cd8f3e5d9c",
+    "review/first-rides/index.html": "ef3ca29e9e88728e100a0aad07e8f77530cf9e5a321397ce8a10f409d1f7bffd",
+    "review/first-rides/native-preview.html": "e5d428172b9594ad779aa73d62b7e036fead4bd2d693e7d6ce819f77e074c816",
+    "review/first-rides/review.js": "51a05db70080fcc1506d02ec53831c87826de0de9af71af0b3d3bcc55f2f3b69"
+  },
+  "strictIncomingFiles": {
+    "assets/course-turf.mjs": "2a81ec6fa237eaa58ad448195e8f2851f1e79d8d314cf72c02d78de94715658e",
+    "assets/features/course-clear.js": "e4ffadb134ee1aa647e440ff1ef58e897714716f0146a466fcefbffe1360a1b5",
+    "assets/grass-families.mjs": "4dfebe46d09537f51b3718e637d8efaf13f304dc2b0ea542b07b426d70f3f573",
+    "assets/grazed-sward.mjs": "bdecab433537c54ad48f77bf6b34b99ba7ffbd85ec432243aa11ae9e44993c1c",
+    "assets/lush-meadow-geometry.mjs": "adcd253788150cf6fcd9d780696a32156035827543098a60cdb3a449804ac6c2",
+    "assets/meadow-cover.js": "58d74d61c5a991dcdc65c448cadd3c4901104bc13f3e0c700d27fb96ad18ccf3",
+    "assets/mixed-sward.mjs": "b45cb2198a9b2aef1bde19dd0acb7211b02134ca8247293bb13a75ab55960570"
+  },
+  "fixtureBaseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "approvedAddedByView": {
+    "formal": {
+      "tools/fixtures/course-turf-blades-3944c9e/contract.json": "a237812d0d621f63cce05fe8be4f6e1ce63e5ff3a289be761136455d516a2a8c",
+      "tools/fixtures/course-turf-blades-3944c9e/source-changes.json": "71870c47af215bf79226adddb641f52182129f62c91daac7eb9e087098f42ae1",
+      "tools/fixtures/course-turf-blades-3944c9e/test-adapter-changes.json": "a2aa5816276df177c758a851d73f9db384bd8d1ca855c76fd7da012de5b55588",
+      "tools/fixtures/course-turf-density3.mjs": "8c924367ce0be49b16f1cba6bbe11d48a9506157de3afbd40f14b618e7cf1903",
+      "tools/fixtures/course-turf-v1/course-turf.mjs": "0b2cb504cfce3c70f4ac881f11e024f37f3e515301e8571e60755d9e6afca045",
+      "tools/fixtures/grass-ribbon-3944-model.json": "d2d96833e3d279c1bc5f042edb912bfea5c7d73fbe3eab38dd90651df9181e58"
+    },
+    "incoming": {
+      "tools/fixtures/formal-approach-resume-5e173bf/contract.json": "ce3842a217c8ecaf4ba4da5b73c6399296a0235755de683d32ff6add4dd6e9cd"
+    }
+  },
+  "fixtureCounts": {
+    "formal": 167,
+    "incoming": 172,
+    "union": 173
+  }
+}

@@ -72,6 +72,21 @@ export function install(G){
   if(s.mode!=null&&(!regroupMode(s)||!isRegroupRoute(route(s.routeId))||!memberAllowed(me())||!regroupState(s.regroup,{status:s.status,hostId:s.hostId})))return;
   sessions.set(s.id,copy(s));roster(s.id).set(me(),copy(p));currentId=s.id;
  }
+ // An expired local lobby is history, not permission to start. A fresh host
+ // session can reconnect its saved, already admitted rider without admitting
+ // anyone new or restoring an old physical Ready/Continue proof.
+ function resumeRegroup(s){
+  if(currentId||!regroupMode(s)||s.status!=='riding'||!memberAllowed(me())||!memberAllowed(s.hostId))return;
+  const save=S.fresh(),saved=save?.clubRideResume,prior=saved?.session,p=saved?.participant,total=route(s.routeId)?.stops.length;
+  if(saved?.code!==scope||saved.id!==s.id||prior?.id!==s.id||prior.mode!==REGROUP_MODE||prior.status!=='riding'||prior.hostId!==s.hostId||prior.routeId!==s.routeId||(prior.planId||null)!==(s.planId||null)||prior.createdAt!==s.createdAt||!Number.isInteger(prior.rev)||s.rev<prior.rev)return;
+  if(!p||p.left!==false||p.finished!==false||!Number.isInteger(p.progress)||p.progress<0||p.progress>=total||!Number.isInteger(p.rev)||p.rev<1||!Number.isFinite(p.at))return;
+  const history=save.clubRideHistory?.[scope+'|'+s.id];
+  if(history&&(history.finished!==false||history.progress!==p.progress||history.rev!==p.rev))return;
+  const old=regroupState(prior.regroup,{status:prior.status,hostId:prior.hostId});
+  if(!old?.crew.includes(me())||!regroupState(s.regroup,{status:s.status,hostId:s.hostId,previous:old})||p.progress>old.departures.length)return;
+  if(old.departures.slice(0,p.progress).some(d=>!Object.prototype.hasOwnProperty.call(d.ready,me())))return;
+  currentId=s.id;roster(s.id).set(me(),copy(p));setSelf(s.id,{ready:false,left:false});
+ }
  function changeScope(){
   const next=code();if(next===scope)return;
   stopTrail(currentId);regroup.clear();sessions.clear();members.clear();pending.clear();pendingPlans.clear();currentId=null;scope=safe(next)?next:'';hydrate();notify();
@@ -83,7 +98,13 @@ export function install(G){
   let changed=false;
   for(const [sid,s]of sessions)if(s.expiresAt<=now()||blocked(s.host)){
    if(sid===currentId&&regroupMode(s)&&G.trail?.ride?.clubRideId===sid){if(lastNotice!=='The group ride is unavailable. Continue alone or leave the trail.'){lastNotice='The group ride is unavailable. Continue alone or leave the trail.';changed=true;}continue;}
-   if(sid===currentId){stopTrail(sid);currentId=null;lastNotice='This club ride has ended or its host is no longer connected.';storeResume();}
+   if(sid===currentId){
+    const p=roster(sid).get(me()),keepResume=regroupMode(s)&&s.status==='riding'&&s.expiresAt<=now()&&!blocked(s.host)&&p?.left===false&&p.finished===false;
+    stopTrail(sid);currentId=null;lastNotice='This club ride has ended or its host is no longer connected.';
+    // A slow reconnect must not erase earned local history before the host's
+    // fresh packet arrives. This expired snapshot cannot authorize a start.
+    if(!keepResume)storeResume();
+   }
    sessions.delete(sid);members.delete(sid);changed=true;
   }
   for(const [key,p]of pending)if(now()-p.at>TTL)pending.delete(key);
@@ -213,6 +234,7 @@ export function install(G){
   if(!old&&sessions.size>=24)return;
   const s={id:sid,hostId:m.hostId,host:clean(m.n,14)||'Rider',routeId:m.routeId,planId:m.planId||null,title:clean(m.title)||route(m.routeId).name,status:m.status,rev:m.rev,createdAt:m.createdAt,at:m.at,expiresAt:m.expiresAt};if(grouping){s.mode=REGROUP_MODE;s.regroup=grouping;}sessions.set(sid,s);
   for(const [key,v]of pending)if(v.sid===sid){acceptMember(sid,v.pid,v.m);pending.delete(key);}
+  resumeRegroup(s);
   if(s.status==='cancelled'&&currentId===sid){if(!regroupMode(s)||G.trail?.ride?.clubRideId!==sid){stopTrail(sid);regroup.clear();currentId=null;}lastNotice='The host ended this club ride.';storeResume();}
   pendingPlans.delete(sid);notify();
  }
