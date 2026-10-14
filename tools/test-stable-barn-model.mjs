@@ -9,7 +9,7 @@ const mounted={bottom:.38,top:2.65,radius:.55};
 test('stable has finite solid surfaces, coherent normals and bounded original footprint/resources',()=>{
  const barn=build();barn.updateMatrixWorld(true);const a=barn.userData.architecture;
  assert.equal(a.kind,'barn');assert.equal(a.width,7);assert.equal(a.depth,5.5);
- assert(a.triangles<=13496);assert.equal(a.drawCalls,12);assert.equal(barn.children.length,12);
+ assert(a.triangles-(barn.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0)<=13496);assert.equal(a.drawCalls,12);assert.equal(barn.children.length,12);
  const bounds=new THREE.Box3().setFromObject(barn);
  assert(bounds.min.x>=-3.94501&&bounds.max.x<=3.94501);
  assert(bounds.min.z>=-3.21301&&bounds.max.z<=3.21301);

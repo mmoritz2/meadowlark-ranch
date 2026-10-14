@@ -1,6 +1,7 @@
 import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 import {dressTimberBox} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';
+import {dressRoofCoverBox} from './ranch-roof-courses.mjs?v=ranch-roof-courses-3';
 /* Original ranch architecture. Metre-scaled materials, real wall openings and
    batched static details. Collision part bounds are retained before batching;
    placement and collision resolution belong to the world. */
@@ -98,6 +99,16 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     constructor(name) { this.group=new THREE.Group(); this.group.name=name; this.batches=new Map(); this.parts=0; }
     geometry(g,m,matrix = new THREE.Matrix4(),solid = true) {
       if(solid)recordSolidPart(THREE,this.group,g,m,matrix);
+      // Cedar-only adoption retains the old solid/camera envelope; slate stays original.
+      if(solid&&m===roof&&g.type==='BoxGeometry'){
+        const {width,height,depth}=g.parameters;
+        if(height<=.15&&width>.24&&depth>.24){
+          const e=matrix.elements,axis=Math.abs(e[1])>Math.abs(e[9])?'x':'z';
+          const downSlope=-Math.sign(axis==='x'?e[1]:e[9])||1;
+          const receipt=dressRoofCoverBox(THREE,g,{width,height,depth,axis,downSlope,style:'cedar'});
+          if(receipt)(this.group.userData.roofCourses??=[]).push({...receipt,scope:'cedar-only',material:m.name});
+        }
+      }
       if(m===siding&&g.userData.ranchTimberBox) dressTimberBox(THREE,g,{...g.userData.ranchTimberBox,radius:.003,siding:true,lengthMetres:m.userData.patchMetres||2.4});
       g.applyMatrix4(matrix);
       let b=this.batches.get(m); if(!b){b={p:[],n:[],u:[],i:[]};this.batches.set(m,b);}

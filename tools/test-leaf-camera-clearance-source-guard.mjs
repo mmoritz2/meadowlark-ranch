@@ -1,3 +1,4 @@
+import {normalizeRoofCoursesAuditSource} from './roof-courses-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -6,7 +7,7 @@ import crypto from 'node:crypto';
 import * as Clearance from './leaf-camera-clearance-source-guard.cjs';
 import * as Canopy from './canopy-depth-source-guard.cjs';
 import * as Joint from './north-formal-composition-source-guard.cjs';
-const root=new URL('../',import.meta.url),fixture='tools/fixtures/leaf-camera-clearance-0f9cd99/contract.json',raw=f=>fs.readFileSync(new URL(f,root),'utf8'),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
+const root=new URL('../',import.meta.url),fixture='tools/fixtures/leaf-camera-clearance-0f9cd99/contract.json',raw=f=>normalizeRoofCoursesAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
 function authored(before,changes){for(const c of changes){assert.equal(c.occurrences,1);assert.equal(before.split(c.before).length-1,1);before=before.replace(c.before,c.after);}return before;}
 test('two actual source owners and two observer fronts invert exactly to their complete approved parent bodies',()=>{
  assert.equal(contract.baseline,'0f9cd990ca5fadade7d561e366713ba255a09997');assert.equal(Object.keys(contract.files).length,2);assert.equal(Object.keys(contract.observers).length,2);

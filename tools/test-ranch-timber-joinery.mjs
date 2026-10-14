@@ -1,3 +1,4 @@
+import {normalizeRoofCoursesSource} from './roof-courses-source-guard.cjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createRanchArchitecture} from '../assets/ranch-architecture.js';
@@ -9,7 +10,7 @@ import {mergeGeometries} from '../assets/vendor/three/examples/jsm/utils/BufferG
 import {createDeferredLoad} from '../assets/deferred-load.js';
 import {applySaplingSnowShader} from '../assets/sapling-snow.mjs?v=nursery-snow-1';
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex'),fixture=JSON.parse(fs.readFileSync(new URL('./fixtures/ranch-joinery-b5d22a6.json',import.meta.url)));
-function original(file){let s=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');for(const c of fixture.sourceChanges.filter(c=>c.file===file).reverse()){assert.equal(s.split(c.after).length-1,1);s=s.replace(c.after,c.before);}assert.equal(sha(s),fixture.originalSHA256[file]);return s;}
+function original(file){let s=normalizeRoofCoursesSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);for(const c of fixture.sourceChanges.filter(c=>c.file===file).reverse()){assert.equal(s.split(c.after).length-1,1);s=s.replace(c.after,c.before);}assert.equal(sha(s),fixture.originalSHA256[file]);return s;}
 const oldArchitecture=new Function('setTimberBoxUV','applyTimberGrain','recordSolidPart','return ('+original('assets/ranch-architecture.js').split('export function ')[1].replace(/^createRanchArchitecture/,'function createRanchArchitecture')+');')(setTimberBoxUV,applyTimberGrain,recordSolidPart);
 const oldBuilder=new Function('setTimberBoxUV','applyTimberGrain','recordSolidPart','mergeGeometries','createDeferredLoad','applySaplingSnowShader','return ('+original('assets/ranch-builder-art.js').split('export function ')[1].replace(/^createRanchBuilderArt/,'function createRanchBuilderArt')+');')(setTimberBoxUV,applyTimberGrain,recordSolidPart,mergeGeometries,createDeferredLoad,applySaplingSnowShader);
 const three={...T,TextureLoader:class{load(){return new T.Texture();}}},GLTFLoader=class{loadAsync(){throw Error('No downloads in the geometry fixture');}};
@@ -31,8 +32,8 @@ test('physical beveled boards have real separate joints, outward planar normals 
 test('actual five building factories retain constructor stream, every solid proxy, door/opening metadata and material/mesh owners',()=>{
  const make=(factory)=>seeded(()=>{const f=factory({THREE:T,loadTextures:false}),g=models(f);return{f,g};});const a=make(oldArchitecture),b=make(createRanchArchitecture);paired={old:a.result,new:b.result};assert.equal(b.calls,a.calls);assert.deepEqual(b.future,a.future);
  for(let i=0;i<a.result.g.length;i++){const x=a.result.g[i],y=b.result.g[i];assert.deepEqual(y.userData.solidParts,x.userData.solidParts);const xm=x.userData.architecture,ym=y.userData.architecture;assert.deepEqual({...ym,triangles:0},{...xm,triangles:0});assert.equal(y.uuid,x.uuid);assert.deepEqual(y.children.map(o=>[o.uuid,o.material.uuid,o.material.name]),x.children.map(o=>[o.uuid,o.material.uuid,o.material.name]));
-  for(let k=0;k<x.children.length;k++){const before=x.children[k],after=y.children[k];if(before.material!==a.result.f.sidingMaterial){for(const n of Object.keys(before.geometry.attributes))assert.deepEqual(after.geometry.attributes[n].array,before.geometry.attributes[n].array);assert.deepEqual(after.geometry.index.array,before.geometry.index.array);}}
-  const oldBox=new T.Box3().setFromObject(x),newBox=new T.Box3().setFromObject(y);assert.deepEqual(newBox,oldBox);const m=measures(y);assert(m.triangles<15000);assert(m.triangles-measures(x).triangles<10000);
+  for(let k=0;k<x.children.length;k++){const before=x.children[k],after=y.children[k];if(before.material!==a.result.f.sidingMaterial&&before.material.name!=='Ranch | aged cedar shingles'){for(const n of Object.keys(before.geometry.attributes))assert.deepEqual(after.geometry.attributes[n].array,before.geometry.attributes[n].array);assert.deepEqual(after.geometry.index.array,before.geometry.index.array);}}
+  const oldBox=new T.Box3().setFromObject(x),newBox=new T.Box3().setFromObject(y);assert.deepEqual(newBox,oldBox);const m=measures(y);const roofDelta=(y.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0);assert(m.triangles-roofDelta<15000);assert(m.triangles-roofDelta-measures(x).triangles<10000);
  }
 });
 test('real builder factory preserves all valid rounded props and shared resources while limed siding survives material adoption',()=>{

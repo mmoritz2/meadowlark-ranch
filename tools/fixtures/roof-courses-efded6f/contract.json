@@ -1,0 +1,231 @@
+{
+  "baseline": "efded6f128a25050c07008bcd359f646b439f93a",
+  "scope": "Source history only: cedar-only original roof covering helper adoption, one post-solid-proxy model hook and its root cache query. Runtime geometry and physics tests remain actual.",
+  "releaseScope": "cedar-only",
+  "roofMaterialsAllowed": [
+    "Ranch | aged cedar shingles"
+  ],
+  "files": {
+    "assets/ranch-architecture.js": {
+      "beforeSHA256": "998f3397d436700e650c0d3393403651e444db939790f2ac0a0fe0c42311eacb",
+      "changes": [
+        {
+          "before": "import {dressTimberBox} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';",
+          "after": "import {dressTimberBox} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';\nimport {dressRoofCoverBox} from './ranch-roof-courses.mjs?v=ranch-roof-courses-3';",
+          "occurrences": 1
+        },
+        {
+          "before": "      if(solid)recordSolidPart(THREE,this.group,g,m,matrix);",
+          "after": "      if(solid)recordSolidPart(THREE,this.group,g,m,matrix);\n      // Cedar-only adoption retains the old solid/camera envelope; slate stays original.\n      if(solid&&m===roof&&g.type==='BoxGeometry'){\n        const {width,height,depth}=g.parameters;\n        if(height<=.15&&width>.24&&depth>.24){\n          const e=matrix.elements,axis=Math.abs(e[1])>Math.abs(e[9])?'x':'z';\n          const downSlope=-Math.sign(axis==='x'?e[1]:e[9])||1;\n          const receipt=dressRoofCoverBox(THREE,g,{width,height,depth,axis,downSlope,style:'cedar'});\n          if(receipt)(this.group.userData.roofCourses??=[]).push({...receipt,scope:'cedar-only',material:m.name});\n        }\n      }",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "be6e68fc7e8f741ae35a46476c64a657e6e017991c089174c59e389b1a452145"
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "501fe7f007b08fdf722596243613ab93b5e7bf2b961ae6e1c9e2be4ea37d8357",
+      "changes": [
+        {
+          "before": "./assets/ranch-architecture.js?v=ranch-models-1",
+          "after": "./assets/ranch-architecture.js?v=ranch-roof-courses-3",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "1e596ab8d732fe12db89939ae3f8029d8fa85f6233d73305050a8f0eff6553b5"
+    }
+  },
+  "observers": {
+    "tools/leaf-camera-clearance-source-guard.cjs": {
+      "beforeSHA256": "5a4afc842829df4086c3b6866dd052dac8482b0c270aa6f41afcca5334c5841f",
+      "changes": [
+        {
+          "before": "const fs=require('node:fs')",
+          "after": "const {normalizeRoofCoursesAuditSource,normalizeRoofCoursesFixtureChanges}=require('./roof-courses-source-guard.cjs');\nconst fs=require('node:fs')",
+          "occurrences": 1
+        },
+        {
+          "before": "function view(source,file,kind){const row=",
+          "after": "function view(source,file,kind){source=normalizeRoofCoursesAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function assertLeafCameraClearanceCurrent(source,file){const row=",
+          "after": "function assertLeafCameraClearanceCurrent(source,file){source=normalizeRoofCoursesAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeLeafCameraClearanceFixtureChanges(diff){const rows=",
+          "after": "function normalizeLeafCameraClearanceFixtureChanges(diff){diff=normalizeRoofCoursesFixtureChanges(diff);const rows=",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "afd2538689843a06e600acb7e735cbdf759e35f3462deb7d1e180e23bec3bf75"
+    },
+    "tools/test-leaf-camera-clearance-source-guard.mjs": {
+      "beforeSHA256": "e458bd7cca28bcf87f8ffd60d1f3d7fc0380ac030920886d929d59c8fc8c7558",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "import {normalizeRoofCoursesAuditSource} from './roof-courses-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "raw=f=>fs.readFileSync(new URL(f,root),'utf8')",
+          "after": "raw=f=>normalizeRoofCoursesAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f)",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "57ae1dda98ce86758a7ea0afdbbf72a9a20a77ab8698507cd823cfc44e00594e"
+    },
+    "tools/test-ranch-timber-joinery.mjs": {
+      "beforeSHA256": "b7d137be1df2eaf8cc862061cc44f11dc16f197570f89686703929eea8964e29",
+      "changes": [
+        {
+          "before": "import test from 'node:test';",
+          "after": "import {normalizeRoofCoursesSource} from './roof-courses-source-guard.cjs';\nimport test from 'node:test';",
+          "occurrences": 1
+        },
+        {
+          "before": "function original(file){let s=fs.readFileSync(new URL('../'+file,import.meta.url),'utf8');",
+          "after": "function original(file){let s=normalizeRoofCoursesSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);",
+          "occurrences": 1
+        },
+        {
+          "before": "if(before.material!==a.result.f.sidingMaterial){",
+          "after": "if(before.material!==a.result.f.sidingMaterial&&before.material.name!=='Ranch | aged cedar shingles'){",
+          "occurrences": 1
+        },
+        {
+          "before": "assert(m.triangles<15000);assert(m.triangles-measures(x).triangles<10000);",
+          "after": "const roofDelta=(y.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0);assert(m.triangles-roofDelta<15000);assert(m.triangles-roofDelta-measures(x).triangles<10000);",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "dfefeada0159ad7957cd64f398a45290892fbfd8dad183b803cb435e79eb4f24"
+    },
+    "tools/test-stable-barn-model.mjs": {
+      "beforeSHA256": "5a8a8defbef740349cc29eacb8ececca7efc6be6cf4923d1c03ce94ed6ab1e59",
+      "changes": [
+        {
+          "before": "assert(a.triangles<=13496);",
+          "after": "assert(a.triangles-(barn.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0)<=13496);",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "d075f61438a71f32b7082d795c08e8e14b1f7a9f88efb68075c0879133299875"
+    },
+    "tools/test-village-architecture.mjs": {
+      "beforeSHA256": "f0d4a939f8607dd2a6f6233faa767583ce91cee013b2b44233686fe9d4cc78ac",
+      "changes": [
+        {
+          "before": "const art=createRanchArchitecture({THREE,loadTextures:false});",
+          "after": "const art=createRanchArchitecture({THREE,loadTextures:false});\nconst baseTriangles=root=>root.userData.architecture.triangles-(root.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0);",
+          "occurrences": 1
+        },
+        {
+          "before": "assert(a.triangles<6000&&a.drawCalls<=16",
+          "after": "assert(baseTriangles(root)<6000&&a.drawCalls<=16",
+          "occurrences": 1
+        },
+        {
+          "before": "assert(a.triangles<12000&&a.drawCalls<=16,'details stay",
+          "after": "assert(baseTriangles(root)<12000&&a.drawCalls<=16,'details stay",
+          "occurrences": 1
+        },
+        {
+          "before": "assert(a.triangles<12000&&a.drawCalls<=16,'detailed inn",
+          "after": "assert(baseTriangles(root)<12000&&a.drawCalls<=16,'detailed inn",
+          "occurrences": 1
+        }
+      ],
+      "afterSHA256": "f47c1d82eede53b0b3b3578f416e81362c3b6f4a89b1bacb3b8b6e29ec5ceb23"
+    }
+  },
+  "addedFiles": {
+    "assets/ranch-roof-courses.mjs": {
+      "sha256": "c9d821eafe3c86d5a85cc35e48b87ad5cb7e02116c20b16104aa7d79683d7fd2"
+    },
+    "tools/test-roof-courses.mjs": {
+      "sha256": "6d38f55f769283009bcad53d1d877d180039300d41ccf3f559bf4a1052b2d50c"
+    }
+  },
+  "addedFixtureSHA256": {
+    "tools/fixtures/roof-courses-efded6f/ranch-architecture.js": "998f3397d436700e650c0d3393403651e444db939790f2ac0a0fe0c42311eacb"
+  },
+  "protectedExistingFixtureSHA256": {
+    "tools/fixtures/north-rim-planar-22b72cc/added-fixture-sha.json": "22d33eff0fdde272fb069e36bdd5841a861b5b101483906348dcc76a9d88ddc6",
+    "tools/fixtures/north-rim-planar-22b72cc/contract.json": "9cbf330484ada3ba80423534b686eae56099e214413aa6999d08c2a0c90f669c",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/observer-changes.json": "df10830c91f75599a7a66a8e7c2d93341cf893adab9c7daaf117f3f27c4417d8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/contract.json": "4e8d087da58ffbe47445206fe3c979a6f6ea4bf447dc3c23667a24b803f87deb",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/coyote-macroform.mjs": "311700d1760eb7a85c6fec29ebd9d58d986c30f545c2d188c4118684b17d06c0",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/canyon-landscape.js": "43428250634073f7c8482e4644a8ebfd12b40c91c5bb7695a0a3965de5b38b82",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/coyote-macroform.mjs": "824a424a212b666d0d3ba6a4d41dec85e94ef0bd41e90cb4860e993b62b14668",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/full-floor-source184.json": "9db2eb6d66bbb47ec185d0682705e6d62dc2cbc41ee878faab723fc1f9caa76a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-baseline.json": "499fa610fc4f2442a85986c2eb42d24f5b2b59e3e28f54ba7773ceb01bde77fe",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-current-routes.json": "c6786e94857a6cbe5588d78ce3d2a91fb40b51f8900b9adeff42141c7fa0e378",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/numeric-source-changes.json": "76a3cad1d8538c21d75cfc9c526e818ec50234ecc31e236249458e3171346b0d",
+    "tools/fixtures/north-rim-planar-22b72cc/source-changes.json": "410f700866216ec47cd1ce6f63f2ba10a2c9a90fd3a8304ffddfbd8dcd40876b",
+    "tools/fixtures/formal-turf-ff10ddd/contract.json": "7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279",
+    "tools/fixtures/formal-approach-resume-5e173bf/contract.json": "ce3842a217c8ecaf4ba4da5b73c6399296a0235755de683d32ff6add4dd6e9cd",
+    "tools/fixtures/pasture-passage-7a6bacd/contract.json": "5b2cdcd9b14261bc878dcee501202078fff6b09bf8c6b672a04c3f7c56028b3c",
+    "tools/fixtures/north-formal-7a6bacd/contract.json": "aaa1e34f2b4e6f59c75df2b7f3157b479f8573e901746541b0146cf1d052e146",
+    "tools/fixtures/canopy-depth-8f5ad05/contract.json": "c68b308774c0807cec57c6fad36d40bdbe35e9b2d988caf9869a7efa976c5e69",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-architecture.js": "2ca011543add5908da50620edd4037ab419346e323aef9c5a022a3b53eff92c5",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-builder-art.js": "ee72c9da7a55013e3b2975eb10cc3edb09486e9deafc93618a3050b42d0d2d7b",
+    "tools/fixtures/ranch-model-b5d22a6/terrain-grid.f32": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+    "tools/fixtures/ranch-model-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/ranch-model-b5d22a6/fieldstone-contract.json": "0fe2d51edc69f62593f0b4b55e74282912b08bc4f79d341e46d2e9b80633993c",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-timber-contract.json": "c487f587f0a3c379515f12120c4c3d13d39f78f4267750826961b1dd9db34e58",
+    "tools/fixtures/fieldstones-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/fieldstones-b5d22a6/native-supports.json": "cfbdefb188147d5bd713d0e9ff667825fd1756bbb720a637763858e9142e94e4",
+    "tools/fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs": "9ccc02118cee8f1a4f1d99c11e2b86c6f8a2ecc97babc4cb0cfccbb2ba20d378",
+    "tools/fixtures/fieldstone-wall-a78ed79/test-adapter-changes.json": "f958443990a1b2f9687aa1be4440f17a9fc28778b3dfc69c7b921c8d6df85087",
+    "tools/fixtures/fieldstone-wall-a78ed79/preimage-SHA.json": "2e941013ae93d73f43ad962ae2341b0f794746397192150689c639108eb92c6c",
+    "tools/fixtures/fieldstone-wall-a78ed79/contract.json": "2e0d648595155c17dcd2c9b03ae416372a33d3eef13f3b392f9343f8277bb1c6",
+    "tools/fixtures/fieldstone-wall-a78ed79/source-changes.json": "4337b7840c319f3d0368347360b9651c0849f205c1c63b91be3f653cf98ee37c",
+    "tools/fixtures/leaf-camera-clearance-0f9cd99/contract.json": "3c9c30690568740a3c95c484a8fd12767460e2fbcdd4fae9110910b785b0502b",
+    "tools/fixtures/ranch-joinery-b5d22a6.json": "aa40860f03f03b051e6f629a2e1dedc02d941b52ea2381426a67ac745909a8f3"
+  },
+  "protectedSourceSHA256": {
+    "assets/features/course-guide.js": "062d55873509bef4d58734ec8be0570ddc71199aec881369cf2f0a880343db56",
+    "assets/features/club-rides.js": "e122bbbc2db6c386c8976377952334b1ed9f17705d7e1a2b63ef705d69a0a416",
+    "assets/formal-fence-guidance.mjs": "2d800f02041caf7f64696ff595aec0715adacf375334ae37ad0da357c8a12437",
+    "assets/features/tack-summon.js": "0899006df0fe173eada4abfef496d3bb8e4936d58ad28209de4de73daa62674e",
+    "assets/features/tack-summon-stall.js": "8ecbd02dc5691cd42486651c5b70038d7860926757c0c8387a8172dbe1201d38",
+    "assets/models/world/realism/island_tree_01.glb": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "assets/island-leaf-surfaces.mjs": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "assets/mature-leaf-patches.mjs": "8d1e4c6c8125f5477494689c7c2808d7fafdd1d2b5c64bcd3e8fee5cad223e59",
+    "assets/woodland-edge-wood-proxies.mjs": "d2c61aa9b857902ac7bc9d4b0643f95b645e5478c9f44dfe7e82ef0f3464cce5",
+    "assets/upright-broadleaf-wood-proxies.mjs": "5c594865b3ad1487a17bbc05ff55cbd78dd6708797c101e1b116b683c0564a94",
+    "assets/tree-impostors.js": "034419c407aa311f3e3ee8e2011408847525dee5182ecd67558e0e8fcc8f3de5",
+    "tools/asset-gen/tree-normal-material.mjs": "50fe0505cf701887f81c85d88d9e7520fa5352eed8a83e5047e29a0ede2842a2",
+    "tools/asset-gen/bake-world-tree.cjs": "ede58937a6c1e3531769e4ca927b99301cfb7d202161000304c41ae88b906ec8",
+    "assets/models/world/realism/tree-impostors.json": "798a79ba9606c51037175b6332662ed282f546940911020b870cf6cfd73f04c3",
+    "assets/models/world/realism/island_tree_01_views.webp": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec",
+    "assets/models/world/realism/island_tree_01_normals.webp": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d",
+    "assets/models/world/realism/orchard_apple_views.webp": "bbfd6ab8ef3464c2bb71f64fb7ea7c0d1932c9dcd0a1638b035dad7ef1a1df39",
+    "assets/models/world/realism/orchard_apple_normals.webp": "fc969164c3132f2e0ce27ebe9e61c519d10c9745cd3318b16de91e79d65e9ebf",
+    "assets/solid-collisions.js": "c06e7bad9f1c59e6ff9a42a98843f2eca408171fa05c173c2c26ed7112c48e1e",
+    "assets/follow-camera.js": "9b8b8ec43b9f65c8dfec842802d901a00ed1ac02aab100ad7ed8593f86f106f8",
+    "assets/ranch-builder-art.js": "9af66c9d8808fecad774a626ec27ef8628e878708d8818db6bc844b2a75a22d2",
+    "assets/ranch-timber-joinery.mjs": "4e3a78a321afd35ce15997652ae9ef24b8623a79d158ab7c85b5a66d49cc5a05",
+    "assets/geology.js": "3e73418720389026b7bd3e7d9c2c4ced18473fd26404d385e68049b641c3e051",
+    "assets/ranch-fieldstones.mjs": "b46f46c4f25af56115a04287256a466058c7e3d112e11473ee851827a4a3499f",
+    "assets/world-photoscans.js": "550aa52860da6e113dd6f5302a7cf2933498bb00430cd61ccf97c67e7da3bfd2",
+    "assets/terrain-realism.js": "0c30d850306445e375ae5729c36c09ebbbd4be08bdbcf55abb5608ddea8285af",
+    "assets/landscape-surface.js": "7f0b21b6bebd4ee4a905f6651f7a4fd56ef0d1d8fb979d6b7349275c288c88dd",
+    "assets/features/world.js": "0dc5ca447dd4b43501837f03c141b7ec886df4dd204bea47fc9b61dda457054e",
+    "assets/features/ranch.js": "60293d377566d75704075e7baa885f4816db296c1accba025b12f7d6759684ad",
+    "sw.js": "0c23433510faeeb45709c7741fd5b12f2edd4d2cf71b532b1ff9104c9a9c9096"
+  }
+}

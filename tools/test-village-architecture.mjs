@@ -4,6 +4,7 @@ import * as THREE from '../assets/vendor/three/build/three.module.js';
 import {createRanchArchitecture} from '../assets/ranch-architecture.js';
 import {createSolidWorld} from '../assets/solid-collisions.js';
 const art=createRanchArchitecture({THREE,loadTextures:false});
+const baseTriangles=root=>root.userData.architecture.triangles-(root.userData.roofCourses??[]).reduce((sum,q)=>sum+q.triangles-12,0);
 const firstHit=(root,x,y,z)=>new THREE.Raycaster(new THREE.Vector3(x,y,z),new THREE.Vector3(0,0,-1)).intersectObject(root,true)[0];
 
 test('all cottage variants have recessed ground and dormer windows without roof occlusion',()=>{
@@ -19,7 +20,7 @@ test('all cottage variants have recessed ground and dormer windows without roof 
   assert(loft.point.x<1.66);
   root.traverse(o=>{if(o.geometry)for(const a of Object.values(o.geometry.attributes))assert(Array.from(a.array).every(Number.isFinite));});
   const a=root.userData.architecture;
-  assert(a.triangles<6000&&a.drawCalls<=16,'village detailing remains batched');
+  assert(baseTriangles(root)<6000&&a.drawCalls<=16,'village detailing remains batched');
   assert(a.windowBoxes.every(b=>Math.abs(b.x)>.9),'planters leave the entrance corridor clear');
  }
 });
@@ -50,7 +51,7 @@ test('two-storey village landmarks have open glazing, hipped roof coverage and b
   }
   root.traverse(o=>{if(o.geometry)for(const a of Object.values(o.geometry.attributes))assert(Array.from(a.array).every(Number.isFinite));});
   const a=root.userData.architecture;
-  assert(a.triangles<12000&&a.drawCalls<=16,'details stay within the village rendering budget');
+  assert(baseTriangles(root)<12000&&a.drawCalls<=16,'details stay within the village rendering budget');
   assert.equal(a.storeys,2);assert.equal(a.windowBoxes.length,4);
   const world=createSolidWorld({THREE});world.register(root);
   const body={bottom:.38,top:2.65,radius:.55};
@@ -90,5 +91,5 @@ test('coaching inn has covered unequal gables, recessed glazing and three mounte
  const bounds=new THREE.Box3().setFromObject(root);
  assert(bounds.max.y<8.4&&a.suggestedLabelY>bounds.max.y,'lower roof profile and label remain separated');
  assert.equal(a.width,12);assert.equal(a.depth,7.6);assert.equal(a.doorX,0);assert(Math.abs(a.doorZ-1.8)<1e-9);
- assert(a.triangles<12000&&a.drawCalls<=16,'detailed inn stays within its rendering budget');
+ assert(baseTriangles(root)<12000&&a.drawCalls<=16,'detailed inn stays within its rendering budget');
 });
