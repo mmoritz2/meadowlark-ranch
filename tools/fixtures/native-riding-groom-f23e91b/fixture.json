@@ -1,0 +1,34 @@
+{
+  "profile": "native-riding-groom-f23e91b",
+  "status": "conditional-prep-art-pending",
+  "source": "WildMesh 3D / CC BY-NC4.0",
+  "parentFlowingFixtureSha256": "52bca65ab63b356fd1c735e667c04a50acc24b7418d5129cd45c1aaf4a8d4344",
+  "protectedInputs": {
+    "review/native-trot-reference-kit/white/model.glb": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+    "assets/models/native-roster/manifest.json": "c3db2495fffe6785b7c71d8f6d73c23d2a819a99283445d840a0665c2031a7f7",
+    "assets/models/artist-breeds/manifest.json": "c3a21bc4219563d142fbc602ebb58331ea653d371aed9b40bdcdba60a0899a74",
+    "assets/breed-models.js": "0b19ac479a4c266116b1cdfd643009e9b942f78dec49f170b1724aae984e4417",
+    "assets/native-horse-customization.js": "0c797f61f48d48c0e6844c0e99aa9cf7e9d97eb964b9b338006b08a5923cd734",
+    "assets/native-roster.js": "36bb0d39604ecd7b26320f181b00dcf4c04be9b5ec83136c061dac8dc79a9417"
+  },
+  "scope": "Direct current raw helper/driver/guard imports. The parent flowing controller is a separately frozen control for constructor-RNG comparisons only; it never replaces current code.",
+  "approvedTailDataHashes": {
+    "bay-sporthorse": {
+      "POSITION": "ad5dc8a403bccdaae05aef9f9a96ad171a8351ff4ff489301303201246481e77",
+      "NORMAL": "356ab02e0081672cfa479f660a4504619a3c20b2f222e389a6010daf98806fd8",
+      "UV": "72a406bebb2d0ee271163d60e8305dba5c311505217c3019f1d2c239091f613a",
+      "indices": "08142b6595a7b0a3a7ecc5da67c82a8dc95bf69f87770bc4680b36e8f1ad2549",
+      "donor": "ae3be2d2003aef30f3069ea9beaeaf2c0b670ea16f6c79a9d66e66ddca94387f",
+      "part": "2eb9350be32ac744db978d929278e05c07741b6e2f213ae729de1bb87badbe5e"
+    },
+    "grey": {
+      "POSITION": "2732e71da84e836eb4b4b2b05019e8459781a17b9f782301c4239a6b2effe105",
+      "NORMAL": "4381311150a176cc2987a32d1fcdd599c0b926cc7cb9bd685eee3451264c23d4",
+      "UV": "72a406bebb2d0ee271163d60e8305dba5c311505217c3019f1d2c239091f613a",
+      "indices": "08142b6595a7b0a3a7ecc5da67c82a8dc95bf69f87770bc4680b36e8f1ad2549",
+      "donor": "198dfe9b2229d13f06fdbe76e1195837ffa664da852a4cb30e1dd996ff30d8f8",
+      "part": "2eb9350be32ac744db978d929278e05c07741b6e2f213ae729de1bb87badbe5e"
+    }
+  },
+  "tailOnlyScope": "1036vertices1776triangles exact V8tail subset; source role domain comes independently from liveparent driver roots. No new mane/forelock geometry. Nativeart pending."
+}

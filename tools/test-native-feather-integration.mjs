@@ -20,8 +20,9 @@ const production=[
 ].join('\n');
 const events=[],created=[],createdFlowing=[],motionOptions=[];
 let finishSource=()=>{};
-const make=new Function('createNativeDraftFeathers','createNativeFlowingGroom','finishNativeSourceGrooms','createNativeHorseMotion','captureNativeActionSeat','tickNativeHorse',production+'\nreturn {nativeGroomFacade,initGameHero,tickGameHero,disposeMountedRig,finishNativeHorseGrooms};');
+const make=new Function('createNativeRidingGroom','createNativeDraftFeathers','createNativeFlowingGroom','finishNativeSourceGrooms','createNativeHorseMotion','captureNativeActionSeat','tickNativeHorse',production+'\nreturn {nativeGroomFacade,initGameHero,tickGameHero,disposeMountedRig,finishNativeHorseGrooms};');
 const api=make(
+ ()=>null, // This queue spy keeps the separate riding geometry boundary inert.
  ({scene,profile})=>{
   if(profile?.noFeathers)return null;
   const mesh=new THREE.Object3D();mesh.name='private feather spy';scene.add(mesh);

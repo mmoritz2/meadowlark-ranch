@@ -1,10 +1,11 @@
+import {createNativeRidingGroom} from './native-riding-groom.mjs?v=native-riding-locks-1';
 import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-2';
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=equestrian-style-20261012';
-export {getNativeHorseCapabilities} from './native-horse-motion.js?v=equestrian-style-20261012';
-import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=equestrian-style-20261012';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
+export {getNativeHorseCapabilities} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
+import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
 
 // Feather inertia samples the final leg pose after actor travel and terrain fit.
 const pendingNativeFeatherGrooms=new Map();
@@ -14,7 +15,7 @@ export function finishNativeHorseGrooms(){
 }
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-20261009';
 import {createNativeDraftFeathers} from './native-draft-feathers.js?v=fine-hair-20261013c';
-import {createNativeFlowingGroom} from './native-flowing-groom.js?v=fine-hair-20261013c';
+import {createNativeFlowingGroom} from './native-flowing-groom.js?v=fine-hair-20261013c-native-riding-locks-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
@@ -132,10 +133,12 @@ export function gameHeroSeat(rig,mount){
 export function nativeGroomFacade({THREE,scene,skin,mount,profile,deferUpdate=false}={}){
   let root=scene||skin;if(!scene)while(root?.parent&&root.parent!==mount)root=root.parent;
   const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&(o.userData.nativeFjordCrest||o.userData.nativeEquestrianGroom||profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount))meshes.push(o);});
+  const riding=createNativeRidingGroom({THREE,scene:root,skin,profile});
+  if(riding&&!meshes.includes(riding.mesh))meshes.push(riding.mesh);
   const flowing=createNativeFlowingGroom({THREE,scene:root,skin,profile});
   for(const mesh of flowing?.meshes||[])if(!meshes.includes(mesh))meshes.push(mesh);
   const feathers=createNativeDraftFeathers({THREE,scene:root,skin,profile});if(feathers)meshes.push(...feathers.meshes);
-  const secondary=flowing||feathers?{disposed:false,update(dt,state){root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);flowing?.update(dt,state,{finalizedPose:true});feathers?.update(dt,state);},reset(){flowing?.reset();feathers?.reset();},dispose(){if(this.disposed)return;this.disposed=true;flowing?.dispose();feathers?.dispose();}}:null;
+  const secondary=flowing||feathers?{disposed:false,update(dt,state){root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);flowing?.update(dt,state,{finalizedPose:true});feathers?.update(dt,state);},reset(){flowing?.reset();feathers?.reset();},dispose(){if(this.disposed)return;this.disposed=true;flowing?.dispose();riding?.dispose();feathers?.dispose();}}:null;
   const group={get visible(){return meshes.some(m=>m.visible);},set visible(v){for(const mesh of meshes)mesh.visible=v;}};
   return {mane:group,tail:group,meshes,feathers,flowing,setColors(options){feathers?.setColors(options);},
     update(dt,state){
@@ -147,7 +150,7 @@ export function nativeGroomFacade({THREE,scene,skin,mount,profile,deferUpdate=fa
     },
     reset(){if(deferUpdate&&secondary)pendingNativeFeatherGrooms.delete(secondary);secondary?.reset();},
     dispose(){if(deferUpdate&&secondary)pendingNativeFeatherGrooms.delete(secondary);secondary?.dispose();},
-    stats:{native:true,meshes:meshes.length,get feathers(){return feathers?.inspect()||null},get flowing(){return flowing?.inspect()||null}}};
+    stats:{native:true,meshes:meshes.length,get feathers(){return feathers?.inspect()||null},get flowing(){return flowing?.inspect()||null},get riding(){return riding?.inspect()||null}}};
 }
 
 // The approved groom is already skinned into each GLB; never overlay the old

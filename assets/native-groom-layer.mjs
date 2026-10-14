@@ -1,3 +1,4 @@
+import {verifyNativeRidingGroom} from './native-riding-groom.mjs?v=native-riding-locks-1';
 // Hair-only inertial response on the verified native WildMesh skin.
 import {createFrameGroomInertia} from './frame-inertia.mjs?v=native-secondary-1';
 import {NATIVE_GROOM_PROFILE_IDS,NATIVE_GROOM_HIERARCHY,NATIVE_GROOM_AUDIT} from './native-groom-controls.mjs?v=native-secondary-1';
@@ -34,6 +35,7 @@ function verifiedFjordCrest(mesh,hair,profile){
 
 // Draft locks retain the same strict source-donor contract as the Fjord crest.
 function verifiedEquestrianGroom(mesh,hair,profile){
+ if(mesh.userData.nativeRidingGroom)return verifyNativeRidingGroom(mesh,hair,profile);
  const groom=profile.nativeVariant?.groom?.equestrian,shell=groom?.shell,attrs=mesh.geometry?.attributes;
  if(!['percheron','shire','clyde'].includes(profile.nativeVariant?.id)||shell?.version!==1||shell.space!=='native-source-mesh'||!attrs)return false;
  const count=attrs.position?.count,index=mesh.geometry.index;

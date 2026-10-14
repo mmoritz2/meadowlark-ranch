@@ -1,3 +1,4 @@
+import {withNativeRidingResources} from './native-riding-groom.mjs?v=native-riding-locks-1';
 /* Actor-private native hair volume and motion. The source skin, clips, bones,
  * bind matrices, dye attributes and material/shader references remain intact. */
 const owned=new WeakMap();
@@ -42,25 +43,29 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
  const records=[],rootIds=[],fjord=profile.nativeVariant?.id==='fjord',shellMeta=profile.nativeVariant?.groom?.equestrian;
  let cardCount=0,lockCount=0,protectedVertices=0;
  for(const mesh of hair){
-  const original=mesh.geometry,g=original.clone(),position=g.attributes.position,raw=position.array,originalPosition=raw.slice(),weights=new Float32Array(position.count),parts=new Int8Array(position.count);parts.fill(-1);
+  const original=mesh.geometry,g=mesh.userData.nativeRidingGroom?withNativeRidingResources(mesh.uuid+'|flowing',()=>original.clone()):original.clone(),position=g.attributes.position,raw=position.array,originalPosition=raw.slice(),weights=new Float32Array(position.count),parts=new Int8Array(position.count);parts.fill(-1);
   const oldGeo=new Float32Array(raw.length),newGeo=new Float32Array(raw.length),originalNormal=g.attributes.normal.array.slice();geometricNormals(g,oldGeo);
   const authoredRoles=new Map();for(const c of shellMeta?.cards||[])authoredRoles.set(c.start,c.role);
-  const shell=!!mesh.userData.nativeEquestrianGroom,groups=shell&&shellMeta?.locks?shellMeta.locks.map(l=>Array.from({length:l.count},(_,i)=>l.start+i)):islands(g),groupsOut=[];
+  const riding=mesh.userData.nativeRidingGroom,meta=riding||shellMeta,shell=!!mesh.userData.nativeEquestrianGroom,groups=shell&&meta?.locks?meta.locks.map(l=>Array.from({length:l.count},(_,i)=>l.start+i)):islands(g),groupsOut=[];
+  const sourceRootGroups=new Map((g.userData.nativeRidingSourceRoots||[]).map(r=>[r.start,r]));
   for(let k=0;k<groups.length;k++){
    const ids=groups[k];let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity,root=ids[0];
    for(const i of ids){const n=i*3,x=raw[n],y=raw[n+1],z=raw[n+2];minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);minZ=Math.min(minZ,z);maxZ=Math.max(maxZ,z);if(y>maxY){maxY=y;root=i;}}
+   const sourceRoot=shell?null:sourceRootGroups.get(ids[0]);if(sourceRoot)root=sourceRoot.root;
    // Native cards use the same authoring centimetre frame, independent of the
    // current animation or actor transform. Tiny eyelash islands are protected.
-   const role=shell?(shellMeta.locks[k].part==='tail'?'tail':k>=12?'forelock':'mane'):authoredRoles.get(ids[0])||((maxZ+minZ)*.5< -60?'tail':Math.max(maxX-minX,maxY-minY,maxZ-minZ)<4?'lash':(maxZ+minZ)*.5>112?'forelock':'mane');
+   const role=shell?(riding?meta.locks[k].role:shellMeta.locks[k].part==='tail'?'tail':k>=12?'forelock':'mane'):sourceRoot?.role||authoredRoles.get(ids[0])||((maxZ+minZ)*.5< -60?'tail':Math.max(maxX-minX,maxY-minY,maxZ-minZ)<4?'lash':(maxZ+minZ)*.5>112?'forelock':'mane');
    if(role==='lash'||fjord&&role!=='tail'){protectedVertices+=ids.length;continue;}
-   const part=role==='tail'?2:role==='forelock'?1:0,uv=g.attributes.uv,roots=shell?ids.filter(i=>uv.getY(i)===0):ids.filter(i=>maxY-raw[i*3+1]<.12);
+   // Riding-shell texture V may sample an opaque dock; motion uses geometric rows.
+   const lock=riding?meta.locks[k]:null,lockT=i=>{const n=i-lock.start,rings=lock.rows*(lock.sides+1);return n>=rings?n-rings:Math.floor(n/(lock.sides+1))/(lock.rows-1);};
+   const part=role==='tail'?2:role==='forelock'?1:0,uv=g.attributes.uv,roots=shell?ids.filter(i=>(riding?lockT(i):uv.getY(i))===0):sourceRoot?sourceRoot.roots.slice():ids.filter(i=>maxY-raw[i*3+1]<.12);
    if(!roots.length)roots.push(root);let rx=0,ry=0,rz=0;for(const i of roots){rx+=raw[i*3];ry+=raw[i*3+1];rz+=raw[i*3+2];}rx/=roots.length;ry/=roots.length;rz/=roots.length;
-   if(shell)flattenLock(raw,ids,uv,role);
+   if(shell&&!riding)flattenLock(raw,ids,uv,role);
    const rootSet=new Set(roots),height=Math.max(.01,ry-minY),fineDraft=!shell&&!!shellMeta,
-    length=role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):shell?.08:role==='forelock'?(fineDraft?1.2:.08):fineDraft?1.9:.24,
+    length=riding?0:role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):shell?.08:role==='forelock'?(fineDraft?1.2:.08):fineDraft?1.9:.24,
     width=shell?0:role==='tail'?.32:role==='forelock'?.15:fineDraft?.35:.22;
-   const group={ids,part,root,roots,weights:[],gain:.93+.14*((k*37%101)/100)};
-   for(const i of ids){const n=i*3,t=rootSet.has(i)?0:shell?clamp(uv.getY(i),0,1):clamp((ry-raw[n+1])/height,0,1),w=t*t*(.8+.2*t);weights[i]=w;parts[i]=part;group.weights.push(w);
+   const group={ids,part,root,roots,weights:[],gain:.93+.14*((((riding?.flowLockOffset||0)+k)*37%101)/100)};
+   for(const i of ids){const n=i*3,t=rootSet.has(i)?0:shell?clamp(riding?lockT(i):uv.getY(i),0,1):clamp((ry-raw[n+1])/height,0,1),w=t*t*(.8+.2*t);weights[i]=w;parts[i]=part;group.weights.push(w);
     // Preserve the whole root ring; broaden a lock gradually, without moving
     // its attachment or replacing tapered tips with broad rectangular ends.
     if(w){const fullness=smooth(t/.32);raw[n]=rx+(raw[n]-rx)*(1+width*fullness);raw[n+1]=ry+(raw[n+1]-ry)*(1+length*smooth(t/.40));raw[n+2]=rz+(raw[n+2]-rz)*(1+width*.45*fullness);}
