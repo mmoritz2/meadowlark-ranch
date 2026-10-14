@@ -1,0 +1,23 @@
+{
+  "profile": "broadleaf-depth-v2-test-fixture-60cb73c",
+  "reportedParentCommit": "60cb73c",
+  "parentSourceSHA256": "d3373246c4707a8dda038d8cc87035fbc9231acd08d068b2d752daf9075d25d6",
+  "candidateSourceSHA256": "4baebe09650243a71cd8f14e188b993d8bcc2ed9a24de66fa88ba0c740933b8e",
+  "parentUpdateBlockSHA256": "084bc45fe5ad60938c1660019612d7f227bab2c200643299251a1533f1bf070e",
+  "sourceEditsSHA256": "dadccc894eb207c3aedef8fd84a2bfe779ab4a3737797f0e00f543e84d4f0c5c",
+  "capturedRosterOriginalSHA256": "789f83aa2904b7118b713029cb4648efcbef8817d2c9d060741e7f567d106ccc",
+  "capturedRosterFixtureSHA256": "7585b0658515b668569d98cef1e7a7358736e0876de3c2389c93235cf39ac862",
+  "capturedRosterCount": 2818,
+  "capturedRosterLosslessReconstructionVerifiedAtPreparation": true,
+  "captureProvenance": "Existing outcrop-clearance-v1-candidate-native/actual-tree-roster.json, exported before outcrop relocation. All photoscan placement/source code bytes remain identical at current60cb73c. This is a frozen selector/upload input, not a fresh native60cb73c rendering claim.",
+  "historicalAdapterScope": "Only baseline updater extraction/inverse verification uses source-edits. Every candidate selection/upload/wind callback test executes raw current source and imports the actual current exported helper.",
+  "modelGLBSHA256": {
+    "tree_small_02": "863d7bddbca4d46df85c32531acd56102ebb91315eec0bed066b7d5e029bf1a2",
+    "pine_tree_01": "3d0a4ef03966d85f283baf0b579b11d26993fcdaa83e3e5a6c7ed91b5fb4139f",
+    "island_tree_01": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "jacaranda_tree": "8732a74d6f90f768ce8321605bbcee946ff96666f751f0ddc90fb6358f66cf38",
+    "upright_broadleaf_01": "5393f0c370b385920b840850881d4fbb25afc965f3e1dc24bda596572476b538",
+    "fir_sapling_medium": "6985c6727180726d2d0ccffeae33e0e09877da0cea244705cf0a42482fbb6677"
+  },
+  "crownInputsSHA256": "3d906ce92776d570ea3d59e085b4ea24b5d6d51a8e035176bcb41f0d45f6d307"
+}

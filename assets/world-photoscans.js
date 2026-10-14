@@ -60,6 +60,47 @@ const WOODLAND_EDGE_PLANTS=[
 
 // Licensed CC0 assets and original derivatives. The world stays available until each
 // replacement has loaded; detailed crowns are budgeted around the rider.
+// Pure CPU projection of existing leaf geometry bounds. No Three resources,
+// source mutation, textures, RNG or placement changes.
+function multiplyCrownMatrices(a,b){const out=new Array(16);for(let col=0;col<4;col++)for(let row=0;row<4;row++)out[col*4+row]=a[row]*b[col*4]+a[row+4]*b[col*4+1]+a[row+8]*b[col*4+2]+a[row+12]*b[col*4+3];return out;}
+export function crownViewProjection(camera){const p=camera?.projectionMatrix?.elements,v=camera?.matrixWorldInverse?.elements;return p?.length===16&&v?.length===16&&p.every(Number.isFinite)&&v.every(Number.isFinite)?multiplyCrownMatrices(p,v):null;}
+export function projectedCrownBenefit(tree,viewProjection){
+ if(!viewProjection||!tree.matrix?.elements)return null;
+ const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];let surfaces=0;
+ for(const part of tree.source.parts||[]){if(!/leaves|twig/.test(part.mat?.name||''))continue;const b=part.bounds;if(!b)continue;surfaces++;for(let i=0;i<3;i++){const key=['x','y','z'][i];min[i]=Math.min(min[i],b.min[key]);max[i]=Math.max(max[i],b.max[key]);}}
+ if(!surfaces||![...min,...max].every(Number.isFinite))return null;
+ const m=multiplyCrownMatrices(viewProjection,tree.matrix.elements),corners=[];
+ for(let i=0;i<8;i++){const x=i&1?max[0]:min[0],y=i&2?max[1]:min[1],z=i&4?max[2]:min[2];corners.push([m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14],m[3]*x+m[7]*y+m[11]*z+m[15]]);}
+ if(corners.some(c=>!c.every(Number.isFinite)))return null;
+ for(let axis=0;axis<3;axis++)for(const sign of[-1,1])if(corners.every(c=>c[3]+sign*c[axis]<0))return{visible:false,area:0};
+ // Project only the portion in front of the near plane. Clipping box edges
+ // avoids enormous sign-flipped screen rectangles when a crown crosses it.
+ const clipped=[];for(const c of corners)if(c[2]+c[3]>=0&&c[3]>0)clipped.push(c);
+ for(let i=0;i<8;i++)for(const bit of[1,2,4])if(!(i&bit)){const a=corners[i],b=corners[i|bit],da=a[2]+a[3],db=b[2]+b[3];if((da<0)!==(db<0)){const t=da/(da-db),c=a.map((v,k)=>v+(b[k]-v)*t);if(c[3]>0)clipped.push(c);}}
+ if(!clipped.length)return{visible:false,area:0};
+ let left=1,right=-1,bottom=1,top=-1;for(const c of clipped){left=Math.min(left,c[0]/c[3]);right=Math.max(right,c[0]/c[3]);bottom=Math.min(bottom,c[1]/c[3]);top=Math.max(top,c[1]/c[3]);}
+ left=Math.max(-1,left);right=Math.min(1,right);bottom=Math.max(-1,bottom);top=Math.min(1,top);const area=Math.max(0,right-left)*Math.max(0,top-bottom)*.25;
+ return{visible:area>0,area,rect:[left,bottom,right,top]};
+}
+export function selectMiddleCrownModels({trees,near,planningMiddle,authoredTriangles,triangleBudget,middleRange,middleLimit,previousMiddleSelection,enabled,distance,facing,camera}){
+ const nearSet=new Set(near),forms=new Set(['mature-pine','broadleaf','mature-leaf-broadleaf','canopy-broadleaf','woodland-broadleaf','upright-broadleaf']);
+ let triangles=authoredTriangles+near.reduce((sum,t)=>sum+t.source.triangles,0);const middle=[],projection=crownViewProjection(camera),benefits=new Map();
+ const benefit=t=>{if(!benefits.has(t))benefits.set(t,projectedCrownBenefit(t,projection));return benefits.get(t);};
+ const eligible=t=>!t.retiredFallsFlora&&!nearSet.has(t)&&forms.has(t.source.key)&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15;
+ const useful=t=>{const b=benefit(t);return b?.visible&&b.area>=(previousMiddleSelection.has(t)?.0003:.0004);};
+ const add=t=>{if(middle.length>=middleLimit||triangles+t.source.triangles>triangleBudget)return false;middle.push(t);triangles+=t.source.triangles;return true;};
+ if(enabled){
+  // Protect original planned pines with meaningful screen presence (0.2% of
+  // the frame). Tiny edge crowns still compete by benefit/cost with new forms;
+  // preserving every barely visible pine would consume the entire pool.
+  for(const t of planningMiddle||[])if(!t.retiredFallsFlora&&!nearSet.has(t)&&t.source.key==='mature-pine'&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&(!projection||(useful(t)&&benefit(t).area>=.002)))add(t);
+  const kept=new Set(middle),score=t=>benefit(t).area/t.source.triangles*(previousMiddleSelection.has(t)?1/.72:1);
+  const candidates=projection?trees.filter(t=>!kept.has(t)&&eligible(t)&&useful(t)).sort((a,b)=>score(b)-score(a)):[];
+  for(const t of candidates)add(t);
+ }
+ return{middle,triangles,projectedMiddle:middle.map(t=>({x:t.x,z:t.z,source:t.source.key,area:benefit(t)?.area||0,plannedPine:(planningMiddle||[]).includes(t)}))};
+}
+
 export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
   const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
@@ -908,7 +949,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(id==='namaqualand_cliff_02')installPrincipalOasisFace(piece);
     }
   }
-  let previousSelection=new Set(),previousNearSelection=new Set(),previousMiddleSelection=new Set(),previousMode=null;
+  let previousSelection=new Set(),previousNearSelection=new Set(),previousMiddleSelection=new Set(),previousCrownSelection=new Set(),previousMode=null;
   const crownView=new THREE.Vector3();
   function updateTrees(){
     if(!treeMeshes.length)return;
@@ -938,11 +979,17 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // Spend any remaining space on the original near candidates; an absent or
     // unaffordable middle crown never leaves a usable part of the pool idle.
     for(const t of candidates){if(near.length>=budget)break;if(nearSet.has(t)||middle.includes(t)||triangles+t.source.triangles>triangleBudget)continue;near.push(t);nearSet.add(t);triangles+=t.source.triangles;}
+    // Complete the exact original near/planning-pine/refill pass before the
+    // camera-bound middle choice. The two histories remain independent.
+    const planningMiddleSelection=new Set(middle);
+    const crowns=selectMiddleCrownModels({trees,near,planningMiddle:middle,authoredTriangles,triangleBudget,middleRange,middleLimit,
+      previousMiddleSelection:previousCrownSelection,enabled,distance,facing,camera:G.camera});
+    middle.length=0;middle.push(...crowns.middle);triangles=crowns.triangles;
     const selected=[...near,...middle],set=new Set(selected),mode=tier+':'+renderer.xr.isPresenting,tierChanged=previousMode!==mode;
     state.activeTreeTriangles=triangles;state.treeTriangleBudget=triangleBudget;
     state.activeTrees=selected.length;state.activeNearTrees=near.length;state.activeMiddleTrees=middle.length;state.activeRenderedTrees=selected.length;
-    state.treeCrownLOD={profile:'volumetric-middle-pines-1',nearTrees:near.length,middleTrees:middle.length,middleRange,middleLimit,authoredTriangles,triangles,triangleBudget,middleSites:middle.map(t=>({x:t.x,z:t.z,source:t.source.key,triangles:t.source.triangles,distance:Math.sqrt(distance(t))}))};
-    previousNearSelection=nearSet;previousMiddleSelection=new Set(middle);
+    state.treeCrownLOD={profile:'projected-middle-crowns-2',nearTrees:near.length,middleTrees:middle.length,planningMiddleTrees:planningMiddleSelection.size,projectedMiddle:crowns.projectedMiddle,middleRange,middleLimit,authoredTriangles,triangles,triangleBudget,middleSites:middle.map(t=>({x:t.x,z:t.z,source:t.source.key,triangles:t.source.triangles,distance:Math.sqrt(distance(t))}))};
+    previousNearSelection=nearSet;previousMiddleSelection=planningMiddleSelection;previousCrownSelection=new Set(middle);
     if(!tierChanged&&set.size===previousSelection.size&&selected.every(t=>previousSelection.has(t)))return;
     const changed=records=>tierChanged||records.some(t=>set.has(t)!==previousSelection.has(t));
     for(const {mesh,records} of treeMeshes){

@@ -1,0 +1,52 @@
+  let previousSelection=new Set(),previousNearSelection=new Set(),previousMiddleSelection=new Set(),previousMode=null;
+  const crownView=new THREE.Vector3();
+  function updateTrees(){
+    if(!treeMeshes.length)return;
+    const p=H.player.pos,tier=G.gfx.get(),enabled=!renderer.xr.isPresenting;
+    const range=tier==='high'?58:tier==='low'?26:40,budget=tier==='high'?12:tier==='low'?4:6;
+    const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
+    const triangleBudget=tier==='high'?1800000:750000;
+    const authoredTriangles=(state.villageEvergreens?.triangles||0)+(state.willows?.triangles||0)+(state.thunderOak?.triangles||0);
+    const middleRange=tier==='high'?105:tier==='low'?70:85,middleLimit=tier==='high'?14:tier==='low'?6:10;
+    if(G.camera?.getWorldDirection)G.camera.getWorldDirection(crownView);
+    else crownView.set(Math.sin(H.player.heading||0),0,Math.cos(H.player.heading||0));
+    const viewLength=Math.hypot(crownView.x,crownView.z)||1,fx=crownView.x/viewLength,fz=crownView.z/viewLength;
+    const facing=t=>{const dx=t.x-p.x,dz=t.z-p.z;return (dx*fx+dz*fz)/(Math.hypot(dx,dz)||1);};
+    // A complete photographed pine crown has real branch parallax. Reserve
+    // feasible space for visible middle crowns instead of spending the entire
+    // fixed pool on small nearby firs and flattening the mature trees ahead.
+    const middleCandidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&t.source.key==='mature-pine'&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15)
+      .sort((a,b)=>distance(a)/(1+Math.max(0,facing(a))*2)*(previousMiddleSelection.has(a)?.72:1)-distance(b)/(1+Math.max(0,facing(b))*2)*(previousMiddleSelection.has(b)?.72:1)):[];
+    const candidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&distance(t)<(range+(previousNearSelection.has(t)?5:0))**2)
+      .sort((a,b)=>distance(a)*(previousNearSelection.has(a)?.72:1)-distance(b)*(previousNearSelection.has(b)?.72:1)):[];
+    const nearest=candidates.find(t=>authoredTriangles+t.source.triangles<=triangleBudget);
+    const nearCeiling=middleCandidates.length?Math.max(triangleBudget*2/3,authoredTriangles+(nearest?.source.triangles||0)):triangleBudget;
+    const near=[],middle=[];let triangles=authoredTriangles;
+    for(const t of candidates){if(near.length>=budget)break;if(triangles+t.source.triangles>nearCeiling)continue;near.push(t);triangles+=t.source.triangles;}
+    const nearSet=new Set(near);
+    for(const t of middleCandidates){if(middle.length>=middleLimit)break;if(nearSet.has(t)||triangles+t.source.triangles>triangleBudget)continue;middle.push(t);triangles+=t.source.triangles;}
+    // Spend any remaining space on the original near candidates; an absent or
+    // unaffordable middle crown never leaves a usable part of the pool idle.
+    for(const t of candidates){if(near.length>=budget)break;if(nearSet.has(t)||middle.includes(t)||triangles+t.source.triangles>triangleBudget)continue;near.push(t);nearSet.add(t);triangles+=t.source.triangles;}
+    const selected=[...near,...middle],set=new Set(selected),mode=tier+':'+renderer.xr.isPresenting,tierChanged=previousMode!==mode;
+    state.activeTreeTriangles=triangles;state.treeTriangleBudget=triangleBudget;
+    state.activeTrees=selected.length;state.activeNearTrees=near.length;state.activeMiddleTrees=middle.length;state.activeRenderedTrees=selected.length;
+    state.treeCrownLOD={profile:'volumetric-middle-pines-1',nearTrees:near.length,middleTrees:middle.length,middleRange,middleLimit,authoredTriangles,triangles,triangleBudget,middleSites:middle.map(t=>({x:t.x,z:t.z,source:t.source.key,triangles:t.source.triangles,distance:Math.sqrt(distance(t))}))};
+    previousNearSelection=nearSet;previousMiddleSelection=new Set(middle);
+    if(!tierChanged&&set.size===previousSelection.size&&selected.every(t=>previousSelection.has(t)))return;
+    const changed=records=>tierChanged||records.some(t=>set.has(t)!==previousSelection.has(t));
+    for(const {mesh,records} of treeMeshes){
+      if(!changed(records))continue;
+      let count=0;for(const t of records)if(set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves|twig/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;}
+      mesh.count=count;mesh.visible=count>0;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;mesh.castShadow=!renderer.xr.isPresenting;
+      if(count)mesh.computeBoundingSphere();
+    }
+    for(const {mesh,records} of treeCards){
+      if(!changed(records))continue;
+      let count=0;for(const t of records)if(!t.retiredFallsFlora&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
+      mesh.count=count;mesh.visible=count>0;mesh.castShadow=!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
+      if(count)mesh.computeBoundingSphere();
+    }
+    previousSelection=set;previousMode=mode;state.detailRebuilds=(state.detailRebuilds||0)+1;
+    state.distantTrees=trees.length-(state.hollowpeakCliffFlora?.retired.length||0)-selected.length;
+  }
