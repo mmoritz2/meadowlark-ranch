@@ -19,6 +19,21 @@ const GROUNDS=Object.freeze([
  Object.freeze({x:236,z:134,rx:98,rz:79,yaw:.42})
 ]);
 const footprint=(p,x,z)=>{const dx=x-p.x,dz=z-p.z,c=Math.cos(p.yaw),s=Math.sin(p.yaw),u=(dx*c+dz*s)/p.rx,v=(-dx*s+dz*c)/p.rz;return Math.hypot(u,v);};
+// One connected submitted glade in the resident grove. These two unequal
+// lobes never participate in placement, eligibility, growth or tree planning.
+const GROVE_GLADE=Object.freeze([
+ Object.freeze({x:160,z:-168,rx:13,rz:22,yaw:.66}),
+ Object.freeze({x:182,z:-190,rx:21,rz:30,yaw:.66})
+]);
+const GLADE_BOUNDS=Object.freeze({minX:143.04675941406035,maxX:206.76981497399163,minZ:-216.97139718580073,maxZ:-148.87965393526443});
+const gladeWeight=(x,z)=>{
+ if(x<=GLADE_BOUNDS.minX||x>=GLADE_BOUNDS.maxX||z<=GLADE_BOUNDS.minZ||z>=GLADE_BOUNDS.maxZ)return 0;
+ // A smooth union keeps the two lobes connected without a max-join crease.
+ // The broad 4.5–5.5 m inner fade is compact at the original ellipse bounds.
+ const width=5+Math.sin(x*.071+z*.043)*.35+Math.sin(x*.039-z*.067)*.15;
+ let remainder=1;for(const p of GROVE_GLADE)remainder*=1-ease(0,width,(1-footprint(p,x,z))*Math.min(p.rx,p.rz));
+ return 1-remainder;
+};
 const positive=(a,o)=>Math.hypot(a[o],a[o+1],a[o+2])+Math.hypot(a[o+4],a[o+5],a[o+6])+Math.hypot(a[o+8],a[o+9],a[o+10])>1e-9;
 
 // Actual final terrain, wet footprints, Chalk down and retired forest list are
@@ -66,7 +81,26 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   const x=MIN_X+ix*STEP,z=MIN_Z+iz*STEP,i=iz*NX+ix,q=authored(x,z);
   cuts[i]=q.cut*(1-ease(1.05,2.55,shade[i]));caps[i]=q.cut>0?q.cap:0;if(cuts[i]>0)covered++;
  }
- function at(x,z){
+ const gladeCuts=new Float32Array(NX*NZ),gladeCaps=new Float32Array(NX*NZ),trunks=new Map();
+ const trunkCell=4,trunkKey=(x,z)=>Math.floor(x/trunkCell)+','+Math.floor(z/trunkCell);
+ let gladeVertices=0,gladeTrees=0;
+ for(const p of forestPoints){
+  if(!Number.isFinite(p.x+p.z)||!Number.isFinite(p.s??1)||p.x<GLADE_BOUNDS.minX-2.2||p.x>GLADE_BOUNDS.maxX+2.2||p.z<GLADE_BOUNDS.minZ-2.2||p.z>GLADE_BOUNDS.maxZ+2.2)continue;
+  // Actual final tree centres, with a small untended contact skirt. Crown-size
+  // forest radii are deliberately not reused as new grazing exclusion discs.
+  const tree={x:p.x,z:p.z,inner:.32+.08*Math.min(2,Math.max(0,p.s??1)),outer:1.50+.30*Math.min(2,Math.max(0,p.s??1))},key=trunkKey(p.x,p.z);
+  if(!trunks.has(key))trunks.set(key,[]);trunks.get(key).push(tree);gladeTrees++;
+ }
+ const gx0=Math.max(0,Math.floor((GLADE_BOUNDS.minX-MIN_X)/STEP)),gx1=Math.min(NX-1,Math.ceil((GLADE_BOUNDS.maxX-MIN_X)/STEP)),gz0=Math.max(0,Math.floor((GLADE_BOUNDS.minZ-MIN_Z)/STEP)),gz1=Math.min(NZ-1,Math.ceil((GLADE_BOUNDS.maxZ-MIN_Z)/STEP));
+ for(let iz=gz0;iz<=gz1;iz++)for(let ix=gx0;ix<=gx1;ix++){
+  const x=MIN_X+ix*STEP,z=MIN_Z+iz*STEP,i=iz*NX+ix,weight=gladeWeight(x,z);if(weight===0||protectedAt(x,z))continue;
+  const river=Math.abs(z-riverZ(x)),y=terrainH(x,z),water=riverLevel(x);if(!Number.isFinite(y+water))throw Error('Nonfinite pastoral glade terrain');
+  const slope=Math.hypot((terrainH(x+.75,z)-terrainH(x-.75,z))/1.5,(terrainH(x,z+.75)-terrainH(x,z-.75))/1.5);
+  const band=fieldSwardAt(x,z).cover,margin=meadowMarginAt(x,z),marsh=1-ease(78,119,Math.hypot(x-310,z-300));
+  const cut=weight*(1-.985*band)*(1-.92*margin)*(1-marsh)*ease(9.6,17,river)*(1-ease(.37,.82,slope));
+  gladeCuts[i]=cut;gladeCaps[i]=cut>0?.43+.07*(.5+.5*Math.sin(x*.027+z*.013)*Math.sin(z*.031-x*.009)):0;if(cut>0)gladeVertices++;
+ }
+ function originalAt(x,z){
   if(x<=MIN_X||x>=MAX_X||z<=MIN_Z||z>=MAX_Z)return ZERO;
   const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;
   const a=(1-fx)*(1-fz),b=fx*(1-fz),c=(1-fx)*fz,d=fx*fz;
@@ -75,13 +109,25 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   // scanned and static grass can safely respond again without compounding.
   const base=caps[i]*a+caps[i+1]*b+caps[i+NX]*c+caps[i+NX+1]*d;return{cut,cap:base/(cut*cut)};
  }
+ function at(x,z){
+  const original=originalAt(x,z),weight=gladeWeight(x,z);if(weight===0||protectedAt(x,z))return original;
+  const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;
+  const a=(1-fx)*(1-fz),b=fx*(1-fz),c=(1-fx)*fz,d=fx*fz;
+  let cut=(gladeCuts[i]*a+gladeCuts[i+1]*b+gladeCuts[i+NX]*c+gladeCuts[i+NX+1]*d)*ease(0,.15,weight);
+  if(cut<=1e-7)return original;
+  const tx=Math.floor(x/trunkCell),tz=Math.floor(z/trunkCell);let skirt=1;
+  for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)for(const p of trunks.get((tx+dx)+','+(tz+dz))||[])skirt*=ease(p.inner,p.outer,Math.hypot(x-p.x,z-p.z));
+  cut*=skirt;if(cut<=1e-7)return original;
+  const base=gladeCaps[i]*a+gladeCaps[i+1]*b+gladeCaps[i+NX]*c+gladeCaps[i+NX+1]*d;
+  return{cut:Math.max(original.cut,cut),cap:Math.min(original.cap,base/(cut*cut))};
+ }
  function applyGrazingPixels(data,size){
   if(!ArrayBuffer.isView(data)||!Number.isInteger(size)||size<1||data.length!==size*size*4)throw Error('Existing landcover mask required');
   let changed=0;const step=1000/size,ix0=Math.max(0,Math.floor((MIN_X+500)/step)),ix1=Math.min(size-1,Math.ceil((MAX_X+500)/step)),iz0=Math.max(0,Math.floor((MIN_Z+500)/step)),iz1=Math.min(size-1,Math.ceil((MAX_Z+500)/step));
   for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const i=(iz*size+ix)*4+2,next=Math.max(data[i],Math.round(at(-500+(ix+.5)*step,-500+(iz+.5)*step).cut*255));if(next>data[i]){data[i]=next;changed++;}}
   return changed;
  }
- return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered}),at,applyGrazingPixels});
+ return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS}),at,applyGrazingPixels});
 }
 let current=null,revision=0;
 const cellCache=new WeakMap();

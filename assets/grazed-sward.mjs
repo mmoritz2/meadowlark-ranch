@@ -1,7 +1,7 @@
 import {appendArchedMeadowLeaf} from './lush-meadow-geometry.mjs?v=grass-ribbon-5';
 import {meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {chalkGrazingAt} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1';
+import {pastoralCoverAt} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
 
 // A short turf stand uses the same seventy triangles as an existing rich root.
 // Only the already-counted rich rows inside grazed ground can use this shape.
@@ -11,6 +11,22 @@ export function grazedSwardWeight(x,z,pastoralCut=pastoralCoverAt(x,z).cut){
  return t*t*(3-2*t);
 }
 export function selectsGrazedSward(x,z,sample,pastoralCut){return sample<grazedSwardWeight(x,z,pastoralCut);}
+
+// Low keeps complete source leaves within the original forty-triangle root
+// budget. The resident70 stand supplies identical rooted positions/UV/colors.
+export function createLowGrazedSwardGeometry(T,source){
+ if(!source?.userData?.grazedSward||source.index?.count!==210)throw Error('Current complete70-triangle turf source required');
+ const leaves=[0,1,2,3,5,6,8,9,12,17,18,19,20,23,24,25,26,27,30,33],ranges=source.userData.grazedSward.leafRanges,arrays=Object.fromEntries(Object.entries(source.attributes).map(([name])=>[name,[]])),indices=[],leafRanges=[];
+ let vertex=0;
+ for(const leaf of leaves){
+  const r=ranges[leaf];if(!r||r.indexCount!==(r.curved?9:3))throw Error('Whole source turf leaf required');
+  for(const[name,a]of Object.entries(source.attributes))for(let i=r.vertexStart*a.itemSize;i<(r.vertexStart+r.vertexCount)*a.itemSize;i++)arrays[name].push(a.array[i]);
+  const indexStart=indices.length;for(let i=r.indexStart;i<r.indexStart+r.indexCount;i++)indices.push(source.index.array[i]-r.vertexStart+vertex);
+  leafRanges.push({...r,sourceLeaf:leaf,vertexStart:vertex,indexStart,root:[...r.root]});vertex+=r.vertexCount;
+ }
+ const g=new T.BufferGeometry();for(const[name,a]of Object.entries(source.attributes))g.setAttribute(name,new T.Float32BufferAttribute(arrays[name],a.itemSize,a.normalized));g.setIndex(indices);g.computeBoundingBox();g.computeBoundingSphere();
+ g.userData.grazedSward={profile:'grazed-natural-low-1',triangles:40,leaves:20,broadLeaves:0,bentLeaves:10,fineBlades:10,rootGroups:7,sourceLeaves:leaves,leafRanges};return g;
+}
 
 export function createGrazedSwardGeometry(T){
  const P=[],C=[],U=[],I=[],leafRanges=[];

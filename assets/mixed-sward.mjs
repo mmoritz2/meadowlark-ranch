@@ -1,6 +1,6 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1';
+import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1';
+import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-ribbon-5';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
@@ -66,7 +66,7 @@ export function readSwardSpecimens(buffer){
 export function installMixedSward(G,{assetUrl='./assets/models/world/grass_medium_02_specimens.glb',fetchAsset=fetch}={}){
  const {THREE:T,scene,world:W}=G,cover=W.nearGroundCover,source=cover?.swardSource;
  if(!source)throw Error('Mixed sward needs the counted near source-cell adapter');
- const state={ready:null,errors:[],stats:null,basal:null,basalMeshes:[],meshes:[],sources:[],disposed:false};let lastKey=null,lastX=Infinity,lastZ=Infinity,lastQuality=null,lastVR=null,rebuilds=0,cachedKey=null,cachedMetadata=null;const cellCache=new WeakMap(),timingSamples=[];const originalNear=cover.near,ownedGeometries=[];
+ const state={ready:null,errors:[],stats:null,basal:null,basalMeshes:[],meshes:[],sources:[],disposed:false};let lastKey=null,lastX=Infinity,lastZ=Infinity,lastQuality=null,lastVR=null,rebuilds=0,cachedKey=null,cachedMetadata=null;const cellCache=new WeakMap(),timingSamples=[];const originalNear=cover.near,ownedGeometries=[];let fullGrazedGeometry=null,lowGrazedGeometry=null,lowRowsKey=null,lowRows=null;
  const geometryBytes=()=>ownedGeometries.reduce((n,g)=>n+(g.index?.array.byteLength||0)+Object.values(g.attributes).reduce((s,a)=>s+a.array.byteLength,0),0);
  const instanceBytes=()=>[...state.basalMeshes,...state.meshes].reduce((n,m)=>n+m.instanceMatrix.array.byteLength+(m.instanceColor?.array.byteLength||0),0);
  // Only the drawn prefix is uploaded; unused capacity cannot contribute vertices.
@@ -87,7 +87,27 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
  function tick(t,x,z,force=false){if(state.disposed||!state.basal)return;const key=source.key(),quality=G.gfx.get(),vr=source.vr(),active=!vr&&['high','medium'].includes(quality);
   if(!force&&key===lastKey&&quality===lastQuality&&vr===lastVR&&(!active||Math.hypot(x-lastX,z-lastZ)<1.25))return;
   // Low/VR use the original source draw; no per-root biome or accent planning.
-  if(!active){const started=now();if(lastQuality===null||(['high','medium'].includes(lastQuality)&&!lastVR)||vr!==lastVR)restore();
+  if(!vr&&quality==='low'){
+   const started=now();let classified=0;
+   if(lowRowsKey!==key||!lowRows){
+    const near=[],fine=[];
+    for(let cellIndex=0;cellIndex<source.cells.length;cellIndex++){
+     const cell=source.cells[cellIndex],pastoral=pastoralSourceRows(cell);
+     for(let row=0;row<cell.count;row++){
+      const o=row*16,x=cell.matrices[o+12],z=cell.matrices[o+14],cut=pastoral.cuts[row],t=clamp((cut-GRAZED_SWARD.maskStart)/(GRAZED_SWARD.maskFull-GRAZED_SWARD.maskStart),0,1),r={cellIndex,row,pastoralCut:cut,pastoralCap:pastoral.caps[row]};
+      (swardHash(x,z,37)<t*t*(3-2*t)?fine:near).push(r);
+     }
+    }
+    lowRows={near,fine};lowRowsKey=key;classified=near.length+fine.length;
+   }
+   for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;
+   state.basalMeshes[3].geometry=lowGrazedGeometry;copy(lowRows.near,originalNear);copy(lowRows.fine,state.basalMeshes[3]);
+   const roots=source.cells.reduce((n,c)=>n+c.count,0),total=now()-started;
+   state.stats={sourceRoots:roots,nearRoots:lowRows.near.length,basalRoots:lowRows.fine.length,familyCounts:[0,0,0,lowRows.fine.length],grazedRoots:lowRows.fine.length,grazedTrianglesPerRoot:40,scanRoots:0,scanCap:0,scanCounts:[0,0,0,0,0],submittedTriangles:roots*MIXED_SWARD.sourceTriangles,sourceSubmittedTriangles:roots*MIXED_SWARD.sourceTriangles,budgetMaxTriangles:roots*MIXED_SWARD.sourceTriangles,triangleDelta:0,classifiedRoots:classified,reusedEligibilityRoots:roots-classified,accentChecks:0,timing:{rebuilds:++rebuilds,eligibilityMs:0,broadphaseMs:0,selectionMs:0,planMs:0,packMs:total,totalMs:total,scope:'OriginalLow roots split into two40-triangle banks; no added density or render/GPU claim'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0};
+   lastKey=key;lastX=x;lastZ=z;lastQuality=quality;lastVR=vr;return;
+  }
+  state.basalMeshes[3].geometry=fullGrazedGeometry;
+  if(!active){const started=now();if(lastQuality===null||lastQuality==='low'||(['high','medium'].includes(lastQuality)&&!lastVR)||vr!==lastVR)restore();
    for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;
    const roots=source.cells.reduce((n,c)=>n+c.count,0),count=vr?Math.floor(roots*.5):roots,total=now()-started;
    state.stats={sourceRoots:roots,nearRoots:count,basalRoots:0,familyCounts:[0,0,0,0],grazedRoots:0,scanRoots:0,scanCap:0,scanCounts:[0,0,0,0,0],submittedTriangles:count*MIXED_SWARD.sourceTriangles,sourceSubmittedTriangles:count*MIXED_SWARD.sourceTriangles,budgetMaxTriangles:count*MIXED_SWARD.sourceTriangles,triangleDelta:0,classifiedRoots:0,reusedEligibilityRoots:0,accentChecks:0,timing:{rebuilds:++rebuilds,eligibilityMs:0,broadphaseMs:0,selectionMs:0,planMs:0,packMs:total,totalMs:total,scope:'Original Low/VR draw, no grass classification or scan selection'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0};
@@ -109,8 +129,8 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   lastKey=key;lastX=x;lastZ=z;lastQuality=quality;lastVR=vr;
  }
  const onTick=(dt,t)=>{try{const p=G.horse.player.pos;tick(t,p.x,p.z);}catch(error){state.errors.push(error.message);state.dispose();console.warn('Mixed sward returned to original cover',error);}};
- state.dispose=()=>{if(state.disposed)return;state.disposed=true;G.off('tick',onTick);if(state.basal)restore();for(const mesh of state.basalMeshes){scene.remove(mesh);mesh.dispose();}for(const mesh of state.meshes){scene.remove(mesh);mesh.dispose();}for(const geo of ownedGeometries)geo.dispose();state.basalMeshes.length=0;state.meshes.length=0;state.sources.length=0;ownedGeometries.length=0;cachedMetadata=null;for(const cell of source.cells)cellCache.delete(cell);state.basal=null;};
- state.tick=tick;state.refreshEligibility=()=>{cachedKey=null;cachedMetadata=null;for(const cell of source.cells)cellCache.delete(cell);};
+ state.dispose=()=>{if(state.disposed)return;state.disposed=true;G.off('tick',onTick);if(state.basal)restore();for(const mesh of state.basalMeshes){scene.remove(mesh);mesh.dispose();}for(const mesh of state.meshes){scene.remove(mesh);mesh.dispose();}for(const geo of ownedGeometries)geo.dispose();state.basalMeshes.length=0;state.meshes.length=0;state.sources.length=0;ownedGeometries.length=0;cachedMetadata=null;lowRows=null;lowRowsKey=null;fullGrazedGeometry=null;lowGrazedGeometry=null;for(const cell of source.cells)cellCache.delete(cell);state.basal=null;};
+ state.tick=tick;state.refreshEligibility=()=>{cachedKey=null;cachedMetadata=null;lowRowsKey=null;lowRows=null;for(const cell of source.cells)cellCache.delete(cell);};
  state.ready=(async()=>{
   // The source clocks/placements finish before ANY new Three resource UUID is allocated.
   await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,W.ranchBuilderArt?.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,G.worldPaths?.roadsideReady]);if(state.disposed)return state;
@@ -126,6 +146,12 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
   state.basal=state.basalMeshes[0];
 
   for(let i=0;i<5;i++){const s=sources[i],geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(s.positions,3));geo.setAttribute('normal',new T.BufferAttribute(s.normals,3));geo.setAttribute('uv',new T.BufferAttribute(s.uvs,2));geo.setIndex(new T.BufferAttribute(s.indices,1));geo.computeBoundingBox();geo.computeBoundingSphere();ownedGeometries.push(geo);const mesh=new T.InstancedMesh(geo,material,MIXED_SWARD.high);mesh.name='Mixed pasture | resident specimen '+i;mesh.count=0;mesh.frustumCulled=false;mesh.receiveShadow=true;mesh.castShadow=false;mesh.userData.fineGroundCover=true;mesh.userData.sourceSpecimen=i;mesh.userData.sourceHeight=s.sourceHeight;state.meshes.push(mesh);scene.add(mesh);}
+  // Allocate only one additional geometry after all original banks/resources.
+  // Its synchronous private UUID stream leaves original/future world RNG exact.
+  fullGrazedGeometry=state.basalMeshes[3].geometry;
+  {const random=Math.random;let seed=0x6c6f7731;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};try{lowGrazedGeometry=createLowGrazedSwardGeometry(T,fullGrazedGeometry);}finally{Math.random=random;}}
+  if(lowGrazedGeometry.index.count/3!==MIXED_SWARD.sourceTriangles||originalNear.geometry.index.count/3!==MIXED_SWARD.sourceTriangles)throw Error('Low turf must retain the original40-triangle root budget');
+  ownedGeometries.push(lowGrazedGeometry);
   G.on('tick',onTick);const p=G.horse.player.pos;tick(0,p.x,p.z,true);return state;
  })().catch(error=>{state.errors.push(error.message);state.dispose();console.warn('Mixed sward prototype unavailable',error);return state;});
  return state;

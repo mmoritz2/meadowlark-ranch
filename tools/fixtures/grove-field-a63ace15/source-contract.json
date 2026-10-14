@@ -1,0 +1,538 @@
+{
+  "profile": "grove-field-1",
+  "baseline": "a63ace15b866db262bbd96fd7b8b6dd8db3f37d9",
+  "status": "SOURCE_DECLARATION_ART_GATED_BY_RELEASE_RECEIPT",
+  "files": {
+    "assets/features/index.js": {
+      "beforeSHA256": "0da51f096e3324c0d97c129f45c588af737cd2f9c646fa1a525b0b7050e5f29e",
+      "afterSHA256": "b75027abf3da8409d976352c10619ee7abd9dbf759c1ecdc92aa4b20451d0730",
+      "changes": [
+        {
+          "before": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1",
+          "after": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/features/world-flora.js": {
+      "beforeSHA256": "b6c47f7828fbb467c19737e14a9a363dd6137d8b1058bec78decb3027b14bb7f",
+      "afterSHA256": "47eb1e62470f4e3105c20df2050a77099e3027a3d255fd9b6796ad7850593f9d",
+      "changes": [
+        {
+          "before": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/grazed-sward.mjs": {
+      "beforeSHA256": "d2b532d9c11ac9c4e6e6fc3f739da0589f90bfc4ce55fd231f9596b22db9f6bc",
+      "afterSHA256": "abfcda524404f7ccd55aaf319ef7a27f9dd4e9261409fcbf31bbe4a6d4c7c56d",
+      "changes": [
+        {
+          "before": "export function createGrazedSwardGeometry(T){",
+          "after": "// Low keeps complete source leaves within the original forty-triangle root\n// budget. The resident70 stand supplies identical rooted positions/UV/colors.\nexport function createLowGrazedSwardGeometry(T,source){\n if(!source?.userData?.grazedSward||source.index?.count!==210)throw Error('Current complete70-triangle turf source required');\n const leaves=[0,1,2,3,5,6,8,9,12,17,18,19,20,23,24,25,26,27,30,33],ranges=source.userData.grazedSward.leafRanges,arrays=Object.fromEntries(Object.entries(source.attributes).map(([name])=>[name,[]])),indices=[],leafRanges=[];\n let vertex=0;\n for(const leaf of leaves){\n  const r=ranges[leaf];if(!r||r.indexCount!==(r.curved?9:3))throw Error('Whole source turf leaf required');\n  for(const[name,a]of Object.entries(source.attributes))for(let i=r.vertexStart*a.itemSize;i<(r.vertexStart+r.vertexCount)*a.itemSize;i++)arrays[name].push(a.array[i]);\n  const indexStart=indices.length;for(let i=r.indexStart;i<r.indexStart+r.indexCount;i++)indices.push(source.index.array[i]-r.vertexStart+vertex);\n  leafRanges.push({...r,sourceLeaf:leaf,vertexStart:vertex,indexStart,root:[...r.root]});vertex+=r.vertexCount;\n }\n const g=new T.BufferGeometry();for(const[name,a]of Object.entries(source.attributes))g.setAttribute(name,new T.Float32BufferAttribute(arrays[name],a.itemSize,a.normalized));g.setIndex(indices);g.computeBoundingBox();g.computeBoundingSphere();\n g.userData.grazedSward={profile:'grazed-natural-low-1',triangles:40,leaves:20,broadLeaves:0,bentLeaves:10,fineBlades:10,rootGroups:7,sourceLeaves:leaves,leafRanges};return g;\n}\n\nexport function createGrazedSwardGeometry(T){",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/meadow-cover.js": {
+      "beforeSHA256": "65bc106d112e2c47b36621735dc8eb55d7a092ab2d87442d6ad6711fc26bfab8",
+      "afterSHA256": "140d319998863b3958a5643fe0a25fbc56965b97291b0d7eb0e844fd4b3bdcc4",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/mixed-sward.mjs": {
+      "beforeSHA256": "96115c1d92bf87715b85d0dafb1d90e536bc5508eab1a04ddd699030e63ae4af",
+      "afterSHA256": "3d6bb8d02e83dfabf3ae03d4cb0de1d6200933172035cb81c4ffed76ed7be8f1",
+      "changes": [
+        {
+          "before": "import {createGrazedSwardGeometry,selectsGrazedSward}",
+          "after": "import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD}",
+          "occurrences": 1
+        },
+        {
+          "before": "const originalNear=cover.near,ownedGeometries=[];",
+          "after": "const originalNear=cover.near,ownedGeometries=[];let fullGrazedGeometry=null,lowGrazedGeometry=null,lowRowsKey=null,lowRows=null;",
+          "occurrences": 1
+        },
+        {
+          "before": "  if(!active){const started=now();if(lastQuality===null||(['high','medium'].includes(lastQuality)&&!lastVR)||vr!==lastVR)restore();\n   for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;",
+          "after": "  if(!vr&&quality==='low'){\n   const started=now();let classified=0;\n   if(lowRowsKey!==key||!lowRows){\n    const near=[],fine=[];\n    for(let cellIndex=0;cellIndex<source.cells.length;cellIndex++){\n     const cell=source.cells[cellIndex],pastoral=pastoralSourceRows(cell);\n     for(let row=0;row<cell.count;row++){\n      const o=row*16,x=cell.matrices[o+12],z=cell.matrices[o+14],cut=pastoral.cuts[row],t=clamp((cut-GRAZED_SWARD.maskStart)/(GRAZED_SWARD.maskFull-GRAZED_SWARD.maskStart),0,1),r={cellIndex,row,pastoralCut:cut,pastoralCap:pastoral.caps[row]};\n      (swardHash(x,z,37)<t*t*(3-2*t)?fine:near).push(r);\n     }\n    }\n    lowRows={near,fine};lowRowsKey=key;classified=near.length+fine.length;\n   }\n   for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;\n   state.basalMeshes[3].geometry=lowGrazedGeometry;copy(lowRows.near,originalNear);copy(lowRows.fine,state.basalMeshes[3]);\n   const roots=source.cells.reduce((n,c)=>n+c.count,0),total=now()-started;\n   state.stats={sourceRoots:roots,nearRoots:lowRows.near.length,basalRoots:lowRows.fine.length,familyCounts:[0,0,0,lowRows.fine.length],grazedRoots:lowRows.fine.length,grazedTrianglesPerRoot:40,scanRoots:0,scanCap:0,scanCounts:[0,0,0,0,0],submittedTriangles:roots*MIXED_SWARD.sourceTriangles,sourceSubmittedTriangles:roots*MIXED_SWARD.sourceTriangles,budgetMaxTriangles:roots*MIXED_SWARD.sourceTriangles,triangleDelta:0,classifiedRoots:classified,reusedEligibilityRoots:roots-classified,accentChecks:0,timing:{rebuilds:++rebuilds,eligibilityMs:0,broadphaseMs:0,selectionMs:0,planMs:0,packMs:total,totalMs:total,scope:'OriginalLow roots split into two40-triangle banks; no added density or render/GPU claim'},geometryBytes:geometryBytes(),instanceBytes:instanceBytes(),addedTextureCount:0,addedMaterialCount:0};\n   lastKey=key;lastX=x;lastZ=z;lastQuality=quality;lastVR=vr;return;\n  }\n  state.basalMeshes[3].geometry=fullGrazedGeometry;\n  if(!active){const started=now();if(lastQuality===null||lastQuality==='low'||(['high','medium'].includes(lastQuality)&&!lastVR)||vr!==lastVR)restore();\n   for(const mesh of [...state.basalMeshes,...state.meshes])mesh.count=0;",
+          "occurrences": 1
+        },
+        {
+          "before": "cachedMetadata=null;for(const cell of source.cells)cellCache.delete(cell);state.basal=null;",
+          "after": "cachedMetadata=null;lowRows=null;lowRowsKey=null;fullGrazedGeometry=null;lowGrazedGeometry=null;for(const cell of source.cells)cellCache.delete(cell);state.basal=null;",
+          "occurrences": 1
+        },
+        {
+          "before": "state.refreshEligibility=()=>{cachedKey=null;cachedMetadata=null;",
+          "after": "state.refreshEligibility=()=>{cachedKey=null;cachedMetadata=null;lowRowsKey=null;lowRows=null;",
+          "occurrences": 1
+        },
+        {
+          "before": "  G.on('tick',onTick);const p=G.horse.player.pos;tick(0,p.x,p.z,true);return state;",
+          "after": "  // Allocate only one additional geometry after all original banks/resources.\n  // Its synchronous private UUID stream leaves original/future world RNG exact.\n  fullGrazedGeometry=state.basalMeshes[3].geometry;\n  {const random=Math.random;let seed=0x6c6f7731;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};try{lowGrazedGeometry=createLowGrazedSwardGeometry(T,fullGrazedGeometry);}finally{Math.random=random;}}\n  if(lowGrazedGeometry.index.count/3!==MIXED_SWARD.sourceTriangles||originalNear.geometry.index.count/3!==MIXED_SWARD.sourceTriangles)throw Error('Low turf must retain the original40-triangle root budget');\n  ownedGeometries.push(lowGrazedGeometry);\n  G.on('tick',onTick);const p=G.horse.player.pos;tick(0,p.x,p.z,true);return state;",
+          "occurrences": 1
+        },
+        {
+          "before": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1",
+          "after": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/pastoral-cover-refresh.mjs": {
+      "beforeSHA256": "7debb89d4240336fecb55bb2d156970a53e7c36cdc3982af0e9c861b0658ce73",
+      "afterSHA256": "f8bfacbba731b80b24a944f4a2642d459ae42ac05175de9fc1607038e7ad36ec",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/pastoral-cover.mjs": {
+      "beforeSHA256": "db0a282bc17f7c794d2a14da1541e9307e306cd2f947675ebcf597c4985daa7c",
+      "afterSHA256": "b91b435b466a451d64a0d62a9e7f6ce7bea1ec22b558b78bb5dd62897c299598",
+      "changes": [
+        {
+          "before": "const positive=(a,o)=>",
+          "after": "// One connected submitted glade in the resident grove. These two unequal\n// lobes never participate in placement, eligibility, growth or tree planning.\nconst GROVE_GLADE=Object.freeze([\n Object.freeze({x:160,z:-168,rx:13,rz:22,yaw:.66}),\n Object.freeze({x:182,z:-190,rx:21,rz:30,yaw:.66})\n]);\nconst GLADE_BOUNDS=Object.freeze({minX:143.04675941406035,maxX:206.76981497399163,minZ:-216.97139718580073,maxZ:-148.87965393526443});\nconst gladeWeight=(x,z)=>{\n if(x<=GLADE_BOUNDS.minX||x>=GLADE_BOUNDS.maxX||z<=GLADE_BOUNDS.minZ||z>=GLADE_BOUNDS.maxZ)return 0;\n // A smooth union keeps the two lobes connected without a max-join crease.\n // The broad 4.5\u20135.5 m inner fade is compact at the original ellipse bounds.\n const width=5+Math.sin(x*.071+z*.043)*.35+Math.sin(x*.039-z*.067)*.15;\n let remainder=1;for(const p of GROVE_GLADE)remainder*=1-ease(0,width,(1-footprint(p,x,z))*Math.min(p.rx,p.rz));\n return 1-remainder;\n};\nconst positive=(a,o)=>",
+          "occurrences": 1
+        },
+        {
+          "before": " function at(x,z){\n  if(x<=MIN_X||x>=MAX_X||z<=MIN_Z||z>=MAX_Z)return ZERO;",
+          "after": " const gladeCuts=new Float32Array(NX*NZ),gladeCaps=new Float32Array(NX*NZ),trunks=new Map();\n const trunkCell=4,trunkKey=(x,z)=>Math.floor(x/trunkCell)+','+Math.floor(z/trunkCell);\n let gladeVertices=0,gladeTrees=0;\n for(const p of forestPoints){\n  if(!Number.isFinite(p.x+p.z)||!Number.isFinite(p.s??1)||p.x<GLADE_BOUNDS.minX-2.2||p.x>GLADE_BOUNDS.maxX+2.2||p.z<GLADE_BOUNDS.minZ-2.2||p.z>GLADE_BOUNDS.maxZ+2.2)continue;\n  // Actual final tree centres, with a small untended contact skirt. Crown-size\n  // forest radii are deliberately not reused as new grazing exclusion discs.\n  const tree={x:p.x,z:p.z,inner:.32+.08*Math.min(2,Math.max(0,p.s??1)),outer:1.50+.30*Math.min(2,Math.max(0,p.s??1))},key=trunkKey(p.x,p.z);\n  if(!trunks.has(key))trunks.set(key,[]);trunks.get(key).push(tree);gladeTrees++;\n }\n const gx0=Math.max(0,Math.floor((GLADE_BOUNDS.minX-MIN_X)/STEP)),gx1=Math.min(NX-1,Math.ceil((GLADE_BOUNDS.maxX-MIN_X)/STEP)),gz0=Math.max(0,Math.floor((GLADE_BOUNDS.minZ-MIN_Z)/STEP)),gz1=Math.min(NZ-1,Math.ceil((GLADE_BOUNDS.maxZ-MIN_Z)/STEP));\n for(let iz=gz0;iz<=gz1;iz++)for(let ix=gx0;ix<=gx1;ix++){\n  const x=MIN_X+ix*STEP,z=MIN_Z+iz*STEP,i=iz*NX+ix,weight=gladeWeight(x,z);if(weight===0||protectedAt(x,z))continue;\n  const river=Math.abs(z-riverZ(x)),y=terrainH(x,z),water=riverLevel(x);if(!Number.isFinite(y+water))throw Error('Nonfinite pastoral glade terrain');\n  const slope=Math.hypot((terrainH(x+.75,z)-terrainH(x-.75,z))/1.5,(terrainH(x,z+.75)-terrainH(x,z-.75))/1.5);\n  const band=fieldSwardAt(x,z).cover,margin=meadowMarginAt(x,z),marsh=1-ease(78,119,Math.hypot(x-310,z-300));\n  const cut=weight*(1-.985*band)*(1-.92*margin)*(1-marsh)*ease(9.6,17,river)*(1-ease(.37,.82,slope));\n  gladeCuts[i]=cut;gladeCaps[i]=cut>0?.43+.07*(.5+.5*Math.sin(x*.027+z*.013)*Math.sin(z*.031-x*.009)):0;if(cut>0)gladeVertices++;\n }\n function originalAt(x,z){\n  if(x<=MIN_X||x>=MAX_X||z<=MIN_Z||z>=MAX_Z)return ZERO;",
+          "occurrences": 1
+        },
+        {
+          "before": " function applyGrazingPixels(data,size){",
+          "after": " function at(x,z){\n  const original=originalAt(x,z),weight=gladeWeight(x,z);if(weight===0||protectedAt(x,z))return original;\n  const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;\n  const a=(1-fx)*(1-fz),b=fx*(1-fz),c=(1-fx)*fz,d=fx*fz;\n  let cut=(gladeCuts[i]*a+gladeCuts[i+1]*b+gladeCuts[i+NX]*c+gladeCuts[i+NX+1]*d)*ease(0,.15,weight);\n  if(cut<=1e-7)return original;\n  const tx=Math.floor(x/trunkCell),tz=Math.floor(z/trunkCell);let skirt=1;\n  for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)for(const p of trunks.get((tx+dx)+','+(tz+dz))||[])skirt*=ease(p.inner,p.outer,Math.hypot(x-p.x,z-p.z));\n  cut*=skirt;if(cut<=1e-7)return original;\n  const base=gladeCaps[i]*a+gladeCaps[i+1]*b+gladeCaps[i+NX]*c+gladeCaps[i+NX+1]*d;\n  return{cut:Math.max(original.cut,cut),cap:Math.min(original.cap,base/(cut*cut))};\n }\n function applyGrazingPixels(data,size){",
+          "occurrences": 1
+        },
+        {
+          "before": "forestCount,coveredVertices:covered}),at,applyGrazingPixels",
+          "after": "forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS}),at,applyGrazingPixels",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/terrain-realism.js": {
+      "beforeSHA256": "b2b6ab9f4fb400d063d2cc9e62319c7738a31744fa00bfb0a9fcbeb4c650d518",
+      "afterSHA256": "d11670e2a8cb53ae6a1b23f59f3ee548a93ba81fcf0b6abf25fd3b76c958a3a3",
+      "changes": [
+        {
+          "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "12f49a86f11ee37647eadd876fa605f29047d2cad96379e6575ff0dfcd27c456",
+      "afterSHA256": "3a092dcde1db6c2a74b005ec363da0842e4b99030174caf4f938793b5a797a9f",
+      "changes": [
+        {
+          "before": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1",
+          "after": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1",
+          "after": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1",
+          "after": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1",
+          "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1",
+          "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "observers": {
+    "tools/grazed-natural-parent-factory.mjs": {
+      "beforeSHA256": "aff805ec23d8ee237f6961d4b847cc17a2192238ed93d746392918956668bffa",
+      "afterSHA256": "67844a258f15e253ad17895375437adb02ae78816aac44e2242989ab4b498f7f",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/island-normal-source-guard.cjs": {
+      "beforeSHA256": "b6af6e71061548c2969afb467d513e2dcc1e084f1049650fd5e5b279901aaa84",
+      "afterSHA256": "5ef1efcab733ffcd6876da7a7d184a5e5b2d631d166c209be666f47b919e49e2",
+      "changes": [
+        {
+          "before": "const fs=require('node:fs')",
+          "after": "const {normalizeGroveFieldAuditSource,normalizeGroveFieldFixtureChanges}=require('./grove-field-source-guard.cjs');\nconst fs=require('node:fs')",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeIslandNormalAuditSource(source,file){const row=",
+          "after": "function normalizeIslandNormalAuditSource(source,file){source=normalizeGroveFieldAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function assertIslandNormalCurrent(source,file){const row=",
+          "after": "function assertIslandNormalCurrent(source,file){source=normalizeGroveFieldAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeIslandNormalFixtureChanges(diff){const rows=",
+          "after": "function normalizeIslandNormalFixtureChanges(diff){diff=normalizeGroveFieldFixtureChanges(diff);const rows=",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/pastoral-production-fixture.mjs": {
+      "beforeSHA256": "82eab42cde1cba1ee1fd93589d8e1095a36b482b5d281710017a3313f511cda3",
+      "afterSHA256": "e42ce4afa1a8d998b55d6da14366183e8e6d447ab479c6b3e296ed0779bb3d8f",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-grazed-natural.mjs": {
+      "beforeSHA256": "e437cfa5b01b7f8bf31eb55f65c6b77bfa11334b4065a6a1b5f19739a2ccd7cb",
+      "afterSHA256": "88d972ad613ae7a91421903e5640a0c024b561996ec6e2cb1722d49e914e69e5",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "prefix(parent));for(const key",
+          "after": "prefix(parent).replace('pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1','pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1'));for(const key",
+          "occurrences": 1
+        },
+        {
+          "before": " const prefix=s=>s.slice(0,s.indexOf('export function createGrazedSwardGeometry(T){'));assert.equal(prefix(source).replace",
+          "after": " const prefix=s=>s.slice(0,s.indexOf('export function createGrazedSwardGeometry(T){'));const gladeContract=JSON.parse(fs.readFileSync(new URL('./fixtures/grove-field-a63ace15/source-contract.json',import.meta.url))),helperEdit=gladeContract.files['assets/grazed-sward.mjs'].changes.find(c=>c.before==='export function createGrazedSwardGeometry(T){'),helper=helperEdit.after.slice(0,-helperEdit.before.length);assert.equal(prefix(source).split(helper).length,2,'Only the exact declared Low helper is excluded from the historical70 header');assert.equal(prefix(source).replace(helper,'').replace",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-mixed-sward-production.mjs": {
+      "beforeSHA256": "084aebcbc01b1f48b02ee7fbff0e105d16ac04122e61dbe84ffcf3ed5fd2514c",
+      "afterSHA256": "bfc759049036c13ebd84384a239c53076fcb296e9549a47fc037d8709105a41e",
+      "changes": [
+        {
+          "before": "import {selectsGrazedSward} from '../assets/grazed-sward.mjs';",
+          "after": "import {selectsGrazedSward,createGrazedSwardGeometry,createLowGrazedSwardGeometry} from '../assets/grazed-sward.mjs';",
+          "occurrences": 1
+        },
+        {
+          "before": "const totalRoots = cells => cells.reduce((n, c) => n + c.count, 0);",
+          "after": "// Allocated cost includes the inactive40/70 variant, not only drawn geometry.\nconst GRAZED_OWNED_BYTES=(()=>{const full=createGrazedSwardGeometry(THREE),low=createLowGrazedSwardGeometry(THREE,full),v={full:geometryBytes(full),low:geometryBytes(low)};full.dispose();low.dispose();return v;})();\nconst ownedGeometryBytes=state=>[...state.basalMeshes,...state.meshes].reduce((n,m)=>n+geometryBytes(m.geometry),0)+(triangles(state.basalMeshes[3].geometry)===40?GRAZED_OWNED_BYTES.full:GRAZED_OWNED_BYTES.low);\nconst totalRoots = cells => cells.reduce((n, c) => n + c.count, 0);",
+          "occurrences": 1
+        },
+        {
+          "before": "[...state.basalMeshes,...state.meshes].reduce((sum,m)=>sum+geometryBytes(m.geometry),0)",
+          "after": "ownedGeometryBytes(state)",
+          "occurrences": 1
+        },
+        {
+          "before": "[...state.basalMeshes,...state.meshes].reduce((sum, m) => sum + geometryBytes(m.geometry), 0)",
+          "after": "ownedGeometryBytes(state /* allocated full/Low variants */)",
+          "occurrences": 1
+        },
+        {
+          "before": "function originalRows(w) {",
+          "after": "function originalRows(w,state=null) {\n  if(state?.basalMeshes[3]&&state.stats.grazedTrianglesPerRoot===40){\n   const source=new Map();for(const c of w.cells)for(let i=0;i<c.count;i++)source.set(c.matrices[i*16+12]+','+c.matrices[i*16+14],c.colors.slice(i*3,i*3+3));\n   const seen=new Set();for(const mesh of[w.near,state.basalMeshes[3]])for(let i=0;i<mesh.count;i++){const key=mesh.instanceMatrix.array[i*16+12]+','+mesh.instanceMatrix.array[i*16+14];assert(source.has(key)&&!seen.has(key),'EachLow root appears once across near40/fine40');seen.add(key);assert.deepEqual(mesh.instanceColor.array.slice(i*3,i*3+3),source.get(key));}\n   assert.equal(seen.size,totalRoots(w.cells));assert.equal(w.near.count+state.basalMeshes[3].count,totalRoots(w.cells));assert.equal(triangles(state.basalMeshes[3].geometry),40);assert.equal(state.stats.submittedTriangles,totalRoots(w.cells)*40);return;\n  }",
+          "occurrences": 1
+        },
+        {
+          "before": "originalRows(w);",
+          "after": "originalRows(w,state);",
+          "occurrences": 12
+        },
+        {
+          "before": "assert(state.basalMeshes.every(m => m.count === 0));",
+          "after": "assert(state.basalMeshes.slice(0,3).every(m => m.count === 0));\n  assert.equal(state.stats.grazedRoots,state.basalMeshes[3].count);\n  const lowOwnedGeometry=state.basalMeshes[3].geometry;",
+          "occurrences": 1
+        },
+        {
+          "before": "assert.deepEqual(state.stats.familyCounts,[0,0,0,0]);",
+          "after": "assert.deepEqual(state.stats.familyCounts,[0,0,0,state.basalMeshes[3].count]);",
+          "occurrences": 1
+        },
+        {
+          "before": "assert.equal(state.stats.classifiedRoots, 0);",
+          "after": "assert.equal(state.stats.classifiedRoots, totalRoots(w.cells));",
+          "occurrences": 1
+        },
+        {
+          "before": "const owned = [...ownedMeshes, ...ownedMeshes.map(m => m.geometry)];",
+          "after": "const owned = [...new Set([...ownedMeshes, ...ownedMeshes.map(m => m.geometry),lowOwnedGeometry])];",
+          "occurrences": 1
+        },
+        {
+          "before": "w.quality('low');w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);",
+          "after": "w.quality('low');w.tick();assert.equal(short.geometry.index.count/3,40);assert.equal(state.stats.grazedRoots,short.count);",
+          "occurrences": 1
+        },
+        {
+          "before": "  originalRows(w,state);\n  for (const loader of",
+          "after": "  originalRows(w,cancelled);\n  for (const loader of",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-pastoral-cover.mjs": {
+      "beforeSHA256": "2f60216bff6af30a0c3fbb3c05e4707392fad91d5d1acae22df931fb27c882e7",
+      "afterSHA256": "b2ac17c012df012a91d8ef67265bf7057070afc30ef0f20544ea21fdfa078512",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 2
+        }
+      ]
+    },
+    "tools/test-pastoral-integration-independent.mjs": {
+      "beforeSHA256": "bec9de0602e324b98cf2707ee0e695e3208db021fbc3a4e3fd74a8fc5201b4f8",
+      "afterSHA256": "0c257310edc718d86e627c74217041ed2178dbbece8f857f0607accc00797002",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        },
+        {
+          "before": "if(tier==='low'||xr){assert.equal(s.stats.basalRoots,0);assert.equal(s.stats.scanRoots,0);}",
+          "after": "if(xr){assert.equal(s.stats.basalRoots,0);assert.equal(s.stats.scanRoots,0);}else if(tier==='low'){assert.equal(near.count+s.basalMeshes[3].count,capacity);assert.equal(s.basalMeshes[3].geometry.index.count/3,40);assert.equal(s.stats.submittedTriangles,capacity*40);assert.equal(s.stats.basalRoots,s.basalMeshes[3].count);assert.equal(s.stats.scanRoots,0);}",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-pastoral-response-independent.mjs": {
+      "beforeSHA256": "1344593d683ab345dd2bafddca88ff7424ae8e21c86504c38850364472628e37",
+      "afterSHA256": "15bcee6b9cd818dedef1c5568cdf40af77a93c1ae9dbe5ed588366bf3fa9ed2b",
+      "changes": [
+        {
+          "before": "?v=pastoral-cover-1-commons-landscape-1",
+          "after": "?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "cacheEdges": [
+    {
+      "file": "assets/features/index.js",
+      "before": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1",
+      "after": "./world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/features/world-flora.js",
+      "before": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/grazed-sward.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/meadow-cover.js",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1",
+      "after": "./grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/mixed-sward.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/pastoral-cover-refresh.mjs",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/terrain-realism.js",
+      "before": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1",
+      "after": "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1",
+      "after": "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1",
+      "after": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1",
+      "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1",
+      "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1",
+      "occurrences": 1
+    }
+  ],
+  "protectedSourceSHA256": {
+    "assets/pastoral-fields.mjs": "7a28359e489c581c5fa212d480b12aea67bb6354fbc0fcb7936e9fb774e162df",
+    "assets/field-sward-bands.mjs": "4659ce2f86ec9be314f4d443329391f44c6bdc97099a62ba0fc2719a210dc1f9",
+    "assets/grass-families.mjs": "4dfebe46d09537f51b3718e637d8efaf13f304dc2b0ea542b07b426d70f3f573",
+    "assets/world-photoscans.js": "30b512a8a1f8b216aad56b4ba11ec8110c8038efd4eedcc23d173f78dde0d196",
+    "assets/island-medium-canopy.mjs": "08c3820da4fe3d18f31409e5ee589fde201cb461b9b188fed1a1a6c441d7f025",
+    "assets/tree-impostors.js": "034419c407aa311f3e3ee8e2011408847525dee5182ecd67558e0e8fcc8f3de5",
+    "assets/models/world/realism/tree-impostors.json": "f5c1b78751e7fe53e7a4a5030e7e42fec575398b4c324ee25ef1c0b275b1cf3e",
+    "assets/models/world/realism/island_tree_01_normals_matched.webp": "c9f532c15071fe492d7dfd98e951341af8984b9be2c6278605b205ecc5b0da84",
+    "assets/models/world/grass_medium_02_specimens.glb": "357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902",
+    "assets/lush-meadow-geometry.mjs": "adcd253788150cf6fcd9d780696a32156035827543098a60cdb3a449804ac6c2",
+    "assets/solid-collisions.js": "c06e7bad9f1c59e6ff9a42a98843f2eca408171fa05c173c2c26ed7112c48e1e"
+  },
+  "protectedFixtures": {
+    "owner": "tools/fixtures/island-normal-7a11/source-contract.json",
+    "ownerSHA256": "635cc5abb4baad90feb510a8224382fcf6293c02688319d28d808ea31ea370bb",
+    "countIncludingOwner": 241,
+    "policy": "Current normal fixture+its240immutable parent inventory, no old fixture edits/copies."
+  },
+  "shape": {
+    "role": "One broad low green glade between existing trunks; uncut outside grass remains the unequal taller shoulder. No added headland band in this first trial.",
+    "lobes": [
+      {
+        "x": 160,
+        "z": -168,
+        "rx": 13,
+        "rz": 22,
+        "yaw": 0.66
+      },
+      {
+        "x": 182,
+        "z": -190,
+        "rx": 21,
+        "rz": 30,
+        "yaw": 0.66
+      }
+    ],
+    "adjustmentFromPlan": "Align both long axes along the rider-to-grove opening and enlarge near lobe so short core joins broadly. Original plan negativeyaw pinched its core.",
+    "bounds": {
+      "minX": 143.04675941406035,
+      "maxX": 206.76981497399163,
+      "minZ": -216.97139718580073,
+      "maxZ": -148.87965393526443
+    },
+    "smoothUnion": "1-product(1-weight_i), compact4.5\u20135.5m innerC2fade, exactquery support and outerweightfade",
+    "coreCapMetres": [
+      0.43,
+      0.5
+    ],
+    "treeSkirts": "Actual final forest centres; core .32+.08min(2,s), outer1.5+.3min(2,s)\u22642.1m, smooth multiplicative overlap;4m spatialhash. Existing originalfield is always preserved where stronger.",
+    "adjustmentFromV1": "Only gladecap expression .32+.055patch\u2192.43+.07patch, keepingfull source naturalgrass belowcap unchanged. No new headland/density. V1Lowbarepalegrass artwithheld."
+  },
+  "lowModel": {
+    "sourceFactory": "CURRENTcreateGrazedSwardGeometry70tri; originalfullfactorytailunchanged",
+    "completeSourceLeaves": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      12,
+      17,
+      18,
+      19,
+      20,
+      23,
+      24,
+      25,
+      26,
+      27,
+      30,
+      33
+    ],
+    "triangles": 40,
+    "bentLeaves": 10,
+    "uprightLeaves": 10,
+    "rootGroups": 7,
+    "vertices": 80,
+    "geometryBytesAdded": 3760,
+    "sourceAABBExtrema": "All6exact; outercurvedtips0..3and.52mleaf27 retained asrealwholeleafsurfaces",
+    "attributes": "EachselectedleafP/N/UV/color/index equalsoriginalsourcebytes; no shreddedtriangles/extent-onlyvertices/newraster"
+  },
+  "currentCPUProof": {
+    "candidateSHA256": "b91b435b466a451d64a0d62a9e7f6ce7bea1ec22b558b78bb5dd62897c299598",
+    "tests": 6,
+    "scope": "Current raw OUT field/model tests; no historical normalization of new behavior."
+  },
+  "scope": "Submittedglade4hunks +wholeleafLow40 geometry/existingbank split and14cacheedges/9runtimeowners. All old placement/planning/physics/source roots/RNG remain; intended grassbasis/height/rich70\u2194fine70 classification/mask only."
+}

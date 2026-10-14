@@ -1,4 +1,4 @@
-import {selectsGrazedSward} from '../assets/grazed-sward.mjs';
+import {selectsGrazedSward,createGrazedSwardGeometry,createLowGrazedSwardGeometry} from '../assets/grazed-sward.mjs';
 import {swardHash} from '../assets/mixed-sward.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,6 +18,9 @@ const assetBuffer = asset.buffer.slice(asset.byteOffset, asset.byteOffset + asse
 const digest = value => crypto.createHash('sha256').update(value).digest('hex');
 const geometryBytes = g => Object.values(g.attributes).reduce((sum, a) => sum + a.array.byteLength, 0) + (g.index?.array.byteLength || 0);
 const triangles = g => (g.index?.count || g.attributes.position.count) / 3;
+// Allocated cost includes the inactive40/70 variant, not only drawn geometry.
+const GRAZED_OWNED_BYTES=(()=>{const full=createGrazedSwardGeometry(THREE),low=createLowGrazedSwardGeometry(THREE,full),v={full:geometryBytes(full),low:geometryBytes(low)};full.dispose();low.dispose();return v;})();
+const ownedGeometryBytes=state=>[...state.basalMeshes,...state.meshes].reduce((n,m)=>n+geometryBytes(m.geometry),0)+(triangles(state.basalMeshes[3].geometry)===40?GRAZED_OWNED_BYTES.full:GRAZED_OWNED_BYTES.low);
 const totalRoots = cells => cells.reduce((n, c) => n + c.count, 0);
 
 // Flat synthetic source cells isolate selection/cache behavior from world eligibility.
@@ -224,7 +227,12 @@ function world(initialQuality = 'high') {
     version: () => { version++; }, tick: () => hooks.get('tick')?.(1 / 60, 120),
   };
 }
-function originalRows(w) {
+function originalRows(w,state=null) {
+  if(state?.basalMeshes[3]&&state.stats.grazedTrianglesPerRoot===40){
+   const source=new Map();for(const c of w.cells)for(let i=0;i<c.count;i++)source.set(c.matrices[i*16+12]+','+c.matrices[i*16+14],c.colors.slice(i*3,i*3+3));
+   const seen=new Set();for(const mesh of[w.near,state.basalMeshes[3]])for(let i=0;i<mesh.count;i++){const key=mesh.instanceMatrix.array[i*16+12]+','+mesh.instanceMatrix.array[i*16+14];assert(source.has(key)&&!seen.has(key),'EachLow root appears once across near40/fine40');seen.add(key);assert.deepEqual(mesh.instanceColor.array.slice(i*3,i*3+3),source.get(key));}
+   assert.equal(seen.size,totalRoots(w.cells));assert.equal(w.near.count+state.basalMeshes[3].count,totalRoots(w.cells));assert.equal(triangles(state.basalMeshes[3].geometry),40);assert.equal(state.stats.submittedTriangles,totalRoots(w.cells)*40);return;
+  }
   const matrices = [], colors = [];
   let remaining = w.near.count;
   for (const c of w.cells) {
@@ -247,7 +255,7 @@ function actualBudget(w, state) {
   assert.deepEqual(state.stats.familyCounts,state.basalMeshes.map(m=>m.count));
   assert.equal(state.stats.familyCounts.reduce((a,b)=>a+b,0),state.stats.basalRoots);
   assert.equal(state.stats.instanceBytes,[...state.basalMeshes,...state.meshes].reduce((sum,m)=>sum+m.instanceMatrix.array.byteLength+(m.instanceColor?.array.byteLength||0),0));
-  assert.equal(state.stats.geometryBytes,[...state.basalMeshes,...state.meshes].reduce((sum,m)=>sum+geometryBytes(m.geometry),0));
+  assert.equal(state.stats.geometryBytes,ownedGeometryBytes(state));
 }
 
 test('deferred installation, High→Low→VR→High and disposal preserve original owners and counted rows', async () => {
@@ -269,13 +277,15 @@ test('deferred installation, High→Low→VR→High and disposal preserve origin
   assert(state.meshes.every(m => m.material === w.scanMaterial && !m.castShadow && m.receiveShadow));
   assert.equal(state.stats.addedMaterialCount, 0);
   assert.equal(state.stats.addedTextureCount, 0);
-  assert.equal(state.stats.geometryBytes, [...state.basalMeshes,...state.meshes].reduce((sum, m) => sum + geometryBytes(m.geometry), 0));
+  assert.equal(state.stats.geometryBytes, ownedGeometryBytes(state /* allocated full/Low variants */));
   exactFamilyRows(w,state);
   actualBudget(w, state);
   w.quality('low'); w.tick();
-  originalRows(w); actualBudget(w, state);
-  assert(state.basalMeshes.every(m => m.count === 0));
-  assert.deepEqual(state.stats.familyCounts,[0,0,0,0]);
+  originalRows(w,state); actualBudget(w, state);
+  assert(state.basalMeshes.slice(0,3).every(m => m.count === 0));
+  assert.equal(state.stats.grazedRoots,state.basalMeshes[3].count);
+  const lowOwnedGeometry=state.basalMeshes[3].geometry;
+  assert.deepEqual(state.stats.familyCounts,[0,0,0,state.basalMeshes[3].count]);
   assert(state.meshes.every(m => m.count === 0));
   const checks = {...w.checks}, builds = state.stats.timing.rebuilds;
   const matrixVersion = w.near.instanceMatrix.version;
@@ -286,11 +296,11 @@ test('deferred installation, High→Low→VR→High and disposal preserve origin
   // This reproduces the production order: original nearGrass repacks before G's tick hook.
   w.cells[0].count -= 3; w.cells[0].version++; w.version(); w.repackOriginal(); w.tick();
   assert.deepEqual(w.checks, checks);
-  assert.equal(state.stats.classifiedRoots, 0);
-  originalRows(w); actualBudget(w, state);
+  assert.equal(state.stats.classifiedRoots, totalRoots(w.cells));
+  originalRows(w,state); actualBudget(w, state);
   w.vr(true); w.tick();
   assert.equal(w.near.count, Math.floor(totalRoots(w.cells) / 2));
-  originalRows(w); actualBudget(w, state);
+  originalRows(w,state); actualBudget(w, state);
   w.quality('high'); w.tick();
   assert.deepEqual(w.checks, checks, 'VR stays on the cheap path despite High preference');
   w.vr(false); w.tick();
@@ -298,13 +308,13 @@ test('deferred installation, High→Low→VR→High and disposal preserve origin
   exactFamilyRows(w,state);
   actualBudget(w, state);
   const ownedMeshes=[...state.basalMeshes,...state.meshes];
-  const owned = [...ownedMeshes, ...ownedMeshes.map(m => m.geometry)];
+  const owned = [...new Set([...ownedMeshes, ...ownedMeshes.map(m => m.geometry),lowOwnedGeometry])];
   let disposed = 0;
   for (const resource of owned) resource.addEventListener('dispose', () => disposed++);
   state.dispose(); state.dispose();
   assert.equal(disposed, owned.length, 'Owned resources disposed exactly once');
   assert.equal(w.near.count, totalRoots(w.cells));
-  originalRows(w);
+  originalRows(w,state);
   assert.equal(w.sharedDisposed(), 0);
   assert.equal(w.G.scene.children.length, 2);
   assert.equal(w.hooks.size, 0);
@@ -327,7 +337,7 @@ test('Low boot and refills skip all eligibility and accent planning', async () =
     assert.deepEqual(w.checks, {basal: 0, accent: 0, query: 0});
     assert.equal(state.stats.timing.eligibilityMs, 0);
     assert.equal(state.stats.timing.selectionMs, 0);
-    originalRows(w); actualBudget(w, state);
+    originalRows(w,state); actualBudget(w, state);
   }
   state.dispose();
   assert.equal(w.sharedDisposed(), 0);
@@ -339,7 +349,7 @@ test('early cancellation and failed asset loading leave original source resource
   cancelled.dispose(); w.unlock(); await cancelled.ready;
   assert.equal(fetched, false);
   assert.equal(w.G.scene.children.length, 2);
-  originalRows(w);
+  originalRows(w,cancelled);
   for (const loader of [async () => ({ok: false, status: 404}), async () => { throw Error('network failure'); }]) {
     const failed = world(); failed.unlock();
     const warn = console.warn;
@@ -400,7 +410,7 @@ test('a failed second family allocation releases partial owned geometry/mesh and
  try{console.warn=()=>{};state=installMixedSward(w.G,{fetchAsset});await state.ready;}finally{console.warn=warn;}
  assert(state.disposed);assert.deepEqual(state.errors,['Injected second family allocation failure']);assert.equal(allocated.length,2);assert.equal(meshes.length,1);assert.equal(disposed,3);
  state.dispose();assert.equal(disposed,3);assert.equal(w.G.scene.children.length,2);assert.equal(w.hooks.size,0);assert.equal(w.sharedDisposed(),0);assert.equal(state.basalMeshes.length,0);assert.equal(state.meshes.length,0);assert.equal(state.basal,null);
- assert.deepEqual(w.near.instanceMatrix.array,beforeMatrix);assert.deepEqual(w.near.instanceColor.array,beforeColor);originalRows(w);
+ assert.deepEqual(w.near.instanceMatrix.array,beforeMatrix);assert.deepEqual(w.near.instanceColor.array,beforeColor);originalRows(w,state);
 });
 
 test('active-prefix updates replace pending ranges, preserve unused capacity and leave source uploads unrestricted',async()=>{
@@ -421,7 +431,7 @@ test('active-prefix updates replace pending ranges, preserve unused capacity and
  const canBasal=w.G.world.nearGroundCover.swardSource.canBasal;w.G.world.nearGroundCover.swardSource.canBasal=()=>false;state.refreshEligibility();state.tick(0,0,0,true);
  rangeCheck();state.basalMeshes.forEach((mesh,i)=>{assert.equal(mesh.count,0);assert.equal(mesh.instanceMatrix.version,versions[i][0]);assert.equal(mesh.instanceColor.version,versions[i][1]);});
  w.G.world.nearGroundCover.swardSource.canBasal=canBasal;state.refreshEligibility();state.tick(0,0,0,true);rangeCheck();exactFamilyRows(w,state);actualBudget(w,state);
- state.dispose();assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);originalRows(w);
+ state.dispose();assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);originalRows(w,state);
 });
 
 test('Low initial draw and source growth cannot retain a smaller pending upload range',async()=>{
@@ -429,7 +439,7 @@ test('Low initial draw and source growth cannot retain a smaller pending upload 
  // Vendored Three creates a full buffer without clearing pending updateRanges. The source
  // owner later uses needsUpdate only, so originalNear must have no prefix range to retain.
  assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);
- w.cells[0].count+=7;w.cells[0].version++;w.version();w.repackOriginal();w.tick();assert.equal(w.near.count,totalRoots(w.cells));originalRows(w);actualBudget(w,state);
+ w.cells[0].count+=7;w.cells[0].version++;w.version();w.repackOriginal();w.tick();assert.equal(w.near.count,totalRoots(w.cells));originalRows(w,state);actualBudget(w,state);
  assert.deepEqual(w.near.instanceMatrix.updateRanges,[]);assert.deepEqual(w.near.instanceColor.updateRanges,[]);assert.deepEqual(w.checks,{basal:0,accent:0,query:0});state.dispose();
 });
 
@@ -442,9 +452,9 @@ test('grazed bucket reuses counted rich roots and leaves tall-margin source base
  const short=state.basalMeshes[3];for(let i=0;i<short.count;i++){const a=short.instanceMatrix.array,o=i*16;assert(sourceRows.has([a[o+12],a[o+14]].join(',')));assert(selectsGrazedSward(a[o+12],a[o+14],swardHash(a[o+12],a[o+14],37)));}
  assert.equal(short.material,w.nearMaterial);assert.equal(short.geometry.index.count/3,70);
  const initialAssignments=exactFamilyRows(w,state),grazedCount=short.count;
- w.quality('low');w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);originalRows(w);actualBudget(w,state);
+ w.quality('low');w.tick();assert.equal(short.geometry.index.count/3,40);assert.equal(state.stats.grazedRoots,short.count);originalRows(w,state);actualBudget(w,state);
  w.quality('high');w.tick();assert.equal(short.count,grazedCount);assert.deepEqual(exactFamilyRows(w,state),initialAssignments);actualBudget(w,state);
- w.vr(true);w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);originalRows(w);actualBudget(w,state);
+ w.vr(true);w.tick();assert.equal(short.count,0);assert.equal(state.stats.grazedRoots,0);originalRows(w,state);actualBudget(w,state);
  w.vr(false);w.tick();assert.equal(short.count,grazedCount);assert.deepEqual(exactFamilyRows(w,state),initialAssignments);actualBudget(w,state);
- assert.equal(sourceDigest(w.cells),before);state.dispose();originalRows(w);assert.equal(w.sharedDisposed(),0);
+ assert.equal(sourceDigest(w.cells),before);state.dispose();originalRows(w,state);assert.equal(w.sharedDisposed(),0);
 });
