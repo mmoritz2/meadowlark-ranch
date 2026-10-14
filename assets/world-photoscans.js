@@ -1,4 +1,5 @@
-import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1';
+import {activeWorldTree,retireCountrysideVistaTrees} from './countryside-vista-owners.mjs?v=countryside-vista-1';
+import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1';
 import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';
 import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
@@ -87,14 +88,14 @@ export function selectMiddleCrownModels({trees,near,planningMiddle,authoredTrian
  const nearSet=new Set(near),forms=new Set(['mature-pine','broadleaf','mature-leaf-broadleaf','canopy-broadleaf','woodland-broadleaf','upright-broadleaf']);
  let triangles=authoredTriangles+near.reduce((sum,t)=>sum+t.source.triangles,0);const middle=[],projection=crownViewProjection(camera),benefits=new Map();
  const benefit=t=>{if(!benefits.has(t))benefits.set(t,projectedCrownBenefit(t,projection));return benefits.get(t);};
- const eligible=t=>!t.retiredFallsFlora&&!nearSet.has(t)&&forms.has(t.source.key)&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15;
+ const eligible=t=>activeWorldTree(t)&&!nearSet.has(t)&&forms.has(t.source.key)&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15;
  const useful=t=>{const b=benefit(t);return b?.visible&&b.area>=(previousMiddleSelection.has(t)?.0003:.0004);};
  const add=t=>{if(middle.length>=middleLimit||triangles+t.source.triangles>triangleBudget)return false;middle.push(t);triangles+=t.source.triangles;return true;};
  if(enabled){
   // Protect original planned pines with meaningful screen presence (0.2% of
   // the frame). Tiny edge crowns still compete by benefit/cost with new forms;
   // preserving every barely visible pine would consume the entire pool.
-  for(const t of planningMiddle||[])if(!t.retiredFallsFlora&&!nearSet.has(t)&&t.source.key==='mature-pine'&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&(!projection||(useful(t)&&benefit(t).area>=.002)))add(t);
+  for(const t of planningMiddle||[])if(activeWorldTree(t)&&!nearSet.has(t)&&t.source.key==='mature-pine'&&Number.isFinite(t.source.triangles)&&t.source.triangles>0&&(!projection||(useful(t)&&benefit(t).area>=.002)))add(t);
   const kept=new Set(middle),score=t=>benefit(t).area/t.source.triangles*(previousMiddleSelection.has(t)?1/.72:1);
   const candidates=projection?trees.filter(t=>!kept.has(t)&&eligible(t)&&useful(t)).sort((a,b)=>score(b)-score(a)):[];
   for(const t of candidates)add(t);
@@ -967,9 +968,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // A complete photographed pine crown has real branch parallax. Reserve
     // feasible space for visible middle crowns instead of spending the entire
     // fixed pool on small nearby firs and flattening the mature trees ahead.
-    const middleCandidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&t.source.key==='mature-pine'&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15)
+    const middleCandidates=enabled?trees.filter(t=>activeWorldTree(t)&&t.source.key==='mature-pine'&&distance(t)<(middleRange+(previousMiddleSelection.has(t)?8:0))**2&&facing(t)>-.15)
       .sort((a,b)=>distance(a)/(1+Math.max(0,facing(a))*2)*(previousMiddleSelection.has(a)?.72:1)-distance(b)/(1+Math.max(0,facing(b))*2)*(previousMiddleSelection.has(b)?.72:1)):[];
-    const candidates=enabled?trees.filter(t=>!t.retiredFallsFlora&&distance(t)<(range+(previousNearSelection.has(t)?5:0))**2)
+    const candidates=enabled?trees.filter(t=>activeWorldTree(t)&&distance(t)<(range+(previousNearSelection.has(t)?5:0))**2)
       .sort((a,b)=>distance(a)*(previousNearSelection.has(a)?.72:1)-distance(b)*(previousNearSelection.has(b)?.72:1)):[];
     const nearest=candidates.find(t=>authoredTriangles+t.source.triangles<=triangleBudget);
     const nearCeiling=middleCandidates.length?Math.max(triangleBudget*2/3,authoredTriangles+(nearest?.source.triangles||0)):triangleBudget;
@@ -1001,12 +1002,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     for(const {mesh,records} of treeCards){
       if(!changed(records))continue;
-      let count=0;for(const t of records)if(!t.retiredFallsFlora&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
+      let count=0;for(const t of records)if(activeWorldTree(t)&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
       mesh.count=count;mesh.visible=count>0;mesh.castShadow=!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
       if(count)mesh.computeBoundingSphere();
     }
     previousSelection=set;previousMode=mode;state.detailRebuilds=(state.detailRebuilds||0)+1;
-    state.distantTrees=trees.length-(state.hollowpeakCliffFlora?.retired.length||0)-selected.length;
+    state.distantTrees=trees.filter(activeWorldTree).length-selected.length;
   }
   state.ready=(async()=>{
     await H.arrivalReady;
@@ -1030,7 +1031,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // and capacities stay fixed; model/card submissions omit only retired owners.
     state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(G,trees,zero);
     if(state.hollowpeakCliffFlora.retired.length){
-      const active=trees.filter(t=>!t.retiredFallsFlora);
+      const active=trees.filter(t=>activeWorldTree(t));
       state.trees=active.length+COTTONWOOD_TREES.length;
       state.conifers=active.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;
       state.matureTrees=active.filter(t=>t.source.key==='mature-pine').length;
@@ -1066,6 +1067,24 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       state.mediumCanopy=mediumCanopy;updateTrees();return state.mediumCanopy;
     }catch(error){restoreOriginalCanopy(error);return null;}
   })();
+  // This authored vista waits every original layout and medium-bank resource.
+  // No new resources or random calls: ordinary matched owners retire together.
+  state.countrysideVistaReady=state.mediumCanopyReady.then(()=>{
+    state.countrysideVista=retireCountrysideVistaTrees(G,trees,zero);
+    if(state.countrysideVista.status==='applied'){
+      const active=trees.filter(activeWorldTree);
+      state.trees=active.length+COTTONWOOD_TREES.length;
+      state.conifers=active.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;
+      state.matureTrees=active.filter(t=>t.source.key==='mature-pine').length;
+      state.woodlandCanopies=active.filter(t=>t.source.key==='woodland-broadleaf').length;
+      state.broadleafCanopies=active.filter(t=>t.source.key==='canopy-broadleaf').length;
+      state.treePositions=active.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+      state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
+      scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+      previousMode=null;updateTrees();
+    }
+    return state.countrysideVista;
+  });
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;

@@ -1,3 +1,4 @@
+import {activeWorldTree} from './countryside-vista-owners.mjs?v=countryside-vista-1';
 // Source-derived medium canopy policy. Copies the current numerical crown projection;
 // no Three resources, source changes, seeded draws or physical registrations.
 export const MEDIUM_WORLD_POLICY_PROFILE='medium-canopy-world-preserved-close-v2';
@@ -34,7 +35,7 @@ export function selectMediumCanopyWorld({trees,nearSelection=[],planningMiddleSe
  const projection=crownViewProjection(camera),benefits=new Map(),px=Array.isArray(player)?player[0]:player?.x,pz=Array.isArray(player)?player[2]:player?.z;
  if(enabled&&(!Number.isFinite(px)||!Number.isFinite(pz)))throw new TypeError('Actual player x/z required for medium range');
  const distance=t=>Math.hypot(t.x-px,t.z-pz),benefit=t=>{if(!benefits.has(t))benefits.set(t,projectedCrownBenefit(t,projection));return benefits.get(t);};
- const valid=t=>t&&!t.retiredFallsFlora&&Number.isFinite(cost(t))&&cost(t)>0;
+ const valid=t=>t&&activeWorldTree(t)&&Number.isFinite(cost(t))&&cost(t)>0;
  const addFull=t=>{if(!valid(t)||full.has(t)||mediumSet.has(t)||triangleCount+cost(t)>triangleBudget)return false;middle.push(t);full.add(t);fullTriangles+=cost(t);triangleCount+=cost(t);return true;};
  if(enabled&&!projection){for(const t of originalMiddle)addFull(t);}
  if(enabled&&projection){
@@ -146,18 +147,18 @@ export function createMediumCanopyController(G,woodland,mediumSource,{policy=sel
   const result=policy({trees,nearSelection:original.near,planningMiddleSelection:original.planningMiddle,middleSelection:original.middle,camera:G.camera,player:G.horse.player.pos,tier,enabled,authoredTriangles,mediumTriangleCost:mediumSource.triangles,previousMediumSelection});
   const full=new Set(result.fullSelection),medium=new Set(result.mediumSelection);
   requireCondition(result.nearSelection.length===original.near.length&&result.nearSelection.every((t,i)=>t===original.near[i]),'original near selection changed');
-  requireCondition([...medium].every(t=>t.source.key==='canopy-broadleaf'&&!full.has(t)&&!t.retiredFallsFlora),'invalid medium source, retirement or overlapping tier');
+  requireCondition([...medium].every(t=>t.source.key==='canopy-broadleaf'&&!full.has(t)&&activeWorldTree(t)),'invalid medium source, retirement or overlapping tier');
   requireCondition(result.triangleCount===authoredTriangles+[...full].reduce((n,t)=>n+t.source.triangles,0)+medium.size*mediumSource.triangles,'actual model cost mismatch');
   requireCondition(result.triangleCount<=result.triangleBudget,'unchanged triangle cap exceeded');
   for(const row of woodland.treeMeshes)updateBank(row,row.records.filter(t=>full.has(t)),newMode,'full');
-  for(const row of woodland.treeCards)updateBank(row,row.records.filter(t=>!t.retiredFallsFlora&&!full.has(t)&&!medium.has(t)),newMode,'far');
+  for(const row of woodland.treeCards)updateBank(row,row.records.filter(t=>activeWorldTree(t)&&!full.has(t)&&!medium.has(t)),newMode,'far');
   for(const row of mediumMeshes)updateBank(row,row.records.filter(t=>medium.has(t)),newMode,'medium');
   const bufferTriangles=rows=>rows.reduce((sum,{mesh})=>sum+(mesh.geometry.index?.count||mesh.geometry.attributes.position.count)/3*mesh.count,0);
   const fullBufferTriangles=bufferTriangles(woodland.treeMeshes),mediumBufferTriangles=bufferTriangles(mediumMeshes),farTriangles=bufferTriangles(woodland.treeCards);
   requireCondition(fullBufferTriangles===result.fullTriangles&&mediumBufferTriangles===result.mediumTriangles,'actual tier buffers disagree with source triangle ledger');
   mode=newMode;previousMediumSelection=medium;
   selection={selected:[...full],near:result.nearSelection.slice(),middle:result.middleSelection.slice(),planningMiddle:result.planningMiddleSelection.slice(),medium:[...medium]};
-  ledger={profile:'island-medium-canopy-1',tier,xr:!enabled,triangleCount:result.triangleCount,triangleBudget:result.triangleBudget,authoredTriangles,fullTriangles:result.fullTriangles,mediumTriangles:result.mediumTriangles,fullBufferTriangles,mediumBufferTriangles,farTriangles,totalRenderTriangles:result.triangleCount+farTriangles,mediumTriangleCost:mediumSource.triangles,nearIDs:selection.near.map(t=>ids.get(t)),fullMiddleIDs:selection.middle.map(t=>ids.get(t)),fullIDs:selection.selected.map(t=>ids.get(t)),mediumIDs:selection.medium.map(t=>ids.get(t)),planningMiddleIDs:selection.planningMiddle.map(t=>ids.get(t)),originalMiddleIDs:original.middle.map(t=>ids.get(t)),fullCount:full.size,mediumCount:medium.size,farCount:trees.filter(t=>!t.retiredFallsFlora&&!full.has(t)&&!medium.has(t)).length,updates:++updates};
+  ledger={profile:'island-medium-canopy-1',tier,xr:!enabled,triangleCount:result.triangleCount,triangleBudget:result.triangleBudget,authoredTriangles,fullTriangles:result.fullTriangles,mediumTriangles:result.mediumTriangles,fullBufferTriangles,mediumBufferTriangles,farTriangles,totalRenderTriangles:result.triangleCount+farTriangles,mediumTriangleCost:mediumSource.triangles,nearIDs:selection.near.map(t=>ids.get(t)),fullMiddleIDs:selection.middle.map(t=>ids.get(t)),fullIDs:selection.selected.map(t=>ids.get(t)),mediumIDs:selection.medium.map(t=>ids.get(t)),planningMiddleIDs:selection.planningMiddle.map(t=>ids.get(t)),originalMiddleIDs:original.middle.map(t=>ids.get(t)),fullCount:full.size,mediumCount:medium.size,farCount:trees.filter(t=>activeWorldTree(t)&&!full.has(t)&&!medium.has(t)).length,updates:++updates};
   return ledger;
  }
  function dispose(){
@@ -173,7 +174,7 @@ export function createMediumCanopyController(G,woodland,mediumSource,{policy=sel
 
 // These copies are planner diagnostics, not actual submitted-tier counters.
 export function originalCanopyPlannerLedger(state,trees,selection){
- return {profile:'original-projected-middle-crowns-2',activeTreeTriangles:state.activeTreeTriangles,treeTriangleBudget:state.treeTriangleBudget,activeTrees:state.activeTrees,activeNearTrees:state.activeNearTrees,activeMiddleTrees:state.activeMiddleTrees,activeRenderedTrees:state.activeRenderedTrees,distantTrees:trees&&selection?trees.filter(t=>!t.retiredFallsFlora).length-selection.size:state.distantTrees,treeCrownLOD:state.treeCrownLOD};
+ return {profile:'original-projected-middle-crowns-2',activeTreeTriangles:state.activeTreeTriangles,treeTriangleBudget:state.treeTriangleBudget,activeTrees:state.activeTrees,activeNearTrees:state.activeNearTrees,activeMiddleTrees:state.activeMiddleTrees,activeRenderedTrees:state.activeRenderedTrees,distantTrees:trees&&selection?trees.filter(t=>activeWorldTree(t)).length-selection.size:state.distantTrees,treeCrownLOD:state.treeCrownLOD};
 }
 export function publishMediumCanopyLedger(state,controller){
  const actual=controller.snapshot(),selection=controller.selection();

@@ -1,5 +1,6 @@
 // Execute the actual current updater without a renderer/GPU or source projection.
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+let activeWorldTree;test.before(async()=>{({activeWorldTree}=await import('../assets/countryside-vista-owners.mjs'));});
 const source=fs.readFileSync(__dirname+'/../assets/world-photoscans.js','utf8'),a=source.indexOf('  let previousSelection=new Set()'),b=source.indexOf('  state.ready=(async()=>{',a),block=source.slice(a,b),actualCrownHelpers=source.slice(source.indexOf('// Pure CPU projection of existing leaf geometry bounds.'),source.indexOf('export function installWorldPhotoscans(')).replace(/export (?=function )/g,'');
 function fixture(tier='high',withPines=true){
  const trees=[];for(let i=0;i<16;i++)trees.push({x:(i%2?1:-1)*(i+2),z:i+2,source:{key:'pine-1',triangles:125308},matrix:{id:i},tint:null});
@@ -8,7 +9,7 @@ function fixture(tier='high',withPines=true){
  const row=(key,card)=>{const records=trees.filter(t=>t.source.key===key),mesh={material:{name:'tree_twigs'},count:0,visible:false,instanceMatrix:{array:[],needsUpdate:false},instanceColor:{needsUpdate:false},setMatrixAt(i,m){this.instanceMatrix.array[i]=m.id;},setColorAt(){},computeBoundingSphere(){}};meshes.push({key,card,mesh,records});return meshes.at(-1);};
  const treeMeshes=[row('pine-1',false),row('mature-pine',false)],treeCards=[row('pine-1',true),row('mature-pine',true)];
  class Vector3{set(x,y,z){this.x=x;this.y=y;this.z=z;return this;}}
- const update=Function('THREE','H','G','state','trees','treeMeshes','treeCards','renderer','WHITE',actualCrownHelpers+block+';return updateTrees;')({Vector3},H,G,state,trees,treeMeshes,treeCards,renderer,{});
+ const update=Function('THREE','H','G','state','trees','treeMeshes','treeCards','renderer','WHITE','activeWorldTree',actualCrownHelpers+block+';return updateTrees;')({Vector3},H,G,state,trees,treeMeshes,treeCards,renderer,{},activeWorldTree);
  return {trees,state,H,G,renderer,meshes,update};
 }
 function check(f){const selected=[],cards=[];for(const row of f.meshes){const target=row.card?cards:selected;for(let i=0;i<row.mesh.count;i++){const t=row.records.find(t=>t.matrix.id===row.mesh.instanceMatrix.array[i]);assert(t);target.push(t);}}

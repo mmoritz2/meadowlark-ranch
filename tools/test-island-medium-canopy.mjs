@@ -44,8 +44,8 @@ function installWrapper(f,c){
  const factory=Function('state','originalCanopyPlannerLedger','publishMediumCanopyLedger','controller','start','sourceTrees','originalSelected','const trees=sourceTrees,previousSelection=new Set(originalSelected);let updateTrees=start,previousMode=null;'+wrapper+"mediumCanopy=controller;state.mediumCanopy=controller;return{update:()=>updateTrees(),originalUpdateTrees};");
  const w=factory(f.G.photoscans,originalCanopyPlannerLedger,publishMediumCanopyLedger,c,original,f.trees,f.original.selected);return{...w,histories:()=>[privateNear,privatePlanning,privateMiddle,privateSelection]};
 }
-test('original updater and old closure extraction remain byte exact; only one existing tick registration',()=>{
- assert.equal(crypto.createHash('sha256').update(extract(projected,'  let previousSelection=','  state.ready=')).digest('hex'),'fc3a799d80df466be3c30a5c9c97d1738d0b22056933f2966ce6e9cbd457ffe8');
+test('current updater exact scope includes shared retirement predicate; only one existing tick registration',()=>{
+ assert.equal(crypto.createHash('sha256').update(extract(projected,'  let previousSelection=','  state.ready=')).digest('hex'),'3d31198d929c1db759dd883ffeed4b8ae8f462636c3444cf667a8f0dbcd3f437');
  assert.equal((projected.match(/G.on\('tick'/g)||[]).length,1);
  assert(!fs.readFileSync(new URL('../assets/island-medium-canopy.mjs',import.meta.url),'utf8').includes("G.on('tick'"));
 });
