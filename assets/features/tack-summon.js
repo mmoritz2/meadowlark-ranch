@@ -3,7 +3,7 @@ import {TACK_SUMMON_COST,TACK_SUMMON_POOL,getTackSummonPool,summonTackPiece} fro
 import {TACK_SLOTS,TACK_SLOT_LABELS,getTackPiece,ownedTackPiece} from '../tack-collection.mjs?v=tack-ceremony-20261007';
 import {tackPieceSVG} from '../tack-collection-art.mjs?v=lookbook-1';
 import {tackPreviewURL} from './tack-collection.js?v=tack-ceremony-20261007';
-import {installTackSummonStall} from './tack-summon-stall.js?v=tack-ceremony-20261007';
+import {installTackSummonStall} from './tack-summon-stall.js?v=pasture-passage-1';
 export const id='tack-summon';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PAGE_SIZE=8;

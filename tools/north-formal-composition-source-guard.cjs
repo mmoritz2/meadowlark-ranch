@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture='tools/fixtures/north-formal-7a6bacd/contract.json',sha=s=>crypto.createHash('sha256').update(s).digest('hex'),text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8');
-assert.equal(sha(text),'11b8463d858b3ce7e264012932e6078451e4b5761ddca6fb0d0074f159802224','Exact joint North/formal declaration');const contract=JSON.parse(text);
+assert.equal(sha(text),'aaa1e34f2b4e6f59c75df2b7f3157b479f8573e901746541b0146cf1d052e146','Exact joint North/formal declaration');const contract=JSON.parse(text);
 // Pure source and observer metadata views. No runtime import or geometry is substituted.
 function view(source,file,parent,kind){const row=contract[kind][file];if(!row)return source;const hash=sha(source),target=row[parent+'SHA256'];if(hash===target)return source;
  if(hash!==row.mergedSHA256&&[row.northSHA256,row.formalSHA256].includes(hash))return source;

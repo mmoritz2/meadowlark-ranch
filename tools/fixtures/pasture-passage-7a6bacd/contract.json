@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "baseline": "7a6bacd72d73821e795a30b130d9e9927fb670b2",
+  "scope": "Only tack workbench placement and three cache edges. Current geometry QA runs live; exact historical QA preimage retained solely for preservation. No horse, terrain, travel, reward, ceremony or controller changes.",
+  "files": {
+    "ranch3d.html": {
+      "beforeSHA256": "4d785e456285b596de778ca7da12ea525b9f221e53b9ad6604bef989b2ed50c4",
+      "afterSHA256": "16e9cf49194530cbedb2fa514b2edb606982228740475e2c4684deb201403ba8",
+      "kind": "cache"
+    },
+    "assets/features/index.js": {
+      "beforeSHA256": "08b6750073b2d4734d48546debd5d3dcf8e592f44b22f67d5482509f4e9b9075",
+      "afterSHA256": "a95976e41ace9016ba1c445462a8260f72a80c2e6e4a5c5d6df58bc529f5f15c",
+      "kind": "cache"
+    },
+    "assets/features/tack-summon.js": {
+      "beforeSHA256": "bce132b602d8f2ab3b50db59d16e297f0b68e24b9404d6941f15bce45b00c946",
+      "afterSHA256": "0899006df0fe173eada4abfef496d3bb8e4936d58ad28209de4de73daa62674e",
+      "kind": "cache"
+    },
+    "assets/features/tack-summon-stall.js": {
+      "beforeSHA256": "8ce37aa533beb87d609fdc237d28af7789dfddbd9e1b56ec8d86dc0bdb101273",
+      "afterSHA256": "8ecbd02dc5691cd42486651c5b70038d7860926757c0c8387a8172dbe1201d38",
+      "kind": "placement"
+    }
+  },
+  "changes": [
+    {
+      "file": "ranch3d.html",
+      "before": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "after": "import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';\nimport {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';\nimport {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';\nimport {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4';\nimport {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';\nimport {paidVipUntil,refreshAccount} from './assets/commerce-client.js';\nimport {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1';\n",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/index.js",
+      "before": "import * as jumpTraining from './jump-training.js?v=jump-clinic-1';\nimport * as trainingDrills from './training-drills.js?v=horse-training-plan-1';\nimport * as menuPolish from './menu-polish.js?v=menus-polish-20261008b';\nimport * as tackSummon from './tack-summon.js?v=clear-stall-arrival-20261009';\nimport * as tackCollection from './tack-collection.js?v=menus-polish-20261008';\nimport * as paidTack from './paid-tack.js?v=tack-summon-20261007';\n/* ============================================================================================\n",
+      "after": "import * as jumpTraining from './jump-training.js?v=jump-clinic-1';\nimport * as trainingDrills from './training-drills.js?v=horse-training-plan-1';\nimport * as menuPolish from './menu-polish.js?v=menus-polish-20261008b';\nimport * as tackSummon from './tack-summon.js?v=pasture-passage-1';\nimport * as tackCollection from './tack-collection.js?v=menus-polish-20261008';\nimport * as paidTack from './paid-tack.js?v=tack-summon-20261007';\n/* ============================================================================================\n",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/tack-summon.js",
+      "before": "import {TACK_SLOTS,TACK_SLOT_LABELS,getTackPiece,ownedTackPiece} from '../tack-collection.mjs?v=tack-ceremony-20261007';\nimport {tackPieceSVG} from '../tack-collection-art.mjs?v=lookbook-1';\nimport {tackPreviewURL} from './tack-collection.js?v=tack-ceremony-20261007';\nimport {installTackSummonStall} from './tack-summon-stall.js?v=tack-ceremony-20261007';\nexport const id='tack-summon';\nconst esc=value=>String(value??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));\nconst PAGE_SIZE=8;\n",
+      "after": "import {TACK_SLOTS,TACK_SLOT_LABELS,getTackPiece,ownedTackPiece} from '../tack-collection.mjs?v=tack-ceremony-20261007';\nimport {tackPieceSVG} from '../tack-collection-art.mjs?v=lookbook-1';\nimport {tackPreviewURL} from './tack-collection.js?v=tack-ceremony-20261007';\nimport {installTackSummonStall} from './tack-summon-stall.js?v=pasture-passage-1';\nexport const id='tack-summon';\nconst esc=value=>String(value??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));\nconst PAGE_SIZE=8;\n",
+      "occurrences": 1,
+      "kind": "cache"
+    },
+    {
+      "file": "assets/features/tack-summon-stall.js",
+      "before": "import {mergeGeometries} from '../vendor/three/examples/jsm/utils/BufferGeometryUtils.js';\n\n// A permanent, quiet workbench in the nook north of the horse summoning stall.\n// The pasture gate at (-33,-9), arena rail x=-25 and barn-row roof stay clear.\nexport const TACK_SUMMON_STALL=Object.freeze({\n x:-27.2,z:-11.55,rotation:Math.PI/2,radius:1.5,reach:3.2,\n width:2.5,depth:1.3,label:'Tack Summoning Stall',\n});\nconst installed=new WeakMap();\n",
+      "after": "import {mergeGeometries} from '../vendor/three/examples/jsm/utils/BufferGeometryUtils.js';\n\n// A quiet workbench beside the pasture approach. The mounted lane across the\n// barn row's north end stays open, as does the original horse-stall arrival.\nexport const TACK_SUMMON_STALL=Object.freeze({\n x:-29.8,z:-9.4,rotation:Math.PI/2,radius:1.5,reach:3.2,\n width:2.5,depth:1.3,label:'Tack Summoning Stall',\n});\nconst installed=new WeakMap();\n",
+      "occurrences": 1,
+      "kind": "placement"
+    }
+  ],
+  "observers": {
+    "tools/formal-turf-composition-source-guard.cjs": {
+      "beforeSHA256": "f86f211f3c5a52a2f81da3f8ecaf4f09ef624cbed063d92992deb39749c33d1f",
+      "afterSHA256": "9adc48c5c7920b06f3eb55bcd1627d4cc17c1c98f0005924b809eeb48ad6e4a9",
+      "changes": [
+        {
+          "file": "tools/formal-turf-composition-source-guard.cjs",
+          "before": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst fixture='tools/fixtures/formal-turf-ff10ddd/contract.json',sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nconst text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8');assert.equal(sha(text),'7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279','Exact approved formal/turf merge contract');const contract=JSON.parse(text);\n// Built-in-only leaf: never initialize Turf, Formal or the historical world\n",
+          "after": "const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\nconst {normalizePasturePassageSource,normalizePasturePassageObserver,normalizePasturePassageFixtures}=require('./pasture-passage-source-guard.cjs');\nconst fixture='tools/fixtures/formal-turf-ff10ddd/contract.json',sha=s=>crypto.createHash('sha256').update(s).digest('hex');\nconst text=fs.readFileSync(path.join(__dirname,'..',fixture),'utf8');assert.equal(sha(text),'7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279','Exact approved formal/turf merge contract');const contract=JSON.parse(text);\n// Built-in-only leaf: never initialize Turf, Formal or the historical world\n",
+          "occurrences": 1
+        },
+        {
+          "file": "tools/formal-turf-composition-source-guard.cjs",
+          "before": " if(c.before)assert.equal(source.replace(c.after,'').split(c.before).length-1,0,'No mixed parent/'+label+' literal '+file);\n source=source.replace(c.after,c.before);\n}return source;}\nfunction sourceView(source,file,view){const row=contract.files[file];if(!row)return source;const hash=sha(source),target=row[view+'SHA256'];if(hash===target)return source;\n const groups=contract['to'+view[0].toUpperCase()+view.slice(1)].filter(c=>c.file===file);\n if(hash!==row.mergedSHA256&&[row.formalSHA256,row.incomingSHA256,row.baseSHA256].includes(hash))return source;\n if(!groups.some(c=>source.includes(c.after)))return source;\n assert.equal(hash,row.mergedSHA256,'Whole approved merged owner '+file);source=reverse(source,groups,view,file);assert.equal(sha(source),target,'Complete '+view+' parent owner '+file);return source;}\nfunction observerView(source,file,view){const views=contract.observers[file],row=views?.[view];if(!row)return source;const hash=sha(source);if(hash===row.beforeSHA256)return source;\n if(hash!==row.afterSHA256&&Object.values(views).some(v=>v.beforeSHA256===hash))return source;\n if(!row.changes.some(c=>source.includes(c.after)))return source;\n assert.equal(hash,row.afterSHA256,'Whole approved merged observer '+file);source=reverse(source,row.changes,view,file);assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' parent observer '+file);return source;}\nconst normalizeFormalTurfFormalSource=(s,f)=>sourceView(s,f,'formal'),normalizeFormalTurfIncomingSource=(s,f)=>sourceView(s,f,'incoming');\nconst normalizeFormalTurfFormalObserver=(s,f)=>observerView(s,f,'formal'),normalizeFormalTurfIncomingObserver=(s,f)=>observerView(s,f,'incoming');\nconst normalizeFormalTurfFormalAuditSource=(s,f)=>normalizeFormalTurfFormalObserver(normalizeFormalTurfFormalSource(s,f),f),normalizeFormalTurfIncomingAuditSource=(s,f)=>normalizeFormalTurfIncomingObserver(normalizeFormalTurfIncomingSource(s,f),f);\nfunction fixtures(diff,baseline,view){assert.equal(baseline,contract.fixtureBaseline,'Exact historical fixture baseline');const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate fixture rows');const allowed={...contract.approvedAddedByView[view],[fixture]:sha(text)};const kept=rows.filter(file=>{if(!Object.hasOwn(allowed,file))return true;assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),allowed[file],'Exact approved other-parent/new fixture '+file);return false;});return kept.length?kept.join('\\n')+'\\n':'';}\nconst normalizeFormalTurfFormalFixtures=(s,b)=>fixtures(s,b,'formal'),normalizeFormalTurfIncomingFixtures=(s,b)=>fixtures(s,b,'incoming');\nfunction assertFormalTurfCurrent(source,file){const row=contract.files[file],views=contract.observers[file],expected=row?.mergedSHA256||(views?Object.values(views)[0].afterSHA256:null)||contract.strictFormalFiles[file]||contract.strictIncomingFiles[file];assert(expected,'Declared merge subject '+file);assert.equal(sha(source),expected,'Entire current approved merge subject '+file);return true;}\nmodule.exports={normalizeFormalTurfFormalSource,normalizeFormalTurfIncomingSource,normalizeFormalTurfFormalObserver,normalizeFormalTurfIncomingObserver,normalizeFormalTurfFormalAuditSource,normalizeFormalTurfIncomingAuditSource,normalizeFormalTurfFormalFixtures,normalizeFormalTurfIncomingFixtures,assertFormalTurfCurrent};\n",
+          "after": " if(c.before)assert.equal(source.replace(c.after,'').split(c.before).length-1,0,'No mixed parent/'+label+' literal '+file);\n source=source.replace(c.after,c.before);\n}return source;}\nfunction sourceView(source,file,view){source=normalizePasturePassageSource(source,file);const row=contract.files[file];if(!row)return source;const hash=sha(source),target=row[view+'SHA256'];if(hash===target)return source;\n const groups=contract['to'+view[0].toUpperCase()+view.slice(1)].filter(c=>c.file===file);\n if(hash!==row.mergedSHA256&&[row.formalSHA256,row.incomingSHA256,row.baseSHA256].includes(hash))return source;\n if(!groups.some(c=>source.includes(c.after)))return source;\n assert.equal(hash,row.mergedSHA256,'Whole approved merged owner '+file);source=reverse(source,groups,view,file);assert.equal(sha(source),target,'Complete '+view+' parent owner '+file);return source;}\nfunction observerView(source,file,view){source=normalizePasturePassageObserver(source,file);const views=contract.observers[file],row=views?.[view];if(!row)return source;const hash=sha(source);if(hash===row.beforeSHA256)return source;\n if(hash!==row.afterSHA256&&Object.values(views).some(v=>v.beforeSHA256===hash))return source;\n if(!row.changes.some(c=>source.includes(c.after)))return source;\n assert.equal(hash,row.afterSHA256,'Whole approved merged observer '+file);source=reverse(source,row.changes,view,file);assert.equal(sha(source),row.beforeSHA256,'Complete '+view+' parent observer '+file);return source;}\nconst normalizeFormalTurfFormalSource=(s,f)=>sourceView(s,f,'formal'),normalizeFormalTurfIncomingSource=(s,f)=>sourceView(s,f,'incoming');\nconst normalizeFormalTurfFormalObserver=(s,f)=>observerView(s,f,'formal'),normalizeFormalTurfIncomingObserver=(s,f)=>observerView(s,f,'incoming');\nconst normalizeFormalTurfFormalAuditSource=(s,f)=>normalizeFormalTurfFormalObserver(normalizeFormalTurfFormalSource(s,f),f),normalizeFormalTurfIncomingAuditSource=(s,f)=>normalizeFormalTurfIncomingObserver(normalizeFormalTurfIncomingSource(s,f),f);\nfunction fixtures(diff,baseline,view){diff=normalizePasturePassageFixtures(diff,baseline);assert.equal(baseline,contract.fixtureBaseline,'Exact historical fixture baseline');const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate fixture rows');const allowed={...contract.approvedAddedByView[view],[fixture]:sha(text)};const kept=rows.filter(file=>{if(!Object.hasOwn(allowed,file))return true;assert.equal(sha(fs.readFileSync(path.join(__dirname,'..',file))),allowed[file],'Exact approved other-parent/new fixture '+file);return false;});return kept.length?kept.join('\\n')+'\\n':'';}\nconst normalizeFormalTurfFormalFixtures=(s,b)=>fixtures(s,b,'formal'),normalizeFormalTurfIncomingFixtures=(s,b)=>fixtures(s,b,'incoming');\nfunction assertFormalTurfCurrent(source,file){const row=contract.files[file],views=contract.observers[file],expected=row?.mergedSHA256||(views?Object.values(views)[0].afterSHA256:null)||contract.strictFormalFiles[file]||contract.strictIncomingFiles[file];assert(expected,'Declared merge subject '+file);assert.equal(sha(source),expected,'Entire current approved merge subject '+file);return true;}\nmodule.exports={normalizeFormalTurfFormalSource,normalizeFormalTurfIncomingSource,normalizeFormalTurfFormalObserver,normalizeFormalTurfIncomingObserver,normalizeFormalTurfFormalAuditSource,normalizeFormalTurfIncomingAuditSource,normalizeFormalTurfFormalFixtures,normalizeFormalTurfIncomingFixtures,assertFormalTurfCurrent};\n",
+          "occurrences": 1
+        }
+      ],
+      "kind": "preservation-reader"
+    },
+    "tools/test-formal-turf-composition.mjs": {
+      "beforeSHA256": "a0ef4636490a963557897624fa984ca709d3f2f0ed19e118b6888a3419b3fe2a",
+      "afterSHA256": "97e59a7e8c3631cc0dc5a1c877d2d32cd58e28976da99356b2240bfd516cd83c",
+      "changes": [
+        {
+          "file": "tools/test-formal-turf-composition.mjs",
+          "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+          "after": "import {normalizePasturePassageAuditSource} from './pasture-passage-source-guard.cjs';\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\n",
+          "occurrences": 1
+        },
+        {
+          "file": "tools/test-formal-turf-composition.mjs",
+          "before": "import {normalizeFormalApproachResumeSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root),'utf8');\nconst fixture='tools/fixtures/formal-turf-ff10ddd/contract.json',contract=JSON.parse(read(fixture));\nconst sha=s=>createHash('sha256').update(s).digest('hex');\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n",
+          "after": "import {normalizeFormalApproachResumeSource} from './formal-approach-resume-source-guard.cjs';\nimport {normalizeActivityIncomingSource} from './activity-landscape-source-guard.cjs';\nimport {normalizeCourseTurfBladesSource} from './course-turf-blades-source-guard.cjs';\nconst root=new URL('../',import.meta.url),read=file=>normalizePasturePassageAuditSource(fs.readFileSync(new URL(file,root),'utf8'),file);\nconst fixture='tools/fixtures/formal-turf-ff10ddd/contract.json',contract=JSON.parse(read(fixture));\nconst sha=s=>createHash('sha256').update(s).digest('hex');\nconst git=(ref,file)=>execFileSync('git',['show',ref+':'+file],{cwd:root,encoding:'utf8'});\n",
+          "occurrences": 1
+        }
+      ],
+      "kind": "preservation-reader"
+    },
+    "tools/qa-tack-summon-stall.mjs": {
+      "beforeSHA256": "8f340a99a1abb733756b46ab3113c146a91467f7c4fa0cd53c6dcc6200cc7f76",
+      "afterSHA256": "cb3e7d87d597a336b47d35c90744d9a8d9f48c6c32885488396b9267f586da84",
+      "changes": [
+        {
+          "file": "tools/qa-tack-summon-stall.mjs",
+          "before": "import assert from 'node:assert/strict';\nimport {readFile} from 'node:fs/promises';\nimport {register} from 'node:module';\nconst threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;\nregister('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);\nconst THREE=await import(threeURL);\n",
+          "after": "import assert from 'node:assert/strict';\nimport {readFile} from 'node:fs/promises';\nimport {register} from 'node:module';\nimport {COTTONWOOD_TRACKS} from '../assets/cottonwood-routes.mjs';\nconst threeURL=new URL('../assets/vendor/three/build/three.module.js',import.meta.url).href;\nregister('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),import.meta.url);\nconst THREE=await import(threeURL);\n",
+          "occurrences": 1
+        },
+        {
+          "file": "tools/qa-tack-summon-stall.mjs",
+          "before": "const source=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');\nfunction object(name){const match=source.match(new RegExp('const '+name+'=(\\\\{[^;]+\\\\});'));assert(match,name+' source placement');return Function('return ('+match[1]+')')();}\nconst summon=object('SUMMON_STALL'),barn=object('BARN_ROW'),pasture=object('PAST');\nconst paths=Function('return ('+source.match(/const PATHS=(\\[[\\s\\S]*?\\]);/)[1]+')')();\nconst pathWidth=Number(source.match(/const PATH_W=([\\d.]+)/)[1]);\nconst scene=new THREE.Scene(),buildings=[],things=[],colliders=[],mapMarkers=[],miniMarkers=[];\nconst G={THREE,scene,nameSprite(text){const sprite=new THREE.Sprite(new THREE.SpriteMaterial());sprite.userData.text=text;return sprite;},world:{things,colliders,mapMarkers,miniMarkers,\n",
+          "after": "const source=await readFile(new URL('../ranch3d.html',import.meta.url),'utf8');\nfunction object(name){const match=source.match(new RegExp('const '+name+'=(\\\\{[^;]+\\\\});'));assert(match,name+' source placement');return Function('return ('+match[1]+')')();}\nconst summon=object('SUMMON_STALL'),barn=object('BARN_ROW'),pasture=object('PAST');\nconst paths=Function('COTTONWOOD_TRACKS','return ('+source.match(/const PATHS=(\\[[\\s\\S]*?\\]);/)[1]+')')(COTTONWOOD_TRACKS);\nconst pathWidth=Number(source.match(/const PATH_W=([\\d.]+)/)[1]);\nconst scene=new THREE.Scene(),buildings=[],things=[],colliders=[],mapMarkers=[],miniMarkers=[];\nconst G={THREE,scene,nameSprite(text){const sprite=new THREE.Sprite(new THREE.SpriteMaterial());sprite.userData.text=text;return sprite;},world:{things,colliders,mapMarkers,miniMarkers,\n",
+          "occurrences": 1
+        },
+        {
+          "file": "tools/qa-tack-summon-stall.mjs",
+          "before": "assert(!rectOverlap(b,{minX:summon.x-1.5,maxX:summon.x+1.5,minZ:summon.z-4.7,maxZ:summon.z-1.5}),'horse door/summoning approach stays open');\nfor(let i=0;i<barn.n;i++){const z=barn.z0+i*barn.step;assert(!rectOverlap(b,{minX:barn.x-1.35,maxX:barn.x+1.45,minZ:z-1.82,maxZ:z+1.82}),'separate from every barn-row roof');}\nassert(b.minX>pasture.x2+.55,'outside pasture fence');assert(b.maxX< -25-.55,'outside the arena rail, including rider clearance');\nassert(Math.abs(P.z+9)>P.radius+.55+.25,'pasture gate centerline retains a horse-width passage');\nassert(Math.hypot(P.x+30,P.z-3.2)>P.radius+2.6,'clear of nearest grandstand collision region');\nfunction segmentDistance(p,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz);}\nlet roadDistance=Infinity;for(const path of paths)for(let i=1;i<path.length;i++)roadDistance=Math.min(roadDistance,segmentDistance([P.x,P.z],path[i-1],path[i]));\n",
+          "after": "assert(!rectOverlap(b,{minX:summon.x-1.5,maxX:summon.x+1.5,minZ:summon.z-4.7,maxZ:summon.z-1.5}),'horse door/summoning approach stays open');\nfor(let i=0;i<barn.n;i++){const z=barn.z0+i*barn.step;assert(!rectOverlap(b,{minX:barn.x-1.35,maxX:barn.x+1.45,minZ:z-1.82,maxZ:z+1.82}),'separate from every barn-row roof');}\nassert(b.minX>pasture.x2+.55,'outside pasture fence');assert(b.maxX< -25-.55,'outside the arena rail, including rider clearance');\nassert(Math.hypot(P.x-pasture.x2,P.z+9)>=P.radius+.55+.25,'pasture gate centre has mounted clearance from the tack blocker');\nassert(Math.hypot(P.x+30,P.z-3.2)>P.radius+2.6,'clear of nearest grandstand collision region');\nfunction segmentDistance(p,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz);}\nlet roadDistance=Infinity;for(const path of paths)for(let i=1;i<path.length;i++)roadDistance=Math.min(roadDistance,segmentDistance([P.x,P.z],path[i-1],path[i]));\n",
+          "occurrences": 1
+        }
+      ],
+      "kind": "live-current-qa"
+    }
+  },
+  "addedFiles": {
+    "tools/test-tack-pasture-clearance.mjs": {
+      "sha256": "0b5cf17dc6f9155eb45bafe4b5fa71c11899c169b5702e64bec253e8b1e380ea",
+      "kind": "live-behavior"
+    }
+  },
+  "fixtureBaseline": "df065bd26a6a0e097306262e689678cb9e439c7d",
+  "unchangedFixtureCount": 174
+}

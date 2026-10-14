@@ -1,7 +1,7 @@
 import * as jumpTraining from './jump-training.js?v=jump-clinic-1';
 import * as trainingDrills from './training-drills.js?v=horse-training-plan-1';
 import * as menuPolish from './menu-polish.js?v=menus-polish-20261008b';
-import * as tackSummon from './tack-summon.js?v=clear-stall-arrival-20261009';
+import * as tackSummon from './tack-summon.js?v=pasture-passage-1';
 import * as tackCollection from './tack-collection.js?v=menus-polish-20261008';
 import * as paidTack from './paid-tack.js?v=tack-summon-20261007';
 /* ============================================================================================
