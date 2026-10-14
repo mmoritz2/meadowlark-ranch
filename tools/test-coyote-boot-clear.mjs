@@ -7,7 +7,7 @@ const source=fs.readFileSync(new URL('../assets/features/world.js',import.meta.u
 function actualClear(W,helper=createCoyoteBootPlanning){const hooks=new Map(),P={},G={on(k,fn){hooks.set(k,fn);}},riverZ=x=>120+Math.sin(x*.012)*45,hyp=(x,z,a,b)=>Math.hypot(x-a,z-b),start=source.indexOf(' const canyonBootPlanning='),end=source.indexOf(' P.findClear=findClear;',start);assert(start>0&&end>start);const api=new Function('G','W','P','riverZ','hyp','createCoyoteBootPlanning',source.slice(start,end)+'return{clear,findClear};')(G,W,P,riverZ,hyp,helper);return{...api,boot:()=>hooks.get('boot')()};}
 const key=c=>[c.x,c.z,c.r].join('|');
 test('boot reference is exact original804 physical contour occupancy, with no game RNG/scene resources and distinct older Flora generation',()=>{
- assert.equal(reference.barriers.length,412);assert.deepEqual(reference.barriers,before.art.barriers.map(({x,z,r})=>({x,z,r})));assert.notDeepEqual(reference.barriers,oldPlan.barriers,'Older Flora decision generation must not replace original physical occupancy');assert.equal(after.art.barriers.length,414);
+ assert.equal(reference.barriers.length,412);assert.deepEqual(reference.barriers,before.art.barriers.map(({x,z,r})=>({x,z,r})));assert.notDeepEqual(reference.barriers,oldPlan.barriers,'Older Flora decision generation must not replace original physical occupancy');assert.equal(after.art.barriers.length,426,'Actual selected NorthV2 contour set');
  assert(!/THREE|Math\.random|fetch\(|Texture|Mesh|Material/.test(fs.readFileSync(new URL('../assets/coyote-boot-planning.mjs',import.meta.url),'utf8')));
 });
 test('exact identity replacement preserves the original order of unrelated owners and cannot revive a missing actual cliff group',()=>{

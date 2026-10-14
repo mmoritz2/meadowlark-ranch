@@ -1,5 +1,5 @@
 import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
-import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
+import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5';
 import {wildTamingInteraction,saveWildTaming} from './wild-taming-rules.mjs?v=wild-bond-1';
 import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.

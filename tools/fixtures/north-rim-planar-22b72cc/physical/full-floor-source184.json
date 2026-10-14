@@ -1,0 +1,114 @@
+{
+  "status": "real-new-lateral-root-floor-exposure-bounded-protection-ready",
+  "sourceRow": 184,
+  "source": "woodland-broadleaf/Jacaranda",
+  "site": [
+    -346.2522620540936,
+    55.00155249704479
+  ],
+  "footFloorWorldBand": 0.025,
+  "allMaterialPartsInspected": [
+    "jacaranda_tree_branches",
+    "jacaranda_tree_trunk",
+    "jacaranda_tree_leaves"
+  ],
+  "rootBearingPart": "jacaranda_tree_trunk",
+  "floorXZBounds": [
+    -347.41412122879876,
+    -346.390888461445,
+    54.016238097895766,
+    55.8302361036835
+  ],
+  "maximumFloorRadiusFromRoot": 1.4271066049031913,
+  "floorVertexExtrema": 176,
+  "intersectingCanonicalTriangles": [
+    [
+      145770,
+      145771,
+      145258
+    ],
+    [
+      145770,
+      146283,
+      145771
+    ]
+  ],
+  "floorSupportVertexIds": [
+    145258,
+    145770,
+    145771,
+    146283
+  ],
+  "rootCallbackSupportIds": [
+    145770,
+    146283,
+    145771
+  ],
+  "protectedUnionVertexIds": [
+    145258,
+    145770,
+    145771,
+    146283
+  ],
+  "protectedVertices": [
+    {
+      "id": 145258,
+      "x": -345.703125,
+      "z": 52.734375,
+      "original22Height": 6.579041957855225,
+      "candidateV2Height": 6.09028959274292,
+      "delta": -0.4887523651123047
+    },
+    {
+      "id": 145770,
+      "x": -347.65625,
+      "z": 54.6875,
+      "original22Height": 4.562801837921143,
+      "candidateV2Height": 4.352312088012695,
+      "delta": -0.21048974990844727
+    },
+    {
+      "id": 145771,
+      "x": -345.703125,
+      "z": 54.6875,
+      "original22Height": 6.061764717102051,
+      "candidateV2Height": 5.576540470123291,
+      "delta": -0.48522424697875977
+    },
+    {
+      "id": 146283,
+      "x": -347.65625,
+      "z": 56.640625,
+      "original22Height": 4.573613166809082,
+      "candidateV2Height": 3.38860821723938,
+      "delta": -1.1850049495697021
+    }
+  ],
+  "maximumExposedPoint": {
+    "worldXZ": [
+      -347.41412122879876,
+      55.8302361036835
+    ],
+    "modelYNew": 5.032380009672405,
+    "modelYOld": 5.597057460866312,
+    "terrainYNew": 3.940234882220895,
+    "terrainYOld": 4.754953664282183,
+    "newGap": 1.0921451274515102,
+    "oldGapSamePoint": 0.8421037965841291,
+    "canonicalTriangleIds": [
+      145770,
+      146283,
+      145771
+    ],
+    "distanceFromRoot": 1.4271066049031913,
+    "worldSourceHeightAboveSharedFloor": 0.025000000000000355,
+    "part": "jacaranda_tree_trunk"
+  },
+  "inputHashes": {
+    "baselineGrid": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "candidateGrid": "fcec870c699310389be35a9023a9b9b07c4492b1b62e47bb2a3d8c0e24f28f9b",
+    "baselineSnapshot": "ba475150494c751e3736a3e0f230c9c3f13dd5fa7f86fa5eadbba7f97ff1e3b6",
+    "candidateSnapshot": "c8d7abc754b5477ac708287c630dc0add38e2c90587358fd5ba5d9a250114a78"
+  },
+  "protectionRequirement": "Restore original22canonical height at every protectedUnionVertexId. Floor support is all actual root-floor polygons clipped against shared triangles, plus exact root terrainH callback support so source matrix/root recipe remains baseline. C2 blend outside this entire union/support-footprint, not a center-only patch. Recheck full original asset lower-band and nearby owners after blend, all routes/exterior unchanged. No source glyph/cactus/actor changes."
+}

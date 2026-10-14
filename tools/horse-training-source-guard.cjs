@@ -1,3 +1,4 @@
+const {undoNorthRimSource,undoNorthRimObserverSource}=require('./north-rim-source-guard.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture='tools/fixtures/horse-training-dc405f3/contract.json';
 const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
@@ -24,10 +25,11 @@ function project(source,file,row,rows,label){
  assert.equal(sha(source),row.beforeSHA256,'Complete dc405f3 '+label+' preimage restored '+file);
  return source;
 }
-function normalizeHorseTrainingSource(source,file){return project(source,file,contract.files[file],contract.changes,'training runtime/cache');}
-function normalizeHorseTrainingObserverSource(source,file){const row=contract.observers[file];return project(source,file,row,row?.changes||[],'training observer');}
+function normalizeHorseTrainingSource(source,file){return project(undoNorthRimSource(source,file),file,contract.files[file],contract.changes,'training runtime/cache');}
+function normalizeHorseTrainingObserverSource(source,file){const row=contract.observers[file];return project(undoNorthRimObserverSource(source,file),file,row,row?.changes||[],'training observer');}
 function normalizeHorseTrainingAuditSource(source,file){return normalizeHorseTrainingObserverSource(normalizeHorseTrainingSource(source,file),file);}
 function assertHorseTrainingCurrentSource(source,file){
+ source=undoNorthRimObserverSource(undoNorthRimSource(source,file),file);
  const row=contract.files[file]||contract.observers[file];assert(row,'Declared horse-training owner '+file);
  assert.equal(sha(source),row.afterSHA256,'Entire current reviewed horse-training owner '+file);return true;
 }

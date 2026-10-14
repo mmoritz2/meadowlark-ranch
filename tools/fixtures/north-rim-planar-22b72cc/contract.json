@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "baseCommit": "22b72cc2d182c921b5605f5d1fc00edac7f5d4ee",
+  "version": "coyote-macroform-5",
+  "files": {
+    "assets/coyote-macroform.mjs": {
+      "baselineSHA256": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+      "candidateSHA256": "5727d61c00796526f2bb920799f70082866ba4656eacf5ad960fb291e885cdcc",
+      "runtimeLogicChanged": true,
+      "cacheOnly": false
+    },
+    "assets/canyon-landscape.js": {
+      "baselineSHA256": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+      "candidateSHA256": "0de3d20cacb31bf02e77876efd29271247f2ba085122affd9cf50248ed574f35",
+      "runtimeLogicChanged": true,
+      "cacheOnly": false
+    },
+    "assets/coyote-boot-planning.mjs": {
+      "baselineSHA256": "b37485306905bba2a4448e9e204878aeb632ba0ce038d0afcd519ffad8b82ef1",
+      "candidateSHA256": "8db6eb5a066b8477f0c36961f7c04cb38f374f6e1f02db8cb2e8b69217b6cba2",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "assets/world-photoscans.js": {
+      "baselineSHA256": "44c4741dae53651f3b40bbf5d70bb3dec50d1dd7f28af94b41fc5a77cab7c915",
+      "candidateSHA256": "e1aea2e589b3e75bd59abb716a2a0f91a6fe97bf656bdf1fd5495435c16ef709",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "assets/features/world.js": {
+      "baselineSHA256": "352a72a704ccdc9625e090d3604c4fa9992938aecfc83b490ed3c85573f04125",
+      "candidateSHA256": "0dc5ca447dd4b43501837f03c141b7ec886df4dd204bea47fc9b61dda457054e",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "assets/features/world-vistas.js": {
+      "baselineSHA256": "241eae6cde1ad7abc2bdee58deeb66e494a248be427d556f98828fc5c6718dc6",
+      "candidateSHA256": "5b7853fab4d4e8d5f9d8b75a1b749f6062db6aa58cba8fdeabae821eeac97596",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "assets/features/world-flora.js": {
+      "baselineSHA256": "55d59116887433156f5cbd8af2ea6a9c1607814536b9625320bf0b8b37aec020",
+      "candidateSHA256": "739b5314323eb35958d3119aec2deb02907ade54103abeb1f2e52c797d93eb28",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "assets/features/index.js": {
+      "baselineSHA256": "b94e0886c7206af03649ba9e2701991fc2609dcb98d4938430cd0d186983f2c2",
+      "candidateSHA256": "7c19d2cb762389235e4b93adb5326de5b4c6092dbe02bf3fba342f4e6a684f49",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    },
+    "ranch3d.html": {
+      "baselineSHA256": "b76c6787cb6af63d747b9f5692f55e62a574d04f1d6e0367a8f349987f870c76",
+      "candidateSHA256": "92e0292dff71c25e073ebafad2e306f8d9af7fb378e56db74b69bad33b05ae88",
+      "runtimeLogicChanged": false,
+      "cacheOnly": true
+    }
+  },
+  "numericChanges": 8,
+  "cacheEdges": 12,
+  "helperSHA256": "5727d61c00796526f2bb920799f70082866ba4656eacf5ad960fb291e885cdcc",
+  "canyonSHA256": "0de3d20cacb31bf02e77876efd29271247f2ba085122affd9cf50248ed574f35",
+  "sourceGuard": "Exact whole candidate/baseline owners plus literal inverse restoration; no broad cache normalization."
+}

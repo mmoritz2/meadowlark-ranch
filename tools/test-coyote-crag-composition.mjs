@@ -53,9 +53,9 @@ test('exact published caches and the original five crag reversals restore the fu
 
  const source=fs.readFileSync(path.join(ROOT,'assets/world-photoscans.js'),'utf8');assert.throws(()=>normalizeCoyoteCragCompositionSource(source.replace('shoulderReach:.55','shoulderReach:.60'),'assets/world-photoscans.js'));
  assert.throws(()=>normalizeCoyoteCragCompositionSource(source+source.slice(source.indexOf('{seed:1116,'),source.indexOf('{seed:1122,')),'assets/world-photoscans.js'));
- const drift=normalizeCoyoteCragCompositionSource(source+'\n// unreviewed owner drift','assets/world-photoscans.js');assert.throws(()=>assert.equal(sha(drift),contract.baselineSHA256['assets/world-photoscans.js']));
+ assert.throws(()=>assert.equal(sha(normalizeCoyoteCragCompositionSource(source+'\n// unreviewed owner drift','assets/world-photoscans.js')),contract.baselineSHA256['assets/world-photoscans.js']));
  assert.throws(()=>normalizeCoyoteCragCompositionSource(source.replace('spec.seed===1116?piece.mat:material','spec.seed===1122?piece.mat:material'),'assets/world-photoscans.js'));
- const materialDrift=normalizeCoyoteCragCompositionSource(source.replace('dressCragMineral({material,source:W.geology.canyonMaterial});','material.roughness=.1;dressCragMineral({material,source:W.geology.canyonMaterial});'),'assets/world-photoscans.js');assert.throws(()=>assert.equal(sha(materialDrift),contract.baselineSHA256['assets/world-photoscans.js']));
+ assert.throws(()=>assert.equal(sha(normalizeCoyoteCragCompositionSource(source.replace('dressCragMineral({material,source:W.geology.canyonMaterial});','material.roughness=.1;dressCragMineral({material,source:W.geology.canyonMaterial});'),'assets/world-photoscans.js')),contract.baselineSHA256['assets/world-photoscans.js']));
  const normalizer=fs.readFileSync(new URL('./coyote-crag-composition-source-guard.cjs',import.meta.url));assert.equal(sha(normalizer),contract.normalizerSHA256);assert.throws(()=>assert.equal(sha(Buffer.concat([normalizer,Buffer.from('\n// unreviewed guard drift')])),contract.normalizerSHA256));
 
 });

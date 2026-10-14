@@ -1,4 +1,4 @@
-import {CANYON_RIDGES,canyonMacroPlanningRelief} from './canyon-landscape.js?v=coyote-macroform-3';
+import {CANYON_RIDGES,canyonMacroPlanningRelief} from './canyon-landscape.js?v=coyote-macroform-5';
 // Boot placement uses original804 physical contour occupancy. Flora retains
 // its separate older planning generation; mounted/NPC physics uses live owners.
 export function createCoyoteBootPlanning(world){

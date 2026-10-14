@@ -1,0 +1,18 @@
+ /* Legacy trunks and rocks retain their footprints; authored structures use part geometry. */
+ for(const c of colliders){
+  if(c.precise||player.y>=(c.height??Math.max(2.5,c.r*2.5)))continue;
+  if(c.terrainCliff&&groundH(player.pos.x,player.pos.z)+player.y>=c.topY)continue;
+  if(c.climb&&player.onFoot)continue;   // rock she can climb: on foot the rock's own surface stops her or carries her (on-foot)
+  const ox=player.pos.x-c.x,oz=player.pos.z-c.z;
+  const d2=ox*ox+oz*oz,rad=c.r+0.55;
+  if(d2<rad*rad){
+   const d=Math.sqrt(d2);
+   if(d<0.02){
+    player.pos.x=c.x+Math.sin(player.heading+Math.PI)*rad;
+    player.pos.z=c.z+Math.cos(player.heading+Math.PI)*rad;
+   }else{
+    player.pos.x=c.x+ox/d*rad;
+    player.pos.z=c.z+oz/d*rad;
+   }
+  }
+ }

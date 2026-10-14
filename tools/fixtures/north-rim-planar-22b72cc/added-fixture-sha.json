@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "approvedAddedFixtureSHA256": {
+    "tools/fixtures/north-rim-planar-22b72cc/observer-changes.json": "df10830c91f75599a7a66a8e7c2d93341cf893adab9c7daaf117f3f27c4417d8",
+    "tools/fixtures/north-rim-planar-22b72cc/contract.json": "9cbf330484ada3ba80423534b686eae56099e214413aa6999d08c2a0c90f669c",
+    "tools/fixtures/north-rim-planar-22b72cc/source-changes.json": "410f700866216ec47cd1ce6f63f2ba10a2c9a90fd3a8304ffddfbd8dcd40876b",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/full-floor-source184.json": "9db2eb6d66bbb47ec185d0682705e6d62dc2cbc41ee878faab723fc1f9caa76a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/numeric-source-changes.json": "76a3cad1d8538c21d75cfc9c526e818ec50234ecc31e236249458e3171346b0d",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-current-routes.json": "c6786e94857a6cbe5588d78ce3d2a91fb40b51f8900b9adeff42141c7fa0e378",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-baseline.json": "499fa610fc4f2442a85986c2eb42d24f5b2b59e3e28f54ba7773ceb01bde77fe",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/contract.json": "4e8d087da58ffbe47445206fe3c979a6f6ea4bf447dc3c23667a24b803f87deb",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/coyote-macroform.mjs": "311700d1760eb7a85c6fec29ebd9d58d986c30f545c2d188c4118684b17d06c0",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/canyon-landscape.js": "43428250634073f7c8482e4644a8ebfd12b40c91c5bb7695a0a3965de5b38b82",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/coyote-macroform.mjs": "824a424a212b666d0d3ba6a4d41dec85e94ef0bd41e90cb4860e993b62b14668",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199"
+  }
+}

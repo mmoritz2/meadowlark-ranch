@@ -1,4 +1,4 @@
-import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-3';
+import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5';
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
 import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1';
 import {configureChalkGrazing} from '../chalk-grazing.mjs?v=chalk-grazing-1';

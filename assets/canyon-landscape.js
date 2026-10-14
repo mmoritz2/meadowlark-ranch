@@ -1,4 +1,4 @@
-import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-3';
+import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-5';
 // Original terrain composition: connected sandstone banks around the riding
 // valley. The same height field feeds visible terrain, hoof contact and dressing.
 export const CANYON_RIDGES=[
@@ -179,8 +179,8 @@ export function coyoteBankShape({id,front,best,side,along,edge}){
 }
 export const coyoteBankShapeControls={chains:CHAINS,cuts:CUTS};
 
-function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false,macroform=true){
- if(!planning&&macroform&&r.id==='north-rim')return coyoteNorthMacroHeight(best,side,along,edge);
+function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=false,macroform=true,x,z){
+ if(!planning&&macroform&&r.id==='north-rim')return coyoteNorthMacroHeight(best,side,along,edge,x,z);
  const authored=coyoteBankShape({id:r.id,front:countrysideBanks[r.id].front,best,side,along,edge});
  if(!planning&&authored!==null)return authored;
  const bank=countrysideBanks[r.id];let a=bank.spine[0],b=a;
@@ -217,7 +217,7 @@ export function canyonRelief(x,z,planning=false,macroform=true){
   const cap=1-.20*smooth(.34,.52,edge)-.62*smooth(.57,.82,edge)-.18*smooth(.81,1.08,edge);
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
   let ridgeHeight=Math.max(0,crest*cap*crown);
-  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning,macroform);
+  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight,planning,macroform,x,z);
   if(r.id==='oasis-butte'){oasisBest=best;oasisEdge=edge;}
   if(r.id==='oasis-butte')oasisUpperDelta=Math.max(0,crest*(1-crestSmooth(.18,1.08,edge))*crown)-ridgeHeight;
   height=Math.max(height,ridgeHeight);

@@ -1,0 +1,69 @@
+{
+  "baseCommit": "3944c9e87ce0ca4c5f13cd0bda067f57b31d6ef2",
+  "actualNativeFiles": {
+    "terrain-grid.f32": {
+      "path": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/hero-geology-3944-baseline-native/terrain-grid.f32",
+      "sha256": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc"
+    },
+    "preservation.json": {
+      "path": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/hero-geology-3944-baseline-native/preservation.json",
+      "sha256": "12042e72f6b581d85af05b20db410c8fa3091cb211a0fa453c7b1db93740cc25"
+    },
+    "river-riding-current.png": {
+      "path": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/hero-geology-3944-baseline-native/river-riding-current.png",
+      "sha256": "1753d4c51a72854f7583eac2455cac0337656dba1ac713547a8401225f7dc03d"
+    },
+    "river-riding-current-hero-geology-rays.json": {
+      "path": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/hero-geology-3944-baseline-native/river-riding-current-hero-geology-rays.json",
+      "sha256": "ede78f2e839de418bb8484e456951093962949456f20e745e3ee1eb854d645ae"
+    }
+  },
+  "fixtureFiles": {
+    "fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199"
+  },
+  "dependencySources": {
+    "assets/riverbank-terrain.mjs": "9caeaa13ad21ddd9268c2b8fca25e25e6ba985cc4e88cbd50c98c8926fc9829d",
+    "assets/riverbank-route-reference.mjs": "75069893b56139c30b3949b051108ed94cc701026b450de8722f641dfab2ddea",
+    "assets/pastoral-fields.mjs": "3ff95754438e715fc5ecbf8186ecead5a22e97f5d5b0a8776976eee71eb4e423",
+    "assets/oasis-art.js": "1df37b89386fc2ab08de3864d8be30404c50a73abbb1f15bc34acb30659db704",
+    "assets/falls-landscape.js": "53d40e5b95842434ea9e4bb7b5e2e8ea975a452db2523f4e44204981bf46967f",
+    "assets/hollowpeak-placement-reference.mjs": "75ada033fa4c93c6cdde79434f676f56819a6c034ce2509e3a96a8b789d4a94e",
+    "assets/features/world-flora.js": "55d59116887433156f5cbd8af2ea6a9c1607814536b9625320bf0b8b37aec020",
+    "assets/vendor/three/build/three.module.js": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495"
+  },
+  "nativeTrackCount": 7,
+  "nativeColliderCount": 4457,
+  "sourceSnippetsSHA256": {
+    "rawTerrain": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "races": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "legacyCollider": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04"
+  },
+  "numericSourceChanges": 5,
+  "support": [
+    -362,
+    -148,
+    -4,
+    82
+  ],
+  "otherSkinOwners": [
+    "western-wall",
+    "eastern-wall",
+    "oasis-butte"
+  ],
+  "runtimeCandidateSHA256": "5727d61c00796526f2bb920799f70082866ba4656eacf5ad960fb291e885cdcc",
+  "noRuntimeCacheEditsYet": false,
+  "observedOldNativeNodeRoundoff": {
+    "index": 348,
+    "key": "z",
+    "browserValue": 142.4253990607342,
+    "nodeValue": 142.42539906073424,
+    "ulp": 2.842170943040401e-14,
+    "scope": "Observed baseline-only Node/Chrome arithmetic difference. All other native fields remain exact; candidate actual native preservation is still required."
+  }
+}

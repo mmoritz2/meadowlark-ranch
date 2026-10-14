@@ -3,6 +3,21 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 import {fixture as f} from './coyote-macro-fixture.mjs';
 import {COYOTE_MACRO_CONTROLS,coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from '../assets/coyote-macroform.mjs';
 const {T,old,next,before,after,n,step}=f;
+// Exact former22b amplitude/topology/count remains an explicitly historical numerical recipe.
+// It is never substituted for f.next or any current route/skin/hoof/planning assertion.
+test('Historical22b North macro amplitude and exact7230triangle/2748byte/414barrier recipe remain reproducible',async()=>{
+ const root='./fixtures/north-rim-planar-22b72cc/historical/assets/',historical=await import(root+'canyon-landscape.js');
+ assert.equal(f.digest(read(root+'canyon-landscape.js')),'56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8');
+ assert.equal(f.digest(read(root+'coyote-macroform.mjs')),'2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199');
+ const grid=before.slice();let maxDelta=0;
+ for(let iz=0;iz<n;iz++)for(let ix=0;ix<n;ix++){const i=iz*n+ix,x=ix*step-500,z=iz*step-500,was=f.oldRaw(x,z),now=f.oldRaw(x,z,undefined,historical.canyonRelief);if(now!==was)grid[i]=now;maxDelta=Math.max(maxDelta,Math.abs(grid[i]-before[i]));}
+ assert(maxDelta>15&&maxDelta<17);
+ const height=(x,z)=>{const gx=(x+500)/step,gz=(z+500)/step,ix=Math.floor(gx),iz=Math.floor(gz),fx=gx-ix,fz=gz-iz,i=iz*n+ix,A=grid[i],B=grid[i+n],C=grid[i+n+1],E=grid[i+1];return fx+fz<=1?A+(E-A)*fx+(B-A)*fz:C+(B-C)*(1-fx)+(E-C)*(1-fz);};
+ const c=build(historical,height),bytes=art=>art.fields.reduce((s,{mesh:{geometry:g}})=>s+Object.values(g.attributes).reduce((s,v)=>s+v.array.byteLength,0)+g.index.array.byteLength,0);
+ assert.equal(c.art.triangles,7230);assert.equal(bytes(c.art)-bytes(a.art),2748);assert.equal(c.art.barriers.length,414);
+ for(const f of c.art.fields)f.mesh.geometry.dispose();c.art.fields[0].mesh.material.dispose();c.material.dispose();
+});
+
 const read=file=>fs.readFileSync(new URL(file,import.meta.url),'utf8');
 const pins=JSON.parse(read('./fixtures/coyote-macro-8042555/source.json'));
 const changes=JSON.parse(read('./fixtures/coyote-macro-8042555/source-changes.json'));
@@ -13,7 +28,7 @@ function ribbon(points,width=3){let samples=0;for(let i=1;i<points.length;i++){c
 function distance(x,z,route){let d=Infinity;for(let i=1;i<route.length;i++){const A=route[i-1],B=route[i],dx=B[0]-A[0],dz=B[1]-A[1],q=Math.max(0,Math.min(1,((x-A[0])*dx+(z-A[1])*dz)/(dx*dx+dz*dz||1)));d=Math.min(d,Math.hypot(x-A[0]-dx*q,z-A[1]-dz*q));}return d;}
 
 test('fresh804 native grid is pinned, source reconstruction matches every changed vertex, and only the two finite owners change',()=>{
- assert.equal(f.sha(before),pins.terrainSHA256);assert.equal(f.maxBaseError,0);assert(f.changed.length>2500&&f.changed.length<3100,'substantial two-owner macro change');assert(f.maxDelta>15&&f.maxDelta<17);
+ assert.equal(f.sha(before),pins.terrainSHA256);assert.equal(f.maxBaseError,0);assert(f.changed.length>2500&&f.changed.length<3100,'substantial two-owner macro change');assert.equal(f.maxDelta,11.948724746704102,'Actual selected NorthV2 amplitude against the pinned804 field; former amplitude is preserved in the explicit historical case');
  let north=0,oasis=0;for(const id of f.changed){const x=id%n*step-500,z=Math.floor(id/n)*step-500;if(x>=-363&&x<=-147&&z>=-5&&z<=85)north++;else{assert(x>=-190&&x<=-107&&z>150.390625&&z<199,'all other region vertices stay exact');oasis++;}assert(Number.isFinite(after[id]));}
  assert(north>2000&&oasis>300,'both actual photographed owners change materially');
 });
@@ -52,7 +67,7 @@ test('same real four skin meshes and constructor stream retain resources and unt
  assert.equal(a.draws,b.draws);assert.equal(b.draws,48);assert.deepEqual(b.future,a.future);assert.equal(b.art.fields.length,4);assert.equal(b.art.group.children.length,4);
  for(const id of ['western-wall','eastern-wall']){const A=a.art.fields.find(f=>f.id===id).mesh.geometry,B=b.art.fields.find(f=>f.id===id).mesh.geometry;for(const key of Object.keys(A.attributes))assert.deepEqual(B.attributes[key].array,A.attributes[key].array);assert.deepEqual(B.index.array,A.index.array);}
  for(let i=0;i<4;i++){const A=a.art.fields[i].mesh,B=b.art.fields[i].mesh;assert.equal(A.geometry.attributes.position.count,B.geometry.attributes.position.count);assert.equal(A.geometry.uuid,B.geometry.uuid);assert.equal(A.uuid,B.uuid);assert.deepEqual(A.geometry.attributes.uv.array,B.geometry.attributes.uv.array);assert.deepEqual(A.geometry.attributes.oasisTone.array,B.geometry.attributes.oasisTone.array);assert.equal(A.material.uuid,B.material.uuid);assert.equal(A.material.customProgramCacheKey(),B.material.customProgramCacheKey());}
- assert.equal(a.art.triangles,6772);assert.equal(b.art.triangles,7230);const bytes=art=>art.fields.reduce((s,{mesh:{geometry:g}})=>s+Object.values(g.attributes).reduce((s,v)=>s+v.array.byteLength,0)+g.index.array.byteLength,0);assert.equal(bytes(b.art)-bytes(a.art),2748);
+ assert.equal(a.art.triangles,6772);assert.equal(b.art.triangles,7194);const bytes=art=>art.fields.reduce((s,{mesh:{geometry:g}})=>s+Object.values(g.attributes).reduce((s,v)=>s+v.array.byteLength,0)+g.index.array.byteLength,0);assert.equal(bytes(b.art)-bytes(a.art),2532);
 });
 
 test('every visible stone triangle matches the physical grid and has finite unit normals, with no floating toe or independent height proxy',()=>{
@@ -63,7 +78,7 @@ test('every visible stone triangle matches the physical grid and has finite unit
 });
 
 test('rebuilt actual cliff contacts stay finite, follow dependent ground heights and retain all real riding clearances',()=>{
- assert.equal(b.art.barriers.length,414);for(const c of b.art.barriers){assert(c.terrainCliff&&c.landform&&c.r===1.05&&Number.isFinite(c.topY));let top=f.height(c.x,c.z);for(let a=0;a<8;a++)for(const d of[6,12,20])top=Math.max(top,f.height(c.x+Math.cos(a*Math.PI/4)*d,c.z+Math.sin(a*Math.PI/4)*d));assert.equal(c.topY,top+.3);}
+ assert.equal(b.art.barriers.length,426);for(const c of b.art.barriers){assert(c.terrainCliff&&c.landform&&c.r===1.05&&Number.isFinite(c.topY));let top=f.height(c.x,c.z);for(let a=0;a<8;a++)for(const d of[6,12,20])top=Math.max(top,f.height(c.x+Math.cos(a*Math.PI/4)*d,c.z+Math.sin(a*Math.PI/4)*d));assert.equal(c.topY,top+.3);}
  for(const route of f.routes){let gap=Infinity;for(const c of b.art.barriers)gap=Math.min(gap,distance(c.x,c.z,route.pts)-c.r);assert(gap>3,route.id+' hoof tube intersects a cliff contact');}
 });
 

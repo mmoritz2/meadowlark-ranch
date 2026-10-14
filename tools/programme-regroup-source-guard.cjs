@@ -1,3 +1,4 @@
+const {undoNorthRimSource,undoNorthRimObserverSource}=require('./north-rim-source-guard.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture='tools/fixtures/programme-regroup-05421c6/contract.json';
 const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
@@ -24,10 +25,11 @@ function project(source,file,row,rows,label){
  assert.equal(sha(source),row.beforeSHA256,'Complete 05421c6 '+label+' preimage restored '+file);
  return source;
 }
-function normalizeProgrammeRegroupSource(source,file){return project(source,file,contract.files[file],contract.changes,'programme/regroup runtime/cache');}
-function normalizeProgrammeRegroupObserverSource(source,file){const row=contract.observers[file];return project(source,file,row,row?.changes||[],'programme/regroup observer');}
+function normalizeProgrammeRegroupSource(source,file){return project(undoNorthRimSource(source,file),file,contract.files[file],contract.changes,'programme/regroup runtime/cache');}
+function normalizeProgrammeRegroupObserverSource(source,file){const row=contract.observers[file];return project(undoNorthRimObserverSource(source,file),file,row,row?.changes||[],'programme/regroup observer');}
 function normalizeProgrammeRegroupAuditSource(source,file){return normalizeProgrammeRegroupObserverSource(normalizeProgrammeRegroupSource(source,file),file);}
 function assertProgrammeRegroupCurrentSource(source,file){
+ source=undoNorthRimObserverSource(undoNorthRimSource(source,file),file);
  const row=contract.files[file]||contract.observers[file],added=contract.addedFiles[file];assert(row||added,'Declared programme/regroup owner '+file);
  assert.equal(sha(source),row?.afterSHA256||added.sha256,'Entire current reviewed programme/regroup owner '+file);return true;
 }
