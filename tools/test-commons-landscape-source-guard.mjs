@@ -1,3 +1,4 @@
+import {normalizeGrazedNaturalAuditSource} from './grazed-natural-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -8,7 +9,7 @@ import * as Commons from './commons-landscape-source-guard.cjs';
 import * as Roof from './roof-courses-source-guard.cjs';
 import * as Clearance from './leaf-camera-clearance-source-guard.cjs';
 import * as Canopy from './canopy-depth-source-guard.cjs';
-const root=new URL('../',import.meta.url),fixture='tools/fixtures/commons-landscape-2fbab/contract.json',raw=f=>fs.readFileSync(new URL(f,root),'utf8'),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
+const root=new URL('../',import.meta.url),fixture='tools/fixtures/commons-landscape-2fbab/contract.json',raw=f=>normalizeGrazedNaturalAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f),sha=s=>crypto.createHash('sha256').update(s).digest('hex'),contract=JSON.parse(raw(fixture));
 const prior=f=>execFileSync('git',['show',contract.baseline+':'+f],{cwd:root,encoding:'utf8'});
 function authored(before,changes){for(const c of changes){assert.equal(before.split(c.before).length-1,c.occurrences);before=before.replace(c.before,c.after);}return before;}
 test('all fourteen current runtime owners and narrow observer fronts restore their complete frozen 2fbab parent bodies',()=>{

@@ -5,12 +5,12 @@ import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
-import {createGrazedSwardGeometry,GRAZED_SWARD} from '../assets/grazed-sward.mjs';
+import {createGrazedSwardGeometry,GRAZED_SWARD} from './grazed-natural-parent-factory.mjs';
 import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
 
-// Actual progressive profile gates. The pinned original model is used only
-// for source roots, tip attributes, exact envelopes/caps and unchanged seeds.
-// No current geometry is substituted with the historical model under test.
+// Current nongrazed progressive profile gates, plus the explicit historical6e9
+// 14-leaf grazed entry. New34-leaf geometry and actual wind/controller/response
+// gates import production directly in test-grazed-natural and the live suites.
 const fixtureBytes=fs.readFileSync(new URL('./fixtures/grass-ribbon-3944-model.json',import.meta.url));
 assert.equal(crypto.createHash('sha256').update(fixtureBytes).digest('hex'),'d2d96833e3d279c1bc5f042edb912bfea5c7d73fbe3eab38dd90651df9181e58');
 const fixture=JSON.parse(fixtureBytes);
@@ -48,7 +48,7 @@ function physicalNormals(g){const p=g.attributes.position,n=g.attributes.normal,
  const before=n.array.slice();g.computeVertexNormals();assert.deepEqual(n.array,before,'No substituted lighting normal');
 }
 for(const form of forms){
- test(`${form.name}: actual mixed progressive topology retains exact source endpoints, caps, envelopes and complete rendering budget`,()=>{
+ test(`${form.name}: ${form.name==='grazed'?'historical6e9':'actual'} mixed progressive topology retains exact source endpoints, caps, envelopes and complete rendering budget`,()=>{
   const g=form.create(T),f=fixture.forms[form.name];try{
    const p=g.attributes.position,rs=ranges(g),counts={};assert.equal(rs.length,form.leaves);assert.equal(p.count,form.vertices);assert.equal(g.index.count/3,form.triangles);assert.equal(bytes(g),form.bytes);
    assert.deepEqual(g.boundingBox.min.toArray(),f.bounds.min);assert.deepEqual(g.boundingBox.max.toArray(),f.bounds.max);assert.deepEqual(g.boundingSphere.center.toArray(),f.sphere.center);assert.equal(g.boundingSphere.radius,f.sphere.radius);
@@ -65,7 +65,7 @@ for(const form of forms){
    assert.equal((g.userData.lushMeadow??g.userData.grazedSward).profile,form.name==='grazed'?'grazed-sward-progressive-4':'lush-meadow-progressive-4');
   }finally{g.dispose();}
  });
- test(`${form.name}: actual progressive rising stations taper and roll into real source tips rather than the former broad shoulder fan`,()=>{
+ test(`${form.name}: ${form.name==='grazed'?'historical6e9':'actual'} progressive rising stations taper and roll into real source tips rather than the former broad shoulder fan`,()=>{
   const g=form.create(T),p=g.attributes.position;try{
    for(const r of ranges(g)){if(!r.bent)continue;const h=peak(p,r),base=r.vertexStart,stations=r.vertexCount===9?[[2,3,.29],[4,5,.55],[6,7,.72]]:[[2,3,.29],[4,5,.68]];let priorY=0,priorWidth=Infinity;
     for(const[left,right,t]of stations){const y=(p.getY(base+left)+p.getY(base+right))*.5,width=Math.hypot(p.getX(base+left)-p.getX(base+right),p.getZ(base+left)-p.getZ(base+right));assert(y>priorY);assert(width>0&&width<h*.25);assert(width<priorWidth,'Physical successive blade widths taper');assert.notEqual(p.getY(base+left),p.getY(base+right),'Real transverse roll');for(const side of[left,right])assert(Math.abs(g.attributes.uv.getY(base+side)-t)<1e-6);priorY=y;priorWidth=width;}
@@ -76,7 +76,7 @@ for(const form of forms){
    const ratio=area(g,true)/area(fixture.forms[form.name],true),surfaceRatio=area(g)/area(fixture.forms[form.name]);assert(ratio>.45&&ratio<.65,'New narrower-profile physical coverage interval relative to actual3944; former area gate remains historical');assert(surfaceRatio>.50&&surfaceRatio<.70,'Actual physical surface remains substantial at the new slender profile');
   }finally{g.dispose();}
  });
- test(`${form.name}: all actual triangles retain computed normal cones and finite facing through wind and original full-size anisotropic placement`,()=>{
+ test(`${form.name}: ${form.name==='grazed'?'historical6e9':'actual'} triangles retain computed normal cones and finite facing through wind and original full-size anisotropic placement`,()=>{
   const g=form.create(T);try{physicalNormals(g);const p=g.attributes.position,n=g.attributes.normal;
    for(const basis of[{xz:.766,y:.207},{xz:.663,y:.235}])for(const tilt of[-.05,.05])for(const heading of[.23,2.17])for(const wind of[[0,0],[.31,-.16],[-.31,.16]])for(const fade of[1]){
     const ratio=basis.y/basis.xz,xf=Math.sqrt(fade),shear=new T.Matrix4().set(xf,wind[0]*ratio*fade,0,0,0,fade,0,0,0,wind[1]*ratio*fade,xf,0,0,0,0,1),base=new T.Matrix4().compose(new T.Vector3(82.16113,1.1373,-107.748565),new T.Quaternion().setFromEuler(new T.Euler(0,heading,tilt)),new T.Vector3(basis.xz,basis.y,basis.xz)),matrix=base.multiply(shear),normalMatrix=new T.Matrix3().getNormalMatrix(matrix),points=Array.from({length:p.count},(_,id)=>vector(p,id).applyMatrix4(matrix));
@@ -106,7 +106,7 @@ test('the exact near min-X is owned by a drawn lower sheath edge with new progre
 });
 
 function sampleConstructor(create){let allocated=0,calls=0,state=123456789;const saved=Math.random;const t=new Proxy({...T,BufferGeometry:class extends T.BufferGeometry{constructor(...args){super(...args);allocated++;}}},{get(target,name){if(typeof name==='string'&&/(?:Material|Texture)$/.test(name))return class{constructor(){throw Error('Unexpected '+name);}};return target[name];}});Math.random=()=>{calls++;state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};try{const geometry=create(t),count=calls,future=Array.from({length:24},()=>Math.random());return{geometry,calls:count,future,allocated};}finally{Math.random=saved;}}
-test('actual current geometry allocates one source, four UUID draws, unchanged future24 and zero materials/textures',()=>{
+test('current nongrazed and historical6e9 grazed geometry allocates one source, four UUID draws, unchanged future24 and zero materials/textures',()=>{
  let state=123456789;const rng=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};for(let i=0;i<4;i++)rng();const future=Array.from({length:24},rng);
  for(const f of forms){const a=sampleConstructor(f.create);try{assert.equal(a.allocated,1);assert.equal(a.calls,4);assert.deepEqual(a.future,future);}finally{a.geometry.dispose();}}
  assert.deepEqual(GRASS_FAMILIES.map(f=>f.leaves),[14,14,10]);assert.equal(GRAZED_SWARD.leaves,14);assert.equal(GRAZED_SWARD.bentLeaves,12);

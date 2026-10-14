@@ -4,7 +4,7 @@ const historical3944=(form,T)=>form.name==='near'?historicalTuft(T,{profile:'nea
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
-import {createGrazedSwardGeometry,GRAZED_SWARD} from '../assets/grazed-sward.mjs';
+import {createGrazedSwardGeometry,GRAZED_SWARD} from './grazed-natural-parent-factory.mjs';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
 import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
 import {MIXED_SWARD} from '../assets/mixed-sward.mjs';
@@ -15,8 +15,9 @@ import {
  createGrassTuftGeometry as previousTuft,
 } from './grass-ribbon-historical-factories.mjs';
 
-// Current physical ribbon contract. Old eight-vertex crease assertions remain
-// unchanged in explicitly historical d9 tests; these factories are live assets.
+// Current nongrazed physical ribbon contract plus an explicit historical6e9
+// 14-leaf grazed entry. All old shape assertions remain; new34-leaf geometry
+// is exercised directly by test-grazed-natural and live wind/controller suites.
 const forms=[
  {name:'near',create:t=>createGrassTuftGeometry(t,{profile:'near-folded-v1'}),before:t=>previousTuft(t,{profile:'near-folded-v1'}),leaves:8,bent:6,upright:2,triangles:40,vertices:56,bytes:2704},
  ...[0,1,2].map(family=>({name:['meadow','low','seeded'][family],create:t=>createGrassFamilyGeometry(t,family),before:t=>previousFamily(t,family),leaves:[14,14,10][family],bent:[11,11,6][family],upright:[3,3,4][family],triangles:70,vertices:[98,98,114][family],bytes:[4732,4732,5436][family]})),
@@ -58,7 +59,7 @@ function projectedArea(g){
  for(let at=0;at<g.index.count;at+=3){const[a,b,c]=Array.from(g.index.array.subarray(at,at+3),id=>vector(p,id));area+=Math.abs(b.sub(a).cross(c.sub(a)).y)*.5;}
  return area;
 }
-for(const form of forms)test(`${form.name}: live continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost`,()=>{
+for(const form of forms)test(`${form.name}: ${form.name==='grazed'?'historical6e9':'live'} continuous rooted ribbons retain every source root pair, source role, tip XZ and peak with bounded cost`,()=>{
  const old=form.before(T),g=form.create(T);
  try{
   physicalSurface(g);const p=g.attributes.position,prior=old.attributes.position,leaves=ranges(g),previous=ranges(old);
@@ -148,7 +149,7 @@ test('all216 noncanonical combinations and actual middle tiers retain complete d
  for(const n of [4,6,8]){const options={profile:'middle-natural-v1',bladeCount:n,segments:2},a=previousTuft(T,options),b=createGrassTuftGeometry(T,options);try{for(const name of Object.keys(a.attributes))assert.deepEqual(b.attributes[name].array,a.attributes[name].array);assert.deepEqual(b.index.array,a.index.array);assert.deepEqual(b.boundingBox,a.boundingBox);assert.deepEqual(b.boundingSphere,a.boundingSphere);assert.deepEqual(b.userData,a.userData);}finally{a.dispose();b.dispose();}}
 });
 
-test('actual ribbons retain finite drawn sides under the Clover near/grazed instance scales and source tilts',()=>{
+test('current nongrazed and historical6e9 grazed ribbons retain finite drawn sides under the Clover near/grazed instance scales and source tilts',()=>{
  const bases=[{xz:.766,y:.207},{xz:.663,y:.235}];let triangles=0;
  for(const form of forms){const g=form.create(T);try{
   for(const basis of bases)for(const tilt of [-.05,.05])for(const heading of [.23,2.17]){

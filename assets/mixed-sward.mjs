@@ -1,4 +1,4 @@
-import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1';
+import {createGrazedSwardGeometry,selectsGrazedSward} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-ribbon-5';
