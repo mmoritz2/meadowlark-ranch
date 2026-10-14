@@ -1,5 +1,5 @@
 import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
+import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-4';

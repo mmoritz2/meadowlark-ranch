@@ -5,7 +5,7 @@ import {pathToFileURL,fileURLToPath} from 'node:url';
 export const repo=path.resolve(process.env.PASTORAL_TEST_REPO||fileURLToPath(new URL('../',import.meta.url)));
 export const moduleAt=(name,query='')=>import(pathToFileURL(path.join(repo,name)).href+query);
 export const T=await moduleAt('assets/vendor/three/build/three.module.js');
-const newCover=fs.existsSync(path.join(repo,'assets/pastoral-cover.mjs'))?await moduleAt('assets/pastoral-cover.mjs','?v=pastoral-cover-1-commons-landscape-1-grove-field-1'):{};
+const newCover=fs.existsSync(path.join(repo,'assets/pastoral-cover.mjs'))?await moduleAt('assets/pastoral-cover.mjs','?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1'):{};
 const grass=await moduleAt('assets/meadow-cover.js'),flowers=await moduleAt('assets/meadow-flowers.mjs'),pastoral=await moduleAt('assets/pastoral-fields.mjs'),ranch=await moduleAt('assets/ranch-grounds.mjs'),chalk=await moduleAt('assets/chalk-grazing.mjs','?v=chalk-grazing-1'),reeds=await moduleAt('assets/reed-beds.js');
 export const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 export const cellsDigest=cells=>sha(Buffer.concat(cells.flatMap(c=>[Buffer.from(c.matrices.buffer,c.matrices.byteOffset,c.matrices.byteLength),Buffer.from(c.colors.buffer,c.colors.byteOffset,c.colors.byteLength)])));

@@ -1,12 +1,14 @@
+// countryside-fields-1: only frozen source-header authority uses the C8 inverse; model imports stay raw current.
+import {normalizeCountrysideFieldsSource} from './countryside-fields-source-guard.cjs';
 // Current field/geometry are imported raw. Only the old reference module is
 // reconstructed from the exact approved parent inverse below.
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import crypto from'node:crypto';
 import * as T from'../assets/vendor/three/build/three.module.js';
-import * as P from'../assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
+import * as P from'../assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';
 import {worldOptions,groundH}from'./pastoral-world-fixture.mjs';
 import {createGrazedSwardGeometry}from'../assets/grazed-sward.mjs';
 import {createGrassFamilyGeometry}from'../assets/grass-families.mjs';
-const sourceURL=new URL('../assets/pastoral-cover.mjs',import.meta.url),source=fs.readFileSync(sourceURL,'utf8'),contract=JSON.parse(fs.readFileSync(new URL('./fixtures/grove-field-a63ace15/source-contract.json',import.meta.url))),row=contract.files['assets/pastoral-cover.mjs'],sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const sourceURL=new URL('../assets/pastoral-cover.mjs',import.meta.url),source=normalizeCountrysideFieldsSource(fs.readFileSync(sourceURL,'utf8'),'assets/pastoral-cover.mjs'),contract=JSON.parse(fs.readFileSync(new URL('./fixtures/grove-field-a63ace15/source-contract.json',import.meta.url))),row=contract.files['assets/pastoral-cover.mjs'],sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 let parent=source;assert.equal(sha(source),row.afterSHA256);for(const c of row.changes.toReversed()){assert.equal(parent.split(c.after).length-1,c.occurrences);parent=parent.replaceAll(c.after,c.before);}assert.equal(sha(parent),row.beforeSHA256);
 const parentURL='data:text/javascript;base64,'+Buffer.from(parent.replace(/(from\s+['"])(\.\.?\/[^'"]+)(['"])/g,(_,a,p,b)=>a+new URL(p,sourceURL).href+b)).toString('base64'),O=await import(parentURL),original=O.createPastoralCoverField(worldOptions),field=P.configurePastoralCover(worldOptions);
 const noRandom=run=>{const old=Math.random;Math.random=()=>{throw Error('Glade presentation used RNG');};try{return run();}finally{Math.random=old;}},inside=(x,z)=>[[160,-168,13,22],[182,-190,21,30]].some(([cx,cz,rx,rz])=>{const dx=x-cx,dz=z-cz,c=Math.cos(.66),s=Math.sin(.66);return Math.hypot((dx*c+dz*s)/rx,(-dx*s+dz*c)/rz)<1;});

@@ -1,3 +1,4 @@
+import {createCountrysideFieldComposition} from './countryside-field-composition.mjs?v=countryside-fields-1';
 import {fieldSwardAt} from './field-sward-bands.mjs?v=field-sward-bands-4';
 import {meadowMarginAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
 import {coldWoodlandWeights} from './cold-woodland.mjs?v=cold-woodland-1';
@@ -39,7 +40,7 @@ const positive=(a,o)=>Math.hypot(a[o],a[o+1],a[o+2])+Math.hypot(a[o+4],a[o+5],a[
 // Actual final terrain, wet footprints, Chalk down and retired forest list are
 // captured once. The numeric raster makes subsequent 47k-root packing bounded:
 // four samples, without nearest-tree scans, terrain probes or biome callbacks.
-export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wetAt=()=>false,chalkAt=()=>false,forestPoints=[]}){
+export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wetAt=()=>false,chalkAt=()=>false,forestPoints=[],countrysideTracks=null}){
  if(![terrainH,riverZ,riverLevel,streamX,wetAt,chalkAt].every(f=>typeof f==='function'))throw Error('Actual final pastoral world samplers required');
  const cuts=new Float32Array(NX*NZ),caps=new Float32Array(NX*NZ),shade=new Float32Array(NX*NZ);
  let forestCount=0;
@@ -100,6 +101,7 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   const cut=weight*(1-.985*band)*(1-.92*margin)*(1-marsh)*ease(9.6,17,river)*(1-ease(.37,.82,slope));
   gladeCuts[i]=cut;gladeCaps[i]=cut>0?.43+.07*(.5+.5*Math.sin(x*.027+z*.013)*Math.sin(z*.031-x*.009)):0;if(cut>0)gladeVertices++;
  }
+ const composition=countrysideTracks?createCountrysideFieldComposition({tracks:countrysideTracks,forestPoints,protectedAt,terrainH}):null;
  function originalAt(x,z){
   if(x<=MIN_X||x>=MAX_X||z<=MIN_Z||z>=MAX_Z)return ZERO;
   const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;
@@ -109,7 +111,7 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   // scanned and static grass can safely respond again without compounding.
   const base=caps[i]*a+caps[i+1]*b+caps[i+NX]*c+caps[i+NX+1]*d;return{cut,cap:base/(cut*cut)};
  }
- function at(x,z){
+ function gladeAt(x,z){
   const original=originalAt(x,z),weight=gladeWeight(x,z);if(weight===0||protectedAt(x,z))return original;
   const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;
   const a=(1-fx)*(1-fz),b=fx*(1-fz),c=(1-fx)*fz,d=fx*fz;
@@ -121,19 +123,25 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   const base=gladeCaps[i]*a+gladeCaps[i+1]*b+gladeCaps[i+NX]*c+gladeCaps[i+NX+1]*d;
   return{cut:Math.max(original.cut,cut),cap:Math.min(original.cap,base/(cut*cut))};
  }
+ function at(x,z){
+  const original=gladeAt(x,z),q=composition?.at(x,z);if(!q||q.weight===0)return original;
+  const w=q.weight,cap=Number.isFinite(original.cap)?original.cap*(1-w)+q.cap*w:q.cap/(w*w);
+  return{cut:original.cut*(1-w)+q.cut*w,cap,floor:q.floor*w,bank:q.floor>0?w:0,seed:q.seed*w,compositionWeight:w};
+ }
  function applyGrazingPixels(data,size){
   if(!ArrayBuffer.isView(data)||!Number.isInteger(size)||size<1||data.length!==size*size*4)throw Error('Existing landcover mask required');
   let changed=0;const step=1000/size,ix0=Math.max(0,Math.floor((MIN_X+500)/step)),ix1=Math.min(size-1,Math.ceil((MAX_X+500)/step)),iz0=Math.max(0,Math.floor((MIN_Z+500)/step)),iz1=Math.min(size-1,Math.ceil((MAX_Z+500)/step));
-  for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const i=(iz*size+ix)*4+2,next=Math.max(data[i],Math.round(at(-500+(ix+.5)*step,-500+(iz+.5)*step).cut*255));if(next>data[i]){data[i]=next;changed++;}}
+  for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const i=(iz*size+ix)*4+2,x=-500+(ix+.5)*step,z=-500+(iz+.5)*step,q=at(x,z),w=composition?.at(x,z).weight||0,next=Math.round(Math.max(data[i],Math.round(q.cut*255))*(1-w)+Math.round(q.cut*255)*w);if(next!==data[i]){data[i]=next;changed++;}}
   return changed;
  }
- return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS}),at,applyGrazingPixels});
+ return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS,countryside:composition?.stats||null}),composition,originalAt:gladeAt,at,applyGrazingPixels});
 }
-let current=null,revision=0;
-const cellCache=new WeakMap();
+let current=null,revision=0,renderColorCacheBytes=0;
+const cellCache=new WeakMap(),renderColorSources=new WeakMap();
 export function configurePastoralCover(options){current=createPastoralCoverField(options);revision++;return current;}
 export const getPastoralCoverField=()=>current;
 export const getPastoralCoverRevision=()=>revision;
+export const getPastoralPresentationStats=()=>({revision,renderColorCacheBytes});
 export const pastoralCoverAt=(x,z)=>current?current.at(x,z):ZERO;
 export const applyPastoralGrazingPixels=(data,size)=>current?current.applyGrazingPixels(data,size):0;
 
@@ -145,22 +153,40 @@ export function pastoralSourceRows(cell){
 }
 export function respondPastoralGrassMatrix(a,o,geometry,groundHeight,offsetX=0,offsetZ=0,offsetY=0,q=null){
  if(!current||!positive(a,o))return 1;
- const x=a[o+12]+offsetX,z=a[o+14]+offsetZ,sample=q||current.at(x,z);if(sample.cut===0||!Number.isFinite(sample.cap))return 1;
+ const x=a[o+12]+offsetX,z=a[o+14]+offsetZ,sample=q||current.at(x,z),live=q&&current.composition?current.at(x,z):sample;if((sample.cut===0||!Number.isFinite(sample.cap))&&!live.compositionWeight)return 1;
  if(!geometry.boundingBox)geometry.computeBoundingBox();const b=geometry.boundingBox;
  const h=Math.abs(a[o+1])*(b.max.x-b.min.x)+Math.abs(a[o+5])*(b.max.y-b.min.y)+Math.abs(a[o+9])*(b.max.z-b.min.z);
+ if(live.compositionWeight>0){
+  const target=Math.max(live.floor||0,Math.min(h,live.cap));
+  if(Math.abs(target-h)<=Math.max(1e-7,target*2e-7)||h<=1e-9)return 1;
+  const scale=target/h,ground=typeof groundHeight==='function'?groundHeight(x,z):groundHeight;
+  if(scale>=8)return 1; // Keep already minute/retired source forms rather than create tall needles.
+  if(!Number.isFinite(ground)||!(scale>0))throw Error('Invalid countryside grass contact');
+  // Only the world-vertical row changes. Every XZ footprint/yaw stays exact.
+  for(const col of[0,4,8])a[o+col+1]*=scale;
+  a[o+13]=ground-offsetY+(a[o+13]+offsetY-ground)*scale;return scale;
+ }
  if(h<=sample.cap+Math.max(1e-7,sample.cap*2e-7))return 1;
  const scale=sample.cap/h,ground=typeof groundHeight==='function'?groundHeight(x,z):groundHeight;
  if(!Number.isFinite(ground)||!(scale>0&&scale<=1))throw Error('Invalid pastoral cover contact');
  for(const column of[0,4,8])for(let axis=0;axis<3;axis++)a[o+column+axis]*=scale;
  a[o+13]=ground-offsetY+(a[o+13]+offsetY-ground)*scale;return scale;
 }
+export function respondPastoralGrassColor(color,x,z,offset=0){
+ const q=current?.composition?.at(x,z),w=q?q.seed*q.weight:0;if(!w)return false;
+ // Local seed ripening only; existing world-space source palette stays intact.
+ if(ArrayBuffer.isView(color)){color[offset]*=1+w*.70;color[offset+1]*=1+w*.22;color[offset+2]*=1-w*.28;}
+ else{color.r*=1+w*.70;color.g*=1+w*.22;color.b*=1-w*.28;}return true;
+}
 export function applyPastoralGrassMesh(mesh,groundHeight,count=mesh.count,offsetX=0,offsetZ=0,offsetY=0){
  if(!current||!mesh)return 0;let changed=0;const a=mesh.instanceMatrix.array;
- for(let row=0;row<count;row++)if(respondPastoralGrassMatrix(a,row*16,mesh.geometry,groundHeight,offsetX,offsetZ,offsetY)<1)changed++;
- if(changed)mesh.instanceMatrix.needsUpdate=true;return changed;
+ for(let row=0;row<count;row++)if(respondPastoralGrassMatrix(a,row*16,mesh.geometry,groundHeight,offsetX,offsetZ,offsetY)!==1)changed++;
+ if(changed)mesh.instanceMatrix.needsUpdate=true;
+ if(current.composition&&mesh.instanceColor){let source=renderColorSources.get(mesh);if(!source){source=mesh.instanceColor.array.slice();renderColorSources.set(mesh,source);renderColorCacheBytes+=source.byteLength;}let tinted=0;for(let row=0;row<count;row++){const o=row*16;mesh.instanceColor.array.set(source.subarray(row*3,row*3+3),row*3);if(respondPastoralGrassColor(mesh.instanceColor.array,a[o+12]+offsetX,a[o+14]+offsetZ,row*3))tinted++;}if(tinted)mesh.instanceColor.needsUpdate=true;}return changed;
 }
 export function applyPastoralSourceMesh(mesh,cells,groundHeight,count=mesh.count){
  if(!current)return 0;let row=0,changed=0;const a=mesh.instanceMatrix.array;
- for(const cell of cells){const q=pastoralSourceRows(cell);for(let k=0;k<cell.count&&row<count;k++,row++)if(q.cuts[k]>0&&respondPastoralGrassMatrix(a,row*16,mesh.geometry,groundHeight,0,0,0,{cut:q.cuts[k],cap:q.caps[k]})<1)changed++;}
- if(changed)mesh.instanceMatrix.needsUpdate=true;return changed;
+ for(const cell of cells){const q=pastoralSourceRows(cell);for(let k=0;k<cell.count&&row<count;k++,row++)if((q.cuts[k]>0||current.composition)&&respondPastoralGrassMatrix(a,row*16,mesh.geometry,groundHeight,0,0,0,{cut:q.cuts[k],cap:q.caps[k]})!==1)changed++;}
+ if(changed)mesh.instanceMatrix.needsUpdate=true;
+ if(current.composition&&mesh.instanceColor){let row=0,tinted=0;for(const cell of cells)for(let k=0;k<cell.count&&row<count;k++,row++){mesh.instanceColor.array.set(cell.colors.subarray(k*3,k*3+3),row*3);if(respondPastoralGrassColor(mesh.instanceColor.array,cell.matrices[k*16+12],cell.matrices[k*16+14],row*3))tinted++;}if(tinted)mesh.instanceColor.needsUpdate=true;}return changed;
 }

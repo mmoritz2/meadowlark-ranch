@@ -1,6 +1,6 @@
-import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1';
+import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {pastoralSourceRows,respondPastoralGrassMatrix} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
+import {pastoralSourceRows,respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-ribbon-5';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.
@@ -72,7 +72,7 @@ export function installMixedSward(G,{assetUrl='./assets/models/world/grass_mediu
  // Only the drawn prefix is uploaded; unused capacity cannot contribute vertices.
  function copy(rows,mesh,colors=true){
   const dst=mesh.instanceMatrix.array;
-  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});if(colors)mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);}
+  for(let i=0;i<rows.length;i++){const r=rows[i],c=source.cells[r.cellIndex];dst.set(c.matrices.subarray(r.row*16,r.row*16+16),i*16);respondChalkGrassMatrix(dst,i*16,mesh.geometry,W.groundH);respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});if(colors){mesh.instanceColor.array.set(c.colors.subarray(r.row*3,r.row*3+3),i*3);respondPastoralGrassColor(mesh.instanceColor.array,c.matrices[r.row*16+12],c.matrices[r.row*16+14],i*3);}}
   mesh.count=rows.length;
   for(const [attribute,width] of [[mesh.instanceMatrix,16],...(colors?[[mesh.instanceColor,3]]:[])]){
    attribute.clearUpdateRanges();

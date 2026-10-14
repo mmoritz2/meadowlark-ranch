@@ -1,4 +1,4 @@
-import {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1';
+import {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';
 
 // Every original planting/capture/course and the accepted Chalk/ferry response
 // finishes before grazing configuration. No constructor, RNG or admission read.
@@ -34,5 +34,13 @@ export function installPastoralCoverRefresh(G){
   const wetAt=(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1));
   configurePastoralCover({terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,wetAt,chalkAt,forestPoints:W.forestPoints});
   return refreshPastoralCover(G);
- });return W.pastoralCoverReady;
+ });
+ // A separate late phase avoids the original cover→medium→vista dependency.
+ // It captures only the final active forest; no source cell or planting reruns.
+ W.countrysideFieldsReady=Promise.resolve().then(()=>Promise.all([W.pastoralCoverReady,G.photoscans?.countrysideVistaReady])).then(()=>{
+  const down=G.vistas?.chalkDown,marsh=G.quartersPkg?.willowmereArt?.landscape;
+  configurePastoralCover({terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks});
+  const response=refreshPastoralCover(G),field=getPastoralCoverField();
+  return{profile:field.composition.profile,stats:field.composition.stats,runs:field.composition.runs,response};
+ }).catch(error=>{W.countrysideFieldsError=error.message;console.warn('Countryside fields kept prior pasture',error);return null;});return W.pastoralCoverReady;
 }
