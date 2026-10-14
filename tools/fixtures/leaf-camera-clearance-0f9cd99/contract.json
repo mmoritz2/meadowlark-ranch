@@ -1,0 +1,142 @@
+{
+  "baseline": "0f9cd990ca5fadade7d561e366713ba255a09997",
+  "profile": "leaf-camera-clearance-1",
+  "files": {
+    "assets/world-photoscans.js": {
+      "beforeSHA256": "e4401f9aeb4ac8f79b61ee3975e948469b742437fb3a54792986f145fd1860d9",
+      "afterSHA256": "550aa52860da6e113dd6f5302a7cf2933498bb00430cd61ccf97c67e7da3bfd2",
+      "changes": [
+        {
+          "before": "import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';",
+          "after": "import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';\nimport {patchLeafCameraClearance} from './leaf-camera-clearance.mjs?v=leaf-camera-clearance-1';",
+          "occurrences": 1
+        },
+        {
+          "before": "      patchFoliageCoverage(sh,activeRenderer);",
+          "after": "      if(mat.name==='island_tree_01_leaves')patchLeafCameraClearance(sh);\n      patchFoliageCoverage(sh,activeRenderer);",
+          "occurrences": 1
+        },
+        {
+          "before": "+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name);",
+          "after": "+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves');",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "db112c68361f6a01364a9cfa63df45692713e6a1fd3ec93288c9756f8cd58e3e",
+      "afterSHA256": "501fe7f007b08fdf722596243613ab93b5e7bf2b961ae6e1c9e2be4ea37d8357",
+      "changes": [
+        {
+          "before": "world-photoscans.js?v=volumetric-middle-pines-1",
+          "after": "world-photoscans.js?v=leaf-camera-clearance-1",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "observers": {
+    "tools/canopy-depth-source-guard.cjs": {
+      "beforeSHA256": "c720df4e409888172377129283951b96d3f50be67d6b959590dcbadfd8968970",
+      "afterSHA256": "880f5a8031bc3d7c8971afa334087069532f1ade6b5d99fac5b5c3176f355363",
+      "changes": [
+        {
+          "before": "const fs=require('node:fs')",
+          "after": "const {normalizeLeafCameraClearanceAuditSource,normalizeLeafCameraClearanceFixtureChanges}=require('./leaf-camera-clearance-source-guard.cjs');\nconst fs=require('node:fs')",
+          "occurrences": 1
+        },
+        {
+          "before": "function view(source,file,kind){const row=",
+          "after": "function view(source,file,kind){source=normalizeLeafCameraClearanceAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function assertCanopyDepthCurrent(source,file){const row=",
+          "after": "function assertCanopyDepthCurrent(source,file){source=normalizeLeafCameraClearanceAuditSource(source,file);const row=",
+          "occurrences": 1
+        },
+        {
+          "before": "function normalizeCanopyDepthFixtureChanges(diff){const rows=",
+          "after": "function normalizeCanopyDepthFixtureChanges(diff){diff=normalizeLeafCameraClearanceFixtureChanges(diff);const rows=",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-canopy-depth-source-guard.mjs": {
+      "beforeSHA256": "cee92477ac3636fe73bb904cd369db547448c9a6735fd86ebb29eac7882c424e",
+      "afterSHA256": "1376201c3469dde7cfc8f110315131202a081c2b892190740b184fa13aba46dd",
+      "changes": [
+        {
+          "before": "import * as Canopy from './canopy-depth-source-guard.cjs';",
+          "after": "import * as Clearance from './leaf-camera-clearance-source-guard.cjs';\nimport * as Canopy from './canopy-depth-source-guard.cjs';",
+          "occurrences": 1
+        },
+        {
+          "before": "raw=f=>fs.readFileSync(new URL(f,root),'utf8')",
+          "after": "raw=f=>Clearance.normalizeLeafCameraClearanceAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f)",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "addedFiles": {
+    "assets/leaf-camera-clearance.mjs": {
+      "sha256": "680c16226336be0d0fdf9d5e44630839c21769a3540594e98bacacc692314333"
+    },
+    "tools/test-leaf-camera-clearance-source-guard.mjs": {
+      "sha256": "e458bd7cca28bcf87f8ffd60d1f3d7fc0380ac030920886d929d59c8fc8c7558"
+    },
+    "tools/test-leaf-camera-clearance.mjs": {
+      "sha256": "704e8c65c885ea9aa034e7f42cb4a3214302e0ad14d6fe9946ee4fa7aa8e1981"
+    }
+  },
+  "protectedExistingFixtureSHA256": {
+    "tools/fixtures/north-rim-planar-22b72cc/added-fixture-sha.json": "22d33eff0fdde272fb069e36bdd5841a861b5b101483906348dcc76a9d88ddc6",
+    "tools/fixtures/north-rim-planar-22b72cc/contract.json": "9cbf330484ada3ba80423534b686eae56099e214413aa6999d08c2a0c90f669c",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/observer-changes.json": "df10830c91f75599a7a66a8e7c2d93341cf893adab9c7daaf117f3f27c4417d8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/contract.json": "4e8d087da58ffbe47445206fe3c979a6f6ea4bf447dc3c23667a24b803f87deb",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/coyote-macroform.mjs": "311700d1760eb7a85c6fec29ebd9d58d986c30f545c2d188c4118684b17d06c0",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/canyon-landscape.js": "43428250634073f7c8482e4644a8ebfd12b40c91c5bb7695a0a3965de5b38b82",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/coyote-macroform.mjs": "824a424a212b666d0d3ba6a4d41dec85e94ef0bd41e90cb4860e993b62b14668",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/full-floor-source184.json": "9db2eb6d66bbb47ec185d0682705e6d62dc2cbc41ee878faab723fc1f9caa76a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-baseline.json": "499fa610fc4f2442a85986c2eb42d24f5b2b59e3e28f54ba7773ceb01bde77fe",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-current-routes.json": "c6786e94857a6cbe5588d78ce3d2a91fb40b51f8900b9adeff42141c7fa0e378",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/numeric-source-changes.json": "76a3cad1d8538c21d75cfc9c526e818ec50234ecc31e236249458e3171346b0d",
+    "tools/fixtures/north-rim-planar-22b72cc/source-changes.json": "410f700866216ec47cd1ce6f63f2ba10a2c9a90fd3a8304ffddfbd8dcd40876b",
+    "tools/fixtures/formal-turf-ff10ddd/contract.json": "7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279",
+    "tools/fixtures/formal-approach-resume-5e173bf/contract.json": "ce3842a217c8ecaf4ba4da5b73c6399296a0235755de683d32ff6add4dd6e9cd",
+    "tools/fixtures/pasture-passage-7a6bacd/contract.json": "5b2cdcd9b14261bc878dcee501202078fff6b09bf8c6b672a04c3f7c56028b3c",
+    "tools/fixtures/north-formal-7a6bacd/contract.json": "aaa1e34f2b4e6f59c75df2b7f3157b479f8573e901746541b0146cf1d052e146",
+    "tools/fixtures/canopy-depth-8f5ad05/contract.json": "c68b308774c0807cec57c6fad36d40bdbe35e9b2d988caf9869a7efa976c5e69"
+  },
+  "protectedSourceSHA256": {
+    "assets/features/course-guide.js": "062d55873509bef4d58734ec8be0570ddc71199aec881369cf2f0a880343db56",
+    "assets/features/club-rides.js": "e122bbbc2db6c386c8976377952334b1ed9f17705d7e1a2b63ef705d69a0a416",
+    "assets/formal-fence-guidance.mjs": "2d800f02041caf7f64696ff595aec0715adacf375334ae37ad0da357c8a12437",
+    "assets/features/tack-summon.js": "0899006df0fe173eada4abfef496d3bb8e4936d58ad28209de4de73daa62674e",
+    "assets/features/tack-summon-stall.js": "8ecbd02dc5691cd42486651c5b70038d7860926757c0c8387a8172dbe1201d38",
+    "assets/models/world/realism/island_tree_01.glb": "04a80fe9c2584bbea686cf9637009dd03b48905b229773c17a8cc611e8d21b58",
+    "assets/island-leaf-surfaces.mjs": "4006a6c2d6707879d3314413f9d2d724731e784941c518a75e8af271be0c6aee",
+    "assets/mature-leaf-patches.mjs": "8d1e4c6c8125f5477494689c7c2808d7fafdd1d2b5c64bcd3e8fee5cad223e59",
+    "assets/woodland-edge-wood-proxies.mjs": "d2c61aa9b857902ac7bc9d4b0643f95b645e5478c9f44dfe7e82ef0f3464cce5",
+    "assets/upright-broadleaf-wood-proxies.mjs": "5c594865b3ad1487a17bbc05ff55cbd78dd6708797c101e1b116b683c0564a94",
+    "assets/tree-impostors.js": "034419c407aa311f3e3ee8e2011408847525dee5182ecd67558e0e8fcc8f3de5",
+    "tools/asset-gen/tree-normal-material.mjs": "50fe0505cf701887f81c85d88d9e7520fa5352eed8a83e5047e29a0ede2842a2",
+    "tools/asset-gen/bake-world-tree.cjs": "ede58937a6c1e3531769e4ca927b99301cfb7d202161000304c41ae88b906ec8",
+    "assets/models/world/realism/tree-impostors.json": "798a79ba9606c51037175b6332662ed282f546940911020b870cf6cfd73f04c3",
+    "assets/models/world/realism/island_tree_01_views.webp": "4e0bcf171bcf9c87026b4af4cf57729fad9c08e70611c3bd1a0adbb5b90313ec",
+    "assets/models/world/realism/island_tree_01_normals.webp": "53bd63e3679ee80e9914a0ab7fb19995bd5a2eeb8e244403ae06d7dfe80aca6d",
+    "assets/models/world/realism/orchard_apple_views.webp": "bbfd6ab8ef3464c2bb71f64fb7ea7c0d1932c9dcd0a1638b035dad7ef1a1df39",
+    "assets/models/world/realism/orchard_apple_normals.webp": "fc969164c3132f2e0ce27ebe9e61c519d10c9745cd3318b16de91e79d65e9ebf"
+  }
+}

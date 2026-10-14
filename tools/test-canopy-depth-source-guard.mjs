@@ -5,9 +5,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import * as Clearance from './leaf-camera-clearance-source-guard.cjs';
 import * as Canopy from './canopy-depth-source-guard.cjs';
 import * as Joint from './north-formal-composition-source-guard.cjs';
-const root=new URL('../',import.meta.url),fixture='tools/fixtures/canopy-depth-8f5ad05/contract.json',raw=f=>fs.readFileSync(new URL(f,root),'utf8'),contract=JSON.parse(raw(fixture)),sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const root=new URL('../',import.meta.url),fixture='tools/fixtures/canopy-depth-8f5ad05/contract.json',raw=f=>Clearance.normalizeLeafCameraClearanceAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f),contract=JSON.parse(raw(fixture)),sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 const prior=f=>execFileSync('git',['show',contract.baseline+':'+f],{cwd:root,encoding:'utf8'});
 function authored(before,rows){for(const c of rows){assert.equal(c.occurrences,1);assert.equal(before.split(c.before).length-1,c.occurrences);before=before.replace(c.before,c.after);}return before;}
 test('two exact raw owners retain complete8f5 preimages and only the approved updater/cache changes',()=>{

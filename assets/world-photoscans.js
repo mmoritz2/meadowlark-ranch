@@ -7,6 +7,7 @@ import {installYoungOuterWoodland} from './young-outer-woodland.mjs?v=young-oute
 import {installOuterCanopyShade} from './outer-canopy-shade.mjs?v=outer-canopy-shelter-1';
 import {installOuterRockClusters} from './outer-rock-clusters.mjs?v=outer-rock-clusters-3';
 import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
+import {patchLeafCameraClearance} from './leaf-camera-clearance.mjs?v=leaf-camera-clearance-1';
 import {patchSummerLeafPigment,isSummerLeafMaterial} from './summer-leaf-pigment.mjs?v=summer-leaf-pigment-1';
 import {SETTLEMENT_WOODLAND_BELTS,SETTLEMENT_WOODLAND_MAX,terrainAwareWoodEnvelope,settlementWoodlandCandidates,settlementWoodlandPlants} from './settlement-woodland.mjs?v=settlement-woodland-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
@@ -122,9 +123,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
           outgoingLight+=diffuseColor.rgb*directionalLights[0].color*scanBack*.055;
         #endif
         #include <opaque_fragment>`);
+      if(mat.name==='island_tree_01_leaves')patchLeafCameraClearance(sh);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name);
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves');
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
