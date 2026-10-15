@@ -1,3 +1,4 @@
+import {installLandmarkStonework,waitForLandmarkStoneTextures,LANDMARK_STONEWORK_PROFILE} from '../landmark-stonework.mjs?v=landmark-stonework-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5';
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
 import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1';
@@ -78,7 +79,7 @@ export function install(G){
  LM.envMapIntensity=0.58;
 
  function Acc(seed,ox,oy,oz){
-  const pos=[],nor=[],col=[],solidOwner={userData:{}};
+  const pos=[],nor=[],col=[],solidOwner={userData:{}},stonePieces=[];
   const c=new THREE.Color(),v=new THREE.Vector3();
   const m=new THREE.Matrix4(),nm=new THREE.Matrix3(),q=new THREE.Quaternion(),e=new THREE.Euler();
   const tr=new THREE.Vector3(),sc=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),dir=new THREE.Vector3();
@@ -91,6 +92,7 @@ export function install(G){
    const g=keep?nonIdx(geo):(geo.index?geo.toNonIndexed():geo);
    const p=g.attributes.position,gn=g.attributes.normal;
    c.set(hex);const s=(shade==null?1:shade)*(0.95+rnd()*0.10);   // every piece a shade apart, or it reads as plastic
+   if(seed===8821&&['#8d8a80','#6e6b62','#a9a69a'].includes(hex))stonePieces.push({start:pos.length/3,count:p.count,type:geo.type,size:[sx,sy,sz],matrix:m.toArray()});
    for(let i=0;i<p.count;i++){
     v.fromBufferAttribute(p,i).applyMatrix4(m);pos.push(v.x,v.y,v.z);
     v.fromBufferAttribute(gn,i).applyMatrix3(nm).normalize();nor.push(v.x,v.y,v.z);
@@ -167,7 +169,7 @@ export function install(G){
     g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
     g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
     g.computeBoundingSphere();
-    const me=new THREE.Mesh(g,LM);me.userData.solidParts=solidOwner.userData.solidParts||[];me.castShadow=true;me.receiveShadow=true;return me;
+    const me=new THREE.Mesh(g,LM);if(seed===8821)me.userData.landmarkStoneworkSource={profile:LANDMARK_STONEWORK_PROFILE,pieces:stonePieces};me.userData.solidParts=solidOwner.userData.solidParts||[];me.castShadow=true;me.receiveShadow=true;return me;
    },
   };
   return A;
@@ -905,6 +907,10 @@ export function install(G){
     3. the log — what a rider has stood on, and what the finger-post promised
     ============================================================================ */
  P.LAND=LAND;
+ P.landmarkStoneworkReady=Promise.resolve().then(()=>Promise.all([W.countrysideFieldsReady,G.photoscans?.countrysideVistaReady,W.ranchBuilderArt?.ready,W.courseTurf?.ready,G.worldPkg?.barleyfoldWallArtReady])).then(async()=>{
+  await waitForLandmarkStoneTextures(W.fallsLandscape.rock.material);
+  const keep=LAND.find(l=>l.id==='wrenfell');P.landmarkStonework=installLandmarkStonework(G,keep);return P.landmarkStonework;
+ }).catch(error=>{P.landmarkStoneworkError=error.message;console.warn('Wrenfell keeps original render',error);return null;});
  P.landVerts=LAND.reduce((a,l)=>a+l.verts,0);
  Q.addAch({id:'vistas',icon:'🧭',label:'Every horizon',desc:'Visit all '+LAND.length+' of the basin’s landmarks',
   v:s=>Object.keys(s.vistas||{}).length,goal:LAND.length,r:{c:700,g:3,k:1}});
