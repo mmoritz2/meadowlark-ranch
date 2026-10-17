@@ -1,0 +1,18 @@
+{
+  "assets/features/world-vistas.js": {
+    "beforeSHA256": "5bcbfb84bb9f44fab62fff258e8d923a6672bbb7b534e252a7181c737f9a430f",
+    "afterSHA256": "5ac4e18c5644f6de5a05b2c83366cec34141b5c7f1862b0eee77b57e75019bbe",
+    "changes": [
+      {
+        "before": "",
+        "after": "import {installHollowpeakShore,waitForHollowpeakShoreImages} from '../hollowpeak-shore.mjs?v=hollowpeak-shore-2';\n",
+        "occurrences": 1
+      },
+      {
+        "before": " P.landVerts=LAND.reduce((a,l)=>a+l.verts,0);",
+        "after": " W.hollowpeakShoreReady=P.hollowpeakShoreReady=Promise.resolve().then(()=>Promise.all([P.standingStonesReady,G.quartersPkg?.millPondArtReady,W.countrysideFieldsReady])).then(async()=>{await waitForHollowpeakShoreImages(W.fallsLandscape.rock.material);W.hollowpeakShore=installHollowpeakShore(G);return W.hollowpeakShore;}).catch(error=>{W.hollowpeakShoreError=error.message;console.warn('Hollowpeak keeps original shore',error);return null;});\n P.landVerts=LAND.reduce((a,l)=>a+l.verts,0);",
+        "occurrences": 1
+      }
+    ]
+  }
+}

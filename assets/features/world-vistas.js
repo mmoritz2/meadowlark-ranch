@@ -1,3 +1,4 @@
+import {installHollowpeakShore,waitForHollowpeakShoreImages} from '../hollowpeak-shore.mjs?v=hollowpeak-shore-2';
 import {installStandingStones,waitForStandingStoneTextures,STANDING_STONES_PROFILE} from '../standing-stones.mjs?v=standing-stones-1';
 import {installLandmarkStonework,waitForLandmarkStoneTextures,LANDMARK_STONEWORK_PROFILE} from '../landmark-stonework.mjs?v=landmark-stonework-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5';
@@ -914,6 +915,7 @@ export function install(G){
   const keep=LAND.find(l=>l.id==='wrenfell');P.landmarkStonework=installLandmarkStonework(G,keep);return P.landmarkStonework;
  }).catch(error=>{P.landmarkStoneworkError=error.message;console.warn('Wrenfell keeps original render',error);return null;});
  P.standingStonesReady=Promise.resolve().then(()=>P.landmarkStoneworkReady).then(async()=>{await waitForStandingStoneTextures(W.fallsLandscape.rock.material);const sisters=LAND.find(l=>l.id==='ninesisters');P.standingStones=installStandingStones(G,sisters);return P.standingStones;}).catch(error=>{P.standingStonesError=error.message;console.warn('Nine Sisters keep original render',error);return null;});
+ W.hollowpeakShoreReady=P.hollowpeakShoreReady=Promise.resolve().then(()=>Promise.all([P.standingStonesReady,G.quartersPkg?.millPondArtReady,W.countrysideFieldsReady])).then(async()=>{await waitForHollowpeakShoreImages(W.fallsLandscape.rock.material);W.hollowpeakShore=installHollowpeakShore(G);return W.hollowpeakShore;}).catch(error=>{W.hollowpeakShoreError=error.message;console.warn('Hollowpeak keeps original shore',error);return null;});
  P.landVerts=LAND.reduce((a,l)=>a+l.verts,0);
  Q.addAch({id:'vistas',icon:'🧭',label:'Every horizon',desc:'Visit all '+LAND.length+' of the basin’s landmarks',
   v:s=>Object.keys(s.vistas||{}).length,goal:LAND.length,r:{c:700,g:3,k:1}});

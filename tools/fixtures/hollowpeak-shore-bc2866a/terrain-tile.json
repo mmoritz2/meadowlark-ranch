@@ -1,0 +1,16 @@
+{
+  "source": "Current previously captured authoritative 513x513 terrain grid; strict original SHA retained",
+  "fullGridSHA256": "a0ed1fc2fd44c35edd537fa657bb355d33ced7cb85252de561f4da4e9740cab8",
+  "originIndex": [
+    167,
+    129
+  ],
+  "width": 25,
+  "height": 25,
+  "step": 1.953125,
+  "worldOrigin": [
+    -173.828125,
+    -248.046875
+  ],
+  "tileSHA256": "064d0634b65d92b599ecc0c0bd4bc3a78efbb20ad48c41f5b76b3bb6cb50356b"
+}
