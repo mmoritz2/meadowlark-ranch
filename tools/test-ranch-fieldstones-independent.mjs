@@ -1,3 +1,5 @@
+// mesa-landforms-1: exact historical source reads; actual factory geometry stays raw.
+import{normalizeMesaLandformsSource as mesaParent}from'./mesa-landforms-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,7 +31,7 @@ let pair;
 
 test('frozen combined source binds only the exact twelve model and cache literals; original whole geology and main world bodies remain',()=>{
  for(const [file,expected]of Object.entries(contract.runtimeSHA256)){
-  const current=fs.readFileSync(new URL('../'+file,import.meta.url));assert.equal(sha(normalizeLupinSource(current.toString(),file)),expected);
+  const current=mesaParent(fs.readFileSync(new URL('../'+file,import.meta.url)),file);assert.equal(sha(normalizeLupinSource(current.toString(),file)),expected);
   if(contract.sourceSHA256[file])assert.equal(sha(normalizeRanchModelSource(current.toString(),file)),contract.sourceSHA256[file]);
  }
  assert.equal(contract.approvedNewSourceChanges.length,12);
@@ -42,7 +44,18 @@ test('actual full production placement loop retains all accepted sites, private 
   const old=a.value.colliders[i],next=b.value.colliders[i];assert.deepEqual({...next,height:old.height},old);
   const original=a.value.scene.children[i],newRoot=b.value.scene.children[i],x=original.children[0],y=newRoot.children[0];assert.equal(newRoot.uuid,original.uuid);assert.equal(y.uuid,x.uuid);assert.equal(y.geometry.uuid,x.geometry.uuid);assert.deepEqual(newRoot.position,original.position);assert.deepEqual(newRoot.quaternion.toArray(),original.quaternion.toArray());
   if(newRoot.userData.geology.fieldstone){changed++;assert(needsPastoralFieldstone(old.x,old.z));assert(next.height>=y.geometry.boundingBox.max.y&&next.height<y.geometry.boundingBox.max.y+.03);assert(next.height>0&&next.height<2);assert.equal(y.material,b.value.geology.material);assert.equal(y.geometry.index.count/3,912);assert.equal(newRoot.userData.geology.legacyHeight,old.height);}
-  else{assert.equal(next.height,old.height);assert.equal(y.material.uuid,x.material.uuid);assert.deepEqual(y.geometry.index.array,x.geometry.index.array);for(const n of Object.keys(x.geometry.attributes))assert.deepEqual(y.geometry.attributes[n].array,x.geometry.attributes[n].array);assert.deepEqual(newRoot.userData,original.userData);}
+  else{assert.equal(next.height,old.height);assert.equal(y.material.uuid,x.material.uuid);assert.deepEqual(y.geometry.index.array,x.geometry.index.array);
+   if(newRoot.userData.geology.kind==='layered mesa'){
+    // Actual current factory remains raw. Only the declared upper mesa surface
+    // changes; the source band's positions/UVs and all placement/physics stay.
+    const a=x.geometry,b=y.geometry,A=a.attributes.position.array,B=b.attributes.position.array,reference=a.userData.groundReference,ceiling=Math.max(3.8,original.userData.geology.height*.23+.05);
+    assert.deepEqual(Object.keys(b.attributes),Object.keys(a.attributes));for(const k of Object.keys(a.attributes)){assert.equal(b.attributes[k].count,a.attributes[k].count);assert.equal(b.attributes[k].itemSize,a.attributes[k].itemSize);assert.equal(b.attributes[k].array.byteLength,a.attributes[k].array.byteLength);}assert.deepEqual(b.attributes.color.array,a.attributes.color.array);
+    let moved=0,normalChanges=0,uvChanges=0,protectedVertices=0;
+    for(let v=0;v<a.attributes.position.count;v++){const k=v*3,u=v*2;if(reference[k+1]<=ceiling){protectedVertices++;for(let j=0;j<3;j++)assert.equal(B[k+j],A[k+j]);for(let j=0;j<2;j++)assert.equal(b.attributes.uv.array[u+j],a.attributes.uv.array[u+j]);}if(Math.hypot(B[k]-A[k],B[k+1]-A[k+1],B[k+2]-A[k+2])>1e-6)moved++;for(let j=0;j<3;j++){assert(Number.isFinite(b.attributes.normal.array[k+j]));if(b.attributes.normal.array[k+j]!==a.attributes.normal.array[k+j])normalChanges++;}for(let j=0;j<2;j++){assert(Number.isFinite(b.attributes.uv.array[u+j]));if(b.attributes.uv.array[u+j]!==a.attributes.uv.array[u+j])uvChanges++;}}
+    assert(protectedVertices>500);assert(moved>500&&normalChanges>0&&uvChanges>0,'intentional upper mesa shape/normal/metricUV changed, not a source-normalized old factory');
+    const oldMeta=original.userData.geology,newMeta=newRoot.userData.geology;assert.deepEqual({...newRoot.userData,geology:{...newMeta,min:oldMeta.min,max:oldMeta.max}},original.userData);for(let axis=0;axis<3;axis++){assert(b.boundingBox.min.getComponent(axis)>=a.boundingBox.min.getComponent(axis)-1e-5);assert(b.boundingBox.max.getComponent(axis)<=a.boundingBox.max.getComponent(axis)+1e-5);}
+   }else{for(const n of Object.keys(x.geometry.attributes))assert.deepEqual(y.geometry.attributes[n].array,x.geometry.attributes[n].array);assert.deepEqual(newRoot.userData,original.userData);}
+  }
   if(!old.landform)assert(actual.some(c=>c.x===old.x&&c.z===old.z&&c.r===old.r&&c.height===old.height),'actual original native circle equals source execution');
  }
  assert.equal(changed,2);assert.equal(contract.sites.filter(s=>s.kind==='hoodoo'&&needsPastoralFieldstone(s.x,s.z)).length,2);

@@ -1,8 +1,11 @@
+// mesa-landforms-1: exact current mesa inverse before regional history.
+const {normalizeMesaLandformsSource,normalizeMesaLandformsFixtureChanges}=require('./mesa-landforms-source-guard.cjs');
 // Exact regional-cover-2 inverse. Inapplicability is never source certification.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture='tools/fixtures/regional-cover-8aa2e72/source-contract.json',sha=b=>crypto.createHash('sha256').update(b).digest('hex'),baseRoot=path.join(__dirname,'..'),declaration=fs.readFileSync(path.join(baseRoot,fixture));
 assert.equal(sha(declaration),'c394debea8beb02b5867b6c2f66eea5c7ce1d5e340aa3e549c7c41c7a88c6e56','Exact regional declaration');const contract=JSON.parse(declaration);
 function normalizeRegionalCoverSource(source,file){
+ source=normalizeMesaLandformsSource(source,file);
  const row=contract.files[file]||contract.observers[file];if(!row)return source;
  const hash=sha(source);if(hash===row.beforeSHA256)return source;
  const buffer=Buffer.isBuffer(source),text=buffer?source.toString('utf8'):source;
@@ -12,12 +15,13 @@ function normalizeRegionalCoverSource(source,file){
  assert.equal(sha(parent),row.beforeSHA256,'Whole exact8aa2e72 parent '+file);return buffer?Buffer.from(parent):parent;
 }
 function assertRegionalCoverCurrent(read,{rootDir=baseRoot}={}){
- const current=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file));
+ const raw=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file)),current=file=>normalizeMesaLandformsSource(raw(file),file);
  for(const[f,row]of Object.entries({...contract.files,...contract.observers}))assert.equal(sha(current(f)),row.afterSHA256,'Actual raw regional owner '+f);
  for(const[f,row]of Object.entries(contract.addedFiles))assert.equal(sha(current(f)),row.sha256,'Actual raw added regional owner '+f);
  for(const[f,v]of Object.entries({...contract.parentFixtureSHA256,...contract.newFixtureSHA256}))assert.equal(sha(current(f)),v,'Exact regional fixture '+f);return true;
 }
 function normalizeRegionalCoverFixtureChanges(diff,{rootDir=baseRoot}={}){
+ diff=normalizeMesaLandformsFixtureChanges(diff,{rootDir});
  const rows=diff.trim()?diff.trim().split('\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate regional fixture');const allowed={...contract.newFixtureSHA256,[fixture]:sha(declaration)};
  const kept=rows.filter(f=>{if(!Object.hasOwn(allowed,f))return true;assert.equal(sha(fs.readFileSync(path.join(rootDir,f))),allowed[f],'Exact new regional fixture '+f);return false;});return kept.length?kept.join('\n')+'\n':'';
 }

@@ -1,0 +1,209 @@
+{
+  "profile": "mesa-landforms-sites-8f811f1",
+  "scope": "Actual current unchanged source placements replayed with full original roads and canyon retirement; scene presence after async scans requires native binding.",
+  "sources": {
+    "ranch3d.html:formationLoop": "6b121ac5a7a9c769dcabdbf20c24acff9603b6d27a15ea0e8beb8a23d344991b",
+    "ranch3d.html:extraMesaLoop": "ab352bb8a7567c427287f37b3fd9c451675e707da7c6903fdc46e3c2fba0f79e"
+  },
+  "sourceSnippets": {
+    "formation": " /* Sedimentary mesas and weathered spires with grounded talus skirts. */\n {\n  let seed=20260906;\n  const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};\n  for(const kind of ['mesa','hoodoo']){\n   let placed=0;const count=kind==='mesa'?13:26;\n   for(let i=0;i<320&&placed<count;i++){\n    const a=rnd()*Math.PI*2,rr=24+rnd()*108,x=CANYON.x+Math.cos(a)*rr,z=CANYON.z+Math.sin(a)*rr;\n    const radius=kind==='mesa'?7+rnd()*9:.9+rnd()*1.5;\n    if(Math.hypot(x-CANYON.x,z-CANYON.z)<18||pathDist(x,z)<radius+4||Math.abs(z-riverZ(x))<radius*1.3+9)continue;\n    const height=kind==='mesa'?7+rnd()*11:3.5+rnd()*6.5;\n    if(canyonReplacesFormation(x,z,radius)){placed++;continue;}\n    let placedFormation;\n    if(kind==='mesa')geology.placeMesa(x,z,radius,height,i+1107);\n    else placedFormation=geology.placeHoodoo(x,z,radius,height,i+3527);\n    const colliderHeight=placedFormation?.userData.geology.fieldstone?placedFormation.userData.geology.collisionHeight:height;\n    colliders.push({x,z,r:radius*.95,height:colliderHeight,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it\n   }\n  }\n }\n",
+    "extraMesas": "{let seed=20260929;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};\nfor(let i=0;i<8;i++){\n const x=-160-rnd()*130,z=80+rnd()*110;\n const hgt=6+rnd()*9,rad=5+rnd()*7;\n if(Math.abs(z-riverZ(x))<rad*1.3+9||pathDist(x,z)<rad+3||Math.hypot(x-CANYON.x,z-CANYON.z)<50)continue;\n if(canyonReplacesFormation(x,z,rad))continue;\n geology.placeMesa(x,z,rad,hgt,i+8234);\n colliders.push({x,z,r:rad*.95,height:hgt,landform:true});\n}}\n"
+  },
+  "sites": [
+    {
+      "kind": "mesa",
+      "x": -323.4361948752548,
+      "z": 125.03008522484386,
+      "radius": 9.948003349127248,
+      "height": 9.932499518617988,
+      "seed": 1110,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "mesa",
+      "x": -195.83215084834097,
+      "z": 125.66595509028143,
+      "radius": 8.848786510759965,
+      "height": 8.822864371351898,
+      "seed": 1113,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "mesa",
+      "x": -147.1487664781018,
+      "z": 42.658726610246234,
+      "radius": 9.85658511845395,
+      "height": 14.906441053142771,
+      "seed": 1116,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "mesa",
+      "x": -349.1653754247129,
+      "z": 138.07231333973914,
+      "radius": 7.866479412186891,
+      "height": 9.161111504537985,
+      "seed": 1117,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "mesa",
+      "x": -191.8227245236306,
+      "z": 123.56940679465845,
+      "radius": 10.459471353329718,
+      "height": 16.38546021678485,
+      "seed": 1122,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -179.35139523604522,
+      "z": 127.87522970887497,
+      "radius": 1.3549340601079165,
+      "height": 9.87218005291652,
+      "seed": 3528,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -192.15878691378774,
+      "z": 130.99680024250225,
+      "radius": 2.3636562271043657,
+      "height": 4.520599033101462,
+      "seed": 3529,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -184.92810805186593,
+      "z": 106.31983177290613,
+      "radius": 1.7858920130878686,
+      "height": 8.947810523561202,
+      "seed": 3531,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -178.9322375058914,
+      "z": 56.86063378639081,
+      "radius": 1.8558423841372131,
+      "height": 7.393751134513877,
+      "seed": 3533,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "hoodoo",
+      "x": -194.13952697635665,
+      "z": 133.56244292647693,
+      "radius": 1.424704169947654,
+      "height": 8.104531004908495,
+      "seed": 3534,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -174.5061587017475,
+      "z": 123.82298776638572,
+      "radius": 1.9107763772830366,
+      "height": 9.581829025759362,
+      "seed": 3537,
+      "photoscanReplacement": true
+    },
+    {
+      "kind": "hoodoo",
+      "x": -179.25589390620937,
+      "z": 221.0835910103737,
+      "radius": 1.7800659533590077,
+      "height": 8.418839734396897,
+      "seed": 3539,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "hoodoo",
+      "x": -345.05155413047663,
+      "z": 130.80521683961314,
+      "radius": 2.215971070434898,
+      "height": 6.100509635056369,
+      "seed": 3540,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "hoodoo",
+      "x": -134.85543603641165,
+      "z": 212.39393997089155,
+      "radius": 1.6526107092853635,
+      "height": 8.678225775831379,
+      "seed": 3550,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "hoodoo",
+      "x": -263.5032936544912,
+      "z": 236.02721236132496,
+      "radius": 2.167526732990518,
+      "height": 6.92044300690759,
+      "seed": 3553,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "hoodoo",
+      "x": -107.76978022635555,
+      "z": 61.11545600269433,
+      "radius": 1.6892302663531154,
+      "height": 9.407214641221799,
+      "seed": 3554,
+      "photoscanReplacement": false
+    },
+    {
+      "kind": "mesa",
+      "x": -263.39737156406045,
+      "z": 97.42358046816662,
+      "radius": 10.324441296746954,
+      "height": 11.829238804522902,
+      "seed": 8237,
+      "photoscanReplacement": false
+    }
+  ],
+  "ochre": [
+    {
+      "kind": "mesa",
+      "x": -359.8666720534363,
+      "z": 302.8252257347845,
+      "radius": 22,
+      "height": 30,
+      "seed": 6401,
+      "region": "ochre"
+    },
+    {
+      "kind": "mesa",
+      "x": -314.52852573808485,
+      "z": 331.88469043542517,
+      "radius": 15,
+      "height": 20,
+      "seed": 6404,
+      "region": "ochre"
+    },
+    {
+      "kind": "mesa",
+      "x": -331.3453455879926,
+      "z": 239.05584486393408,
+      "radius": 11,
+      "height": 14,
+      "seed": 6402,
+      "region": "ochre"
+    }
+  ],
+  "visibleMesaSeeds": [
+    6401,
+    6404,
+    6402,
+    1110,
+    1117,
+    8237
+  ],
+  "retiredScanMesaSeeds": [
+    1113,
+    1116,
+    1122
+  ]
+}

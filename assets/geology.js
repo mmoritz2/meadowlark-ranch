@@ -1,3 +1,4 @@
+import {createMesaLandform} from './mesa-landforms.mjs?v=mesa-landforms-1';
 import {dressPastoralFieldstone,groundPastoralFieldstone} from './ranch-fieldstones.mjs?v=ranch-fieldstones-1';
 import {dressCanyonSurface} from './canyon-surface.js?v=countryside-banks-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
@@ -89,6 +90,7 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     const random=rng(seed),phase=random()*TAU;
     const segments=hoodoo?40:72,beds=hoodoo?12:Math.min(27,Math.max(16,Math.round(height*1.05)));
     const ellipse=.78+random()*.15;
+    const mesaLandform=hoodoo?null:createMesaLandform(radius,height,seed,phase);
     const fractures=Array.from({length:hoodoo?6:11},()=>({a:random()*TAU,
       width:.025+random()*.045,depth:.035+random()*.055,bend:random()*2-1}));
     const tiers=Array.from({length:beds+1},()=>random());
@@ -134,9 +136,11 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       -(hoodoo?.12:.060)*Math.exp(-Math.pow(angular(a,phase+.5)/.46,2))
       -(hoodoo?0:.035)*Math.exp(-Math.pow(angular(a,phase+3.4)/.38,2)));
     const surface=(a,t,ledge=0)=>{
-      const r=radial(a,t,ledge),shear=height*.014*t;
-      return [Math.cos(a)*r+Math.cos(phase)*shear,
-        height*t+upper(a)*Math.pow(Math.max(t,0),3)+Math.sin(a*6+phase)*height*.003*t,
+      let r=radial(a,t,ledge);
+      let y=height*t+upper(a)*Math.pow(Math.max(t,0),3)+Math.sin(a*6+phase)*height*.003*t;
+      if(mesaLandform)[r,y]=mesaLandform.surface(a,t,r,y);
+      const shear=height*.014*t;
+      return [Math.cos(a)*r+Math.cos(phase)*shear,y,
         Math.sin(a)*r*ellipse+Math.sin(phase)*shear];
     };
     const p=[],u=[],c=[],idx=[];
@@ -168,7 +172,7 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     for(const f of topRings)for(let i=0;i<=segments;i++){
       const a=i/segments*TAU,edge=surface(a,1),cx=Math.cos(phase)*height*.014,cz=Math.sin(phase)*height*.014;
       const x=cx+(edge[0]-cx)*f,z=cz+(edge[2]-cz)*f;
-      const crown=height*.925;
+      const crown=mesaLandform?mesaLandform.crown:height*.925;
       const y=crown+(edge[1]-crown)*f+Math.sin(a*5+phase)*height*.005*f*(1-f);
       topP.push(x,y,z);topU.push(x/PATCH,z/PATCH);
       const v=.98+.035*Math.sin(a*8+phase)*f;topC.push(v,v*.99,v*.96);

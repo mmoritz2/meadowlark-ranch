@@ -1,0 +1,28 @@
+{
+  "assets/geology.js": {
+    "beforeSHA256": "3e73418720389026b7bd3e7d9c2c4ced18473fd26404d385e68049b641c3e051",
+    "afterSHA256": "4ed952b3166501d70beb6901255435214b1ed072bb9c643348ba56ccd775219a",
+    "changes": [
+      {
+        "before": "import {dressPastoralFieldstone,groundPastoralFieldstone}",
+        "after": "import {createMesaLandform} from './mesa-landforms.mjs?v=mesa-landforms-1';\nimport {dressPastoralFieldstone,groundPastoralFieldstone}",
+        "occurrences": 1
+      },
+      {
+        "before": "    const ellipse=.78+random()*.15;",
+        "after": "    const ellipse=.78+random()*.15;\n    const mesaLandform=hoodoo?null:createMesaLandform(radius,height,seed,phase);",
+        "occurrences": 1
+      },
+      {
+        "before": "      const r=radial(a,t,ledge),shear=height*.014*t;\n      return [Math.cos(a)*r+Math.cos(phase)*shear,\n        height*t+upper(a)*Math.pow(Math.max(t,0),3)+Math.sin(a*6+phase)*height*.003*t,\n        Math.sin(a)*r*ellipse+Math.sin(phase)*shear];",
+        "after": "      let r=radial(a,t,ledge);\n      let y=height*t+upper(a)*Math.pow(Math.max(t,0),3)+Math.sin(a*6+phase)*height*.003*t;\n      if(mesaLandform)[r,y]=mesaLandform.surface(a,t,r,y);\n      const shear=height*.014*t;\n      return [Math.cos(a)*r+Math.cos(phase)*shear,y,\n        Math.sin(a)*r*ellipse+Math.sin(phase)*shear];",
+        "occurrences": 1
+      },
+      {
+        "before": "      const crown=height*.925;",
+        "after": "      const crown=mesaLandform?mesaLandform.crown:height*.925;",
+        "occurrences": 1
+      }
+    ]
+  }
+}
