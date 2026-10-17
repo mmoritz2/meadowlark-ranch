@@ -1,3 +1,4 @@
+import {createRegionalCoverField,composeRegionalCover,tintRegionalCover} from './regional-cover-composition.mjs?v=regional-cover-2';
 import {createCountrysideFieldComposition} from './countryside-field-composition.mjs?v=countryside-fields-1';
 import {fieldSwardAt} from './field-sward-bands.mjs?v=field-sward-bands-4';
 import {meadowMarginAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
@@ -40,7 +41,7 @@ const positive=(a,o)=>Math.hypot(a[o],a[o+1],a[o+2])+Math.hypot(a[o+4],a[o+5],a[
 // Actual final terrain, wet footprints, Chalk down and retired forest list are
 // captured once. The numeric raster makes subsequent 47k-root packing bounded:
 // four samples, without nearest-tree scans, terrain probes or biome callbacks.
-export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wetAt=()=>false,chalkAt=()=>false,forestPoints=[],countrysideTracks=null}){
+export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wetAt=()=>false,chalkAt=()=>false,forestPoints=[],countrysideTracks=null,regionalLayout=null}){
  if(![terrainH,riverZ,riverLevel,streamX,wetAt,chalkAt].every(f=>typeof f==='function'))throw Error('Actual final pastoral world samplers required');
  const cuts=new Float32Array(NX*NZ),caps=new Float32Array(NX*NZ),shade=new Float32Array(NX*NZ);
  let forestCount=0;
@@ -102,6 +103,7 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   gladeCuts[i]=cut;gladeCaps[i]=cut>0?.43+.07*(.5+.5*Math.sin(x*.027+z*.013)*Math.sin(z*.031-x*.009)):0;if(cut>0)gladeVertices++;
  }
  const composition=countrysideTracks?createCountrysideFieldComposition({tracks:countrysideTracks,forestPoints,protectedAt,terrainH}):null;
+ const regional=regionalLayout?createRegionalCoverField({layout:regionalLayout,terrainH,wetAt:(x,z)=>wetAt(x,z)||Math.abs(z-riverZ(x))<10.5||Math.hypot(x-20,z-16)<9||(z<163&&Math.abs(x-streamX(z))<5.0),chalkAt,preserveAt:(x,z)=>!!composition?.at(x,z).weight,forestPoints}):null;
  function originalAt(x,z){
   if(x<=MIN_X||x>=MAX_X||z<=MIN_Z||z>=MAX_Z)return ZERO;
   const xx=(x-MIN_X)/STEP,zz=(z-MIN_Z)/STEP,ix=Math.floor(xx),iz=Math.floor(zz),fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*NX+ix;
@@ -123,18 +125,19 @@ export function createPastoralCoverField({terrainH,riverZ,riverLevel,streamX,wet
   const base=gladeCaps[i]*a+gladeCaps[i+1]*b+gladeCaps[i+NX]*c+gladeCaps[i+NX+1]*d;
   return{cut:Math.max(original.cut,cut),cap:Math.min(original.cap,base/(cut*cut))};
  }
- function at(x,z){
+ function originalComposedAt(x,z){
   const original=gladeAt(x,z),q=composition?.at(x,z);if(!q||q.weight===0)return original;
   const w=q.weight,cap=Number.isFinite(original.cap)?original.cap*(1-w)+q.cap*w:q.cap/(w*w);
   return{cut:original.cut*(1-w)+q.cut*w,cap,floor:q.floor*w,bank:q.floor>0?w:0,seed:q.seed*w,compositionWeight:w};
  }
+ function at(x,z){const original=originalComposedAt(x,z);return regional?composeRegionalCover(original,regional.at(x,z)):original;}
  function applyGrazingPixels(data,size){
   if(!ArrayBuffer.isView(data)||!Number.isInteger(size)||size<1||data.length!==size*size*4)throw Error('Existing landcover mask required');
   let changed=0;const step=1000/size,ix0=Math.max(0,Math.floor((MIN_X+500)/step)),ix1=Math.min(size-1,Math.ceil((MAX_X+500)/step)),iz0=Math.max(0,Math.floor((MIN_Z+500)/step)),iz1=Math.min(size-1,Math.ceil((MAX_Z+500)/step));
   for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const i=(iz*size+ix)*4+2,x=-500+(ix+.5)*step,z=-500+(iz+.5)*step,q=at(x,z),w=composition?.at(x,z).weight||0,next=Math.round(Math.max(data[i],Math.round(q.cut*255))*(1-w)+Math.round(q.cut*255)*w);if(next!==data[i]){data[i]=next;changed++;}}
-  return changed;
+  return changed+(regional?.applyGrazingPixels(data,size)||0);
  }
- return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS,countryside:composition?.stats||null}),composition,originalAt:gladeAt,at,applyGrazingPixels});
+ return Object.freeze({profile:PASTORAL_COVER_PROFILE,bounds:Object.freeze({minX:MIN_X,maxX:MAX_X,minZ:MIN_Z,maxZ:MAX_Z}),stats:Object.freeze({gridVertices:NX*NZ,gridBytes:cuts.byteLength+caps.byteLength,step:STEP,forestCount,coveredVertices:covered,gladeVertices,gladeTrees,gladeGridBytes:gladeCuts.byteLength+gladeCaps.byteLength,gladeBounds:GLADE_BOUNDS,countryside:composition?.stats||null,regional:regional?.stats||null}),composition,regional,originalAt:gladeAt,at,applyGrazingPixels});
 }
 let current=null,revision=0,renderColorCacheBytes=0;
 const cellCache=new WeakMap(),renderColorSources=new WeakMap();
@@ -173,10 +176,11 @@ export function respondPastoralGrassMatrix(a,o,geometry,groundHeight,offsetX=0,o
  a[o+13]=ground-offsetY+(a[o+13]+offsetY-ground)*scale;return scale;
 }
 export function respondPastoralGrassColor(color,x,z,offset=0){
- const q=current?.composition?.at(x,z),w=q?q.seed*q.weight:0;if(!w)return false;
- // Local seed ripening only; existing world-space source palette stays intact.
- if(ArrayBuffer.isView(color)){color[offset]*=1+w*.70;color[offset+1]*=1+w*.22;color[offset+2]*=1-w*.28;}
- else{color.r*=1+w*.70;color.g*=1+w*.22;color.b*=1-w*.28;}return true;
+ const q=current?.composition?.at(x,z),w=q?q.seed*q.weight:0;
+ // The three published field networks retain their exact original arithmetic.
+ if(w){if(ArrayBuffer.isView(color)){color[offset]*=1+w*.70;color[offset+1]*=1+w*.22;color[offset+2]*=1-w*.28;}
+ else{color.r*=1+w*.70;color.g*=1+w*.22;color.b*=1-w*.28;}}
+ return tintRegionalCover(color,current?.regional?.at(x,z),offset)||!!w;
 }
 export function applyPastoralGrassMesh(mesh,groundHeight,count=mesh.count,offsetX=0,offsetZ=0,offsetY=0){
  if(!current||!mesh)return 0;let changed=0;const a=mesh.instanceMatrix.array;

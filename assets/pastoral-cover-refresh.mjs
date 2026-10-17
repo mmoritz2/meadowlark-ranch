@@ -1,4 +1,5 @@
-import {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';
+import {regionalCoverLayoutFromWorld} from './regional-cover-composition.mjs?v=regional-cover-2';
+import {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2';
 
 // Every original planting/capture/course and the accepted Chalk/ferry response
 // finishes before grazing configuration. No constructor, RNG or admission read.
@@ -39,8 +40,10 @@ export function installPastoralCoverRefresh(G){
  // It captures only the final active forest; no source cell or planting reruns.
  W.countrysideFieldsReady=Promise.resolve().then(()=>Promise.all([W.pastoralCoverReady,G.photoscans?.countrysideVistaReady])).then(()=>{
   const down=G.vistas?.chalkDown,marsh=G.quartersPkg?.willowmereArt?.landscape;
-  configurePastoralCover({terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks});
-  const response=refreshPastoralCover(G),field=getPastoralCoverField();
-  return{profile:field.composition.profile,stats:field.composition.stats,runs:field.composition.runs,response};
+  const options={terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks};
+  try{configurePastoralCover({...options,regionalLayout:regionalCoverLayoutFromWorld(G)});}
+  catch(error){W.regionalCoverError=error.message;console.warn('Regional cover keeps original fields',error);configurePastoralCover(options);}
+  const response=refreshPastoralCover(G),field=getPastoralCoverField();W.regionalCover=field.regional||null;
+  return{profile:field.composition.profile,stats:field.composition.stats,runs:field.composition.runs,response,regionalCover:field.regional?{profile:field.regional.profile,stats:field.regional.stats,runs:field.regional.runs}:null};
  }).catch(error=>{W.countrysideFieldsError=error.message;console.warn('Countryside fields kept prior pasture',error);return null;});return W.pastoralCoverReady;
 }

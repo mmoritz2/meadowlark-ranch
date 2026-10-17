@@ -1,0 +1,79 @@
+{
+  "assets/pastoral-cover.mjs": {
+    "beforeSHA256": "fe24ec7bc80bee8d0ef6a5cf52a824334662ec26587de5a8531992f502fdb5bf",
+    "afterSHA256": "528ab2638efcd2e33a28309ed2d869a5e195207b0901b974e08f7930f09750fb",
+    "changes": [
+      {
+        "before": "import {createCountrysideFieldComposition}",
+        "after": "import {createRegionalCoverField,composeRegionalCover,tintRegionalCover} from './regional-cover-composition.mjs?v=regional-cover-2';\nimport {createCountrysideFieldComposition}",
+        "occurrences": 1
+      },
+      {
+        "before": "forestPoints=[],countrysideTracks=null})",
+        "after": "forestPoints=[],countrysideTracks=null,regionalLayout=null})",
+        "occurrences": 1
+      },
+      {
+        "before": " const composition=countrysideTracks?createCountrysideFieldComposition({tracks:countrysideTracks,forestPoints,protectedAt,terrainH}):null;",
+        "after": " const composition=countrysideTracks?createCountrysideFieldComposition({tracks:countrysideTracks,forestPoints,protectedAt,terrainH}):null;\n const regional=regionalLayout?createRegionalCoverField({layout:regionalLayout,terrainH,wetAt:(x,z)=>wetAt(x,z)||Math.abs(z-riverZ(x))<10.5||Math.hypot(x-20,z-16)<9||(z<163&&Math.abs(x-streamX(z))<5.0),chalkAt,preserveAt:(x,z)=>!!composition?.at(x,z).weight,forestPoints}):null;",
+        "occurrences": 1
+      },
+      {
+        "before": " function at(x,z){\n  const original=gladeAt(x,z)",
+        "after": " function originalComposedAt(x,z){\n  const original=gladeAt(x,z)",
+        "occurrences": 1
+      },
+      {
+        "before": " function applyGrazingPixels(data,size){",
+        "after": " function at(x,z){const original=originalComposedAt(x,z);return regional?composeRegionalCover(original,regional.at(x,z)):original;}\n function applyGrazingPixels(data,size){",
+        "occurrences": 1
+      },
+      {
+        "before": "  return changed;\n }\n return Object.freeze",
+        "after": "  return changed+(regional?.applyGrazingPixels(data,size)||0);\n }\n return Object.freeze",
+        "occurrences": 1
+      },
+      {
+        "before": "countryside:composition?.stats||null}),composition,originalAt:gladeAt,at,applyGrazingPixels",
+        "after": "countryside:composition?.stats||null,regional:regional?.stats||null}),composition,regional,originalAt:gladeAt,at,applyGrazingPixels",
+        "occurrences": 1
+      },
+      {
+        "before": " const q=current?.composition?.at(x,z),w=q?q.seed*q.weight:0;if(!w)return false;\n // Local seed ripening only; existing world-space source palette stays intact.\n if(ArrayBuffer.isView(color)){color[offset]*=1+w*.70;color[offset+1]*=1+w*.22;color[offset+2]*=1-w*.28;}\n else{color.r*=1+w*.70;color.g*=1+w*.22;color.b*=1-w*.28;}return true;",
+        "after": " const q=current?.composition?.at(x,z),w=q?q.seed*q.weight:0;\n // The three published field networks retain their exact original arithmetic.\n if(w){if(ArrayBuffer.isView(color)){color[offset]*=1+w*.70;color[offset+1]*=1+w*.22;color[offset+2]*=1-w*.28;}\n else{color.r*=1+w*.70;color.g*=1+w*.22;color.b*=1-w*.28;}}\n return tintRegionalCover(color,current?.regional?.at(x,z),offset)||!!w;",
+        "occurrences": 1
+      }
+    ]
+  },
+  "assets/pastoral-cover-refresh.mjs": {
+    "beforeSHA256": "36e79443c1357be0a916f2a3384340a45ffcafb4b1585d87329645fe473aad29",
+    "afterSHA256": "4176d768f3ab58a6042f7e0e53db2a8909379f38d13746a3cf5fb18f7043fa46",
+    "changes": [
+      {
+        "before": "import {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';",
+        "after": "import {regionalCoverLayoutFromWorld} from './regional-cover-composition.mjs?v=regional-cover-2';\nimport {configurePastoralCover,getPastoralCoverField,getPastoralCoverRevision,applyPastoralGrassMesh} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';",
+        "occurrences": 1
+      },
+      {
+        "before": "return{profile:field.composition.profile,stats:field.composition.stats,runs:field.composition.runs,response};",
+        "after": "return{profile:field.composition.profile,stats:field.composition.stats,runs:field.composition.runs,response,regionalCover:field.regional?{profile:field.regional.profile,stats:field.regional.stats,runs:field.regional.runs}:null};",
+        "occurrences": 1
+      },
+      {
+        "before": "  configurePastoralCover({terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks});",
+        "after": "  const options={terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks};\n  try{configurePastoralCover({...options,regionalLayout:regionalCoverLayoutFromWorld(G)});}\n  catch(error){W.regionalCoverError=error.message;console.warn('Regional cover keeps original fields',error);configurePastoralCover(options);}",
+        "occurrences": 1
+      },
+      {
+        "before": "  const response=refreshPastoralCover(G),field=getPastoralCoverField();",
+        "after": "  const response=refreshPastoralCover(G),field=getPastoralCoverField();W.regionalCover=field.regional||null;",
+        "occurrences": 1
+      },
+      {
+        "before": "from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1';",
+        "after": "from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2';",
+        "occurrences": 1
+      }
+    ]
+  }
+}
