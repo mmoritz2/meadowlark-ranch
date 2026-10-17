@@ -1,3 +1,4 @@
+import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2';
 import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1';
 import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
@@ -157,6 +158,7 @@ export function install(G){
    const mesh=own(new THREE.Mesh(merged,m));mesh.name='quarter_baked';
    mesh.castShadow=shadow!==false&&e.cast;mesh.receiveShadow=true;
    scene.add(mesh);out.push(mesh);
+   if(P.millPondSource){if(m===P.millPondSource.waterMaterial)P.millPondSource.water=mesh;if(m===P.millPondSource.bankMaterial)P.millPondSource.bank=mesh;}
   }
   if(g.parent)g.parent.remove(g);
   P.mergedFrom+=n;P.draws+=out.length;
@@ -252,7 +254,7 @@ export function install(G){
   w.rotation.x=-Math.PI/2;w.castShadow=false;
   const drop=Math.max(0.4,y-groundH(x+r*1.15,z)+0.3);
   const sk=put(G_SKIRT,bank,r,drop,r,x,y-drop/2,z,g);sk.castShadow=false;
-  const site={x,z,r,y};P.ponds.push(site);return site;
+  const site={x,z,r,y};P.ponds.push(site);P.millPondSource={site,waterMaterial:w.material,bankMaterial:sk.material,water:null,bank:null};return site;
  }
 
  /* ================= 5. things to do when you get there ================= */
@@ -1084,6 +1086,10 @@ vQMistUV=uv;
     other animated landmarks install their own handlers beside their geometry. */
  G.on('tick',dt=>{try{tickSmoke(dt);tickFade(dt);}catch(e){}});
 
+ P.millPondArtReady=Promise.resolve().then(()=>Promise.all([W.countrysideFieldsReady,G.photoscans?.countrysideVistaReady,G.vistas?.landmarkStoneworkReady,W.ranchBuilderArt?.ready,G.worldPkg?.barleyfoldWallArtReady])).then(async()=>{
+  await waitForMillPondImages(W.ranchBuilderArt.materials.stone);
+  P.millPondArt=installMillPond(G,P.millPondSource);G.on('tick',(dt,t)=>P.millPondArt?.update(t));return P.millPondArt;
+ }).catch(error=>{P.millPondArtError=error.message;console.warn('Amberwood keeps original mill pond',error);return null;});
  /* The first time you ride into one of the four, say what it is rather than leaving the region
     name to carry the whole arrival. Once each, ever. */
  const ARRIVE={
