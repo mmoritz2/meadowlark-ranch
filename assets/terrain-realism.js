@@ -1,9 +1,9 @@
 import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2';
+import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-4';
-import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its

@@ -1,8 +1,11 @@
+// connected-landforms-1: exact latest terrain/flow inverse before mesa history.
+const {normalizeConnectedLandformsSource,normalizeConnectedLandformsFixtureChanges}=require('./connected-landforms-source-guard.cjs');
 // Exact mesa-landforms-1 inverse. Inapplicability is never source certification.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const fixture='tools/fixtures/mesa-landforms-8f811f1/source-contract.json',sha=b=>crypto.createHash('sha256').update(b).digest('hex'),baseRoot=path.join(__dirname,'..'),declaration=fs.readFileSync(path.join(baseRoot,fixture));
 assert.equal(sha(declaration),'df16e6f85c845fd1536c60a4e32e298a951e70e94430e31bc3aa40c9f256bc8c','Exact mesa declaration');const contract=JSON.parse(declaration);
 function normalizeMesaLandformsSource(source,file){
+ source=normalizeConnectedLandformsSource(source,file);
  const row=contract.files[file]||contract.observers[file];if(!row)return source;
  const hash=sha(source);if(hash===row.beforeSHA256)return source;
  const buffer=Buffer.isBuffer(source),text=buffer?source.toString('utf8'):source;
@@ -12,12 +15,13 @@ function normalizeMesaLandformsSource(source,file){
  assert.equal(sha(parent),row.beforeSHA256,'Whole exact8f811f1 parent '+file);return buffer?Buffer.from(parent):parent;
 }
 function assertMesaLandformsCurrent(read,{rootDir=baseRoot}={}){
- const current=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file));
+ const raw=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file)),current=file=>normalizeConnectedLandformsSource(raw(file),file);
  for(const[f,row]of Object.entries({...contract.files,...contract.observers}))assert.equal(sha(current(f)),row.afterSHA256,'Actual raw mesa owner '+f);
  for(const[f,row]of Object.entries(contract.addedFiles))assert.equal(sha(current(f)),row.sha256,'Actual raw added mesa owner '+f);
  for(const[f,v]of Object.entries({...contract.parentFixtureSHA256,...contract.newFixtureSHA256}))assert.equal(sha(current(f)),v,'Exact regional fixture '+f);return true;
 }
 function normalizeMesaLandformsFixtureChanges(diff,{rootDir=baseRoot}={}){
+ diff=normalizeConnectedLandformsFixtureChanges(diff,{rootDir});
  const rows=diff.trim()?diff.trim().split('\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate regional fixture');const allowed={...contract.newFixtureSHA256,[fixture]:sha(declaration)};
  const kept=rows.filter(f=>{if(!Object.hasOwn(allowed,f))return true;assert.equal(sha(fs.readFileSync(path.join(rootDir,f))),allowed[f],'Exact new regional fixture '+f);return false;});return kept.length?kept.join('\n')+'\n':'';
 }

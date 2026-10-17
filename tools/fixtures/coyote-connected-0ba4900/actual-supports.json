@@ -1,0 +1,72 @@
+{
+  "profile": "actual-coyote-supports-0ba4900",
+  "captureSHA256": "902449d52d1c6574daae3c74596f684b8785ef6fe264c99ecc3f59c4fbb6265f",
+  "scope": "Actual unchanged captured current world forests/tracks and old canonical scan support. Current0ba adds only mesa upper shape and observer fixes after this capture; root must bind native current layout. No runtime source coordinates are relocated.",
+  "forestSourceCount": 2900,
+  "forestNearby": [
+    [
+      -316.2102328356782,
+      -4.359306213954891
+    ],
+    [
+      -336.8237483712114,
+      4.118370012640274
+    ],
+    [
+      -342.2973620915642,
+      36.63145269628419
+    ]
+  ],
+  "treeNearby": [
+    [
+      -316.2102328356782,
+      -4.359306213954891,
+      3.917441646057381
+    ],
+    [
+      -336.8237483712114,
+      4.118370012640274,
+      4.501060012688881
+    ],
+    [
+      -342.29736328125,
+      36.63145446777344,
+      6.551431002838458
+    ]
+  ],
+  "tracksSourceCount": 7,
+  "tracksNearby": [],
+  "riverSupport": {
+    "x": [
+      -380,
+      -100
+    ],
+    "width": 22
+  },
+  "oasisShore": {
+    "x": -200,
+    "z": 158,
+    "radius": 24
+  },
+  "principalScanSupport": {
+    "x": [
+      -158,
+      -119
+    ],
+    "z": [
+      130,
+      154.296875
+    ]
+  },
+  "northRootFloor": {
+    "x": [
+      -347.65625,
+      -345.703125
+    ],
+    "z": [
+      52.734375,
+      56.640625
+    ],
+    "halo": 3.90625
+  }
+}

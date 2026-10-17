@@ -1,0 +1,18 @@
+{
+  "assets/world-photoscans.js": {
+    "beforeSHA256": "a09630f902ef5b192c641ed4f7e83c209e672193850b88b19d730a5879ac6773",
+    "afterSHA256": "7753a929c1bfaaba69e09186308feb2fb9b9909b1f1f4a2fd15c18e6137b0d97",
+    "changes": [
+      {
+        "before": "import {activeWorldTree,retireCountrysideVistaTrees}",
+        "after": "import {fitHollowpeakTreeRoots} from './hollowpeak-root-seating.mjs?v=hollowpeak-root-seating-1';\nimport {activeWorldTree,retireCountrysideVistaTrees}",
+        "occurrences": 1
+      },
+      {
+        "before": "      t.matrix=new THREE.Matrix4().compose(v,q,s);",
+        "after": "      t.matrix=new THREE.Matrix4().compose(v,q,s);\n      const rootSeating=fitHollowpeakTreeRoots(t,W.groundH);\n      if(rootSeating){t.matrix.elements[13]=rootSeating.fittedY;t.rootSeating=rootSeating;}",
+        "occurrences": 1
+      }
+    ]
+  }
+}

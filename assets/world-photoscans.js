@@ -1,7 +1,8 @@
+import {fitHollowpeakTreeRoots} from './hollowpeak-root-seating.mjs?v=hollowpeak-root-seating-1';
 import {activeWorldTree,retireCountrysideVistaTrees} from './countryside-vista-owners.mjs?v=countryside-vista-1';
 import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1';
-import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1';
-import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1';
+import {retireSteepFallsFloraTrees} from './hollowpeak-flora-roots.mjs?v=regional-landmarks-1-connected-landforms-1';
+import {retireSteepFallsSeed} from './hollowpeak-steep-seeds.mjs?v=hollowpeak-cascades-1-connected-landforms-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
 import {NORTH_VALLEY_WOODLAND_PROFILE,NORTH_VALLEY_WOODLAND_GROUPS,NORTH_VALLEY_WOODLAND_MAX,northValleyWoodlandCandidates,northValleyWoodlandPlants} from './north-valley-woodland.mjs?v=north-valley-1';
 import {COMMONS_STANDARDS_PROFILE,COMMONS_STANDARDS_LIMIT,commonsStandardCandidates,commonsTreeCell,withCommonsStandardResources} from './commons-standard-trees.mjs?v=commons-standard-trees-1';
@@ -19,7 +20,7 @@ import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './uprigh
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
-import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-5';
+import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-5-connected-landforms-1';
 import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
 import {installThunderOak} from './thunder-oak-art.js?v=landmark-fields-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
@@ -29,10 +30,10 @@ import {installVillageEvergreens} from './village-planting.js?v=village-gardens-
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
-import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
+import {ALPINE_BOUNDS,alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=matched-tree-normals-1';
 import {applyPineSprayCutout} from './pine-spray-surfaces.mjs?v=pine-spray-surfaces-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -590,6 +591,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       q.setFromAxisAngle(UP,t.yaw);s.set(scale*crownWidth,scale,scale*crownWidth);
       v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
       t.matrix=new THREE.Matrix4().compose(v,q,s);
+      const rootSeating=fitHollowpeakTreeRoots(t,W.groundH);
+      if(rootSeating){t.matrix.elements[13]=rootSeating.fittedY;t.rootSeating=rootSeating;}
     }
     if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
     const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}

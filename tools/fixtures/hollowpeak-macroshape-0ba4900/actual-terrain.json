@@ -1,0 +1,42 @@
+{
+  "profile": "actual-hollowpeak-terrain-0ba4900",
+  "originIndex": [
+    107,
+    36
+  ],
+  "width": 142,
+  "height": 120,
+  "step": 1.953125,
+  "terrainSHA256": "4a10dc63b865dfe2788eb6add4f30221ab2162f731fb8eafa2aca833e9e224fa",
+  "rawTerrainSource": "function ihash(ix,iz){\n let h=ix*374761393+iz*668265263;\n h=(h^(h>>13))*1274126177;\n return ((h^(h>>16))>>>0)/4294967295;\n}\nfunction vnoise(x,z){\n const ix=Math.floor(x),iz=Math.floor(z),fx=x-ix,fz=z-iz;\n const sx=fx*fx*(3-2*fx),sz=fz*fz*(3-2*fz);\n const a=ihash(ix,iz),b=ihash(ix+1,iz),c=ihash(ix,iz+1),d=ihash(ix+1,iz+1);\n return a+(b-a)*sx+(c-a)*sz+(a-b-c+d)*sx*sz;\n}\nconst riverZ=x=>120+Math.sin(x*0.012)*45;\n/* Sparrow Creek stream — a tributary that winds down from the southern hills into the river */\nconst streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;\nconst STREAM_JOIN=160;                          // it meets the river around z≈160\nconst riverLevel=x=>0.50-x*0.009;\nconst streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));\nfunction rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){\n const d=Math.hypot(x,z);\n const near=THREE.MathUtils.smoothstep(d,24,58);\n const far=1-THREE.MathUtils.smoothstep(d,380,460);\n const n=vnoise(x*0.018+7,z*0.018+3)*7.5       // medium rolling\n        +vnoise(x*0.055,z*0.055)*1.8           // small bumps\n        +vnoise(x*0.008+19,z*0.008+5)*14.0     // broad hills\n        +vnoise(x*0.0042+50,z*0.0042+22)*13.0; // very broad ridges & valleys\n let h=near*far*(n-9.5)+pastureRise(x,z);\n const rg=1-Math.abs(vnoise(x*0.006+83,z*0.006-41)*2-1);   // ridged crests give hills a backbone\n h+=near*far*rg*rg*6.0;\n const bl=vnoise(x*0.011-31,z*0.011+44);                    // flat-topped bluffs, steep cliff faces\n h+=near*far*THREE.MathUtils.smoothstep(bl,0.35,0.60)*9.0;\n h+=canyonHeight(x,z);\n // A continuous graded channel: the water elevation is independent of the hills.\n const rd=Math.abs(z-riverZ(x));\n const riverBed=riverLevel(x)-0.85+THREE.MathUtils.smoothstep(rd,0,7)*1.30;\n h=THREE.MathUtils.lerp(riverBed,h,THREE.MathUtils.smoothstep(rd,7.5,19));\n h=riverHeight(x,z,h);\n if(z<STREAM_JOIN+3){\n  const sd=Math.abs(x-streamX(z));\n  const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;\n  const creekInfluence=(1-THREE.MathUtils.smoothstep(sd,3.8,10))*(1-THREE.MathUtils.smoothstep(z,156,163));\n  h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);\n }\n\n return fallsHeight(x,z,oasisTerrainHeight(x,z,h));\n}\n",
+  "rawTerrainSourceSHA256": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+  "sourceSHA256": {
+    "assets/falls-landscape.js": "53d40e5b95842434ea9e4bb7b5e2e8ea975a452db2523f4e44204981bf46967f",
+    "assets/pastoral-fields.mjs": "7a28359e489c581c5fa212d480b12aea67bb6354fbc0fcb7936e9fb774e162df",
+    "assets/canyon-landscape.js": "0de3d20cacb31bf02e77876efd29271247f2ba085122affd9cf50248ed574f35",
+    "assets/oasis-art.js": "1df37b89386fc2ab08de3864d8be30404c50a73abbb1f15bc34acb30659db704",
+    "assets/riverbank-terrain.mjs": "9caeaa13ad21ddd9268c2b8fca25e25e6ba985cc4e88cbd50c98c8926fc9829d",
+    "assets/hollowpeak-placement-reference.mjs": "75ada033fa4c93c6cdde79434f676f56819a6c034ce2509e3a96a8b789d4a94e"
+  },
+  "nativeCrossBinding": {
+    "meta": {
+      "source": "Current previously captured authoritative 513x513 terrain grid; strict original SHA retained",
+      "fullGridSHA256": "a0ed1fc2fd44c35edd537fa657bb355d33ced7cb85252de561f4da4e9740cab8",
+      "originIndex": [
+        167,
+        129
+      ],
+      "width": 25,
+      "height": 25,
+      "step": 1.953125,
+      "worldOrigin": [
+        -173.828125,
+        -248.046875
+      ],
+      "tileSHA256": "064d0634b65d92b599ecc0c0bd4bc3a78efbb20ad48c41f5b76b3bb6cb50356b"
+    },
+    "tileSHA256": "064d0634b65d92b599ecc0c0bd4bc3a78efbb20ad48c41f5b76b3bb6cb50356b",
+    "maximumError": 0
+  },
+  "scope": "Exact current raw source reconstructed into canonical Float32 grid; accepted current 25x25 native shore tile cross-binding. No synthetic plane."
+}

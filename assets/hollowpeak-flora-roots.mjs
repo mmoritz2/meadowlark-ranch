@@ -1,4 +1,4 @@
-import {fallsRelief,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
+import {fallsRelief,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1';
 const FRONT=Object.freeze({x0:-202,x1:-100,z0:-270,z1:-224});
 const ordinaryKeys=['x','z','r','height'];
 // Flora tree() supplies the exact renderer rows and original double-coordinate

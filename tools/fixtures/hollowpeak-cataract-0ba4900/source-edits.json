@@ -1,0 +1,43 @@
+{
+  "baseline": "0ba4900bee5a3d62648ebf5fca770ec4477353f1",
+  "changes": {
+    "assets/waterfall-art.js": {
+      "beforeSHA256": "8cfcf6a748e33354a12c39eb35abf00b1d18911ed91e64eedbd047a8e7ec9ae6",
+      "afterSHA256": "a6892d605f886c400474a2b5b2e56d7756cf43b8fbad761cbbce63138a4457aa",
+      "edits": [
+        {
+          "before": "import {createWaterfallEffects}",
+          "after": "import {HOLLOWPEAK_CATARACT_PROFILE,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-1';\nimport {createWaterfallEffects}",
+          "occurrences": 1
+        },
+        {
+          "before": "const {x,z,top,bottom,width,run=2.6,name='waterfall',footHeightAt,footWidth}=options,flow={x,z,top,bottom,width,run,footHeightAt,footWidth};",
+          "after": "const {x,z,top,bottom,width,run=2.6,name='waterfall',footHeightAt,footWidth,flowProfile=null}=options,flow={x,z,top,bottom,width,run,footHeightAt,footWidth};\n  if(flowProfile!==null&&flowProfile!==HOLLOWPEAK_CATARACT_PROFILE)throw Error('Unknown waterfall flow profile');",
+          "occurrences": 1
+        },
+        {
+          "before": "vertex(sampleCascadeVeil(flow,veil,s,u),u,s*s,veil*.1731+.043,s);",
+          "after": "const point=sampleCascadeVeil(flow,veil,s,u);vertex(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?hollowpeakCataractPoint(flow,s,point):point,u,s*s,veil*.1731+.043,s);",
+          "occurrences": 1
+        },
+        {
+          "before": "run,profile:CASCADE_FLOW_PROFILE,veils:",
+          "after": "run,profile:flowProfile||CASCADE_FLOW_PROFILE,veils:",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "cdbc0b597a04950da8601bfd47ac528855325552fb9692c335f3c18192df8c7b",
+      "edits": [
+        {
+          "file": "ranch3d.html",
+          "before": "width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls'});scene.add(fall);FALLS.surface=fall;",
+          "after": "width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls',flowProfile:'hollowpeak-cataract-1'});scene.add(fall);FALLS.surface=fall;",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "scope": "Only explicit Hollowpeak flow selected; HTML projected cache edits belong to combinedQA."
+}

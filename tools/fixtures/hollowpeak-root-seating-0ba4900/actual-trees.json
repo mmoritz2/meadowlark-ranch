@@ -1,0 +1,767 @@
+{
+  "scope": "Actual continuation boot before root seating; same physical grid as failed first candidate. Local original GLB sources are parsed by the raw test, not downloaded or replaced.",
+  "surveySHA256": "3f9b74e8f8a600bbf10a7e03e408429afad24a28fb8a160dcaa003f821d6ad73",
+  "canonicalGridSHA256": "d067f57736c1f00c8fa54cdc4390489a4a39801f32c3e2aedd447e31ec132c11",
+  "terrain": {
+    "originIndex": [
+      152,
+      99
+    ],
+    "width": 53,
+    "height": 39,
+    "step": 1.953125,
+    "sha256": "5e07f18eba8990bd8044eea95f9c852e94cccfadf90db5f6599d7ea998c46f80"
+  },
+  "outside": {
+    "count": 2803,
+    "type": "Float64Array",
+    "sha256": "e7948403a718c695e5f28ef93a3bef65912ad27e06f781ca09808df9833c0dd8"
+  },
+  "sources": {
+    "mature-pine": {
+      "file": "assets/models/world/realism/pine_tree_01.glb",
+      "sha256": "3d0a4ef03966d85f283baf0b579b11d26993fcdaa83e3e5a6c7ed91b5fb4139f",
+      "variant": 0
+    },
+    "pine-1": {
+      "file": "assets/models/world/realism/fir_sapling_medium.glb",
+      "sha256": "6985c6727180726d2d0ccffeae33e0e09877da0cea244705cf0a42482fbb6677",
+      "variant": 1
+    }
+  },
+  "trees": [
+    {
+      "id": 405,
+      "x": -163.56868367844748,
+      "z": -249.19441293366472,
+      "height": 11.822573991568323,
+      "source": "mature-pine",
+      "matrix": [
+        0.24017042203730388,
+        0,
+        0.4646965660316418,
+        0,
+        0,
+        0.5755440752513242,
+        0,
+        0,
+        -0.4646965660316418,
+        0,
+        0.24017042203730388,
+        0,
+        -163.56868367844748,
+        17.827885147742922,
+        -249.19441293366472,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "index": 14,
+      "floraOwner": null,
+      "bounds": {
+        "min": [
+          -166.34579221612393,
+          21.065340330769313,
+          -252.04729802471638
+        ],
+        "max": [
+          -160.365155715195,
+          29.604725037747443,
+          -246.21526088130506
+        ]
+      }
+    },
+    {
+      "id": 407,
+      "x": -117.64790275090185,
+      "z": -276.9614113924209,
+      "height": 12.19794897939274,
+      "source": "mature-pine",
+      "matrix": [
+        -0.1282375570391914,
+        0,
+        -0.5052514179231002,
+        0,
+        0,
+        0.5938180019270177,
+        0,
+        0,
+        0.5052514179231002,
+        0,
+        -0.1282375570391914,
+        0,
+        -117.64790275090185,
+        23.05764824022307,
+        -276.9614113924209,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "index": 18,
+      "floraOwner": null,
+      "bounds": {
+        "min": [
+          -120.55709860181177,
+          26.397894888185718,
+          -279.6625471097093
+        ],
+        "max": [
+          -115.12410354275421,
+          35.208411028360715,
+          -274.47907318215965
+        ]
+      }
+    },
+    {
+      "id": 409,
+      "x": -181.75809910501607,
+      "z": -296.6367189772539,
+      "height": 12.625332294336557,
+      "source": "mature-pine",
+      "matrix": [
+        0.3470433150042895,
+        0,
+        0.5054542768217135,
+        0,
+        0,
+        0.6146237871098902,
+        0,
+        0,
+        -0.5054542768217135,
+        0,
+        0.3470433150042895,
+        0,
+        -181.75809910501607,
+        23.71245007184393,
+        -296.6367189772539,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "index": 21,
+      "floraOwner": null,
+      "bounds": {
+        "min": [
+          -185.0988347517402,
+          27.16972997577018,
+          -300.1398468674512
+        ],
+        "max": [
+          -177.9030264202502,
+          36.28894289773328,
+          -293.0488805233175
+        ]
+      }
+    },
+    {
+      "id": 410,
+      "x": -177.3451882569026,
+      "z": -292.5888635528855,
+      "height": 13.174472338445787,
+      "source": "mature-pine",
+      "matrix": [
+        -0.5686696219116244,
+        0,
+        -0.2888843076953287,
+        0,
+        0,
+        0.6413569079256891,
+        0,
+        0,
+        0.2888843076953287,
+        0,
+        -0.5686696219116244,
+        0,
+        -177.3451882569026,
+        22.052613024936107,
+        -292.5888635528855,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "index": 23,
+      "floraOwner": null,
+      "bounds": {
+        "min": [
+          -181.147762663285,
+          25.660267651260096,
+          -296.1386718645073
+        ],
+        "max": [
+          -174.05459234959693,
+          35.17612161755076,
+          -288.8603297165029
+        ]
+      }
+    },
+    {
+      "id": 2332,
+      "x": -198.74325561523438,
+      "z": -285.6614074707031,
+      "height": 10.821624326950152,
+      "source": "mature-pine",
+      "matrix": [
+        0.01695556054366927,
+        0,
+        -0.49497366612913085,
+        0,
+        0,
+        0.5268160529520646,
+        0,
+        0,
+        0.49497366612913085,
+        0,
+        0.01695556054366927,
+        0,
+        -198.74325561523438,
+        12.027699252433388,
+        -285.6614074707031,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1168,
+      "index": 241,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 241,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1168,
+        "colliderIndex": 2859,
+        "forestIndex": 1697
+      },
+      "bounds": {
+        "min": [
+          -201.11397561166524,
+          14.991057637082562,
+          -287.8780368146657
+        ],
+        "max": [
+          -196.66614979549692,
+          22.807461522406182,
+          -283.7465803179365
+        ]
+      }
+    },
+    {
+      "id": 2333,
+      "x": -191.6642303466797,
+      "z": -295.9822082519531,
+      "height": 12.036889992665598,
+      "source": "mature-pine",
+      "matrix": [
+        0.12010815910915097,
+        0,
+        0.5201167976495681,
+        0,
+        0,
+        0.5859773620085957,
+        0,
+        0,
+        -0.5201167976495681,
+        0,
+        0.12010815910915097,
+        0,
+        -191.6642303466797,
+        15.470076200961602,
+        -295.9822082519531,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1169,
+      "index": 242,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 242,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1169,
+        "colliderIndex": 2860,
+        "forestIndex": 1698
+      },
+      "bounds": {
+        "min": [
+          -194.21788994305945,
+          18.76621898019612,
+          -298.482094480379
+        ],
+        "max": [
+          -188.72084226364652,
+          27.460403038274606,
+          -293.2497866910792
+        ]
+      }
+    },
+    {
+      "id": 2334,
+      "x": -194.71412658691406,
+      "z": -297.72235107421875,
+      "height": 10.523857606442336,
+      "source": "mature-pine",
+      "matrix": [
+        0.19060218994763986,
+        0,
+        -0.4087033435700511,
+        0,
+        0,
+        0.5123202357199191,
+        0,
+        0,
+        0.4087033435700511,
+        0,
+        0.19060218994763986,
+        0,
+        -194.71412658691406,
+        10.95204321722101,
+        -297.72235107421875,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1170,
+      "index": 243,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 243,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1170,
+        "colliderIndex": 2861,
+        "forestIndex": 1699
+      },
+      "bounds": {
+        "min": [
+          -197.33034775110386,
+          13.833862132264976,
+          -300.37592406393344
+        ],
+        "max": [
+          -192.2363752090602,
+          21.435190638811953,
+          -295.42629859312865
+        ]
+      }
+    },
+    {
+      "id": 2335,
+      "x": -198.88050842285156,
+      "z": -295.35980224609375,
+      "height": 10.605815052022443,
+      "source": "mature-pine",
+      "matrix": [
+        0.4280714184241594,
+        0,
+        0.2802698295768244,
+        0,
+        0,
+        0.5163100709503863,
+        0,
+        0,
+        -0.2802698295768244,
+        0,
+        0.4280714184241594,
+        0,
+        -198.88050842285156,
+        8.420903732570293,
+        -295.35980224609375,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1171,
+      "index": 244,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 244,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1171,
+        "colliderIndex": 2862,
+        "forestIndex": 1700
+      },
+      "bounds": {
+        "min": [
+          -201.61181712183378,
+          11.32516560776576,
+          -298.4007617643966
+        ],
+        "max": [
+          -195.7252783764639,
+          18.985691557941244,
+          -292.41640269061384
+        ]
+      }
+    },
+    {
+      "id": 2336,
+      "x": -195.6406707763672,
+      "z": -293.3168029785156,
+      "height": 12.767802283624187,
+      "source": "mature-pine",
+      "matrix": [
+        0.04757689189769241,
+        0,
+        -0.5970438019226889,
+        0,
+        0,
+        0.6215594813414589,
+        0,
+        0,
+        0.5970438019226889,
+        0,
+        0.04757689189769241,
+        0,
+        -195.6406707763672,
+        9.579838217764873,
+        -293.3168029785156,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1172,
+      "index": 245,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 245,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1172,
+        "colliderIndex": 2863,
+        "forestIndex": 1701
+      },
+      "bounds": {
+        "min": [
+          -198.60143669142397,
+          13.076131639861865,
+          -296.1169819558609
+        ],
+        "max": [
+          -193.0180971427941,
+          22.298249906176693,
+          -290.89729907702605
+        ]
+      }
+    },
+    {
+      "id": 2341,
+      "x": -188.10316467285156,
+      "z": -299.69622802734375,
+      "height": 14.767080584542883,
+      "source": "mature-pine",
+      "matrix": [
+        0.1819619834772398,
+        0,
+        -0.6792885663516063,
+        0,
+        0,
+        0.7188879295874104,
+        0,
+        0,
+        0.6792885663516063,
+        0,
+        0.1819619834772398,
+        0,
+        -188.10316467285156,
+        18.946080191373188,
+        -299.69622802734375,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1177,
+      "index": 250,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 250,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1177,
+        "colliderIndex": 2868,
+        "forestIndex": 1706
+      },
+      "bounds": {
+        "min": [
+          -191.9485786492312,
+          22.989849476360746,
+          -303.4780670636706
+        ],
+        "max": [
+          -184.5672729163235,
+          33.65603623064057,
+          -296.4259096846108
+        ]
+      }
+    },
+    {
+      "id": 2342,
+      "x": -196.03086853027344,
+      "z": -300.8119201660156,
+      "height": 14.537443519792856,
+      "source": "mature-pine",
+      "matrix": [
+        0.39272570194261563,
+        0,
+        0.5097619146148449,
+        0,
+        0,
+        0.707708786012649,
+        0,
+        0,
+        -0.5097619146148449,
+        0,
+        0.39272570194261563,
+        0,
+        -196.03086853027344,
+        9.205706970442863,
+        -300.8119201660156,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1178,
+      "index": 251,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 251,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1178,
+        "colliderIndex": 2869,
+        "forestIndex": 1707
+      },
+      "bounds": {
+        "min": [
+          -199.55943245866106,
+          13.186593189016952,
+          -304.5440780106647
+        ],
+        "max": [
+          -191.95843116825984,
+          23.686914266306275,
+          -297.0205354326432
+        ]
+      }
+    },
+    {
+      "id": 2343,
+      "x": -193.94613647460938,
+      "z": -288.9301452636719,
+      "height": 14.734867900808975,
+      "source": "mature-pine",
+      "matrix": [
+        0.170643546472212,
+        0,
+        -0.6800068101867285,
+        0,
+        0,
+        0.7173197584527473,
+        0,
+        0,
+        0.6800068101867285,
+        0,
+        0.170643546472212,
+        0,
+        -193.94613647460938,
+        11.525957528062415,
+        -288.9301452636719,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1179,
+      "index": 252,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 252,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1179,
+        "colliderIndex": 2870,
+        "forestIndex": 1708
+      },
+      "bounds": {
+        "min": [
+          -197.75268257201645,
+          15.56090579657861,
+          -292.66232158138945
+        ],
+        "max": [
+          -190.45621656157152,
+          26.20382549420526,
+          -285.70297022665676
+        ]
+      }
+    },
+    {
+      "id": 2409,
+      "x": -185.8827362060547,
+      "z": -282.157470703125,
+      "height": 11.393437604878992,
+      "source": "mature-pine",
+      "matrix": [
+        0.4709343512929771,
+        0,
+        0.09715818415469467,
+        0,
+        0,
+        0.5546529473962605,
+        0,
+        0,
+        -0.09715818415469467,
+        0,
+        0.4709343512929771,
+        0,
+        -185.8827362060547,
+        18.973608640691292,
+        -282.157470703125,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1246,
+      "index": 319,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 319,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1246,
+        "colliderIndex": 2936,
+        "forestIndex": 1774
+      },
+      "bounds": {
+        "min": [
+          -188.0325972728321,
+          22.093550512292992,
+          -284.71526842026833
+        ],
+        "max": [
+          -183.39603248356647,
+          30.322972202730377,
+          -279.83132531993374
+        ]
+      }
+    },
+    {
+      "id": 2455,
+      "x": -195.6245880126953,
+      "z": -268.0701904296875,
+      "height": 5.639597798629273,
+      "source": "pine-1",
+      "matrix": [
+        0.6993702832676435,
+        0,
+        0.2847629703868929,
+        0,
+        0,
+        0.723385275799351,
+        0,
+        0,
+        -0.2847629703868929,
+        0,
+        0.6993702832676435,
+        0,
+        -195.6245880126953,
+        12.408816423613352,
+        -268.0701904296875,
+        1
+      ],
+      "retiredFallsFlora": true,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1292,
+      "index": 365,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 365,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1292,
+        "colliderIndex": -1,
+        "forestIndex": -1
+      },
+      "bounds": {
+        "min": [
+          -197.63054448157249,
+          12.664828455547166,
+          -270.0071225325045
+        ],
+        "max": [
+          -193.51672287934193,
+          17.963072377915037,
+          -266.0227754654203
+        ]
+      }
+    },
+    {
+      "id": 2458,
+      "x": -198.55813598632812,
+      "z": -289.8334045410156,
+      "height": 9,
+      "source": "mature-pine",
+      "matrix": [
+        0.14994466701323506,
+        0,
+        -0.37806960564007563,
+        0,
+        0,
+        0.4381361183238219,
+        0,
+        0,
+        0.37806960564007563,
+        0,
+        0.14994466701323506,
+        0,
+        -198.55813598632812,
+        9.894681961352479,
+        -289.8334045410156,
+        1
+      ],
+      "retiredFallsFlora": false,
+      "retiredCountrysideVista": false,
+      "stemIndex": 1295,
+      "index": 368,
+      "floraOwner": {
+        "canopyName": "flora_cold",
+        "canopyUUID": "bbd67b98-eac2-434a-8d7b-5c4f544ae027",
+        "canopyIndex": 368,
+        "trunkName": "flora_trunk",
+        "trunkUUID": "434fd2b1-d211-46cd-95ed-82b27cc1b19e",
+        "trunkIndex": 1295,
+        "colliderIndex": 2984,
+        "forestIndex": 1822
+      },
+      "bounds": {
+        "min": [
+          -200.87990125096496,
+          12.35921266913385,
+          -292.16514509578434
+        ],
+        "max": [
+          -196.37998706116227,
+          18.859866622969502,
+          -287.8162120732997
+        ]
+      }
+    }
+  ],
+  "reviewEnvelope": {
+    "x0": -199,
+    "x1": -106,
+    "z0": -303,
+    "z1": -239,
+    "includesUnchangedBoundaryCollar": true,
+    "actualMacroshapeCenters": 12
+  }
+}

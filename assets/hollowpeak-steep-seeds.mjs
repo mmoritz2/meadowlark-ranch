@@ -1,4 +1,4 @@
-import {fallsRelief,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1';
+import {fallsRelief,fallsContainsWater} from './falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1';
 import {retireHiddenHollowpeakSeed} from './hollowpeak-mown-seeds.mjs?v=hollowpeak-mow-1';
 
 // The two foremost falls crests lie at z=-266/-269. Their bare front faces

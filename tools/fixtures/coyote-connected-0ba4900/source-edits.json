@@ -1,0 +1,23 @@
+{
+  "assets/canyon-landscape.js": {
+    "beforeSHA256": "0de3d20cacb31bf02e77876efd29271247f2ba085122affd9cf50248ed574f35",
+    "afterSHA256": "4b02ae72eb0f8d6cbba5eef1ff0555971fcaffcd15a0fc3c16d20474e3786d09",
+    "changes": [
+      {
+        "before": "",
+        "after": "import {connectedCoyoteRelief} from './coyote-connected-macroshape.mjs?v=coyote-connected-macroshape-1';\n",
+        "occurrences": 1
+      },
+      {
+        "before": "export function canyonRelief(x,z,planning=false,macroform=true){",
+        "after": "function canyonBaseRelief(x,z,planning=false,macroform=true){",
+        "occurrences": 1
+      },
+      {
+        "before": "",
+        "after": "export function canyonRelief(x,z,planning=false,macroform=true){\n const relief=canyonBaseRelief(x,z,planning,macroform);\n return !planning&&macroform?connectedCoyoteRelief(x,z,relief):relief;\n}\n",
+        "occurrences": 1
+      }
+    ]
+  }
+}

@@ -1,3 +1,4 @@
+import {connectedCoyoteRelief} from './coyote-connected-macroshape.mjs?v=coyote-connected-macroshape-1';
 import {coyoteNorthMacroHeight,coyoteOasisMacroBlend,coyoteOasisMacroHeight} from './coyote-macroform.mjs?v=coyote-macroform-5';
 // Original terrain composition: connected sandstone banks around the riding
 // valley. The same height field feeds visible terrain, hoof contact and dressing.
@@ -199,7 +200,7 @@ function countrysideBankHeight(r,best,side,along,edge,legacyHeight,planning=fals
  gully*=crestSmooth(-.18,.12,facing)*(1-crestSmooth(.90,1.08,best));
  return Math.min(legacyHeight,Math.max(0,rise*shoulder-gully));
 }
-export function canyonRelief(x,z,planning=false,macroform=true){
+function canyonBaseRelief(x,z,planning=false,macroform=true){
  let height=0,oasisUpperDelta=0,oasisBest=Infinity,oasisEdge=Infinity;
  for(const r of prepared){
   if(x<r.minX||x>r.maxX||z<r.minZ||z>r.maxZ)continue;
@@ -230,6 +231,10 @@ export function canyonRelief(x,z,planning=false,macroform=true){
  const retainedCrown=oasisUpperCrown(x,z,seated);
  const macroBlend=!planning&&macroform?coyoteOasisMacroBlend(x,z,oasisBest,oasisEdge):0;
  return macroBlend===0?retainedCrown:retainedCrown+(coyoteOasisMacroHeight(x,z,oasisBest,oasisEdge)*keepLandmarks(x,z)-retainedCrown)*macroBlend;
+}
+export function canyonRelief(x,z,planning=false,macroform=true){
+ const relief=canyonBaseRelief(x,z,planning,macroform);
+ return !planning&&macroform?connectedCoyoteRelief(x,z,relief):relief;
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.

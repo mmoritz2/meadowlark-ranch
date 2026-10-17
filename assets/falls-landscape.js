@@ -1,3 +1,4 @@
+import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=cliff-landscape-4';
@@ -153,7 +154,8 @@ const FALLS_BUTTRESSES=[
 ];
 export function fallsRelief(x,z){
  const alpine=alpineRelief(x,z);if(!withinFalls(x,z))return alpine;
- const keep=smooth(7,13,nearest(x,z,trail).d);if(!keep)return alpine;
+ const trailDistance=nearest(x,z,trail).d;
+ const keep=smooth(7,13,trailDistance);if(!keep)return alpine;
  // A broad spillway mass holds the fixed high channel. Its open southern
  // face is a worn headwall, not the former high-frequency shelf/shoulder field.
  const dx=(x+146)/41,dz=(z+269)/47,r=Math.hypot(dx,dz);
@@ -171,7 +173,8 @@ export function fallsRelief(x,z){
  const hem=smooth(0,3,Math.min(x+202,-100-x,z+321,-214-z));
  // Do not pin rectangular legacy bank corners. The physical pool/channel
  // beds and the full falling-water ravine are owned by fallsTerrainHeight.
- return alpine+Math.max(0,banks-recess)*keep*hem;
+ const original=alpine+Math.max(0,banks-recess)*keep*hem;
+ return hollowpeakMacroshape(x,z,original,dryRidgeWeight(x,z)*smooth(13,18,trailDistance));
 }
 export function fallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;

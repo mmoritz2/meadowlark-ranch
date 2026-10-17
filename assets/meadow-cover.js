@@ -1,11 +1,11 @@
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2';
+import {respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
 import {createLushMeadowGeometry} from './lush-meadow-geometry.mjs?v=grass-ribbon-5';
 import {northPastureAt} from './north-pasture.mjs?v=north-pasture-2';
 import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1';
+import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-4';
 
 // Middle-distance grass uses six/ten/twelve upright blades within the retained

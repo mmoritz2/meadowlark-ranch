@@ -1,0 +1,23 @@
+{
+  "assets/falls-landscape.js": {
+    "beforeSHA256": "53d40e5b95842434ea9e4bb7b5e2e8ea975a452db2523f4e44204981bf46967f",
+    "afterSHA256": "9d9c16110fcb044710d355542d33d8e619de6e016fb280129c133e00d5631921",
+    "changes": [
+      {
+        "before": "import {patchPlungePool}",
+        "after": "import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';\nimport {patchPlungePool}",
+        "occurrences": 1
+      },
+      {
+        "before": " const keep=smooth(7,13,nearest(x,z,trail).d);if(!keep)return alpine;",
+        "after": " const trailDistance=nearest(x,z,trail).d;\n const keep=smooth(7,13,trailDistance);if(!keep)return alpine;",
+        "occurrences": 1
+      },
+      {
+        "before": " return alpine+Math.max(0,banks-recess)*keep*hem;",
+        "after": " const original=alpine+Math.max(0,banks-recess)*keep*hem;\n return hollowpeakMacroshape(x,z,original,dryRidgeWeight(x,z)*smooth(13,18,trailDistance));",
+        "occurrences": 1
+      }
+    ]
+  }
+}

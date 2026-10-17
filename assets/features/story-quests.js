@@ -10,7 +10,7 @@ import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
    new season. Missions insert before an index once per save (s.mig tags), so an old save keeps
    its place. Nothing here runs at import time; everything happens inside install(G). */
 import {stepStoryFillyNavigation} from '../story-filly-navigation.mjs?v=filly-obstacles-1';
-import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-cascades-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1';
 
 export const id='story-quests';
 
