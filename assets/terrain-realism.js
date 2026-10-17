@@ -1,3 +1,4 @@
+import {normalizeGroundRouteEntries} from './ground-route-entries.mjs?v=route-ground-2';
 import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
@@ -629,7 +630,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
      that. Also hung on material.userData so a feature package can reach it without an inline
      change: G.scene.getObjectByName('Pasture terrain').material.userData.setPaths(lines, 2.9). */
   function setPaths(polylines, width = 2.9, strength = 1) {
-    pathList = (polylines || []).filter(pl => pl && pl.length > 1).map(pts => ({pts, width, strength}));
+    pathList = normalizeGroundRouteEntries(polylines,width,strength);
     redrawMask();
   }
   material.userData.setPaths = setPaths;

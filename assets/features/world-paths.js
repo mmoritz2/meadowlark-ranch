@@ -225,6 +225,8 @@ export function install(G){
   return Math.sqrt(best);
  }
  P.trackDist=trackDist;
+ // Publish the sampler before mask redraw calls managedGrass through woodland skirts.
+ scene.getObjectByName('Pasture terrain')?.material.userData.setPaths?.([...(W.groundPaths||[]),...TRACKS.map(t=>({pts:t.pts,width:t.w}))]);
  // The older planting pass runs before roads are surveyed. Remove its soft
  // cover once the final paths exist; quality changes preserve these matrices.
  P.clearedPlantInstances=0;

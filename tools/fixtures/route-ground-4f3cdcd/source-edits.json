@@ -1,0 +1,71 @@
+{
+  "assets/terrain-realism.js": {
+    "beforeSHA256": "aca7c9e2bbe6a0c2c0231fac0d206067f477029350a052f1f56cb3f0c54e1ed6",
+    "afterSHA256": "5fb81186eeb1856da250ec02199fe596d5d9c50bff8bccdeffab0cc1bf686fd7",
+    "changes": [
+      {
+        "before": "import {applyChalkGrazingPixels}",
+        "after": "import {normalizeGroundRouteEntries} from './ground-route-entries.mjs?v=route-ground-2';\nimport {applyChalkGrazingPixels}",
+        "occurrences": 1
+      },
+      {
+        "before": "pathList = (polylines || []).filter(pl => pl && pl.length > 1).map(pts => ({pts, width, strength}));",
+        "after": "pathList = normalizeGroundRouteEntries(polylines,width,strength);",
+        "occurrences": 1
+      }
+    ]
+  },
+  "ranch3d.html": {
+    "beforeSHA256": "0a5004b9322300bf350ddb3454f9bc9d3596e87ab5975d616f42438fd2ba846a",
+    "afterSHA256": "3c1d91a4eb7c0b53a8667ebd55199421380b0e3b551699b590bbc6f784571577",
+    "changes": [
+      {
+        "before": "import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight}",
+        "after": "import {sampleGroundBasePaths} from './assets/ground-route-entries.mjs?v=route-ground-2';\nimport {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight}",
+        "occurrences": 1
+      },
+      {
+        "before": "const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:bumpTexture,managedAt:managedGrass});",
+        "after": "const groundMaskRoutes=sampleGroundBasePaths(PATHS);\nconst terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:bumpTexture,managedAt:managedGrass});\nterrainSurface.setPaths(groundMaskRoutes,PATH_W);",
+        "occurrences": 1
+      },
+      {
+        "before": "world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,",
+        "after": "world:{groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,",
+        "occurrences": 1
+      },
+      {
+        "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1",
+        "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-route-ground-2",
+        "occurrences": 1
+      },
+      {
+        "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1",
+        "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2",
+        "occurrences": 1
+      }
+    ]
+  },
+  "assets/features/world-paths.js": {
+    "beforeSHA256": "59fc76113c9eb2d38adfcb342c475dbc9d3fb0bfd220b735c752145670e3a3b1",
+    "afterSHA256": "da56f2dfd86c2720cef7dfcde071a0471d9deb1f844b1c9fcadebc8d6a199a51",
+    "changes": [
+      {
+        "before": " P.trackDist=trackDist;",
+        "after": " P.trackDist=trackDist;\n // Publish the sampler before mask redraw calls managedGrass through woodland skirts.\n scene.getObjectByName('Pasture terrain')?.material.userData.setPaths?.([...(W.groundPaths||[]),...TRACKS.map(t=>({pts:t.pts,width:t.w}))]);",
+        "occurrences": 1
+      }
+    ]
+  },
+  "assets/features/index.js": {
+    "beforeSHA256": "8ca7d723ef91d14ab7bde1520bd46242f43fe8048a2979911463fef3e13773e0",
+    "afterSHA256": "47cfa4c96e3385eafef97a0b09d87f5b0f3605d198f21dc96c31466b86a5f42f",
+    "changes": [
+      {
+        "before": "./world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4",
+        "after": "./world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2",
+        "occurrences": 1
+      }
+    ]
+  }
+}
