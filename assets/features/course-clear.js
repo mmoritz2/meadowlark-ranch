@@ -229,7 +229,7 @@ export function install(G){
     route bent round one would differ between players, and so would every time on its leaderboard. A building beside a
     line stays a thing to ride round. */
  /* water a horse would have to swim: the river's channel and Loon Lake (the same depth horse-roster swims at) */
- const wet=(x,z)=>{if(Math.hypot(x-20,z-16)<5)return true;try{if(Math.abs(z-W.riverZ(x))<9){const th=W.terrainH(x,z);return W.groundH(x,z)<=th+0.3&&W.riverLevel(x)-th>0.25;}}catch(e){}return false;};
+ const wet=(x,z)=>{if(W.loonLake?W.loonLake.containsWater(x,z,.5):Math.hypot(x-20,z-16)<5)return true;try{if(Math.abs(z-W.riverZ(x))<9){const th=W.terrainH(x,z);return W.groundH(x,z)<=th+0.3&&W.riverLevel(x)-th>0.25;}}catch(e){}return false;};
  function reroute(){
   const big=W.colliders.filter(c=>c&&c.landform);
   for(const k in T.RACE_ROUTES){

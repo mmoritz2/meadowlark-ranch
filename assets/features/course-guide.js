@@ -39,7 +39,7 @@
    intervals, and rebuilds the route when needed. Unscored flat races and ordinary formal
    fences also cache a solid-aware steering route and validate it every 300 ms. It creates no new meshes during riding;
    recovery planning and changed snapshots may allocate small temporary objects. */
-import {createFlatRaceGuidance,flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1';
+import {createFlatRaceGuidance,flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1-loon-lake-4';
 import {createFormalFenceGuidance} from '../formal-fence-guidance.mjs?v=formal-fence-guide-1';
 export const id='course-guide';
 const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12], TO_SHOW=2.2;
@@ -78,7 +78,7 @@ export function rushRecoverySegmentClear(a,b,{world={},course,skip}={}){
  const n=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/.65));let previous=null;
  try{for(let i=0;i<=n;i++){
   const t=i/n,x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=world.groundH?.(x,z)??0;
-  if(Math.hypot(x,z)>454||Math.hypot(x-20,z-16)<5||!Number.isFinite(y)||previous!==null&&Math.abs(y-previous)>.8)return false;previous=y;
+  if(Math.hypot(x,z)>454||(world.loonLake?world.loonLake.containsWater(x,z,.5):Math.hypot(x-20,z-16)<5)||!Number.isFinite(y)||previous!==null&&Math.abs(y-previous)>.8)return false;previous=y;
   if(world.terrainH&&world.riverZ&&world.riverLevel&&Math.abs(z-world.riverZ(x))<9&&world.riverLevel(x)-world.terrainH(x,z)>.3&&y<=world.terrainH(x,z)+.3)return false;
   if(world.solidWorld){const point={x,z};world.solidWorld.resolve(point,{bottom:y+.38,top:y+2.65,radius:.7});if(Math.hypot(point.x-x,point.z-z)>.001)return false;}
  }}catch{return false;}
@@ -1098,7 +1098,9 @@ export function install(G){
       damp the first two metres, which covers every fence in the game, and follow one for one
       above that, which is flight. */
    const py=player.y||0, lift=py<=2?py*0.8:1.6+(py-2);
-   const foot=W.groundH(player.pos.x,player.pos.z)+lift;
+   const lakeSurface=player.swim&&!player.onFoot?W.loonLake?.waterAt(player.pos.x,player.pos.z)?.surface:null;
+   const visualGround=lakeSurface??W.groundH(player.pos.x,player.pos.z);
+   const foot=visualGround+lift;
    /* Is she standing between the lens and the next thing she is being sent at? Asked of the eye
       this frame would have WITHOUT any lift, so the answer is about the course and not about the
       lift itself; then each step of CAM.NUDGE in turn until one clears. Only for a target ahead of
@@ -1109,7 +1111,7 @@ export function install(G){
    if(!F.drag&&nextSight()){
     const dx=T.x-player.pos.x, dz=T.z-player.pos.z, dd=Math.hypot(dx,dz);
     if(dd>5&&dd<70&&dx*Math.sin(head)+dz*Math.cos(head)>0){
-     const fy=W.groundH(player.pos.x,player.pos.z)+py;
+     const fy=visualGround+py;
      const blocked=(dp,dO)=>{
       const p2=clamp(pitch0+dp,0.08,1.12), r2=R*Math.cos(p2), a2=ang0+dO*side;
       const x2=player.pos.x-Math.sin(a2)*r2, z2=player.pos.z-Math.cos(a2)*r2;

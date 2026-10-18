@@ -933,7 +933,7 @@ export function install(G){
   if(best){if(!st.slot)st.slot=[0,0];st.slot[0]=best[0];st.slot[1]=best[1];st.slotI=best[2];st.slotHid=bestH;}
  }
  /* water: the river's channel and Loon Lake, as the horse and the rider on foot both read them */
- function waterAt(x,z){let depth=0,surface=0;const dl=Math.hypot(x-20,z-16);if(dl<4.5){const d=0.35+0.9*(1-dl/4.5);if(d>depth){depth=d;surface=gH(20,16)+0.02;}}
+ function waterAt(x,z){let depth=0,surface=0;const lake=W.loonLake?.waterAt(x,z);if(lake&&lake.depth>depth){depth=lake.depth;surface=lake.surface;}
   try{const rz=W.riverZ(x);if(Math.abs(z-rz)<9){const th=W.terrainH(x,z);if(gH(x,z)<=th+0.3){const lv=W.riverLevel(x);if(lv-th>depth){depth=lv-th;surface=lv;}}}}catch(e){}
   return depth>0.02?{depth,surface}:null;}
  function wallAt(x,z,pad){for(const w of W.walls||[]){const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;let u=l2>0?((x-w.x1)*dx+(z-w.z1)*dz)/l2:0;u=u<0?0:u>1?1:u;if(Math.hypot(x-(w.x1+dx*u),z-(w.z1+dz*u))<pad)return true;}return false;}
@@ -944,7 +944,7 @@ export function install(G){
 
  /* ---------------------------------------------------------------- the rider, as the pet sees it */
  function rider(st,dt){
-  const p=player,gy=gH(p.pos.x,p.pos.z),y=gy+(p.y||0),R=st.R||(st.R={vx:0,vz:0,svx:0,svz:0,vy:0,yawRate:0,x:0,z:0,gy:0,y:0,h:0,fx:0,fz:1,rx:-1,rz:0,flying:false,onFoot:false,spd:0,wingX:0});
+  const p=player,lake=p.swim&&!p.onFoot?W.loonLake?.waterAt(p.pos.x,p.pos.z):null,gy=lake?lake.surface:gH(p.pos.x,p.pos.z),y=gy+(p.y||0),R=st.R||(st.R={vx:0,vz:0,svx:0,svz:0,vy:0,yawRate:0,x:0,z:0,gy:0,y:0,h:0,fx:0,fz:1,rx:-1,rz:0,flying:false,onFoot:false,spd:0,wingX:0});
   if(st.lp){const jx=p.pos.x-st.lp.x,jz=p.pos.z-st.lp.z,j=Math.hypot(jx,jz);
    if(j>8){st.teleT=0.35;R.vx=R.vz=R.svx=R.svz=R.vy=0;st.side=null;st.slot=null;st.bad=null;}
    else{const k=1-Math.exp(-10*dt);R.svx+=(jx/dt-R.svx)*k;R.svz+=(jz/dt-R.svz)*k;R.vy+=(clamp((y-st.lp.y)/dt,-30,30)-R.vy)*k;}

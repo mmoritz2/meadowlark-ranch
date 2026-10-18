@@ -1,3 +1,4 @@
+import {buildLoonLakeLandscape,replaceLoonLakeGeometry,retargetLoonLakeScatter,reconcileLoonLakeDecor,seatLoonLakePunt} from '../loon-lake-art.mjs?v=loon-lake-4';
 import {remodelRibbonFallsCliff} from '../ribbon-falls-landform.mjs?v=ribbon-falls-2';
 import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';
 import {createBankRushGeometry} from '../bank-rushes.mjs?v=bank-rushes-1';
@@ -24,7 +25,8 @@ export function install(G){
  const {THREE,scene}=G;
  const W=G.world;
  const groundH=W.groundH, riverZ=W.riverZ, riverLevel=W.riverLevel, streamX=W.streamX;
- const planningGroundH=W.riverBankPlacement?.heightAt||groundH;
+ const underlyingPlanningGroundH=W.riverBankPlacement?.heightAt||groundH;
+ const planningGroundH=(x,z)=>{const h=W.loonLake?.planningHeightAt(x,z);return Number.isFinite(h)?h:underlyingPlanningGroundH(x,z);};
  const box=W.box, tube=W.tube;
  const P={}; G.waterPkg=P;                        // this package's live state, for QA to look at
 
@@ -777,9 +779,10 @@ export function install(G){
     this package's to carve — so it gets the things that say 'lake' instead: a shingle and silt shore
     the water disappears into, reed beds on the margin, a fishing stage out over the water and a
     punt tied to it. */
+ const lakeScatter={reeds:[],pebbles:[]};
  const LK={x:20,z:16,r:4.5};
  {
-  const surf=0.04;
+  const surf=W.loonLake.level;
   P.lake={surface:surf,ground:+groundH(LK.x,LK.z).toFixed(3)};
   /* BUG, and not one this package can fix at source: ranch3d.html:4525 hangs the lake's shore foam
      ring at groundH(20,16)+0.62 and :4540 puts all 54 lily pads and their 14 flowers at
@@ -840,8 +843,8 @@ export function install(G){
   for(let i=0;i<32;i++){
    const a=rr(2.15,4.75), off=rr(LK.r-1.1,LK.r+1.0);
    const x=LK.x+Math.cos(a)*off, z=LK.z+Math.sin(a)*off;
-   reeds.push({x,y:Math.min(groundH(x,z),surf)-0.06,z,sx:rr(0.34,0.58),sy:rr(0.55,1.02),sz:rr(0.34,0.58),
-    ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.12)});
+   const row={x,y:Math.min(groundH(x,z),surf)-0.06,z,sx:rr(0.34,0.58),sy:rr(0.55,1.02),sz:rr(0.34,0.58),
+    ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.12)};reeds.push(row);lakeScatter.reeds.push(row);
   }
   /* Kept inside the shore band this package actually draws. At LK.r+0.2..LK.r+2.4 the ring of
      stones landed on mown lawn a clear two metres beyond anything that looks like a shore, and at
@@ -851,8 +854,8 @@ export function install(G){
   for(let i=0;i<26;i++){
    const a=rnd()*6.28, off=rr(LK.r-0.6,LK.r+1.0);
    const x=LK.x+Math.cos(a)*off, z=LK.z+Math.sin(a)*off, s=rr(0.08,0.26);
-   pebbles.push({x,y:groundH(x,z)+s*0.22,z,sx:s*rr(1,1.5),sy:s*rr(0.5,0.85),sz:s*rr(1,1.4),
-    ry:rnd()*6.28,c:0xffffff,cm:rr(0.8,1.2)});
+   const row={x,y:groundH(x,z)+s*0.22,z,sx:s*rr(1,1.5),sy:s*rr(0.5,0.85),sz:s*rr(1,1.4),
+    ry:rnd()*6.28,c:0xffffff,cm:rr(0.8,1.2)};pebbles.push(row);lakeScatter.pebbles.push(row);
   }
   /* The fishing stage wants a clear piece of shore, and the obvious spot turned out to have
      something of somebody else's standing 1.8 m away, so it asks the shore a few times over
@@ -864,7 +867,7 @@ export function install(G){
   }
   if(!jok)skipped.jetty=(skipped.jetty||0)+1;
   if(jok){
-   const deckY=surf+0.42;
+   const deckY=0.04+0.42; // retain the original reachable stage elevation
    const dl=Math.hypot(LK.x-jx,LK.z-jz);
    const dirX=(LK.x-jx)/dl, dirZ=(LK.z-jz)/dl;         // out toward the middle of the lake
    /* Four planks butted into a slab read as a garden table from the shore, which is what the first
@@ -1017,6 +1020,21 @@ export function install(G){
   if(puddleMesh){puddleMesh.visible=false;puddleMesh.renderOrder=1;}
   P.puddles=rows.length;
  }
+
+ // Retain all original constructors and seeded proposals, then replace only
+ // the existing Loon owners with one canonical basin/water/unequal bank model.
+ const lakeModel=buildLoonLakeLandscape({terrainH:W.terrainH,terrainStep:W.terrainStep,lakeRuntime:W.loonLake});
+ replaceLoonLakeGeometry(THREE,W.loonLakeMesh,lakeModel.water,{pondLocal:true});
+ W.loonLakeMesh.material.vertexColors=true;W.loonLakeMesh.material.needsUpdate=true;
+ replaceLoonLakeGeometry(THREE,P.lakeShore,lakeModel.shore);
+ dressRiverBankMaterial(P.lakeShore.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);
+ retargetLoonLakeScatter(lakeScatter,W.terrainH);
+ P.lakeDecor=reconcileLoonLakeDecor(scene,W.loonLake);
+ if(P.punt&&P.jetty){P.lakeMooring=seatLoonLakePunt(P.punt,P.jetty,W.loonLake);P.puntY=W.loonLake.level;}
+ P.lakeLandscape={profile:lakeModel.profile,waterFaces:lakeModel.water.index.length/3,shoreFaces:lakeModel.shore.index.length/3,
+  waterSourceCells:lakeModel.water.sourceCells,shoreSourceCells:lakeModel.shore.sourceCells,bounds:lakeModel.bounds,
+  waterMesh:W.loonLakeMesh,shoreMesh:P.lakeShore};
+ P.lake={...P.lake,surface:W.loonLake.level,ground:W.terrainH(20,16),canonical:true};
 
  /* Everything scattered above goes in now, one mesh per kind and three for all the rock. */
  P.pebbleMesh=instance(pebbleGeo,pebbleMat,pebbles,'Water | bank shingle',false);

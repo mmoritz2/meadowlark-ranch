@@ -400,6 +400,8 @@ export function install(G){
   {id:'b1',pt:bank(-120,7),region:'meadows'},{id:'b2',pt:bank(-70,7),region:'meadows'},{id:'b3',pt:[14,124],region:'riverside'},{id:'b4',pt:bank(60,7),region:'meadows'},
   {id:'b5',pt:bank(110,7),region:'meadows'},{id:'b6',pt:bank(-190,7),region:'coyote'},{id:'b7',pt:[31,17],region:'lake'},{id:'b8',pt:[28,11],region:'lake'},
  ].map((b,i)=>Object.assign(b,{note:BOTTLE_NOTES[i],x:b.pt[0],z:b.pt[1]}));
+ // Original proposals/IDs/lore remain; only new lake water moves a shore bottle.
+ for(const b of BOTTLES)if(b.region==='lake'&&W.loonLake?.containsWater(b.x,b.z,.5)){const p=W.loonLake.dryPoint(b.x,b.z,.5);b.pt=p;b.x=p[0];b.z=p[1];}
  P.BOTTLES=BOTTLES;
  const glassMat=new THREE.MeshStandardMaterial({color:0x7fd8c8,emissive:0x3fa898,emissiveIntensity:0.35,roughness:0.15,metalness:0.1,transparent:true,opacity:0.85});
  function mkBottle(b){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.13,0.42,10),glassMat);body.position.y=0.3;g.add(body);const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.08,0.16,8),glassMat);neck.position.y=0.58;g.add(neck);box(0.07,0.08,0.07,'#c9a86a',0,0.68,0,g);const note=box(0.06,0.2,0.02,'#f4e8c8',0,0.3,0,g);note.rotation.y=0.6;g.rotation.z=0.35;g.position.set(b.x,groundH(b.x,b.z),b.z);scene.add(g);return g;}

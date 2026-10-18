@@ -133,6 +133,7 @@ export function install(G){
    const d=p[1]-riverZ(p[0]);
    if(Math.abs(d)<11)p[1]=riverZ(p[0])+(d<0?-11:11);
    const dl=hyp(p[0],p[1],20,16); if(dl<13){const a=Math.atan2(p[1]-16,p[0]-20);p[0]=20+Math.cos(a)*13;p[1]=16+Math.sin(a)*13;}
+   if(W.loonLake?.containsWater(p[0],p[1],8.5)){const dry=W.loonLake.dryPoint(p[0],p[1],8.5);p[0]=dry[0];p[1]=dry[1];}
    const rr=Math.hypot(p[0],p[1]); if(rr>440){p[0]*=440/rr;p[1]*=440/rr;}
   }
  }

@@ -348,13 +348,11 @@ export function install(G){
       Water: past her knees it slows her, and deeper than her thighs she swims, treading water or
       stroking when she moves: the river's channel and the middle of Loon Lake. */
  const WALK=1.45, RUN=5.5, SWIM=1.35, SWIM_FAST=2.2, SWIM_D=0.72, WADE_D=0.3, STEP=0.45, CLIMB=1.25, GRAV=9.8;   // the river runs about 0.8 m deep: she swims it, as the horse does
- const LAKE={x:20,z:16,r:4.5};
- /* the river's bed is carved into the terrain; Loon Lake is a disc laid on the ground, so its depth is
-    the one the horse swims it at (horse-roster) and the ground itself hides whatever is below */
+ /* Loon depth and its fixed surface share the actual carved bed and dry deck sampler. */
  function waterAt(x,z){
   let depth=0,surface=0;
-  const dl=Math.hypot(x-LAKE.x,z-LAKE.z);
-  if(dl<LAKE.r){const d=0.35+0.9*(1-dl/LAKE.r);if(d>depth){depth=d;surface=Wd.groundH(LAKE.x,LAKE.z)+0.02;}}
+  const lake=Wd.loonLake?.waterAt(x,z);
+  if(lake&&lake.depth>depth){depth=lake.depth;surface=lake.surface;}
   try{const rz=Wd.riverZ(x);if(Math.abs(z-rz)<9){const th=Wd.terrainH(x,z);if(Wd.groundH(x,z)<=th+0.3){const lv=Wd.riverLevel(x);if(lv-th>depth){depth=lv-th;surface=lv;}}}}catch(e){}
   return depth>0.02?{depth,surface}:null;
  }

@@ -129,7 +129,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
-    if(Math.hypot(x-20,z-16)<r+19||oasisContainsWater(x,z,r+.7))return false;
+    if(Math.hypot(x-20,z-16)<r+19||W.loonLake?.containsWater(x,z,r+1.5)||oasisContainsWater(x,z,r+.7))return false;
     if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return false;
     if(W.colliders.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.r||0)+.3))return false;
     for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;
@@ -497,7 +497,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(G.vistas?.clearZones?.some(test=>test(x,z)))return 'landmark vista';
       if(cottonwoodReserved(x,z,fullRadius+1)||G.villageCourts?.contains(x,z,fullRadius+2))return 'village court/building';
       if(Math.hypot(x,z)<33||Math.hypot(x-20,z-16)<r+19)return 'ranch/lake';
-      if(fallsContainsWater(x,z,r+1.5)||oasisContainsWater(x,z,r+.7)||W.sceneryArt.containsWaterfall(x,z,r)||G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return 'water/landmark';
+      if(W.loonLake?.containsWater(x,z,r+1.5)||fallsContainsWater(x,z,r+1.5)||oasisContainsWater(x,z,r+.7)||W.sceneryArt.containsWaterfall(x,z,r)||G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return 'water/landmark';
       if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return 'waterway';
       if(W.pathDist(x,z)<r+4||(G.worldPaths?.trackDist(x,z)??Infinity)<r+4)return 'riding path';
       if(window.__onCourse?.(x,z,r+2))return 'course';

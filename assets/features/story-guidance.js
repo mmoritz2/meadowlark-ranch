@@ -1,5 +1,5 @@
 import {COTTONWOOD_ROUTES} from '../cottonwood-routes.mjs?v=cottonwood-post-1';
-import {flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1';
+import {flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1-loon-lake-4';
 /* Resolve the next playable action, without changing quest progress or rewards. */
 export const id='story-guidance';
 

@@ -23,7 +23,7 @@ function clearance(world={},limit=6000){
  const circles=world.colliders??[],walls=world.walls??[];
  const valid=Array.isArray(circles)&&Array.isArray(walls)&&(!world.solidWorld||typeof world.solidWorld.resolve==='function');
  function sample(p){
-  if(!valid||!point(p)||Math.hypot(p.x,p.z)>454||Math.hypot(p.x-20,p.z-16)<5)return null;
+  if(!valid||!point(p)||Math.hypot(p.x,p.z)>454||(world.loonLake?world.loonLake.containsWater(p.x,p.z,.5):Math.hypot(p.x-20,p.z-16)<5))return null;
   const key=p.x+','+p.z;if(samples.has(key))return samples.get(key);
   if(++calls>limit){exhausted=true;return null;}
   let height=null;

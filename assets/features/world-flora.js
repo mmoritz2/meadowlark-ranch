@@ -48,7 +48,7 @@ export function install(G){
  const planning=W.hollowpeakPlacement;
  const underlyingPlanningH=W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt||planning?.heightAt||groundH;
  const chalkPlanning=G.vistas?.chalkDown;
- const planningH=(x,z)=>{const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
+ const planningH=(x,z)=>{const lake=W.loonLake?.planningHeightAt?.(x,z);if(Number.isFinite(lake))return lake;const y=chalkPlanning?.planningHeightAt?.(x,z);return Number.isFinite(y)?y:underlyingPlanningH(x,z);};
  const plantingExcluded=planning?.excludesDryPlants||((x,z)=>fallsExcludesDryPlants(x,z,groundH));
  const F={};                                             // this package's live state, exposed for QA
  G.floraPkg=F;
@@ -1033,6 +1033,18 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   return cleared;
  }
  F.chalkCover=clearLiveChalkCover();
+ // Preserve every seeded proposal and policy draw before applying the new local water.
+ // Later model/fallback capture sees these zero bases; counts, colours and dry roots stay exact.
+ F.loonLakeCover={cleared:{},roots:[]};
+ if(W.loonLake)for(const name of ['scrub','juni','sage','brack','reed','tuft','petal','succ','oco']){
+  const b=BANK[name];let count=0;
+  for(let i=0;i<b.n;i++){b.im.getMatrixAt(i,_m);const a=_m.elements;if(Math.abs(_m.determinant())<1e-8)continue;
+   const wet=W.loonLake.waterAt(a[12],a[14]);if(!wet||name==='reed'&&wet.depth<=.3)continue;
+   F.loonLakeCover.roots.push({bank:name,row:i,x:a[12],z:a[14],depth:wet.depth});
+   for(const column of [0,4,8])for(let axis=0;axis<3;axis++)a[column+axis]=0;
+   b.im.setMatrixAt(i,_m);count++;
+  }F.loonLakeCover.cleared[name]=count;
+ }
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

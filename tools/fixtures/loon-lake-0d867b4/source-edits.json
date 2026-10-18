@@ -1,0 +1,199 @@
+{
+  "ranch3d.html": {
+    "beforeSHA256": "481908f19cd12432b17b389948e5fb22c1095851f20c27ff70645337c5dc8d22",
+    "afterSHA256": "59d551d44dce5989eaaec9e5c7dda06f589281446cef5ca03dd0a2ae046fcaa0",
+    "changes": [
+      {
+        "before": "import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';",
+        "after": "import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';\nimport {createLoonLakeRuntime,loonLakeTerrainHeight,legacyLoonLakeTerrainHeight,loonLakeContainsWater,loonLakeDryPoint} from './assets/loon-lake.mjs?v=loon-lake-4';",
+        "occurrences": 1
+      },
+      {
+        "before": "function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){",
+        "after": "function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight,lakeHeight=loonLakeTerrainHeight){",
+        "occurrences": 1
+      },
+      {
+        "before": " return fallsHeight(x,z,oasisTerrainHeight(x,z,h));",
+        "after": " return lakeHeight(x,z,fallsHeight(x,z,oasisTerrainHeight(x,z,h)));",
+        "occurrences": 1
+      },
+      {
+        "before": "rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight)",
+        "after": "rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight)",
+        "occurrences": 1
+      },
+      {
+        "before": "rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight)",
+        "after": "rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight)",
+        "occurrences": 1
+      },
+      {
+        "before": "rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight)",
+        "after": "rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight)",
+        "occurrences": 1
+      },
+      {
+        "before": "rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight)",
+        "after": "rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight,legacyLoonLakeTerrainHeight)",
+        "occurrences": 1
+      },
+      {
+        "before": "const solidWorld=createSolidWorld({THREE});",
+        "after": "// A bounded parent canonical reference preserves historical layout decisions.\n// No separate physical floor is registered; transforms still use groundH.\nfunction loonLakePlanningH(x,z){\n if(!loonLakeContainsWater(x,z,3.5+Math.SQRT2*TERRAIN_STEP))return NaN;\n const step=TERRAIN_STEP,gx=(x+500)/step,gz=(z+500)/step,ix=Math.floor(gx),iz=Math.floor(gz),u=gx-ix,v=gz-iz;\n const node=(a,b)=>Math.fround(rawH(a*step-500,b*step-500,fallsTerrainHeight,canyonRelief,riverBankTerrainHeight,legacyLoonLakeTerrainHeight));\n const a=node(ix,iz),b=node(ix,iz+1),c=node(ix+1,iz+1),d=node(ix+1,iz);\n let h=u+v<=1?a+(d-a)*u+(b-a)*v:c+(b-c)*(1-u)+(d-c)*(1-v);\n for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));\n return h;\n}\nconst loonLake=createLoonLakeRuntime({terrainH,groundH,planningHeightAt:loonLakePlanningH});\nCOLL_SETS.shells.pts=COLL_SETS.shells.pts.map(p=>loonLake.containsWater(...p,.3)?loonLake.dryPoint(...p,.65):p);\nconst solidWorld=createSolidWorld({THREE});",
+        "occurrences": 1
+      },
+      {
+        "before": "if(alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0",
+        "after": "if(loonLake.containsWater(x,z,.45)||alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0",
+        "occurrences": 1
+      },
+      {
+        "before": "if(Math.hypot(x-20,z-16)<5.4||oasisContainsWater(x,z,.7))",
+        "after": "if(loonLake.containsWater(x,z,.9)||oasisContainsWater(x,z,.7))",
+        "occurrences": 1
+      },
+      {
+        "before": "Math.hypot(x-20,z-16)<9.5)return 'water'",
+        "after": "loonLake.containsWater(x,z,5))return 'water'",
+        "occurrences": 1
+      },
+      {
+        "before": "if(Math.hypot(x-20,z-16)<5.6||oasisContainsWater(x,z,.7))",
+        "after": "if(loonLake.containsWater(x,z,1.1)||oasisContainsWater(x,z,.7))",
+        "occurrences": 1
+      },
+      {
+        "before": "const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));",
+        "after": "const d=Math.min(Math.abs(z-riverZ(x)),loonLake.shoreDistance(x,z)+4.5);",
+        "occurrences": 1
+      },
+      {
+        "before": "pond.position.set(20,0.04,16);",
+        "after": "pond.position.set(20,loonLake.level,16);\npond.name='Loon Lake water';",
+        "occurrences": 1
+      },
+      {
+        "before": "world:{groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,",
+        "after": "world:{loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,",
+        "occurrences": 1
+      },
+      {
+        "before": "if(gy>0.35&&Math.hypot(x-20,z-16)>22)",
+        "after": "if(gy>0.35&&!loonLake.containsWater(x,z,17.5))",
+        "occurrences": 1
+      },
+      {
+        "before": "const nearWater=Math.hypot(player.pos.x-20,player.pos.z-16)<6.5||",
+        "after": "const nearWater=loonLake.containsWater(player.pos.x,player.pos.z,2)||",
+        "occurrences": 1
+      },
+      {
+        "before": " const gy=groundH(player.pos.x,player.pos.z);",
+        "after": " const lakeSwimSurface=player.swim&&!player.onFoot?loonLake.waterAt(player.pos.x,player.pos.z)?.surface:null;\n const gy=lakeSwimSurface??groundH(player.pos.x,player.pos.z);",
+        "occurrences": 1
+      },
+      {
+        "before": "  const pp=W2(20,16);\n  mc.beginPath();mc.arc(pp[0],pp[1],4.5*S,0,7);mc.fill();",
+        "after": "  mc.beginPath();\n  for(const contour of loonLake.footprintContours()){contour.forEach((p,i)=>{const q=W2(p[0],p[1]);i?mc.lineTo(q[0],q[1]):mc.moveTo(q[0],q[1]);});mc.closePath();}\n  mc.fill('evenodd');",
+        "occurrences": 1
+      },
+      {
+        "before": "{distance:Math.hypot(x-20,z-16),level:.04}",
+        "after": "{distance:loonLake.distanceToWater(x,z),level:loonLake.level}",
+        "occurrences": 1
+      },
+      {
+        "before": "  m4.compose(v,q,s1);\n  inst.setMatrixAt(i,m4);",
+        "after": "  m4.compose(v,q,s1);\n  if((p[0]===X&&p[1]>7.5)||(p[1]===Z&&p[0]>15))m4.makeScale(0,0,0);\n  inst.setMatrixAt(i,m4);",
+        "occurrences": 1
+      },
+      {
+        "before": "rail(-X,Z,-3,Z,y);rail(3,Z,X,Z,y);",
+        "after": "rail(-X,Z,-3,Z,y);rail(3,Z,15,Z,y);",
+        "occurrences": 1
+      },
+      {
+        "before": "rail(-X,-Z,-X,Z,y);rail(X,-Z,X,Z,y);",
+        "after": "rail(-X,-Z,-X,Z,y);rail(X,-Z,X,7.5,y);",
+        "occurrences": 1
+      },
+      {
+        "before": "  f.position.set(x,1.12,z);\n  f.rotation.z=Math.PI;",
+        "after": "  f.position.set(x,1.12,z);\n  if(z>0&&x>15)f.visible=false; // the retired east lake corner no longer has a rail\n  f.rotation.z=Math.PI;",
+        "occurrences": 1
+      },
+      {
+        "before": "[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,25,20],[-25,-20,-25,20],[25,-20,25,20]]",
+        "after": "[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,15,20],[-25,-20,-25,20],[25,-20,25,7.5]]",
+        "occurrences": 1
+      },
+      {
+        "before": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1",
+        "after": "./assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4",
+        "occurrences": 1
+      },
+      {
+        "before": "./assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1-countryside-vista-1-connected-landforms-1-hollowpeak-root-seating-1",
+        "after": "./assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1-countryside-vista-1-connected-landforms-1-hollowpeak-root-seating-1-loon-lake-4",
+        "occurrences": 1
+      },
+      {
+        "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4",
+        "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4",
+        "occurrences": 1
+      },
+      {
+        "before": "breeds.html?v=artist-study-1",
+        "after": "breeds.html?v=artist-study-1-loon-lake-4",
+        "occurrences": 2
+      }
+    ]
+  },
+  "assets/features/world-water.js": {
+    "beforeSHA256": "6ab9a6868dd8694dd9570d9b8ce3c38f0d2ffbf45af524604f9664f7fa7186ff",
+    "afterSHA256": "99267c6b40d4118c17f9c1e1bd6f34b4eb3736549675ebb8dd01a4e5caa89a0e",
+    "changes": [
+      {
+        "before": "import {remodelRibbonFallsCliff}",
+        "after": "import {buildLoonLakeLandscape,replaceLoonLakeGeometry,retargetLoonLakeScatter,reconcileLoonLakeDecor,seatLoonLakePunt} from '../loon-lake-art.mjs?v=loon-lake-4';\nimport {remodelRibbonFallsCliff}",
+        "occurrences": 1
+      },
+      {
+        "before": "  const surf=0.04;",
+        "after": "  const surf=W.loonLake.level;",
+        "occurrences": 1
+      },
+      {
+        "before": "   const deckY=surf+0.42;",
+        "after": "   const deckY=0.04+0.42; // retain the original reachable stage elevation",
+        "occurrences": 1
+      },
+      {
+        "before": " const planningGroundH=W.riverBankPlacement?.heightAt||groundH;",
+        "after": " const underlyingPlanningGroundH=W.riverBankPlacement?.heightAt||groundH;\n const planningGroundH=(x,z)=>{const h=W.loonLake?.planningHeightAt(x,z);return Number.isFinite(h)?h:underlyingPlanningGroundH(x,z);};",
+        "occurrences": 1
+      },
+      {
+        "before": " const LK={x:20,z:16,r:4.5};",
+        "after": " const lakeScatter={reeds:[],pebbles:[]};\n const LK={x:20,z:16,r:4.5};",
+        "occurrences": 1
+      },
+      {
+        "before": "   reeds.push({x,y:Math.min(groundH(x,z),surf)-0.06,z,sx:rr(0.34,0.58),sy:rr(0.55,1.02),sz:rr(0.34,0.58),\n    ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.12)});",
+        "after": "   const row={x,y:Math.min(groundH(x,z),surf)-0.06,z,sx:rr(0.34,0.58),sy:rr(0.55,1.02),sz:rr(0.34,0.58),\n    ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.12)};reeds.push(row);lakeScatter.reeds.push(row);",
+        "occurrences": 1
+      },
+      {
+        "before": "   pebbles.push({x,y:groundH(x,z)+s*0.22,z,sx:s*rr(1,1.5),sy:s*rr(0.5,0.85),sz:s*rr(1,1.4),\n    ry:rnd()*6.28,c:0xffffff,cm:rr(0.8,1.2)});",
+        "after": "   const row={x,y:groundH(x,z)+s*0.22,z,sx:s*rr(1,1.5),sy:s*rr(0.5,0.85),sz:s*rr(1,1.4),\n    ry:rnd()*6.28,c:0xffffff,cm:rr(0.8,1.2)};pebbles.push(row);lakeScatter.pebbles.push(row);",
+        "occurrences": 1
+      },
+      {
+        "before": " /* Everything scattered above goes in now, one mesh per kind and three for all the rock. */",
+        "after": " // Retain all original constructors and seeded proposals, then replace only\n // the existing Loon owners with one canonical basin/water/unequal bank model.\n const lakeModel=buildLoonLakeLandscape({terrainH:W.terrainH,terrainStep:W.terrainStep,lakeRuntime:W.loonLake});\n replaceLoonLakeGeometry(THREE,W.loonLakeMesh,lakeModel.water,{pondLocal:true});\n W.loonLakeMesh.material.vertexColors=true;W.loonLakeMesh.material.needsUpdate=true;\n replaceLoonLakeGeometry(THREE,P.lakeShore,lakeModel.shore);\n dressRiverBankMaterial(P.lakeShore.material,scene.getObjectByName('Pasture terrain')?.material.userData.riverSoil);\n retargetLoonLakeScatter(lakeScatter,W.terrainH);\n P.lakeDecor=reconcileLoonLakeDecor(scene,W.loonLake);\n if(P.punt&&P.jetty){P.lakeMooring=seatLoonLakePunt(P.punt,P.jetty,W.loonLake);P.puntY=W.loonLake.level;}\n P.lakeLandscape={profile:lakeModel.profile,waterFaces:lakeModel.water.index.length/3,shoreFaces:lakeModel.shore.index.length/3,\n  waterSourceCells:lakeModel.water.sourceCells,shoreSourceCells:lakeModel.shore.sourceCells,bounds:lakeModel.bounds,\n  waterMesh:W.loonLakeMesh,shoreMesh:P.lakeShore};\n P.lake={...P.lake,surface:W.loonLake.level,ground:W.terrainH(20,16),canonical:true};\n\n /* Everything scattered above goes in now, one mesh per kind and three for all the rock. */",
+        "occurrences": 1
+      }
+    ]
+  }
+}

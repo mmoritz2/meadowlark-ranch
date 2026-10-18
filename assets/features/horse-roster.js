@@ -467,7 +467,7 @@ export function install(G){
  /* water: the river channel, Sparrow Creek and Loon Lake. Depth in metres above the bed. */
  function waterDepth(x,z){
   const W=G.world; let d=0;
-  const dl=Math.hypot(x-20,z-16); if(dl<4.5)d=Math.max(d,0.35+0.9*(1-dl/4.5));
+  const lake=W.loonLake?.waterAt(x,z);if(lake)d=Math.max(d,lake.depth);
   const rz=W.riverZ(x); if(Math.abs(z-rz)<9){const th=W.terrainH(x,z);if(W.groundH(x,z)>th+0.3)return 0;d=Math.max(d,W.riverLevel(x)-th);}
   return Math.max(0,d);
  }

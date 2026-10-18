@@ -381,7 +381,7 @@ export function install(G){
  function hideBox(){ if(SBOX)SBOX.visible=false; }
  /* Whether a horse can stand somewhere. The water tests are the world's own numbers — the river
     channel runs about five units either side of riverZ, Sparrow Creek about four either side of
-    streamX until it joins at z≈160, and Loon Lake is a circle at (20,16) — widened a little here
+    streamX until it joins at z≈160, and Loon Lake uses its canonical shore — widened here
     because a rider dropped on the bank of a river is still a rider in the wrong place. The
     collider and wall tests are the ones world.js's own follower AI uses to keep a foal out of the
     barn and on the right side of a fence. The last is the ground itself: if the ground three
@@ -390,7 +390,7 @@ export function install(G){
     finished building must cost a course start nothing rather than throw inside it. */
  function wet(x,z){
   try{ if(Math.abs(z-W.riverZ(x))<7)return true; }catch(e){}
-  try{ if(Math.hypot(x-20,z-16)<8)return true; }catch(e){}
+  try{ if(W.loonLake?W.loonLake.containsWater(x,z,3.5):Math.hypot(x-20,z-16)<8)return true; }catch(e){}
   try{ if(z<163&&Math.abs(x-W.streamX(z))<5)return true; }catch(e){}
   return false;
  }

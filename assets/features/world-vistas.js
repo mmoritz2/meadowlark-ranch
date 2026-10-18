@@ -525,7 +525,7 @@ export function install(G){
   if(W.pathDist(x,z)<pad+4)return false;
   if(Math.abs(z-W.riverZ(x))<pad+12)return false;
   if(z<=172&&Math.abs(x-W.streamX(z))<pad+12)return false;
-  if(hyp(x,z,20,16)<pad+10)return false;
+  if(hyp(x,z,20,16)<pad+10||W.loonLake?.containsWater(x,z,pad+5.5))return false;
   for(const sg of segs)if(segDist(x,z,sg)<pad+6)return false;
   for(const rg of T.REGIONS){const v=rg.venue;if(!v)continue;const home=rg.id==='ranch',A=(home?30:20)+pad+6,B=(home?25:15)+pad+6;if(((x-v.x)/A)**2+((z-v.z)/B)**2<1||(!home&&Math.abs(x-v.x)<8+pad&&z>v.z&&z<v.z+27+pad))return false;}
   for(const c of placementColliders())if(c&&(c.landform||bootLandforms.has(c))&&hyp(x,z,c.x,c.z)<c.r+pad)return false;

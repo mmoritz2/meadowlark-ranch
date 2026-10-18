@@ -134,7 +134,7 @@ export function install(G){
   for(const [ox,oz,orad] of OTHER)if(Math.hypot(x-ox,z-oz)<orad)return false;
   try{ if(Math.abs(z-W.riverZ(x))<R+15)return false; }catch(e){}
   try{ if(z<163&&Math.abs(x-W.streamX(z))<R+12)return false; }catch(e){}
-  if(Math.hypot(x-20,z-16)<R+22)return false;                      // Loon Lake
+  if(Math.hypot(x-20,z-16)<R+22||W.loonLake?.containsWater(x,z,R*1.3))return false; // Historical collar plus the full new-wet rock envelope
   try{ if(W.pathDist(x,z)<R+8)return false; }catch(e){}
   for(const s of routes)if(segD(x,z,s[0],s[1])<R+14)return false;
   for(const v of venues)if(Math.hypot(x-v.x,z-v.z)<R+60)return false;

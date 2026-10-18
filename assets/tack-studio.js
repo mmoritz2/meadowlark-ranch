@@ -6,7 +6,7 @@ import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeH
 import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';
 import {premiumTackSet} from './premium-tack.mjs';
-import {registerRosterPreviews} from './features/horse-roster.js?v=natural-mane-20261009';
+import {registerRosterPreviews} from './features/horse-roster.js?v=wild-bond-1-loon-lake-4';
 import {registerClubHorsePreviews} from './features/clubs-boards.js?v=native-tack-fit-1';
 import {registerMarketHorsePreviews} from './features/market-summon-keys-pets.js?v=native-tack-fit-1';
 import {registerNewBreedPreviews} from './features/new-breeds.js?v=native-tack-fit-1';

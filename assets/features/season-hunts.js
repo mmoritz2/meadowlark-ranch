@@ -72,29 +72,41 @@ export function install(G){
   {id:'hollowpeak',x:-160, z:-210, r:90, label:'🏔️ Hollowpeak Heights'},
  ];
  P.ZONES=ZONES;
- function placeable(x,z){
+ const huntPlanningH=(x,z)=>{const h=W.loonLake?.planningHeightAt?.(x,z);return Number.isFinite(h)?h:groundH(x,z);};
+ function legacyPlaceable(x,z){
   if(Math.hypot(x,z)>428)return false;                              // the ride clamps you at 455
   if(Math.abs(x)<34&&Math.abs(z)<30)return false;                   // not in the yard, where you would trip over it
   if(Math.abs(z-riverZ(x))<11)return false;                         // the river ribbon and both banks
   if(z<163&&Math.abs(x-streamX(z))<10)return false;                 // the creek that feeds it
   if(hyp(x,z,20,16)<15)return false;                                // Loon Lake
-  const h=groundH(x,z);
+  const h=huntPlanningH(x,z);
   if(Math.abs(z-riverZ(x))<55&&h<riverLevel(x)+0.35)return false;    // the wet bottoms either side of the channel
-  if(Math.abs(groundH(x+1.5,z)-h)>1.0||Math.abs(groundH(x,z+1.5)-h)>1.0)return false;
+  if(Math.abs(huntPlanningH(x+1.5,z)-h)>1.0||Math.abs(huntPlanningH(x,z+1.5)-h)>1.0)return false;
   for(const c of W.colliders){const R=(c.r||1)+1.4;if(Math.abs(c.x-x)>R)continue;if(hyp(x,z,c.x,c.z)<R)return false;}   // the reach is the collider's own: a canyon mesa is fourteen metres round, and a flat 9 m cut-off laid an egg inside one
   return true;
  }
- P.placeable=placeable;
- function spotIn(zone,rnd){
+ // Keep the original seeded search. Only a completed local proposal moves off new water.
+ const placeable=(x,z)=>legacyPlaceable(x,z)&&!W.loonLake?.containsWater(x,z,10.5);
+ P.placeable=placeable;P.loonLakeReanchors=[];
+ function legacySpotIn(zone,rnd){
   for(let k=0;k<70;k++){
    const a=rnd()*Math.PI*2, r=Math.sqrt(rnd())*zone.r;
    const x=zone.x+Math.cos(a)*r, z=zone.z+Math.sin(a)*r;
-   if(placeable(x,z))return [x,z];
+   if(legacyPlaceable(x,z))return [x,z];
   }
   /* Seventy draws and nothing took — borrow the world package's spiral search, and if even that
      fails take the centre, because a hunt with a hole in it is worse than a piece in a hedge. */
-  try{const at=G.worldPkg.findClear(zone.x,zone.z,2.2,zone.r);if(placeable(at[0],at[1]))return at;}catch(e){}
+  try{const at=G.worldPkg.findClear(zone.x,zone.z,2.2,zone.r);if(legacyPlaceable(at[0],at[1]))return at;}catch(e){}
   return [zone.x,zone.z];
+ }
+
+ function spotIn(zone,rnd){
+  const at=legacySpotIn(zone,rnd),lake=W.loonLake;if(!lake?.containsWater(at[0],at[1],10.5))return at;
+  const dry=lake.dryPoint(at[0],at[1],10.5);
+  for(let r=0;r<=60;r+=2)for(let k=0;k<(r?24:1);k++){const a=k*Math.PI/12,x=dry[0]+Math.cos(a)*r,z=dry[1]+Math.sin(a)*r;
+   if(placeable(x,z)){P.loonLakeReanchors.push({zone:zone.id,before:at.slice(),after:[x,z]});return[x,z];}
+  }
+  throw Error('No clear dry shore for Loon seasonal pickup');
  }
 
  /* ================= 2. the hunt engine ================= */

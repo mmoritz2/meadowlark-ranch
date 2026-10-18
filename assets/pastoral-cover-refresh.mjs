@@ -32,7 +32,7 @@ export function installPastoralCoverRefresh(G){
   // exact finite boundary; this is broader than the grazing/glyph cut alone.
   const chalkAt=down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false;
   const marsh=G.quartersPkg?.willowmereArt?.landscape;
-  const wetAt=(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1));
+  const wetAt=(x,z)=>!!(W.loonLake?.containsWater(x,z,3)||G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1));
   configurePastoralCover({terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,wetAt,chalkAt,forestPoints:W.forestPoints});
   return refreshPastoralCover(G);
  });
@@ -40,7 +40,7 @@ export function installPastoralCoverRefresh(G){
  // It captures only the final active forest; no source cell or planting reruns.
  W.countrysideFieldsReady=Promise.resolve().then(()=>Promise.all([W.pastoralCoverReady,G.photoscans?.countrysideVistaReady])).then(()=>{
   const down=G.vistas?.chalkDown,marsh=G.quartersPkg?.willowmereArt?.landscape;
-  const options={terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks};
+  const options={terrainH:W.terrainH,riverZ:W.riverZ,riverLevel:W.riverLevel,streamX:W.streamX,chalkAt:down?(x,z)=>Number.isFinite(down.heightAt(x,z)):()=>false,wetAt:(x,z)=>!!(W.loonLake?.containsWater(x,z,3)||G.quartersPkg?.pondContains(x,z)||(marsh&&marsh.shore(x,z)<3.1)),forestPoints:W.forestPoints,countrysideTracks:G.worldPaths.tracks};
   try{configurePastoralCover({...options,regionalLayout:regionalCoverLayoutFromWorld(G)});}
   catch(error){W.regionalCoverError=error.message;console.warn('Regional cover keeps original fields',error);configurePastoralCover(options);}
   const response=refreshPastoralCover(G),field=getPastoralCoverField();W.regionalCover=field.regional||null;

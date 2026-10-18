@@ -672,6 +672,7 @@ import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {sampleGroundBasePaths} from './assets/ground-route-entries.mjs?v=route-ground-2';
 import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
+import {createLoonLakeRuntime,loonLakeTerrainHeight,legacyLoonLakeTerrainHeight,loonLakeContainsWater,loonLakeDryPoint} from './assets/loon-lake.mjs?v=loon-lake-4';
 import {installUndergrowth} from './assets/undergrowth.js?v=hollowpeak-cascades-1-connected-landforms-1';
 import {installMixedSward} from './assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1';
 import {installCourseTurf} from './assets/course-turf.mjs?v=mown-course-turf-4';
@@ -681,7 +682,7 @@ import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowB
 import {applyChalkGrassMesh,respondChalkGrassMatrix,respondChalkFlowerMatrix} from './assets/chalk-grazing.mjs?v=chalk-grazing-1';
 import {installChalkCoverRefresh} from './assets/chalk-cover-refresh.mjs?v=chalk-grazing-1';
 import {applyPastoralSourceMesh} from './assets/pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
-import {installPastoralCoverRefresh} from './assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
+import {installPastoralCoverRefresh} from './assets/pastoral-cover-refresh.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4';
 import {meadowFlowerBankAt,meadowFlowerHeightAt,MEADOW_LUPIN_HEIGHT,LEGACY_LUPIN_HEIGHT} from './assets/meadow-flowers.mjs?v=lupin-rounded-1';
 import {managedGroundsAt,ranchTurfHeightAt,ranchTurfReachAt} from './assets/ranch-grounds.mjs?v=ranch-actors-2';
 import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './assets/pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
@@ -717,13 +718,13 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1-countryside-vista-1-connected-landforms-1-hollowpeak-root-seating-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=leaf-camera-clearance-1-commons-landscape-1-broadleaf-depth-2-island-medium-canopy-1-island-matched-normal-1-countryside-vista-1-connected-landforms-1-hollowpeak-root-seating-1-loon-lake-4';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lashes96-20261013';
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4';
+import {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1-native-riding-locks-1';
@@ -1507,7 +1508,7 @@ const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
 const STREAM_JOIN=160;                          // it meets the river around z≈160
 const riverLevel=x=>0.50-x*0.009;
 const streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));
-function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight){
+function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,riverHeight=riverBankTerrainHeight,lakeHeight=loonLakeTerrainHeight){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
  const far=1-THREE.MathUtils.smoothstep(d,380,460);
@@ -1533,7 +1534,7 @@ function rawH(x,z,fallsHeight=fallsTerrainHeight,canyonHeight=canyonRelief,river
   h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);
  }
 
- return fallsHeight(x,z,oasisTerrainHeight(x,z,h));
+ return lakeHeight(x,z,fallsHeight(x,z,oasisTerrainHeight(x,z,h)));
 }
 /* ===== Roads =====
    A valley with towns in it and no roads between them reads as scenery rather than a place
@@ -1588,7 +1589,7 @@ function pathDist(x,z){
 // Sample the collision surface from the same triangles used by the visible terrain.
 const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
 const riverBankPlacement=configureRiverBanks({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight),heightAt:(x,z)=>canyonPlacement.heightAt(x,z)});
 const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
@@ -1601,10 +1602,10 @@ function terrainH(x,z){
 }
 // Preserve authored planting decisions while every rendered/physical root uses terrainH.
 const hollowpeakPlacement=createHollowpeakPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight),heightAt:(x,z)=>groundH(x,z)});
+ rawHeightAt:(x,z)=>rawH(x,z,legacyFallsTerrainHeight,canyonRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight),heightAt:(x,z)=>groundH(x,z)});
 const canyonPlacement=createCanyonPlacementPlan({terrainStep:TERRAIN_STEP,
- rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight),
- macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight),
+ rawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonPlanningRelief,legacyRiverBankHeight,legacyLoonLakeTerrainHeight),
+ macroRawHeightAt:(x,z)=>rawH(x,z,fallsTerrainHeight,canyonMacroPlanningRelief,riverBankTerrainHeight,legacyLoonLakeTerrainHeight),
  surfaceHeightAt:(x,z,h)=>{for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));return h;},heightAt:hollowpeakPlacement.heightAt});
 const groundSurfaces=[];
 const colliders=[];
@@ -1617,6 +1618,19 @@ function groundH(x,z){
  for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));
  return h;
 }
+// A bounded parent canonical reference preserves historical layout decisions.
+// No separate physical floor is registered; transforms still use groundH.
+function loonLakePlanningH(x,z){
+ if(!loonLakeContainsWater(x,z,3.5+Math.SQRT2*TERRAIN_STEP))return NaN;
+ const step=TERRAIN_STEP,gx=(x+500)/step,gz=(z+500)/step,ix=Math.floor(gx),iz=Math.floor(gz),u=gx-ix,v=gz-iz;
+ const node=(a,b)=>Math.fround(rawH(a*step-500,b*step-500,fallsTerrainHeight,canyonRelief,riverBankTerrainHeight,legacyLoonLakeTerrainHeight));
+ const a=node(ix,iz),b=node(ix,iz+1),c=node(ix+1,iz+1),d=node(ix+1,iz);
+ let h=u+v<=1?a+(d-a)*u+(b-a)*v:c+(b-c)*(1-u)+(d-c)*(1-v);
+ for(const sample of groundSurfaces)h=Math.max(h,sample(x,z));
+ return h;
+}
+const loonLake=createLoonLakeRuntime({terrainH,groundH,planningHeightAt:loonLakePlanningH});
+COLL_SETS.shells.pts=COLL_SETS.shells.pts.map(p=>loonLake.containsWater(...p,.3)?loonLake.dryPoint(...p,.65):p);
 const solidWorld=createSolidWorld({THREE});
 const followCamera=createFollowCamera({THREE,groundHeight:groundH});
 const registerCamera=followCamera.register;
@@ -3139,7 +3153,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   const winterCover=coldPastureCover(x,z);
   // Keep all seeded random draws; winter cover only changes this blade's matrix.
   const winterSample=Math.sin(x*47.13+z*53.71)*43758.5453;
-  if(alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0||(winterCover<1&&winterSample-Math.floor(winterSample)>winterCover))sc.setScalar(0);
+  if(loonLake.containsWater(x,z,.45)||alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0||(winterCover<1&&winterSample-Math.floor(winterSample)>winterCover))sc.setScalar(0);
   else if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
@@ -3314,7 +3328,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(z-riverZ(x))<6.5)return false;               // not in the river
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
-  if(Math.hypot(x-20,z-16)<5.4||oasisContainsWater(x,z,.7))return false; // lake and oasis
+  if(loonLake.containsWater(x,z,.9)||oasisContainsWater(x,z,.7))return false; // lake and oasis
   // Fine short turf joins the trail's feathered shoulder in ordinary meadow.
   // Flowers, tall clutter, existing path cores and event lanes keep their clear strip.
   const trackClearance=shortVerge&&biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35?2.6:3.4;
@@ -3333,7 +3347,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.hypot(x-310,z-300)<120)return 'marsh';    // Willowmere, reed and standing water
   if(Math.hypot(x+300,z+320)<125)return 'tundra';   // Frostpine, above the treeline
   if(Math.hypot(x+330,z-300)<125)return 'badland';  // Ochre Reach, red rock and dust
-  if(Math.abs(z-riverZ(x))<11||Math.hypot(x-20,z-16)<9.5)return 'water';
+  if(Math.abs(z-riverZ(x))<11||loonLake.containsWater(x,z,5))return 'water';
   return 'meadow';
  };
  const okClutter=(x,z)=>{
@@ -3342,7 +3356,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // never in the arena
   if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
-  if(Math.hypot(x-20,z-16)<5.6||oasisContainsWater(x,z,.7))return false; // no dry clutter in water
+  if(loonLake.containsWater(x,z,1.1)||oasisContainsWater(x,z,.7))return false; // no dry clutter in water
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(pathDist(x,z)<PATH_W*1.16||G.worldPaths?.trackDist(x,z)<3.8)return false;               // leave room around the trail
   if(managedGrass(x,z)>.58)return false;                  // maintained yard, not woodland undergrowth
@@ -3423,7 +3437,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
    const h1=gh(ci*97+k*7,cj*43+k*23), h2=gh(ci*31+k*41,cj*13+k*29), h3=gh(k*19+cj*7,ci*11+k*3);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));
+   const d=Math.min(Math.abs(z-riverZ(x)),loonLake.shoreDistance(x,z)+4.5);
    if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62)continue;
    const sz=0.8+h3*0.7; e.set(0,h2*Math.PI*2,(h1-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.6),sz);
    v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,reed.geometry,groundH);m4.toArray(reedCell.matrices,reedCell.count*16);
@@ -6818,7 +6832,8 @@ pondMat.customProgramCacheKey=()=> 'ripple-water-v3-pond';
 pondMat.needsUpdate=true;
 const pond=new THREE.Mesh(new THREE.CircleGeometry(4.5,28),pondMat);
 pond.rotation.x=-Math.PI/2;
-pond.position.set(20,0.04,16);
+pond.position.set(20,loonLake.level,16);
+pond.name='Loon Lake water';
 scene.add(pond);
 /* 🐢 turtles! (and one legendary golden turtle) */
 const turtles=[];
@@ -7377,6 +7392,7 @@ const NORTH_GATE={x1:-5.5,x2:-.5};
   q.setFromEuler(e);
   v.set(p[0],0.55,p[1]);
   m4.compose(v,q,s1);
+  if((p[0]===X&&p[1]>7.5)||(p[1]===Z&&p[0]>15))m4.makeScale(0,0,0);
   inst.setMatrixAt(i,m4);
  });
  inst.castShadow=true;
@@ -7391,8 +7407,8 @@ const NORTH_GATE={x1:-5.5,x2:-.5};
  }
  for(const y of[0.5,0.88]){
   rail(-X,-Z,NORTH_GATE.x1,-Z,y);rail(NORTH_GATE.x2,-Z,X,-Z,y);
-  rail(-X,Z,-3,Z,y);rail(3,Z,X,Z,y);
-  rail(-X,-Z,-X,Z,y);rail(X,-Z,X,Z,y);
+  rail(-X,Z,-3,Z,y);rail(3,Z,15,Z,y);
+  rail(-X,-Z,-X,Z,y);rail(X,-Z,X,7.5,y);
  }
 }
 /* ================= show arena detailing ================= */
@@ -7451,6 +7467,7 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
   const f=new THREE.Mesh(new THREE.CircleGeometry(0.16,3),
    new THREE.MeshBasicMaterial({color:FLAGCOLS[i%5],side:THREE.DoubleSide}));
   f.position.set(x,1.12,z);
+  if(z>0&&x>15)f.visible=false; // the retired east lake corner no longer has a rail
   f.rotation.z=Math.PI;
   scene.add(f);
  }
@@ -7573,7 +7590,7 @@ colliders.push(
  {x:-21.8,z:-12.25,r:1.2},{x:-50.7,z:-17.5,r:1.4}, // fixed hay stacks
  {x:-46,z:-4,r:0.8},           // pasture shade tree
 );
-[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,25,20],[-25,-20,-25,20],[25,-20,25,20]]
+[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,15,20],[-25,-20,-25,20],[25,-20,25,7.5]]
  .forEach(s=>walls.push({x1:s[0],z1:s[1],x2:s[2],z2:s[3]}));
 [[PAST.x1,PAST.z1,PAST.x2,PAST.z1],[PAST.x1,PAST.z2,PAST.x2,PAST.z2],
  [PAST.x1,PAST.z1,PAST.x1,PAST.z2],[PAST.x2,PAST.z1,PAST.x2,-11.2],[PAST.x2,-6.8,PAST.x2,PAST.z2]]
@@ -12766,7 +12783,7 @@ function renderStable(){
  +sect('stableHeader',s)
  +'<div style="font-size:11.5px;color:#8c7a63;padding:0 2px">🌿 <b>'+_out+' of '+_max+'</b> out in the pasture'+(isVIP(s)?' (VIP)':'')+'. The rest are in the barn — keep as many horses as you like, and rotate who goes out to grass.</div>'
  +'<div class="evrow"><b>Bay sporthorse</b><span>A new arrival · ready to ride</span><button data-st="hero" class="claimBtn">'+(s.horses.some(h=>h.breed==='bay-sporthorse'&&!h.foal)?'Ride Bay sporthorse':'Adopt & ride · Free')+'</button></div>'
- +'<div style="padding:10px 18px"><a href="breeds.html?v=artist-study-1" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Open Breed Studio ↗</a></div>'
+ +'<div style="padding:10px 18px"><a href="breeds.html?v=artist-study-1-loon-lake-4" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Open Breed Studio ↗</a></div>'
  +s.horses.map((h,i)=>{
   const hearts=Math.max(0,Math.min(5,Math.round((h.bond||0)/20)));
   const low=h.needs&&Object.values(h.needs).some(v=>v<35);
@@ -12835,7 +12852,7 @@ function renameHorse(i){
  }});
 }
 $('stableBtn').onclick=openStable;
-$('breedStudioBtn').onclick=()=>window.open('breeds.html?v=artist-study-1','_blank','noopener');
+$('breedStudioBtn').onclick=()=>window.open('breeds.html?v=artist-study-1-loon-lake-4','_blank','noopener');
 if(new URLSearchParams(location.search).get('adopt')==='bay-sporthorse'){
  adoptBaySporthorse();
  const clean=new URL(location.href);clean.searchParams.delete('adopt');history.replaceState(null,'',clean);
@@ -13661,7 +13678,7 @@ function spawnWild3(){
   const a=Math.random()*Math.PI*2, r=28+Math.random()*17;
   const x=player.pos.x+Math.cos(a)*r, z=player.pos.z+Math.sin(a)*r;
   const gy=groundH(x,z);
-  if(gy>0.35&&Math.hypot(x-20,z-16)>22){px=x;pz=z;ok=true;break;}   // dry land, not in the lake
+  if(gy>0.35&&!loonLake.containsWater(x,z,17.5)){px=x;pz=z;ok=true;break;}   // dry land, not in the lake
  }
  if(!ok)return;                                    // nowhere sensible right here; try again later
  const wb=WILD_BREEDS[Math.floor(Math.random()*WILD_BREEDS.length)];
@@ -14222,7 +14239,8 @@ function tick(stepSeconds){
  G.horse.frameTravel=ridingTravel; // immutable current-frame metrics for riding rewards
  driveRider(sp,t,dt);          // rest<->ride pose, posting, breathing, reins
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
- const gy=groundH(player.pos.x,player.pos.z);
+ const lakeSwimSurface=player.swim&&!player.onFoot?loonLake.waterAt(player.pos.x,player.pos.z)?.surface:null;
+ const gy=lakeSwimSurface??groundH(player.pos.x,player.pos.z);
  const bob=RIG.heroMotion?0:Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
  player.landT=Math.max(0,(player.landT||0)-dt);
  const landDip=!RIG.heroMotion&&player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
@@ -14457,7 +14475,7 @@ function tick(stepSeconds){
  rideDistAcc+=ridingTravel.travel;
  if(rideDistAcc>=200){rideDistAcc-=200;trainXp(8);}
  /* drinking at water */
- const nearWater=Math.hypot(player.pos.x-20,player.pos.z-16)<6.5||Math.hypot(player.pos.x+6,player.pos.z+18)<3.5;
+ const nearWater=loonLake.containsWater(player.pos.x,player.pos.z,2)||Math.hypot(player.pos.x+6,player.pos.z+18)<3.5;
  if(drinkCd>0)drinkCd-=dt;
  if(nearWater&&sp<0.4&&drinkCd<=0){
   drinkT+=dt;
@@ -15061,8 +15079,9 @@ function tick(stepSeconds){
    mc.strokeRect(pq0[0],pq0[1],(PAST.x2-PAST.x1)*S,(PAST.z2-PAST.z1)*S);
   }
   mc.fillStyle='#4f9ad6';
-  const pp=W2(20,16);
-  mc.beginPath();mc.arc(pp[0],pp[1],4.5*S,0,7);mc.fill();
+  mc.beginPath();
+  for(const contour of loonLake.footprintContours()){contour.forEach((p,i)=>{const q=W2(p[0],p[1]);i?mc.lineTo(q[0],q[1]):mc.moveTo(q[0],q[1]);});mc.closePath();}
+  mc.fill('evenodd');
   mc.strokeStyle='#4f9ad6';mc.lineWidth=3.5;
   mc.beginPath();
   for(let rx=pcx-140;rx<=pcx+140;rx+=12){
@@ -15222,7 +15241,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
@@ -15286,7 +15305,7 @@ const waterReflections=createWaterReflections({scene,renderer,camera,material:wa
  omitFromReflection:o=>o===grassInst||o.userData.fineGroundCover||reflectionFineCover.has(o.name),
  levelAt(x,z){
   const planes=[...['pool','tarn'].map(k=>({distance:Math.max(0,Math.hypot(x-HOLLOWPEAK[k].x,z-HOLLOWPEAK[k].z)-HOLLOWPEAK[k].r),level:HOLLOWPEAK[k].level,refreshIntervalMs:100})),{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
-   {distance:Math.hypot(x-20,z-16),level:.04}];
+   {distance:loonLake.distanceToWater(x,z),level:loonLake.level}];
   const marsh=G.quartersPkg?.willowmereArt?.landscape;if(marsh)planes.push({distance:Math.max(0,marsh.shore(x,z)),level:marsh.level,refreshIntervalMs:100});
   const oasis=G.worldPkg?.oasis;if(oasis)planes.push({distance:Math.max(0,Math.hypot(x-oasis.x,z-oasis.z)-oasis.r),level:oasis.y,refreshIntervalMs:100});
   if(z<STREAM_JOIN)planes.push({distance:Math.abs(x-streamX(z)),level:streamLevel(z)});
