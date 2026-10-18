@@ -1,6 +1,6 @@
 import {installHollowpeakShore,waitForHollowpeakShoreImages} from '../hollowpeak-shore.mjs?v=hollowpeak-shore-2';
 import {installStandingStones,waitForStandingStoneTextures,STANDING_STONES_PROFILE} from '../standing-stones.mjs?v=standing-stones-1';
-import {installLandmarkStonework,waitForLandmarkStoneTextures,LANDMARK_STONEWORK_PROFILE} from '../landmark-stonework.mjs?v=landmark-stonework-1';
+import {installLandmarkStonework,waitForLandmarkStoneTextures,LANDMARK_STONEWORK_PROFILE} from '../landmark-stonework.mjs?v=landmark-stonework-1-keep-climbing-vines-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5-connected-landforms-1';
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
 import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1-chalk-scour-1';
@@ -81,7 +81,7 @@ export function install(G){
  LM.envMapIntensity=0.58;
 
  function Acc(seed,ox,oy,oz){
-  const pos=[],nor=[],col=[],solidOwner={userData:{}},stonePieces=[],standingPieces=[];
+  const pos=[],nor=[],col=[],solidOwner={userData:{}},stonePieces=[],standingPieces=[],ivyPieces=[];
   const c=new THREE.Color(),v=new THREE.Vector3();
   const m=new THREE.Matrix4(),nm=new THREE.Matrix3(),q=new THREE.Quaternion(),e=new THREE.Euler();
   const tr=new THREE.Vector3(),sc=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),dir=new THREE.Vector3();
@@ -95,6 +95,7 @@ export function install(G){
    const p=g.attributes.position,gn=g.attributes.normal;
    c.set(hex);const s=(shade==null?1:shade)*(0.95+rnd()*0.10);   // every piece a shade apart, or it reads as plastic
    if(seed===8821&&['#8d8a80','#6e6b62','#a9a69a'].includes(hex))stonePieces.push({start:pos.length/3,count:p.count,type:geo.type,size:[sx,sy,sz],matrix:m.toArray()});
+   if(seed===8821&&hex==='#44603c'&&geo.type==='SphereGeometry')ivyPieces.push({start:pos.length/3,count:p.count,type:geo.type,size:[sx,sy,sz],matrix:m.toArray(),solidIndex:solidOwner.userData.solidParts.length-1});
    if(seed===2299&&geo.type==='BoxGeometry'&&['#8d8a80','#6e6b62','#a9a69a'].includes(hex))standingPieces.push({start:pos.length/3,count:p.count,type:geo.type,size:[sx,sy,sz],matrix:m.toArray()});
    for(let i=0;i<p.count;i++){
     v.fromBufferAttribute(p,i).applyMatrix4(m);pos.push(v.x,v.y,v.z);
@@ -172,7 +173,7 @@ export function install(G){
     g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
     g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
     g.computeBoundingSphere();
-    const me=new THREE.Mesh(g,LM);if(seed===8821)me.userData.landmarkStoneworkSource={profile:LANDMARK_STONEWORK_PROFILE,pieces:stonePieces};if(seed===2299)me.userData.standingStoneSource={profile:STANDING_STONES_PROFILE,pieces:standingPieces};me.userData.solidParts=solidOwner.userData.solidParts||[];me.castShadow=true;me.receiveShadow=true;return me;
+    const me=new THREE.Mesh(g,LM);if(seed===8821)me.userData.landmarkStoneworkSource={profile:LANDMARK_STONEWORK_PROFILE,pieces:stonePieces,ivyPieces};if(seed===2299)me.userData.standingStoneSource={profile:STANDING_STONES_PROFILE,pieces:standingPieces};me.userData.solidParts=solidOwner.userData.solidParts||[];me.castShadow=true;me.receiveShadow=true;return me;
    },
   };
   return A;
