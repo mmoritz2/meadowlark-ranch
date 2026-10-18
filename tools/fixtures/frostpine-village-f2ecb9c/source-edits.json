@@ -1,0 +1,143 @@
+{
+  "profile": "frostpine-village-source-edits-1",
+  "baseCommit": "f2ecb9cc7be1dbfdea92beb1c3ef345632c13303",
+  "files": {
+    "assets/features/world-quarters.js": {
+      "beforeSHA256": "a51d7fdb16801d24a0d3539916f990bc0118c6f369e95e5d0b396c83b0ddf5cf",
+      "afterSHA256": "7cf0d8ed07ec7ae87ce7037cadb49e66bbffdb4d024ab5ee494c96ab9ef6e003",
+      "edits": [
+        {
+          "old": "import {createRegionalWorkshopArt}",
+          "new": "import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';\nimport {createRegionalWorkshopArt}",
+          "count": 1
+        },
+        {
+          "old": "  const hole=[tat[0]+2.6,tat[1]-1.7];",
+          "new": "  const frostTarnSources=solid.children.slice();\n  const hole=[tat[0]+2.6,tat[1]-1.7];",
+          "count": 1
+        },
+        {
+          "old": "  bake(solid,true);bake(flat,false);\n\n  trough('frost:hole'",
+          "new": "  // Keep the original construction/layout and global constructor stream.\n  const frostBake=frostpineBakeBudget(solid);\n  const frostArt=createFrostpineVillageArt({THREE,W,scene,center:tat,level:lvl,approach:bunk});\n  for(const child of frostTarnSources)solid.remove(child);\n  tg.clear();tg.add(frostArt.towerRoot);solid.add(frostArt.tarnRoot);\n  frostpinePrivateResources(()=>bake(solid,true));\n  for(let i=0;i<frostBake.randomDraws;i++)Math.random();\n  frostArt.releaseBuildGeometry();P.frostpineArt=frostArt;P.frostpineArt.stats.legacyBake=frostBake;\n  bake(flat,false);\n\n  trough('frost:hole'",
+          "count": 1
+        },
+        {
+          "old": " /* The first time you ride into one of the four, say what it is",
+          "new": " if(P.frostpineArt){\n  W.groundSurfaces.push(P.frostpineArt.supportAt);\n  P.frostpineArt.stats.groundedActors=[];\n  for(const entry of P.frostpineNPCs||[]){const before=entry.g.position.y,after=groundH(entry.def.x,entry.def.z);entry.g.position.y=after;P.frostpineArt.stats.groundedActors.push({id:entry.def.id,x:entry.def.x,z:entry.def.z,before,after});}\n }\n /* The first time you ride into one of the four, say what it is",
+          "count": 1
+        },
+        {
+          "old": "if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);P.npcs++;",
+          "new": "if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);if(def.id.startsWith('qf_'))(P.frostpineNPCs||(P.frostpineNPCs=[])).push(entry);P.npcs++;",
+          "count": 1
+        },
+        {
+          "old": " P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2);",
+          "new": " P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2)||!!P.frostpineArt?.iceContains(x,z);",
+          "count": 1
+        }
+      ]
+    },
+    "assets/terrain-realism.js": {
+      "beforeSHA256": "5fb81186eeb1856da250ec02199fe596d5d9c50bff8bccdeffab0cc1bf686fd7",
+      "afterSHA256": "2c8426f571935d4462ebb87ec16d7cfcc0c63f45da70989014f6d1574a5710d2",
+      "edits": [
+        {
+          "old": "  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};",
+          "new": "  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};\n  material.userData.snowSurface={color:uniforms.terrainSnow};",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "v2WoodUVCorrection": {
+    "helperBeforeSHA256": "71307f6b5c3dbb8e86527f8961b3448ffdcb5821d6c24f699c0f31e7474bf64c",
+    "before": "const uv=role.startsWith('wood')?ps.map(p=>[(p[along]+origin[along])/1.8,.5+(p[across]/Math.max(.025,[w,h,d][across]))*.44]):null;",
+    "after": "const uv=role.startsWith('wood')?ps.map(p=>Math.abs(n[along])>.999&&Math.abs(n[other[0]])+Math.abs(n[other[1]])<1e-9?[p[other[0]]/1.8,p[other[1]]/1.8]:[(p[along]+origin[along])/1.8,.5+(p[across]/Math.max(.025,[w,h,d][across]))*.44]):null;",
+    "count": 1
+  },
+  "v3IceAdmissionCorrection": {
+    "helperBeforeSHA256": "40499020baab4991364c8e295cc5907037a49176ac750a9b729f81893c34186a",
+    "helperEdits": [
+      {
+        "before": "topFaces=[],segments=new Map()",
+        "after": "topFaces=[],iceFaces=[],segments=new Map()",
+        "count": 1
+      },
+      {
+        "before": "topFaces.push(world.map(p=>p.map(Math.fround)));",
+        "after": "const packed=world.map(p=>p.map(Math.fround));topFaces.push(packed);if(role==='ice')iceFaces.push(packed);",
+        "count": 1
+      },
+      {
+        "before": "result.topFaces=topFaces;result.terrain=terrain;",
+        "after": "result.topFaces=topFaces;result.iceFaces=iceFaces;result.terrain=terrain;",
+        "count": 1
+      },
+      {
+        "before": "support=frostpinePackedSupport(tarn.topFaces);",
+        "after": "support=frostpinePackedSupport(tarn.topFaces),iceSupport=frostpinePackedSupport(tarn.iceFaces);",
+        "count": 1
+      },
+      {
+        "before": "retainedSupportBytes:support.positions.byteLength};",
+        "after": "retainedSupportBytes:support.positions.byteLength,iceMask:{triangles:iceSupport.triangles,typedBytes:iceSupport.positions.byteLength,bounds:iceSupport.bounds}};",
+        "count": 1
+      },
+      {
+        "before": "return{towerRoot,tarnRoot,supportAt:support.heightAt,support,stats,",
+        "after": "return{towerRoot,tarnRoot,supportAt:support.heightAt,support,iceSupport,iceContains:(x,z)=>Number.isFinite(iceSupport.heightAt(x,z)),stats,",
+        "count": 1
+      }
+    ],
+    "currentNearClutterSHA256": "b26e67c2e70f5159abebc578961a60cf96269cb0735d7a4e5d22c4f4f093ead4",
+    "sourceDerivedIceCandidates": [
+      {
+        "kind": "fern",
+        "x": -278.3485589121349,
+        "z": -330.19112738319467,
+        "screenPx": [
+          613.2418660315348,
+          339.1606799606155
+        ]
+      },
+      {
+        "kind": "rock",
+        "x": -278.8107291280317,
+        "z": -335.5799850713415,
+        "screenPx": [
+          574.8781819924354,
+          370.2668408750368
+        ]
+      },
+      {
+        "kind": "rock",
+        "x": -280.2244122741335,
+        "z": -331.47284152486196,
+        "screenPx": [
+          677.7193039601784,
+          346.246541455547
+        ]
+      },
+      {
+        "kind": "fern",
+        "x": -276.5333043729265,
+        "z": -328.935708193792,
+        "screenPx": [
+          558.1026844983722,
+          333.02389391750097
+        ]
+      },
+      {
+        "kind": "rock",
+        "x": -277.9547346536896,
+        "z": -325.77593093686176,
+        "screenPx": [
+          633.4157613438219,
+          322.39863434644525
+        ]
+      }
+    ],
+    "scope": "Candidate roots are deterministic source-derived, not authenticated submitted IDs. Full actualnative ICEposition binding and source projection diagnosis retained OUT/snow-village-v3/independent-audit/ice-near-clutter-proposal-v1.json."
+  }
+}

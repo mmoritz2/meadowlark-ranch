@@ -1,0 +1,468 @@
+{
+  "profile": "snow-village-source-contract-4",
+  "baselineCommit": "f2ecb9cc7be1dbfdea92beb1c3ef345632c13303",
+  "authorManifestSHA256": "4f47b6ecfe567bd4861cb14b3922b198544c3e5c3a29887372b5d54104214bb6",
+  "markers": [
+    "frostpine-village-4",
+    "snow-village-source-guard"
+  ],
+  "files": {
+    "assets/features/world-quarters.js": {
+      "beforeSHA256": "a51d7fdb16801d24a0d3539916f990bc0118c6f369e95e5d0b396c83b0ddf5cf",
+      "afterSHA256": "7cf0d8ed07ec7ae87ce7037cadb49e66bbffdb4d024ab5ee494c96ab9ef6e003",
+      "changes": [
+        {
+          "before": "import {createRegionalWorkshopArt}",
+          "after": "import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';\nimport {createRegionalWorkshopArt}",
+          "occurrences": 1
+        },
+        {
+          "before": "  const hole=[tat[0]+2.6,tat[1]-1.7];",
+          "after": "  const frostTarnSources=solid.children.slice();\n  const hole=[tat[0]+2.6,tat[1]-1.7];",
+          "occurrences": 1
+        },
+        {
+          "before": "  bake(solid,true);bake(flat,false);\n\n  trough('frost:hole'",
+          "after": "  // Keep the original construction/layout and global constructor stream.\n  const frostBake=frostpineBakeBudget(solid);\n  const frostArt=createFrostpineVillageArt({THREE,W,scene,center:tat,level:lvl,approach:bunk});\n  for(const child of frostTarnSources)solid.remove(child);\n  tg.clear();tg.add(frostArt.towerRoot);solid.add(frostArt.tarnRoot);\n  frostpinePrivateResources(()=>bake(solid,true));\n  for(let i=0;i<frostBake.randomDraws;i++)Math.random();\n  frostArt.releaseBuildGeometry();P.frostpineArt=frostArt;P.frostpineArt.stats.legacyBake=frostBake;\n  bake(flat,false);\n\n  trough('frost:hole'",
+          "occurrences": 1
+        },
+        {
+          "before": " /* The first time you ride into one of the four, say what it is",
+          "after": " if(P.frostpineArt){\n  W.groundSurfaces.push(P.frostpineArt.supportAt);\n  P.frostpineArt.stats.groundedActors=[];\n  for(const entry of P.frostpineNPCs||[]){const before=entry.g.position.y,after=groundH(entry.def.x,entry.def.z);entry.g.position.y=after;P.frostpineArt.stats.groundedActors.push({id:entry.def.id,x:entry.def.x,z:entry.def.z,before,after});}\n }\n /* The first time you ride into one of the four, say what it is",
+          "occurrences": 1
+        },
+        {
+          "before": "if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);P.npcs++;",
+          "after": "if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);if(def.id.startsWith('qf_'))(P.frostpineNPCs||(P.frostpineNPCs=[])).push(entry);P.npcs++;",
+          "occurrences": 1
+        },
+        {
+          "before": " P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2);",
+          "after": " P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2)||!!P.frostpineArt?.iceContains(x,z);",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/terrain-realism.js": {
+      "beforeSHA256": "5fb81186eeb1856da250ec02199fe596d5d9c50bff8bccdeffab0cc1bf686fd7",
+      "afterSHA256": "2c8426f571935d4462ebb87ec16d7cfcc0c63f45da70989014f6d1574a5710d2",
+      "changes": [
+        {
+          "before": "  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};",
+          "after": "  material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};\n  material.userData.snowSurface={color:uniforms.terrainSnow};",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/features/index.js": {
+      "beforeSHA256": "d5e960930c23aabb4cabe03823f1cf140c9e0dc53a1f2b1526653e4d5c1fd46a",
+      "afterSHA256": "cce4812eaf3f7cab801c80ef5d70c0040b6eaf61bc6319abc783cb56e87ac55a",
+      "changes": [
+        {
+          "before": "./world-quarters.js?v=regional-landmarks-1-mill-pond-2",
+          "after": "./world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "f1695efaab00fd74241e652ed0f632e3268e9e7f35484615928ab317fdaff107",
+      "afterSHA256": "481908f19cd12432b17b389948e5fb22c1095851f20c27ff70645337c5dc8d22",
+      "changes": [
+        {
+          "before": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-route-ground-2",
+          "after": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-route-ground-2-frostpine-village-4",
+          "occurrences": 1
+        },
+        {
+          "before": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1",
+          "after": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "observers": {
+    "tools/fine-pasture-source-guard.cjs": {
+      "beforeSHA256": "7d91ffc8447703f89465f6eeb65fce220a84f92329d6bdc5be29afb4451b67de",
+      "afterSHA256": "d00f3acfee647918797fbae880f005dc9346b6a88809cc4a296ab9ca96d6fa7a",
+      "changes": [
+        {
+          "before": "// Exact fine-pasture-1 inverse. Inapplicability is never source certification.\nconst fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\n",
+          "after": "// snow-village-1: exact newest inverse and raw current certification before fine-pasture history.\nconst {normalizeSnowVillageSource,assertSnowVillageCurrent,normalizeSnowVillageFixtureChanges}=require('./snow-village-source-guard.cjs');\n// Exact fine-pasture-1 inverse. Inapplicability is never source certification.\nconst fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');\n",
+          "occurrences": 1
+        },
+        {
+          "before": "assert.equal(sha(declaration),'410fa887ac162b5e7db301b1774d450a0a671dc81b29271e83209fa262830d83','Exact fine pasture declaration');const contract=JSON.parse(declaration);\nfunction normalizeFinePastureSource(source,file){\n const row=contract.files[file]||contract.observers[file];if(!row)return source;\n const hash=sha(source);if(hash===row.beforeSHA256)return source;\n",
+          "after": "assert.equal(sha(declaration),'410fa887ac162b5e7db301b1774d450a0a671dc81b29271e83209fa262830d83','Exact fine pasture declaration');const contract=JSON.parse(declaration);\nfunction normalizeFinePastureSource(source,file){\n source=normalizeSnowVillageSource(source,file);\n const row=contract.files[file]||contract.observers[file];if(!row)return source;\n const hash=sha(source);if(hash===row.beforeSHA256)return source;\n",
+          "occurrences": 1
+        },
+        {
+          "before": "}\nfunction assertFinePastureCurrent(read,{rootDir=baseRoot}={}){\n const current=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file));\n for(const[f,row]of Object.entries({...contract.files,...contract.observers}))assert.equal(sha(current(f)),row.afterSHA256,'Actual raw fine pasture owner '+f);\n for(const[f,row]of Object.entries(contract.addedFiles))assert.equal(sha(current(f)),row.sha256,'Actual raw added fine pasture owner '+f);\n",
+          "after": "}\nfunction assertFinePastureCurrent(read,{rootDir=baseRoot}={}){\n const raw=typeof read==='function'?read:file=>fs.readFileSync(path.join(rootDir,file));\n assertSnowVillageCurrent(raw,{rootDir});\n const current=file=>normalizeSnowVillageSource(raw(file),file);\n for(const[f,row]of Object.entries({...contract.files,...contract.observers}))assert.equal(sha(current(f)),row.afterSHA256,'Actual raw fine pasture owner '+f);\n for(const[f,row]of Object.entries(contract.addedFiles))assert.equal(sha(current(f)),row.sha256,'Actual raw added fine pasture owner '+f);\n",
+          "occurrences": 1
+        },
+        {
+          "before": "}\nfunction normalizeFinePastureFixtureChanges(diff,{rootDir=baseRoot}={}){\n const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate Ribbon fixture');const allowed={...contract.newFixtureSHA256,[fixture]:sha(declaration)};\n const kept=rows.filter(f=>{if(!Object.hasOwn(allowed,f))return true;assert.equal(sha(fs.readFileSync(path.join(rootDir,f))),allowed[f],'Exact new Ribbon fixture '+f);return false;});return kept.length?kept.join('\\n')+'\\n':'';\n",
+          "after": "}\nfunction normalizeFinePastureFixtureChanges(diff,{rootDir=baseRoot}={}){\n diff=normalizeSnowVillageFixtureChanges(diff,{rootDir});\n const rows=diff.trim()?diff.trim().split('\\n'):[];assert.equal(new Set(rows).size,rows.length,'No duplicate Ribbon fixture');const allowed={...contract.newFixtureSHA256,[fixture]:sha(declaration)};\n const kept=rows.filter(f=>{if(!Object.hasOwn(allowed,f))return true;assert.equal(sha(fs.readFileSync(path.join(rootDir,f))),allowed[f],'Exact new Ribbon fixture '+f);return false;});return kept.length?kept.join('\\n')+'\\n':'';\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-fine-pasture-source-guard.mjs": {
+      "beforeSHA256": "636ca1660b206138d93c05fa93815352bdef640f0707b72eb358d3abddc29e30",
+      "afterSHA256": "72885c923192c78bbf2a4728781442d10269b31b5a009a67150692d788ae2038",
+      "changes": [
+        {
+          "before": "import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import path from'node:path';import{fileURLToPath}from'node:url';import{createHash}from'node:crypto';\nimport{normalizeFinePastureSource as inverse,assertFinePastureCurrent as current,normalizeFinePastureFixtureChanges as filter}from'./fine-pasture-source-guard.cjs';\nimport{normalizeRibbonFallsSource as prior,assertRibbonFallsCurrent}from'./ribbon-falls-source-guard.cjs';\nconst root=fileURLToPath(new URL('../',import.meta.url)),fixture='tools/fixtures/fine-pasture-cd4b62d/source-contract.json',read=f=>fs.readFileSync(path.join(root,f)),contract=JSON.parse(read(fixture)),sha=b=>createHash('sha256').update(b).digest('hex');\ntest('raw current fine pasture owners and all283 published fixtures arestrictlybound',()=>{assert.equal(Object.keys(contract.files).length,8);assert.equal(Object.keys(contract.observers).length,4);assert.equal(Object.keys(contract.parentFixtureSHA256).length,283);assert(current(read,{rootDir:root}));assert(assertRibbonFallsCurrent(read,{rootDir:root}));});\ntest('counted inverse exactly recovers publishedcd4 source; inapplicability never certifiescurrent',()=>{for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const raw=read(f),parent=inverse(raw,f);assert.equal(sha(parent),row.beforeSHA256);assert.equal(inverse(parent,f),parent);const old='unmarked unrelated history';assert.equal(inverse(old,f),old);assert.throws(()=>current(n=>n===f?Buffer.from(old):read(n),{rootDir:root}));}const binary=Buffer.from([255,0,128]);assert.equal(inverse(binary,'unowned.bin'),binary);});\ntest('marked drift throws; allmarkersremoved driftcannot reconstruct parentorcertifycurrent',()=>{for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const raw=read(f).toString(),bad=raw+'\\n// fine-pasture-1 drift';assert.throws(()=>inverse(bad,f),/Whole approved/);assert.throws(()=>current(n=>n===f?bad:read(n),{rootDir:root}));const hidden=contract.markers.reduce((s,m)=>s.replaceAll(m,''),raw)+'\\n// unknownremovedmarker';assert.equal(inverse(hidden,f),hidden);assert.notEqual(sha(hidden),row.beforeSHA256);assert.throws(()=>current(n=>n===f?hidden:read(n),{rootDir:root}));}});\ntest('nine final cacheedges and exact inverses composewith publishedRibbonhistory',()=>{assert.equal(contract.cacheEdges.length,9);for(const e of contract.cacheEdges){const raw=read(e.parent).toString();assert.equal(raw.split(\"'\"+e.url+\"'\").length-1+raw.split('\\\"'+e.url+'\\\"').length-1,1);}for(const f of Object.keys(contract.files))assert.deepEqual(prior(read(f),f),prior(inverse(read(f),f),f));});\ntest('newfixturefilter exactandunknownsretained; rawhelper/test driftrejected',()=>{for(const f of[fixture,...Object.keys(contract.newFixtureSHA256)])assert.equal(filter(f+'\\n',{rootDir:root}),'');assert.equal(filter('tools/fixtures/unknown.json\\n',{rootDir:root}),'tools/fixtures/unknown.json\\n');assert.throws(()=>filter(fixture+'\\n'+fixture+'\\n',{rootDir:root}),/duplicate/);for(const f of Object.keys(contract.addedFiles))assert.throws(()=>current(n=>n===f?Buffer.concat([read(f),Buffer.from('drift')]):read(n),{rootDir:root}));});\n",
+          "after": "// snow-village-1: old fine-pasture assertions use their exact published parent; current gates receive raw bytes.\nimport{normalizeSnowVillageSource as snowParent}from'./snow-village-source-guard.cjs';\nimport test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import path from'node:path';import{fileURLToPath}from'node:url';import{createHash}from'node:crypto';\nimport{normalizeFinePastureSource as inverse,assertFinePastureCurrent as current,normalizeFinePastureFixtureChanges as filter}from'./fine-pasture-source-guard.cjs';\nimport{normalizeRibbonFallsSource as prior,assertRibbonFallsCurrent}from'./ribbon-falls-source-guard.cjs';\nconst root=fileURLToPath(new URL('../',import.meta.url)),fixture='tools/fixtures/fine-pasture-cd4b62d/source-contract.json',rawRead=f=>fs.readFileSync(path.join(root,f)),read=f=>snowParent(rawRead(f),f),contract=JSON.parse(read(fixture)),sha=b=>createHash('sha256').update(b).digest('hex');\ntest('raw current fine pasture owners and all283 published fixtures arestrictlybound',()=>{assert.equal(Object.keys(contract.files).length,8);assert.equal(Object.keys(contract.observers).length,4);assert.equal(Object.keys(contract.parentFixtureSHA256).length,283);assert(current(rawRead,{rootDir:root}));assert(assertRibbonFallsCurrent(rawRead,{rootDir:root}));});\ntest('counted inverse exactly recovers publishedcd4 source; inapplicability never certifiescurrent',()=>{for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const raw=read(f),parent=inverse(raw,f);assert.equal(sha(parent),row.beforeSHA256);assert.equal(inverse(parent,f),parent);const old='unmarked unrelated history';assert.equal(inverse(old,f),old);assert.throws(()=>current(n=>n===f?Buffer.from(old):rawRead(n),{rootDir:root}));}const binary=Buffer.from([255,0,128]);assert.equal(inverse(binary,'unowned.bin'),binary);});\ntest('marked drift throws; allmarkersremoved driftcannot reconstruct parentorcertifycurrent',()=>{for(const[f,row]of Object.entries({...contract.files,...contract.observers})){const raw=read(f).toString(),bad=raw+'\\n// fine-pasture-1 drift';assert.throws(()=>inverse(bad,f),/Whole approved/);assert.throws(()=>current(n=>n===f?bad:rawRead(n),{rootDir:root}));const hidden=contract.markers.reduce((s,m)=>s.replaceAll(m,''),raw)+'\\n// unknownremovedmarker';assert.equal(inverse(hidden,f),hidden);assert.notEqual(sha(hidden),row.beforeSHA256);assert.throws(()=>current(n=>n===f?hidden:rawRead(n),{rootDir:root}));}});\ntest('nine final cacheedges and exact inverses composewith publishedRibbonhistory',()=>{assert.equal(contract.cacheEdges.length,9);for(const e of contract.cacheEdges){const raw=read(e.parent).toString();assert.equal(raw.split(\"'\"+e.url+\"'\").length-1+raw.split('\\\"'+e.url+'\\\"').length-1,1);}for(const f of Object.keys(contract.files))assert.deepEqual(prior(read(f),f),prior(inverse(read(f),f),f));});\ntest('newfixturefilter exactandunknownsretained; rawhelper/test driftrejected',()=>{for(const f of[fixture,...Object.keys(contract.newFixtureSHA256)])assert.equal(filter(f+'\\n',{rootDir:root}),'');assert.equal(filter('tools/fixtures/unknown.json\\n',{rootDir:root}),'tools/fixtures/unknown.json\\n');assert.throws(()=>filter(fixture+'\\n'+fixture+'\\n',{rootDir:root}),/duplicate/);for(const f of Object.keys(contract.addedFiles))assert.throws(()=>current(n=>n===f?Buffer.concat([read(f),Buffer.from('drift')]):rawRead(n),{rootDir:root}));});\n",
+          "occurrences": 1
+        }
+      ]
+    },
+    "tools/test-regional-workshops.mjs": {
+      "beforeSHA256": "c5d70e83ba22e9f9144f6ade673a3a3616e284f0dae508b7e34a4a7f6bf14c9f",
+      "afterSHA256": "f11da01b69c54bf1ee5ba92fb5b7dc7322afddb6d081ad6bc7b3f8e3c2a07aed",
+      "changes": [
+        {
+          "before": "import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';\nimport {register} from 'node:module';register(new URL('./fixtures/three-workshop-loader.mjs',import.meta.url));\n",
+          "after": "import{normalizeSnowVillageSource}from'./snow-village-source-guard.cjs';\nimport test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import crypto from 'node:crypto';\nimport {register} from 'node:module';register(new URL('./fixtures/three-workshop-loader.mjs',import.meta.url));\n",
+          "occurrences": 1
+        },
+        {
+          "before": "});\ntest('source routes/collisions/fades/private placement stream and untouched region builders remain intact',()=>{\n for(const block of['buildWillowmere','buildFrostpine']){const start=' function '+block+'(){',end=block==='buildWillowmere'?' /* ================= 10.':' /* ================= 11.';assert.equal(slice(newSource,start,end),slice(oldSource,start,end));}assert(newSource.includes('fan.rotation.z-=dt*1.6')&&newSource.includes('wh.rotation.z-=dt*0.35'));assert.equal(slice(newSource,' let _rs=',' /* ================= 1.'),slice(oldSource,' let _rs=',' /* ================= 1.'));assert.equal((newSource.match(/collide\\(/g)||[]).length,(oldSource.match(/collide\\(/g)||[]).length);proof.sourceHashes={world:crypto.createHash('sha256').update(newSource).digest('hex'),baseline:crypto.createHash('sha256').update(oldSource).digest('hex')};\n});\ntest('frozen shape/resource proof remains reviewable without default file writes',()=>{function replacer(key,value){if(key==='bounds'&&value)return{min:value.min.toArray(),max:value.max.toArray()};return value;}const json=JSON.stringify(proof,replacer,2)+'\\n',report=JSON.parse(json);assert.equal(report.productionLogs.draws,6);assert.equal(report.sourceHashes.world,crypto.createHash('sha256').update(newSource).digest('hex'));assert(report.wheel.candidate.finite&&report.fan.candidate.finite&&report.tank.geometry.finite);if(process.env.WORKSHOP_AUDIT_OUTPUT)fs.writeFileSync(process.env.WORKSHOP_AUDIT_OUTPUT,json);});\n",
+          "after": "});\ntest('source routes/collisions/fades/private placement stream and untouched region builders remain intact',()=>{\n for(const block of['buildWillowmere','buildFrostpine']){const start=' function '+block+'(){',end=block==='buildWillowmere'?' /* ================= 10.':' /* ================= 11.';assert.equal(slice(block==='buildFrostpine'?normalizeSnowVillageSource(newSource,'assets/features/world-quarters.js'):newSource,start,end),slice(oldSource,start,end));}assert(newSource.includes('fan.rotation.z-=dt*1.6')&&newSource.includes('wh.rotation.z-=dt*0.35'));assert.equal(slice(newSource,' let _rs=',' /* ================= 1.'),slice(oldSource,' let _rs=',' /* ================= 1.'));assert.equal((newSource.match(/collide\\(/g)||[]).length,(oldSource.match(/collide\\(/g)||[]).length);proof.sourceHashes={world:crypto.createHash('sha256').update(newSource).digest('hex'),baseline:crypto.createHash('sha256').update(oldSource).digest('hex')};\n});\ntest('frozen shape/resource proof remains reviewable without default file writes',()=>{function replacer(key,value){if(key==='bounds'&&value)return{min:value.min.toArray(),max:value.max.toArray()};return value;}const json=JSON.stringify(proof,replacer,2)+'\\n',report=JSON.parse(json);assert.equal(report.productionLogs.draws,6);assert.equal(report.sourceHashes.world,crypto.createHash('sha256').update(newSource).digest('hex'));assert(report.wheel.candidate.finite&&report.fan.candidate.finite&&report.tank.geometry.finite);if(process.env.WORKSHOP_AUDIT_OUTPUT)fs.writeFileSync(process.env.WORKSHOP_AUDIT_OUTPUT,json);});\n",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "addedFiles": {
+    "assets/frostpine-village.mjs": {
+      "sha256": "ce00db2d7c9df793998f5398e10ebff7527582216e879434afc85d111b6e7041"
+    },
+    "tools/test-frostpine-village.mjs": {
+      "sha256": "9cb2417dcff8c1f0810b80e3e20f391ec2f94760571955081678331bb0f88fcd"
+    },
+    "tools/test-snow-village-source-guard.mjs": {
+      "sha256": "cc9e45343d15c4b004fd844e364d1a66c84ed9ae36fa67735fa647b2babc3b48"
+    }
+  },
+  "parentFixtureSHA256": {
+    "tools/fixtures/activity-landscape-6a82f3f/contract.json": "911a10260ea29868b7a627e19f28144b2a477cdbd724d19a432aa6c8e8e4cabe",
+    "tools/fixtures/activity-runtime-df065bd/contract.json": "cb5d05e979ef6866d6725292a46358939e344d872e23be9b620c7a9b75912a4e",
+    "tools/fixtures/alpine-range-baseline.json": "e2c849bd9fe7ca0762e9e557fed9f414531fbfb4b6a0974d1343bd590249f030",
+    "tools/fixtures/bank-rushes-7908e80/declared-source-changes.json": "ef21b4c3a0a6c4a1aaae17c60b73a4f783987bc17f2e2738684f7b0f090f296b",
+    "tools/fixtures/bank-rushes-7908e80/native-bank-reeds.json": "8f9265fc9d30cb06ecde29feaaf0713b0a05384e31a61e44f9411e018afd64e6",
+    "tools/fixtures/bank-rushes-7908e80/world-water.js": "8cf87f6562d95e569b1c1184bdca4ec414f73327d4034c67ce263a2a70940988",
+    "tools/fixtures/barleyfold-wall-3173712/source-contract.json": "12fbd830de353c12ca8f8ffcef08dc2b7e27bf700b258a5b444a79e4e08679a4",
+    "tools/fixtures/botanical-petals-7fbd/world-flora.js": "9c2219be9dd1bcb011ccd24f8efaac5f2a29e7ea09bc494f026da0d0ea0c1364",
+    "tools/fixtures/broadleaf-depth-60cb73c/actual-tree-roster.json": "7585b0658515b668569d98cef1e7a7358736e0876de3c2389c93235cf39ac862",
+    "tools/fixtures/broadleaf-depth-60cb73c/contract.json": "141a1805a5951a51fe9c5ce719b1b5e9932f1dfc177ba83d0d51ef70bd1060a3",
+    "tools/fixtures/broadleaf-depth-60cb73c/crown-inputs.json": "3d906ce92776d570ea3d59e085b4ea24b5d6d51a8e035176bcb41f0d45f6d307",
+    "tools/fixtures/broadleaf-depth-60cb73c/fixture.json": "dd0e3710f0939ee932561c158b2ca32975837e1ca4527bfe60ee8a1707401313",
+    "tools/fixtures/broadleaf-depth-60cb73c/parent-updateTrees.js.txt": "084bc45fe5ad60938c1660019612d7f227bab2c200643299251a1533f1bf070e",
+    "tools/fixtures/broadleaf-depth-60cb73c/source-edits.json": "dadccc894eb207c3aedef8fd84a2bfe779ab4a3737797f0e00f543e84d4f0c5c",
+    "tools/fixtures/canopy-depth-8f5ad05/contract.json": "c68b308774c0807cec57c6fad36d40bdbe35e9b2d988caf9869a7efa976c5e69",
+    "tools/fixtures/canyon-protected-ground.json": "ace6c899dc917467cdeab9e9fb575d4e6ec63a46a8c7c9fc5ef3be44b3899a43",
+    "tools/fixtures/cascade-water-6edee7c/assets/falls-landscape.js": "4a4d3b109061e3c3f791bb1ab0963103f1aaf249d05c7e819c50de187daeedfd",
+    "tools/fixtures/cascade-water-6edee7c/assets/waterfall-art.js": "e386b0e0d7a0ae74d84a8c6b21f87d5cd3cf766e9868f6d8f6d89afc3b715c03",
+    "tools/fixtures/cascade-water-6edee7c/assets/waterfall-effects.js": "c297b255b013174c21e0b6d1d84fb6cb9fe75b2f12dd466afad717192f78ed41",
+    "tools/fixtures/cascade-water-6edee7c/terrain-grid.f32": "9b4147b0a6b71e34b4aedc96cc5d7361d9ea82fd299d595f155529ba69cb2220",
+    "tools/fixtures/chalk-cover-519f/assets/features/world-flora.js": "b2bc59c5d2b0ec9b59f55d6344e06d9069100918c13a1b4c4b13fe12f128b6b3",
+    "tools/fixtures/chalk-cover-519f/assets/terrain-realism.js": "5cef3db06fdc2354c6656f2a585a07738a14088e7b50773d4d00464294e0d0bd",
+    "tools/fixtures/chalk-cover-519f/chalk-front-high-grass-near.f32": "5b4ec7b2944c6b2490fe13fb72715476c46d1f57d2ce7b10258c6b3307313a1a",
+    "tools/fixtures/chalk-cover-519f/chalk-front-high-grass-seed.f32": "28cb95bb91c18e27f7fa0212c0a5cd235224f98e8875eedb4916fc3215e786c5",
+    "tools/fixtures/chalk-cover-519f/chalk-surface-source.json": "435a7efac2c4c0bb8f2f92c7f51b39b20b582bd588803833f420957958273399",
+    "tools/fixtures/chalk-cover-519f/near-source.json": "9f907f6eff0cdeb5a5b85bff446d8c7818527beba84ca910159285f3bc36ae39",
+    "tools/fixtures/chalk-cover-519f/ranch3d.html": "81c68cb5953211e25726ae6731753725ab58a7c6e07eeeaf0f0c24d19d65bad6",
+    "tools/fixtures/chalk-cover-519f/receipt.json": "4bfe790510bd37b4ace302f6e09391d25629e8f126c27eb7cce21f353d165760",
+    "tools/fixtures/chalk-cover-519f/terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "tools/fixtures/chalk-cover-final-native/chalk-front-high-grass-seed.f32": "92d5102be9daaddf2104ca585a40fd671e3808e6a8023ed690fd94f950506dfd",
+    "tools/fixtures/chalk-cover-final-native/chalk-surface-source.json": "1ca42595801b12b09865168f4b75da48626277162e317211ce3f42cf3b3a2061",
+    "tools/fixtures/chalk-cover-final-native/receipt.json": "8c2a4cbcd5e53fa38fe5c3466a37d657d703e70424767458099bfa0d9f139bfe",
+    "tools/fixtures/chalk-protected-ground.json": "c662cb8041ba1b82b45356bd0c0ddc39271d19c69fc6d99c7d4c1784025fe954",
+    "tools/fixtures/chalk-shadow-519f/chalk-down.js": "23f8705fee991561d1df69220d5ec4aa8a34d2a92b7f55bf8f826306139f6cfb",
+    "tools/fixtures/chalk-shadow-519f/chalk-downland.mjs": "abcd746cb09f3b6b61c39ec92c1b24664b30120b50939ecc0d18389fcf1919d1",
+    "tools/fixtures/chalk-shadow-519f/chalk-surface-source.json": "435a7efac2c4c0bb8f2f92c7f51b39b20b582bd588803833f420957958273399",
+    "tools/fixtures/chalk-shadow-519f/receipt.json": "40e68c3b0d526c6358969c031911103e8e4da48fc74c0d0c0b1fda8acb060cfa",
+    "tools/fixtures/chalk-shadow-519f/terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "tools/fixtures/commons-landscape-2fbab/contract.json": "93569794ce7231d44ba7637feb099db76b6d8c70d28869075474b1870b7e8008",
+    "tools/fixtures/commons-landscape-2fbab/features/index.js": "1dfda37caea70c2e2efb04ef13fb0916e2804bd4fd76aae833bee4f1084e707b",
+    "tools/fixtures/commons-landscape-2fbab/features/world-flora.js": "739b5314323eb35958d3119aec2deb02907ade54103abeb1f2e52c797d93eb28",
+    "tools/fixtures/commons-landscape-2fbab/field-sward-bands.mjs": "5adf795a7b1e841becdfbfc2bc48ccbcee851e789320a18b5313e09f9bf05267",
+    "tools/fixtures/commons-landscape-2fbab/grazed-sward.mjs": "bdecab433537c54ad48f77bf6b34b99ba7ffbd85ec432243aa11ae9e44993c1c",
+    "tools/fixtures/commons-landscape-2fbab/integration-edit.json": "9f9e2e79cc410beb15d7df30e9d4fca4d38a0322e6cb79cb154c9edac2bdccb4",
+    "tools/fixtures/commons-landscape-2fbab/meadow-cover.js": "58d74d61c5a991dcdc65c448cadd3c4901104bc13f3e0c700d27fb96ad18ccf3",
+    "tools/fixtures/commons-landscape-2fbab/meadow-landcover.mjs": "a5c1fe014c1e2d6ba762103a7675d389bd625e9939dbb9899374e51e40e34c56",
+    "tools/fixtures/commons-landscape-2fbab/meadow-tufts.mjs": "f8d5a39f4f24ca41f3c42e615d82591d695d0fcb97d1e95d67572664c28dfb30",
+    "tools/fixtures/commons-landscape-2fbab/mixed-sward.mjs": "b45cb2198a9b2aef1bde19dd0acb7211b02134ca8247293bb13a75ab55960570",
+    "tools/fixtures/commons-landscape-2fbab/parent/ranch3d.html": "1e596ab8d732fe12db89939ae3f8029d8fa85f6233d73305050a8f0eff6553b5",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/pastoral-production-fixture.mjs": "bcf7045ee975eb2545c34c289e3ef11dcedc749c124dc6837044f5ff16f68649",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/roof-courses-source-guard.cjs": "6637c42105e689a60f19a4411b410051f5d77dafe4bcfef08a91ef2abcf3eecd",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-field-sward-bands.mjs": "e4409016924ce0cd33a33287a97d6bdedf782fb1f08f90dfc84f7a04bff7012e",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-meadow-tufts.mjs": "ffa15dfe25957be410901eba9717757ce57a65166a6c37e5cd0c205e4939195c",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-cover.mjs": "0ce8e48e04c5b742610114f095a69afce099e17ce844efad2a8c2cf7285a4358",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-integration-independent.mjs": "3588da6c31c930219c05de9f22f82bf10fcddcd0508c185d0490a62e61e5188d",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-pastoral-response-independent.mjs": "d511d7ee9f613d92f80f8aa737a3c03c0f791a7ffe1ec91f48b62af11c7423e6",
+    "tools/fixtures/commons-landscape-2fbab/parent/tools/test-roof-courses-source-guard.mjs": "5f18dbf7ebda0b11a348bea7adbfa8b8a0f64e0628464a1be2cdb5b7820747ad",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-cover-refresh.mjs": "c8ffcd54e1c8043cd97a660b456e962caebf8d4e8df9907d5a3e8ce006b1b559",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-cover.mjs": "495ea3cc969f55f5f7ca43c696e826ea55eb306f5ffdea6faa55fc1aa20c7e0e",
+    "tools/fixtures/commons-landscape-2fbab/pastoral-fields.mjs": "3ff95754438e715fc5ecbf8186ecead5a22e97f5d5b0a8776976eee71eb4e423",
+    "tools/fixtures/commons-landscape-2fbab/terrain-realism.js": "0c30d850306445e375ae5729c36c09ebbbd4be08bdbcf55abb5608ddea8285af",
+    "tools/fixtures/commons-landscape-2fbab/world-photoscans.js": "550aa52860da6e113dd6f5302a7cf2933498bb00430cd61ccf97c67e7da3bfd2",
+    "tools/fixtures/connected-landforms-0ba4900/source-contract.json": "90a59dbd7022fbc5d57e8b983c22317181a17ac1a97d8d5350930c37d93220d7",
+    "tools/fixtures/countryside-fields-c8cfa9c/native-fields.json": "c83a4f01b16e84f11497aa3cc41ee670249855149070754626c1a627faa28003",
+    "tools/fixtures/countryside-fields-c8cfa9c/source-contract.json": "ddd875b118357f0692700ec0c46983354a6916d0f944cd891a2163939163650f",
+    "tools/fixtures/countryside-fields-c8cfa9c/terrain-grid.f32": "a0ed1fc2fd44c35edd537fa657bb355d33ced7cb85252de561f4da4e9740cab8",
+    "tools/fixtures/countryside-vista-3fa6665/native-owner-inputs.json": "9295004ddb27074d24838abec5674fc330ef62e14c478d3d1d165f1aa2e1780a",
+    "tools/fixtures/countryside-vista-3fa6665/source-contract.json": "6b2eba319d6d1cd9866ad5ad360d69b2fe3f2aa64dac1aa457cd19e08ad927d6",
+    "tools/fixtures/course-turf-blades-3944c9e/contract.json": "a237812d0d621f63cce05fe8be4f6e1ce63e5ff3a289be761136455d516a2a8c",
+    "tools/fixtures/course-turf-blades-3944c9e/source-changes.json": "71870c47af215bf79226adddb641f52182129f62c91daac7eb9e087098f42ae1",
+    "tools/fixtures/course-turf-blades-3944c9e/test-adapter-changes.json": "a2aa5816276df177c758a851d73f9db384bd8d1ca855c76fd7da012de5b55588",
+    "tools/fixtures/course-turf-density3.mjs": "8c924367ce0be49b16f1cba6bbe11d48a9506157de3afbd40f14b618e7cf1903",
+    "tools/fixtures/course-turf-v1/course-turf.mjs": "0b2cb504cfce3c70f4ac881f11e024f37f3e515301e8571e60755d9e6afca045",
+    "tools/fixtures/coyote-8042555/source.json": "7d36edf1a7c28e62183584759ef83e966643859d5ab19a0d3535dc48059cfcd0",
+    "tools/fixtures/coyote-banks-11fb567/README.md": "86b47d5e64456ed42e97d98e56fbbdb87880f59e427de508181d87d5989a3763",
+    "tools/fixtures/coyote-banks-11fb567/assets/canyon-landscape.js": "d32e6424db088bec3bf70133ba2466a9274ff72c73185908168d75033babfd23",
+    "tools/fixtures/coyote-banks-11fb567/routes.json": "fe8fc46f104acfd1f467e6cb752a8eed752bf854653cd6384118456cc686d018",
+    "tools/fixtures/coyote-banks-11fb567/terrain-grid.f32": "d02a78010bd9cccc401f52e5862cb200578eee51f172230c0e109a2844b2de38",
+    "tools/fixtures/coyote-connected-0ba4900/actual-supports.json": "1cf2ee3610cb8e53adc59836fa90f7b0ba4f5ad706d11659f758c5ac9fba6547",
+    "tools/fixtures/coyote-connected-0ba4900/source-edits.json": "f043069f2754f690307c9690890dcaaa5eba3d03821acf53773a4b8840726d2a",
+    "tools/fixtures/coyote-crag-7009c41/contract.json": "25d871e0e2dd193789c3138e45d040dd58a47aa4ddbf950c4220d625c8131013",
+    "tools/fixtures/coyote-crag-7009c41/source-changes.json": "7ecc7ee6bf143a3bb01df7372454d4e3310f8d689f1289b11b05fc18ae3295bc",
+    "tools/fixtures/coyote-crag-7009c41/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/coyote-macro-8042555/canyon-landscape.js": "0d083ab131fcca53d111ac10c70cbb163086fb4736ce728a3ca5a1897491bb56",
+    "tools/fixtures/coyote-macro-8042555/chalk-site.json": "de2e94a3127e17bef6870649597853cfe91770157a4fe1c4961afca044a8b700",
+    "tools/fixtures/coyote-macro-8042555/routes.json": "7d594675d4913e6ecd277cd564e18e7cf26624af0a62bf86c6cf6d33ac81b3c7",
+    "tools/fixtures/coyote-macro-8042555/source-changes.json": "4779bd8d310e9d10cd4824e56175adedf2b596b1778d156c0b951a4e9f1906bd",
+    "tools/fixtures/coyote-macro-8042555/source.json": "5196416e4fd4761ba0dfe399b6ac41e2243d824b8c3dfd349f74ec4a15952cfb",
+    "tools/fixtures/coyote-macro-8042555/terrain-grid.f32": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+    "tools/fixtures/coyote-macro-8042555/vistas-site.json": "bc3310bf0c6e982a2cc0287731546e75ad19fb9e691f2cbb8813fbaa15bfb10d",
+    "tools/fixtures/coyote-macro-8042555/vistas-source-changes.json": "f547c5b9b4f85f845255ffb7320d64696c7f46bb503b2ac9d7db25b04deea8f7",
+    "tools/fixtures/coyote-macro-8042555/world-vistas.js": "10fef6849052f9035812bb0cb925da0d47ff63d0ce0c188c5c9224084fac56f0",
+    "tools/fixtures/coyote-macro-8042555/world.js": "fcf2a2a4143ff6f01daf94964aeebc53d44faed293cb1821425c63414a44485b",
+    "tools/fixtures/coyote-planning-11fb567.json": "01ddf14e5771b4044d778b80fba4f2c5d58baedb76c75806c3a8e1f145d273b0",
+    "tools/fixtures/dry-cover-cd4b62d/actual-owners.json": "f613867e00ee625704d282f1aba16c7b9acbe1aee5b5523b6c5b8f139dfd1f67",
+    "tools/fixtures/dry-cover-cd4b62d/source-edits.json": "011eff13af8978ee90069bf05c3624cd77cf1e32bfb9cc1fe4c7ae3acd3e2170",
+    "tools/fixtures/falls-protected-ground.json": "0853a7eb99d55a5e4be26f4f3503992b3aaae26028d3318a6a29b992cf04403e",
+    "tools/fixtures/ferry-bank-7908e80/site.json": "53a7d0b0a05caa0f94c0629fd0a0d70c2cd0e1e13469a0a4babf08dc1969ebc0",
+    "tools/fixtures/ferry-bank-7908e80/terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "tools/fixtures/ferry-bank-7908e80/world-water.js": "8cf87f6562d95e569b1c1184bdca4ec414f73327d4034c67ce263a2a70940988",
+    "tools/fixtures/fieldstone-wall-a78ed79/contract.json": "2e0d648595155c17dcd2c9b03ae416372a33d3eef13f3b392f9343f8277bb1c6",
+    "tools/fixtures/fieldstone-wall-a78ed79/coursed-field-wall-before.mjs": "9ccc02118cee8f1a4f1d99c11e2b86c6f8a2ecc97babc4cb0cfccbb2ba20d378",
+    "tools/fixtures/fieldstone-wall-a78ed79/preimage-SHA.json": "2e941013ae93d73f43ad962ae2341b0f794746397192150689c639108eb92c6c",
+    "tools/fixtures/fieldstone-wall-a78ed79/source-changes.json": "4337b7840c319f3d0368347360b9651c0849f205c1c63b91be3f653cf98ee37c",
+    "tools/fixtures/fieldstone-wall-a78ed79/test-adapter-changes.json": "f958443990a1b2f9687aa1be4440f17a9fc28778b3dfc69c7b921c8d6df85087",
+    "tools/fixtures/fieldstones-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/fieldstones-b5d22a6/native-supports.json": "cfbdefb188147d5bd713d0e9ff667825fd1756bbb720a637763858e9142e94e4",
+    "tools/fixtures/fine-pasture-cd4b62d/source-contract.json": "410fa887ac162b5e7db301b1774d450a0a671dc81b29271e83209fa262830d83",
+    "tools/fixtures/follow-camera-d5b9441/contract.json": "b5f810b057b4e640ac56e3a5ebe9be7b437beff489b4ee1695e54bf1ed9378e5",
+    "tools/fixtures/follow-camera-d5b9441/follow-camera.js": "0dc2ad4009ffcad37cecaad0b904491a6077765b765d0e3ef1d80cabfedfc4a6",
+    "tools/fixtures/follow-camera-d5b9441/scalar-v2-follow-camera.js": "ff9bc0fc6afb1921951154ab7c7befd6a8623349cb46a8530368a610aad66c86",
+    "tools/fixtures/foothills-protected-ground.json": "662ae88f44c3bc0d69a6851d6c9e45bab4c1f35548da7bfcf1840b1ecd1a9830",
+    "tools/fixtures/formal-approach-resume-5e173bf/contract.json": "ce3842a217c8ecaf4ba4da5b73c6399296a0235755de683d32ff6add4dd6e9cd",
+    "tools/fixtures/formal-turf-ff10ddd/contract.json": "7e0329c60ce26374cd640903773d18cc5e10aef0237679130b60c84e38d1e279",
+    "tools/fixtures/grass-arch-d5b9441/preimage-SHA.json": "785d75b18d8352333f98e7c7d6b47d493e7fceb698c22ed94f9bd5b720c2bca5",
+    "tools/fixtures/grass-arch-d5b9441/source-changes.json": "e6cf4639a8111d4e400c78c0e9335707ae3d99ec4ac709f058661d2e9ed699e3",
+    "tools/fixtures/grass-ribbon-3944-model.json": "d2d96833e3d279c1bc5f042edb912bfea5c7d73fbe3eab38dd90651df9181e58",
+    "tools/fixtures/grass-ribbon-d9b168e/contract.json": "127fc737b1c66aea9adfbc630703a1c6750519d9d248dbfc24f4771f92902f8e",
+    "tools/fixtures/grass-ribbon-d9b168e/source-changes.json": "4407e3d4bc8027a5998e2a52282b59f71262e9ecda6001a7f4ba895e4d68b405",
+    "tools/fixtures/grass-ribbon-d9b168e/test-adapter-changes.json": "a93761c1efb10043174e1817d27ea579427b87e399338c1619532236ec22b54a",
+    "tools/fixtures/grazed-natural-6e91739/contract.json": "06e7295694ba5f78961ab136ca9d32c44d0b6bc430c741402f6142cd09831242",
+    "tools/fixtures/grazed-natural-6e91739/grazed-sward.mjs": "2e548d98a4afec8c487e82595764405002b892a4b4c23312f011762990eae0ef",
+    "tools/fixtures/grove-field-a63ace15/source-contract.json": "5fce592b2f9e1b74e41d080c2320acf1a1c088d4bc6ee6725ad8184feab5a167",
+    "tools/fixtures/hollowpeak-cataract-0ba4900/source-edits.json": "c1706b1055a70dc455c67820dce1e4de37c6585154510c7fba7c970a256eaaef",
+    "tools/fixtures/hollowpeak-contours-6edee7c/README.md": "bb03a2e6e811aad91c57307e9ae54b7b9f2a9d6be62035f6e7bf9d4811014046",
+    "tools/fixtures/hollowpeak-contours-6edee7c/assets/falls-landscape.js": "4a4d3b109061e3c3f791bb1ab0963103f1aaf249d05c7e819c50de187daeedfd",
+    "tools/fixtures/hollowpeak-contours-6edee7c/terrain-grid.f32": "9b4147b0a6b71e34b4aedc96cc5d7361d9ea82fd299d595f155529ba69cb2220",
+    "tools/fixtures/hollowpeak-macroshape-0ba4900/actual-terrain.f32": "4a10dc63b865dfe2788eb6add4f30221ab2162f731fb8eafa2aca833e9e224fa",
+    "tools/fixtures/hollowpeak-macroshape-0ba4900/actual-terrain.json": "bc7ae08abc86fd625a1e2f4c04f19a4772886c7ebd2a130b508a10747e972473",
+    "tools/fixtures/hollowpeak-macroshape-0ba4900/source-edits.json": "50e009dff1e03465e0f16fa12df1197eae6493d23ab97ef8ffea632a0a6d0f93",
+    "tools/fixtures/hollowpeak-root-seating-0ba4900/actual-terrain.f32": "5e07f18eba8990bd8044eea95f9c852e94cccfadf90db5f6599d7ea998c46f80",
+    "tools/fixtures/hollowpeak-root-seating-0ba4900/actual-trees.json": "03fcb3b16039752ce600498cb077fdd9b4be195ed6c239408ab12ba5352bf853",
+    "tools/fixtures/hollowpeak-root-seating-0ba4900/outside-xz.f64": "e7948403a718c695e5f28ef93a3bef65912ad27e06f781ca09808df9833c0dd8",
+    "tools/fixtures/hollowpeak-root-seating-0ba4900/source-edits.json": "8130fa0e2c11ba605dcd2a13d48164666db5488ebd35c334049da1fc8e8448ad",
+    "tools/fixtures/hollowpeak-shore-bc2866a/source-contract.json": "7afbe889c5a06bed944c72c057f0bc7d7321fde776c5e0ee63707d877a225927",
+    "tools/fixtures/hollowpeak-shore-bc2866a/source-edits.json": "51b3463e86e45d3c5c3982425f7eb6df81da2b76d4856c6f65487ca0c3c4d525",
+    "tools/fixtures/hollowpeak-shore-bc2866a/terrain-tile.f32": "064d0634b65d92b599ecc0c0bd4bc3a78efbb20ad48c41f5b76b3bb6cb50356b",
+    "tools/fixtures/hollowpeak-shore-bc2866a/terrain-tile.json": "a076411acd84cac414f8d395c480e6ba9636f8e1a4f704ae730170fec1cae176",
+    "tools/fixtures/horse-training-dc405f3/contract.json": "cae6f4a87d97ad87174a47a874e08365f510c32cf58673d0cde87d785fffd822",
+    "tools/fixtures/island-normal-7a11/source-contract.json": "635cc5abb4baad90feb510a8224382fcf6293c02688319d28d808ea31ea370bb",
+    "tools/fixtures/landmark-environment-7989c92/source-contract.json": "e9651cf68fe1f77e274ff4801e3694112363ac870b686cf4bddddf421d851e49",
+    "tools/fixtures/landmark-stonework-5b6c7c4/source-contract.json": "54677b236c3d9647672ca8adaa62008d48450c124bb0c4b1f85acc0e3e80e8d3",
+    "tools/fixtures/landmark-stonework-5b6c7c4/wrenfell-parent-functions.json": "9bfc5b8c1da2bfc554e3afefef08bd0a2a5182c176d943d9a53d70bce32af2c9",
+    "tools/fixtures/lash-cache-df065bd/contract.json": "58698c4725ad04d8a12dea7381daf30183ab576a2ca7c2b1a59bbe7f2179ab51",
+    "tools/fixtures/lash-cache-df065bd/observer-changes.json": "ecd0fd1269c4d8b09d5be04c2dcc242381b0dc77ac8d9dfca0754b8ca0ff658b",
+    "tools/fixtures/leaf-camera-clearance-0f9cd99/contract.json": "3c9c30690568740a3c95c484a8fd12767460e2fbcdd4fae9110910b785b0502b",
+    "tools/fixtures/lupin-e8b5cf4/native-prototype.json": "ac2f0c4bb4357a9772acc3a2921ec4f56aa59bae4987154404df0a8531f1002f",
+    "tools/fixtures/lupin-e8b5cf4/native-rows.json": "610f9b862ca3ed42861fc8a65927edf1b28881824894236baa4ad2832ca5540b",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-clover-high-grass-lupin.f32": "ba21767bd2d7d34b59decc7ae94ef0a5c9fb31bf1a221bdd3c8e8ba3c2267a2a",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-clover-low-grass-lupin.f32": "ba21767bd2d7d34b59decc7ae94ef0a5c9fb31bf1a221bdd3c8e8ba3c2267a2a",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-commons-riding-high-grass-lupin.f32": "2d4560a3b5bd602b1c1d5528a04ab32d66df114b13d10f5661575ca18d7cc790",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-east-field-high-grass-lupin.f32": "cb7b2c800bd87bd01659d1648b32c1afcd7d1e96615da339f8c502aa7f69244f",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-north-meadow-high-grass-lupin.f32": "447ce3a5dd31dd241ab1889d1393e92850ec0e5434cd576f2379ef545eb907b7",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-physical-flower-colony-high-grass-lupin.f32": "de687c68f8dc319f528470a13c9abf013090508aa85894b167de55f8de6f7793",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-ranch-paddock-high-grass-lupin.f32": "44c550180bb1c7094ba1a9ecb71a5ed2607f714682f2bbbc756715bc63775521",
+    "tools/fixtures/lupin-e8b5cf4/pastoral-willowmere-high-grass-lupin.f32": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tools/fixtures/lupin-e8b5cf4/source-changes.json": "158adc7af912652e832275eb5c9be4aa13e9fc8f6a04fc45d21ba52325278127",
+    "tools/fixtures/lupin-e8b5cf4/source.json": "df1abd78cfb515bc065b3fea25a5066724d221b1a6dad54427b5d5191c80df17",
+    "tools/fixtures/lupin-model-source.mjs": "774ed0fc3d66c2b9431a2accaeb5e9bbde13c96458731e8a69165d2a04ac7d9a",
+    "tools/fixtures/lupin-original-e8b5cf4.mjs": "d5abc641ee0d4e0dbf5c65a5328d49c0cf6d29926e57e2ebeb636092c07d561a",
+    "tools/fixtures/lupin-source-e8b5cf4.json": "b33de9abc5d7757c4c59c608fae9a6a45a8db978e948962d1266aefbbda591ca",
+    "tools/fixtures/managed-turf-native-points-b1.json": "a910123c907a492e963f05a3b451584f102e9d48ff1e083c70580042e1b0ff1f",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/contract.json": "3cff1eb7dc27bc01dda44374df346821396b31238958e527cb42df333e321b51",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/prior-projection-functions.json": "e7adfb03c6167c869c041f0ac3e58a3ee73ba5a871374537207e5a0a47fcb87b",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/source-changes.json": "e669420b69e14252a6439dcc851cd3a6f9b4930a6e9399a4bd7e6e22be60f463",
+    "tools/fixtures/meadow-relief-wall-b1a73b1/test-adapter-changes.json": "f0ee89033b05672748c24c2acb5aa6d0fa36b648145e8bf33fc84347cb16240d",
+    "tools/fixtures/medium-canopy-08d4/source-contract.json": "80bb196caf297ba8dee543d3c899d3b730a4b1cd39613de94397f97be46ca4f7",
+    "tools/fixtures/mesa-landforms-8f811f1/actual-sites.json": "e74d6068dbbd6fa7824440b21c06bf5b6e5a44f8ce71e8fa401d220c89514fd8",
+    "tools/fixtures/mesa-landforms-8f811f1/source-contract.json": "df16e6f85c845fd1536c60a4e32e298a951e70e94430e31bc3aa40c9f256bc8c",
+    "tools/fixtures/mesa-landforms-8f811f1/source-edits.json": "a5079b8a4b5a230dc1be75259a63d91fd74becaa7f6aeb3d104a912406807d34",
+    "tools/fixtures/native-riding-groom-f23e91b/fixture.json": "224e3b942af399bc08bd96a97b34c788f1e09b46abd2f9e63733adce2435a324",
+    "tools/fixtures/native-riding-groom-f23e91b/parent-native-flowing-groom.js.txt": "52bca65ab63b356fd1c735e667c04a50acc24b7418d5129cd45c1aaf4a8d4344",
+    "tools/fixtures/native-riding-groom-f23e91b/source-contract.json": "53aaf012714bd654e95bb19d74a3e4a43b9b4c73d66e143d87965791c7fb5d14",
+    "tools/fixtures/north-formal-7a6bacd/contract.json": "aaa1e34f2b4e6f59c75df2b7f3157b479f8573e901746541b0146cf1d052e146",
+    "tools/fixtures/north-rim-planar-22b72cc/added-fixture-sha.json": "22d33eff0fdde272fb069e36bdd5841a861b5b101483906348dcc76a9d88ddc6",
+    "tools/fixtures/north-rim-planar-22b72cc/contract.json": "9cbf330484ada3ba80423534b686eae56099e214413aa6999d08c2a0c90f669c",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/historical/assets/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/observer-changes.json": "df10830c91f75599a7a66a8e7c2d93341cf893adab9c7daaf117f3f27c4417d8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/baseline/coyote-macroform.mjs": "2445c7c60a1c659c1e5258ee9507597c1de4f1406f21105e587b21ee3008d199",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/contract.json": "4e8d087da58ffbe47445206fe3c979a6f6ea4bf447dc3c23667a24b803f87deb",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/legacy-collider-source.txt": "af4e90aba2c19d1ea3632c74cf5d1dff147ab4fa7383547d8b3b95b0b5ebdd04",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/native-preservation.json": "9f813d0d75a2b363ddf61b9ecefdc318b2e8f0016088c8194457d7e2e168dca4",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/races-source.txt": "f50750bcb6139a9d7cb82f113746902973f848f0673637d0b75630fccd00e7cd",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/raw-terrain-source.txt": "6a16c87e1fa237733f23e4e55ef38954d08ecfa7054ba7f7b1ac533a54d7c86a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/terrain-grid.f32": "079c70ca40c54e4eb2b4b37c87a3cfabaad05df0f270cbcc1f10169ed90c7edc",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/canyon-landscape.js": "56b44ae22f3ca4f1d58cd43182df01947efe934de04e38e5b15575b3c3db33a8",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v1/assets/coyote-macroform.mjs": "311700d1760eb7a85c6fec29ebd9d58d986c30f545c2d188c4118684b17d06c0",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/canyon-landscape.js": "43428250634073f7c8482e4644a8ebfd12b40c91c5bb7695a0a3965de5b38b82",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/fixtures/v2/assets/coyote-macroform.mjs": "824a424a212b666d0d3ba6a4d41dec85e94ef0bd41e90cb4860e993b62b14668",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/full-floor-source184.json": "9db2eb6d66bbb47ec185d0682705e6d62dc2cbc41ee878faab723fc1f9caa76a",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-baseline.json": "499fa610fc4f2442a85986c2eb42d24f5b2b59e3e28f54ba7773ceb01bde77fe",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/native-current-routes.json": "c6786e94857a6cbe5588d78ce3d2a91fb40b51f8900b9adeff42141c7fa0e378",
+    "tools/fixtures/north-rim-planar-22b72cc/physical/numeric-source-changes.json": "76a3cad1d8538c21d75cfc9c526e818ec50234ecc31e236249458e3171346b0d",
+    "tools/fixtures/north-rim-planar-22b72cc/source-changes.json": "410f700866216ec47cd1ce6f63f2ba10a2c9a90fd3a8304ffddfbd8dcd40876b",
+    "tools/fixtures/outcrop-clearance-7eccc/fallback-sites.json": "8be2aaecb20657315c703a674e8dfb7c8e192e83d96601101e5667dea5009003",
+    "tools/fixtures/outcrop-clearance-7eccc/source-edits.json": "e0b22eb9027297b1e801abf186bdad534a3f71096c39e4f9dcc9c41e63e29f63",
+    "tools/fixtures/outcrop-clearance-7eccc/terrain-tiles.json": "cc1db13cb372ae75da0292f5976654b1da43f45865321935e03449c2e04e3548",
+    "tools/fixtures/outcrop-clearance-7eccc/world-outcrops.js": "9c4cec77b4255fe7db66e64b8937bfdfd266f39088223497766cd10d6453961a",
+    "tools/fixtures/outcrop-clearance-7eccc2e/contract.json": "9fe8cdae4449ec6af24ea5d9584d67738d8c1ec5ab155baf037f36ccf2e42e61",
+    "tools/fixtures/pastoral-7fbd127/approved-combined-source-changes.json": "492b1982e3ab8ff5e9607222f8b79f7e82b650664e7900625a74d814b248b480",
+    "tools/fixtures/pastoral-7fbd127/assets/features/world-flora.js": "9c2219be9dd1bcb011ccd24f8efaac5f2a29e7ea09bc494f026da0d0ea0c1364",
+    "tools/fixtures/pastoral-7fbd127/assets/grazed-sward.mjs": "16fb6f076f043671c3b3ae7b029a7580c45d8cab691a549b74a966679b6aa1f6",
+    "tools/fixtures/pastoral-7fbd127/assets/lush-meadow-geometry.mjs": "2590b0c2761ef9ebb70362f2df04160a867beb1bec6b6a0ad917b3dbc654b586",
+    "tools/fixtures/pastoral-7fbd127/assets/meadow-cover.js": "5937f3735b68ae075f718e7eec8df01d9e9d4813fc325b4c472ef4c5d23d89ef",
+    "tools/fixtures/pastoral-7fbd127/native/flora-petal.f32": "ec7e8c6fbac9e4cc7baf07a9ab802488e7c0a878af38835d1491991ac28aaa5e",
+    "tools/fixtures/pastoral-7fbd127/native/flora-petal.json": "5a73d429d00154589b0ad2f54a1cc648c405b06a1df8698bf9992d956887e083",
+    "tools/fixtures/pastoral-7fbd127/native/near-source.json": "b05c10883bb9a31a46f67df9684e945eb36e88920c55f568043413fe0e3ef28c",
+    "tools/fixtures/pastoral-7fbd127/native/pastoral-clover-high-grass-near.f32": "99b632d75d9f516757e69e732f3c0c41260133da0e9b2c97d2e5b0eb5699918e",
+    "tools/fixtures/pastoral-7fbd127/native/seed-geometry.json": "055f0c0f258adf12e16a6c431a52341e1b4aaa78bf8fe41732db4a24d2b1815e",
+    "tools/fixtures/pastoral-7fbd127/native/terrain-grid.f32": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+    "tools/fixtures/pastoral-7fbd127/native/world.json": "4dbbe2e23cb5979f5d47609bd5d9519d87a8bf96213556b475d61ec2e2e97936",
+    "tools/fixtures/pastoral-7fbd127/ranch3d.html": "19c5ceeef46cbb75f00d0d8294300f837b2bfb104a5b91124c35bede1dea68f8",
+    "tools/fixtures/pastoral-7fbd127/untouched-source-contract.json": "d46a9ec6650a1564d5af13c8e8dc467a00d3a6a63baef2ef27d27285fc7dc2b8",
+    "tools/fixtures/pastoral-cover-source-7fbd127.json": "56452ed014a0ea789e0d6c81f2a02c7c774d8444138ad2a2cdc8549736ff57c9",
+    "tools/fixtures/pasture-passage-7a6bacd/contract.json": "5b2cdcd9b14261bc878dcee501202078fff6b09bf8c6b672a04c3f7c56028b3c",
+    "tools/fixtures/pets/broken.glb": "9eded66e4a57557a3d05523b5ddab26ca95f8c6c81e352aee84d528e47c548a1",
+    "tools/fixtures/pets/fixture-bird.glb": "0fdd9f77e8597ce3327e4f2d74851d43378f3794dc9a5adfcd8e51148bb483b0",
+    "tools/fixtures/pets/fixture-quad.glb": "f31b513a54ee9ab982bf7a1812b22dbc1464cb0b004fcaee226a670a6b81582f",
+    "tools/fixtures/pets/make-fixtures.mjs": "a10f30a98f97810ae4ec19c0079177d4750458464986f3d3163d908aefdbb1ef",
+    "tools/fixtures/pets/manifest.test.json": "9c7369b6551bb934c8930fff06eacf8f4711998c109bbd0124cbeb1958dac500",
+    "tools/fixtures/programme-regroup-05421c6/contract.json": "671c6d08f0ce12c2c0aa300807b3d1e41ef6b49dccba566bc73bd732e35d9996",
+    "tools/fixtures/progression-grass-9c9ae98/contract.json": "958b9c5da1176b6fdabc7141f3768fb3a141b665c998fbd6bc7e35bb6ce2885f",
+    "tools/fixtures/progression-grass-9c9ae98/observer-changes.json": "40872f7b336c24f965329098e2951ec49e35a63c10163cad6128a92fd7f8f5c4",
+    "tools/fixtures/progression-hints-243dbfb/contract.json": "59996a48689f05491817fe097ae6305fa215e9907cf5e8ef4870c899e343ed41",
+    "tools/fixtures/progression-loop-243dbfb/contract.json": "cf5ff527391ca6eefbabac929cc68273cd8ef5d3499bf7b5861cb6e932cbe017",
+    "tools/fixtures/published-world-885e882/import-changes.json": "570482ee64edda384401be849e1dcaa1b2ba7c0b2c2b64823509c9e82c1db3d2",
+    "tools/fixtures/ranch-joinery-b5d22a6.json": "aa40860f03f03b051e6f629a2e1dedc02d941b52ea2381426a67ac745909a8f3",
+    "tools/fixtures/ranch-model-b5d22a6/fieldstone-contract.json": "0fe2d51edc69f62593f0b4b55e74282912b08bc4f79d341e46d2e9b80633993c",
+    "tools/fixtures/ranch-model-b5d22a6/geology.js": "cc7a56cb5b017984149199520466d65a6bfa53e1544005f86a86d5209e984f4c",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-architecture.js": "2ca011543add5908da50620edd4037ab419346e323aef9c5a022a3b53eff92c5",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-builder-art.js": "ee72c9da7a55013e3b2975eb10cc3edb09486e9deafc93618a3050b42d0d2d7b",
+    "tools/fixtures/ranch-model-b5d22a6/ranch-timber-contract.json": "c487f587f0a3c379515f12120c4c3d13d39f78f4267750826961b1dd9db34e58",
+    "tools/fixtures/ranch-model-b5d22a6/terrain-grid.f32": "a1533a3dda49033f351eb0e7b16c0014e9a9bbb6679cc5c68582592567a00aeb",
+    "tools/fixtures/regional-cover-8aa2e72/actual-layout.json": "363efbbde81b04480a00d306f996e716b8140f0d8bcc33604a94cf7fdd172025",
+    "tools/fixtures/regional-cover-8aa2e72/source-contract.json": "c394debea8beb02b5867b6c2f66eea5c7ce1d5e340aa3e549c7c41c7a88c6e56",
+    "tools/fixtures/regional-cover-8aa2e72/source-edits.json": "3c60538333c9cddf2c7de23870274a799bd0f36afba304dab5ed381524a98b6c",
+    "tools/fixtures/reviewed-riding-4e346b2/cache-changes.json": "b4bbecb268eece3397c81b1ec345e512c81b173e8e9bb9a7f08f6bda80f0cca9",
+    "tools/fixtures/reviewed-riding-4e346b2/contract.json": "fad6b15aebd17a4308b86000be9cec078ba61407eebe611489c778a86e9a20c1",
+    "tools/fixtures/reviewed-riding-4e346b2/guide-changes.json": "3b49f51ab669ac09f0564005e17becdc3ec72c97859656a30a0fbe0d518f02e0",
+    "tools/fixtures/reviewed-riding-4e346b2/observer-changes.json": "a489678b6a9fc7aa3d74f8b0267865b83037d951ac515304c1aecb1864dbe667",
+    "tools/fixtures/ribbon-award-8733008/contract.json": "4ccdf5184e0269c86c07bca86273a6af081b0f1f9908b5e00acb9b368eb43692",
+    "tools/fixtures/ribbon-award-8733008/source-changes.json": "1da057b475b663c8f25095ebb2e2b452ca820f42b6597813ccf349106cb080f2",
+    "tools/fixtures/ribbon-chute-cd4b62d/native-state.json": "5786d392b66e2064f1a4d121b36ae0f300b4c9f785f325640f6edfa824450bee",
+    "tools/fixtures/ribbon-chute-cd4b62d/source-edits.json": "93a06572fe2d80b0a397c8e478d33052336b2352f181dce498243ac123c26155",
+    "tools/fixtures/ribbon-falls-b3f2d33/actual-owners.json": "e70d1501cdc3a7c2670b9a754343664124c857392559ab1104836dc99e29992d",
+    "tools/fixtures/ribbon-falls-b3f2d33/actual-terrain.json": "ef7fa97303d1ac29d1a1816b2afba335afa09cbb0d56f44f6e6b05e1625109fb",
+    "tools/fixtures/ribbon-falls-b3f2d33/source-contract.json": "ecdb2a981453e672f47d20f37ff1c948abddf5a9f69e0ee20912ac42812bdec4",
+    "tools/fixtures/ribbon-falls-b3f2d33/source-edits.json": "211bf791c8b3c953c1db34afd8520ac7e040a23b1882fdc637dbbdf26693c07d",
+    "tools/fixtures/riding-distance-8733008/contract.json": "4bff20bf265afc541401459834588a3ad1f70a1321344f08f4d9a8d32e7e7503",
+    "tools/fixtures/riding-distance-8733008/source-changes.json": "e0f1e8a335f43a126f03eacf758c4ccdc92441c621f64864c59fde793e62ceb8",
+    "tools/fixtures/river-7908e80/approved-river-source-changes.json": "e090472df965e6fb7cb2bf1ea6695295d082df4ffa14deede88c0eb5713cb34d",
+    "tools/fixtures/river-7908e80/assets/features/index.js": "48094d45481076d87cd77237138452333cdd63f7be97ad2fd9b1eab060c4bec9",
+    "tools/fixtures/river-7908e80/assets/features/world-flora.js": "d434396a39af49bdeaa6b96089eecbb3057ca94615b47f74f0d295ee5f83fdf7",
+    "tools/fixtures/river-7908e80/assets/features/world-water.js": "8cf87f6562d95e569b1c1184bdca4ec414f73327d4034c67ce263a2a70940988",
+    "tools/fixtures/river-7908e80/assets/riparian.js": "252a87dfe5a86ae9070032a2b25d7f6a305c372daee1481f3948d8df47d361ef",
+    "tools/fixtures/river-7908e80/assets/scenery-art.js": "b5438679e06564c3a625673f06e3e19550bbcd08bdf8db41f57a98b0f5cf7bdd",
+    "tools/fixtures/river-7908e80/assets/terrain-realism.js": "80640117aa0086b2f5571d384a7fa189c0ecbf5ae603b8e8a7ea59964ed9987a",
+    "tools/fixtures/river-7908e80/bank-rush-source-changes.json": "ef21b4c3a0a6c4a1aaae17c60b73a4f783987bc17f2e2738684f7b0f090f296b",
+    "tools/fixtures/river-7908e80/combined-cache-edges.json": "f3b24704fed8e74b87bf64d5388a5247aeb952a8577ad15d2f0ae104de9cdfdd",
+    "tools/fixtures/river-7908e80/native-river-bed.json": "3d3b02c79b9c672a4c0cca4a0b473d67eeaa98170892ac869534a0c55f5dcdba",
+    "tools/fixtures/river-7908e80/ranch3d.html": "a1123682b33ba389a26e718f76bd6c4d5f76f7d6841390bbd87e4228cc3e0327",
+    "tools/fixtures/river-7908e80/river-protected-supports.json": "76d0ea2fa004cebddb5e8511bbde8550d2d1d4c2b86631ed9267c7b72824cb42",
+    "tools/fixtures/river-7908e80/terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "tools/fixtures/river-bank-aprons-7908/aprons.json": "d794b790c2bc63313ebf0634b4611dd0d7eda8adaa6485e19215f7a9b72ce469",
+    "tools/fixtures/river-bank-aprons-7908/bed.json": "97887a3969fb935726c2ef7640abcb0256933144ae64432fb2bc437e5e96676c",
+    "tools/fixtures/river-bank-aprons-7908/receipt.json": "8cc148b27f809d9dba2df263f6690b2d78b86b2861f3d417250aa4b842fc0209",
+    "tools/fixtures/river-bank-aprons-7908/terrain-grid.f32": "671b0df3976c1002dcc18c683b36c5a7d0385c1df48115eddad23641341fd40f",
+    "tools/fixtures/river-combined-source-7908e80.json": "942326b9acec5d864920dec4a09b93ad38d9d832ba16195eb5e15972db7f7d31",
+    "tools/fixtures/roof-courses-efded6f/contract.json": "1827d1b82188984c0bc38754de0e469c6e25fbc02c0b3d7944d5f31159183acd",
+    "tools/fixtures/roof-courses-efded6f/ranch-architecture.js": "998f3397d436700e650c0d3393403651e444db939790f2ac0a0fe0c42311eacb",
+    "tools/fixtures/route-ground-4f3cdcd/actual-routes.json": "9551b3304da6c8baf33ccc6df7425184fdb58f384b681a2fda0c6fb8d86cfdcb",
+    "tools/fixtures/route-ground-4f3cdcd/source-contract.json": "ee7ffebd1ea816f289f7683e3e70ae178a39b93df4a5157d3e908d8ffa5df972",
+    "tools/fixtures/route-ground-4f3cdcd/source-edits.json": "01e7dc5a76dbd60e21acb0031cecae26c571000d9783ec81ab427bae8fdce026",
+    "tools/fixtures/rubble-field-wall-b1a73b1/actual-units.json": "6bcdb527027826d94e02d909e9f1ee864590b924b5ff1b40e794a0a00dc4aa80",
+    "tools/fixtures/standing-stones-7989c92/sisters-parent-functions.json": "3c73e6f867f6e6838780618afc5170161f69d12a7a5440ae996ded3033c8041b",
+    "tools/fixtures/starter-tack-2986289/index.js": "b64ba748f2bac5bf6c0ded32fd05fb980e70d23c7b99256b53893eaaaa07f4da",
+    "tools/fixtures/starter-tack-2986289/on-foot.js": "9d7abef0dd1a0b32ceae8c66e5ad4425ad2a8e2c370ab41e5d52222f185513ad",
+    "tools/fixtures/starter-tack-2986289/preimage-SHA.json": "3f583dee966cc24e28fdb37126fbf9ac6c2224c13ea6e1a2fe72829698778261",
+    "tools/fixtures/starter-tack-2986289/ranch3d.html": "b4ccde61598e4e4af76eed64dbcc7496459e14e9a9ca890ecc38337ced3251df",
+    "tools/fixtures/starter-tack-2986289/source-changes.json": "b18d6799d427029bcd491e4d834ed3351b9aba01550c81fb6d3eb30e21356931",
+    "tools/fixtures/starter-tack-2986289/tack-collection-models.js": "0a61dc61c419bbbee32e2c6153add85eef951b82f4409f072de3ca1dff34c21f",
+    "tools/fixtures/steep-flora-11fb567/world-flora.js": "a9135319593dea5594569f8c825a425839f28c6eb88164c3c396f3ddb46a39be",
+    "tools/fixtures/steep-flora-11fb567/world-photoscans.js": "08c387d502cb94599bc2685722992fbc4684a7dee5a0d8d709194191d277bb01",
+    "tools/fixtures/three-workshop-loader.mjs": "4577907ec5b0fe1cb68083b290ed51a886fe492877ee30800501a55186c4b7e8",
+    "tools/fixtures/west-meadow-baseline.mjs": "8cdbe7ec009f747bee5ee3faf1d0532e6673362171fab2fc203cf5f196f6113c",
+    "tools/fixtures/world-quarters-11fb567.js": "e2e328d73fbf63d40d7f8cdaaaa276c98397aca52c1d4f5d4b1bb9e868f28769"
+  },
+  "newFixtureSHA256": {
+    "tools/fixtures/frostpine-village-f2ecb9c/actual-inputs.json": "2a680402caaea023e6e9f92cd30f6fbc1fe77e70b7f9bf32f5b46d6ed8a7bc97",
+    "tools/fixtures/frostpine-village-f2ecb9c/source-edits.json": "88c111545a3c9f1e2d10e10796c3fa5586b955469f28a8a5941a40aa2902c9e8"
+  },
+  "cacheEdges": [
+    {
+      "parent": "assets/features/world-quarters.js",
+      "url": "../frostpine-village.mjs?v=frostpine-village-4",
+      "occurrences": 1
+    },
+    {
+      "parent": "assets/features/index.js",
+      "url": "./world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4",
+      "occurrences": 1
+    },
+    {
+      "parent": "ranch3d.html",
+      "url": "./assets/terrain-realism.js?v=pastoral-cover-1-meadow-relief-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-route-ground-2-frostpine-village-4",
+      "occurrences": 1
+    },
+    {
+      "parent": "ranch3d.html",
+      "url": "./assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4",
+      "occurrences": 1
+    }
+  ],
+  "scope": "V4 preserves V3 model/material/support/bake/RNG geometry, with ice-only admission masking via existingpondContains for old nearGrass/okClutter/staticclear. Bank and outside predicates retain originalbehavior. One bounded deferred bank/icegroundsupport and re-groundedNPC intentional. Rawcurrentbehavior tests use finalbytes; strict counted inverse onlyhistoricalsource paths. Parent288fixtures unchanged."
+}

@@ -1,4 +1,5 @@
 import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2';
+import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';
 import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1';
 import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
@@ -37,7 +38,7 @@ export function install(G){
  const player=H.player,groundH=W.groundH;
  const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[],willowTrees:[],reedSources:[],ponds:[]};
  G.quartersPkg=P;
- P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2);
+ P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2)||!!P.frostpineArt?.iceContains(x,z);
  /* Every object this package puts in the scene, kept in one list. It is what lets a QA run
     measure what the four settlements cost by switching them off and on again inside one
     browser session — the only way to get a draw-call delta that is not swamped by the
@@ -270,7 +271,7 @@ export function install(G){
    if(ok){toast(line.replace('%',H.ridden().name)+' +40 thirst');G.sChime();}
   }});
  }
- function npc(def){try{const at=clearSpot(def.x,def.z);def.x=at[0];def.z=at[1];const entry=W.addNPC(def);if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);P.npcs++;}catch(err){console.error('quarters npc '+def.id,err);}}
+ function npc(def){try{const at=clearSpot(def.x,def.z);def.x=at[0];def.z=at[1];const entry=W.addNPC(def);if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);if(def.id.startsWith('qf_'))(P.frostpineNPCs||(P.frostpineNPCs=[])).push(entry);P.npcs++;}catch(err){console.error('quarters npc '+def.id,err);}}
  /* A building goes through pad() first, so the coordinates it ends up on are the ones every
     label, marker and chimney afterwards has to use — hence the returned pair. */
  function building(o){
@@ -782,6 +783,7 @@ vQMistUV=uv;
   /* Boot-and-hoof-packed snow round the rim, so the tarn has an edge you can see. */
   for(let k=0;k<26;k++){const a=k/26*Math.PI*2+rr(-0.06,0.06);
    lp(solid,'#f4f9fc',tat[0]+Math.cos(a)*rr(10.4,11.6),lvl-0.35,tat[1]+Math.sin(a)*rr(10.4,11.6),rr(1.2,2.6),rr(0.35,0.7),rr(1.2,2.2)).castShadow=false;}
+  const frostTarnSources=solid.children.slice();
   const hole=[tat[0]+2.6,tat[1]-1.7];
   put(G_DISC,'#dfeef4',1.2,1.2,1,hole[0],lvl+0.018,hole[1],solid).rotation.x=-Math.PI/2;
   put(G_DISC,'#12343f',0.8,0.8,1,hole[0],lvl+0.024,hole[1],solid,{roughness:0.1,metalness:0.5}).rotation.x=-Math.PI/2;
@@ -898,7 +900,15 @@ vQMistUV=uv;
    solid.add(cg);}
 
   const sgn=F.at(-9,-5),sg4=new THREE.Group();signboard(sg4,'FROSTPINE STATION',3.8);place(solid,sg4,sgn[0],sgn[1],F.yaw+Math.PI-0.2);
-  bake(solid,true);bake(flat,false);
+  // Keep the original construction/layout and global constructor stream.
+  const frostBake=frostpineBakeBudget(solid);
+  const frostArt=createFrostpineVillageArt({THREE,W,scene,center:tat,level:lvl,approach:bunk});
+  for(const child of frostTarnSources)solid.remove(child);
+  tg.clear();tg.add(frostArt.towerRoot);solid.add(frostArt.tarnRoot);
+  frostpinePrivateResources(()=>bake(solid,true));
+  for(let i=0;i<frostBake.randomDraws;i++)Math.random();
+  frostArt.releaseBuildGeometry();P.frostpineArt=frostArt;P.frostpineArt.stats.legacyBake=frostBake;
+  bake(flat,false);
 
   trough('frost:hole',hole[0],hole[1],4.6,'🧊 Break the ice for your horse','🧊 % drinks from the fishing hole.');
   npc({id:'qf_ivar',name:'Ivar',icon:'🧔',x:store[0]+3.2,z:store[1]+2.6,hat:'#3a4650',shirt:'#5a6f8a',folk:true,
@@ -1090,6 +1100,11 @@ vQMistUV=uv;
   await waitForMillPondImages(W.ranchBuilderArt.materials.stone);
   P.millPondArt=installMillPond(G,P.millPondSource);G.on('tick',(dt,t)=>P.millPondArt?.update(t));return P.millPondArt;
  }).catch(error=>{P.millPondArtError=error.message;console.warn('Amberwood keeps original mill pond',error);return null;});
+ if(P.frostpineArt){
+  W.groundSurfaces.push(P.frostpineArt.supportAt);
+  P.frostpineArt.stats.groundedActors=[];
+  for(const entry of P.frostpineNPCs||[]){const before=entry.g.position.y,after=groundH(entry.def.x,entry.def.z);entry.g.position.y=after;P.frostpineArt.stats.groundedActors.push({id:entry.def.id,x:entry.def.x,z:entry.def.z,before,after});}
+ }
  /* The first time you ride into one of the four, say what it is rather than leaving the region
     name to carry the whole arrival. Once each, ever. */
  const ARRIVE={
