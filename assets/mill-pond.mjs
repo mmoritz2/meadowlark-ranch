@@ -1,33 +1,53 @@
 // Original Amberwood mill-pond shore. Terrain, water level and physical owners stay authoritative.
-export const MILL_POND_PROFILE='amberwood-shore-1';
+export const MILL_POND_PROFILE='amberwood-waterfront-1';
 const installed=new WeakMap(),clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
 export const millPondImagesReady=m=>!!m&&[m.map,m.normalMap,m.roughnessMap].every(t=>{const i=t?.image;return i&&(i.naturalWidth??i.width)>0&&(i.naturalHeight??i.height)>0;});
 export async function waitForMillPondImages(material,{timeout=12000,now=()=>performance.now(),frame=()=>new Promise(resolve=>setTimeout(resolve,40))}={}){const start=now();while(!millPondImagesReady(material)){if(now()-start>=timeout)throw Error('Mill bank resident images missed bounded deadline');await frame();}return true;}
-export function millPondRadius(a){return 12.25+.14*Math.sin(3*a+.5)+.06*Math.sin(7*a-1)+.025*Math.cos(11*a);}
-export function millPondOuterRadius(a){return 14.82+.48*Math.sin(2*a-.6)+.23*Math.cos(5*a+.9);}
-export function buildMillPondData(site,heightAt){
+// Two broad sheltered inlets and an off-centre shoulder replace the nearly circular rim.
+const turn=a=>Math.atan2(Math.sin(a),Math.cos(a));
+export function millPondRadius(a){return 11.96+.28*Math.sin(2*a+.7)+.13*Math.cos(5*a-1.1)-1.72*Math.exp(-((turn(a-2.45)/.45)**2))-1.18*Math.exp(-((turn(a-5.32)/.36)**2));}
+export function millPondOuterRadius(a){return 14.45+.72*Math.sin(2*a-.6)+.31*Math.cos(3*a+.9)+.12*Math.sin(7*a);}
+export function legacyMillPondRadius(a){return 12.25+.14*Math.sin(3*a+.5)+.06*Math.sin(7*a-1)+.025*Math.cos(11*a);}
+export function legacyMillPondBoundaryRadius(angle){const a=((angle/(Math.PI*2)%1)+1)%1*Math.PI*2,k=Math.floor(a/(Math.PI*2)*144),lo=k/144*Math.PI*2,hi=(k+1)/144*Math.PI*2,r0=legacyMillPondRadius(lo),r1=legacyMillPondRadius(hi);return r0*r1*Math.sin(hi-lo)/(r1*Math.sin(hi-a)+r0*Math.sin(a-lo));}
+export function millPondProtectedLogFootprints(points){return points.filter(p=>Math.hypot(...p)<=legacyMillPondBoundaryRadius(Math.atan2(p[1],p[0])));}
+export function protectMillPondLogs(radius,angle,points=[]){let r=radius;for(const p of points){const a=Math.atan2(p[1],p[0]),d=Math.abs(turn(angle-a));if(d<.14)r=Math.max(r,Math.hypot(...p)+.03-.22*(d/.14)**2);}if(r>12.475)throw Error('Original floating log footprint exceeds fixed mill water envelope');return r;}
+// Read only original, already constructed instance matrices. No new renderer resources/RNG.
+export function millPondLogFootprints(mesh,site){
+ if(!mesh?.isInstancedMesh||mesh.count!==20)throw Error('Actual twenty original floating mill logs required');mesh.updateWorldMatrix(true,false);
+ const A=mesh.instanceMatrix.array,E=mesh.matrixWorld.elements,points=[];
+ for(let row=0;row<mesh.count;row++){const k=row*16,m=A.subarray(k,k+16),length=Math.hypot(m[0],m[1],m[2]),steps=Math.max(4,Math.ceil(length/.18));
+  for(let i=0;i<=steps;i++)for(const z of[-1,1]){const x=i/steps-.5,px=m[0]*x+m[8]*z+m[12],py=m[1]*x+m[9]*z+m[13],pz=m[2]*x+m[10]*z+m[14];points.push([E[0]*px+E[4]*py+E[8]*pz+E[12]-site.x,E[2]*px+E[6]*py+E[10]*pz+E[14]-site.z]);}}
+ return points;
+}
+export function buildMillPondData(site,heightAt,{floatingFootprints=[],terrainStep=1000/512,terrainOrigin=-500}={}){
  if(!site||Math.abs(site.r-12.5)>1e-8||![site.x,site.z,site.y].every(Number.isFinite)||typeof heightAt!=='function')throw Error('Original Amberwood pond required');
- const bank={position:[],normal:[],uv:[],color:[],index:[]},water={position:[],normal:[],uv:[],color:[],index:[]},segments=144;
- const add=(out,x,y,z,col)=>{out.position.push(x,y,z);out.normal.push(0,1,0);out.uv.push(x/2.7,z/2.7);out.color.push(...col);};
- const deep=[.045,.105,.095],shallow=[.19,.28,.18];
- // A radial surface with a genuinely unequal perimeter; its mean plane remains the old level.
- for(let j=0;j<=8;j++)for(let k=0;k<=segments;k++){const a=k/segments*Math.PI*2,t=j/8,r=millPondRadius(a)*t,x=site.x+Math.cos(a)*r,z=site.z+Math.sin(a)*r,edge=smooth((t-.69)/.31);add(water,x,site.y,z,deep.map((v,i)=>v+(shallow[i]-v)*edge));}
- for(let j=0;j<8;j++)for(let k=0;k<segments;k++){const a=j*(segments+1)+k,b=a+segments+1;if(j===0)water.index.push(a,b+1,b);else water.index.push(a,a+1,b+1,a,b+1,b);}
- const rings=[0,.10,.24,.45,.70,1];let maxBankRise=0,maxRadius=0,minOuterGroundGap=Infinity,maxOuterGroundGap=-Infinity;
- for(let j=0;j<rings.length;j++)for(let k=0;k<=segments;k++){const a=k/segments*Math.PI*2,t=rings[j],inner=millPondRadius(a)-.30,outer=millPondOuterRadius(a),r=inner+(outer-inner)*t,x=site.x+Math.cos(a)*r,z=site.z+Math.sin(a)*r,g=heightAt(x,z);if(!Number.isFinite(g))throw Error('Finite terrain required');
-  // A low, rounded mill embankment meets the actual ground, without the old open cylindrical side.
-  const crest=site.y+.025+.018*Math.sin(4*a+.7),base=site.y-.095,shore=t<=.10?base+(crest-base)*smooth(t/.10):crest+(g+.012-crest)*smooth((t-.10)/.90),y=Math.max(g+.012,shore);
-  const wet=1-smooth(t/.55),v=.76+.12*Math.sin(3*a+2*t)+.05*Math.cos(11*a),col=[v*(1-.25*wet),v*(1-.18*wet),v*(1-.35*wet)];add(bank,x,y,z,col);maxBankRise=Math.max(maxBankRise,y-g);maxRadius=Math.max(maxRadius,r);if(j===rings.length-1){minOuterGroundGap=Math.min(minOuterGroundGap,y-g);maxOuterGroundGap=Math.max(maxOuterGroundGap,y-g);}}
- for(let j=0;j<rings.length-1;j++)for(let k=0;k<segments;k++){const a=j*(segments+1)+k,b=a+segments+1;bank.index.push(a,a+1,b+1,a,b+1,b);}
- const pack=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,k==='index'?new Uint16Array(v):new Float32Array(v)]));
- return{water:pack(water),bank:pack(bank),stats:{segments,waterTriangles:water.index.length/3,bankTriangles:bank.index.length/3,waterLevel:site.y,minWaterRadius:12.025,maxWaterRadius:12.475,maxOuterRadius:maxRadius,maxBankRise,minOuterGroundGap,maxOuterGroundGap,oldOuterRadius:site.r*1.26}};
+ if(!(terrainStep>0)||!Number.isFinite(terrainOrigin))throw Error('Canonical terrain grid required');
+ const protectedFootprints=millPondProtectedLogFootprints(floatingFootprints),segments=192,water={position:[],normal:[],uv:[],color:[],index:[]},bank={position:[],normal:[],uv:[],color:[],index:[]},radii=Array.from({length:segments+1},(_,j)=>protectMillPondLogs(millPondRadius(j/segments*Math.PI*2),j/segments*Math.PI*2,protectedFootprints));
+ const add=(out,x,y,z,c)=>{const n=out.position.length/3;out.position.push(x,y,z);out.normal.push(0,1,0);out.uv.push(x/2.7,z/2.7);out.color.push(...c);return n;};
+ const deep=[.046,.105,.095],shallow=[.057,.124,.090];
+ // Same horizontal water level and old texture/material resource population. The wet edge
+ // follows the authored coves while actual float footprints hold their original wet seats.
+ add(water,site.x,site.y,site.z,deep);for(let j=1;j<=8;j++)for(let k=0;k<=segments;k++){const a=k/segments*Math.PI*2,t=j/8,r=radii[k]*t,edge=smooth((t-.64)/.36);add(water,site.x+Math.cos(a)*r,site.y,site.z+Math.sin(a)*r,deep.map((v,i)=>v+(shallow[i]-v)*edge));}
+ for(let j=0;j<8;j++)for(let k=0;k<segments;k++){if(j===0)water.index.push(0,1+k+1,1+k);else{const a=1+(j-1)*(segments+1)+k,b=a+segments+1;water.index.push(a,a+1,b+1,a,b+1,b);}}
+ // Exactly clip every bank face to the actual canonical grid triangles. The dry part
+ // outside the unchanged r+.12 vegetation collar is the same affine ground +12mm.
+ const clip=(poly,tri)=>{let p=poly;for(let e=0;e<3&&p.length;e++){const a=tri[e],b=tri[(e+1)%3],side=q=>(b[0]-a[0])*(q[1]-a[1])-(b[1]-a[1])*(q[0]-a[0]),out=[];for(let i=0;i<p.length;i++){const u=p[i],v=p[(i+1)%p.length],du=side(u),dv=side(v),inside=du>=-1e-10,next=dv>=-1e-10;if(inside)out.push(u);if(inside!==next){const t=du/(du-dv);out.push([u[0]+(v[0]-u[0])*t,u[1]+(v[1]-u[1])*t]);}}p=out;}return p;};
+ const profile=(x,z)=>{const dx=x-site.x,dz=z-site.z,a=Math.atan2(dz,dx),r=Math.hypot(dx,dz),f=((a/(Math.PI*2)%1)+1)%1*segments,k=Math.floor(f),rw=radii[k]+(radii[k+1]-radii[k])*(f-k),g=heightAt(x,z);if(!Number.isFinite(g))throw Error('Finite actual mill terrain required');const crestRadius=Math.min(rw+.20,site.r+.08),t=clamp((r-rw+.22)/(crestRadius-rw+.22)),crest=site.y+.022+.012*Math.sin(3*a+.5),wet=site.y-.085+(crest-site.y+.085)*smooth(t),dry=smooth((r-crestRadius)/(site.r+.115-crestRadius));const y=r<crestRadius?wet:crest+(g+.012-crest)*dry;return{g,y:Math.max(g+.012,y),wet:1-smooth((r-rw+.2)/1.7),a};};
+ let omittedProjectedArea=0,maxBankRise=0,maxOuterGroundGap=0,minOuterGroundGap=Infinity;
+ const emit=poly=>{for(let i=1;i<poly.length-1;i++){let ps=[poly[0],poly[i],poly[i+1]].map(([gx,gz])=>[Math.fround(terrainOrigin+gx*terrainStep),Math.fround(terrainOrigin+gz*terrainStep)]),cross=(ps[1][0]-ps[0][0])*(ps[2][1]-ps[0][1])-(ps[1][1]-ps[0][1])*(ps[2][0]-ps[0][0]);if(Math.abs(cross)<1e-9){omittedProjectedArea+=Math.abs(cross)/2;continue;}if(cross<0)[ps[1],ps[2]]=[ps[2],ps[1]];const first=bank.position.length/3;for(const[x,z]of ps){const p=profile(x,z),v=.73+.08*Math.sin(3*p.a)+.045*Math.cos((x-site.x)*.9+(z-site.z)*1.3),c=[v*(1-.22*p.wet),v*(1-.15*p.wet),v*(1-.29*p.wet)];add(bank,x,p.y,z,c);maxBankRise=Math.max(maxBankRise,p.y-p.g);}bank.index.push(first,first+2,first+1);}};
+ const bankRings=[0,1,2,3,4],ring=(a,k,j)=>{const rw=radii[k],outer=millPondOuterRadius(a),r=[rw-.22,Math.min(rw+.20,site.r+.08),site.r+.12,(site.r+.12+outer)/2,outer][j];return[site.x+Math.cos(a)*r,site.z+Math.sin(a)*r];};
+ function fit(v){const q=v.map(([x,z])=>[(x-terrainOrigin)/terrainStep,(z-terrainOrigin)/terrainStep]),x0=Math.floor(Math.min(...q.map(p=>p[0]))),x1=Math.floor(Math.max(...q.map(p=>p[0]))),z0=Math.floor(Math.min(...q.map(p=>p[1]))),z1=Math.floor(Math.max(...q.map(p=>p[1])));for(let j=z0;j<=z1;j++)for(let i=x0;i<=x1;i++)for(const t of [[[i,j],[i+1,j],[i,j+1]],[[i+1,j+1],[i,j+1],[i+1,j]]])emit(clip(q,t));}
+ for(let j=0;j<4;j++)for(let k=0;k<segments;k++){const a=k/segments*Math.PI*2,b=(k+1)/segments*Math.PI*2,A=ring(a,k,j),B=ring(b,k+1,j),C=ring(b,k+1,j+1),D=ring(a,k,j+1);fit([A,B,C]);fit([A,C,D]);}
+ for(let k=0;k<=segments;k++){const a=k/segments*Math.PI*2,[x,z]=ring(a,k,4),p=profile(x,z);minOuterGroundGap=Math.min(minOuterGroundGap,p.y-p.g);maxOuterGroundGap=Math.max(maxOuterGroundGap,p.y-p.g);}
+ const pack=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,k==='index'?new Uint32Array(v):new Float32Array(v)]));
+ return{water:pack(water),bank:pack(bank),stats:{segments,waterTriangles:water.index.length/3,bankTriangles:bank.index.length/3,waterLevel:site.y,minWaterRadius:Math.min(...radii),maxWaterRadius:Math.max(...radii),maxOuterRadius:Math.max(...Array.from({length:segments},(_,k)=>millPondOuterRadius(k/segments*Math.PI*2))),maxBankRise,minOuterGroundGap,maxOuterGroundGap,oldOuterRadius:site.r*1.26,sourceFloatFootprintSamples:floatingFootprints.length,protectedWetFootprintSamples:protectedFootprints.length,originalDryFootprintSamples:floatingFootprints.length-protectedFootprints.length,canonicalGridClipped:true,omittedProjectedArea}};
 }
 function privateResources(fn){const prior=Math.random;let s=0x6d696c6c;Math.random=()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};try{return fn();}finally{Math.random=prior;}}
 export function installMillPond(G,source){
  if(installed.has(source))return installed.get(source);const T=G.THREE,W=G.world,{site,water:oldWater,bank:oldBank}=source||{},stone=W.ranchBuilderArt?.materials.stone;
  if(!oldWater?.isMesh||!oldBank?.isMesh||!oldWater.visible||!oldBank.visible||oldWater.geometry.index?.count!==84||oldBank.geometry.index?.count!==168||!stone?.map||!stone.normalMap||!stone.roughnessMap)throw Error('Original mill pond and resident shore material required');
  if(!millPondImagesReady(stone))throw Error('Resident mill bank images unavailable');
- const data=buildMillPondData(site,W.groundH),owned=[],meshes=[],oldRanges=[oldWater,oldBank].map(o=>({...o.geometry.drawRange}));let normalTexture;
+ const sourceLogs=G.scene.getObjectByName('Amberwood | floating barked logs'),floatingFootprints=millPondLogFootprints(sourceLogs,site),data=buildMillPondData(site,W.groundH,{floatingFootprints,terrainStep:W.terrainStep||1000/512}),owned=[],meshes=[],oldRanges=[oldWater,oldBank].map(o=>({...o.geometry.drawRange}));let normalTexture;
  try{privateResources(()=>{
   // Small intersecting capillary waves: integer frequencies tile exactly, with no dominant wave train.
   const size=128,pixels=new Uint8Array(size*size*4),waves=[[3,2,.035,.1],[-2,5,.023,1.7],[7,-4,.012,2.4],[-6,-9,.009,.8],[13,3,.005,4.2],[5,17,.004,3.1]];for(let y=0;y<size;y++)for(let x=0;x<size;x++){const u=x/size*Math.PI*2,v=y/size*Math.PI*2;let dx=0,dz=0;for(const[kx,kz,amplitude,phase]of waves){const slope=amplitude*Math.cos(kx*u+kz*v+phase);dx+=kx*slope;dz+=kz*slope;}const l=Math.hypot(dx,dz,1),i=(y*size+x)*4;pixels.set([Math.round((-.5*dx/l+.5)*255),Math.round((-.5*dz/l+.5)*255),Math.round((.5/l+.5)*255),255],i);}

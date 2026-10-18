@@ -33,8 +33,8 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollo
    there and a barn dropped into a thicket helps nobody. */
 import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-5-connected-landforms-1';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
-import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
-import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
+import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1-final-environment-1';
+import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';

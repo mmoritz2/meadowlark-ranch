@@ -1,0 +1,94 @@
+{
+  "parent": "95db0efe5938948952b97e4cea3d9c4503974ce5",
+  "files": [
+    {
+      "path": "assets/cold-woodland.mjs",
+      "preimageSHA256": "07524c1d24586b7755ccfcd3e040bd6700303d70c28dd9032e16147ff2f60d69",
+      "sha256": "1ca145de12a7a66e66296855939f7391ef2527affc367470dcefbd6288b8dfc0",
+      "edits": [
+        {
+          "old": "// The existing Hollowpeak",
+          "new": "import {frostpineTransitionAt} from './frostpine-transition.mjs?v=frostpine-transition-1';\n// The existing Hollowpeak",
+          "count": 1
+        },
+        {
+          "old": "export function coldPastureCover(x,z){\n return 1-smooth(.08,.60,coldWoodlandWeights(x,z).weight);\n}",
+          "new": "export function coldPastureCover(x,z){\n return coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));\n}\nfunction coldFloorCover(weights,frost){\n const original=1-smooth(.08,.60,weights.weight);\n if(frost.weight===0)return original;\n // The tree/climate source policy stays unchanged. Only existing decorative\n // floor consumers follow Frostpine's actual rendered deposit/thaw fraction.\n const other=1-smooth(.08,.60,Math.max(weights.hollow,weights.alpine));\n return mix(original,Math.min(other,frost.pasture),frost.weight);\n}",
+          "count": 1
+        },
+        {
+          "old": " const change=WINTER_COVER[kind],weight=coldWoodlandWeights(x,z).weight;\n if(!change||weight<=.08)return null;\n const pasture=coldPastureCover(x,z),winter=1-pasture;\n return {weight,pasture,density:kind==='petal'?0:change.floor+(1-change.floor)*pasture,\n  size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};",
+          "new": " const change=WINTER_COVER[kind],weights=coldWoodlandWeights(x,z),frost=frostpineTransitionAt(x,z);\n const weight=Math.max(weights.weight,frost.weight);\n if(!change||weight<=.08)return null;\n const pasture=coldFloorCover(weights,frost),winter=1-pasture;\n const originalDensity=kind==='petal'?0:change.floor+(1-change.floor)*pasture;\n // Full deposits carry no dry fern/card islands. Connected bare heath keeps\n // short dormant scrub, with original proposed sites and no additional draws.\n const exposed=1-smooth(.38,.82,frost.deposit);\n const density=originalDensity*mix(1,exposed,frost.weight);\n return {weight,pasture,density,\n  size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};",
+          "count": 1
+        },
+        {
+          "old": "./frostpine-transition.mjs?v=frostpine-transition-1",
+          "new": "./frostpine-transition.mjs?v=frostpine-transition-1-final-environment-1",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "assets/terrain-realism.js",
+      "preimageSHA256": "2c8426f571935d4462ebb87ec16d7cfcc0c63f45da70989014f6d1574a5710d2",
+      "sha256": "06fc348ba1391062257e85ca643d53ea826f269b0c1ec49b2daed1638c8ca8e6",
+      "edits": [
+        {
+          "old": "import {normalizeGroundRouteEntries}",
+          "new": "import {FROSTPINE_TRANSITION_GLSL,FROSTPINE_TRANSITION_PROFILE} from './frostpine-transition.mjs?v=frostpine-transition-1';\nimport {normalizeGroundRouteEntries}",
+          "count": 1
+        },
+        {
+          "old": "+'-'+HOLLOWPEAK_SNOW_PROFILE;",
+          "new": "+'-'+HOLLOWPEAK_SNOW_PROFILE+'-'+FROSTPINE_TRANSITION_PROFILE;",
+          "count": 1
+        },
+        {
+          "old": "sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+`",
+          "new": "sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+FROSTPINE_TRANSITION_GLSL+`",
+          "count": 1
+        },
+        {
+          "old": "      float quarters = amber+marsh+tundra+ochre;",
+          "new": "      vec3 frostFloor=vec3(0.0,1.0,0.0);\n      #ifndef OUTER_LANDSCAPE\n        frostFloor=frostpineTransition(p);\n      #endif\n      float frostDeposit=frostFloor.x*(1.0-wear*.72);\n      float frostPowderAmount=mix(frostDeposit,.30,wear*.65);\n      float quarters = amber+marsh+tundra+ochre;",
+          "count": 1
+        },
+        {
+          "old": "coldPowder=snow*(1.0-tundra*.88)+tundra*.88*(.66-.46*smoothstep(.06,.36,grade+rough*.3));",
+          "new": "coldPowder=snow*(1.0-tundra*.88)+tundra*.88*(.66-.46*smoothstep(.06,.36,grade+rough*.3));\n        coldPowder=mix(coldPowder,frostPowderAmount,frostFloor.z);",
+          "count": 1
+        },
+        {
+          "old": "if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003) earth=",
+          "new": "if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003||frostFloor.z>0.003) earth=",
+          "count": 1
+        },
+        {
+          "old": "if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){",
+          "new": "if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003||frostFloor.z>0.003){",
+          "count": 1
+        },
+        {
+          "old": "if(snow>0.003||tundra>0.003){",
+          "new": "if(snow>0.003||tundra>0.003||frostFloor.z>0.003){",
+          "count": 1
+        },
+        {
+          "old": "      soilWeight*=soilReady;",
+          "new": "      #ifndef OUTER_LANDSCAPE\n        if(frostFloor.z>.003){\n          // Connected winter heath replaces the broad radial white blanket.\n          // Photographed litter/mineral ground stays visible in wind-scoured\n          // corridors; unequal snow tongues retain the same physical grain.\n          float exposedStone=smoothstep(.10,.42,grade+rough*.20)*.44+.14;\n          vec3 frostHeath=mix(earth*vec3(.91,.96,.91),rock*vec3(.89,.95,1.00),exposedStone);\n          frostHeath*=.92+.14*stand;\n          vec3 frostPowder=snowTex*vec3(.90,.95,1.00)*(.94+.10*macro);\n          vec3 frostSurface=mix(frostHeath,frostPowder,frostDeposit);\n          // Keep the already authored packed core and soft route shoulder.\n          vec3 frostPackedSurface=mix(earth*vec3(.83,.88,.86),frostPowder*.85,.30);\n          frostSurface=mix(frostSurface,frostPackedSurface,wear*.65);\n          surface=mix(surface,frostSurface,frostFloor.z);\n          soilWeight*=1.0-frostFloor.z*frostDeposit;\n        }\n      #endif\n      soilWeight*=soilReady;",
+          "count": 1
+        },
+        {
+          "old": "./frostpine-transition.mjs?v=frostpine-transition-1",
+          "new": "./frostpine-transition.mjs?v=frostpine-transition-1-final-environment-1",
+          "count": 1
+        },
+        {
+          "old": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1",
+          "new": "./pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1';
+import {createGrazedSwardGeometry,createLowGrazedSwardGeometry,selectsGrazedSward,GRAZED_SWARD} from './grazed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {pastoralSourceRows,respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
+import {pastoralSourceRows,respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from './grass-families.mjs?v=grass-ribbon-5-fine-pasture-1';
 // Three original meadow forms share stable source roots and the existing grass budget.
 // Resident CC0 Poly Haven grass_medium_02 specimens; source material/maps remain owned by ranch-world-details.

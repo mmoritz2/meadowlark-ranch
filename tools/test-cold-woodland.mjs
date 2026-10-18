@@ -1,3 +1,4 @@
+import {frostpineTransitionAt} from '../assets/frostpine-transition.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -92,15 +93,16 @@ test('winter turf tapers continuously within existing support and leaves other b
  for(let z=-470;z<-35;z+=2)for(let x=-470;x<35;x+=2){
   const weight=coldWoodlandWeights(x,z).weight,cover=coldPastureCover(x,z);
   assert.ok(Number.isFinite(cover)&&cover>=0&&cover<=1);
-  if(weight<=.08)assert.equal(cover,1);
-  if(weight>=.60)assert.equal(cover,0);
+  const frost=frostpineTransitionAt(x,z);
+  // The unchanged climate tree field keeps its original floor rule outside the new Frost surface.
+  if(frost.weight===0){if(weight<=.08)assert.equal(cover,1);if(weight>=.60)assert.equal(cover,0);}
   // Combined smoothsteps have a bounded derivative, so no hard pasture seam.
   assert.ok(Math.abs(cover-coldPastureCover(x+.1,z+.1))<.016);
  }
 });
 
 test('winter cores remove summer flowers/turf while preserving a sparse low evergreen floor',()=>{
- for(const [x,z] of [[-160,-210],[-300,-320],[-150,-333]]){
+ for(const [x,z] of [[-160,-210],[-150,-333]]){
   for(const kind of ['tuft','petal','brack'])assert.equal(coldCoverProfile(x,z,kind).density,0);
   for(const kind of ['reed','scrub','juni','sage']){
    const p=coldCoverProfile(x,z,kind);assert.ok(p.density>0&&p.density<=.25);assert.ok(p.size<=.67);
@@ -109,7 +111,7 @@ test('winter cores remove summer flowers/turf while preserving a sparse low ever
  }
  let margin=0;for(let z=-470;z<-35;z+=5)for(let x=-470;x<35;x+=5){
   const w=coldWoodlandWeights(x,z).weight;
-  if(w>.08&&w<.6){margin++;assert.equal(coldCoverProfile(x,z,'petal').density,0);
+  if(w>.08&&w<.6&&frostpineTransitionAt(x,z).weight===0){margin++;assert.equal(coldCoverProfile(x,z,'petal').density,0);
    const p=coldCoverProfile(x,z,'tuft');assert.ok(p.density>0&&p.density<1&&p.size<1&&p.tintAmount>0);
   }
  }
@@ -169,7 +171,7 @@ test('actual winter bank pass preserves outside bytes, removes summer cores and 
    assert.ok(before.has(key(m)),'Postpass moved a trunk/plant coordinate');after.set(key(m),{matrix:m,color:c});
    const old=before.get(key(m)),weight=coldWoodlandWeights(m[12],m[14]).weight;
    if(kind==='petal')assert.ok(weight<=.08,'Summer flowers survive winter support');
-   if(['tuft','brack'].includes(kind))assert.ok(weight<.6,'Summer turf survives a snowy core');
+   if(['tuft','brack'].includes(kind))assert.ok(weight<.6||frostpineTransitionAt(m[12],m[14]).weight>0&&frostpineTransitionAt(m[12],m[14]).deposit<.82,'Summer turf survives a full snow deposit');
    if(kind==='scrub'&&weight>.08&&weight<.6){
     retainedMarginScrub++;const profile=coldCoverProfile(m[12],m[14],kind),ground=groundH(m[12],m[14]);
     assert.ok(Math.abs(m[13]-(ground+(old.matrix[13]-ground)*profile.size))<.000002,'Shortened scrub root floated');
@@ -181,7 +183,7 @@ test('actual winter bank pass preserves outside bytes, removes summer cores and 
     assert.notDeepEqual(c,old.color,'Winter margin was not desaturated');
    }
   }
-  for(const [k,old] of before)if(kind==='trunk'||coldWoodlandWeights(old.matrix[12],old.matrix[14]).weight<=.08){
+  for(const [k,old] of before)if(kind==='trunk'||coldWoodlandWeights(old.matrix[12],old.matrix[14]).weight<=.08&&frostpineTransitionAt(old.matrix[12],old.matrix[14]).weight===0){
    assert.ok(after.has(k),'Outside plant disappeared');assert.deepEqual(after.get(k),old,'Outside matrix/colour bytes changed');
   }
  }

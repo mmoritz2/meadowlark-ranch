@@ -1,3 +1,4 @@
+import {frostpineTransitionAt} from './frostpine-transition.mjs?v=frostpine-transition-1-final-environment-1';
 // The existing Hollowpeak and Frostpine climate envelopes, sampled without RNG.
 // Site coordinates and collision records belong to the original world planting.
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -44,7 +45,15 @@ export function coldWoodlandProfile({x,z,height,source,elevation=0,grade=0}){
 // Pasture stops under continuous winter cover. The compact thaw margin retains
 // gradually shorter, sparser dry blades; ordinary meadows remain byte-exact.
 export function coldPastureCover(x,z){
- return 1-smooth(.08,.60,coldWoodlandWeights(x,z).weight);
+ return coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));
+}
+function coldFloorCover(weights,frost){
+ const original=1-smooth(.08,.60,weights.weight);
+ if(frost.weight===0)return original;
+ // The tree/climate source policy stays unchanged. Only existing decorative
+ // floor consumers follow Frostpine's actual rendered deposit/thaw fraction.
+ const other=1-smooth(.08,.60,Math.max(weights.hollow,weights.alpine));
+ return mix(original,Math.min(other,frost.pasture),frost.weight);
 }
 const WINTER_COVER=Object.freeze({
  tuft:{floor:0,size:.50,tint:'#c1b99b',amount:.88},
@@ -56,9 +65,15 @@ const WINTER_COVER=Object.freeze({
  sage:{floor:.16,size:.56,tint:'#c1bca7',amount:.82},
 });
 export function coldCoverProfile(x,z,kind){
- const change=WINTER_COVER[kind],weight=coldWoodlandWeights(x,z).weight;
+ const change=WINTER_COVER[kind],weights=coldWoodlandWeights(x,z),frost=frostpineTransitionAt(x,z);
+ const weight=Math.max(weights.weight,frost.weight);
  if(!change||weight<=.08)return null;
- const pasture=coldPastureCover(x,z),winter=1-pasture;
- return {weight,pasture,density:kind==='petal'?0:change.floor+(1-change.floor)*pasture,
+ const pasture=coldFloorCover(weights,frost),winter=1-pasture;
+ const originalDensity=kind==='petal'?0:change.floor+(1-change.floor)*pasture;
+ // Full deposits carry no dry fern/card islands. Connected bare heath keeps
+ // short dormant scrub, with original proposed sites and no additional draws.
+ const exposed=1-smooth(.38,.82,frost.deposit);
+ const density=originalDensity*mix(1,exposed,frost.weight);
+ return {weight,pasture,density,
   size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};
 }

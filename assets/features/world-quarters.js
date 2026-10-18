@@ -1,6 +1,6 @@
-import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2';
+import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2-final-environment-1';
 import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';
-import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1';
+import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1-final-environment-1';
 import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
    Amberwood, Willowmere, Frostpine and Ochre Reach opened yesterday and received a biome colour

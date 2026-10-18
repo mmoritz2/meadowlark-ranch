@@ -1,0 +1,27 @@
+{
+  "profile": "current-canonical-amberwood-source-inputs-1",
+  "site": {
+    "x": 293.8216743309888,
+    "z": -282.6225087391821,
+    "r": 12.5,
+    "y": -0.2964564410541272
+  },
+  "siteAuthority": "Exact prior accepted mill pond native-site values retained in published tools/test-mill-pond.mjs; final current native must bind actual P.millPondSource.site. No new site/level/physical source edits.",
+  "canonical": {
+    "source": "whole-world-final-audit-v1/current-native-v1/canonical-terrain-heights.f32",
+    "fullSHA256": "32ccaef2d49db809eb0e84034987e30ba87f6e8242ce02d53e008ac5136a2294",
+    "tileSHA256": "9c542bd9261ee5a2c74e04b225ab41591e623100aeb42f4d9786d41dd4fcd183",
+    "ix": 396,
+    "iz": 101,
+    "nx": 23,
+    "nz": 23,
+    "origin": [
+      273.4375,
+      -302.734375
+    ],
+    "step": 1.953125,
+    "type": "Float32Array",
+    "topology": "fx+fz<=1 A(top-left),D(top-right),B(bottom-left); else C,B,D"
+  },
+  "physicalQualification": "Art-only mesh upgrade; all existing physical ground/pondContains/water/riding consumers preserved. No Amber swim, reflection plane or bank support registration added."
+}

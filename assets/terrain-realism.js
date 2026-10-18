@@ -1,6 +1,7 @@
+import {FROSTPINE_TRANSITION_GLSL,FROSTPINE_TRANSITION_PROFILE} from './frostpine-transition.mjs?v=frostpine-transition-1-final-environment-1';
 import {normalizeGroundRouteEntries} from './ground-route-entries.mjs?v=route-ground-2';
 import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
-import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1';
+import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
 import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-4';
@@ -138,7 +139,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE+'-'+HOLLOWPEAK_SNOW_PROFILE;
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE+'-'+HOLLOWPEAK_SNOW_PROFILE+'-'+FROSTPINE_TRANSITION_PROFILE;
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0],hollowSnow:[-1]};
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
@@ -153,7 +154,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
       terrainChalkRelief = chalkRelief;
       terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;
       terrainNormal = normalize(mat3(modelMatrix) * normal);`);
-    sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+`varying float terrainHollowSnow; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
+    sh.fragmentShader = HOLLOWPEAK_SNOW_GLSL+FROSTPINE_TRANSITION_GLSL+`varying float terrainHollowSnow; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
       uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
       uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
       uniform sampler2D meadowDetail, stoneDetail, litterDetail;
@@ -355,6 +356,12 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         bank*=1.0-extend;wet*=1.0-extend;
         canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*(1.0-arid)*.68);
       #endif
+      vec3 frostFloor=vec3(0.0,1.0,0.0);
+      #ifndef OUTER_LANDSCAPE
+        frostFloor=frostpineTransition(p);
+      #endif
+      float frostDeposit=frostFloor.x*(1.0-wear*.72);
+      float frostPowderAmount=mix(frostDeposit,.30,wear*.65);
       float quarters = amber+marsh+tundra+ochre;
       float coldPowder=snow;
       #ifndef OUTER_LANDSCAPE
@@ -362,6 +369,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         // powder share replaces grass relief in proportion to that real mix;
         // steep, scoured ground keeps the mineral portion instead of full snow.
         coldPowder=snow*(1.0-tundra*.88)+tundra*.88*(.66-.46*smoothstep(.06,.36,grade+rough*.3));
+        coldPowder=mix(coldPowder,frostPowderAmount,frostFloor.z);
       #endif
 
       /* Fifteen texture fetches a pixel, everywhere, was this shader's real cost: forest floor,
@@ -381,8 +389,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         snowUV=mat2(.91,-.414,.414,.91)*p/${COLD_SNOW_SURFACE.textureMetres}+vec2(edgeLo-.5,edgeHi-.5)*.34;
       #endif
       vec3 earth=vec3(0.0), rock=vec3(0.0), sand=vec3(0.0), snowTex=vec3(0.0);
-      if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003) earth=texture2D(terrainForest,earthUV).rgb;
-      if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){
+      if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003||frostFloor.z>0.003) earth=texture2D(terrainForest,earthUV).rgb;
+      if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003||frostFloor.z>0.003){
         #ifdef CHEAP_GROUND
           rock=texture2D(terrainRock,rockUVy).rgb;
         #else
@@ -402,7 +410,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
       // and two on low. Independent sample orientations avoid a common tile axis.
       vec2 snowCell=floor(snowUV*.31),snowF=fract(snowUV*.31);
       snowF=snowF*snowF*(3.0-2.0*snowF);
-      if(snow>0.003||tundra>0.003){
+      if(snow>0.003||tundra>0.003||frostFloor.z>0.003){
         #ifdef CHEAP_GROUND
           #ifdef OUTER_LANDSCAPE
             snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,snowUV*.713+vec2(.37,.61)).rgb,.48);
@@ -535,6 +543,23 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           soilWeight=mix(soilWeight,1.0-stone,ochre*.94);
         }
       }
+      #ifndef OUTER_LANDSCAPE
+        if(frostFloor.z>.003){
+          // Connected winter heath replaces the broad radial white blanket.
+          // Photographed litter/mineral ground stays visible in wind-scoured
+          // corridors; unequal snow tongues retain the same physical grain.
+          float exposedStone=smoothstep(.10,.42,grade+rough*.20)*.44+.14;
+          vec3 frostHeath=mix(earth*vec3(.91,.96,.91),rock*vec3(.89,.95,1.00),exposedStone);
+          frostHeath*=.92+.14*stand;
+          vec3 frostPowder=snowTex*vec3(.90,.95,1.00)*(.94+.10*macro);
+          vec3 frostSurface=mix(frostHeath,frostPowder,frostDeposit);
+          // Keep the already authored packed core and soft route shoulder.
+          vec3 frostPackedSurface=mix(earth*vec3(.83,.88,.86),frostPowder*.85,.30);
+          frostSurface=mix(frostSurface,frostPackedSurface,wear*.65);
+          surface=mix(surface,frostSurface,frostFloor.z);
+          soilWeight*=1.0-frostFloor.z*frostDeposit;
+        }
+      #endif
       soilWeight*=soilReady;
       vec2 granularUV=soilUV;
       // One lossless RGBA texture packs normal XY, roughness, and occlusion.
