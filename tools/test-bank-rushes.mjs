@@ -1,10 +1,12 @@
+// ribbon-falls-2: restore only exact parent Water for this historical source contract.
+import{normalizeRibbonFallsSource as ribbonParent}from'./ribbon-falls-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {createBankRushGeometry,BANK_RUSH_PROFILE} from '../assets/bank-rushes.mjs';
 const read=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8');
-const old=read('./fixtures/bank-rushes-7908e80/world-water.js'),next=read('../assets/features/world-water.js');
+const old=read('./fixtures/bank-rushes-7908e80/world-water.js'),next=ribbonParent(read('../assets/features/world-water.js'),'assets/features/world-water.js');
 const changes=JSON.parse(read('./fixtures/bank-rushes-7908e80/declared-source-changes.json'));
 const native=JSON.parse(read('./fixtures/bank-rushes-7908e80/native-bank-reeds.json')).owner;
 const approvedOwners=JSON.parse(read('./fixtures/river-combined-source-7908e80.json'));

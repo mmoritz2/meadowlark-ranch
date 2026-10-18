@@ -1,0 +1,38 @@
+{
+  "assets/features/world-water.js": {
+    "beforeSHA256": "54d6ba21bcd0f95c04df2dd18b4e0c48ef8233034872e79d1eb0917733f1d27f",
+    "afterSHA256": "9be3d5f7d9882c2d656c162339263502cea4ff5b3afd01d134020cc0cb6b7f2f",
+    "changes": [
+      {
+        "before": "import {installFerryBankApproach}",
+        "after": "import {remodelRibbonFallsCliff} from '../ribbon-falls-landform.mjs?v=ribbon-falls-2';\nimport {installFerryBankApproach}",
+        "occurrences": 1
+      },
+      {
+        "before": "cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;",
+        "after": "cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;\n    P.ribbonRocks=remodelRibbonFallsCliff({THREE,cliff,heightAt:groundH,x:FALL_X,lipZ:LIP_Z,shelfZ:SHELF_Z,toeZ:TOE_Z,lipY,shelfY});",
+        "occurrences": 1
+      },
+      {
+        "before": "   for(let i=0;i<20;i++){                             // rock either side of the chute",
+        "after": "   const oldRockStarts=boulderRows.map(rows=>rows.length);\n   for(let i=0;i<20;i++){                             // retain original layout draws, replace only these detached blocks",
+        "occurrences": 1
+      },
+      {
+        "before": "    boulder(bx,groundH(bx,z)-0.08,z,rr(0.35,0.95),rr(0.6,1.05));\n   }",
+        "after": "    boulder(bx,groundH(bx,z)-0.08,z,rr(0.35,0.95),rr(0.6,1.05));\n   }\n   P.ribbonRocks.replacedLooseStones=boulderRows.reduce((n,rows,k)=>n+rows.length-oldRockStarts[k],0);\n   boulderRows.forEach((rows,k)=>{rows.length=oldRockStarts[k];});",
+        "occurrences": 1
+      },
+      {
+        "before": "  P.excludesPlants=(x,z)=>z>64.5&&z<78&&Math.abs(x-FALL_X)<1.9+Math.max(0,(z-SHELF_Z)/(TOE_Z-SHELF_Z))*2.5;",
+        "after": "  P.excludesPlants=(x,z)=>Number.isFinite(P.ribbonRocks.supportAt(x,z))||z>64.5&&z<78&&Math.abs(x-FALL_X)<1.9+Math.max(0,(z-SHELF_Z)/(TOE_Z-SHELF_Z))*2.5;",
+        "occurrences": 1
+      },
+      {
+        "before": " installFerryBankApproach(G);\n P.ok=true;",
+        "after": " installFerryBankApproach(G);\n // Register frozen faces after all original water, layout and approach captures.\n // Cliff faces block bodies; only the continuous low bed carries ground support.\n W.solidWorld.registerSurface(P.ribbonRocks.mesh,P.ribbonRocks.bodyGeometry);\n W.groundSurfaces.push(P.ribbonRocks.supportAt);\n P.ok=true;",
+        "occurrences": 1
+      }
+    ]
+  }
+}

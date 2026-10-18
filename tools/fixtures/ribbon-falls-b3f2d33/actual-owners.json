@@ -1,0 +1,1063 @@
+{
+  "baselineCommit": "b3f2d335fb76ffba0217773fe9bc28957504fa75",
+  "nativeOwnersSHA256": "4c22de1ef55f9d8fce374415c599196dab8bf577fc9aa0d9b0b6b2b32f73325b",
+  "waterRows": [
+    {
+      "role": "fallSheet",
+      "name": "Water | Ribbon Falls liquid veils",
+      "object": "8f38ccdb-ae32-474a-8140-f514b882ef4a",
+      "geometry": "9bb9126a-4a88-4235-adc1-80a6b4166fdb",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": null,
+      "triangles": 4608,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          340.3270568847656,
+          3.1015615463256836,
+          66.05000305175781
+        ],
+        "max": [
+          343.6729431152344,
+          7.398674011230469,
+          67.9000015258789
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 35100,
+          "sha256": "aa31be62b3e19e91672abcedf2864da88e81cda91a1353ab8daed0f05f51e287"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 23400,
+          "sha256": "ac36111b0e1d20ed3d9b4502b921bde06270e7d251a56d6dc9ecd4d19828bf6f"
+        },
+        "cascadePhase": {
+          "type": "Float32Array",
+          "itemSize": 1,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 11700,
+          "sha256": "ca908006c1fd7ff6256ccb6165aa33e7102aa310a4eebe957c4fdda5b7428d83"
+        },
+        "cascadeSpeed": {
+          "type": "Float32Array",
+          "itemSize": 1,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 11700,
+          "sha256": "fc906fb23c977a262f0bf59726be41847f437b561090a1dcbf73db79976bd80f"
+        },
+        "cascadeAcross": {
+          "type": "Float32Array",
+          "itemSize": 1,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 11700,
+          "sha256": "13a16826b30dda9150052d1fff3ef8d9a7dd67379b4b80bf878d8d7957ff4288"
+        },
+        "cascadeMotion": {
+          "type": "Float32Array",
+          "itemSize": 1,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 11700,
+          "sha256": "aa3468212ce8f06001887e553d02e6de1b07a7a57b1506473584130b94851c3c"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 2925,
+          "normalized": false,
+          "bytes": 35100,
+          "sha256": "dddcbe9f92588123f9b4d0d5160c053b3629398138582f07d05622008a12b7ca"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 13824,
+        "normalized": false,
+        "bytes": 27648,
+        "sha256": "d1ab10a9cf637360b0832936ac462c60628cbe1b9667fa3b09df89689f22adb0"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "97ef9ae6-16ae-4b13-89f4-f242605aae51",
+          "name": "Water | flowing waterfall",
+          "type": "MeshPhysicalMaterial",
+          "color": [
+            0.43415363616478553,
+            0.5840784178830671,
+            0.5840784178830671
+          ],
+          "opacity": 0.88,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "flowing-waterfall-joining-veils-v5-photo",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "chute",
+      "name": "Water | falls chute",
+      "object": "37aa3cde-36e8-4d50-a9a8-c80e8039ba5b",
+      "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": null,
+      "triangles": 384,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          338.1499938964844,
+          -2.1395952701568604,
+          67.9000015258789
+        ],
+        "max": [
+          345.8500061035156,
+          3.4095356464385986,
+          76
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 225,
+          "normalized": false,
+          "bytes": 2700,
+          "sha256": "2ea4e4742321782db14e93d28dc379d0598fd76e7d0ec3deeae0efdb4a57efc2"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 225,
+          "normalized": false,
+          "bytes": 1800,
+          "sha256": "6c37a36eb28ad4bf5d0be2976c4be5dd8b3ae19ad1419f09f148cdab1207e870"
+        },
+        "color": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 225,
+          "normalized": false,
+          "bytes": 2700,
+          "sha256": "64b1560d5ac9dbc0b29859ecdfe7b19618925ac7599fc9caaedd970abaac8058"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 225,
+          "normalized": false,
+          "bytes": 2700,
+          "sha256": "60a7582c6924c0d987935348e2b579fcf91281f3f818fdcd7cd3daf38e420090"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 1152,
+        "normalized": false,
+        "bytes": 2304,
+        "sha256": "0a5f16cd4067e2d3563c8d65de312f4cdd6eeb1faa37ded08fb790cc70f53316"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "97ef9ae6-16ae-4b13-89f4-f242605aae51",
+          "name": "Water | flowing waterfall",
+          "type": "MeshPhysicalMaterial",
+          "color": [
+            0.43415363616478553,
+            0.5840784178830671,
+            0.5840784178830671
+          ],
+          "opacity": 0.88,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "flowing-waterfall-joining-veils-v5-photo",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "plunge",
+      "name": "Water | soft impact foam",
+      "object": "134254a0-6246-4e66-a5f8-0ea78c3420f1",
+      "geometry": "df50a391-be4e-4399-910d-31ee48c9e326",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        2.220446049250313e-16,
+        -1,
+        0,
+        0,
+        1,
+        2.220446049250313e-16,
+        0,
+        342,
+        -2.488,
+        75.4,
+        1
+      ],
+      "visible": true,
+      "count": null,
+      "triangles": 64,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          339.64690136909485,
+          -2.4880000000000004,
+          73.35400547981263
+        ],
+        "max": [
+          344.7030186653137,
+          -2.4879999999999995,
+          77.44156064987183
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 66,
+          "normalized": false,
+          "bytes": 792,
+          "sha256": "ddfa1e39048b997e59b2c53509ce7aea3fd22274394469c25b457b2f1ee8eb60"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 66,
+          "normalized": false,
+          "bytes": 792,
+          "sha256": "1f970800db552c8c624c5b58a31b9707927e7f6c6922faf7095ca81df6bf8cdc"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 66,
+          "normalized": false,
+          "bytes": 528,
+          "sha256": "0b156ed948253cc9456fe268cb091de662caed08d4f95420bad60631452eb70c"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 192,
+        "normalized": false,
+        "bytes": 384,
+        "sha256": "32bd32069e0c92c5429ebddd451a6dea9af34efc86b3c3bcb975d5838ee9b3d6"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "eb4466b5-5a7b-42ed-bd78-3810444c5060",
+          "name": "Water | aerated impact foam",
+          "type": "MeshStandardMaterial",
+          "color": [
+            0.7156935005005721,
+            0.7912979403281551,
+            0.76052450467022
+          ],
+          "opacity": 0.74,
+          "transparent": true,
+          "side": 0,
+          "depthWrite": false,
+          "cache": "aerated-impact-v3-natural-footprint",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "upperEffects",
+      "name": "Water | falling droplets",
+      "object": "7f7dcc57-de52-426d-b102-69ae68023932",
+      "geometry": "d7c2023e-56e8-4c83-8969-683ca0ce9c3c",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": 40,
+      "triangles": 2,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.5,
+          0
+        ],
+        "max": [
+          0.5,
+          0.5,
+          0
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "790d89949ccfb2fa2c3a7bb089a2ee773bc38e58b93ddacf647fa0896b103952"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "796f0b940d4268e7d9ccbd67f52dca773c768e372dae64d3c1b1caf59e6c8247"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 4,
+          "normalized": false,
+          "bytes": 32,
+          "sha256": "f3a0a46301c6859e5b64beadee234c4eeec1dec8c4735dc7bf40ea09e762e189"
+        },
+        "fxSeed": {
+          "type": "Float32Array",
+          "itemSize": 4,
+          "count": 40,
+          "normalized": false,
+          "bytes": 640,
+          "sha256": "d81b1b8543271eab51569f6ff2544b0d32b081faba6ae0646cab288d3131ce94"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 6,
+        "normalized": false,
+        "bytes": 12,
+        "sha256": "e6681333c21d3bedc5c5d4ea4503e8acc5b95e8d8e2aabffd97d12425a145443"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "8b9772f8-7a6d-4e4f-9d84-0c3464a356d1",
+          "name": "Water | falling droplets",
+          "type": "MeshBasicMaterial",
+          "color": [
+            0.39591669343837976,
+            0.6040600215437447,
+            0.6766785673766856
+          ],
+          "opacity": 0.34,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "waterfall-particles-gravity-v2-0",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "upperEffects",
+      "name": "Water | impact spray",
+      "object": "db5e1502-8a6c-4c1e-add8-a2d9f4c4ad4e",
+      "geometry": "b3e88abc-827c-48e1-8578-04beac6f1163",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": 64,
+      "triangles": 2,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0,
+          0,
+          0
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "790d89949ccfb2fa2c3a7bb089a2ee773bc38e58b93ddacf647fa0896b103952"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "796f0b940d4268e7d9ccbd67f52dca773c768e372dae64d3c1b1caf59e6c8247"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 4,
+          "normalized": false,
+          "bytes": 32,
+          "sha256": "f3a0a46301c6859e5b64beadee234c4eeec1dec8c4735dc7bf40ea09e762e189"
+        },
+        "fxSeed": {
+          "type": "Float32Array",
+          "itemSize": 4,
+          "count": 64,
+          "normalized": false,
+          "bytes": 1024,
+          "sha256": "777caa145b8dba314c3dc3935fe257182e7cee87e7da58700fbbd9257d5307dd"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 6,
+        "normalized": false,
+        "bytes": 12,
+        "sha256": "e6681333c21d3bedc5c5d4ea4503e8acc5b95e8d8e2aabffd97d12425a145443"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "278db51e-660e-4dea-99b8-a44430af6361",
+          "name": "Water | impact spray",
+          "type": "MeshBasicMaterial",
+          "color": [
+            0.39591669343837976,
+            0.6040600215437447,
+            0.6766785673766856
+          ],
+          "opacity": 0.38,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "waterfall-particles-gravity-v2-1",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "upperEffects",
+      "name": "Water | rising water mist",
+      "object": "772be4f4-76f8-4ed4-a9fb-cf3bc0f384b1",
+      "geometry": "cf91a8b3-ee3a-47c3-812b-7f0bf8f4ebbc",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": 18,
+      "triangles": 2,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.5,
+          0
+        ],
+        "max": [
+          0.5,
+          0.5,
+          0
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "790d89949ccfb2fa2c3a7bb089a2ee773bc38e58b93ddacf647fa0896b103952"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "796f0b940d4268e7d9ccbd67f52dca773c768e372dae64d3c1b1caf59e6c8247"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 4,
+          "normalized": false,
+          "bytes": 32,
+          "sha256": "f3a0a46301c6859e5b64beadee234c4eeec1dec8c4735dc7bf40ea09e762e189"
+        },
+        "fxSeed": {
+          "type": "Float32Array",
+          "itemSize": 4,
+          "count": 18,
+          "normalized": false,
+          "bytes": 288,
+          "sha256": "ceac5f932947281b0761f2c082be9deb550adb88ff7ec706b1c978c9763e6472"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 6,
+        "normalized": false,
+        "bytes": 12,
+        "sha256": "e6681333c21d3bedc5c5d4ea4503e8acc5b95e8d8e2aabffd97d12425a145443"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "039a56c4-925d-46c0-9545-b5103cc35c21",
+          "name": "Water | rising water mist",
+          "type": "MeshBasicMaterial",
+          "color": [
+            0.39591669343837976,
+            0.6040600215437447,
+            0.6766785673766856
+          ],
+          "opacity": 0.085,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "waterfall-particles-gravity-v2-2",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "toeEffects",
+      "name": "Water | impact spray",
+      "object": "c79dd3f6-86a6-437e-b932-77c1509c2975",
+      "geometry": "1ffa7a28-fe66-46b7-91c8-62c988cb4562",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": 64,
+      "triangles": 2,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0,
+          0,
+          0
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "790d89949ccfb2fa2c3a7bb089a2ee773bc38e58b93ddacf647fa0896b103952"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "796f0b940d4268e7d9ccbd67f52dca773c768e372dae64d3c1b1caf59e6c8247"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 4,
+          "normalized": false,
+          "bytes": 32,
+          "sha256": "f3a0a46301c6859e5b64beadee234c4eeec1dec8c4735dc7bf40ea09e762e189"
+        },
+        "fxSeed": {
+          "type": "Float32Array",
+          "itemSize": 4,
+          "count": 64,
+          "normalized": false,
+          "bytes": 1024,
+          "sha256": "777caa145b8dba314c3dc3935fe257182e7cee87e7da58700fbbd9257d5307dd"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 6,
+        "normalized": false,
+        "bytes": 12,
+        "sha256": "e6681333c21d3bedc5c5d4ea4503e8acc5b95e8d8e2aabffd97d12425a145443"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "53df73e9-a2c2-4011-a5c7-706fcc3aeb53",
+          "name": "Water | impact spray",
+          "type": "MeshBasicMaterial",
+          "color": [
+            0.39591669343837976,
+            0.6040600215437447,
+            0.6766785673766856
+          ],
+          "opacity": 0.38,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "waterfall-particles-gravity-v2-1",
+          "maps": {}
+        }
+      ]
+    },
+    {
+      "role": "toeEffects",
+      "name": "Water | rising water mist",
+      "object": "a3b8972e-b2ab-4815-b5fd-b3af5cd615a0",
+      "geometry": "7b29bd07-aa76-4d0c-8d1c-399514f4e04e",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "visible": true,
+      "count": 18,
+      "triangles": 2,
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.5,
+          0
+        ],
+        "max": [
+          0.5,
+          0.5,
+          0
+        ]
+      },
+      "attributes": {
+        "position": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "790d89949ccfb2fa2c3a7bb089a2ee773bc38e58b93ddacf647fa0896b103952"
+        },
+        "normal": {
+          "type": "Float32Array",
+          "itemSize": 3,
+          "count": 4,
+          "normalized": false,
+          "bytes": 48,
+          "sha256": "796f0b940d4268e7d9ccbd67f52dca773c768e372dae64d3c1b1caf59e6c8247"
+        },
+        "uv": {
+          "type": "Float32Array",
+          "itemSize": 2,
+          "count": 4,
+          "normalized": false,
+          "bytes": 32,
+          "sha256": "f3a0a46301c6859e5b64beadee234c4eeec1dec8c4735dc7bf40ea09e762e189"
+        },
+        "fxSeed": {
+          "type": "Float32Array",
+          "itemSize": 4,
+          "count": 18,
+          "normalized": false,
+          "bytes": 288,
+          "sha256": "ceac5f932947281b0761f2c082be9deb550adb88ff7ec706b1c978c9763e6472"
+        }
+      },
+      "index": {
+        "type": "Uint16Array",
+        "itemSize": 1,
+        "count": 6,
+        "normalized": false,
+        "bytes": 12,
+        "sha256": "e6681333c21d3bedc5c5d4ea4503e8acc5b95e8d8e2aabffd97d12425a145443"
+      },
+      "finite": true,
+      "materials": [
+        {
+          "uuid": "6fb628b5-0ed7-4079-a1d9-407918868f6f",
+          "name": "Water | rising water mist",
+          "type": "MeshBasicMaterial",
+          "color": [
+            0.39591669343837976,
+            0.6040600215437447,
+            0.6766785673766856
+          ],
+          "opacity": 0.085,
+          "transparent": true,
+          "side": 2,
+          "depthWrite": false,
+          "cache": "waterfall-particles-gravity-v2-2",
+          "maps": {}
+        }
+      ]
+    }
+  ],
+  "localColliders": [
+    {
+      "x": 356.39061468716255,
+      "z": 50.26181976423909,
+      "r": 0.8,
+      "height": 9.845047713583336
+    },
+    {
+      "x": 347.8182332653776,
+      "z": 45.82310736838185,
+      "r": 0.55,
+      "height": 7.866447800956667
+    },
+    {
+      "x": 316.356156013154,
+      "z": 76.89293084013366,
+      "r": 0.55,
+      "height": 5.545293065393344
+    },
+    {
+      "x": 314.6588402475484,
+      "z": 79.57151668902216,
+      "r": 0.55,
+      "height": 5.588082129694522
+    },
+    {
+      "x": 319.4136297045338,
+      "z": 81.10958078386226,
+      "r": 0.55,
+      "height": 6.938496178925037
+    },
+    {
+      "x": 314.2695729884936,
+      "z": 72.81819986301998,
+      "r": 0.55,
+      "height": 5.528482112241909
+    },
+    {
+      "x": 339.2,
+      "z": 65.5,
+      "r": 1.4
+    },
+    {
+      "x": 336.2,
+      "z": 65.98,
+      "r": 1.4
+    },
+    {
+      "x": 344.8,
+      "z": 65.5,
+      "r": 1.4
+    },
+    {
+      "x": 347.8,
+      "z": 65.98,
+      "r": 1.4
+    }
+  ],
+  "nearbyTrees": [],
+  "treeSurveySHA256": "f2123b12edf7e527dab2a3a440c0f989b4477dd15b001bcd19002fbfc3a3ee17",
+  "uvRevision": {
+    "beforeHelperSHA256": "f9f50ec9c85055231aa878130052402499f8ff9794731724e200420a204e8165",
+    "changes": [
+      {
+        "before": "point,reverse=false,top=false){",
+        "after": "point,reverse=false,top=false,depth=false){",
+        "occurrences": 1
+      },
+      {
+        "before": "g.uv.push(p[0]/3.2,(top?p[2]:p[1])/3.2);",
+        "after": "g.uv.push((depth?p[2]:p[0])/3.2,(top?p[2]:p[1])/3.2);",
+        "occurrences": 1
+      },
+      {
+        "before": "},end===0?side>0:side<0);",
+        "after": "},end===0?side>0:side<0,false,true);",
+        "occurrences": 1
+      },
+      {
+        "before": "},end===1);",
+        "after": "},end===1,false,true);",
+        "occurrences": 1
+      }
+    ],
+    "actualV2Native": {
+      "file": "ribbon-falls-v2/candidate-native-v2/actual-ribbon-owners.json",
+      "sha256": "9c54a66a3bffcf687aef67e03feebe151adf98fd49710605b6397ed03ab337a0",
+      "cliff": {
+        "role": "cliff",
+        "name": "Geology | waterfall amphitheatre",
+        "object": "3f74d707-9e5a-41d4-b1e7-52102820feb2",
+        "geometry": "4b425a56-3a99-4a0e-9d3d-590d24859876",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          342,
+          2.447022869873078,
+          65.5,
+          1
+        ],
+        "visible": true,
+        "count": null,
+        "triangles": 19744,
+        "drawRange": {
+          "start": 0,
+          "count": null
+        },
+        "bounds": {
+          "min": [
+            333.25,
+            -2.580173060607879,
+            58.9332275390625
+          ],
+          "max": [
+            350.75,
+            8.136794998931915,
+            77
+          ]
+        },
+        "attributes": {
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17130,
+            "normalized": false,
+            "bytes": 205560,
+            "sha256": "fa7687a62bd45445f16cabc917e50ca8c8a4078dc0f589be092b0d91e0a437ed"
+          },
+          "uv": {
+            "type": "Float32Array",
+            "itemSize": 2,
+            "count": 17130,
+            "normalized": false,
+            "bytes": 137040,
+            "sha256": "2293c4a636875f60d05db55b7fcca4e725796947f1fdea32fb005dfa87a827ba"
+          },
+          "color": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17130,
+            "normalized": false,
+            "bytes": 205560,
+            "sha256": "60f4bb9eddb0b34fba9edf1b9e1998b7a29589716cea9064d14e06a0e9fb092a"
+          },
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17130,
+            "normalized": false,
+            "bytes": 205560,
+            "sha256": "04bdc2c0aca476c75589faab7aab48b0720a553fa51cb7b2b5739382fb06908c"
+          }
+        },
+        "index": {
+          "type": "Uint32Array",
+          "itemSize": 1,
+          "count": 59232,
+          "normalized": false,
+          "bytes": 236928,
+          "sha256": "2d161d6521e342b4ef53192e42e6e2f953309eb3fbfb660066353ed1bdd49984"
+        },
+        "finite": true,
+        "materials": [
+          {
+            "uuid": "538db1f8-a298-4668-a5a5-b0b9cc809d39",
+            "name": "Weathered sedimentary limestone",
+            "type": "MeshStandardMaterial",
+            "color": [
+              0.6583748172725346,
+              0.6172065624120635,
+              0.5271151256969157
+            ],
+            "opacity": 1,
+            "transparent": false,
+            "side": 0,
+            "depthWrite": true,
+            "cache": "landscape-surface-v4-false-false-false-1-1-8-0.04",
+            "maps": {
+              "map": {
+                "uuid": "dbcc8182-8a02-4296-ad76-bfa8f4ca15a8",
+                "width": 2048,
+                "height": 2048
+              },
+              "normalMap": {
+                "uuid": "03c85030-92b3-4e68-95a3-65513c89c5dd",
+                "width": 1024,
+                "height": 1024
+              },
+              "roughnessMap": {
+                "uuid": "2b286790-9a85-4997-bd7e-796b8410f56d",
+                "width": 512,
+                "height": 512
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

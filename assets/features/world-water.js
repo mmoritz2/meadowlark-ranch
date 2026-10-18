@@ -1,3 +1,4 @@
+import {remodelRibbonFallsCliff} from '../ribbon-falls-landform.mjs?v=ribbon-falls-2';
 import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';
 import {createBankRushGeometry} from '../bank-rushes.mjs?v=bank-rushes-1';
 import {conformRiverBankGeometry,dressRiverBankMaterial} from '../riverbank-surface.mjs?v=river-banks-1';
@@ -706,6 +707,7 @@ export function install(G){
   {
    const cliff=W.geology.makeWaterfallCliff({width:17.5,lip:lipY,foot:shelfY-1.1,seed:8723,notchWidth:3.5});
    cliff.position.set(FALL_X,shelfY-1.1,LIP_Z);cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;
+    P.ribbonRocks=remodelRibbonFallsCliff({THREE,cliff,heightAt:groundH,x:FALL_X,lipZ:LIP_Z,shelfZ:SHELF_Z,toeZ:TOE_Z,lipY,shelfY});
    for(const side of[-1,1])for(let i=0;i<4;i++){const bx=FALL_X+side*(2.8+i*1.5),bz=LIP_Z+i*.24;if(claim(bx,bz,1.4,'falls-rock'))W.colliders.push({x:bx,z:bz,r:1.4});}
    const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls',footHeightAt:groundH,footWidth:1.35});scene.add(fall);P.fallSheet=fall;
   }
@@ -727,11 +729,14 @@ export function install(G){
    const uv=P.chute.geometry.attributes.uv;
    for(let i=0;i<uv.count;i++)uv.setXY(i,(i%9)/8,Math.floor(i/9)/24);
    uv.needsUpdate=true;P.chute.renderOrder=2;
-   for(let i=0;i<20;i++){                             // rock either side of the chute
+   const oldRockStarts=boulderRows.map(rows=>rows.length);
+   for(let i=0;i<20;i++){                             // retain original layout draws, replace only these detached blocks
     const t=rnd(), z=SHELF_Z+1+(TOE_Z-SHELF_Z-1)*t;
     const side=rnd()<0.5?-1:1, bx=FALL_X+side*rr(2.2,5.2)*(1+t*0.5);
     boulder(bx,groundH(bx,z)-0.08,z,rr(0.35,0.95),rr(0.6,1.05));
    }
+   P.ribbonRocks.replacedLooseStones=boulderRows.reduce((n,rows,k)=>n+rows.length-oldRockStarts[k],0);
+   boulderRows.forEach((rows,k)=>{rows.length=oldRockStarts[k];});
   }
   // Churn at both landings uses the same lit foam and sky-tinted spray as
   // Hollowpeak. No additive streaks remain lit after the surrounding world dims.
@@ -744,7 +749,7 @@ export function install(G){
    // Retain the old package-local layout sequence (drops, mist sites, phases).
    for(let i=0;i<373;i++)rnd();
   }
-  P.excludesPlants=(x,z)=>z>64.5&&z<78&&Math.abs(x-FALL_X)<1.9+Math.max(0,(z-SHELF_Z)/(TOE_Z-SHELF_Z))*2.5;
+  P.excludesPlants=(x,z)=>Number.isFinite(P.ribbonRocks.supportAt(x,z))||z>64.5&&z<78&&Math.abs(x-FALL_X)<1.9+Math.max(0,(z-SHELF_Z)/(TOE_Z-SHELF_Z))*2.5;
   const clearMatrix=new THREE.Matrix4(),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);P.clearedCover=0;
   scene.traverse(o=>{if(!o.isInstancedMesh||!['flora_tuft','flora_petal','flora_brack'].includes(o.name))return;let changed=false;
    for(let i=0;i<o.count;i++){o.getMatrixAt(i,clearMatrix);if(P.excludesPlants(clearMatrix.elements[12],clearMatrix.elements[14])){o.setMatrixAt(i,hiddenMatrix);P.clearedCover++;changed=true;}}
@@ -1058,5 +1063,9 @@ export function install(G){
 
  // Register the new bank approach only after every original layout/course capture.
  installFerryBankApproach(G);
+ // Register frozen faces after all original water, layout and approach captures.
+ // Cliff faces block bodies; only the continuous low bed carries ground support.
+ W.solidWorld.registerSurface(P.ribbonRocks.mesh,P.ribbonRocks.bodyGeometry);
+ W.groundSurfaces.push(P.ribbonRocks.supportAt);
  P.ok=true;
 }

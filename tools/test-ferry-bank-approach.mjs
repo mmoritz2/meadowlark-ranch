@@ -1,3 +1,5 @@
+// ribbon-falls-2: restore only exact parent Water for this historical source contract.
+import{normalizeRibbonFallsSource as ribbonParent}from'./ribbon-falls-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -68,7 +70,7 @@ test('actual installer ordering waits late packages, course startup and Chalk ca
 });
 
 test('only exact individually approved bank/reed/deferred-ramp additions change the entire Water body',()=>{
- const old=read('./fixtures/ferry-bank-7908e80/world-water.js'),next=restoreApprovedOwners(read('../assets/features/world-water.js'),approvedOwners.bankAndReed),imported="import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';\n",tail=' // Register the new bank approach only after every original layout/course capture.\n installFerryBankApproach(G);\n';
+ const old=read('./fixtures/ferry-bank-7908e80/world-water.js'),next=restoreApprovedOwners(ribbonParent(read('../assets/features/world-water.js'),'assets/features/world-water.js'),approvedOwners.bankAndReed),imported="import {installFerryBankApproach} from '../ferry-bank-approach.mjs?v=ferry-bank-approach-2';\n",tail=' // Register the new bank approach only after every original layout/course capture.\n installFerryBankApproach(G);\n';
  assert.equal(next.split(imported).length,2);assert.equal(next.split(tail).length,2);assert.equal(next.replace(imported,'').replace(tail,''),old);
 });
 

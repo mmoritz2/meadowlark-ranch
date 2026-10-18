@@ -1,9 +1,11 @@
+// ribbon-falls-2: historical Water installer reconstruction only; actual new Ribbon tests import raw current product.
+import{normalizeRibbonFallsSource as ribbonParent}from'./ribbon-falls-source-guard.cjs';
 import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
 import {T,repo,baseline,oldWater,runWater,sha} from './river-preservation-fixture.mjs';
 const pkg=process.env.RIVER_BANK_PACKAGE||repo,load=p=>import(pathToFileURL(path.join(pkg,p)));
 const {conformRiverBankGeometry,dressRiverBankMaterial}=await load('assets/riverbank-surface.mjs');
-const newWater=fs.readFileSync(path.join(pkg,'assets/features/world-water.js'),'utf8'),approved=JSON.parse(fs.readFileSync(new URL('./fixtures/river-7908e80/approved-river-source-changes.json',import.meta.url)));
+const newWater=ribbonParent(fs.readFileSync(path.join(pkg,'assets/features/world-water.js'),'utf8'),'assets/features/world-water.js'),approved=JSON.parse(fs.readFileSync(new URL('./fixtures/river-7908e80/approved-river-source-changes.json',import.meta.url)));
 const reedChanges=JSON.parse(fs.readFileSync(new URL('./fixtures/river-7908e80/bank-rush-source-changes.json',import.meta.url))),hasRushes=newWater.includes(reedChanges.import);
 const createBankRushGeometry=hasRushes?(await load('assets/bank-rushes.mjs')).createBankRushGeometry:null;
 const cacheFile=new URL('./fixtures/river-7908e80/combined-cache-edges.json',import.meta.url),cacheEdges=fs.existsSync(cacheFile)?JSON.parse(fs.readFileSync(cacheFile)):[];
