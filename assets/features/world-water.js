@@ -728,6 +728,8 @@ export function install(G){
    P.chute=band(rows,9,W.waterfallArt.material,'Water | falls chute');
    const uv=P.chute.geometry.attributes.uv;
    for(let i=0;i<uv.count;i++)uv.setXY(i,(i%9)/8,Math.floor(i/9)/24);
+   // Grounded flow owns its vertex values; cached GL generic defaults may belong to another draw.
+   for(const[name,value]of [['cascadePhase',0],['cascadeSpeed',.6],['cascadeAcross',-1],['cascadeMotion',0]])P.chute.geometry.setAttribute(name,new THREE.Float32BufferAttribute(new Float32Array(uv.count).fill(value),1));
    uv.needsUpdate=true;P.chute.renderOrder=2;
    const oldRockStarts=boulderRows.map(rows=>rows.length);
    for(let i=0;i<20;i++){                             // retain original layout draws, replace only these detached blocks

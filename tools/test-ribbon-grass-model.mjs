@@ -1,13 +1,14 @@
+// fine-pasture-1: this pre-existing morphology suite retains its exact published cd4 factory assertions. New current finer geometry is exercised by test-dry-cover-reconciliation.mjs.
 import test from 'node:test';
 import {createGrassTuftGeometry as historicalTuft,createGrassFamilyGeometry as historicalFamily,createGrazedSwardGeometry as historicalGrazed} from './course-turf-blades-historical.mjs';
 const historical3944=(form,T)=>form.name==='near'?historicalTuft(T,{profile:'near-folded-v1'}):form.name==='grazed'?historicalGrazed(T):historicalFamily(T,['meadow','low','seeded'].indexOf(form.name));
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
+import {createLushMeadowGeometry} from './fine-pasture-parent-factories.mjs';
 import {createGrazedSwardGeometry,GRAZED_SWARD} from './grazed-natural-parent-factory.mjs';
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
-import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
-import {MIXED_SWARD} from '../assets/mixed-sward.mjs';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './fine-pasture-parent-factories.mjs';
+import {createGrassTuftGeometry} from './fine-pasture-parent-factories.mjs';
+import {MIXED_SWARD} from './fine-pasture-parent-factories.mjs';
 import {
  createLushMeadowGeometry as previousLush,
  createGrazedSwardGeometry as previousGrazed,

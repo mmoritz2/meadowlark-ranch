@@ -111,8 +111,70 @@ export function appendArchedMeadowLeaf(P,C,U,I,leaf){
 }
 
 
+// Original dry-cover leaf surfaces. Spend each retained tier on an unequal
+// lower leaf mass, a few recovery leaves and finer accents. Existing rooted
+// matrices, tint, wind, normal correction, admission and wet plants stay owned
+// by their callers. This factory allocates exactly one original geometry.
+function createReconciledDryCover(T,{profile,leafCount,seeded}){
+ const middle=profile==='middle',near=profile==='near',low=profile==='low';
+ const tier=middle?leafCount*3:near?40:70,leafTriangles=seeded?42:tier;
+ const plan=middle?(leafCount===4?[3,3,1,1,1,1,1,1]:leafCount===6?[3,3,3,3,1,1,1,1,1,1]:[3,3,3,3,3,3,1,1,1,1,1,1]):near?[7,7,3,3,3,3,3,3,3,3,1,1]:seeded?[7,7,3,3,3,3,3,3,3,3,1,1,1,1]:[7,7,7,7,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1];
+ const P=[],C=[],U=[],I=[],leafRanges=[];
+ const emit=(p,u,v,shade,dry=0)=>{P.push(...p);U.push(u,v);C.push(shade*(.90+dry*.12),shade*(1-dry*.04),shade*(.73-dry*.16));};
+ const variation=[.11,.73,.32,.94,.48,.06,.61,.87,.24,.55,.99,.39,.18,.80,.44,.67,.03,.90,.29,.58,.76,.14];
+ for(let leaf=0;leaf<plan.length;leaf++){
+  const triangles=plan[leaf],rings=(triangles+3)/2,curved=triangles>1;
+  const rootIndex=(leaf*4+Math.floor(leaf/3))%(middle||near?6:9),root=ROOTS[rootIndex];
+  const v=variation[leaf],recovery=triangles===7,accent=!curved;
+  const heading=leaf*2.399963229728653+rootIndex*.31+(v-.5)*.68+(low?.41:middle?.19:0);
+  const dx=Math.cos(heading),dz=Math.sin(heading),sx=-dz,sz=dx;
+  let height=middle?(curved?.32+v*.45:.43+v*.56):recovery?.52+v*.50:accent?.42+v*.68:.16+v*.40;
+  if(low)height*=.63;
+  // Middle instances have a broad XZ footprint. Their real leaves are finer
+  // and lean less locally, rather than becoming broad fans after that scale.
+  const reach=middle?(curved?.032+v*.022:.016+v*.020):recovery?.20+v*.13:accent?.042+v*.055:.08+v*.13;
+  const width=(middle?(accent?.0028:.0045)+v*.0013:(accent?.0037:recovery?.0077:.0064)+v*.0028)*(middle?2.6:1.9);
+  const start=P.length/3,indexStart=I.length,sign=leaf%2?-1:1;
+  const times=rings===5?[0,.25,.53,.77,1]:rings===3?[0,.59,1]:[0,1];
+  for(let ring=0;ring<times.length;ring++){
+   const t=times[ring],tip=ring===times.length-1;
+   const rise=accent?t:rings===5?[0,.36,.70,.94,.93+v*.05][ring]:[0,.69,.91+v*.07][ring];
+   const along=reach*(.16*t+.84*t*t),sweep=sign*reach*.055*Math.sin(Math.PI*t),angle=heading+sign*(.10*t+.14*t*t);
+   const x=root[0]+dx*along+sx*sweep,z=root[1]+dz*along+sz*sweep;
+   const half=width*(ring===0?.48:.85-.55*t),roll=sign*half*.13*Math.sin(Math.PI*t);
+   const shade=.27+.67*Math.pow(Math.sin(t*Math.PI*.5),.72),dry=leaf%17===0?.15:0;
+   for(const side of tip?[0]:[-1,1])emit([x-Math.sin(angle)*half*side,height*rise+roll*side,z+Math.cos(angle)*half*side],(side+1)/2,t,shade,dry);
+   if(ring<times.length-2){const k=start+ring*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}
+   else if(ring===times.length-2){const k=start+ring*2;I.push(k,k+1,k+2);}
+  }
+  leafRanges.push({vertexStart:start,vertexCount:P.length/3-start,indexStart,indexCount:I.length-indexStart,rootIndex,root:[...root],segments:rings-1,bent:curved,upright:accent,recovery,sourceLeaf:leaf,progressive:rings===5,transverseRoll:curved});
+ }
+ if(I.length/3!==leafTriangles)throw Error('Dry-cover leaf budget mismatch');
+ if(seeded)for(let stem=0;stem<2;stem++){
+  const a=stem===0?.81:3.97,dx=Math.cos(a),dz=Math.sin(a),rx=stem===0?.024:-.038,rz=stem===0?-.021:.032;
+  const height=stem===0?1.35:1.52,lean=stem===0?.21:.17,base=P.length/3;
+  for(let ring=0;ring<2;ring++)for(let side=0;side<4;side++){
+   const angle=a+side*Math.PI*.5,radius=ring?.0028:.004;
+   emit([rx+dx*lean*ring+Math.cos(angle)*radius,height*ring,rz+dz*lean*ring+Math.sin(angle)*radius],side/3,ring,.32+ring*.54,.15);
+  }
+  for(let side=0;side<4;side++){const b=base+side,c=base+(side+1)%4,d=base+4+side,e=base+4+(side+1)%4;I.push(b,d,c,c,d,e);}
+  const x=rx+dx*lean,z=rz+dz*lean,length=stem===0?.075:.065,width=stem===0?.009:.007;
+  const grain=[{p:[x,height-.004,z],u:.5,v:.80,shade:.95,dry:.65}];
+  for(let side=0;side<3;side++){const angle=a+side*Math.PI*2/3;grain.push({p:[x+dx*.014+Math.cos(angle)*width,height+length*.36,z+dz*.014+Math.sin(angle)*width],u:side/2,v:.9,shade:1,dry:.8});}
+  grain.push({p:[x+dx*.038,height+length,z+dz*.038],u:.5,v:1,shade:1,dry:.85});
+  for(let side=0;side<3;side++)for(const ids of [[0,1+side,1+(side+1)%3],[1+side,4,1+(side+1)%3]]){
+   const at=P.length/3;for(const id of ids){const q=grain[id];emit(q.p,q.u,q.v,q.shade,q.dry);}I.push(at,at+1,at+2);
+  }
+ }
+ const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(P,3));geometry.setAttribute('color',new T.Float32BufferAttribute(C,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(U,2));geometry.setIndex(I);geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
+ geometry.userData.lushMeadow={profile:'dry-cover-reconciled-1',form:profile,leaves:leafRanges.length,requestedLeaves:leafCount,triangles:I.length/3,seedTriangles:seeded?28:0,leafRanges,shape:'Fine multidirectional curved basal leaves with unequal recovery leaves and slender accents'};
+ if(middle)geometry.userData.middleCover={profile:'dry-middle-reconciled-1',leaves:leafRanges.length,requestedLeaves:leafCount,leafRanges};
+ return geometry;
+}
+
 export function createLushMeadowGeometry(T,{leafCount=14,segments=3,profile='meadow',seeded=false}={}){
  if(!Number.isInteger(leafCount)||leafCount<4||leafCount>14||![2,3].includes(segments)||!['meadow','low','seeded','near','middle'].includes(profile))throw Error('Invalid lush meadow geometry');
+ if(profile==='middle'&&segments===2&&[4,6,8].includes(leafCount)&&!seeded||profile==='near'&&leafCount===8&&segments===3&&!seeded||['meadow','low'].includes(profile)&&leafCount===14&&segments===3&&!seeded||profile==='seeded'&&leafCount===14&&segments===2&&seeded)return createReconciledDryCover(T,{profile,leafCount,seeded});
  const canonical=profile==='near'&&leafCount===8&&segments===3&&!seeded||['meadow','low'].includes(profile)&&leafCount===14&&segments===3&&!seeded||profile==='seeded'&&leafCount===14&&segments===2&&seeded;
  // The broad-scaled middle tier and noncanonical public factory combinations
  // retain every attribute/index byte from their original implementation.

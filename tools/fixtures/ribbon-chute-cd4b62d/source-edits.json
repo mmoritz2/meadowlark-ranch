@@ -1,0 +1,13 @@
+{
+  "assets/features/world-water.js": {
+    "beforeSHA256": "9be3d5f7d9882c2d656c162339263502cea4ff5b3afd01d134020cc0cb6b7f2f",
+    "afterSHA256": "6ab9a6868dd8694dd9570d9b8ce3c38f0d2ffbf45af524604f9664f7fa7186ff",
+    "changes": [
+      {
+        "before": "   uv.needsUpdate=true;P.chute.renderOrder=2;",
+        "after": "   // Grounded flow owns its vertex values; cached GL generic defaults may belong to another draw.\n   for(const[name,value]of [['cascadePhase',0],['cascadeSpeed',.6],['cascadeAcross',-1],['cascadeMotion',0]])P.chute.geometry.setAttribute(name,new THREE.Float32BufferAttribute(new Float32Array(uv.count).fill(value),1));\n   uv.needsUpdate=true;P.chute.renderOrder=2;",
+        "occurrences": 1
+      }
+    ]
+  }
+}

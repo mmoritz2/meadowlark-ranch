@@ -1,0 +1,427 @@
+{
+  "baselineCommit": "cd4b62da679bfbf5ce40d6b90133e5cc91498807",
+  "nativeDiagnosis": {
+    "file": "fine-pasture-v1/independent-audit/ribbon-chute-live-attribute-diagnosis-v1.json",
+    "sha256": "d449181c16484af272578be423833f365272f0c8ad251221226ec2cba3fced10"
+  },
+  "trace": [
+    {
+      "view": "loon-lake-dock-high",
+      "raw": {
+        "file": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/fine-pasture-v1/candidate-native-v1/loon-lake-dock-high-cascade-attributes.json",
+        "sha256": "4f98f1b8390586a5d1e23f3a8f68d8a12cee0d92433cc0b73466742fdc1f65f5"
+      },
+      "owner": "37aa3cde-36e8-4d50-a9a8-c80e8039ba5b",
+      "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886",
+      "programID": 87,
+      "actualProgramMatchesCompiled": true,
+      "geometryTriangles": 384,
+      "attributes": {
+        "cascadeAcross": {
+          "location": 5,
+          "geometryAttribute": null,
+          "materialDefault": [
+            -1
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeSpeed": {
+          "location": 4,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0.6
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0.6000000238418579,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadePhase": {
+          "location": 3,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeMotion": {
+          "location": 6,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        }
+      }
+    },
+    {
+      "view": "wrenfell-keep-high",
+      "raw": {
+        "file": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/fine-pasture-v1/candidate-native-v1/wrenfell-keep-high-cascade-attributes.json",
+        "sha256": "086aeb7f0fcc4162658a1f849b205c5e3646a55150c75fcb7f2be8ebe79b20f8"
+      },
+      "owner": "37aa3cde-36e8-4d50-a9a8-c80e8039ba5b",
+      "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886",
+      "programID": 87,
+      "actualProgramMatchesCompiled": true,
+      "geometryTriangles": 384,
+      "attributes": {
+        "cascadeAcross": {
+          "location": 5,
+          "geometryAttribute": null,
+          "materialDefault": [
+            -1
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeSpeed": {
+          "location": 4,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0.6
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadePhase": {
+          "location": 3,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeMotion": {
+          "location": 6,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        }
+      }
+    },
+    {
+      "view": "barleyfold-field-ride-high",
+      "raw": {
+        "file": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/fine-pasture-v1/candidate-native-v1/barleyfold-field-ride-high-cascade-attributes.json",
+        "sha256": "ae5818becdbddf5ab35c141b2bd6350cbefa431118725cb0ee4fdcc066a6fd8c"
+      },
+      "owner": "37aa3cde-36e8-4d50-a9a8-c80e8039ba5b",
+      "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886",
+      "programID": 87,
+      "actualProgramMatchesCompiled": true,
+      "geometryTriangles": 384,
+      "attributes": {
+        "cascadeAcross": {
+          "location": 5,
+          "geometryAttribute": null,
+          "materialDefault": [
+            -1
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeSpeed": {
+          "location": 4,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0.6
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadePhase": {
+          "location": 3,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeMotion": {
+          "location": 6,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        }
+      }
+    },
+    {
+      "view": "ribbon-falls-bank-high",
+      "raw": {
+        "file": "/Users/mbphome/Desktop/meadowlark-ranch/output/equestrian-visual-goal/fine-pasture-v1/candidate-native-v1/ribbon-falls-bank-high-cascade-attributes.json",
+        "sha256": "0c27f06f401553f5069d395b8f158934956cb1aaaa6ea9b124f5593b72b214c4"
+      },
+      "owner": "37aa3cde-36e8-4d50-a9a8-c80e8039ba5b",
+      "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886",
+      "programID": 87,
+      "actualProgramMatchesCompiled": true,
+      "geometryTriangles": 384,
+      "attributes": {
+        "cascadeAcross": {
+          "location": 5,
+          "geometryAttribute": null,
+          "materialDefault": [
+            -1
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeSpeed": {
+          "location": 4,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0.6
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            -1,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadePhase": {
+          "location": 3,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        },
+        "cascadeMotion": {
+          "location": 6,
+          "geometryAttribute": null,
+          "materialDefault": [
+            0
+          ],
+          "arrayEnabled": false,
+          "currentVertexAttrib": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "arraySize": 4,
+          "arrayType": 5126,
+          "arrayStride": 0,
+          "arrayBufferBound": false,
+          "divisor": 0
+        }
+      }
+    }
+  ],
+  "originalChute": {
+    "source": "ribbon-falls-v3/candidate-native-v1/actual-ribbon-owners.json",
+    "sha256": "5eeabf8b91eb8f0a302e1e8ff415259918cc97e4a2f38633e8fab66e5cf57db1",
+    "attributes": {
+      "position": {
+        "type": "Float32Array",
+        "itemSize": 3,
+        "count": 225,
+        "normalized": false,
+        "bytes": 2700,
+        "sha256": "2ea4e4742321782db14e93d28dc379d0598fd76e7d0ec3deeae0efdb4a57efc2"
+      },
+      "uv": {
+        "type": "Float32Array",
+        "itemSize": 2,
+        "count": 225,
+        "normalized": false,
+        "bytes": 1800,
+        "sha256": "6c37a36eb28ad4bf5d0be2976c4be5dd8b3ae19ad1419f09f148cdab1207e870"
+      },
+      "color": {
+        "type": "Float32Array",
+        "itemSize": 3,
+        "count": 225,
+        "normalized": false,
+        "bytes": 2700,
+        "sha256": "64b1560d5ac9dbc0b29859ecdfe7b19618925ac7599fc9caaedd970abaac8058"
+      },
+      "normal": {
+        "type": "Float32Array",
+        "itemSize": 3,
+        "count": 225,
+        "normalized": false,
+        "bytes": 2700,
+        "sha256": "60a7582c6924c0d987935348e2b579fcf91281f3f818fdcd7cd3daf38e420090"
+      }
+    },
+    "index": {
+      "type": "Uint16Array",
+      "itemSize": 1,
+      "count": 1152,
+      "normalized": false,
+      "bytes": 2304,
+      "sha256": "0a5f16cd4067e2d3563c8d65de312f4cdd6eeb1faa37ded08fb790cc70f53316"
+    },
+    "triangles": 384,
+    "geometry": "c34cbf3c-52f1-4f09-9546-1088fc4c0886"
+  },
+  "terrainFixture": {
+    "file": "tools/fixtures/ribbon-falls-b3f2d33/actual-terrain.json",
+    "sha256": "ef7fa97303d1ac29d1a1816b2afba335afa09cbb0d56f44f6e6b05e1625109fb"
+  },
+  "dependencySHA256": {
+    "assets/features/world-water.js": "9be3d5f7d9882c2d656c162339263502cea4ff5b3afd01d134020cc0cb6b7f2f",
+    "assets/waterfall-art.js": "a6892d605f886c400474a2b5b2e56d7756cf43b8fbad761cbbce63138a4457aa",
+    "assets/vendor/three/build/three.module.js": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495"
+  },
+  "scope": "Actual passive post-main-draw native default/array/current-state trace; compact prior captured canonical terrain and chute buffer hashes authenticate source-built water. No copied geometry arrays or mock target source."
+}

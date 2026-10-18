@@ -1,12 +1,13 @@
+// fine-pasture-1: this pre-existing morphology suite retains its exact published cd4 factory assertions. New current finer geometry is exercised by test-dry-cover-reconciliation.mjs.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {createLushMeadowGeometry} from '../assets/lush-meadow-geometry.mjs';
-import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
+import {createLushMeadowGeometry} from './fine-pasture-parent-factories.mjs';
+import {createGrassFamilyGeometry,GRASS_FAMILIES} from './fine-pasture-parent-factories.mjs';
 import {createGrazedSwardGeometry,GRAZED_SWARD} from './grazed-natural-parent-factory.mjs';
-import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
+import {createGrassTuftGeometry} from './fine-pasture-parent-factories.mjs';
 
 // Current nongrazed progressive profile gates, plus the explicit historical6e9
 // 14-leaf grazed entry. New34-leaf geometry and actual wind/controller/response
