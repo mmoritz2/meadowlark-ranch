@@ -1,3 +1,4 @@
+import {createEstateGrandstandDresser} from './estate-grandstand.mjs?v=estate-grandstand-1';
 import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 import {installLimedTimberFinish} from './ranch-timber-joinery.mjs?v=ranch-timber-joinery-2';
@@ -12,6 +13,7 @@ import {applySaplingSnowShader} from './sapling-snow.mjs?v=nursery-snow-1';
 export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=8,getRanchName=()=> 'Meadowlark Ranch',deferModels=false}) {
  const T=THREE,loader=new T.TextureLoader(),textures=new Map(),templates=new Map(),scans=new Map(),ghosts=new Map();
  const state={version:1,loaded:false,errors:[],models:[],materialNames:[],ready:null};
+ const dressGrandstand=createEstateGrandstandDresser({THREE:T,architecture});
  function tex(path,color=false){if(textures.has(path))return textures.get(path);const t=loader.load(path,undefined,undefined,()=>state.errors.push(path));t.colorSpace=color?T.SRGBColorSpace:T.NoColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(8,anisotropy);textures.set(path,t);return t;}
  function material(name,color,roughness=0.8,metalness=0,scan=null,scale=1){
   const p={name:'Builder | '+name,color,roughness,metalness};
@@ -437,10 +439,10 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
    case 'well':stoneCourses(b,.72,.86);b.torus(.72,.095,stone,0,.88,0,[Math.PI/2,0,0]);b.cylinder(.57,.57,.02,water,0,.28,0);for(const x of[-.91,.91])b.box(.15,2.22,.15,aged,x,1.07,0);for(const s of[-1,1])b.box(2.2,.10,.86,roof,0,2.21,s*.35,[s*-.38,0,0]);b.cylinder(.065,.065,1.92,oak,0,1.65,0,[0,0,Math.PI/2]);b.tube([[0,1.67,0],[0,1.15,0],[0,.58,0]],.012,cloth);b.cylinder(.17,.13,.24,steel,.34,1.52,0);b.torus(.14,.012,iron,.34,1.70,0);break;
    default:return null;
   }
-  return b.finish();
+  const root=b.finish();return type==='grandstand'?dressGrandstand(root):root;
  }
  function key(type){return type==='sign'?type+':'+getRanchName():type;}
- function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const out=src.clone(true);if(ghost)out.userData.collisionIgnore=true;out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
+ function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const out=type==='grandstand'?dressGrandstand.clone(src):src.clone(true);if(ghost)out.userData.collisionIgnore=true;out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=o.geometry.userData.estateGrandstandResident?dressGrandstand.isolated(()=>m.clone()):m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
  function create(type,ghost=false){const out=copy(type,ghost);if(!out)return null;if(!state.loaded)state.ready.then(()=>{const replacement=copy(type,ghost);out.clear();for(const child of [...replacement.children])out.add(child);out.userData={...replacement.userData};});return out;}
  const sources={
   wine_barrel_01:'builder/wine_barrel_01',wooden_picnic_table:'builder/wooden_picnic_table',planter_box_01:'builder/planter_box_01',wooden_lantern_01:'builder/wooden_lantern_01',tree_stump_01:'builder/tree_stump_01',flower_gazania:'builder/flower_gazania',wild_rooibos_bush:'builder/wild_rooibos_bush',
@@ -462,7 +464,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  })).then(()=>{state.loaded=true;const old=[...templates.values()];templates.clear();
   // The existing instances swap children in the following promise callbacks.
   // Retire only procedural fallback geometry, never shared scan resources.
-  setTimeout(()=>{for(const root of old)root.traverse(o=>{if(o.isMesh&&!o.geometry.userData.builderScan)o.geometry.dispose();});},0);
+  setTimeout(()=>{for(const root of old)root.traverse(o=>{if(o.isMesh&&!o.geometry.userData.builderScan&&!o.geometry.userData.estateGrandstandResident)o.geometry.dispose();});},0);
   return state;}));
  state.ready=modelLoad.ready;
  state.startLoading=()=>modelLoad.start();

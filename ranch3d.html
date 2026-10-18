@@ -709,9 +709,10 @@ import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from '
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js?v=estate-arrival-1';
 import {buildArrivalStable} from './assets/arrival-stable.mjs?v=estate-arrival-1';
+import {installEstateOutbuildings} from './assets/estate-outbuildings.mjs?v=estate-outbuildings-1';
 import {buildArrivalGateway} from './assets/arrival-gateway.mjs?v=estate-arrival-1';
 import {installRanchArrivalLandscape} from './assets/ranch-arrival-landscape.mjs?v=estate-arrival-1';
-import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=ranch-models-1';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=estate-grandstand-1';
 import {createWorldFinish} from './assets/world-rendering.js?v=world-presentations-1';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
@@ -2776,6 +2777,7 @@ const moonS=(()=>{
 /* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
 const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
+installEstateOutbuildings({THREE,architecture:ranchArchitecture});
 const ranchBuilderArt=createRanchBuilderArt({THREE,GLTFLoader,architecture:ranchArchitecture,deferModels:true,
  anisotropy:renderer.capabilities.getMaxAnisotropy(),getRanchName:()=>freshSave()?.ranchName||'Meadowlark Ranch'});
 const waterfallFlowTexture=await loadCascadeFoamTexture({THREE,url:new URL('./assets/textures/waterfall/cascade-foam-v1.png',import.meta.url)});
