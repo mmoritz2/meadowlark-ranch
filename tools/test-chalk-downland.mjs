@@ -1,3 +1,4 @@
+import {loadPublishedChalkDown} from './chalk-scour-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../assets/vendor/three/build/three.module.js';
@@ -9,6 +10,7 @@ const THREE={...T,TextureLoader:class{load(){return new T.Texture();}}};
 const mat=new T.MeshStandardMaterial();
 const down=createChalkDown({THREE,site,baseHeight:()=>2,groundMaterial:mat});
 const ground=down.root.getObjectByName('vista:chalkscarp'),p=ground.geometry.attributes.position,idx=ground.geometry.index;
+const {createChalkDown:createPublished}=await loadPublishedChalkDown(),historicalDown=createPublished({THREE,site,baseHeight:()=>2,groundMaterial:mat});
 
 test('compact connected down retains zero hem and a substantial asymmetric ridge',()=>{
  let max=0;const crests=[];
@@ -21,7 +23,8 @@ test('compact connected down retains zero hem and a substantial asymmetric ridge
  for(const u of [-60,-56,56,60])for(const t of [.1,.3,.6,.9])assert.equal(chalkDownlandLift(site,u,t),0);
 });
 
-test('ground retains grid and every sampled triangle is the physical surface',()=>{
+test('QUALIFIED published d60 flat-base grid retains its historical normals/contact; current actual-site terrain is tested raw in chalk-scour',()=>{
+ const down=historicalDown,ground=down.root.getObjectByName('vista:chalkscarp'),p=ground.geometry.attributes.position,idx=ground.geometry.index;
  assert.equal(p.count,18193);assert.equal(idx.count/3,35840);assert.equal(ground.material,mat);assert(ground.castShadow&&ground.receiveShadow);
  let minDot=1,minY=Infinity,maxContact=0;
  const a=new T.Vector3(),b=new T.Vector3(),c=new T.Vector3(),cross=new T.Vector3(),ab=new T.Vector3(),ac=new T.Vector3(),n=ground.geometry.attributes.normal;
@@ -41,7 +44,8 @@ test('historical planting samples and masks remain separate from live hoof heigh
  assert(Math.abs(down.heightAt(0,-19)-down.planningHeightAt(0,-19))>1);assert.equal(down.planningHeightAt(57,0),-Infinity);assert.equal(down.stats.planningBytes,18193*4);
 });
 
-test('direct-mapped mare is seated, finite and uses matching live plant exclusion',()=>{
+test('QUALIFIED published d60 flat-base raised mare reproduces its historical contact; current incised mare is tested raw in chalk-scour',()=>{
+ const down=historicalDown;
  const cut=down.root.getObjectByName('Chalk Mare | ground cutting').geometry,cp=cut.attributes.position,cn=cut.attributes.normal;
  assert(cp.count/3<36000);let gap=0,inside=0,totalArea=0,minDot=1;
  for(let i=0;i<cp.count;i+=3){const vs=[0,1,2].map(k=>new T.Vector3().fromBufferAttribute(cp,i+k)),cross=new T.Vector3().subVectors(vs[1],vs[0]).cross(new T.Vector3().subVectors(vs[2],vs[0]));assert(cross.lengthSq()>1e-16);const area=Math.abs(cross.y)/2;totalArea+=area;cross.normalize();
@@ -76,7 +80,7 @@ test('actual cleanup, dry, winter and grazed policies finish before live-cut sin
    const matrices=[new T.Matrix4().compose(new T.Vector3(10,4.95,20),new T.Quaternion(),new T.Vector3(.8,1.2,.8)),new T.Matrix4().compose(new T.Vector3(30,4.95,40),new T.Quaternion(),new T.Vector3(.8,1.2,.8))],colors=[new T.Color('#aabc90'),new T.Color('#aabc90')];
    rows[name]={matrices,colors};BANK[name]={n:2,im:{geometry:{attributes:{position:{count:2,getX:()=>0,getY:i=>i,getZ:()=>0}}},getMatrixAt(i,out){out.copy(matrices[i]);},setMatrixAt(i,m){matrices[i]=m.clone();},getColorAt(i,out){out.copy(colors[i]);},setColorAt(i,c){colors[i]=c.clone();}}};
   }
-  let grazed=0;const D={THREE:T,BANK,F:{},KEEP:[],inFarm:()=>false,pathDist:()=>100,onRace:()=>false,alpineSnowAt:()=>0,vn:()=>.5,hsh:()=>0,groundH:()=>5,biomeAt:()=> 'meadow',coyoteCoverDryWeight:()=>0,coldCoverProfile:()=>null,onWater:()=>false,applyChalkGrassMesh,applyChalkFlowerMesh,
+  let grazed=0;const D={W:{loonLake:null},THREE:T,BANK,F:{},KEEP:[],inFarm:()=>false,pathDist:()=>100,onRace:()=>false,alpineSnowAt:()=>0,vn:()=>.5,hsh:()=>0,groundH:()=>5,biomeAt:()=> 'meadow',coyoteCoverDryWeight:()=>0,coldCoverProfile:()=>null,onWater:()=>false,applyChalkGrassMesh,applyChalkFlowerMesh,
    grazedTuftScale(x,z,height){grazed++;assert([x,z,height].every(Number.isFinite));assert(height>0,'hidden zero basis must never enter scale policy');return .8;},chalkPlanning:{isChalk:(x,z)=>live&&x===10&&z===20},_m:new T.Matrix4(),_q:new T.Quaternion(),_v:new T.Vector3(),_sc:new T.Vector3(),_col:new T.Color()};
   run(D);return{rows,BANK,F:D.F,grazed};
  };

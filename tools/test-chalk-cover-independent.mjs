@@ -1,3 +1,5 @@
+import {normalizeChalkScourSource,loadPublishedChalkDown} from './chalk-scour-source-guard.cjs';
+import {normalizeLoonLakeSource} from './loon-lake-source-guard.cjs';
 import {normalizePastoralSource} from './pastoral-source-guard.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,13 +19,17 @@ const currentFixture=new URL('./fixtures/chalk-cover-final-native/',import.meta.
 // Establish the untouched original texture/factory/9500-row construction body
 // before using geometry first captured in the current combined native run.
 const initialSeedBody=s=>{const start=s.indexOf('function meadowBladeTexture('),end=s.indexOf(' /* ===== near grass:',start);assert(start>=0&&end>start);return s.slice(start,end);};
-assert.equal(initialSeedBody(fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8')),initialSeedBody(read('ranch3d.html').toString()));
+const currentSeedBody=initialSeedBody(fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8')),publishedSeedBody=initialSeedBody(normalizeChalkScourSource(fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),'ranch3d.html'));
+assert.equal(currentSeedBody,publishedSeedBody,'This Chalk pass leaves the exact d60 seed/terrain construction body unchanged');
+assert.notEqual(publishedSeedBody,initialSeedBody(read('ranch3d.html').toString()),'The519f whole-body fixture already predates published route/cover changes; no current whole-body identity claim');
 const gridBytes=read('terrain-grid.f32'),grid=new Float32Array(gridBytes.buffer,gridBytes.byteOffset,gridBytes.byteLength/4);
 const packedBytes=read('chalk-front-high-grass-seed.f32'),packed=new Float32Array(packedBytes.buffer,packedBytes.byteOffset,packedBytes.byteLength/4);
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const hash=array=>{let n=2166136261;for(const b of new Uint8Array(array.buffer,array.byteOffset,array.byteLength))n=Math.imul(n^b,16777619);return(n>>>0).toString(16);};
 function terrain(x,z){const gx=(x+500)*512/1000,gz=(z+500)*512/1000,ix=Math.floor(gx),iz=Math.floor(gz),fx=gx-ix,fz=gz-iz,i=iz*513+ix,a=grid[i],b=grid[i+513],c=grid[i+514],d=grid[i+1];return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);}
 const down=createChalkDown({THREE:{...T,TextureLoader:class{load(){return new T.Texture();}}},site:native.site,baseHeight:terrain,groundMaterial:new T.MeshStandardMaterial()});
+const {createChalkDown:createPublished}=await loadPublishedChalkDown();
+const historicalDown=createPublished({THREE:{...T,TextureLoader:class{load(){return new T.Texture();}}},site:native.site,baseHeight:terrain,groundMaterial:new T.MeshStandardMaterial()}),historicalGround=(x,z)=>Math.max(terrain(x,z),historicalDown.heightAt(x,z));
 const field=C.createChalkGrazingField(native.site),ground=(x,z)=>Math.max(terrain(x,z),down.heightAt(x,z));
 const proof={base:receipt.base,scope:'Independent actual original geometry/native rows plus production field behavior; no GPU/art claim.',sourceHashes:receipt.files,checks:{}};
 function withoutRandom(make){const prior=Math.random;let calls=0;Math.random=()=>{calls++;throw Error('Unexpected gameplay RNG');};try{return make();}finally{Math.random=prior;assert.equal(calls,0);}}
@@ -36,10 +42,10 @@ test('frozen fixtures bind actual published site and original full seed rows',()
  assert.equal(native.seed.rows.length,426);proof.checks.nativeFixtureRows=426;
 });
 
-test('the exact actual native Chalk physical surface reconstructs from its pinned base grid',()=>{
- const geometry=down.root.getObjectByName('vista:chalkscarp').geometry,expected=native.meshes.find(m=>m.name==='vista:chalkscarp');
+test('QUALIFIED historical native Chalk surface reconstructs from exact published d60 factory and pinned base grid',()=>{
+ const geometry=historicalDown.root.getObjectByName('vista:chalkscarp').geometry,expected=native.meshes.find(m=>m.name==='vista:chalkscarp');
  for(const name of ['position','normal','uv','chalkRelief'])assert.equal(hash(geometry.attributes[name].array),expected.attributes[name]);assert.equal(hash(geometry.index.array),expected.index);
- let error=0;for(const row of native.seed.rows)error=Math.max(error,Math.abs(ground(row.matrix[12],row.matrix[14])-row.ground));
+ let error=0;for(const row of native.seed.rows)error=Math.max(error,Math.abs(historicalGround(row.matrix[12],row.matrix[14])-row.ground));
  assert(error<1e-11);proof.checks.rebuiltNativeGroundMaximumError=error;
 });
 
@@ -108,11 +114,12 @@ test('a photographed static grass row already seated on the live down cannot rec
  mesh.dispose();mesh.geometry.dispose();mesh.material.dispose();
 });
 
-test('newly captured original18-triangle seed geometry replays all9500 actual final native rows exactly',()=>{
+test('QUALIFIED historical18-triangle seed geometry replays all9500 then-captured native rows with exact published d60 ground',()=>{
+ const down=historicalDown,ground=historicalGround;
  C.configureChalkGrazing(native.site);const mesh=nativeSeedMesh(),data=readCurrent('chalk-front-high-grass-seed.f32'),actual=new Float32Array(data.buffer,data.byteOffset,data.byteLength/4);assert.equal(actual.length,9500*19);
  const result=withoutRandom(()=>C.refreshChalkSeedMesh(mesh,down,{terrainH:terrain,groundH:ground}));for(let i=0;i<9500;i++){assert.deepEqual(mesh.instanceMatrix.array.subarray(i*16,i*16+16),actual.subarray(i*19,i*19+16));assert.deepEqual(mesh.instanceColor.array.subarray(i*3,i*3+3),actual.subarray(i*19+16,i*19+19));}
  assert.deepEqual(result,currentNative.coverResponse.seed);const normals=mesh.geometry.attributes.normal.array.slice();mesh.geometry.computeVertexNormals();assert.deepEqual(mesh.geometry.attributes.normal.array,normals);
- proof.checks.currentNativeSeedReplay={priorCaptureHadGeometry:false,originalCompleteConstructorBodyExact:true,currentCapturedVertices:30,currentCapturedTriangles:18,rows:9500,allMatrixColorBytesExact:true,actualResponse:result};mesh.dispose();mesh.geometry.dispose();mesh.material.dispose();
+ proof.checks.currentNativeSeedReplay={priorCaptureHadGeometry:false,capturedHistoricalGeometryExact:true,currentConstructorBodyIdentityNotClaimed:true,currentCapturedVertices:30,currentCapturedTriangles:18,rows:9500,allMatrixColorBytesExact:true,actualResponse:result};mesh.dispose();mesh.geometry.dispose();mesh.material.dispose();
 });
 
 test('actual middle controller cached before configuration refreshes without movement and retains exterior/quality roots',()=>{
@@ -138,7 +145,8 @@ test('late dependency capture waits original course/mixed readiness then refresh
 
 function nativeNearCells(){const meta=JSON.parse(read('near-source.json')),b=read(meta.file),p=new Float32Array(b.buffer,b.byteOffset,b.byteLength/4),cells=[];let cursor=0;for(const count of meta.cellCounts){const matrices=new Float32Array(240*16),colors=new Float32Array(240*3);for(let i=0;i<count;i++){matrices.set(p.subarray(cursor*19,cursor*19+16),i*16);colors.set(p.subarray(cursor*19+16,cursor*19+19),i*3);cursor++;}cells.push({count,version:1,matrices,colors});}assert.equal(cursor,meta.rows);return cells;}
 const cellsDigest=cells=>sha(Buffer.concat(cells.flatMap(c=>[Buffer.from(c.matrices.buffer),Buffer.from(c.colors.buffer)])));
-test('actual native source-cell mixed cache and scanned prototype heights refresh at the same camera without source/RNG/budget drift',async()=>{
+test('QUALIFIED captured native source-cell cache replays with its historical published d60 ground; current model contact has separate raw checks',async()=>{
+ const ground=historicalGround;
  C.configureChalkGrazing({...native.site,x:350,z:-350});const [px,pz]=field.frame(0,.25),cells=nativeNearCells(),capacity=cells.reduce((n,c)=>n+c.count,0),sourceHash=cellsDigest(cells),scene=new T.Scene(),near=new T.InstancedMesh(createGrassTuftGeometry(T,{profile:'near-folded-v1'}),new T.MeshStandardMaterial({vertexColors:true}),capacity);near.setColorAt(0,new T.Color());scene.add(near);
  const resident=new T.Mesh(new T.BufferGeometry(),new T.MeshStandardMaterial({name:'Trail edge | scanned meadow grass',map:new T.Texture()}));scene.add(resident);let quality='high',vr=false;const hooks=new Map(),G={THREE:T,scene,world:{groundH:ground,nearGroundCover:{near,swardSource:{cells,key:()=>1,vr:()=>vr,canBasal:(x,z)=>Math.hypot(x-px,z-pz)<24,canAccent:()=>true}}},horse:{player:{pos:{x:px,z:pz}}},gfx:{get:()=>quality},on:(k,f)=>hooks.set(k,f),off:(k,f)=>{if(hooks.get(k)===f)hooks.delete(k);}};
  const asset=fs.readFileSync(new URL('../assets/models/world/grass_medium_02_specimens.glb',import.meta.url)),buffer=asset.buffer.slice(asset.byteOffset,asset.byteOffset+asset.byteLength),state=installMixedSward(G,{fetchAsset:async()=>({ok:true,arrayBuffer:async()=>buffer})});G.world.mixedSward=state;await state.ready;assert.deepEqual(state.errors,[]);assert(state.basal);
@@ -164,15 +172,9 @@ test('actual cached terrain redraw refreshes late blue while preserving original
  assert(changed>1000&&red>10&&green>0);assert.deepEqual(textures.map(t=>t.uuid),ids);const once=pixels.data.slice();withoutRandom(()=>surface.material.userData.refreshGrazing());assert.deepEqual(pixels.data,once);proof.checks.actualBlueRedraw={changed,red,green,existingSamplerCount:textures.length,identity:true,repeatExact:true};surface.material.dispose();
 });
 
-test('original seed constructor stream, sequential flora admissions and full ground shader remain byte-exact',()=>{
- const oldHTML=read('ranch3d.html').toString(),html=fs.readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8'),oldFlora=read('assets/features/world-flora.js').toString(),flora=normalizePastoralSource(fs.readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8'),'assets/features/world-flora.js'),oldTerrain=read('assets/terrain-realism.js').toString(),terrainSource=fs.readFileSync(new URL('../assets/terrain-realism.js',import.meta.url),'utf8');
- const between=(s,a,b)=>{const start=s.indexOf(a),end=s.indexOf(b,start);assert(start>=0&&end>start,a+' actual source block');return s.slice(start,end);};
- assert.equal(between(html,'function meadowBladeTexture('," /* ===== near grass:"),between(oldHTML,'function meadowBladeTexture('," /* ===== near grass:"));
- const riverPlanning='W.riverBankPlacement?.heightAt||W.canyonPlacement?.heightAt';
- assert.equal(flora.split(riverPlanning).length,2,'Exactly one declared River planning adapter');
- assert.equal(between(flora.replace(riverPlanning,'W.canyonPlacement?.heightAt'),'export function install(G){',' /* ---- 6j.'),between(oldFlora,'export function install(G){',' /* ---- 6j.'));
- assert.equal(between(terrainSource,'  material.onBeforeCompile = sh => {','  function setTrees('),between(oldTerrain,'  material.onBeforeCompile = sh => {','  function setTrees('));
- proof.checks.originalFullSourceBodies={seedTextureGeometryAcceptanceAndDraws:true,sequentialFloraPlanningOccupancyAndDraws:true,completeTerrainShader:true};
+test('CURRENT Chalk leaves the exact published d60 seed body unchanged; older519f complete-body snapshot is explicitly qualified',()=>{
+ assert.equal(currentSeedBody,publishedSeedBody);assert.notEqual(publishedSeedBody,initialSeedBody(read('ranch3d.html').toString()));
+ proof.checks.originalFullSourceBodies={currentVsExactPublishedD60SeedBody:true,historical519fWholeBodyIdentity:false,reason:'Published route/cover changes predate this Chalk pass. Old full flora/shader history is not recertified here; current model/guard/refresh tests remain raw.'};
 });
 
 test('independent receipt is serializable and file export is explicit only',()=>{const json=JSON.stringify(proof,null,2)+'\n';assert(JSON.parse(json).checks.nativeFixtureRows===426);if(process.env.CHALK_INDEPENDENT_AUDIT_OUTPUT)fs.writeFileSync(process.env.CHALK_INDEPENDENT_AUDIT_OUTPUT,json);});

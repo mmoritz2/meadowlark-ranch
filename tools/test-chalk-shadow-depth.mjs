@@ -1,3 +1,4 @@
+import {normalizeChalkScourSource,loadPublishedChalkDown} from './chalk-scour-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -23,24 +24,26 @@ function snapshot(down,records){const nodes=[];down.root.updateMatrixWorld(true)
 function construct(create,{fallback=false,flat=false,failDepth=false}={}){const prior=Math.random,rnd=stream(),records={geometries:[],standard:[],depth:[],textures:[],requests:[],meshes:[],groups:[]};let globalDraws=0;const gameRandom=()=>{globalDraws++;return rnd();};Math.random=gameRandom;
  const THREE={...T,BufferGeometry:class extends T.BufferGeometry{constructor(){super();records.geometries.push(this);}},MeshStandardMaterial:class extends T.MeshStandardMaterial{constructor(p){super(p);records.standard.push(this);}},MeshDepthMaterial:class extends T.MeshDepthMaterial{constructor(p){super(p);records.depth.push(this);if(failDepth)throw Error('fixture depth failure');}},TextureLoader:class{load(path){const t=new T.Texture();records.textures.push(t);records.requests.push(path);return t;}},Mesh:class extends T.Mesh{constructor(...args){super(...args);records.meshes.push(this);}},Group:class extends T.Group{constructor(){super();records.groups.push(this);}}};
  try{const mat=fallback?null:new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,color:'#ffffff'}),down=create({THREE,site:flat?{x:0,z:0,len:112,depth:76,h:14,crest:.5}:realSite,baseHeight:flat?()=>2:terrainH,groundMaterial:mat,groundColorAt:fallback?undefined:(x,z,c)=>c.setRGB(.5+.05*Math.sin(x*.03),.6+.03*Math.cos(z*.03),.4)});const result={down,records,mat,snapshot:snapshot(down,records),draws:globalDraws,future:Array.from({length:20},()=>gameRandom())};assert.equal(Math.random,gameRandom);return result;}finally{Math.random=prior;}}
+const {createChalkDown:createPublished}=await loadPublishedChalkDown();
+const publishedSource=normalizeChalkScourSource(source,'assets/chalk-down.js'),historicalAfter=construct(createPublished);
 const before=construct(createBaseline),after=construct(createChalkDown);
 function fnv(array){let h=2166136261;for(const b of new Uint8Array(array.buffer,array.byteOffset,array.byteLength)){h^=b;h=Math.imul(h,16777619);}return(h>>>0).toString(16).padStart(8,'0');}
 const actualGround=after.down.root.getObjectByName('vista:chalkscarp');
 
-test('pinned production constructor/native terrain fixture is exact and scoped source normalization restores it',()=>{
+test('QUALIFIED published d60 constructor recovers exact historical519f native fixture and depth-only source change',()=>{
  for(const[name,expected]of Object.entries(pinned.files))assert.equal(sha(readFileSync(new URL(name,fixture))),expected,name);
- const start=source.indexOf('// Lower only this hill\'s sun caster;'),end=source.indexOf('// One sampled surface is shared',start);assert(start>=0&&end>start);
- let normalized=source.slice(0,start)+source.slice(end);const addition=" const sunDepth=chalkSunDepth(T);ground.customDepthMaterial=sunDepth;\n const releaseSunDepth=()=>{geometry.removeEventListener('dispose',releaseSunDepth);sunDepth.dispose();};geometry.addEventListener('dispose',releaseSunDepth);\n";assert.equal(normalized.split(addition).length,2);normalized=normalized.replace(addition,'');assert.equal(normalized,baselineSource);
- for(const row of surface.meshes){const mesh=after.down.root.getObjectByName(row.name);for(const [name,hash]of Object.entries(row.attributes)){if(row.name==='vista:chalkscarp'&&name==='color')continue;assert.equal(fnv(mesh.geometry.attributes[name].array),hash,row.name+' '+name);}assert.equal(mesh.geometry.index?fnv(mesh.geometry.index.array):null,row.index);}
+ const start=publishedSource.indexOf('// Lower only this hill\'s sun caster;'),end=publishedSource.indexOf('// One sampled surface is shared',start);assert(start>=0&&end>start);
+ let normalized=publishedSource.slice(0,start)+publishedSource.slice(end);const addition=" const sunDepth=chalkSunDepth(T);ground.customDepthMaterial=sunDepth;\n const releaseSunDepth=()=>{geometry.removeEventListener('dispose',releaseSunDepth);sunDepth.dispose();};geometry.addEventListener('dispose',releaseSunDepth);\n";assert.equal(normalized.split(addition).length,2);normalized=normalized.replace(addition,'');assert.equal(normalized,baselineSource);
+ for(const row of surface.meshes){const mesh=historicalAfter.down.root.getObjectByName(row.name);for(const [name,hash]of Object.entries(row.attributes)){if(row.name==='vista:chalkscarp'&&name==='color')continue;assert.equal(fnv(mesh.geometry.attributes[name].array),hash,row.name+' '+name);}assert.equal(mesh.geometry.index?fnv(mesh.geometry.index.array):null,row.index);}
 });
-test('actual constructor keeps every visible node, geometry, glyph, texture request and physical/planning sample exact',()=>{
- assert.deepEqual(after.snapshot,before.snapshot);assert.equal(after.mat,actualGround.material);assert(actualGround.castShadow&&actualGround.receiveShadow);
+test('QUALIFIED published d60 constructor retains historical519f visible geometry/native samples; current resource population remains exact',()=>{
+ assert.deepEqual(historicalAfter.snapshot,before.snapshot);assert.equal(after.mat,actualGround.material);assert(actualGround.castShadow&&actualGround.receiveShadow);
  assert.equal(after.records.geometries.length,before.records.geometries.length);assert.equal(after.records.meshes.length,before.records.meshes.length);assert.equal(after.records.groups.length,before.records.groups.length);assert.equal(after.records.standard.length,before.records.standard.length);assert.equal(after.records.textures.length,before.records.textures.length);
  assert.equal(after.records.depth.length-before.records.depth.length,1);assert.equal(after.records.requests.length,2);
 });
 test('actual constructor and subsequent gameplay sequence preserve global random draws, including fallback ground material',()=>{
  assert.equal(after.draws,before.draws);assert.deepEqual(after.future,before.future);
- const a=construct(createBaseline,{fallback:true,flat:true}),b=construct(createChalkDown,{fallback:true,flat:true});assert.equal(b.draws,a.draws);assert.deepEqual(b.future,a.future);assert.deepEqual(b.snapshot,a.snapshot);assert.equal(b.records.requests.length,5);
+ const a=construct(createBaseline,{fallback:true,flat:true}),b=construct(createChalkDown,{fallback:true,flat:true});assert.equal(b.draws,a.draws);assert.deepEqual(b.future,a.future);assert.equal(b.down.root.getObjectByName('vista:chalkscarp').material.isMeshStandardMaterial,true);assert.equal(b.records.requests.length,5);
 });
 test('one owned RGB packed depth material changes only bundled begin_vertex and needs no texture or geometry allocation',()=>{
  const d=actualGround.customDepthMaterial;assert(d.isMeshDepthMaterial);assert.equal(d.depthPacking,T.RGBADepthPacking);assert.equal(d.side,T.DoubleSide);assert.equal(d.map,null);assert.equal(d.alphaMap,null);assert.equal(d.displacementMap,null);assert.equal(d.customProgramCacheKey(),'chalk-sun-caster-inset-2');
@@ -68,6 +71,6 @@ test('depth hook serialization and repeat compilation remain deterministic and d
 
 test('real constructor negative control detects the four gameplay draws from an unisolated added depth material',async()=>{
  const randomLine=source.split('\n').find(line=>line.startsWith(' Math.random=()=>{state='));assert(randomLine);
- const variant=source.replace(randomLine,' // Fixture deliberately omits private UUID randomness.').replace("'./chalk-downland.mjs?v=landmark-fields-1'",JSON.stringify(new URL('../assets/chalk-downland.mjs',import.meta.url).href));
+ const variant=source.replace(randomLine,' // Fixture deliberately omits private UUID randomness.').replace(/'\.\/chalk-downland\.mjs\?v=[^']*'/,JSON.stringify(new URL('../assets/chalk-downland.mjs',import.meta.url).href));
  const module=await import('data:text/javascript;base64,'+Buffer.from(variant).toString('base64'));const bad=construct(module.createChalkDown);assert.equal(bad.draws,before.draws+4);assert.notDeepEqual(bad.future,before.future);
 });

@@ -3,7 +3,7 @@ import {installStandingStones,waitForStandingStoneTextures,STANDING_STONES_PROFI
 import {installLandmarkStonework,waitForLandmarkStoneTextures,LANDMARK_STONEWORK_PROFILE} from '../landmark-stonework.mjs?v=landmark-stonework-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5-connected-landforms-1';
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-grazing-1-chalk-scour-1';
 import {configureChalkGrazing} from '../chalk-grazing.mjs?v=chalk-grazing-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 

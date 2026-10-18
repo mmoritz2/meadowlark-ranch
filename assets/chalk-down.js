@@ -1,4 +1,4 @@
-import {chalkDownlandLift,CHALK_MARE_PANEL,drawChalkMare} from './chalk-downland.mjs?v=landmark-fields-1';
+import {chalkDownlandLift,chalkDownlandReferenceLift,chalkMareOutline,chalkScourDepth,CHALK_MARE_PANEL,drawChalkMare} from './chalk-downland.mjs?v=chalk-scour-1';
 
 // Lower only this hill's sun caster; visible turf and hoof contact stay on the
 // shared surface. A private synchronous stream keeps its extra material UUID
@@ -21,7 +21,7 @@ function chalkSunDepth(T){
 // One sampled surface is shared by the visible down, the chalk cutting and hoof height.
 export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundColorAt}) {
  const {x,z,len,depth,h,crest}=site,face=Math.atan2(x,z),ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
- const nx=160,nz=112,heights=new Float32Array((nx+1)*(nz+1)),planningHeights=new Float32Array((nx+1)*(nz+1)),positions=[],colors=[],uvs=[],indices=[],relief=[];
+ const nx=160,nz=112,heights=new Float32Array((nx+1)*(nz+1)),uncutHeights=new Float32Array((nx+1)*(nz+1)),planningHeights=new Float32Array((nx+1)*(nz+1)),positions=[],colors=[],uvs=[],indices=[],relief=[];
  const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
  // A lower, broad down has one larger western shoulder and a shallow saddle
  // through its crown. All terms meet the original surveyed footprint at zero rise.
@@ -36,7 +36,11 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
   return c.peak*p*(1-c.gully*4*p*(1-p));
  }
  const legacyLift=(u,t)=>columnLift(column(u),t);
- const lift=(u,t)=>chalkDownlandLift(site,u,t);
+ const physicalOutline=chalkMareOutline();
+ // Keep the entire pre-existing foot outside historical tree clearance exact.
+ // Within that cleared down the new shoulders and valleys are actual ground.
+ const uncutLift=(u,t)=>{const old=chalkDownlandReferenceLift(site,u,t),w=smooth((Math.min(legacyLift(u,t),old)-1.2)/2);return old+(chalkDownlandLift(site,u,t)-old)*w;};
+ const lift=(u,t)=>Math.max(0,uncutLift(u,t)-chalkScourDepth(site,u,t,physicalOutline));
  // Keep the original galloping outline affine in across-slope distance and rise.
  // One shared mapping seats the complete figure below the lower crown; its
  // forward and inverse expressions are used by the cutting and plant exclusion.
@@ -47,7 +51,7 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const turf=new T.Color('#a9b397'),bleached=new T.Color('#d1c3a0'),c=new T.Color();
  for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){
   const u=(i/nx-.5)*len,t=j/nz,[wx,wz]=frame(u,t),rise=lift(u,t),base=baseHeight(wx,wz),y=base+rise;
-  planningHeights[j*(nx+1)+i]=base+legacyLift(u,t);
+  planningHeights[j*(nx+1)+i]=base+legacyLift(u,t);uncutHeights[j*(nx+1)+i]=base+uncutLift(u,t);
   heights[j*(nx+1)+i]=y;relief.push(rise);positions.push(wx,y,wz);uvs.push(groundMaterial?(wx+500)/1000:wx/1.6,groundMaterial?(500-wz)/1000:wz/1.6);
   const wear=(Math.sin(u*.14+t*5)+Math.sin(u*.047-t*9)+2)*.065;
   if(groundColorAt)groundColorAt(wx,wz,c,rise);
@@ -65,7 +69,12 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const sunDepth=chalkSunDepth(T);ground.customDepthMaterial=sunDepth;
  const releaseSunDepth=()=>{geometry.removeEventListener('dispose',releaseSunDepth);sunDepth.dispose();};geometry.addEventListener('dispose',releaseSunDepth);
  function sampleUV(u,t,field=heights){
-  const fx=(u/len+.5)*nx,fz=t*nz;if(fx<0||fz<0||fx>nx||fz>nz)return -Infinity;
+  let fx=(u/len+.5)*nx,fz=t*nz;
+  // Packed world XZ can round a surveyed hem point a few micrometres outside
+  // its inverse frame. Live contact closes only that 0.05mm hem; historical
+  // planning keeps the original strict outside/-Infinity semantics exactly.
+  if(field!==planningHeights){const ex=.00005*nx/len,ez=.00005*nz/depth;if(fx>=-ex&&fx<=nx+ex&&fz>=-ez&&fz<=nz+ez){fx=Math.max(0,Math.min(nx,fx));fz=Math.max(0,Math.min(nz,fz));}}
+  if(fx<0||fz<0||fx>nx||fz>nz)return -Infinity;
   const i=Math.min(nx-1,Math.floor(fx)),j=Math.min(nz-1,Math.floor(fz)),a=j*(nx+1)+i,dx=fx-i,dz=fz-j;
   const A=field[a],B=field[a+1],C=field[a+nx+1],D=field[a+nx+2];
   return dx>=dz?A+(B-A)*dx+(D-B)*dz:A+(D-C)*dx+(C-A)*dz;
@@ -93,59 +102,69 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const outline=[];
  for(let i=0;i<curve.length;i++){const a=curve[i],b=curve[(i+1)%curve.length],n=Math.max(1,Math.ceil(a.distanceTo(b)/.16));
   for(let k=0;k<n;k++){const p=a.clone().lerp(b,k/n),rough=.012*Math.sin(p.x*41+p.y*23)+.007*Math.sin(p.x*67-p.y*37);p.x+=rough;p.y+=rough*.8;outline.push(p);}}
+ // Each mineral face is clipped to one original A-D terrain triangle. The
+ // scoured turf and exposed chalk therefore share the exact packed support;
+ // polygonOffset selects the mineral material without a lifted white mesh.
  const triangles=T.ShapeUtils.triangulateShape(outline,[]),ps=[],ns=[],cs=[],uv=[];
- const chalk=new T.Color('#a5a38f'),chalkLight=new T.Color('#d4cfbb');
- const peg=(fx,fy)=>{
-  const u=fx*CHALK_MARE_PANEL.xScale+CHALK_MARE_PANEL.xOffset,t=CHALK_MARE_PANEL.tBase+fy*CHALK_MARE_PANEL.tScale;
-  const [wx,wz]=frame(u,t),y=sampleUV(u,t)+.023;
-  const e=.05,n=new T.Vector3(heightAt(wx-e,wz)-heightAt(wx+e,wz),2*e,heightAt(wx,wz-e)-heightAt(wx,wz+e)).normalize();
-  return {wx,wz,y,n};
- };
- let repairedCutTriangles=0,omittedCutArea=0;
- function tri(a,b,c2,depth=0){
-  const ab=a.distanceTo(b),bc=b.distanceTo(c2),ca=c2.distanceTo(a);
-  if(Math.max(ab,bc,ca)>.28&&depth<9){
-   if(ab>=bc&&ab>=ca){const m=a.clone().add(b).multiplyScalar(.5);tri(a,m,c2,depth+1);tri(m,b,c2,depth+1);}
-   else if(bc>=ca){const m=b.clone().add(c2).multiplyScalar(.5);tri(a,b,m,depth+1);tri(a,m,c2,depth+1);}
-   else{const m=c2.clone().add(a).multiplyScalar(.5);tri(a,b,m,depth+1);tri(m,b,c2,depth+1);}return;
-  }
-  // Positive local XY winding maps to an upward-facing surface in this frame.
-  if((b.x-a.x)*(c2.y-a.y)-(b.y-a.y)*(c2.x-a.x)>0)[b,c2]=[c2,b];
-  const samples=[a,b,c2].map(p=>peg(p.x,p.y)),f=samples.map(q=>[Math.fround(q.wx),Math.fround(q.y),Math.fround(q.wz)]);
-  const ab3=f[1].map((v,k)=>v-f[0][k]),ac3=f[2].map((v,k)=>v-f[0][k]);
-  const cross=[ab3[1]*ac3[2]-ab3[2]*ac3[1],ab3[2]*ac3[0]-ab3[0]*ac3[2],ab3[0]*ac3[1]-ab3[1]*ac3[0]],area=Math.hypot(...cross);
-  if(area<1e-8){omittedCutArea+=Math.abs(cross[1])*.5;return;}
-  const alignment=Math.min(...samples.map(q=>(cross[0]*q.n.x+cross[1]*q.n.y+cross[2]*q.n.z)/Math.max(1e-20,area)));
-  // Thin triangulated outline ears can span a terrain-cell crease even after
-  // ordinary edge subdivision. Refine only those ears, measuring emitted Float32
-  // geometry, so lifting cannot turn them into nearly vertical white slivers.
-  if(alignment<.90||cross[1]<=0){
-   if(depth<16){repairedCutTriangles++;const ab=a.distanceTo(b),bc=b.distanceTo(c2),ca=c2.distanceTo(a);
-    if(ab>=bc&&ab>=ca){const m=a.clone().add(b).multiplyScalar(.5);tri(a,m,c2,depth+1);tri(m,b,c2,depth+1);}
-    else if(bc>=ca){const m=b.clone().add(c2).multiplyScalar(.5);tri(a,b,m,depth+1);tri(a,m,c2,depth+1);}
-    else{const m=c2.clone().add(a).multiplyScalar(.5);tri(a,b,m,depth+1);tri(m,b,c2,depth+1);}return;
-   }
-   // Submillimetre slivers can collapse after world-coordinate quantization.
-   // Their bounded planar area is reported rather than emitting an inverted face.
-   omittedCutArea+=Math.abs(cross[1])*.5;return;
-  }
-  for(let k=0;k<3;k++){const p=[a,b,c2][k],q=samples[k];ps.push(q.wx,q.y,q.wz);ns.push(q.n.x,q.n.y,q.n.z);uv.push(p.x*.85,p.y*.85);
-   const grain=.5+.22*Math.sin(p.x*1.7+p.y*.9)*Math.sin(p.y*1.2-p.x*.7)+.12*Math.sin(p.x*23+p.y*17)*Math.sin(p.y*31-p.x*7);c.copy(chalk).lerp(chalkLight,grain);cs.push(c.r,c.g,c.b);}
+ const chalk=new T.Color('#969887'),chalkLight=new T.Color('#c2bda5');
+ const normal=geometry.attributes.normal;
+ const chart=p=>[(p.x*CHALK_MARE_PANEL.xScale+CHALK_MARE_PANEL.xOffset)/len*nx+nx*.5,(CHALK_MARE_PANEL.tBase+p.y*CHALK_MARE_PANEL.tScale)*nz];
+ const sign=(a,b,p)=>(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);
+ function clip(poly,tri){
+  const orientation=Math.sign(sign(tri[0],tri[1],tri[2]));
+  for(let edge=0;edge<3&&poly.length;edge++){
+   const a=tri[edge],b=tri[(edge+1)%3],next=[];
+   for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const p=poly[j],q=poly[i],dp=sign(a,b,p)*orientation,dq=sign(a,b,q)*orientation,P=dp>=-1e-10,Q=dq>=-1e-10;
+    if(P!==Q){const k=dp/(dp-dq);next.push([p[0]+(q[0]-p[0])*k,p[1]+(q[1]-p[1])*k]);}if(Q)next.push(q);
+   }poly=next;
+  }return poly;
  }
- for(const [a,b,c2]of triangles)tri(outline[a],outline[b],outline[c2]);
+ const point=(gx,gz)=>{
+  const u=(gx/nx-.5)*len,t=gz/nz,[wx,wz]=frame(u,t),i=Math.min(nx-1,Math.max(0,Math.floor(gx))),j=Math.min(nz-1,Math.max(0,Math.floor(gz))),dx=gx-i,dz=gz-j,a=j*(nx+1)+i;
+  const ids=dx>=dz?[a,a+1,a+nx+2]:[a,a+nx+2,a+nx+1],weights=dx>=dz?[1-dx,dx-dz,dz]:[1-dz,dx,dz-dx];
+  let X=0,Y=0,Z=0;for(let k=0;k<3;k++){X+=normal.getX(ids[k])*weights[k];Y+=normal.getY(ids[k])*weights[k];Z+=normal.getZ(ids[k])*weights[k];}const m=Math.hypot(X,Y,Z);
+  return{wx,wz,y:sampleUV(u,t),n:[X/m,Y/m,Z/m],u,t};
+ };
+ let omittedCutArea=0;
+ function emit(poly,positions,normals,colors,uvs,edge=false){
+  if(poly.length<3)return;
+  for(let i=1;i<poly.length-1;i++){
+   let pts=[poly[0],poly[i],poly[i+1]];if(sign(...pts)>0)[pts[1],pts[2]]=[pts[2],pts[1]];
+   const qs=pts.map(p=>point(...p)),f=qs.map(q=>[Math.fround(q.wx),Math.fround(q.y),Math.fround(q.wz)]),ab=f[1].map((v,k)=>v-f[0][k]),ac=f[2].map((v,k)=>v-f[0][k]);
+   const faceNormal=[ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]],cy=faceNormal[1],faceLength=Math.hypot(...faceNormal);
+   const alignment=Math.min(...qs.map(q=>q.n.reduce((s,v,k)=>s+v*faceNormal[k],0)/Math.max(faceLength,1e-30)));
+   if(cy<=1e-9||alignment<.93){if(Math.abs(cy)>.00002)throw Error('Chalk cell clipping produced a substantial misaligned face');omittedCutArea+=Math.abs(cy)*.5;continue;}
+   for(const q of qs){positions.push(q.wx,q.y,q.wz);normals?.push(...q.n);uvs?.push((q.wx-x)/1.25,(q.wz-z)/1.25);
+    if(colors){const grain=.5+.18*Math.sin(q.u*.87+q.t*13)*Math.sin(q.u*.31-q.t*21)+.12*Math.sin(q.u*7.1+q.t*41);c.copy(chalk).lerp(chalkLight,Math.max(0,Math.min(1,grain)));colors.push(c.r,c.g,c.b);}}
+  }
+ }
+ function fitChartTriangle(chartTri,positions,normals,colors,uvs){
+  const x0=Math.max(0,Math.floor(Math.min(...chartTri.map(p=>p[0])))),x1=Math.min(nx-1,Math.floor(Math.max(...chartTri.map(p=>p[0])))),z0=Math.max(0,Math.floor(Math.min(...chartTri.map(p=>p[1])))),z1=Math.min(nz-1,Math.floor(Math.max(...chartTri.map(p=>p[1]))));
+  for(let j=z0;j<=z1;j++)for(let i=x0;i<=x1;i++)for(const tri of [[[i,j],[i+1,j+1],[i+1,j]],[[i,j],[i,j+1],[i+1,j+1]]])emit(clip(chartTri,tri),positions,normals,colors,uvs);
+ }
+ for(const [a,b,c2]of triangles)fitChartTriangle([outline[a],outline[b],outline[c2]].map(chart),ps,ns,cs,uv);
  const cut=new T.BufferGeometry();cut.setAttribute('position',new T.Float32BufferAttribute(ps,3));cut.setAttribute('normal',new T.Float32BufferAttribute(ns,3));cut.setAttribute('color',new T.Float32BufferAttribute(cs,3));cut.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
  const rock=new T.TextureLoader().load('assets/textures/scanned/rock_boulder_cracked_arm.webp');rock.wrapS=rock.wrapT=T.RepeatWrapping;
- const chalkMat=new T.MeshStandardMaterial({vertexColors:true,roughness:1,map:texture('assets/textures/scanned/rock_boulder_cracked_diff.webp',true),bumpMap:rock,bumpScale:.035,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+ const chalkMat=new T.MeshStandardMaterial({vertexColors:true,roughness:1,map:texture('assets/textures/scanned/rock_boulder_cracked_diff.webp',true),bumpMap:rock,bumpScale:.018,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
  chalkMat.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
  vec3 grain=texture2D(map,vMapUv).rgb;
  float chalkGrain=dot(grain,vec3(.30,.59,.11));
- diffuseColor.rgb*=.78+chalkGrain*.50;
- #endif`);};chalkMat.customProgramCacheKey=()=> 'weathered-chalk-cut-1';
- const rimPos=[];
- for(let i=0;i<outline.length;i++){const a=outline[i],b=outline[(i+1)%outline.length],direction=b.clone().sub(a).normalize(),out=new T.Vector2(direction.y,-direction.x).multiplyScalar(.055);
-  const points=[a,a.clone().add(out),b.clone().add(out),a,b.clone().add(out),b];for(const p of points){const q=peg(p.x,p.y);rimPos.push(q.wx,q.y-.008,q.wz);}}
- const rimGeo=new T.BufferGeometry();rimGeo.setAttribute('position',new T.Float32BufferAttribute(rimPos,3));rimGeo.computeVertexNormals();
- const rim=new T.Mesh(rimGeo,new T.MeshStandardMaterial({color:'#716957',roughness:1,side:T.DoubleSide}));rim.receiveShadow=true;rim.name='Chalk Mare | worn turf edge';root.add(rim);
+ diffuseColor.rgb*=.69+chalkGrain*.44;
+ #endif`);};chalkMat.customProgramCacheKey=()=> 'weathered-chalk-scour-1';
+ const rimPos=[],rimNormals=[];
+ // Discontinuous torn turf returns sit on the same physical transition. They
+ // are deliberately not a dark, constant-width outline around the whole mare.
+ for(let i=0;i<outline.length;i++){
+  const a=outline[i],b=outline[(i+1)%outline.length],midX=(a.x+b.x)*.5,midY=(a.y+b.y)*.5;
+  if(Math.sin(midX*1.37+midY*.83)+Math.sin(midX*.53-midY*1.61)<.10)continue;
+  const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,width=.025+.025*(.5+.5*Math.sin(midX*2.3-midY*1.4));
+  // The authored outline is counterclockwise: its left normal points inward.
+  const inX=-dy/l*width/CHALK_MARE_PANEL.xScale,inY=dx/l*width/(CHALK_MARE_PANEL.tScale*depth),aa={x:a.x+inX,y:a.y+inY},bb={x:b.x+inX,y:b.y+inY};
+  fitChartTriangle([a,aa,bb].map(chart),rimPos,rimNormals);fitChartTriangle([a,bb,b].map(chart),rimPos,rimNormals);
+ }
+ const rimGeo=new T.BufferGeometry();rimGeo.setAttribute('position',new T.Float32BufferAttribute(rimPos,3));rimGeo.setAttribute('normal',new T.Float32BufferAttribute(rimNormals,3));
+ const rim=new T.Mesh(rimGeo,new T.MeshStandardMaterial({color:'#8e8a6f',roughness:1,side:T.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));rim.receiveShadow=true;rim.name='Chalk Mare | worn turf edge';root.add(rim);
  const mare=new T.Mesh(cut,chalkMat);mare.name='Chalk Mare | ground cutting';mare.receiveShadow=true;root.add(mare);
  const planningIsChalk=(wx,wz)=>{const [u,t]=coordinates(wx,wz);if(t<0||t>crestAt(u)||Math.abs(u)>22)return false;
   const px=(u-glyphMap.xOffset)/glyphMap.xScale,py=glyphFy(legacyLift(u,t));let inside=false;
@@ -161,5 +180,5 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
   // The original acceptance mask above remains untouched for seeded planning.
   return inside||edgeDistance2<.4*.4;};
  const planningContains=(wx,wz)=>{const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&legacyLift(u,t)>.12;};
- return {root,heightAt,reliefAt,isChalk,planningHeightAt,planningIsChalk,planningContains,contains(wx,wz){const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&lift(u,t)>.12;},site,stats:{groundTriangles:indices.length/3,chalkTriangles:ps.length/9,planningBytes:planningHeights.byteLength,repairedCutTriangles,omittedCutArea,profile:'chalk-downland-3'}};
+ return {root,heightAt,uncutHeightAt:(wx,wz)=>sampleUV(...coordinates(wx,wz),uncutHeights),reliefAt,isChalk,planningHeightAt,planningIsChalk,planningContains,contains(wx,wz){const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&lift(u,t)>.12;},site,stats:{groundTriangles:indices.length/3,chalkTriangles:ps.length/9,planningBytes:planningHeights.byteLength,scourReferenceBytes:uncutHeights.byteLength,repairedCutTriangles:0,omittedCutArea,profile:'chalk-scour-1'}};
 }
