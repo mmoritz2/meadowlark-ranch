@@ -151,3 +151,22 @@ test('repeated models retain distinct object and resource UUIDs without consumin
   }finally{Math.random=random;for(const g of models)g.userData.dispose();}
   assert.equal(identities.size,8*(1+9*3));
 });
+
+
+test('replacement windows inherit the original live evening colour without adding lighting controllers',()=>{
+  const glowPanes=[],architecture=createRanchArchitecture({THREE:T,loadTextures:false,glowPanes});
+  installEstateOutbuildings({THREE:T,architecture});
+  const controllerCount=glowPanes.length,root=architecture.buildOutbuilding(specs[1]);
+  const old=root.children.find(m=>m.material?.name==='Ranch | window interior');
+  const pane=root.children.find(m=>m.visible&&m.material?.name==='Estate service | deep opaque casement glass');
+  assert(old&&!old.visible&&pane);
+  assert.equal(pane.material.emissive,old.material.color);
+  assert.equal(pane.material.emissiveIntensity,.70);
+  assert.equal(root.userData.estateOutbuilding.inheritedWindowLighting,true);
+  assert.equal(glowPanes.length,controllerCount);
+  const controller=glowPanes.find(p=>p.mat===old.material);assert(controller);
+  controller.mat.color.copy(controller.night);
+  assert.deepEqual(pane.material.emissive.toArray(),controller.night.toArray());
+  controller.mat.color.copy(controller.day);
+  assert.deepEqual(pane.material.emissive.toArray(),controller.day.toArray());
+});

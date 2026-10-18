@@ -35,6 +35,12 @@ export function dressEstateOutbuilding({THREE:T,architecture,root}={}){
   if(data.kind!=='outbuilding')throw new TypeError('Estate dressing requires an outbuilding shell');
   const visual=buildEstateOutbuilding({THREE:T,architecture,width:data.width,depth:data.depth,
     height:data.wallHeight,animatedDoorOpening:data.animatedDoorOpening,name:root.name});
+  // The original factory registers this live colour with the world's evening
+  // lighting. Keep that controller while replacing its old window geometry.
+  const interior=root.children.find(child=>child.isMesh&&child.material?.name==='Ranch | window interior')?.material;
+  const pane=visual.children.find(child=>child.material?.name==='Estate service | deep opaque casement glass')?.material;
+  if(interior&&pane){pane.emissive=interior.color;pane.emissiveIntensity=.70;
+    visual.userData.estateOutbuilding.inheritedWindowLighting=true;}
   // Flat material batches are intentional: the follow camera uses the root's
   // authored solidParts and must not infer a full-room AABB from a nested group.
   for(const child of root.children)if(child.isMesh)child.visible=false;
