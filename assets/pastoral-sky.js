@@ -70,8 +70,8 @@ export function createPastoralSky(THREE) {
           // Broad banks have blue openings; wet weather joins the same groups.
           float groups=smoothstep(.30,.65,warp.x+.5);
           groups=mix(groups,1.,rain*.80);
-          float coverage=mix(.50,.35,rain);
-          alpha=smoothstep(coverage,coverage+.22,shape)*groups*mix(.58,.90,rain);
+          float coverage=mix(.47,.35,rain);
+          alpha=smoothstep(coverage,coverage+.22,shape)*groups*mix(.76,.90,rain);
         }
         alpha*=smoothstep(.025,.16,d.y);
         float daylight=smoothstep(0.,.55,day);
@@ -80,7 +80,7 @@ export function createPastoralSky(THREE) {
         // RG warp saved that sample; the existing tier texture budget is unchanged.
         vec2 lightDir=sd.xz/max(length(sd.xz),.1);
         float sideLight=clamp((fieldNoise(cloudUv+lightDir*.36)-density)*2.2,-.10,.10);
-        vec3 lit=highLayer?vec3(.82,.88,.93):mix(vec3(.55,.63,.70),vec3(.89,.93,.96),1.-body*.52);
+        vec3 lit=highLayer?vec3(.82,.88,.93):mix(vec3(.62,.70,.79),vec3(.96,.97,.98),1.-body*.52);
         lit+=vec3(sideLight);
         lit+=mix(vec3(.07,.06,.04),vec3(.086,.042,.055),highLayer?.42:0.)*pow(max(dot(d,sd),0.),12.);
         lit=mix(lit,lit*vec3(1.14,.83,.66),golden*.70);
@@ -90,7 +90,7 @@ export function createPastoralSky(THREE) {
       }
       void main(){
         vec3 d=normalize(vDirection);
-        float h=pow(max(d.y,0.0),0.62);
+        float h=pow(max(d.y,0.0),0.54);
         vec3 sky=mix(horizon,zenith,smoothstep(0.0,0.80,h));
         sky=mix(sky,dusk,golden*pow(1.0-h,3.0)*0.72);
         float daylight=smoothstep(0.0,0.55,day);

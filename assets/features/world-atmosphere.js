@@ -81,10 +81,10 @@ export function install(G){
  /* A clear cyan daytime sky keeps the open meadow light without washing it
     grey. Dawn and dusk retain their distinct warm horizon ramps, and the same
     palette supplies the haze between the distant ridges. */
- const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#b6d4db'],[50,'#b4d4dd']];
- const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#b6d4db'],[50,'#b4d4dd']];
- const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#4c9ad6'],[34,'#559eb8'],[54,'#60a8c0']];
- const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#4c9ad6'],[34,'#559eb8'],[54,'#60a8c0']];
+ const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#96c3df'],[50,'#a2cce5']];
+ const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#96c3df'],[50,'#a2cce5']];
+ const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#4c9ad6'],[34,'#347fb8'],[54,'#3e91c7']];
+ const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#4c9ad6'],[34,'#347fb8'],[54,'#3e91c7']];
  const GLOW_DAWN=[[-4,'#5b4a68'],[0,'#ffa295'],[6,'#ffbda8'],[16,'#e8cdb4']];
  const GLOW_DUSK=[[-4,'#5f3c52'],[0,'#ff7a35'],[6,'#ff9c4e'],[16,'#f0c898']];
  /* Built once. A ramp is walked with two comparisons and one lerp per frame, which is the

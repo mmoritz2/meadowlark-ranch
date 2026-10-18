@@ -665,7 +665,7 @@ import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGam
 import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createPastoralSky} from './assets/pastoral-sky.js?v=grouped-clouds-1';
+import {createPastoralSky} from './assets/pastoral-sky.js?v=estate-arrival-sky-1';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=far-northern-ridges-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
@@ -707,7 +707,10 @@ import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-s
 import {createFollowCamera} from './assets/follow-camera.js?v=camera-authored-parts-4';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
-import {createArrivalArt} from './assets/ranch-arrival-art.js';
+import {createArrivalArt} from './assets/ranch-arrival-art.js?v=estate-arrival-1';
+import {buildArrivalStable} from './assets/arrival-stable.mjs?v=estate-arrival-1';
+import {buildArrivalGateway} from './assets/arrival-gateway.mjs?v=estate-arrival-1';
+import {installRanchArrivalLandscape} from './assets/ranch-arrival-landscape.mjs?v=estate-arrival-1';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=ranch-models-1';
 import {createWorldFinish} from './assets/world-rendering.js?v=world-presentations-1';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
@@ -724,7 +727,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=more-noticeable-lash
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1';
+import {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1-native-riding-locks-1';
@@ -3050,10 +3053,11 @@ terrainSurface.setPaths(groundMaskRoutes,PATH_W);
 }
 // sandy riding arena inside the paddock
 {
- const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.55,0.55),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});   // was 0.20: the arena is the single largest flat area a player looks at, and at a fifth strength its rake marks and hoof scuffs caught no light at all, so it read as a plain cream disc
+ const smatl=new THREE.MeshStandardMaterial({color:'#c6ae88',map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.72,0.72),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});   // was 0.20: the arena is the single largest flat area a player looks at, and at a fifth strength its rake marks and hoof scuffs caught no light at all, so it read as a plain cream disc
  smatl.envMapIntensity=0.46;
  arrivalArt.enhanceArenaMaterial(smatl);
- const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
+ const sand=new THREE.Mesh(new THREE.CircleGeometry(1,96),smatl);
+ sand.name='Meadowlark | groomed riding footing';
  sand.scale.set(23.5,18.5,1);
  sand.rotation.x=-Math.PI/2;
  sand.position.set(0,0.012,0);
@@ -7367,6 +7371,13 @@ function updateTrail(dt){
 /* ================= ranch buildings & paddock ================= */
 {
  const b=ranchArchitecture.buildBarn();
+ // Keep the original part proxies and seeded construction; replace only visible batches.
+ for(const child of b.children)if(child.isMesh)child.visible=false;
+ const stable=buildArrivalStable({THREE,architecture:ranchArchitecture});
+ b.userData.arrivalStable=stable.userData.arrivalStable;
+ b.userData.disposeArrivalStable=stable.userData.dispose;
+ // Direct batches retain authored opening proxies; nested material AABBs would close the apron.
+ b.add(...stable.children.slice());
  b.position.set(-16,0,-14);
  scene.add(b);
  followCamera.register(b);
@@ -7416,7 +7427,7 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
 {
  // worn hoof track & rake rings in the footing
  const lane=new THREE.Mesh(new THREE.RingGeometry(0.86,0.985,56),
-  new THREE.MeshBasicMaterial({color:0xc2ab7d,transparent:true,opacity:0.35,depthWrite:false}));
+  new THREE.MeshStandardMaterial({color:0x8d795d,roughness:1,transparent:true,opacity:0.22,depthWrite:false}));
  lane.rotation.x=-Math.PI/2;
  lane.scale.set(23.5,18.5,1);
  lane.position.y=0.016;
@@ -7443,9 +7454,17 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
  // Measured timber gateway on the existing approach; both riding exits stay open.
  const entry=new THREE.Group();entry.name='Arena | timber and stone entrance';entry.position.set(0,0,20);
  entry.userData.ridingOpening={width:5.5,height:3.55};
- entry.add(ranchBuilderArt.create('arena_entry'));
+ const gate=ranchBuilderArt.create('arena_entry');entry.add(gate);
+ // Deferred builder scans replace each instance's children first. Dress the final owner afterward.
+ ranchBuilderArt.ready.then(()=>{
+  for(const child of gate.children)if(child.isMesh)child.visible=false;
+  const gateway=buildArrivalGateway({THREE,architecture:ranchArchitecture});
+  gate.userData.arrivalGateway=gateway.userData.arrivalGateway;
+  gate.userData.disposeArrivalGateway=gateway.userData.dispose;
+  gate.add(...gateway.children.slice());
+ });
  const archSign=arrivalArt.buildSign({text:'MEADOWLARK ARENA',width:4.6,height:.48});
- archSign.position.set(0,4.04,.04);entry.add(archSign);scene.add(entry);followCamera.register(entry);
+ archSign.position.set(0,3.98,.04);entry.add(archSign);scene.add(entry);followCamera.register(entry);
  // A covered, timber-framed pavilion on a clear stretch of the west rail.
  // The old stand overlapped the Summoning Stall at z=-4.5.
  {
@@ -15299,6 +15318,8 @@ G.world.mixedSward=installMixedSward(G);
 installChalkCoverRefresh(G);
 installPastoralCoverRefresh(G);
 G.world.courseTurf=installCourseTurf(G);
+const arrivalLandscape=installRanchArrivalLandscape(G);
+G.world.ranchArrivalLandscapeReady=arrivalLandscape.ready.catch(error=>{console.error('Arrival landscape failed',error);return null;});
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

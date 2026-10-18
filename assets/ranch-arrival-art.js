@@ -160,7 +160,7 @@ export function createArrivalArt({THREE,anisotropy=8}={}) {
   shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
     // Centimetre-scale churn and shallow ruts catch grazing sun. Screen-space
     // derivatives are limited to nearby footing so the arena stays stable afar.
-    float footingHeight=(grain*.018+churn*.011-trackBand*.016)*churnNear;
+    float footingHeight=(grain*.026+churn*.021-trackBand*.023)*churnNear;
     vec3 dpdx=dFdx(-vViewPosition),dpdy=dFdy(-vViewPosition);
     vec3 sx=cross(dpdy,normal),sy=cross(normal,dpdx);
     float determinant=dot(dpdx,sx);
@@ -168,7 +168,7 @@ export function createArrivalArt({THREE,anisotropy=8}={}) {
     normal=normalize(abs(determinant)*normal-reliefGradient);
   `);
   };
-  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-3';material.needsUpdate=true;return material;
+  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-4';material.needsUpdate=true;return material;
  }
  return {buildPlanter,buildNoticeboard,buildPracticeJump,buildSign,buildHayStack,enhanceArenaMaterial,materials:{timber,darkTimber,soil,botanical,iron}};
 }
