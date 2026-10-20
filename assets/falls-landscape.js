@@ -1,3 +1,4 @@
+import {seatHollowpeakTerminalWaterBed} from './hollowpeak-terminal-water-bed.mjs?v=terminal-water-bed-1';
 import {sculptSpillwayBankRelief} from './hollowpeak-spillway-bank.mjs?v=hollowpeak-spillway-bank-4';
 import {sculptUpperHollowpeakRelief} from './hollowpeak-upper-ridges.mjs?v=hollowpeak-upper-ridges-3';
 import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';
@@ -180,7 +181,7 @@ function establishedFallsRelief(x,z){
  return hollowpeakMacroshape(x,z,original,dryRidgeWeight(x,z)*smooth(13,18,trailDistance));
 }
 export function fallsRelief(x,z){return sculptSpillwayBankRelief(x,z,establishedFallsRelief(x,z));}
-export function fallsTerrainHeight(x,z,height){
+function establishedFallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;
  let h=height+fallsRelief(x,z);
  const flow=nearest(x,z,HOLLOWPEAK.channel);
@@ -198,6 +199,7 @@ export function fallsTerrainHeight(x,z,height){
  if(flow.d<7.2)h=mix(h,Math.min(h,flow.y-1.15+.3*smooth(1.9,4.5,flow.d)),1-smooth(2.7,7.2,flow.d));
  return mix(height,h,smooth(7,9,nearest(x,z,trail).d));
 }
+export function fallsTerrainHeight(x,z,height){return seatHollowpeakTerminalWaterBed(x,z,establishedFallsTerrainHeight(x,z,height));}
 export function fallsAllowsHorse(x,z){return !fallsContainsWater(x,z,1.4)&&fallsRelief(x,z)<1.3;}
 export function fallsExcludesDryPlants(x,z,heightAt){
  if(!within(x,z))return false;
