@@ -1,15 +1,16 @@
 /* Layered draft-horse strand surfaces on exact native hair donor influences.
  * Fine source cards carry the silhouette; the bounded shell adds airy layers. */
-export const NATIVE_EQUESTRIAN_GROOM_VERSION='equestrian-fine-strands-1';
+export const NATIVE_EQUESTRIAN_GROOM_VERSION='equestrian-layered-locks-3';
 const DRAFTS=new Set(['percheron','shire','clyde']);
 const strandTextures=new WeakMap();
 function fineStrandTexture(THREE){
  if(strandTextures.has(THREE))return strandTextures.get(THREE);
- const width=128,height=256,data=new Uint8Array(width*height*4),smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
+ const width=256,height=256,data=new Uint8Array(width*height*4),smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-  const u=(x+.5)/width,v=y/(height-1),strand=u*31+.075*Math.sin(v*8+u*29),fiber=Math.pow(Math.max(0,Math.sin(strand*Math.PI)),.55);
-  const end=.73+.24*(.5+.5*Math.sin(Math.floor(u*31)*17.31+1.7)),root=smooth((v-.008)/.11),tip=smooth((end-v)/.12),edge=Math.pow(Math.sin(Math.PI*u),.32),i=(y*width+x)*4;
-  const shade=Math.round(235+20*fiber);data[i]=data[i+1]=data[i+2]=shade;data[i+3]=Math.round(255*fiber*edge*root*tip);
+  const u=(x+.5)/width,v=y/(height-1),flow=u+.016*Math.sin(v*6+u*5),fine=.5+.5*Math.sin((flow*47+.045*Math.sin(v*11))*Math.PI*2);
+  const bundle=.5+.5*Math.sin((flow*4.5+.06*Math.sin(v*4))*Math.PI*2),groove=smooth((bundle-.035)/.18),fiber=smooth((fine-.08)/.24);
+  const end=.79+.19*(.5+.5*Math.sin(Math.floor(u*47)*17.31+1.7)),root=smooth((v-.006)/.10),tip=smooth((end-v)/.10),edge=Math.pow(Math.sin(Math.PI*u),.38),i=(y*width+x)*4;
+  const shade=Math.round(218+23*bundle+14*fine);data[i]=data[i+1]=data[i+2]=shade;data[i+3]=Math.round(255*(.92+.08*fine)*fiber*groove*edge*root*tip);
  }
  const texture=new THREE.DataTexture(data,width,height);texture.name='Native fine mane and tail strands';texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.ClampToEdgeWrapping;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.generateMipmaps=true;texture.needsUpdate=true;
  strandTextures.set(THREE,texture);return texture;
@@ -43,7 +44,7 @@ export function prepareNativeEquestrianGroom({THREE,gltf,spec,binary}={}){
  const base=Array.isArray(hair.material)?hair.material[0]:hair.material,material=base.clone();material.name='M_EquestrianGroom';material.map=fineStrandTexture(THREE);material.alphaMap=null;material.alphaTest=.34;material.alphaToCoverage=true;material.transparent=false;material.depthWrite=true;material.side=THREE.DoubleSide;
  // Standard color, depth and distance passes sample the same map alpha, so
  // fine tips do not leave the former solid rope-shaped shadows.
- material.roughness=.76;material.metalness=0;material.specularIntensity=.25;material.envMapIntensity=.38;
+ material.roughness=.68;material.metalness=0;material.specularIntensity=.34;material.envMapIntensity=.42;
  const mesh=new THREE.SkinnedMesh(geometry,material);mesh.name='Native equestrian mane and tail locks';mesh.userData.nativeEquestrianGroom=true;
  mesh.position.copy(hair.position);mesh.quaternion.copy(hair.quaternion);mesh.scale.copy(hair.scale);mesh.bindMode=hair.bindMode;mesh.bind(hair.skeleton,hair.bindMatrix);mesh.normalizeSkinWeights();
  mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;hair.parent.add(mesh);return mesh;
@@ -68,12 +69,12 @@ export function applyNativeEquestrianGroom({THREE,rig}={}){
    shader.fragmentShader='varying vec2 eqLockUv;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
     float eqAcross=eqLockUv.x*70.;float eqPhase=eqAcross*6.283185+sin(eqLockUv.y*9.)*.3;
     float eqFilter=1.-smoothstep(.7,1.4,fwidth(eqAcross));
-    float eqFiber=.87+.075*sin(eqPhase)*eqFilter;
-    float eqBundle=.94+.05*sin(eqLockUv.x*5.*6.283185+sin(eqLockUv.y*3.)*.3);
+    float eqFiber=.96+.03*sin(eqPhase)*eqFilter;
+    float eqBundle=.95+.04*sin(eqLockUv.x*4.5*6.283185+sin(eqLockUv.y*3.)*.3);
     diffuseColor.rgb*=eqFiber*eqBundle*mix(.88,1.0,smoothstep(0.,.8,eqLockUv.y));`);
    shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
     vec3 eqAxis=dFdx(vViewPosition)*dFdy(eqLockUv.y)-dFdy(vViewPosition)*dFdx(eqLockUv.y);
-    float eqAxisLength=length(eqAxis);if(eqAxisLength>.000001)normal=normalize(normal+eqAxis/eqAxisLength*(cos(eqPhase)*.10*eqFilter));`);
+    float eqAxisLength=length(eqAxis);if(eqAxisLength>.000001)normal=normalize(normal+eqAxis/eqAxisLength*(cos(eqPhase)*.04*eqFilter));`);
   };material.customProgramCacheKey=()=>key+'|'+NATIVE_EQUESTRIAN_GROOM_VERSION;material.userData.equestrianLocks=NATIVE_EQUESTRIAN_GROOM_VERSION;material.needsUpdate=true;
  }
  return {version:NATIVE_EQUESTRIAN_GROOM_VERSION,vertices:locks.geometry.attributes.position.count,triangles:locks.geometry.index.count/3,maneLocks:authored.maneLocks,forelockLocks:authored.forelockLocks,tailLocks:authored.tailLocks};

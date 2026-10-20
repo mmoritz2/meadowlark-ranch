@@ -643,6 +643,7 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {RANCH_PASTURE_ROUTE,RANCH_PASTURE_ROAD,RANCH_PASTURE_GATE,RANCH_GRANDSTAND,RANCH_PASTURE_TROUGH,ranchPastureReserved} from './assets/ranch-pasture-route.mjs?v=ranch-pasture-route-1';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';
 import {ridingTravelCredit} from './assets/riding-distance.mjs?v=physical-ride-1';
@@ -653,7 +654,7 @@ import {createNPCImpostors} from './assets/npc-impostors.js?v=resident-distance-
 import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
-import {createBreedLibrary} from './assets/breed-models.js?v=fine-hair-20261013c';
+import {createBreedLibrary} from './assets/breed-models.js?v=horse-realism-20261020a';
 import {createHorseArrival} from './assets/horse-arrival.js?v=horse-arrival-2';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=world-presentations-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=equestrian-style-20261012';
@@ -661,8 +662,10 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=riding-foundation-1-horse-realism-20261020a-native-riding-locks-1';
 import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
+import {createMountedSteering} from './assets/mounted-steering.mjs?v=riding-foundation-1';
+import {sampleMountedSeat,mountedHorseBank} from './assets/horse-riding-pose.mjs?v=riding-foundation-1';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=estate-arrival-sky-1';
@@ -729,10 +732,10 @@ import {createRiderLibrary} from './assets/rider-model.js?v=natural-complexion-2
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
+import {FEATURES} from './assets/features/index.js?v=riding-foundation-1-pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-more-noticeable-lashes96-20261013-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
-import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=world-presentations-1-native-riding-locks-1';
+import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=horse-realism-20261020a-native-riding-locks-1';
 import {worldHorseCanDress,beginWorldHorseLoad,settleWorldHorseLoad,retireWorldHorse} from './assets/world-horse-lifecycle.mjs?v=ranch-actors-2';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
 import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-route-2';
@@ -1551,7 +1554,7 @@ const PATHS=[
  ...COTTONWOOD_TRACKS,
  [[0,128],[0,138],[18,150],[47,171],[83,184]],                         // river crossing -> north meadow
  [[0,10],[13,-11],[28,-30],[44,-46],[50,-53]],                       // ranch -> Cottonwood
- [[-7,3],[-26,7],[-46,2],[-63,-6],[-71,-10]],                        // ranch -> Home Pasture
+ RANCH_PASTURE_ROUTE,                                             // ranch -> real arena/pasture gateways
  [[2,15],[7,44],[4,72],[1,98],[0,112]],                              // ranch -> the river bridge
  [[53,-57],[96,-70],[140,-84],[184,-97],[214,-105]],                 // Cottonwood -> Barleyfold
  [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines
@@ -4526,11 +4529,11 @@ for(let i=0;i<44;i++){                                       // stumps: where tr
  while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z)||sceneryArt.containsWaterfall(x,z,1));
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
 }
-// Cull only random plants/rocks from the authored courier corridors after all
-// placement draws. Preserve the random stream and every fixed ranch prop.
+// Cull only random plants/rocks from the authored courier/pasture corridors
+// and pavilion footprint after all placement draws; keep every fixed ranch prop.
 for(const name of ['oak','birch','blossom','pine','snowpine','bush','flowerbush','boulder','stump'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
  const p=FOLIAGE[name][i],ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z),radius=ci>=0?colliders[ci].r:Math.min(2,p.s||1);
- if(cottonwoodTrackDistance(p.x,p.z)>3.2+radius)continue;
+ if(cottonwoodTrackDistance(p.x,p.z)>3.2+radius&&!ranchPastureReserved(p.x,p.z,radius))continue;
  if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 const PROP_SRC={};
@@ -4915,7 +4918,9 @@ let waterMat=null;   // hoisted: the pond reuses it
    return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3);
   };
   for(const pl of PATHS){
-   const pts=[];
+   const pastureRoad=pl===RANCH_PASTURE_ROUTE;
+   const pts=pastureRoad?RANCH_PASTURE_ROAD:[];
+   if(!pastureRoad){
    for(let i=0;i<pl.length-1;i++){
     const p0=pl[Math.max(0,i-1)],p1=pl[i],p2=pl[i+1],p3=pl[Math.min(pl.length-1,i+2)];
     const segLen=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]), steps=Math.max(3,Math.round(segLen/1.6));
@@ -4923,13 +4928,14 @@ let waterMat=null;   // hoisted: the pond reuses it
      pts.push([cr(p0[0],p1[0],p2[0],p3[0],t),cr(p0[1],p1[1],p2[1],p3[1],t)]);}
    }
    pts.push(pl[pl.length-1]);
+   }
    let run=0;
    const base=rp.length/3;
    for(let i=0;i<pts.length;i++){
     const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)];
     let dx=b[0]-a[0], dz=b[1]-a[1]; const L=Math.hypot(dx,dz)||1; dx/=L; dz/=L;
     if(i>0)run+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
-    const wob=PATH_W*(.94+.05*Math.sin(run*.12)+.035*Math.sin(run*.047));
+    const wob=pastureRoad?pts[i][2]:PATH_W*(.94+.05*Math.sin(run*.12)+.035*Math.sin(run*.047));
     // Sample across the full track: two edge vertices made a suspended flat
     // ribbon wherever the middle of a trail crossed a hollow.
     for(let lane=0;lane<=8;lane++){
@@ -5008,7 +5014,7 @@ for(const [x,z,ry]of[[81,-37,.15],[80,-35.5,-.3],[210,-103,.3],[212.5,-101,-.4]]
 /* hidden golden horseshoes — now a daily hunt; see the 'golden horseshoe hunt' section */
 /* lush dressing: distant forest ring, tree groves & meadow bushes */
 function cheapTree(x,z,s){
- if(cottonwoodReserved(x,z,3))return;
+ if(cottonwoodReserved(x,z,3)||ranchPastureReserved(x,z,.55))return;
  const t=makeNaturalTree({THREE,scale:s*.7,seed:Math.abs((x*19+z*31)|0)});
  t.position.set(x,groundH(x,z),z);
  scene.add(t); STATIC_MERGE.push(t);
@@ -5029,7 +5035,9 @@ for(let i=0;i<44;i++){
  const a=Math.random()*Math.PI*2,rr=30+Math.random()*400;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
  if((Math.abs(x)<28&&Math.abs(z)<23)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z))continue;
- const b=makeNaturalShrub({THREE,scale:.8+Math.random()*.3,seed:i*17});
+ const shrubScale=.8+Math.random()*.3; // keep the placement draw even on a reserved shoulder
+ if(ranchPastureReserved(x,z,shrubScale))continue;
+ const b=makeNaturalShrub({THREE,scale:shrubScale,seed:i*17});
  b.position.set(x,groundH(x,z),z);
  scene.add(b); STATIC_MERGE.push(b);
 }
@@ -6752,7 +6760,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   const nativeMax=nativeMount?getNativeHorseCapabilities(RIG)?.maxSpeedMps:0;
   const t=THREE.MathUtils.clamp(nativeMount?(nativeMax>0?sp/nativeMax:0):(sp-0.3)/6,0,1);
   const ph=RIG.phase*Math.PI*2, moving=sp>(nativeMount ? .02 : .3);
-  const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
+  const turn=RIG.profile?.nativeKind==='horse'&&!player.flying&&!player.onFoot&&mountedSteeringFrame?.reason!=='inactive'?(mountedSteeringFrame?.turn||0):(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
   R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*smooth(5.4);
   R._turn=(R._turn||0)+(turn-(R._turn||0))*smooth(4.2);
   /* The baked hero gait carries its own lift and leaves player.y alone, so a jump on that
@@ -6780,9 +6788,17 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   const patP=R._patRun>0?1-R._patRun/1.9:0;
   const patIdle=patP>0?Math.sin(patP*Math.PI)*(0.72+0.28*Math.sin(patP*Math.PI*7)):0;
   const pat=Math.max(patIdle,(RIG.emote&&(RIG.emote.type==='nuzzle'||RIG.emote.pet))?emEnv(RIG.emote):0);
-  R.pose.rise=R._post*beat*0.115+R._air*(bareback?.025:.20)+(moving?0:Math.sin((tm||0)*1.5)*0.006);
-  R.pose.lean=0.05+0.17*t+0.62*R._air+R._post*beat*0.16+breath+em+pat*0.13;
-  R.pose.side=R._turn*0.13+(moving?Math.sin(ph*0.5)*0.018:Math.sin((tm||0)*0.6)*0.012);
+  if(RIG.profile?.nativeKind==='horse'&&!player.flying){
+   const seatPose=sampleMountedSeat({gait:RIG.heroMotion?.state?.gait||'stand',phase:RIG.phase,speed:sp,turn:R._turn,
+    yawRate:mountedSteeringFrame?.active?mountedSteeringFrame.yawRate:0,western:TACK.saddle?.userData?.style==='western',bareback});
+   R.pose.rise=R._post*seatPose.postRise+R._air*(bareback?.025:.20)+(moving?0:Math.sin((tm||0)*1.5)*.006);
+   R.pose.lean=seatPose.lean+.62*R._air+R._post*seatPose.postLean+em+pat*.13;
+   R.pose.side=seatPose.side+(moving?Math.sin(ph*.5)*.009:Math.sin((tm||0)*.6)*.009);
+  }else{
+   R.pose.rise=R._post*beat*0.115+R._air*(bareback?.025:.20)+(moving?0:Math.sin((tm||0)*1.5)*0.006);
+   R.pose.lean=0.05+0.17*t+0.62*R._air+R._post*beat*0.16+breath+em+pat*0.13;
+   R.pose.side=R._turn*0.13+(moving?Math.sin(ph*0.5)*0.018:Math.sin((tm||0)*0.6)*0.012);
+  }
   R.pose.head=R._look*(1-pat*0.6);   // patting, she is looking at him, not down the arena
   R._ik=true;
   R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,0);
@@ -7391,7 +7407,7 @@ function updateTrail(dt){
  }
  placeRanchProp('trough',-6,-18,0,1.3);
 }
-// Open paths to the south trail and the old stall to the north.
+// Real openings connect the south trail, north village path and west pasture road.
 const NORTH_GATE={x1:-5.5,x2:-.5};
 {
  const postGeo=new THREE.BoxGeometry(0.15,1.1,0.15);
@@ -7399,7 +7415,8 @@ const NORTH_GATE={x1:-5.5,x2:-.5};
  const X=25,Z=20;
  for(let x=-X;x<=X;x+=2.5){if(x<NORTH_GATE.x1||x>NORTH_GATE.x2)posts.push([x,-Z]);if(Math.abs(x)>3)posts.push([x,Z]);}
  posts.push([NORTH_GATE.x1,-Z],[NORTH_GATE.x2,-Z]);
- for(let z=-Z+2.5;z<=Z-2.5;z+=2.5){posts.push([-X,z]);posts.push([X,z]);}
+ for(let z=-Z+2.5;z<=Z-2.5;z+=2.5){if(z<RANCH_PASTURE_GATE.z1||z>RANCH_PASTURE_GATE.z2)posts.push([-X,z]);posts.push([X,z]);}
+ posts.push([RANCH_PASTURE_GATE.x,RANCH_PASTURE_GATE.z1],[RANCH_PASTURE_GATE.x,RANCH_PASTURE_GATE.z2]);
  const inst=new THREE.InstancedMesh(postGeo,whitePaintMat,posts.length);
  const m4=new THREE.Matrix4(),e=new THREE.Euler(),q=new THREE.Quaternion(),v=new THREE.Vector3(),s1=new THREE.Vector3(1,1,1);
  posts.forEach((p,i)=>{
@@ -7423,7 +7440,7 @@ const NORTH_GATE={x1:-5.5,x2:-.5};
  for(const y of[0.5,0.88]){
   rail(-X,-Z,NORTH_GATE.x1,-Z,y);rail(NORTH_GATE.x2,-Z,X,-Z,y);
   rail(-X,Z,-3,Z,y);rail(3,Z,15,Z,y);
-  rail(-X,-Z,-X,Z,y);rail(X,-Z,X,7.5,y);
+  rail(-X,-Z,-X,RANCH_PASTURE_GATE.z1,y);rail(-X,RANCH_PASTURE_GATE.z2,-X,Z,y);rail(X,-Z,X,7.5,y);
  }
 }
 /* ================= show arena detailing ================= */
@@ -7440,7 +7457,7 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
  for(let i=0;i<40;i++){
   const th=i/40*Math.PI*2;
   const x=Math.cos(th)*23.2,z=Math.sin(th)*18.2;
-  if((Math.abs(x)<3.4&&z>15)||(Math.abs(x+3)<3.4&&z<-15))continue; // leave both approaches open
+  if((Math.abs(x)<3.4&&z>15)||(Math.abs(x+3)<3.4&&z<-15)||(x< -19&&z>RANCH_PASTURE_GATE.z1-2&&z<RANCH_PASTURE_GATE.z2+2))continue; // keep complete kickboard segments clear of all three approaches
   const kb=box(3.35,0.32,0.09,whitePaintMat,x,0.16,z,scene);   // 2.6 on a 3.26 pitch left the ring dashed
   kb.rotation.y=Math.atan2(-23.2*Math.sin(th),18.2*Math.cos(th))+Math.PI/2;
  }
@@ -7469,11 +7486,11 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
  });
  const archSign=arrivalArt.buildSign({text:'MEADOWLARK ARENA',width:4.6,height:.48});
  archSign.position.set(0,3.98,.04);entry.add(archSign);scene.add(entry);followCamera.register(entry);
- // A covered, timber-framed pavilion on a clear stretch of the west rail.
- // The old stand overlapped the Summoning Stall at z=-4.5.
+ // Pavilion moved clear of the real pasture connection; shared anchors also
+ // move both spectator camera/interaction providers and the map marker.
  {
   const bl=ranchBuilderArt.create('grandstand');bl.name='Arena | grandstand';
-  bl.position.set(-28.5,groundH(-30,7.5),7.5);bl.rotation.y=Math.PI/2;
+  bl.position.set(RANCH_GRANDSTAND.x,groundH(RANCH_GRANDSTAND.x,RANCH_GRANDSTAND.z),RANCH_GRANDSTAND.z);bl.rotation.y=RANCH_GRANDSTAND.rotation;
   scene.add(bl);followCamera.register(bl);
  }
  {
@@ -7576,7 +7593,7 @@ const PAST={x1:-110,x2:-33,z1:-45,z2:25};
   followCamera.register(sh);
  }
  // trough, hay, shade tree & gate sign
- placeRanchProp('trough',-36.5,-9.5,0,1.3);
+ placeRanchProp('trough',RANCH_PASTURE_TROUGH.x,RANCH_PASTURE_TROUGH.z,0,RANCH_PASTURE_TROUGH.scale);
  placeRanchProp('haybale',-50,-18,.15,1.15);
  placeRanchProp('haybale',-51.4,-17,-.24);
  const shadeT=makeLeafy(1.3);
@@ -7602,18 +7619,18 @@ colliders.push(
  {x:-16,z:-14,r:4.4,precise:true},          // barn
  ...COTTONWOOD_COTTAGES.map(p=>({x:p.x,z:p.z,r:2.7,precise:true})), // authored village plots
  {x:-59,z:-19,r:3.4,precise:true},          // run-in shelter
- {x:-30,z:3.2,r:2.6,precise:true},{x:-30,z:7.5,r:2.6,precise:true},{x:-30,z:11.8,r:2.6,precise:true}, // pavilion, clear of stall and arena
+ ...[-4.3,0,4.3].map(dz=>({x:RANCH_GRANDSTAND.x-1.5,z:RANCH_GRANDSTAND.z+dz,r:2.6,precise:true})), // pavilion at the same shared visual/seat anchor
  {x:27.6,z:-6,r:1.7,precise:true},{x:29.4,z:-6,r:1.1,precise:true},          // judge tower, outside the east rail
  ...FLOODLIGHTS.map(p=>({x:p[0],z:p[1],r:0.3})), // floodlights, outside the corners
  {x:-3,z:20,r:0.42},{x:3,z:20,r:0.42}, // arch posts
  {x:85,z:-40,r:2.1,precise:true},{x:215,z:-108,r:2.1,precise:true}, // windmills
  ...FOLIAGE.trough.map(p=>({x:p.x,z:p.z,r:1.1*p.s})),
  ...FOLIAGE.haybale.map(p=>({x:p.x,z:p.z,r:1.2*p.s})),
- {x:-6,z:-18,r:1.1},{x:-36.5,z:-9.5,r:1.1}, // fixed troughs
+ {x:-6,z:-18,r:1.1},{x:RANCH_PASTURE_TROUGH.x,z:RANCH_PASTURE_TROUGH.z,r:RANCH_PASTURE_TROUGH.radius}, // fixed troughs, pasture water clear of the gateway
  {x:-21.8,z:-12.25,r:1.2},{x:-50.7,z:-17.5,r:1.4}, // fixed hay stacks
  {x:-46,z:-4,r:0.8},           // pasture shade tree
 );
-[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,15,20],[-25,-20,-25,20],[25,-20,25,7.5]]
+[[-25,-20,NORTH_GATE.x1,-20],[NORTH_GATE.x2,-20,25,-20],[-25,20,-3,20],[3,20,15,20],[RANCH_PASTURE_GATE.x,-20,RANCH_PASTURE_GATE.x,RANCH_PASTURE_GATE.z1],[RANCH_PASTURE_GATE.x,RANCH_PASTURE_GATE.z2,RANCH_PASTURE_GATE.x,20],[25,-20,25,7.5]]
  .forEach(s=>walls.push({x1:s[0],z1:s[1],x2:s[2],z2:s[3]}));
 [[PAST.x1,PAST.z1,PAST.x2,PAST.z1],[PAST.x1,PAST.z2,PAST.x2,PAST.z2],
  [PAST.x1,PAST.z1,PAST.x1,PAST.z2],[PAST.x2,PAST.z1,PAST.x2,-11.2],[PAST.x2,-6.8,PAST.x2,PAST.z2]]
@@ -9260,6 +9277,9 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
 $('tGal').addEventListener('click',()=>{if(!player.flying&&!player.onFoot){ridingInput.select(ridingInput.state().selected==='gallop'?'canter':'gallop');touch.gal=false;}else touch.gal=!touch.gal;$('tGal').style.opacity=touch.gal?'1':'0.6';});
 $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
+const mountedSteering=createMountedSteering();
+let mountedSteeringFrame=null;
+G.on('state',o=>{o.mountedSteering=mountedSteeringFrame;o.horseSteppingTurn=!!RIG.nativeTurningInPlace;});
 let camYaw=0.24,camPitch=0.27,camDist=8.2,camDistSm=8.2,camDrag=null;
 const camLook=new THREE.Vector3(-7,1.35,10);
 const camDesired=new THREE.Vector3(),camSafe=new THREE.Vector3();
@@ -9282,7 +9302,7 @@ addEventListener('pointermove',e=>{
 const endDrag=e=>{ if(camDrag&&(!e||e.pointerId===camDrag.id))camDrag=null; };
 addEventListener('pointerup',endDrag);
 addEventListener('pointercancel',endDrag);
-function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();nativeJumpInput.reset();hoofContacts.reset();releaseRidingPointer();endDrag();}
+function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();nativeJumpInput.reset();hoofContacts.reset();mountedSteering.reset();mountedSteeringFrame=null;player.turnSm=0;releaseRidingPointer();endDrag();}
 function resetGameInput(){
  postInteractionHeld=false;
  releaseAllRidingControls();player.breathHold=false;
@@ -14078,15 +14098,26 @@ function tick(stepSeconds){
     yaw is the axis that turns stomachs and a stick that snaps to full lock feels wild.
     VR also turns slower than the flat game for the same reason. */
  let turn=(left?1:0)-(right?1:0);
- if(inVR||touch.analog){
-  // the touch stick can respond faster than VR: no inner ear to upset on a phone
-  const rate=inVR?5:11;
-  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-rate*dt));
-  if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
-  turn=player.turnSm;
- }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
- if(freeCam||ridingIntent.locked){turn=0;player.turnSm=0;}
- const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
+ const mountedHorse=!inVR&&!player.onFoot&&!player.flying&&!player.swim&&!G.worldPkg?.vehicle?.()&&RIG.profile?.nativeKind==='horse';
+ const groundTurn=player.y<=.01&&!player.landing&&RIG.heroMotion?.state?.grounded!==false;
+ mountedSteeringFrame=mountedSteering.update({dt,input:touch.analog?touch.turnA:turn,speed:player.speed,agility:agMul,
+  active:mountedHorse,locked:!!(freeCam||ridingIntent.locked||!groundTurn),mountKey:String(myHorses[rideIdx]?.id)+'|'+RIG.modelKey});
+ let yawRate;
+ if(mountedHorse){
+  turn=mountedSteeringFrame.turn;player.turnSm=turn;
+  // Interval-average filtered yaw already includes agility; substeps keep the
+  // same sweep/collision precision without applying that multiplier twice.
+  yawRate=dt>0?mountedSteeringFrame.yawDelta/dt:0;
+ }else{
+  if(inVR||touch.analog){
+   const rate=inVR?5:11;
+   player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-rate*dt));
+   if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
+   turn=player.turnSm;
+  }else player.turnSm=turn;
+  if(freeCam||ridingIntent.locked){turn=0;player.turnSm=0;}
+  yawRate=turn*(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1)*agMul;
+ }
  // Fast galloping and slow rendering must not skip across narrow fences.
  solidWorld.updateDynamic();
  // Frame-local sampling excludes fast travel, scene relocation and later ride hooks.
@@ -14098,7 +14129,7 @@ function tick(stepSeconds){
  const previousFoot=player.onFoot&&Number.isFinite(G.onFoot?.height)?G.onFoot.height:previousGround+player.y;
  const previousJumpAir=(RIG.heroJumpAge!==null&&RIG.heroJumpAge<1.25)||(RIG.heroJumpGrace>0);
  const solidPrevious={x:player.pos.x,z:player.pos.z,bottom:previousJumpAir?Math.max(previousFoot+(player.onFoot?.22:.38),previousGround+1.45):previousFoot+(player.onFoot?.22:.38),top:previousFoot+(player.onFoot?1.75:2.65)};
- player.heading+=turn*travelDt*yawRate*agMul;
+ player.heading+=travelDt*yawRate;
  player.pos.x+=Math.sin(player.heading)*player.speed*travelDt;
  player.pos.z+=Math.cos(player.heading)*player.speed*travelDt;
  /* The basin runs to the terrain grid's edge. 455 keeps the horse inside the ground mesh
@@ -14281,7 +14312,7 @@ function tick(stepSeconds){
  player.mesh.rotation.x=player.pitchSm+rock+(RIG.emote&&!RIG.emote.native?EMOTES[RIG.emote.type].pitch*emEnv(RIG.emote):0);
  const tPrev=Number.isFinite(player.turnSm)?player.turnSm:0;
  player.turnSm=tPrev+(turn-tPrev)*Math.min(1,dt*5);
- player.mesh.rotation.z=-player.turnSm*(player.flying&&!RIG.nativeLandingPose?0.4:Math.min(1,sp/8)*0.16);
+ player.mesh.rotation.z=mountedHorse?-mountedHorseBank({speed:player.speed,yawRate}):-player.turnSm*(player.flying&&!RIG.nativeLandingPose?0.4:Math.min(1,sp/8)*0.16);
  if(player.trick){const tr=player.trick;tr.t+=dt;const pr=Math.min(1,tr.t/tr.dur);
   const ez=pr<0.5?2*pr*pr:1-Math.pow(-2*pr+2,2)/2, ang=ez*Math.PI*2*tr.dir;
   if(tr.type==='roll')player.mesh.rotation.z+=ang; else if(tr.type==='spin')player.mesh.rotation.y+=ang; else player.mesh.rotation.x+=ang;

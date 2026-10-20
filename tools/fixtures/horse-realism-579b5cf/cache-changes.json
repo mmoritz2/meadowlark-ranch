@@ -1,0 +1,139 @@
+{
+  "baseCommit": "579b5cfc56f4163e1f28a4e6768d7e3e0e692945",
+  "release": "horse-realism-20261020a",
+  "changes": [
+    {
+      "file": "assets/breed-models.js",
+      "before": "'./native-horse-materials.js?v=native-surface-6'",
+      "after": "'./native-horse-materials.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/breed-models.js",
+      "before": "'./native-equestrian-groom.js?v=fine-hair-20261013c'",
+      "after": "'./native-equestrian-groom.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/game-hero-horse.js",
+      "before": "'./native-draft-feathers.js?v=fine-hair-20261013c'",
+      "after": "'./native-draft-feathers.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/game-hero-horse.js",
+      "before": "'./native-flowing-groom.js?v=fine-hair-20261013c-native-riding-locks-1'",
+      "after": "'./native-flowing-groom.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/world-horse-lod.mjs",
+      "before": "'./game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1'",
+      "after": "'./game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/breed-models.js?v=fine-hair-20261013c'",
+      "after": "'./assets/breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1'",
+      "after": "'./assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "ranch3d.html",
+      "before": "'./assets/world-horse-lod.mjs?v=world-presentations-1-native-riding-locks-1'",
+      "after": "'./assets/world-horse-lod.mjs?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "breeds.html",
+      "before": "'./assets/breed-models.js?v=fine-hair-20261013c'",
+      "after": "'./assets/breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "breeds.html",
+      "before": "'./assets/game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1'",
+      "after": "'./assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "hero-horse.html",
+      "before": "'./assets/breed-models.js?v=fine-hair-20261013c'",
+      "after": "'./assets/breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/tack-studio.js",
+      "before": "'./breed-models.js?v=fine-hair-20261013c'",
+      "after": "'./breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "assets/tack-studio.js",
+      "before": "'./game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1'",
+      "after": "'./game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "tack-studio.html",
+      "before": "\"assets/tack-studio.js?v=fine-hair-20261013c-native-riding-locks-1-loon-lake-4\"",
+      "after": "\"assets/tack-studio.js?v=horse-realism-20261020a-native-riding-locks-1-loon-lake-4\"",
+      "occurrences": 1
+    },
+    {
+      "file": "review/native-draft-legs/review.html",
+      "before": "'../../assets/breed-models.js?v=fine-hair-20261013c'",
+      "after": "'../../assets/breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "review/native-draft-legs/review.html",
+      "before": "'../../assets/game-hero-horse.js?v=fine-hair-20261013c'",
+      "after": "'../../assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "review/horse-quality/capture.js",
+      "before": "'../../assets/breed-models.js?v=fine-hair-20261013c'",
+      "after": "'../../assets/breed-models.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "review/horse-quality/capture.js",
+      "before": "'../../assets/game-hero-horse.js?v=fine-hair-20261013c'",
+      "after": "'../../assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1'",
+      "occurrences": 1
+    },
+    {
+      "file": "review/horse-quality/capture.js",
+      "before": "'../../assets/native-horse-materials.js?v=native-surface-2'",
+      "after": "'../../assets/native-horse-materials.js?v=horse-realism-20261020a'",
+      "occurrences": 1
+    },
+    {
+      "file": "review/horse-quality/capture.html",
+      "before": "\"./capture.js?v=horse-art-20261009b\"",
+      "after": "\"./capture.js?v=horse-realism-20261020a\"",
+      "occurrences": 1
+    }
+  ],
+  "beforeSHA256": {
+    "assets/breed-models.js": "0b19ac479a4c266116b1cdfd643009e9b942f78dec49f170b1724aae984e4417",
+    "assets/game-hero-horse.js": "852aaf212d98eaea82d44ae582c91c6cacaf7534d035538912cb2184f1f28745",
+    "assets/world-horse-lod.mjs": "7f6c252d3c23d9c97ce691daa9cc555a126919261163348e2cea6c05d3f7ec68",
+    "ranch3d.html": "1c1199977c1d0310316d07eb984298ca62af4c9262355b993d832b8cc44637e7",
+    "breeds.html": "4d070db6582c3fa88a093e84ae5b3cb11f8e46b1d005a768b7bdb31b01c1a389",
+    "hero-horse.html": "3b42da50e5a7b457a2d03280d87acb0cec17772db77d8cbd28eda5f4b8eb037c",
+    "assets/tack-studio.js": "ebcb1f33d65fdfe2d0b550948fedfae6f3b5975381e0d84566b99878fce5418b",
+    "tack-studio.html": "d1d3c98b0ae3d7edf23be4955b400bb8f77e670c195589280f9dd3365e2258f7",
+    "review/native-draft-legs/review.html": "57a677678f97643dac9025c0e8598a3ebbdbca1e32074b55891df33a1344ec03",
+    "review/horse-quality/capture.js": "e97088ee8a769e5968936e5f6657e9ef93f7ee71b2ede85678d07bf1c6758556",
+    "review/horse-quality/capture.html": "bed8b67e8c547377e02cbe50fbade069200dfc3c8270bf7667b2be6fef7a38d9"
+  }
+}

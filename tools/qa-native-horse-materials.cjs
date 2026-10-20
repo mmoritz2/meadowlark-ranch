@@ -6,7 +6,7 @@ let checks=0;function check(value,message){assert(value,message);checks++;}
 const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
 (async()=>{
  const THREE=await import(threeURL),{clone}=await load('assets/vendor/three/examples/jsm/utils/SkeletonUtils.js');
- const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish,NATIVE_COAT_SHADING:shading,NATIVE_LEG_COAT_SHADING:legShading}=await load('assets/native-horse-materials.js');
+ const {applyNativeHorseMaterials:apply,NATIVE_HORSE_MATERIAL_FINISH:finish,NATIVE_COAT_SHADING:shading,NATIVE_LEG_COAT_SHADING:legShading,NATIVE_COAT_REALISM:realism}=await load('assets/native-horse-materials.js');
  const {createBreedLibrary}=await load('assets/breed-models.js');
  const {NATIVE_BREED_PROFILES}=await load('assets/native-breed-profiles.js');
  const {configureNativeCustomization}=await load('assets/native-horse-customization.js');
@@ -92,7 +92,7 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
  const hook=shader=>{shader.uniforms.fixture={value:3};},cache=()=> 'prior-artwork-v1';hookMaterial.onBeforeCompile=hook;hookMaterial.customProgramCacheKey=cache;
  apply({THREE,rig:hookRig});const hookShader=makeShader();hookMaterial.onBeforeCompile(hookShader);
  check(hookShader.uniforms.fixture.value===3&&hookShader.uniforms.nativeCoatNeutral.value===hookRig.nativeNeutralCoat,'surface helper chains existing artwork and supplies the untouched neutral atlas');
- check(hookMaterial.customProgramCacheKey()==='prior-artwork-v1|native-coat-satin-3','composed program identity retains its prior key and explicit coat revision');
+ check(hookMaterial.customProgramCacheKey()==='prior-artwork-v1|native-coat-satin-4','composed program identity retains its prior key and explicit coat revision');
  const installedHook=hookMaterial.onBeforeCompile;apply({THREE,rig:hookRig});check(hookMaterial.onBeforeCompile===installedHook,'repeated material application never stacks the coat hook');
  const raw=fixtureAsset('white-western',defs);raw.materials=Object.values(materialsOf(raw.scene));const rawHook=raw.baseMat.onBeforeCompile;apply({THREE,rig:raw});check(raw.baseMat.onBeforeCompile===rawHook,'raw colored originals without a neutral atlas are never mistaken for grayscale shading');
  const belgianProfile=library.manifest.breeds.belgian;check(belgianProfile?.nativeRosterAlias,'Belgian uses the actual registered alias path');
@@ -109,6 +109,15 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
  check(Array.from({length:1001},(_,i)=>gain(i/1000)).every(x=>Number.isFinite(x)&&x>=1&&x<=1.55),'all atlas luminances have finite, bounded, positive gain');
  check((.3*gain(.3))/(.1*gain(.1))<3&&gain(.2)>1.4,'middle-shadow anatomy contrast is reduced without erasing its direction');
  check(belgianShader.fragmentShader.includes(shading.exponent.toFixed(4))&&belgianShader.fragmentShader.includes(shading.maxGain.toFixed(4)),'production shader uses the tested tone-curve bounds');
+ // Tonal compression is separate from pigment: retain black skin, constrain
+ // reflectance, reduce a bright/dark anatomy pair, and preserve full leg shaping.
+ const previousTone=x=>x*gain(x),realTone=(x,leg=0)=>{const a=previousTone(x),tone=Math.max(-realism.maxToneDelta,Math.min(realism.maxToneDelta,(realism.tonePivot-a)*realism.toneStrength));return a+tone*smooth(shading.skinStart,shading.skinEnd,x)*(1-Math.abs(leg));};
+ check(realTone(0)===0&&realTone(.01)===previousTone(.01),'black nostrils/hooves are never lifted by realism compression');
+ check(Array.from({length:1001},(_,i)=>realTone(i/1000)).every((x,i,a)=>Number.isFinite(x)&&x>=0&&x<=1&&(i===0||x>=a[i-1])),'realism transfer is finite, bounded, monotonic across every source intensity');
+ check(realTone(.1)/realTone(.5)>previousTone(.1)/previousTone(.5)&&realTone(.8)<previousTone(.8),'painted groove/highlight contrast decreases in both directions');
+ check([-.9,-.4,0,.4,.9].every(leg=>Math.abs(realTone(.3,leg)-previousTone(.3))<=realism.maxToneDelta),'transition correction is bounded');
+ check([.04,.1,.3,.8].every(x=>realTone(x,1)===previousTone(x)&&realTone(x,-1)===previousTone(x)),'full fore and hind masks keep the existing leg transfer exactly');
+ check(realism.fiberHeightM<=.00003&&realism.roughnessVariation<=.12,'coat detail stays micrometre-scale with restrained roughness, not anatomical bumps');
  const themed=Object.values(materialsOf(r.scene));check(themed.every(m=>Number.isFinite(m.roughness)&&Number.isFinite(m.specularIntensity)),'composed material properties remain finite');
  // Parse untouched GLB bytes with the actual vendored loader. Only image pixel
  // decoding is stubbed; KHR extensions, material classes, rigs and preparation
@@ -123,7 +132,21 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
  try{actualLibrary=createBreedLibrary({THREE,clone,GLTFLoader:FileLoader});await actualLibrary.manifestReady;}finally{global.fetch=previousFetch;}
  for(const key of ['white-western','bay-western','bay-sporthorse-native']){
   const asset=await actualLibrary.load(key),original=materialsOf(asset.scene),before=Object.fromEntries(Object.entries(original).map(([name,m])=>[name,snapshot(m)]));
+  const sourceArrays=Object.fromEntries(['position','normal','uv','skinIndex','skinWeight'].map(name=>[name,new asset.skin.geometry.attributes[name].array.constructor(asset.skin.geometry.attributes[name].array)]));
+  const sourceIndices=new asset.skin.geometry.index.array.constructor(asset.skin.geometry.index.array);
   const untreated=actualLibrary.instantiate(asset,{materialPolish:false}),actor=actualLibrary.instantiate(asset),m=materialsOf(actor.scene);
+  const rest=actor.skin.geometry.attributes.nativeCoatRest,coatShader=makeShader();m.M_Body.onBeforeCompile(coatShader);
+  check(rest?.count===16159&&actor.nativeMaterialPolish.coatFiberVertices===16159,key+' real original receives stable short-hair appearance coordinates');
+  check(Array.from(rest.array).every(Number.isFinite),key+' every cached rest coordinate is finite');
+  for(const name of Object.keys(sourceArrays))check(Buffer.from(asset.skin.geometry.attributes[name].array.buffer,asset.skin.geometry.attributes[name].array.byteOffset,asset.skin.geometry.attributes[name].array.byteLength).equals(Buffer.from(sourceArrays[name].buffer)),key+' source '+name+' bytes stay exact');
+  check(Buffer.from(asset.skin.geometry.index.array.buffer,asset.skin.geometry.index.array.byteOffset,asset.skin.geometry.index.array.byteLength).equals(Buffer.from(sourceIndices.buffer)),key+' source topology stays exact');
+  const valuesBefore=rest.array.slice(),again=actualLibrary.instantiate(asset);check(again.skin.geometry.attributes.nativeCoatRest===rest,key+' later actors reuse one immutable appearance attribute');
+  actor.skin.skeleton.bones[0].position.x+=.5;actor.scene.updateMatrixWorld(true);actor.skin.skeleton.update();
+  check(Buffer.from(rest.array.buffer).equals(Buffer.from(valuesBefore.buffer)),key+' motion does not make grain swim or modify the shared rest field');actor.skin.skeleton.bones[0].position.x-=.5;
+  check(coatShader.vertexShader.includes('ncCoatRest=nativeCoatRest')&&coatShader.fragmentShader.includes('ncFiberFilter=1.0-smoothstep')&&coatShader.fragmentShader.includes('dFdx(ncHeight)'),key+' shader has stable directional fiber relief and derivative distance filtering');
+  check(coatShader.fragmentShader.indexOf('float ncFiber=')<coatShader.fragmentShader.indexOf('float ncHeight='),key+' fiber variables are declared before normal perturbation');
+  check(coatShader.fragmentShader.match(/varying vec3 ncCoatRest/g)?.length===1,key+' fiber shader is installed exactly once');
+  for(const material of again.materials)material.dispose();
   check(Object.keys(original).sort().join(',')==='M_Body,M_Eye,M_Hair,M_Saddle1,M_Saddle2',key+' actual loader preserves exact source material names');
   check(['M_Body','M_Eye','M_Hair'].every(name=>original[name].isMeshPhysicalMaterial&&original[name].specularIntensity===0),key+' KHR_materials_specular constructs physical source materials');
   check(actor.nativeMaterialPolish.body===1&&actor.nativeMaterialPolish.eye===1&&actor.nativeMaterialPolish.hair===1,key+' real load→prepare→private clone applies every intended surface');
@@ -131,8 +154,10 @@ const load=relative=>import(pathToFileURL(path.join(root,relative)).href);
   check(m.M_Eye.color.getHexString()===finish.eye.color.slice(1)&&m.M_Eye.roughness===finish.eye.roughness,key+' actual loaded eye becomes dark warm iris');
   check(m.M_Hair.alphaTest===finish.hair.alphaCutoff&&m.M_Hair.alphaToCoverage,key+' actual loaded hair retains cutout and softer edges');
   const eyeShader=makeShader();m.M_Eye.onBeforeCompile(eyeShader);
-  check(eyeShader.fragmentShader.includes('float neCatch=pow(max(0.0,dot(normal,neHalf)),96.0)')&&eyeShader.fragmentShader.includes('dot(normal,neView)')&&eyeShader.fragmentShader.indexOf('float neCatch=')>eyeShader.fragmentShader.indexOf('#include <lights_physical_fragment>'),key+' small corneal reflection uses actual view/normal direction and fades at grazing angles');
+  check(eyeShader.fragmentShader.includes('float neCatch=pow(max(0.0,dot(normal,neHalf)),80.0)')&&eyeShader.fragmentShader.includes('dot(normal,neView)')&&eyeShader.fragmentShader.indexOf('float neCatch=')>eyeShader.fragmentShader.indexOf('#include <lights_physical_fragment>'),key+' small corneal reflection uses actual view/normal direction and fades at grazing angles');
+  check(eyeShader.fragmentShader.includes('min(.22,neLit*.36)')&&eyeShader.fragmentShader.includes('diffuse*neIrisL*(.48+.16*neIrisL)'),key+' iris retains its source fibers with warm reflectance and catchlight cannot shine in unlit shadow');
   check(m.M_Eye.emissive.getHex()===original.M_Eye.emissive.getHex()&&m.M_Eye.clearcoat===finish.eye.clearcoat,key+' eye retains physical corneal reflection without changing emissive material pigment');
+  check(m.M_Eye.envMapIntensity<=.2&&m.M_Eye.specularIntensity>=.5&&m.M_Eye.clearcoat>0&&m.M_Eye.clearcoat<=.3&&m.M_Eye.clearcoatRoughness<.08,key+' broad environment reflection recedes while a narrow physical tear-film highlight remains');
   for(const name of Object.keys(original)){
    check(snapshot(original[name])===before[name]&&snapshot(materialsOf(untreated.scene)[name])===before[name],key+' actual source/baseline isolated: '+name);
    check(m[name].map===original[name].map&&m[name]!==original[name],key+' actual map unchanged and material privately cloned: '+name);

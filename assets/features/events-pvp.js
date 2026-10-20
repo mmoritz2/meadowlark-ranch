@@ -23,6 +23,7 @@
      friendly races no-stakes challenges to whoever is riding nearby
      bundles        four themed kits — a horse, a full tack set, an outfit and a hamper — earned
                     by taking the trophies of a whole region */
+import {RANCH_GRANDSTAND} from '../ranch-pasture-route.mjs?v=ranch-pasture-route-1';
 export const id='events-pvp';
 export function install(G){
  const THREE=G.THREE, $=G.$, T=G.tables, W=G.world, player=G.horse.player;
@@ -270,7 +271,7 @@ export function install(G){
 
  /* the grandstand seat ------------------------------------------------------------------- */
  let spectate=false;
- const SEAT={x:-28.5,z:7.5};
+ const SEAT=RANCH_GRANDSTAND;
  function setSpectate(on){
   spectate=!!on;
   if(spectate){toast('👀 In the grandstand — any movement key gets you back on.');player.speed=0;}

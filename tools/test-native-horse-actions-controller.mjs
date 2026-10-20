@@ -142,3 +142,13 @@ test('newer peer actions and completion packets preserve local lie-down recovery
  assert.equal(m.action.type,'rear');assert.equal(m.action.timeS,.3);assert.equal(rig.receivedNativeActionSeq,11);
  assert.equal(receiveNativeAction(rig,{seq:10,type:null,elapsedS:0},{wild:true}),false);assert.equal(m.action.type,'rear');m.dispose();
 });
+
+
+test('slow rein turns step the native feet without inventing travel or disturbing actions',()=>{
+ const {m,rig,bone}=fixture();
+ tickNativeHorse(rig,0,.1,.8);assert.equal(m.mode,'walk');assert.equal(rig.nativeTurningInPlace,true);assert.equal(m.state.speedMps,0);
+ const before=m.time;tickNativeHorse(rig,0,.1,.8);assert(m.time>before);assert(bone.position.y>0,'Actual walk mixer moves while actor stays stopped');
+ tickNativeHorse(rig,0,.25,0);assert.equal(m.mode,'stand');assert.equal(rig.nativeTurningInPlace,false);
+ m.startAction('graze');tickNativeHorse(rig,0,.1,.8);assert.equal(m.action.type,'graze','A rein cannot overwrite a one-shot');
+ m.dispose();
+});

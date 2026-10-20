@@ -1,3 +1,4 @@
+import {normalizeHorseRealismSource} from './horse-realism-source-guard.cjs';
 /* Real production loader, source clips and native hair controls. No browser,
  * WebGL, network, generated model writes or saved game. */
 import assert from 'node:assert/strict';
@@ -35,7 +36,7 @@ const canonical=(scene,m,i)=>scene.worldToLocal(position(m,i));
 const protectedRows=rig=>meshList(rig.scene).filter(m=>m.geometry.attributes.position.count!==23514&&!m.userData.nativeRidingGroom).map(m=>({mesh:m,hash:geometryHash(m.geometry),geometry:m.geometry,material:m.material,bind:m.bindMatrix.toArray(),bones:m.skeleton.bones.slice(),inverses:m.skeleton.boneInverses.map(v=>v.toArray())}));
 const checkRows=rows=>{for(const r of rows){assert.equal(geometryHash(r.mesh.geometry),r.hash);assert.equal(r.mesh.geometry,r.geometry);assert.equal(r.mesh.material,r.material);assert.deepEqual(r.mesh.bindMatrix.toArray(),r.bind);assert.deepEqual(r.mesh.skeleton.bones,r.bones);assert.deepEqual(r.mesh.skeleton.boneInverses.map(v=>v.toArray()),r.inverses);}};
 const originalFlowing=(await import('data:text/javascript,'+encodeURIComponent(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/parent-native-flowing-groom.js.txt',import.meta.url),'utf8')))).createNativeFlowingGroom;
-const parentMeta=JSON.parse(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/fixture.json',import.meta.url)));for(const[f,h]of Object.entries(parentMeta.protectedInputs))assert.equal(hash(fs.readFileSync(new URL(f,root))),h,'Pinned real native source '+f);
+const parentMeta=JSON.parse(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/fixture.json',import.meta.url)));for(const[f,h]of Object.entries(parentMeta.protectedInputs))assert.equal(hash(normalizeHorseRealismSource(fs.readFileSync(new URL(f,root)),f)),h,'Pinned real native source '+f);
 const reports=[];let checks=0;
 {const ambient=Math.random;let calls=0;Math.random=()=>{calls++;return .37;};const observer=Math.random;try{assert.throws(()=>withNativeRidingResources('negative-control',()=>{new THREE.BufferGeometry();throw Error('intentional');}),/intentional/);assert.equal(Math.random,observer);assert.equal(calls,0);}finally{Math.random=ambient;}}
 

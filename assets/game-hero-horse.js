@@ -3,9 +3,9 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
-export {getNativeHorseCapabilities} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
-import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
+export {getNativeHorseCapabilities} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
+import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
 
 // Feather inertia samples the final leg pose after actor travel and terrain fit.
 const pendingNativeFeatherGrooms=new Map();
@@ -14,8 +14,8 @@ export function finishNativeHorseGrooms(){
   for(const [feathers,frame] of pendingNativeFeatherGrooms){pendingNativeFeatherGrooms.delete(feathers);feathers.update(frame.dt,frame.state);}
 }
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-20261009';
-import {createNativeDraftFeathers} from './native-draft-feathers.js?v=fine-hair-20261013c';
-import {createNativeFlowingGroom} from './native-flowing-groom.js?v=fine-hair-20261013c-native-riding-locks-1';
+import {createNativeDraftFeathers} from './native-draft-feathers.js?v=horse-realism-20261020a';
+import {createNativeFlowingGroom} from './native-flowing-groom.js?v=horse-realism-20261020a-native-riding-locks-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.

@@ -1,0 +1,80 @@
+{
+  "scope": "Horse riding and existing ranch access; no new gameplay systems.",
+  "upstreamBase": "14028781b1cb3b18261ddc320fff60a307e858a2",
+  "runtimeSHA256": {
+    "ranch3d.html": "4f06c0819167f7b4055552b4a58d28a701578cb700814d3d8fcfee2430908d98",
+    "assets/features/index.js": "5ae9234e907013878308ad80fbbd2f22de242e2822f2a8eaf9044355fc053671",
+    "assets/features/course-guide.js": "e49f3ea31228a8f7030235f62746c20b9ad5ff034e88b99c464d6ac5fd182931",
+    "assets/native-horse-motion.js": "a758e66542715c43fab800a4f4a2c22be403d08f8ca73eaf7b6332e15892f806",
+    "assets/game-hero-horse.js": "771e83f574fde5607174fb306d66484b9a595740bf4bdc9191b19fb6b9581032",
+    "assets/features/social-play.js": "c6813b011bcba56b5d81ef12ce81550b85205762abfe48cde9a831c7482d612e",
+    "assets/features/events-pvp.js": "a469027aac5100321645bf0e88d8442404ed9e2eeafefce16d6e1e3bf3a4c43e"
+  },
+  "changes": [
+    "Eased reins with wider turning arcs at higher speeds and preserved target travel speeds.",
+    "Authored foot movement for slow turns without inventing travel.",
+    "Gait-aware rider seat with seated Western/bareback and English trot posting.",
+    "Existing camera owner follows actual native jump lift, keeps collision-safe framing and preserves swimming/flight owners.",
+    "Visible pasture road passes through a real west-arena opening, alongside existing stalls and through the retained pasture gate; pavilion, trough, map and interaction anchors match."
+  ],
+  "automatedChecks": {
+    "focusedRidingCameraRouteAndPreservation": {
+      "pass": 89,
+      "fail": 0
+    },
+    "latestHorseArtRidingAndRoute": {
+      "pass": 42,
+      "fail": 0
+    },
+    "neighborRanchAndRiding": {
+      "pass": 30,
+      "fail": 0
+    },
+    "remainingControlsDistanceTackActionsJump": {
+      "pass": 125,
+      "fail": 6,
+      "failures": "All six older source comparisons reproduce with identical assertions on raw upstream1402878."
+    },
+    "historicalSourceGuards": {
+      "current": {
+        "pass": 106,
+        "fail": 139
+      },
+      "rawUpstream": {
+        "pass": 99,
+        "fail": 139
+      },
+      "comparison": "Every one of139 failed case names and assertion payloads matches raw upstream; seven new preservation tests pass."
+    }
+  },
+  "ordinaryBrowserPlay": {
+    "input": "Normal production gait selector and fixed keyboard inputs. No save seeding, actor teleport or progress edits.",
+    "outboundPasturePosition": {
+      "x": -36.43602047913593,
+      "z": -9.413726307858063,
+      "heading": 4.785879152481469,
+      "speed": 0
+    },
+    "returnedIntoArenaPosition": {
+      "x": -23.255087971346377,
+      "z": 1.7520842616065224,
+      "heading": 1.3280341179500423,
+      "speed": 0
+    },
+    "cameraFailuresAtRecordedGateAndReturnSamples": 0,
+    "errorsAtRecordedGateAndReturnSamples": [],
+    "finalCombinedArtReload": "Loaded normally; canter and gallop travel checked, arena wall retained collision, and native jump progressed through115/385/725 per mille phases back to stand with zero camera failures."
+  },
+  "preserved": [
+    "Latest upstream estate stable, shelters, grandstand and open stall models.",
+    "Latest upstream horse materials, coats, eyes and mane/tail grooming.",
+    "Horse source gaits and approved hoof tucks.",
+    "Wallet, rewards, story, collisions outside the declared access repair and target travel speeds."
+  ],
+  "limits": [
+    "This is a focused riding and ranch repair, not a claim of commercial-game parity.",
+    "Fast game travel still uses the existing source gait clips; full contact-speed matching and further animation polish remain.",
+    "No physical-device, unassisted touch, App Store or performance certification is claimed.",
+    "Older historical source comparisons already fail on the upstream ranch artwork; they remain reported rather than repinned."
+  ]
+}
