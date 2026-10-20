@@ -1,7 +1,8 @@
+import {HOLLOWPEAK_CATARACT_TRAJECTORY_K} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-2';
 // A selected surface response for the existing Hollowpeak cataract. Geometry,
 // travel rate, bank contacts and the shared Ribbon/chute material remain owned
 // by waterfall-art. All density is one whole-width field across joined veils.
-export const HOLLOWPEAK_FALLING_WATER_PROFILE='hollowpeak-falling-water-2';
+export const HOLLOWPEAK_FALLING_WATER_PROFILE='hollowpeak-falling-water-trajectory-1';
 let cloneSerial=0;
 function privateClone(material){
  let state=2166136261;for(const c of material.uuid+'|'+HOLLOWPEAK_FALLING_WATER_PROFILE+'|'+(++cloneSerial))state=Math.imul(state^c.charCodeAt(0),16777619);
@@ -19,9 +20,11 @@ export function createHollowpeakFallingWaterMaterial(base,{flowTexture=null}={})
   if(start<0||stop<=start||shader.fragmentShader.indexOf(begin,start+begin.length)!==-1||shader.fragmentShader.indexOf(end,stop+end.length)!==-1)throw Error('Hollowpeak waterfall colour contract changed');
   const field=`   vec2 fuv=cascadeUV;
    float fx=cascadeWholeAcross;
-   // sqrt(drop) is elapsed fall time. Advection in this coordinate accelerates
-   // in world space without a wrapped scroll phase or a reset at the lip.
-   float fallTravel=sqrt(max(fuv.y,.0001))-waterfallTime*cascadeTravelSpeed;
+   // Selected UV.y is the principal drop fraction q(s). Its inverse is elapsed
+   // fall time; the selected rate retains gravity with finite initial speed.
+   float trajectoryK=${HOLLOWPEAK_CATARACT_TRAJECTORY_K.toFixed(8)};
+   float fallElapsed=(sqrt(trajectoryK*trajectoryK+4.0*(1.0-trajectoryK)*max(fuv.y,0.0))-trajectoryK)/(2.0*(1.0-trajectoryK));
+   float fallTravel=fallElapsed-waterfallTime*cascadeTravelSpeed;
    float currentBend=(fallNoise(vec2(fx*3.1,fallTravel*2.8))-.5)*.025;
    float fallStream=fx+currentBend;
    float mainCurrent=exp(-pow((fallStream-.31)/.20,2.0));

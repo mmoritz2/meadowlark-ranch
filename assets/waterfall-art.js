@@ -1,5 +1,5 @@
-import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2';
-import {HOLLOWPEAK_CATARACT_PROFILE,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-1';
+import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1';
+import {HOLLOWPEAK_CATARACT_PROFILE,HOLLOWPEAK_CATARACT_TRAJECTORY_K,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-2';
 import {createWaterfallEffects} from './waterfall-effects.js?v=hollowpeak-cascades-1';
 import {CASCADE_FLOW_PROFILE,CASCADE_VEIL_WEIGHTS,cascadeRim,cascadeSpread,sampleCascadeVeil,cascadeFlowRate,cascadeMotionAmplitude} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 /* Thin lit liquid, not a pair of full-width curtains. Nine unequal veils
@@ -60,13 +60,13 @@ export function createWaterfallArt({THREE:T,flowTexture=null}){
  function fall(options){
   const {x,z,top,bottom,width,run=2.6,name='waterfall',footHeightAt,footWidth,flowProfile=null}=options,flow={x,z,top,bottom,width,run,footHeightAt,footWidth};
   if(flowProfile!==null&&flowProfile!==HOLLOWPEAK_CATARACT_PROFILE)throw Error('Unknown waterfall flow profile');
-  const root=new T.Group();root.name='Water | '+name;const p=[],uv=[],phases=[],speeds=[],acrossValues=[],motion=[],ix=[],R=64,C=4,rate=cascadeFlowRate(top,bottom);
+  const root=new T.Group();root.name='Water | '+name;const p=[],uv=[],phases=[],speeds=[],acrossValues=[],motion=[],ix=[],R=64,C=4,rate=cascadeFlowRate(top,bottom)*(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?1/Math.sqrt(1-HOLLOWPEAK_CATARACT_TRAJECTORY_K):1);
   function vertex(point,u,v,phase,s){p.push(...point);uv.push(u,v);phases.push(phase);speeds.push(rate);const spread=cascadeSpread(flow,s);acrossValues.push(.5+(point[0]-x)/(2*width*spread));motion.push(Math.min(cascadeMotionAmplitude(width,s),Math.max(0,width*1.29-Math.abs(point[0]-x))));}
   // Veil roots meet the incoming channel at its exact finite endpoint.
   // The obsolete pale crest band and both rear curtains are absent.
   for(let veil=0;veil<CASCADE_VEIL_WEIGHTS.length;veil++){
    const offset=p.length/3;
-   for(let j=0;j<=R;j++)for(let i=0;i<=C;i++){const s=j/R,u=i/C;const point=sampleCascadeVeil(flow,veil,s,u);vertex(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?hollowpeakCataractPoint(flow,s,point):point,u,s*s,veil*.1731+.043,s);}
+   for(let j=0;j<=R;j++)for(let i=0;i<=C;i++){const s=j/R,u=i/C;const point=sampleCascadeVeil(flow,veil,s,u);vertex(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?hollowpeakCataractPoint(flow,s,point):point,u,s*s+(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?HOLLOWPEAK_CATARACT_TRAJECTORY_K*s*(1-s):0),veil*.1731+.043,s);}
    for(let j=0;j<R;j++)for(let i=0;i<C;i++){const a=offset+j*(C+1)+i,b=a+C+1;ix.push(a,b,a+1,a+1,b,b+1);}
   }
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(p,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setAttribute('cascadePhase',new T.Float32BufferAttribute(phases,1));geo.setAttribute('cascadeSpeed',new T.Float32BufferAttribute(speeds,1));geo.setAttribute('cascadeAcross',new T.Float32BufferAttribute(acrossValues,1));geo.setAttribute('cascadeMotion',new T.Float32BufferAttribute(motion,1));geo.setIndex(ix);geo.computeVertexNormals();geo.computeBoundingSphere();const maxMotion=Math.max(...motion);geo.boundingSphere.radius+=maxMotion;

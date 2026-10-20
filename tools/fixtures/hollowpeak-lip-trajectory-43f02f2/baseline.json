@@ -1,0 +1,366 @@
+{
+  "scope": "Compact accepted43/V10 native59 cohort: complete prior-native field reconstructed from unchanged committed9a02gzip plus fifteen actual accepted native terminal-node values; no prior fixture edits.",
+  "baselineCommit": "43f02f27ca9cd22727ec15c1f16eb9b465900b82",
+  "size": 513,
+  "step": 1.953125,
+  "canonicalSHA256": "59b9537a0846282f73b5baa5f2fec0b1f6eed2af3fcd865f6a826effdb35ca8d",
+  "rawCanonicalSHA256": "0e88796b209a7236b7cf0da79b7e6ef38ac43445003fe2a1adda9ad8692c277c",
+  "rawSourceSHA256": "c4834e4c686683ea8102f8a1256b539069407bbc98f4e0157511981be84bd0cb",
+  "canonicalBase": {
+    "fixture": "../hollowpeak-terminal-water-bed-367cc5b/canonical-terrain.f32.gz",
+    "gzipSHA256": "a8b5d40fbedb5354cb2152b471f86b6b3d7aee12bece0ad389ad951d18b25bbe",
+    "unpackedSHA256": "9a02d361aaf183f898a10ab9072e9fc63518fd2157ea125b545d36ceb376841b"
+  },
+  "nativeFinalNodes": [
+    {
+      "ix": 177,
+      "iz": 131,
+      "y": 13.644245147705078
+    },
+    {
+      "ix": 178,
+      "iz": 131,
+      "y": 13.644245147705078
+    },
+    {
+      "ix": 179,
+      "iz": 131,
+      "y": 13.644245147705078
+    },
+    {
+      "ix": 180,
+      "iz": 131,
+      "y": 13.644245147705078
+    },
+    {
+      "ix": 181,
+      "iz": 131,
+      "y": 13.644245147705078
+    },
+    {
+      "ix": 182,
+      "iz": 131,
+      "y": 13.936485290527344
+    },
+    {
+      "ix": 174,
+      "iz": 132,
+      "y": 11.154158592224121
+    },
+    {
+      "ix": 175,
+      "iz": 132,
+      "y": 14.027242660522461
+    },
+    {
+      "ix": 176,
+      "iz": 132,
+      "y": 14.300000190734863
+    },
+    {
+      "ix": 177,
+      "iz": 132,
+      "y": 14.079999923706055
+    },
+    {
+      "ix": 178,
+      "iz": 132,
+      "y": 14.079999923706055
+    },
+    {
+      "ix": 179,
+      "iz": 132,
+      "y": 14.079999923706055
+    },
+    {
+      "ix": 180,
+      "iz": 132,
+      "y": 14.079999923706055
+    },
+    {
+      "ix": 181,
+      "iz": 132,
+      "y": 14.079999923706055
+    },
+    {
+      "ix": 182,
+      "iz": 132,
+      "y": 14.079999923706055
+    }
+  ],
+  "latePatchFixture": {
+    "fixture": "../hollowpeak-terminal-water-bed-367cc5b/established-native.json",
+    "sha256": "6fec336ce658def219939f612782ef0de6d4b829a4728ec3ab82667dbbcbc6d8"
+  },
+  "preimages": {
+    "cataract": "5afd3a7ee235a35bf91e9ed38ece66445bfdc5c43d95cb21beda55e9f9a7b68f",
+    "factory": "b820d0240077bf1fc1158d251185128a37107456fda0aea72fb58bfd2896500e",
+    "helper": "aecdedf919b07133a9813e9db0a1e6ab28bf097cafef71d797d179c13e4178e9",
+    "html": "465730d39ea6de9e01c67e6469565bc2fb1badeb1d8b8feb47d3557228941702"
+  },
+  "edges": {
+    "cataract": [
+      {
+        "before": "export const HOLLOWPEAK_CATARACT_PROFILE='hollowpeak-cataract-1';",
+        "after": "export const HOLLOWPEAK_CATARACT_PROFILE='hollowpeak-cataract-2';\nexport const HOLLOWPEAK_CATARACT_TRAJECTORY_K=.35;"
+      },
+      {
+        "before": "&&flow.width>0&&flow.run>0&&point.length===3",
+        "after": "&&flow.width>0&&flow.run>0&&Number.isFinite(flow.top)&&Number.isFinite(flow.bottom)&&point.length===3"
+      },
+      {
+        "before": "return [point[0],point[1],point[2]+advance];",
+        "after": "return [point[0],point[1]-(flow.top-flow.bottom)*HOLLOWPEAK_CATARACT_TRAJECTORY_K*s*(1-s),point[2]+advance];"
+      }
+    ],
+    "factory": [
+      {
+        "before": "import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2';",
+        "after": "import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1';"
+      },
+      {
+        "before": "import {HOLLOWPEAK_CATARACT_PROFILE,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-1';",
+        "after": "import {HOLLOWPEAK_CATARACT_PROFILE,HOLLOWPEAK_CATARACT_TRAJECTORY_K,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-2';"
+      },
+      {
+        "before": "rate=cascadeFlowRate(top,bottom);",
+        "after": "rate=cascadeFlowRate(top,bottom)*(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?1/Math.sqrt(1-HOLLOWPEAK_CATARACT_TRAJECTORY_K):1);"
+      },
+      {
+        "before": ":point,u,s*s,veil*.1731+.043,s);",
+        "after": ":point,u,s*s+(flowProfile===HOLLOWPEAK_CATARACT_PROFILE?HOLLOWPEAK_CATARACT_TRAJECTORY_K*s*(1-s):0),veil*.1731+.043,s);"
+      }
+    ],
+    "helper": [
+      {
+        "before": "",
+        "after": "import {HOLLOWPEAK_CATARACT_TRAJECTORY_K} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-2';\n",
+        "prepend": true
+      },
+      {
+        "before": "export const HOLLOWPEAK_FALLING_WATER_PROFILE='hollowpeak-falling-water-2';",
+        "after": "export const HOLLOWPEAK_FALLING_WATER_PROFILE='hollowpeak-falling-water-trajectory-1';"
+      },
+      {
+        "before": "   // sqrt(drop) is elapsed fall time. Advection in this coordinate accelerates\n   // in world space without a wrapped scroll phase or a reset at the lip.\n   float fallTravel=sqrt(max(fuv.y,.0001))-waterfallTime*cascadeTravelSpeed;",
+        "after": "   // Selected UV.y is the principal drop fraction q(s). Its inverse is elapsed\n   // fall time; the selected rate retains gravity with finite initial speed.\n   float trajectoryK=${HOLLOWPEAK_CATARACT_TRAJECTORY_K.toFixed(8)};\n   float fallElapsed=(sqrt(trajectoryK*trajectoryK+4.0*(1.0-trajectoryK)*max(fuv.y,0.0))-trajectoryK)/(2.0*(1.0-trajectoryK));\n   float fallTravel=fallElapsed-waterfallTime*cascadeTravelSpeed;"
+      }
+    ],
+    "html": [
+      {
+        "before": "  \"./assets/waterfall-art.js?v=hollowpeak-cascades-1-connected-landforms-1\":\"./assets/waterfall-art.js?v=hollowpeak-falling-water-2\",",
+        "after": "  \"./assets/waterfall-art.js?v=hollowpeak-cascades-1-connected-landforms-1\":\"./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1\",\n  \"./assets/waterfall-art.js?v=hollowpeak-falling-water-2\":\"./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1\",\n  \"./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2\":\"./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1\",\n  \"./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-1\":\"./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-2\","
+      },
+      {
+        "before": "const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls',flowProfile:'hollowpeak-cataract-1'});",
+        "after": "const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls',flowProfile:'hollowpeak-cataract-2'});"
+      }
+    ]
+  },
+  "physicalOwnersSHA256": {
+    "falls-landscape.js": "7e210c890f685b29fc4de0c85fb2ca319ccf642afe6e72f66c3494058a9be178",
+    "hollowpeak-spillway-bank.mjs": "7681f40df27cbd0bba4b934c92aa2999b09058a201012a19003d3b9eef42d207",
+    "hollowpeak-upper-ridges.mjs": "5e80e06137ec33a88da2efd2526adcc57fef02e1762e2aab534b5462276fdedf",
+    "hollowpeak-macroshape.mjs": "c44bd484a5274cb5130083883234112ab34c588ec9ffc4580f9f1a1ae5c2f9c6",
+    "cascade-flow.mjs": "48957154af4835e8ac65c0efe8cd59e08e3f5f54152d3492e568e5a4b0ab35ae",
+    "hollowpeak-snow.mjs": "77fcd42f5f4db3f1dbd4bc3e5342e2e93be7dd143b893711398b308274b8e374",
+    "hollowpeak-rock-surface.mjs": "4e25e4dba72797ec464ee9ab96947845e44e084b5cf5a638f3be52bdb08b2251",
+    "hollowpeak-shore.mjs": "8a287374340ad8b086cf2aef3b7c3cf132b2f181d9c4e8636f130fab4a809092",
+    "hollowpeak-placement-reference.mjs": "75ada033fa4c93c6cdde79434f676f56819a6c034ce2509e3a96a8b789d4a94e",
+    "willowmere-landscape.js": "dc44c09bf5591fe7b67290813bac85d525893a563bba9fd4241090ea4787269c",
+    "hollowpeak-terminal-water-bed.mjs": "c2cbd9ed0b723fce40b5a9e13d5fab6b4a3650e596df738edcfde857e0dd2cce",
+    "waterfall-effects.js": "c85f19e83fea50a63809216179a43a1b7523e6c54e111e10c81242bf2b666f6f"
+  },
+  "nativeSelectedFall": {
+    "key": "Water | Hollowpeak Falls liquid veils|/Water | Hollowpeak Falls|1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1",
+    "name": "Water | Hollowpeak Falls liquid veils",
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "count": null,
+    "renderOrder": 2,
+    "castShadow": false,
+    "receiveShadow": false,
+    "attributes": {
+      "position": {
+        "type": "Float32Array",
+        "itemSize": 3,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "96384f89fea8361fbac82a214f64c65236f4491057af36532c2591f3cc68eda0"
+      },
+      "uv": {
+        "type": "Float32Array",
+        "itemSize": 2,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "ac36111b0e1d20ed3d9b4502b921bde06270e7d251a56d6dc9ecd4d19828bf6f"
+      },
+      "cascadePhase": {
+        "type": "Float32Array",
+        "itemSize": 1,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "ca908006c1fd7ff6256ccb6165aa33e7102aa310a4eebe957c4fdda5b7428d83"
+      },
+      "cascadeSpeed": {
+        "type": "Float32Array",
+        "itemSize": 1,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "d62ddcddcdb529297dd6ac62a030c989af6c7e626a6dacc0ec838c2f1fc90dd3"
+      },
+      "cascadeAcross": {
+        "type": "Float32Array",
+        "itemSize": 1,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "9192c8f477e60e19caa9c8ae32395d0b48a482324a5b60fc5702331518d679e8"
+      },
+      "cascadeMotion": {
+        "type": "Float32Array",
+        "itemSize": 1,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "13f31ae6475f41a431c532e18d22cc0eda82d937a4a5441800c64edc51ff1f95"
+      },
+      "normal": {
+        "type": "Float32Array",
+        "itemSize": 3,
+        "count": 2925,
+        "normalized": false,
+        "sha256": "b038ec5a6ef30e8ab454805794ccd206ce62ca1bbe432070cfd26210a6af1152"
+      }
+    },
+    "index": {
+      "type": "Uint16Array",
+      "count": 13824,
+      "sha256": "d1ab10a9cf637360b0832936ac462c60628cbe1b9667fa3b09df89689f22adb0"
+    },
+    "drawRange": {
+      "start": 0,
+      "count": null
+    },
+    "groups": [],
+    "boundingSphere": {
+      "center": [
+        -150,
+        7.069999905303121,
+        -238.29999542236328
+      ],
+      "radius": 8.751696117173646
+    }
+  },
+  "nativeSelectedGeometryProfile": {
+    "top": 14.2,
+    "bottom": -0.060000000000000005,
+    "width": 2.45,
+    "run": 7.8,
+    "profile": "hollowpeak-cataract-1",
+    "veils": 9,
+    "vertices": 2925,
+    "triangles": 4608,
+    "draws": 1,
+    "attributeBytes": 140400,
+    "indexBytes": 27648,
+    "geometryCPUBytes": 168048,
+    "geometryGPUBytes": 168048,
+    "footContact": false,
+    "footWidth": null,
+    "flowTexture": true,
+    "rate": 0.5861898270389748,
+    "maxLateralMotionM": 0.03185,
+    "lipZRange": [
+      -242.2,
+      -242.2
+    ]
+  },
+  "nativeSelectedMaterial": {
+    "name": "Water | Hollowpeak accelerating current",
+    "type": "MeshPhysicalMaterial",
+    "color": [
+      0.43415363616478553,
+      0.5840784178830671,
+      0.5840784178830671
+    ],
+    "roughness": 0.46,
+    "metalness": 0,
+    "ior": 1.333,
+    "clearcoat": 0.015,
+    "clearcoatRoughness": 0.46,
+    "specularIntensity": 0.14,
+    "opacity": 0.88,
+    "transparent": true,
+    "depthWrite": false,
+    "depthTest": true,
+    "side": 2,
+    "envMapIntensity": 0.9,
+    "forceSinglePass": true,
+    "defaultAttributeValues": {
+      "cascadePhase": [
+        0
+      ],
+      "cascadeSpeed": [
+        0.6
+      ],
+      "cascadeAcross": [
+        -1
+      ],
+      "cascadeMotion": [
+        0
+      ]
+    },
+    "cacheKey": "hollowpeak-falling-water-2|flowing-waterfall-joining-veils-v5-photo"
+  },
+  "baselineSweep": {
+    "min": 0.11964540631061027,
+    "worst": {
+      "x": -152.32873760930264,
+      "y": 14.199645330016665,
+      "z": -242.1875,
+      "ground": 14.079999923706055
+    },
+    "insideMin": 0.11964540631061027,
+    "insideWorst": {
+      "x": -152.32873760930264,
+      "y": 14.199645330016665,
+      "z": -242.1875,
+      "ground": 14.079999923706055
+    },
+    "outsideMin": 1.068304818191575,
+    "outsideWorst": {
+      "x": -153.16050720214844,
+      "y": -0.05999999865889549,
+      "z": -234.39999389648438,
+      "ground": -1.1283048168504706
+    },
+    "triangles": 4608,
+    "facets": 11397,
+    "emptyFacets": 0,
+    "clippedVertices": 50904,
+    "outsideFieldChanges": 0
+  },
+  "minimumAllPhaseClearanceM": 0.075,
+  "nativeFilesSHA256": {
+    "report.json": "5c22c4768f87d78e690872244c057bdc85f7cbe3ad2495a11dd6a09b7c80f5c7",
+    "canonical-terrain.bin": "59b9537a0846282f73b5baa5f2fec0b1f6eed2af3fcd865f6a826effdb35ca8d",
+    "resident-audit.json": "8438385f3a97bb2b19ba13fa3fc322d5f7181fc834974fb46527a85d5e160b45",
+    "native-physics.json": "f9d3caa7e1b9a913bc8a37e9ba68898a704cbd994cefdc540df4cf7b05385db5",
+    "installed-shore-audit.json": "53f5f1ceac7af4e2886c8d65fa587fc49a4b548427e9b93da5d1136b0f6659a1"
+  }
+}

@@ -634,7 +634,10 @@ body.touch #stickZone{display:block}
   "three/addons/":"./assets/vendor/three/examples/jsm/",
   "./assets/falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1":"./assets/falls-landscape.js?v=terminal-water-bed-1",
   "./assets/falls-landscape.js?v=hollowpeak-upper-ridges-3":"./assets/falls-landscape.js?v=terminal-water-bed-1",
-  "./assets/waterfall-art.js?v=hollowpeak-cascades-1-connected-landforms-1":"./assets/waterfall-art.js?v=hollowpeak-falling-water-2",
+  "./assets/waterfall-art.js?v=hollowpeak-cascades-1-connected-landforms-1":"./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1",
+  "./assets/waterfall-art.js?v=hollowpeak-falling-water-2":"./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1",
+  "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2":"./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1",
+  "./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-1":"./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-2",
   "./assets/hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1":"./assets/hollowpeak-macroshape.mjs?v=hollowpeak-eastern-headwall-2"
  }
 }
@@ -4762,7 +4765,7 @@ let waterMat=null;   // hoisted: the pond reuses it
   const FX=HOLLOWPEAK.x,FZ=HOLLOWPEAK.z,lip=HOLLOWPEAK.top,foot=HOLLOWPEAK.level;
   FALLS.landscape=createFallsLandscape({THREE,scene,heightAt:terrainH,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,colliders});
   {const FW=HOLLOWPEAK.width;
-   const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls',flowProfile:'hollowpeak-cataract-1'});scene.add(fall);FALLS.surface=fall;
+   const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls',flowProfile:'hollowpeak-cataract-2'});scene.add(fall);FALLS.surface=fall;
    FALLS.effects=waterfallArt.effects({x:FX,z:FZ,top:lip,bottom:foot+.07,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak'});scene.add(FALLS.effects.group);
    // Preserve the retired droplet layout's seeded placement draws.
    for(let i=0;i<270;i++)Math.random();

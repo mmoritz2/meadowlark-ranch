@@ -1,0 +1,86 @@
+{
+  "scope": "Actual accepted43/V10 installed shore mesh positions/index and registered contact. NativeV12 confirms these complete buffers unchanged; no duplicate fullmesh JSON.",
+  "sourceOwnerSHA256": "8a287374340ad8b086cf2aef3b7c3cf132b2f181d9c4e8636f130fab4a809092",
+  "nativeAuditSHA256": "53f5f1ceac7af4e2886c8d65fa587fc49a4b548427e9b93da5d1136b0f6659a1",
+  "registered": true,
+  "meshes": [
+    {
+      "name": "Hollowpeak shore | shoals",
+      "visible": true,
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "position": {
+        "type": "Float32Array",
+        "count": 15954,
+        "sha256": "38dbed5b813b7d9eabed25263d9ac87e867f109056744f99f3250901ab06b849"
+      },
+      "index": {
+        "type": "Uint32Array",
+        "count": 15954,
+        "sha256": "c78ca5c76c393fb3d4bc565feb2cf853ecd8381433c8ad13a7ea3f0cd6ba57b3"
+      }
+    },
+    {
+      "name": "Hollowpeak shore | reflecting plunge water",
+      "visible": true,
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "drawRange": {
+        "start": 0,
+        "count": null
+      },
+      "position": {
+        "type": "Float32Array",
+        "count": 2899,
+        "sha256": "aa3d7990498d133a5555415c1841b3a722930da1b46a497c391e895ea87df957"
+      },
+      "index": {
+        "type": "Uint16Array",
+        "count": 16800,
+        "sha256": "3890af2fcede558b7f5385da7717d7618c141982db0967b89224444b0e6ce3de"
+      }
+    }
+  ],
+  "reflectingLevel": -0.1,
+  "policy": {
+    "solidShoalMinimumM": 0.075,
+    "reflecting": "Retain the exact before landing minimum; falling water intentionally ends0.04m above the fixed reflecting plane"
+  },
+  "reflectingMaterialOwnerSHA256": "06fc348ba1391062257e85ca643d53ea826f269b0c1ec49b2daed1638c8ca8e6"
+}
