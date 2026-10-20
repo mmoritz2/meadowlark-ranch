@@ -1,0 +1,898 @@
+{
+  "source": "Native V5 ridge-attribution Wren reference",
+  "reportSHA256": "a5cda0bc59721b65cf23fcf08a0893587d515876bc5102c3a5276e93888177d3",
+  "sourceHTML": "046ca0466de9e56bc6c5098d92f2c170c5ca34ca7946c00b8f6bb54b94a324c1",
+  "step": 1.953125,
+  "heightSHA256": "350e38c8db9a1ec95619ff79e808fc714d48351f30c1dc4f1624cd05d98e32a1",
+  "probes": [
+    {
+      "pixel": {
+        "id": "western-dome-upper",
+        "x": 1043,
+        "y": 252
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 384.1519002501693,
+        "point": [
+          -197.78808387091576,
+          40.98538528845046,
+          -344.37439436932203
+        ],
+        "terrainHeight": 40.97338425085296,
+        "groundHeight": 40.97338425085296,
+        "aboveTerrain": 0.01200103759749993,
+        "aboveGround": 0.01200103759749993,
+        "faceIndex": 3001,
+        "faceNormal": [
+          0.3000625136264818,
+          0.24819788199608825,
+          0.9210647638949249
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 4450,
+            "position": [
+              -197.265625,
+              45.28468322753906,
+              -345.703125
+            ],
+            "terrainHeight": 45.272682189941406,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4575,
+            "position": [
+              -199.21875,
+              40.39787673950195,
+              -343.75
+            ],
+            "terrainHeight": 40.3858757019043,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4576,
+            "position": [
+              -197.265625,
+              38.036617279052734,
+              -343.75
+            ],
+            "terrainHeight": 38.02461624145508,
+            "aboveTerrain": 0.01200103759765625
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 384.15514614890634,
+        "point": [
+          -197.7896854640602,
+          40.985722595519846,
+          -344.37719740017303
+        ],
+        "terrainHeight": 40.98572259551986,
+        "groundHeight": 40.98572259551986,
+        "aboveTerrain": -1.4210854715202004e-14,
+        "aboveGround": -1.4210854715202004e-14,
+        "faceIndex": 81205,
+        "faceNormal": [
+          0.3000625136264818,
+          0.24819788199608825,
+          0.9210647638949249
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 41194,
+            "position": [
+              -199.21875,
+              40.3858757019043,
+              -343.75
+            ],
+            "terrainHeight": 40.3858757019043,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 41195,
+            "position": [
+              -197.265625,
+              38.02461624145508,
+              -343.75
+            ],
+            "terrainHeight": 38.02461624145508,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 40682,
+            "position": [
+              -197.265625,
+              45.272682189941406,
+              -345.703125
+            ],
+            "terrainHeight": 45.272682189941406,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "western-dome-crown",
+        "x": 1073,
+        "y": 232
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 385.03884061572865,
+        "point": [
+          -191.9103235999917,
+          45.60281609145865,
+          -348.10030723366884
+        ],
+        "terrainHeight": 45.59081505386091,
+        "groundHeight": 45.59081505386091,
+        "aboveTerrain": 0.012001037597741515,
+        "aboveGround": 0.012001037597741515,
+        "faceIndex": 2709,
+        "faceNormal": [
+          0.5997011146040475,
+          0.3235786014240258,
+          0.7318848692541298
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 4201,
+            "position": [
+              -191.40625,
+              48.08187484741211,
+              -349.609375
+            ],
+            "terrainHeight": 48.06987380981445,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4326,
+            "position": [
+              -193.359375,
+              47.28401184082031,
+              -347.65625
+            ],
+            "terrainHeight": 47.272010803222656,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4327,
+            "position": [
+              -191.40625,
+              43.664207458496094,
+              -347.65625
+            ],
+            "terrainHeight": 43.65220642089844,
+            "aboveTerrain": 0.01200103759765625
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 385.043222097877,
+        "point": [
+          -191.91241364839757,
+          45.6033229004278,
+          -348.1041245924608
+        ],
+        "terrainHeight": 45.603322900427806,
+        "groundHeight": 45.603322900427806,
+        "aboveTerrain": -7.105427357601002e-15,
+        "aboveGround": -7.105427357601002e-15,
+        "faceIndex": 79163,
+        "faceNormal": [
+          0.5997011146040475,
+          0.3235786014240258,
+          0.7318848692541298
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 40171,
+            "position": [
+              -193.359375,
+              47.272010803222656,
+              -347.65625
+            ],
+            "terrainHeight": 47.272010803222656,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 40172,
+            "position": [
+              -191.40625,
+              43.65220642089844,
+              -347.65625
+            ],
+            "terrainHeight": 43.65220642089844,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 39659,
+            "position": [
+              -191.40625,
+              48.06987380981445,
+              -349.609375
+            ],
+            "terrainHeight": 48.06987380981445,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "western-dome-face",
+        "x": 1098,
+        "y": 270
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 383.9065832632651,
+        "point": [
+          -186.7116812707843,
+          36.46493499839067,
+          -350.687426147263
+        ],
+        "terrainHeight": 36.452933960793004,
+        "groundHeight": 36.452933960793004,
+        "aboveTerrain": 0.012001037597663355,
+        "aboveGround": 0.012001037597663355,
+        "faceIndex": 2566,
+        "faceNormal": [
+          0.7643126763562997,
+          0.19953665249891162,
+          0.613197567730498
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 4077,
+            "position": [
+              -187.5,
+              42.173736572265625,
+              -351.5625
+            ],
+            "terrainHeight": 42.16173553466797,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4203,
+            "position": [
+              -187.5,
+              36.171573638916016,
+              -349.609375
+            ],
+            "terrainHeight": 36.15957260131836,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 4078,
+            "position": [
+              -185.546875,
+              34.692413330078125,
+              -351.5625
+            ],
+            "terrainHeight": 34.68041229248047,
+            "aboveTerrain": 0.01200103759765625
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 383.90931415727573,
+        "point": [
+          -186.7129508197993,
+          36.465186812654615,
+          -350.68983085451595
+        ],
+        "terrainHeight": 36.46518681265446,
+        "groundHeight": 36.46518681265446,
+        "aboveTerrain": 1.5631940186722204e-13,
+        "aboveGround": 1.5631940186722204e-13,
+        "faceIndex": 78144,
+        "faceNormal": [
+          0.7643126763562997,
+          0.19953665249891162,
+          0.613197567730498
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 39148,
+            "position": [
+              -187.5,
+              42.16173553466797,
+              -351.5625
+            ],
+            "terrainHeight": 42.16173553466797,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 39661,
+            "position": [
+              -187.5,
+              36.15957260131836,
+              -349.609375
+            ],
+            "terrainHeight": 36.15957260131836,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 39149,
+            "position": [
+              -185.546875,
+              34.68041229248047,
+              -351.5625
+            ],
+            "terrainHeight": 34.68041229248047,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "central-cleft",
+        "x": 1135,
+        "y": 286
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 346.81279259211806,
+        "point": [
+          -162.79733990822615,
+          29.500419666565342,
+          -321.80001743406115
+        ],
+        "terrainHeight": 29.488420536316323,
+        "groundHeight": 29.488420536316323,
+        "aboveTerrain": 0.011999130249019885,
+        "aboveGround": 0.011999130249019885,
+        "faceIndex": 4816,
+        "faceNormal": [
+          -0.011689876547780491,
+          0.833595653546464,
+          0.5522514220667445
+        ],
+        "rockCover": 0.9599999785423279,
+        "support": [
+          {
+            "index": 5979,
+            "position": [
+              -164.0625,
+              29.791139602661133,
+              -322.265625
+            ],
+            "terrainHeight": 29.77914047241211,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 6105,
+            "position": [
+              -164.0625,
+              28.497207641601562,
+              -320.3125
+            ],
+            "terrainHeight": 28.48520851135254,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 5980,
+            "position": [
+              -162.109375,
+              29.81852912902832,
+              -322.265625
+            ],
+            "terrainHeight": 29.806529998779297,
+            "aboveTerrain": 0.011999130249023438
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 346.8366792756061,
+        "point": [
+          -162.8079850484938,
+          29.50237814420269,
+          -321.8213110716575
+        ],
+        "terrainHeight": 29.5023781442027,
+        "groundHeight": 29.5023781442027,
+        "aboveTerrain": -1.0658141036401503e-14,
+        "aboveGround": -1.0658141036401503e-14,
+        "faceIndex": 93528,
+        "faceNormal": [
+          -0.011689876547780491,
+          0.833595653546464,
+          0.5522514220667445
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 46855,
+            "position": [
+              -164.0625,
+              29.77914047241211,
+              -322.265625
+            ],
+            "terrainHeight": 29.77914047241211,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 47368,
+            "position": [
+              -164.0625,
+              28.48520851135254,
+              -320.3125
+            ],
+            "terrainHeight": 28.48520851135254,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 46856,
+            "position": [
+              -162.109375,
+              29.806529998779297,
+              -322.265625
+            ],
+            "terrainHeight": 29.806529998779297,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "eastern-pier-upper",
+        "x": 1159,
+        "y": 267
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 354.84033450374824,
+        "point": [
+          -161.73016748145346,
+          34.12213509246367,
+          -330.84894431084547
+        ],
+        "terrainHeight": 34.11013442518597,
+        "groundHeight": 34.11013442518597,
+        "aboveTerrain": 0.01200066727770377,
+        "aboveGround": 0.01200066727770377,
+        "faceIndex": 4074,
+        "faceNormal": [
+          0.9803899171944611,
+          0.19486945030305766,
+          0.029351449743107813
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 5350,
+            "position": [
+              -162.109375,
+              36.208011627197266,
+              -332.03125
+            ],
+            "terrainHeight": 36.19601058959961,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 5476,
+            "position": [
+              -162.109375,
+              35.9138298034668,
+              -330.078125
+            ],
+            "terrainHeight": 35.90182876586914,
+            "aboveTerrain": 0.01200103759765625
+          },
+          {
+            "index": 5351,
+            "position": [
+              -160.15625,
+              26.38182258605957,
+              -332.03125
+            ],
+            "terrainHeight": 26.369823455810547,
+            "aboveTerrain": 0.011999130249023438
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 354.84574474897744,
+        "point": [
+          -161.73250774918924,
+          34.122639112335314,
+          -330.8537961006527
+        ],
+        "terrainHeight": 34.12263911233564,
+        "groundHeight": 34.12263911233564,
+        "aboveTerrain": -3.268496584496461e-13,
+        "aboveGround": -3.268496584496461e-13,
+        "faceIndex": 88410,
+        "faceNormal": [
+          0.9803899098039569,
+          0.19486948665992693,
+          0.029351455219219228
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 44291,
+            "position": [
+              -162.109375,
+              36.19601058959961,
+              -332.03125
+            ],
+            "terrainHeight": 36.19601058959961,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 44804,
+            "position": [
+              -162.109375,
+              35.90182876586914,
+              -330.078125
+            ],
+            "terrainHeight": 35.90182876586914,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 44292,
+            "position": [
+              -160.15625,
+              26.369823455810547,
+              -332.03125
+            ],
+            "terrainHeight": 26.369823455810547,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "front-triangular-buttress",
+        "x": 1180,
+        "y": 309
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 277.817610713868,
+        "point": [
+          -125.53777508441043,
+          19.814107339831313,
+          -263.777767225037
+        ],
+        "terrainHeight": 19.802108209582297,
+        "groundHeight": 19.802108209582297,
+        "aboveTerrain": 0.011999130249016332,
+        "aboveGround": 0.011999130249016332,
+        "faceIndex": 8765,
+        "faceNormal": [
+          -0.4288455719353209,
+          0.6680894466818529,
+          0.6080690476120315
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 9653,
+            "position": [
+              -125,
+              21.84058380126953,
+              -265.625
+            ],
+            "terrainHeight": 21.828584671020508,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 9778,
+            "position": [
+              -126.953125,
+              18.80921745300293,
+              -263.671875
+            ],
+            "terrainHeight": 18.797218322753906,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 9779,
+            "position": [
+              -125,
+              20.062925338745117,
+              -263.671875
+            ],
+            "terrainHeight": 20.050926208496094,
+            "aboveTerrain": 0.011999130249023438
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 277.84238878298794,
+        "point": [
+          -125.54823670077599,
+          19.81577952973398,
+          -263.8001661328957
+        ],
+        "terrainHeight": 19.81577952973399,
+        "groundHeight": 19.81577952973399,
+        "aboveTerrain": -1.0658141036401503e-14,
+        "aboveGround": -1.0658141036401503e-14,
+        "faceIndex": 123263,
+        "faceNormal": [
+          -0.4288455719353209,
+          0.6680894466818529,
+          0.6080690476120315
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 62264,
+            "position": [
+              -126.953125,
+              18.797218322753906,
+              -263.671875
+            ],
+            "terrainHeight": 18.797218322753906,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 62265,
+            "position": [
+              -125,
+              20.050926208496094,
+              -263.671875
+            ],
+            "terrainHeight": 20.050926208496094,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 61752,
+            "position": [
+              -125,
+              21.828584671020508,
+              -265.625
+            ],
+            "terrainHeight": 21.828584671020508,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    },
+    {
+      "pixel": {
+        "id": "front-ledge",
+        "x": 1121,
+        "y": 327
+      },
+      "visualSkin": {
+        "name": "Hollowpeak | grounded rock and snow",
+        "uuid": "64ffce17-7f29-41dc-9e0e-d753b18e0ea2",
+        "role": "visual-rock-snow-skin",
+        "visible": true,
+        "vertices": 13104,
+        "triangles": 10488,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "Hollowpeak | scanned marble cliffs",
+        "distance": 276.45305436517435,
+        "point": [
+          -133.6817455034464,
+          16.854872239968035,
+          -258.4839081248552
+        ],
+        "terrainHeight": 16.842872908317066,
+        "groundHeight": 16.842872908317066,
+        "aboveTerrain": 0.011999331650969225,
+        "aboveGround": 0.011999331650969225,
+        "faceIndex": 9099,
+        "faceNormal": [
+          0.8178994201276755,
+          0.4807177203982786,
+          0.3161502994619722
+        ],
+        "rockCover": 1,
+        "support": [
+          {
+            "index": 10027,
+            "position": [
+              -132.8125,
+              16.21886444091797,
+              -259.765625
+            ],
+            "terrainHeight": 16.206865310668945,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 10152,
+            "position": [
+              -134.765625,
+              18.25743865966797,
+              -257.8125
+            ],
+            "terrainHeight": 18.245439529418945,
+            "aboveTerrain": 0.011999130249023438
+          },
+          {
+            "index": 10153,
+            "position": [
+              -132.8125,
+              14.934366226196289,
+              -257.8125
+            ],
+            "terrainHeight": 14.92236614227295,
+            "aboveTerrain": 0.012000083923339844
+          }
+        ]
+      },
+      "physicalBase": {
+        "name": "Pasture terrain",
+        "uuid": "004c51d5-6b35-41e1-9ab1-83087d3d5f82",
+        "role": "physical-terrain",
+        "visible": true,
+        "vertices": 263169,
+        "triangles": 524288,
+        "castShadow": false,
+        "receiveShadow": true,
+        "material": "MeshStandardMaterial",
+        "distance": 276.46228627804743,
+        "point": [
+          -133.6859345350269,
+          16.85539952534839,
+          -258.4921180091322
+        ],
+        "terrainHeight": 16.8553995253484,
+        "groundHeight": 16.8553995253484,
+        "aboveTerrain": -1.0658141036401503e-14,
+        "aboveGround": -1.0658141036401503e-14,
+        "faceIndex": 126327,
+        "faceNormal": [
+          0.8178994371361877,
+          0.48071759243589457,
+          0.3161504500312228
+        ],
+        "rockCover": null,
+        "support": [
+          {
+            "index": 63799,
+            "position": [
+              -134.765625,
+              18.245439529418945,
+              -257.8125
+            ],
+            "terrainHeight": 18.245439529418945,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 63800,
+            "position": [
+              -132.8125,
+              14.92236614227295,
+              -257.8125
+            ],
+            "terrainHeight": 14.92236614227295,
+            "aboveTerrain": 0
+          },
+          {
+            "index": 63287,
+            "position": [
+              -132.8125,
+              16.206865310668945,
+              -259.765625
+            ],
+            "terrainHeight": 16.206865310668945,
+            "aboveTerrain": 0
+          }
+        ]
+      }
+    }
+  ]
+}

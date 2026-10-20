@@ -1,0 +1,6 @@
+{
+  "source": "assets/falls-landscape.js before upper-ridge integration; complete established owner",
+  "sha256": "9d9c16110fcb044710d355542d33d8e619de6e016fb280129c133e00d5631921",
+  "integration": "prepend exact V3 sculpt import; rename alpineRelief implementation; insert one public wrapper immediately before alpineSnowAt",
+  "historicalNativeFixture": "hollowpeak-upper-native-v5.json remains untouched"
+}

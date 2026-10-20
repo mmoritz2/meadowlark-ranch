@@ -1,3 +1,4 @@
+import {sculptUpperHollowpeakRelief} from './hollowpeak-upper-ridges.mjs?v=hollowpeak-upper-ridges-3';
 import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
@@ -89,7 +90,7 @@ function joinDryRidges(a,b){
  const blend=Math.max(0,span-Math.abs(a-b));
  return Math.max(a,b)+blend*blend/(4*span);
 }
-export function alpineRelief(x,z){
+function establishedAlpineRelief(x,z){
  if(!within(x,z)||z>=-253)return 0;
  // Retain the exact original support union and its north-valley apron. The
  // silhouette may change substantially inside it; the outer foot cannot grow.
@@ -112,6 +113,7 @@ export function alpineRelief(x,z){
  const weight=dryRidgeWeight(x,z);if(weight===0)return original;
  return mix(original,h*smooth(0,.22,support)*protectedTrail*settlement*catchment*foreground,weight);
 }
+export function alpineRelief(x,z){return sculptUpperHollowpeakRelief(x,z,establishedAlpineRelief(x,z));}
 export function alpineSnowAt(x,z){return 1-smooth(.65,1.10,Math.hypot((x+150)/100,(z+333)/92));}
 
 const trail=[[-160,-215],[-173.0439,-225.4024],[-187.0279,-235.9788],[-200.6802,-244.8582],[-260,-280]];

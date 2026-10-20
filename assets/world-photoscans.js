@@ -1,3 +1,4 @@
+import {planUpperHollowpeakTreeRoots,retireUpperHollowpeakTrees} from './hollowpeak-upper-tree-roots.mjs?v=hollowpeak-upper-source-roots-1';
 import {fitHollowpeakTreeRoots} from './hollowpeak-root-seating.mjs?v=hollowpeak-root-seating-1';
 import {activeWorldTree,retireCountrysideVistaTrees} from './countryside-vista-owners.mjs?v=countryside-vista-1';
 import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1';
@@ -593,6 +594,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       t.matrix=new THREE.Matrix4().compose(v,q,s);
       const rootSeating=fitHollowpeakTreeRoots(t,W.groundH);
       if(rootSeating){t.matrix.elements[13]=rootSeating.fittedY;t.rootSeating=rootSeating;}
+      const upperPlan=planUpperHollowpeakTreeRoots(t,W.terrainH,{terrainStep:W.terrainStep});
+      if(upperPlan){t.upperHollowpeakRootPlan=upperPlan;if(upperPlan.action==='fit')t.matrix.elements[13]=upperPlan.fittedY;}
     }
     if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
     const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
@@ -1032,8 +1035,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   state.floraRetirementReady=Promise.resolve().then(()=>Promise.allSettled([state.ready,G.worldDetails?.ready,G.undergrowth?.ready])).then(()=>{
     // All synchronous/scan/details/undergrowth layout is finished. Source rows
     // and capacities stay fixed; model/card submissions omit only retired owners.
+    state.hollowpeakUpperTrees=retireUpperHollowpeakTrees(G,trees,zero);
     state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(G,trees,zero);
-    if(state.hollowpeakCliffFlora.retired.length){
+    if(state.hollowpeakCliffFlora.retired.length||state.hollowpeakUpperTrees.retired.length){
       const active=trees.filter(t=>activeWorldTree(t));
       state.trees=active.length+COTTONWOOD_TREES.length;
       state.conifers=active.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;
