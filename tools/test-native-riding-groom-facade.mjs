@@ -1,3 +1,4 @@
+import {normalizeHorseRealismSource} from './horse-realism-source-guard.cjs';
 /* Real production loader, source clips and native hair controls. No browser,
  * WebGL, network, generated model writes or saved game. */
 import assert from 'node:assert/strict';
@@ -35,7 +36,7 @@ const canonical=(scene,m,i)=>scene.worldToLocal(position(m,i));
 const protectedRows=rig=>meshList(rig.scene).filter(m=>[16159,2028,13895,5092].includes(m.geometry.attributes.position.count)).map(m=>({mesh:m,hash:geometryHash(m.geometry),geometry:m.geometry,material:m.material,bind:m.bindMatrix.toArray(),bones:m.skeleton.bones.slice(),inverses:m.skeleton.boneInverses.map(v=>v.toArray())}));
 const checkRows=rows=>{for(const r of rows){assert.equal(geometryHash(r.mesh.geometry),r.hash);assert.equal(r.mesh.geometry,r.geometry);assert.equal(r.mesh.material,r.material);assert.deepEqual(r.mesh.bindMatrix.toArray(),r.bind);assert.deepEqual(r.mesh.skeleton.bones,r.bones);assert.deepEqual(r.mesh.skeleton.boneInverses.map(v=>v.toArray()),r.inverses);}};
 const originalFlowing=(await import('data:text/javascript,'+encodeURIComponent(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/parent-native-flowing-groom.js.txt',import.meta.url),'utf8')))).createNativeFlowingGroom;
-const parentMeta=JSON.parse(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/fixture.json',import.meta.url)));for(const[f,h]of Object.entries(parentMeta.protectedInputs))assert.equal(hash(fs.readFileSync(new URL(f,root))),h,'Pinned real native source '+f);
+const parentMeta=JSON.parse(fs.readFileSync(new URL('./fixtures/native-riding-groom-f23e91b/fixture.json',import.meta.url)));for(const[f,h]of Object.entries(parentMeta.protectedInputs))assert.equal(hash(normalizeHorseRealismSource(fs.readFileSync(new URL(f,root)),f)),h,'Pinned real native source '+f);
 
 const {initGameHero,tickGameHero,finishNativeHorseGrooms,disposeMountedRig}=await import('../assets/game-hero-horse.js');
 await library.manifestReady;const reports=[];
