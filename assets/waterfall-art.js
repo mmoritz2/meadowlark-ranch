@@ -1,3 +1,4 @@
+import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2';
 import {HOLLOWPEAK_CATARACT_PROFILE,hollowpeakCataractPoint} from './hollowpeak-cataract.mjs?v=hollowpeak-cataract-1';
 import {createWaterfallEffects} from './waterfall-effects.js?v=hollowpeak-cascades-1';
 import {CASCADE_FLOW_PROFILE,CASCADE_VEIL_WEIGHTS,cascadeRim,cascadeSpread,sampleCascadeVeil,cascadeFlowRate,cascadeMotionAmplitude} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
@@ -7,7 +8,7 @@ import {CASCADE_FLOW_PROFILE,CASCADE_VEIL_WEIGHTS,cascadeRim,cascadeSpread,sampl
    cascadeSpeed is its gravity travel rate. Independently grounded chute meshes
    use the material defaults and are never displaced by this shader. */
 export function createWaterfallArt({THREE:T,flowTexture=null}){
- const time={value:0},mistMaterials=[],effectGroups=[];
+ const time={value:0},mistMaterials=[],effectGroups=[];let hollowpeakMaterial=null;
  const material=new T.MeshPhysicalMaterial({name:'Water | flowing waterfall',color:'#b0c9c9',roughness:.46,metalness:0,ior:1.333,clearcoat:.015,clearcoatRoughness:.46,specularIntensity:.14,transparent:true,opacity:.88,depthWrite:false,side:T.DoubleSide,envMapIntensity:.9});
  material.forceSinglePass=true;
  material.defaultAttributeValues={...material.defaultAttributeValues,cascadePhase:[0],cascadeSpeed:[.6],cascadeAcross:[-1],cascadeMotion:[0]};
@@ -69,7 +70,7 @@ export function createWaterfallArt({THREE:T,flowTexture=null}){
    for(let j=0;j<R;j++)for(let i=0;i<C;i++){const a=offset+j*(C+1)+i,b=a+C+1;ix.push(a,b,a+1,a+1,b,b+1);}
   }
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(p,3));geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setAttribute('cascadePhase',new T.Float32BufferAttribute(phases,1));geo.setAttribute('cascadeSpeed',new T.Float32BufferAttribute(speeds,1));geo.setAttribute('cascadeAcross',new T.Float32BufferAttribute(acrossValues,1));geo.setAttribute('cascadeMotion',new T.Float32BufferAttribute(motion,1));geo.setIndex(ix);geo.computeVertexNormals();geo.computeBoundingSphere();const maxMotion=Math.max(...motion);geo.boundingSphere.radius+=maxMotion;
-  const mesh=new T.Mesh(geo,material);mesh.renderOrder=2;mesh.name='Water | '+name+' liquid veils';root.add(mesh);
+  const mesh=new T.Mesh(geo,flowProfile===HOLLOWPEAK_CATARACT_PROFILE?(hollowpeakMaterial||(hollowpeakMaterial=createHollowpeakFallingWaterMaterial(material,{flowTexture}))):material);mesh.renderOrder=2;mesh.name='Water | '+name+' liquid veils';root.add(mesh);
   const attributeBytes=Object.values(geo.attributes).reduce((n,a)=>n+a.array.byteLength,0),indexBytes=geo.index.array.byteLength;
   root.userData.waterfallArt={top,bottom,width,run,profile:flowProfile||CASCADE_FLOW_PROFILE,veils:CASCADE_VEIL_WEIGHTS.length,vertices:p.length/3,triangles:ix.length/3,draws:1,attributeBytes,indexBytes,geometryCPUBytes:attributeBytes+indexBytes,geometryGPUBytes:attributeBytes+indexBytes,footContact:!!footHeightAt,footWidth:footWidth||null,flowTexture:!!flowTexture,rate,maxLateralMotionM:maxMotion,lipZRange:[z,z]};return root;
  }

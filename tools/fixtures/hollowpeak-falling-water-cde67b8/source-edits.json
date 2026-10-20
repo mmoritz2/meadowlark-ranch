@@ -1,0 +1,20 @@
+{
+  "baselineCommit": "cde67b82654d061de2d3838701e25aa9f976817c",
+  "baselineSourceSHA256": "a6892d605f886c400474a2b5b2e56d7756cf43b8fbad761cbbce63138a4457aa",
+  "changes": [
+    {
+      "before": "",
+      "after": "import {createHollowpeakFallingWaterMaterial} from './hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2';\n",
+      "kind": "prepend"
+    },
+    {
+      "before": " const time={value:0},mistMaterials=[],effectGroups=[];",
+      "after": " const time={value:0},mistMaterials=[],effectGroups=[];let hollowpeakMaterial=null;"
+    },
+    {
+      "before": "const mesh=new T.Mesh(geo,material);",
+      "after": "const mesh=new T.Mesh(geo,flowProfile===HOLLOWPEAK_CATARACT_PROFILE?(hollowpeakMaterial||(hollowpeakMaterial=createHollowpeakFallingWaterMaterial(material,{flowTexture}))):material);"
+    }
+  ],
+  "source": "Current accepted V7 waterfall-art.js; fixture exists only for precise additive selected-material inverse. Historical cataract/cascade fixtures remain untouched."
+}
