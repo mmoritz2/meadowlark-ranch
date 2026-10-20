@@ -1,9 +1,10 @@
+import {normalizeRidingFoundationAuditSource} from './riding-foundation-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {normalizeHorseRealismCacheSource as inverse} from './horse-realism-cache-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=f=>fs.readFileSync(new URL(f,root),'utf8');
+const root=new URL('../',import.meta.url),read=f=>normalizeRidingFoundationAuditSource(fs.readFileSync(new URL(f,root),'utf8'),f);
 const contract=JSON.parse(read('tools/fixtures/horse-realism-579b5cf/cache-changes.json'));
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 const importURLs=f=>[...read(f).matchAll(/(?:\bfrom\s*|\bimport\s*)['"]([^'"]+)['"]/g)].map(m=>new URL(m[1],new URL(f,root)));

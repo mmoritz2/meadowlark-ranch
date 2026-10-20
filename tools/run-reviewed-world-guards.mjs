@@ -1,3 +1,4 @@
+import {normalizeRidingFoundationAuditSource} from './riding-foundation-source-guard.cjs';
 /* Run unchanged historical landscape/camera tests against an exact, disposable
  * projection of the current merged sources. Runtime behavior is tested directly
  * by the separate riding/ribbon/guide suites; this only composes preservation
@@ -30,9 +31,9 @@ function tree(relative=''){
   const name=path.posix.join(relative,ent.name),dest=path.join(projection,name),src=path.join(root,name);
   if(ent.isDirectory()){
    if(['assets','tools','assets/features'].includes(name))tree(name);else symlinkSync(src,dest,'dir');
-  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(readFileSync(src,'utf8'),name));
-  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(normalizeHorseTrainingSource(readFileSync(src,'utf8'),name),name));
-  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(normalizeFormalApproachResumeSource(readFileSync(src,'utf8'),name),name));
+  }else if(name==='ranch3d.html'||name==='assets/features/index.js')writeFileSync(dest,normalizeReviewedRuntimeSource(normalizeRidingFoundationAuditSource(readFileSync(src,'utf8'),name),name));
+  else if(name==='assets/features/world.js'||name==='assets/features/story-quests.js')writeFileSync(dest,normalizeActivityRuntimeSource(normalizeHorseTrainingSource(normalizeRidingFoundationAuditSource(readFileSync(src,'utf8'),name),name),name));
+  else if(name==='assets/features/course-guide.js')writeFileSync(dest,normalizeReviewedGuideSource(normalizeFormalApproachResumeSource(normalizeRidingFoundationAuditSource(readFileSync(src,'utf8'),name),name),name));
   // Incoming live observers now perform their own complete historical adapter
   // reversal; pre-projecting these copies would incorrectly reverse twice.
   else if(observers.has(name))copyFileSync(src,dest);

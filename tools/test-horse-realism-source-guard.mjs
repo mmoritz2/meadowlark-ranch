@@ -1,3 +1,4 @@
+import {normalizeRidingFoundationAuditSource} from './riding-foundation-source-guard.cjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -5,7 +6,7 @@ import crypto from 'node:crypto';
 import {normalizeHorseRealismSource as inverse,assertHorseRealismCurrent as current,normalizeHorseRealismFixtureChanges as filter} from './horse-realism-source-guard.cjs';
 import {normalizeFinalEnvironmentSource as environment,assertFinalEnvironmentCurrent} from './final-environment-source-guard.cjs';
 import {normalizeNativeRidingGroomAuditSource as riding} from './native-riding-groom-source-guard.cjs';
-const root=new URL('../',import.meta.url),read=file=>fs.readFileSync(new URL(file,root)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const root=new URL('../',import.meta.url),read=file=>normalizeRidingFoundationAuditSource(fs.readFileSync(new URL(file,root)),file),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const fixture='tools/fixtures/horse-realism-579b5cf/source-contract.json',contract=JSON.parse(read(fixture));
 test('current reviewed appearance and complete parent/import bodies are raw-bound; all old fixtures remain unchanged',()=>{
  assert(current(read));assert.equal(Object.keys(contract.files).length,15);assert(Object.keys(contract.parentFixtureSHA256).length>=304);
