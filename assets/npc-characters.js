@@ -1,5 +1,6 @@
 /* Nearby townspeople reuse the game's CC0 Quaternius rider bodies, clothes and native clips.
    This helper never changes the interactable root, quest data, labels or collision geometry. */
+import {createGroundSupport} from './rider-ground-support.js?v=rider-fit74-20261010';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const npcAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
@@ -35,22 +36,32 @@ export function npcUpdateInterval(distance,talking=false){return talking?1/30:di
 export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,keepRadius=85,distantCharacters=null,onError=console.warn}){
  const records=new Map();let pending=null,disposed=false,clock=0;
  const axis=new THREE.Vector3(),q=new THREE.Quaternion(),worldQ=new THREE.Quaternion(),parentQ=new THREE.Quaternion();
- const sole=new THREE.Vector3(),parentInverse=new THREE.Matrix4();
- // A small support polygon from the existing boot soles keeps both body types grounded.
- function soleSamples(rig){
-  const samples=[];
-  for(const mesh of rig.outfit?.meshes||[]){if(!/Feet/.test(mesh.name))continue;const p=mesh.geometry.attributes.position,chosen=new Set();
-   for(const side of [-1,1]){let low=Infinity;for(let i=0;i<p.count;i++)if(p.getX(i)*side>=0)low=Math.min(low,p.getY(i));
-    for(let k=0;k<8;k++){const a=k*Math.PI/4;let best=-Infinity,index=-1;
-     for(let i=0;i<p.count;i++){if(p.getX(i)*side<0||p.getY(i)>low+.025)continue;const score=p.getX(i)*Math.cos(a)+p.getZ(i)*Math.sin(a)-p.getY(i)*.5;if(score>best){best=score;index=i;}}
-     if(index>=0)chosen.add(index);}}
-   if(chosen.size)samples.push({mesh,indices:[...chosen]});
-  }return samples;
+ const groundSupport=createGroundSupport(THREE),parentInverse=new THREE.Matrix4(),soleToParent=new THREE.Matrix4();
+ // Connected wardrobe boots live outside outfit.meshes. Keep their exact
+ // indexed support in the interaction root's frame, including mesh/rig scale.
+ function soleMeshes(rig){
+  const meshes=[];
+  rig.root.traverse(mesh=>{
+   if(mesh.isSkinnedMesh&&(mesh.userData.riderSurfaceRole==='footwear'||/Feet/.test(mesh.name))){
+    groundSupport.prepare(mesh);meshes.push(mesh);
+   }
+  });return meshes;
+ }
+ function visibleSole(mesh,root){
+  for(let node=mesh;node;node=node.parent){if(!node.visible)return false;if(node===root)return true;}
+  return false;
  }
  function groundSoles(r){
-  if(!r.soles?.length)return;parentInverse.copy(r.entry.g.matrixWorld).invert();let low=Infinity;
-  for(const {mesh,indices} of r.soles){mesh.skeleton.update();for(const i of indices){mesh.getVertexPosition(i,sole).applyMatrix4(mesh.matrixWorld).applyMatrix4(parentInverse);low=Math.min(low,sole.y);}}
-  if(Number.isFinite(low)){r.rig.root.position.y+=.003-low;r.rig.root.updateMatrixWorld(true);}
+  if(!r.soles?.length)return;
+  // Refresh moving ancestors before SkinnedMesh refreshes its attached bind inverse.
+  const root=r.rig.root;root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);
+  parentInverse.copy(r.entry.g.matrixWorld).invert();let low=Infinity;
+  for(const mesh of r.soles){
+   if(!visibleSole(mesh,root))continue;
+   soleToParent.multiplyMatrices(parentInverse,mesh.matrixWorld);
+   low=Math.min(low,groundSupport.minimum(mesh,soleToParent));
+  }
+  if(Number.isFinite(low)){root.position.y+=.003-low;root.updateMatrixWorld(true);}
  }
  const turnWorld=(bone,angle)=>{
   if(!bone||Math.abs(angle)<1e-5)return;
@@ -113,7 +124,7 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
    await Promise.resolve();
    if(disposed){release(r);return;}
    r.entry.g.add(rig.root);pose(r,.001,false,null);
-   r.soles=soleSamples(rig);groundSoles(r);rig.updateHairMass?.();
+   r.soles=soleMeshes(rig);groundSoles(r);rig.updateHairMass?.();
    r.shadowMeshes=[];rig.root.traverse(mesh=>{if(mesh.isMesh)r.shadowMeshes.push({mesh,castShadow:mesh.castShadow});});updateShadows(r);
    for(const child of r.fallback)child.visible=false;
    if(r.distant)r.distant.root.visible=false;

@@ -3,12 +3,12 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),QA=require('../qa-platform.cjs');
 const root=path.resolve(__dirname,'../..'),dest=path.join(root,'assets/models/npc-distance');fs.mkdirSync(dest,{recursive:true});
 const defs=JSON.parse(fs.readFileSync(path.join(__dirname,'npc-distance-definitions.json'))),RJ=fs.readFileSync(path.join(root,'ranch3d.html'),'utf8').match(/const RJ=(\{[\s\S]*?\n\});/)[1];
-(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
+(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs(['--mute-audio'])});try{
  const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/__npc_bake.html',r=>r.fulfill({contentType:'text/html',body:`<!doctype html><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><script>window.RJ=${RJ}</script>`}));
  await page.goto(QA.BASE+'/__npc_bake.html');
  await page.evaluate(async()=>{
-  const T=await import('three'),{GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js'),{clone}=await import('three/addons/utils/SkeletonUtils.js'),{createRiderLibrary}=await import('/assets/rider-model.js'),{createNPCCharacters,npcAppearance}=await import('/assets/npc-characters.js');
+  const T=await import('three'),{GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js'),{clone}=await import('three/addons/utils/SkeletonUtils.js'),{createRiderLibrary}=await import('/assets/rider-model.js'),{createNPCCharacters,npcAppearance}=await import('/assets/npc-characters.js'),{createGroundSupport}=await import('/assets/rider-ground-support.js');
   const library=createRiderLibrary({THREE:T,GLTFLoader,clone,RJ}),renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setSize(64,128);renderer.setClearColor(0,0);renderer.toneMapping=T.NoToneMapping;
   window.bakeNPC=async def=>{
    const scene=new T.Scene(),g=new T.Group(),entry={def,g};scene.add(g);const system=createNPCCharacters({THREE:T,riderLibrary:library,limit:1});
@@ -16,14 +16,16 @@ const defs=JSON.parse(fs.readFileSync(path.join(__dirname,'npc-distance-definiti
    while(!system.get(def.id)){step(.05);await new Promise(r=>setTimeout(r,20));if(system.stats().failed.length)throw Error('NPC failed: '+def.id);}
    const rig=system.get(def.id);for(let i=0;i<30;i++)step(.05);
    const poses=def.folk?3:1,width=1.35,height=2.2,bottom=-.055,atlases=[false,true].map(()=>{const c=document.createElement('canvas');c.width=256;c.height=256*poses;return c;});
-   const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,30),v=new T.Vector3(),materials=new Map();
+   const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,30),materials=new Map(),groundSupport=createGroundSupport(T),footwear=[];
+   rig.root.traverseVisible(m=>{if(m.isSkinnedMesh&&(m.userData.riderSurfaceRole==='footwear'||/Feet/.test(m.name))){groundSupport.prepare(m);footwear.push(m);}});
    rig.root.traverse(o=>{if(o.isMesh&&!materials.has(o.material)){const m=o.material;materials.set(m,{compile:m.onBeforeCompile,key:m.customProgramCacheKey,coverage:m.alphaToCoverage});m.alphaToCoverage=false;}});
    let maxEdgeAlpha=0;
    for(let pose=0;pose<poses;pose++){
     if(pose){for(let i=0;i<35;i++){g.position.z+=.065;step(.05);}rig.action('walk').time=(pose===1?.12:.62)*rig.action('walk').getClip().duration;rig.mixer.update(0);}
     g.position.set(0,0,0);rig.root.position.y=0;g.updateMatrixWorld(true);let min=Infinity;
-    for(const m of rig.outfit.meshes.filter(m=>/Feet/.test(m.name))){m.skeleton.update();for(let i=0;i<m.geometry.attributes.position.count;i++){m.getVertexPosition(i,v).applyMatrix4(m.matrixWorld);min=Math.min(min,v.y);}}
-    rig.root.position.y=.003-min;g.updateMatrixWorld(true);
+    for(const m of footwear)min=Math.min(min,groundSupport.minimum(m,m.matrixWorld));
+    if(!Number.isFinite(min))throw Error('No finite resident footwear support: '+def.id+' pose '+pose);
+    rig.root.position.y=.003-min;g.updateMatrixWorld(true);rig.updateHairMass?.();
     for(let channel=0;channel<2;channel++){
      const normal=channel===1;renderer.outputColorSpace=normal?T.LinearSRGBColorSpace:T.SRGBColorSpace;
      for(const[m,original]of materials){m.onBeforeCompile=(sh,r)=>{original.compile.call(m,sh,r);sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',normal?'gl_FragColor=vec4(inverseTransformDirection(normal,viewMatrix)*.5+.5,diffuseColor.a);':'gl_FragColor=diffuseColor;');};m.customProgramCacheKey=()=>original.key.call(m)+'-npc-bake-'+channel;m.needsUpdate=true;}

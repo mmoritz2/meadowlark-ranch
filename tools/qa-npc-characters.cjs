@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
 const out=process.env.QA_OUT||'/private/tmp/meadowlark-horses-main/review/npc-characters';fs.mkdirSync(out,{recursive:true});
 const rj=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match(/const RJ=(\{[\s\S]*?\n\});/)[1];
-(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
+(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs(['--mute-audio'])});try{
  const page=await browser.newPage({viewport:{width:1200,height:800}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',route=>{const u=new URL(route.request().url());return u.origin===new URL(QA.BASE).origin?route.continue():route.abort();});
  await page.route('**/__npc_qa.html',r=>r.fulfill({contentType:'text/html',body:`<!doctype html><meta charset=utf-8><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><style>body{margin:0;padding:16px;background:#dedbd1;color:#29392f;font:15px system-ui}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.card{text-align:center}img{width:100%}</style><h2>Meadowlark residents · existing character library</h2><div class=grid></div><script>window.RJ=${rj}</script>`}));
@@ -23,11 +23,12 @@ const rj=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
   const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(360,500);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
   const cam=new THREE.PerspectiveCamera(30,.72,.03,40),v=new THREE.Vector3(),images=[],checks=[];
   function sample(e){
-   const rig=system.get(e.def.id);rig.root.updateMatrixWorld(true);const bones=Object.values(rig.bones);let finite=bones.every(b=>b.matrixWorld.elements.every(Number.isFinite)),minFootY=Infinity,maxY=-Infinity,vertices=0;
-   for(const m of rig.outfit.meshes){m.skeleton.update();const pos=m.geometry.attributes.position;for(let i=0;i<pos.count;i+=Math.max(1,Math.floor(pos.count/200))){m.getVertexPosition(i,v).applyMatrix4(m.matrixWorld);finite&&=[v.x,v.y,v.z].every(Number.isFinite);maxY=Math.max(maxY,v.y);vertices++;}
-    if(/Feet/.test(m.name))for(let i=0;i<pos.count;i++){m.getVertexPosition(i,v).applyMatrix4(m.matrixWorld);minFootY=Math.min(minFootY,v.y);}
+   const rig=system.get(e.def.id);rig.root.updateMatrixWorld(true);const bones=Object.values(rig.bones);let finite=bones.every(b=>b.matrixWorld.elements.every(Number.isFinite)),minFootY=Infinity,maxY=-Infinity,vertices=0,footVertices=0;
+   const meshes=[];rig.root.traverseVisible(m=>{if(m.isSkinnedMesh)meshes.push(m);});
+   for(const m of meshes){m.skeleton.update();const pos=m.geometry.attributes.position;for(let i=0;i<pos.count;i+=Math.max(1,Math.floor(pos.count/200))){m.getVertexPosition(i,v).applyMatrix4(m.matrixWorld);finite&&=[v.x,v.y,v.z].every(Number.isFinite);maxY=Math.max(maxY,v.y);vertices++;}
+    if(m.userData.riderSurfaceRole==='footwear'||/Feet/.test(m.name))for(const i of new Set(m.geometry.index?.array||Array.from({length:pos.count},(_,i)=>i))){m.getVertexPosition(i,v).applyMatrix4(m.matrixWorld);minFootY=Math.min(minFootY,v.y);footVertices++;}
    }
-   return {bones:bones.length,finite,minFootY,maxY,vertices};
+   return {bones:bones.length,finite,minFootY,maxY,vertices,footVertices};
   }
   for(const e of entries){
    let lowest=Infinity,highest=-Infinity;const heads=[];
@@ -50,7 +51,7 @@ const rj=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
  });
  await page.screenshot({path:path.join(out,'residents.png'),fullPage:true});for(const {id,img}of result.images)fs.writeFileSync(path.join(out,id+'.png'),Buffer.from(img.split(',')[1],'base64'));delete result.images;
  result.errors=errors;fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(result,null,2));
- assert.deepEqual(errors,[]);assert.deepEqual(result.warnings,[]);assert.ok(result.checks.every(c=>c.finite&&c.placeholderHidden&&c.rootUnchanged));
+ assert.deepEqual(errors,[]);assert.deepEqual(result.warnings,[]);assert.ok(result.checks.every(c=>c.finite&&Number.isFinite(c.minFootY)&&c.footVertices>0&&c.placeholderHidden&&c.rootUnchanged));
  assert.ok(result.checks.every(c=>c.lowestFoot>-.005&&c.highestFoot<.035&&c.walkLow>-.005&&c.walkHigh<.035),'Native idle/talk feet stay close to ground');
  console.log(JSON.stringify(result,null,2));
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
