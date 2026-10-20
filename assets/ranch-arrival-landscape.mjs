@@ -128,12 +128,17 @@ const ARRIVAL_COVER_MASK_GLSL=`varying vec2 vEstateCoverRoot;
 `;
 export function installArrivalCoverMask(G){
  const W=G.world,cover=W.nearGroundCover,actual=new Set([W.seedGrass,cover?.near,cover?.flow,cover?.fern,cover?.reed,cover?.rock,cover?.lupin,cover?.meadowDistance?.mesh]),restores=[],materials=new Set(),owners=[];
+ // The base pasture run-in is static. Its own transform defines the original
+ // 4 x 3.25 m slab, including the existing 1.5 X scale and 2.2 radian yaw.
+ const shelter=G.scene.getObjectByName('Pasture | run-in shelter');let shelterInverse=null;
+ if(shelter){shelter.updateWorldMatrix(true,false);shelterInverse=new G.THREE.Matrix4().copy(shelter.matrixWorld).invert();}
  function patch(material){
   if(!material||materials.has(material))return;materials.add(material);
   const previous=material.onBeforeCompile,key=material.customProgramCacheKey;
   material.onBeforeCompile=(shader,renderer)=>{
    previous.call(material,shader,renderer);
-   shader.vertexShader='varying vec2 vEstateCoverRoot;\n'+shader.vertexShader;
+   if(shelterInverse)shader.uniforms.estateShelterWorldInverse={value:shelterInverse};
+   shader.vertexShader='varying vec2 vEstateCoverRoot;\n'+(shelterInverse?'uniform mat4 estateShelterWorldInverse;\nvarying vec2 vEstateShelterRoot;\n':'')+shader.vertexShader;
    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`vec4 estateCoverRoot=vec4(0.0,0.0,0.0,1.0);
     #ifdef USE_INSTANCING
       estateCoverRoot=instanceMatrix*estateCoverRoot;
@@ -141,11 +146,12 @@ export function installArrivalCoverMask(G){
       estateCoverRoot=vec4(transformed,1.0);
     #endif
     vEstateCoverRoot=(modelMatrix*estateCoverRoot).xz;
+    ${shelterInverse?'vEstateShelterRoot=(estateShelterWorldInverse*modelMatrix*estateCoverRoot).xz;':''}
     #include <project_vertex>`);
-   shader.fragmentShader=ARRIVAL_COVER_MASK_GLSL+shader.fragmentShader;
-   shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(estateHardscape(vEstateCoverRoot)>.5)discard;');
+   shader.fragmentShader=(shelterInverse?'varying vec2 vEstateShelterRoot;\n':'')+ARRIVAL_COVER_MASK_GLSL+shader.fragmentShader;
+   shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(estateHardscape(vEstateCoverRoot)>.5)discard;'+(shelterInverse?'\nif(abs(vEstateShelterRoot.x)<2.0&&abs(vEstateShelterRoot.y)<1.625)discard;':''));
   };
-  material.customProgramCacheKey=()=>key.call(material)+'|estate-hardscape-mask-1';material.needsUpdate=true;
+  material.customProgramCacheKey=()=>key.call(material)+'|estate-hardscape-mask-1'+(shelterInverse?'|pasture-shelter-floor-1':'');material.needsUpdate=true;
   restores.push(()=>{material.onBeforeCompile=previous;material.customProgramCacheKey=key;material.needsUpdate=true;});
  }
  G.scene.traverse(mesh=>{
@@ -156,7 +162,7 @@ export function installArrivalCoverMask(G){
   for(const material of(Array.isArray(mesh.material)?mesh.material:[mesh.material]))patch(material);
   patch(mesh.customDepthMaterial);patch(mesh.customDistanceMaterial);
  });
- return{profile:'estate-hardscape-mask-1',owners,materials:materials.size,currentInstanceRoots:true,matrixRowsChanged:0,newMaterials:0,newTextures:0,dispose(){for(const restore of restores)restore();}};
+ return{profile:'estate-hardscape-mask-1',owners,materials:materials.size,currentInstanceRoots:true,pastureShelterFootprint:!!shelterInverse,matrixRowsChanged:0,newMaterials:0,newTextures:0,dispose(){for(const restore of restores)restore();}};
 }
 function enhanceLawn(material){
  const old=material.onBeforeCompile,key=material.customProgramCacheKey.bind(material);if(material.userData.arrivalLandscape)return()=>{};
