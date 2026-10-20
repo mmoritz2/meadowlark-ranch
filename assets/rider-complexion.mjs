@@ -1,3 +1,4 @@
+import {installRiderDiffuseResponse98} from './rider-skin-lighting98.js?v=character-redesign98-20261020';
 // Material-only finish for the existing authored rider head and eyes. Geometry,
 // skin weights, saved appearance and the shared material lifecycle stay intact.
 export function patchStylizedHead(material,u,asset,body){
@@ -42,6 +43,23 @@ float riderSkinNoise(vec3 p){
  };
  material.customProgramCacheKey=()=>'rider-artist-head-natural-surface-3-'+body;
  material.userData.riderNaturalSkin={version:3,scope:'head material only',neckTransitionUnchanged:true,geometryUnchanged:true,authoredNormals:true,filteredPoreRelief:false,spatialRoughness:true,bakedFaceShadows:false};
+ if(asset.adultFace98){
+  const pigmentCompile=material.onBeforeCompile;
+  material.onBeforeCompile=shader=>{
+   const common='#include <common>',assignment='vHead=(uFaceBind*vec4(position,1.0)).xyz;';
+   if(shader.vertexShader.split(common).length!==2||shader.vertexShader.split('#include <begin_vertex>').length!==2)throw Error('Adult98 source-pigment shader seam changed');
+   pigmentCompile(shader);
+   if(shader.vertexShader.split(common).length!==2||shader.vertexShader.split(assignment).length!==2)throw Error('Adult98 source-pigment shader seam changed');
+   shader.vertexShader=shader.vertexShader.replace(common,common+'\nattribute vec3 artistFaceCoord;').replace(assignment,'vHead=artistFaceCoord;');
+  };
+  material.customProgramCacheKey=()=>'rider-artist-head-natural-surface-3-'+body+'-authored-pigment-response98-1';
+  // This complete callback replacement retired the earlier response wrapper.
+  // Remove only its stale marker, then install the actual response once.
+  delete material.userData.riderDiffuseResponse98;
+  installRiderDiffuseResponse98(material,{kind:'skin',strength:1});
+  material.userData.riderNaturalSkin.authoredCoordinates98=true;
+  material.userData.riderNaturalSkin.diffuseResponse98=true;
+ }
 }
 export function patchStylizedEyes(material,u,asset,body){
  material.map=null;material.normalMap=null;material.roughness=.25;material.ior=1.376;material.specularIntensity=.48;material.clearcoat=.48;material.clearcoatRoughness=.12;
@@ -76,11 +94,17 @@ export function patchStylizedEyes(material,u,asset,body){
   sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.36,.20,iris);');
  };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-surface-3-'+body+(asset.adultFace98?'-adult98':'');
  material.userData.riderNaturalEyes={version:3,geometryUnchanged:true,selectedEyeColorPreserved:true,filteredIrisFibers:true,paintedHighlights:false,physicalHighlights:true};
+ if(asset.adultFace98){
+  material.customProgramCacheKey=()=>'rider-artist-eyes-natural-surface-3-'+body+'-adult-pigment-response98-1';
+  delete material.userData.riderDiffuseResponse98;
+  installRiderDiffuseResponse98(material,{kind:'eye',strength:.45});
+  material.userData.riderNaturalEyes.diffuseResponse98=true;
+ }
 }
 
 export function finishRiderComplexion(rig){
  if(!rig?.face?.material||!rig?.eyes?.material||!rig?.kit?.headAsset||!rig.u)return rig;
- if(rig.face.material.userData.riderNaturalSkin?.version===3&&rig.eyes.material.userData.riderNaturalEyes?.version===3)return rig;
+ if(rig.face.material.userData.riderNaturalSkin?.version===3&&rig.eyes.material.userData.riderNaturalEyes?.version===3&&(!rig.kit.headAsset.adultFace98||(rig.face.material.userData.riderNaturalSkin.authoredCoordinates98&&rig.face.material.userData.riderNaturalSkin.diffuseResponse98&&rig.eyes.material.userData.riderNaturalEyes.diffuseResponse98)))return rig;
  patchStylizedHead(rig.face.material,rig.u,rig.kit.headAsset,rig.kit.body);
  patchStylizedEyes(rig.eyes.material,rig.u,rig.kit.headAsset,rig.kit.body);
  rig.face.material.needsUpdate=true;rig.eyes.material.needsUpdate=true;
