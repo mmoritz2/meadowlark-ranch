@@ -1,3 +1,4 @@
+import {installRiderDiffuseResponse98} from './rider-skin-lighting98.js?v=character-redesign98-20261020';
 import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 /* Artist-authored CC0 heads from Blender Studio, fitted to the shared rider rig.
    Only the neck transition inherits body weights; face, eyes and brows follow Head. */
@@ -130,20 +131,21 @@ export function patchStylizedHead(material,u,asset,body){
    float eyeRecess=exp(-pow(eye.x/.028,4.0)-pow((eye.y-.007)/.014,2.0))*face;
    float noseSides=exp(-pow((abs(vHead.x)-.018)/.0065,2.0)-pow((vHead.y-.059)/.019,4.0))*face;
    float chinCrease=exp(-pow(vHead.x/.023,4.0)-pow((vHead.y-${(asset.config.mouth-.013).toFixed(5)})/.0045,2.0))*face;
-   skin*=1.0-.048*eyeRecess-.035*noseSides-.025*chinCrease;
+   skin*=1.0-.016*eyeRecess-.020*noseSides-.010*chinCrease;
    skin=mix(skin,skin*vec3(1.025,.92,.89),eyeRecess*.16);
    float lipY=vHead.y-${(asset.config.mouth+(body==='f'?.0025:.001)).toFixed(5)};
    float lip=exp(-pow(abs(vHead.x)/${body==='f'?'.026':'.0304'},4.0)-pow(lipY/.0085,4.0))*front;
-   vec3 lipColor=uSkin*vec3(.87,.48,.53)+vec3(.015,.001,.002);
+   vec3 lipColor=uSkin*vec3(.90,.60,.63)+vec3(.010,.001,.002);
    lipColor*=.94+.09*(1.0-smoothstep(-.005,.003,lipY));
-   diffuseColor.rgb=mix(skin,lipColor,lip*.74);
+   diffuseColor.rgb=mix(skin,lipColor,lip*.45);
    // Filtered microvariation avoids a sparkling pore pattern at gameplay scale.
    float detail=1.0-smoothstep(.00045,.0015,length(fwidth(vHead)));
    float pores=sin(vHead.x*1700.0)*sin(vHead.y*1530.0)*sin(vHead.z*1610.0);
    diffuseColor.rgb*=1.0+pores*.002*detail;`);
-  sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.62,.43,lip*.65);');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.62,.54,lip*.55);');
  };
- material.customProgramCacheKey=()=>'rider-artist-head-natural-2-'+body;
+ material.customProgramCacheKey=()=>'rider-artist-head-natural-2-'+body+'-relaxed-expression3';
+ installRiderDiffuseResponse98(material,{kind:'skin',strength:1});
 }
 export function patchStylizedEyes(material,u,asset,body){
  material.map=null;material.normalMap=null;material.roughness=.25;material.ior=1.40;material.specularIntensity=.44;material.clearcoat=.30;material.clearcoatRoughness=.15;
@@ -152,9 +154,9 @@ export function patchStylizedEyes(material,u,asset,body){
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uEye;varying vec3 vEyeHead;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
    vec2 e=vec2(abs(vEyeHead.x)-${(body==='f'?.03431453:.03320741).toFixed(6)},vEyeHead.y-${(body==='f'?.09881232:.09402493).toFixed(6)});
-   float radius=${body==='f'?'.0102':'.0096'},r=length(e),iris=1.0-smoothstep(radius-.00035,radius+.00035,r);
+   float radius=${body==='f'?'.00835':'.00855'},r=length(e),iris=1.0-smoothstep(radius-.00035,radius+.00035,r);
    iris*=smoothstep(${(asset.config.target[2]+.0056).toFixed(5)},${(asset.config.target[2]+.0064).toFixed(5)},vEyeHead.z);
-   float pupil=1.0-smoothstep(.0036,.0042,r),limbus=smoothstep(radius-.0015,radius-.0004,r);
+   float pupil=1.0-smoothstep(.00305,.00355,r),limbus=smoothstep(radius-.0015,radius-.0004,r);
    float angle=atan(e.y,e.x),fibers=sin(angle*67.0+sin(r*1870.0))*sin(angle*43.0-r*2240.0);
    float irisL=dot(uEye,vec3(.2126,.7152,.0722));
    vec3 eyeColor=mix(vec3(irisL),uEye,.78);
@@ -164,5 +166,6 @@ export function patchStylizedEyes(material,u,asset,body){
    glint=max(glint,(1.0-smoothstep(.00045,.0008,length(e-vec2(.003,-.0025))))*.58);
    irisColor=mix(irisColor,vec3(.86,.90,.94),glint*.87);
    diffuseColor.rgb=mix(vec3(.73,.75,.71),irisColor,iris);`);
- };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-2-'+body;
+ };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-2-'+body+'-adult-eye2';
+ installRiderDiffuseResponse98(material,{kind:'eye',strength:.45});
 }

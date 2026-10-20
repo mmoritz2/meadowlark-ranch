@@ -1,6 +1,6 @@
 // TMP21: immutable19 preparation kernel plus one post-preparation smooth male lower-chart scalar. No other geometry, topology or ownership changes.
 import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
-export {patchStylizedHead,patchStylizedEyes} from './rider-live-heads.js?v=character-polish-20261009';
+export {patchStylizedHead,patchStylizedEyes} from './rider-live-heads.js?v=character-redesign98-20261020';
 /* TMP: keep the exact published upper head/neck and connect only its lower cut
    to the artist BODY seam. No source raw-neck chart/shoulder expansion is used. */
 const CUT=-.020,TAU=Math.PI*2,get=['getX','getY','getZ','getW'];
