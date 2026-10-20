@@ -41,6 +41,7 @@
    recovery planning and changed snapshots may allocate small temporary objects. */
 import {createFlatRaceGuidance,flatRaceSegmentClear} from '../flat-race-guidance.mjs?v=flat-race-guide-1-loon-lake-4';
 import {createFormalFenceGuidance} from '../formal-fence-guidance.mjs?v=formal-fence-guide-1';
+import {createRidingCamera} from '../riding-camera.mjs?v=riding-composition-1';
 export const id='course-guide';
 const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12], TO_SHOW=2.2;
 const JUMP_CUES={early:'Wait',good:'Jump',perfect:'Jump now',late:'Too close',lineup:'Line up'};
@@ -836,6 +837,7 @@ export function install(G){
  /* live state: the eased speed number, the lagging heading, and the player's own look-around */
  const F={u:0,head:null,yaw:0,pitch:0,zoom:1,occ:1,drag:null,placed:false,own:false,broke:0,frames:0,
   nudgeP:0,nudgeO:0,wantP:0,wantO:0,hidden:false,walk:1};
+ const mountedCamera=createRidingCamera(),mountedCameraInput={};
  const _eye=new THREE.Vector3(), _look=new THREE.Vector3(), _anchor=new THREE.Vector3();
  const _seen=new THREE.Vector3(NaN,NaN,NaN);
 
@@ -966,7 +968,7 @@ export function install(G){
  /* How bad an eye is, for the walk-in's last resort: 0 in the clear, 1 with a crown across the view
     of her shoulders, and 1 plus the depth when the lens itself is in the leaves. */
  function eyeCost(x,y,z,hx,hy,hz){const b=inCanopy(x,y,z);return b>0?1+b:sightBlocked(x,y,z,hx,hy,hz)?1:0;}
- G.on('tick',()=>{followInput.sync();if(!F.own&&LENS.hid.size)clearPeople();F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
+ G.on('tick',()=>{followInput.sync();if(!F.own)mountedCamera.reset();if(!F.own&&LENS.hid.size)clearPeople();F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
  /* ---- people in the lens ------------------------------------------------------------------
     The villagers are not architecture: nobody registered them with followCamera, and rightly —
     a camera that backed off every passer-by would never settle in a town. But that leaves the
@@ -1035,7 +1037,7 @@ export function install(G){
  G.on('camera',c=>{
   if(F.broke>2||!player.mesh)return false;
   try{
-   if(foreignCam()||!G.camera.position.equals(_seen)){followInput.suspend();F.own=false;clearPeople();return false;}
+   if(foreignCam()||!G.camera.position.equals(_seen)){mountedCamera.reset();followInput.suspend();F.own=false;clearPeople();return false;}
    const cam=G.camera, dt=Math.min(c.dt,0.1), sp=Math.abs(player.speed)||0;
    const head=player.heading;
    if(F.head===null){F.head=head;}
@@ -1086,11 +1088,20 @@ export function install(G){
    const minArm=dragon?(blackDragon?(player.flying?8.5:7):(player.flying?5:4))*dragonScale:0;
    const minWalkIn=dragon?Math.max(2.2,minArm*.8):2.2;
    const lookLift=dragon?(blackDragon ? .65 : .2)*dragonScale:0;
-   const R=Math.max(minArm,(CAM.dist+CAM.distSp*F.u+CAM.NARROW_DIST*narrow)*F.zoom*(1-CAM.TUCK*tight)*frameScale);
-   const pitch0=CAM.pitch+CAM.pitchSp*F.u+CAM.NARROW_PITCH*narrow+F.pitch;
+   // Ground horses use one mount-sized composition, preserving this owner's
+   // input, obstacle/foliage clearance and next-obstacle visibility checks.
+   const groundHorse=!dragon&&!player.flying&&!player.onFoot&&!G.onFoot?.on;
+   const mi=mountedCameraInput;mi.active=groundHorse;mi.x=player.pos.x;mi.z=player.pos.z;
+   mi.groundY=W.groundH(player.pos.x,player.pos.z);mi.height=Math.min(2,player.y||0)*.8+Math.max(0,(player.y||0)-2);
+   mi.heading=head;mi.speed=player.speed||0;mi.dt=c.dt;mi.aspect=aspect;mi.mountId=G.horse.ridden?.()?.id||player.mesh;
+   mi.mountScale=herScale();mi.subjectHeight=HER_H*mi.mountScale;mi.orbitYaw=F.yaw;mi.orbitPitch=F.pitch;mi.zoom=F.zoom;
+   mi.manualOrbit=!!F.drag||followInput.grace>0;mi.currentFov=cam.fov;
+   const composed=mountedCamera.update(mi);
+   const R=groundHorse?composed.distance:Math.max(minArm,(CAM.dist+CAM.distSp*F.u+CAM.NARROW_DIST*narrow)*F.zoom*(1-CAM.TUCK*tight)*frameScale);
+   const pitch0=groundHorse?composed.pitch:CAM.pitch+CAM.pitchSp*F.u+CAM.NARROW_PITCH*narrow+F.pitch;
    /* The orbit angle is the lagged heading, plus the player's own drag, plus the three-quarter
       sweep — and the sweep carries most of the turn back, which is the BIAS above. */
-   const ang0=F.head+F.yaw+(CAM.off+CAM.offSp*F.u)*wide+lag*CAM.BIAS, side=CAM.off<0?-1:1;
+   const ang0=groundHorse?composed.angle:F.head+F.yaw+(CAM.off+CAM.offSp*F.u)*wide+lag*CAM.BIAS, side=CAM.off<0?-1:1;
    /* The eye used to follow four fifths of her height. Over a fence that is the right
       instinct — it damps the pogo, and a fifth of a 1.5 m jump is 30 cm nobody can see. On a
       winged horse it is a disaster: a fifth of fifty metres is ten, so the further she climbed
@@ -1197,23 +1208,30 @@ export function install(G){
       here is metres out in front of her — so anchoring on it put the camera in front of the
       horse the first time she cornered under trees, and the shot lost her completely. The
       origin is the subject; where the lens happens to be pointing is a separate question. */
-   _anchor.set(player.pos.x,foot+1.45+lookLift,player.pos.z);
+   if(groundHorse)_anchor.set(composed.anchor.x,composed.anchor.y,composed.anchor.z);
+   else _anchor.set(player.pos.x,foot+1.45+lookLift,player.pos.z);
    c.camDesired.copy(_eye);
    W.followCamera.frame(_anchor,c.camDesired,c.camSafe,dt);
    /* A cut, not a dolly, when the horse has plainly teleported — fast travel, a ferry landing,
       the first frame after boot. Easing across half the basin is a long slow drift through
       other people's scenery. */
-   if(!F.placed||cam.position.distanceTo(c.camSafe)>CAM.SNAP){cam.position.copy(c.camSafe);F.placed=true;}
+   if(groundHorse&&composed.snap||!F.placed||cam.position.distanceTo(c.camSafe)>CAM.SNAP){cam.position.copy(c.camSafe);F.placed=true;}
    else cam.position.lerp(c.camSafe,1-Math.exp(-CAM.EASE*dt));
    // The predictive sweep above smooths the orbit and retraction. The final
    // safety check must be exact: easing its collision fraction let the lens
    // cross a wall for several frames, showing a solid dark panel on screen.
    F.occ=W.followCamera.resolve(_anchor,cam.position,cam.position);
    tickPeople(cam.position);
-   const shake=sp>7&&c.grounded?0.010:0;
-   cam.lookAt(c.camLook.x+Math.sin(c.t*23)*shake,c.camLook.y+Math.sin(c.t*31)*shake,c.camLook.z+Math.cos(c.t*27)*shake);
-   const fovT=CAM.fov+CAM.fovSp*F.u;
-   if(Math.abs(cam.fov-fovT)>0.05){cam.fov+=(fovT-cam.fov)*Math.min(1,dt*2.5);cam.updateProjectionMatrix();}
+   if(groundHorse){
+    const at=mountedCamera.aim(cam.position,nudgeRise);c.camLook.set(at.x,at.y,at.z);
+    cam.lookAt(c.camLook); // deliberate gait/turn composition, without high-frequency shake
+    if(Math.abs(cam.fov-composed.fov)>.01){cam.fov=composed.fov;cam.updateProjectionMatrix();}
+   }else{
+    const shake=sp>7&&c.grounded?0.010:0;
+    cam.lookAt(c.camLook.x+Math.sin(c.t*23)*shake,c.camLook.y+Math.sin(c.t*31)*shake,c.camLook.z+Math.cos(c.t*27)*shake);
+    const fovT=CAM.fov+CAM.fovSp*F.u;
+    if(Math.abs(cam.fov-fovT)>0.05){cam.fov+=(fovT-cam.fov)*Math.min(1,dt*2.5);cam.updateProjectionMatrix();}
+   }
    F.own=true;
    return true;
   }catch(e){
@@ -1237,6 +1255,6 @@ export function install(G){
     rig and put it back without this file knowing. reset() is what a teleport should call. */
  G.followCam={CAM,state:F,isOwner:()=>F.own,yielding:()=>foreignCam(),
   invalidateTrees(){TG.map=null;},
-  reset(){followInput.release();F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;F.nudgeP=F.nudgeO=F.wantP=F.wantO=0;F.hidden=false;},
+  reset(){mountedCamera.reset();followInput.release();F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;F.nudgeP=F.nudgeO=F.wantP=F.wantO=0;F.hidden=false;},
   hidesBehindHer,nextSight:()=>nextSight()?[T.x,T.y,T.z]:null,herScale};
 }

@@ -229,6 +229,7 @@ export function getNativeHorseCapabilities(rig){
 export function tickNativeHorse(rig,speed,dt,turn=0){
  const motion=rig.heroMotion,cap=getNativeHorseCapabilities(rig);if(!motion||!cap)return null;
  if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native update delta');
+ rig.nativeTurningInPlace=false;
  const actual=Math.max(0,Math.min(rig.nativeFlying&&cap.canFly?cap.flightMaxSpeedMps:cap.maxSpeedMps,Math.abs(Number(speed)||0))),gaits=rig.profile.nativeGaits||{};
  if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
  // A grounded full-body action owns its complete get-up and final blend.
@@ -239,16 +240,20 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
   else{motion.setTurn(0);motion.update(dt);const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=1;return state;}
  }
  if(motion.mode==='jump'){motion.set('jump',{speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate:1});const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=state.gait==='jump'?state.jumpTimeS:null;rig.heroJumpExtra=state.bodyLiftM*cap.worldScale*(rig.nativeJumpHeightScale||1);rig.heroRate=1;if(state.gait!=='jump')rig.heroJumpGrace=.20;return state;}
+ // A slow rein turn must move the feet instead of rotating a standing statue.
+ // Travel/score stay at their real measured speed; only the ordinary walk pose steps.
+ const turningInPlace=cap.paced&&!rig.nativeFlying&&!rig.nativeReverse&&actual<.18&&Math.abs(turn)>.08;
+ rig.nativeTurningInPlace=turningInPlace;
  let gait='stand',rate=1,record=null;
  // Gather the Black Dragon's wings during the last part of a requested
  // landing. Physics stays airborne until contact; a low hover keeps flapping.
  const landingApproach=!!(rig.nativeFlying&&gaits.fly&&rig.profile.nativeLandingBlendHeightM&&rig.nativeLanding&&Number.isFinite(rig.nativeAltitude)&&rig.nativeAltitude<=rig.profile.nativeLandingBlendHeightM);
  rig.nativeLandingPose=landingApproach;
  if(rig.nativeFlying&&gaits.fly&&!landingApproach){gait='fly';record=gaits.fly;}
- else if(actual>.02){
+ else if(actual>.02||turningInPlace){
   const ground=Object.entries(gaits).filter(([key])=>key!=='fly'&&!key.endsWith('Right')).sort((a,b)=>a[1].nominalSpeedMps-b[1].nominalSpeedMps);
   const paceFactor=cap.paced?(rig.nativePaceFactor||1):1;
-  let chosen=ground.find(([key])=>actual<=cap.gaitSpeeds[key]*paceFactor+1e-7)||ground.at(-1);
+  let chosen=turningInPlace?ground.find(([key])=>key==='walk'):ground.find(([key])=>actual<=cap.gaitSpeeds[key]*paceFactor+1e-7)||ground.at(-1);
   // A faster trot remains a trot. On slowing down, keep a faster gait until
   // actual travel enters the requested gait's gameplay speed range.
   const requested=ground.find(([key])=>key===rig.nativeRequestedGait);
@@ -259,6 +264,7 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
  if(reversing){gait='walk';record=gaits.walk;}
  const lead=turn<-.32?'right':turn>-.08?'left':rig.heroLead||'left';rig.heroLead=lead;if(gait.endsWith('Left'))gait=gait.slice(0,-4);
  if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=(cap.paced||cap.dragonTravel)&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
+ if(turningInPlace)rate=.40+.30*Math.min(1,Math.abs(turn));
  if(gait==='fly')rate=cap.dragonTravel?(rig.profile.nativeFlightRate||1)*(1+.12*actual/Math.max(1,cap.flightMaxSpeedMps)):Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
  motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate,direction:reversing?-1:1});
  // The original long wing fingers sweep below the feet during some blends.

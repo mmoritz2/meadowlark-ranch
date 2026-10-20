@@ -3,9 +3,9 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
-export {getNativeHorseCapabilities} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
-import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
+export {getNativeHorseCapabilities} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
+import {finishNativeHorseGrooms as finishNativeSourceGrooms} from './native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1';
 
 // Feather inertia samples the final leg pose after actor travel and terrain fit.
 const pendingNativeFeatherGrooms=new Map();
