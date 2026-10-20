@@ -1,3 +1,4 @@
+import {createEstateShelterDresser} from './estate-shelters.mjs?v=estate-stalls-1';
 import {createEstateGrandstandDresser} from './estate-grandstand.mjs?v=estate-grandstand-1';
 import {setTimberBoxUV,applyTimberGrain} from './timber-cladding.mjs?v=timber-cladding-1';
 import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
@@ -46,6 +47,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  const glass=new T.MeshPhysicalMaterial({name:'Builder | glass',color:'#d5d9ce',roughness:.13,metalness:.1,transparent:true,opacity:.22,depthWrite:false});
  const glow=material('warm lamp flame','#d9a85a',.6);glow.emissive.set('#ffb45c');glow.emissiveIntensity=1.7;
  const roof=architecture.roofMaterial;roof.userData.metres=1.8;
+ const dressShelter=createEstateShelterDresser({THREE:T,architecture,strawMaterial:straw});
  // Share the photographed channels; architecture keeps its board-interior sampler,
  // directional grain coordinates, recessed openings and original solid geometry.
  for(const m of [architecture.sidingMaterial,...architecture.materials.values()].filter((m,i,a)=>m&&(m===architecture.sidingMaterial||/oiled oak/.test(m.name))&&a.indexOf(m)===i)){
@@ -439,10 +441,10 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
    case 'well':stoneCourses(b,.72,.86);b.torus(.72,.095,stone,0,.88,0,[Math.PI/2,0,0]);b.cylinder(.57,.57,.02,water,0,.28,0);for(const x of[-.91,.91])b.box(.15,2.22,.15,aged,x,1.07,0);for(const s of[-1,1])b.box(2.2,.10,.86,roof,0,2.21,s*.35,[s*-.38,0,0]);b.cylinder(.065,.065,1.92,oak,0,1.65,0,[0,0,Math.PI/2]);b.tube([[0,1.67,0],[0,1.15,0],[0,.58,0]],.012,cloth);b.cylinder(.17,.13,.24,steel,.34,1.52,0);b.torus(.14,.012,iron,.34,1.70,0);break;
    default:return null;
   }
-  const root=b.finish();return type==='grandstand'?dressGrandstand(root):root;
+  const root=b.finish();return type==='grandstand'?dressGrandstand(root):['shelter','stall'].includes(type)?dressShelter(root,type):root;
  }
  function key(type){return type==='sign'?type+':'+getRanchName():type;}
- function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const out=type==='grandstand'?dressGrandstand.clone(src):src.clone(true);if(ghost)out.userData.collisionIgnore=true;out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=o.geometry.userData.estateGrandstandResident?dressGrandstand.isolated(()=>m.clone()):m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
+ function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const dresser=type==='grandstand'?dressGrandstand:['shelter','stall'].includes(type)?dressShelter:null;const out=dresser?dresser.clone(src):src.clone(true);if(ghost)out.userData.collisionIgnore=true;out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=(o.geometry.userData.estateGrandstandResident||o.geometry.userData.estateShelterResident)?dresser.isolated(()=>m.clone()):m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
  function create(type,ghost=false){const out=copy(type,ghost);if(!out)return null;if(!state.loaded)state.ready.then(()=>{const replacement=copy(type,ghost);out.clear();for(const child of [...replacement.children])out.add(child);out.userData={...replacement.userData};});return out;}
  const sources={
   wine_barrel_01:'builder/wine_barrel_01',wooden_picnic_table:'builder/wooden_picnic_table',planter_box_01:'builder/planter_box_01',wooden_lantern_01:'builder/wooden_lantern_01',tree_stump_01:'builder/tree_stump_01',flower_gazania:'builder/flower_gazania',wild_rooibos_bush:'builder/wild_rooibos_bush',
@@ -464,7 +466,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  })).then(()=>{state.loaded=true;const old=[...templates.values()];templates.clear();
   // The existing instances swap children in the following promise callbacks.
   // Retire only procedural fallback geometry, never shared scan resources.
-  setTimeout(()=>{for(const root of old)root.traverse(o=>{if(o.isMesh&&!o.geometry.userData.builderScan&&!o.geometry.userData.estateGrandstandResident)o.geometry.dispose();});},0);
+  setTimeout(()=>{for(const root of old)root.traverse(o=>{if(o.isMesh&&!o.geometry.userData.builderScan&&!o.geometry.userData.estateGrandstandResident&&!o.geometry.userData.estateShelterResident)o.geometry.dispose();});},0);
   return state;}));
  state.ready=modelLoad.ready;
  state.startLoading=()=>modelLoad.start();
