@@ -1090,9 +1090,11 @@ export function install(G){
    const lookLift=dragon?(blackDragon ? .65 : .2)*dragonScale:0;
    // Ground horses use one mount-sized composition, preserving this owner's
    // input, obstacle/foliage clearance and next-obstacle visibility checks.
-   const groundHorse=!dragon&&!player.flying&&!player.onFoot&&!G.onFoot?.on;
+   const groundHorse=!dragon&&!player.flying&&!player.onFoot&&!G.onFoot?.on&&!player.swim;
    const mi=mountedCameraInput;mi.active=groundHorse;mi.x=player.pos.x;mi.z=player.pos.z;
-   mi.groundY=W.groundH(player.pos.x,player.pos.z);mi.height=Math.min(2,player.y||0)*.8+Math.max(0,(player.y||0)-2);
+   mi.groundY=W.groundH(player.pos.x,player.pos.z);
+   const subjectLift=groundHorse&&Number.isFinite(player.mesh.position?.y)?Math.max(0,player.mesh.position.y-mi.groundY):Math.max(0,player.y||0);
+   mi.height=Math.min(2,subjectLift)*.8+Math.max(0,subjectLift-2);
    mi.heading=head;mi.speed=player.speed||0;mi.dt=c.dt;mi.aspect=aspect;mi.mountId=G.horse.ridden?.()?.id||player.mesh;
    mi.mountScale=herScale();mi.subjectHeight=HER_H*mi.mountScale;mi.orbitYaw=F.yaw;mi.orbitPitch=F.pitch;mi.zoom=F.zoom;
    mi.manualOrbit=!!F.drag||followInput.grace>0;mi.currentFov=cam.fov;
@@ -1108,7 +1110,7 @@ export function install(G){
       the further the camera sank beneath her, until the shot was her belly against the sky. So
       damp the first two metres, which covers every fence in the game, and follow one for one
       above that, which is flight. */
-   const py=player.y||0, lift=py<=2?py*0.8:1.6+(py-2);
+   const py=groundHorse?subjectLift:player.y||0, lift=groundHorse?mi.height:py<=2?py*0.8:1.6+(py-2);
    const lakeSurface=player.swim&&!player.onFoot?W.loonLake?.waterAt(player.pos.x,player.pos.z)?.surface:null;
    const visualGround=lakeSurface??W.groundH(player.pos.x,player.pos.z);
    const foot=visualGround+lift;

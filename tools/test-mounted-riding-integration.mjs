@@ -24,10 +24,10 @@ const legacySteering17a656b=" let turn=(left?1:0)-(right?1:0);\n if(inVR||touch.
 const legacyHeading17a656b=" player.heading+=turn*travelDt*yawRate*agMul;\n player.pos.x+=Math.sin(player.heading)*player.speed*travelDt;\n player.pos.z+=Math.cos(player.heading)*player.speed*travelDt;\n";
 const script=new vm.Script(`(()=>{${input}${acceleration}${steering}${travelDecl}\nfor(let travelStep=0;travelStep<travelSteps;travelStep++){${heading}}\nconst sp=Math.abs(player.speed);${bank}\nreturn {turn,yawRate,mountedHorse,groundTurn,frame:mountedSteeringFrame};})()`,{filename:'actual-mounted-steering-heading-bank.js'});
 const legacyScript=new vm.Script(`(()=>{${input}${legacySteering17a656b}${travelDecl}\nfor(let travelStep=0;travelStep<travelSteps;travelStep++){${legacyHeading17a656b}}\nreturn {turn,yawRate:turn*yawRate*agMul};})()`,{filename:'captured-17a656b-excluded-mode-steering.js'});
-function fixture({profile=NATIVE_BREED_PROFILES['white-western'],speed=7.5,inVR=false,onFoot=false,flying=false,vehicle=false,agility=1}={}){
+function fixture({profile=NATIVE_BREED_PROFILES['white-western'],speed=7.5,inVR=false,onFoot=false,flying=false,swim=false,vehicle=false,agility=1}={}){
  const save=Object.freeze({coins:137,gems:4,story:Object.freeze({idx:5,prog:2}),horseXP:94}),mesh=new THREE.Group();
  const context=vm.createContext({THREE,Math,mountedHorseBank,dt:1/60,inVR,freeCam:false,agMul:agility,acMul:1,target:speed,keys:{KeyW:true},touch:{analog:false,turnA:0},
-  player:{speed,pos:{x:0,z:0},heading:0,turnSm:0,y:0,vy:0,onFoot,flying,landing:false,mesh},
+  player:{speed,pos:{x:0,z:0},heading:0,turnSm:0,y:0,vy:0,onFoot,flying,swim,landing:false,mesh},
   RIG:{profile,modelKey:profile.id,ready:true,attachedTo:mesh,scene:new THREE.Group(),heroMotion:{mode:'stand',state:{gait:'stand',grounded:true}}},
   myHorses:[{id:23,bareback:false}],rideIdx:0,mountedSteering:createMountedSteering(),mountedSteeringFrame:null,ridingInput:createRidingInput(),
   DRILL:{on:false},drillPaused:()=>false,G:{worldPkg:{vehicle:()=>vehicle}},
@@ -94,6 +94,20 @@ test('legacy VR, foot, flying, dragon and vehicle steering remain equal to captu
    const actual=fixture({...options,speed:4.2}),legacy=fixture({...options,speed:4.2});
    for(let i=0;i<30;i++){const opts={dt:1/60,keys:{KeyW:true,...(i<15?{KeyA:true}:{KeyD:true})},touch:{analog,turnA:i<15?.7:-.4}};actual.step(opts);legacy.step(opts,true);}
    near(actual.context.player.heading,legacy.context.player.heading);near(actual.context.player.pos.x,legacy.context.player.pos.x);near(actual.context.player.pos.z,legacy.context.player.pos.z);near(actual.context.player.turnSm,legacy.context.player.turnSm);
+  }
+ }
+});
+test('a swimming native horse retains the raw preexisting steering and signed travel at the water surface',()=>{
+ for(const speed of [2.4,-1.3])for(const analog of [false,true]){
+  const actual=fixture({swim:true,speed}),legacy=fixture({swim:true,speed});
+  // A negative-speed sample represents an already deliberate rein-back, after
+  // the real input owner's brake-before-reverse wait, not its initial stop.
+  if(speed<0)for(const f of [actual,legacy])f.context.ridingInput.resolve({keys:{KeyS:true},speed:0,dt:.2});
+  assert.equal(actual.context.RIG.profile.nativeKind,'horse');assert.equal(actual.context.RIG.heroMotion.state.grounded,true);assert.equal(actual.context.player.y,0,'Native walk/zero actor lift does not itself prove ground contact while swimming');
+  for(let n=0;n<60;n++){
+   const opts={dt:1/60,keys:speed<0?{KeyS:true,...(n<30?{KeyA:true}:{KeyD:true})}:{KeyW:true,...(n<30?{KeyA:true}:{KeyD:true})},touch:{analog,turnA:n<30?.75:-.4}};
+   const result=actual.step(opts);legacy.step(opts,true);assert.equal(result.mountedHorse,false);assert.equal(result.frame.reason,'inactive');
+   near(actual.context.player.heading,legacy.context.player.heading);near(actual.context.player.pos.x,legacy.context.player.pos.x);near(actual.context.player.pos.z,legacy.context.player.pos.z);near(actual.context.player.turnSm,legacy.context.player.turnSm);near(actual.context.player.speed,speed);
   }
  }
 });
