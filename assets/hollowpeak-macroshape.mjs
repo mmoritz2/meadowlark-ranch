@@ -1,3 +1,4 @@
+import {sculptEasternHeadwall} from './hollowpeak-eastern-headwall.mjs?v=hollowpeak-eastern-headwall-2';
 // Original directional erosion for the physical Hollowpeak falls front.
 // Connected gullies cut the existing mass; low toes and wet/trail supports stay exact.
 export const HOLLOWPEAK_MACROSHAPE_PROFILE='hollowpeak-macroshape-1';
@@ -27,7 +28,7 @@ function tangent(points,i,k){
  const wa=2*hb+ha,wb=hb+2*ha;return(wa+wb)/(wa/da+wb/db);
 }
 function field(points,i,k,z){const a=points[i-1],b=points[i],h=b[0]-a[0],t=(z-a[0])/h,t2=t*t,t3=t2*t;return(2*t3-3*t2+1)*a[k]+(t3-2*t2+t)*h*tangent(points,i-1,k)+(-2*t3+3*t2)*b[k]+(t3-t2)*h*tangent(points,i,k);}
-export function hollowpeakMacroshape(x,z,original,protection=1){
+function establishedHollowpeakMacroshape(x,z,original,protection=1){
  const b=HOLLOWPEAK_MACROSHAPE_BOUNDS;
  if(!Number.isFinite(x+z+original+protection))throw new TypeError('Finite Hollowpeak physical samples required');
  if(x<=b.x0||x>=b.x1||z<=b.z0||z>=b.z1||original<=6||protection<=0)return original;
@@ -49,3 +50,5 @@ export function hollowpeakMacroshape(x,z,original,protection=1){
   *ease(b.z0,b.z0+4,z)*(1-ease(b.z1-5,b.z1,z));
  return original-loss*Math.min(1,protection)*boundary;
 }
+
+export function hollowpeakMacroshape(x,z,original,protection=1){return sculptEasternHeadwall(x,z,establishedHollowpeakMacroshape(x,z,original,protection),protection);}
