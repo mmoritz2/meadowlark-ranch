@@ -1,3 +1,4 @@
+import {sculptSpillwayBankRelief} from './hollowpeak-spillway-bank.mjs?v=hollowpeak-spillway-bank-4';
 import {sculptUpperHollowpeakRelief} from './hollowpeak-upper-ridges.mjs?v=hollowpeak-upper-ridges-3';
 import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
@@ -154,7 +155,7 @@ const FALLS_BUTTRESSES=[
  [[-313,-178,0,18,23],[-295,-184,19,18,23],[-279,-180,28,19,25],[-264,-177,31,18,26],[-249,-181,26,18,25],[-236,-176,16,18,22],[-223,-171,0,15,18]],
  [[-311,-128,0,19,17],[-294,-124,17,22,18],[-278,-120,25,25,19],[-262,-126,29,25,20],[-248,-120,24,24,20],[-233,-124,13,20,17],[-222,-128,0,16,15]]
 ];
-export function fallsRelief(x,z){
+function establishedFallsRelief(x,z){
  const alpine=alpineRelief(x,z);if(!withinFalls(x,z))return alpine;
  const trailDistance=nearest(x,z,trail).d;
  const keep=smooth(7,13,trailDistance);if(!keep)return alpine;
@@ -178,6 +179,7 @@ export function fallsRelief(x,z){
  const original=alpine+Math.max(0,banks-recess)*keep*hem;
  return hollowpeakMacroshape(x,z,original,dryRidgeWeight(x,z)*smooth(13,18,trailDistance));
 }
+export function fallsRelief(x,z){return sculptSpillwayBankRelief(x,z,establishedFallsRelief(x,z));}
 export function fallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;
  let h=height+fallsRelief(x,z);
