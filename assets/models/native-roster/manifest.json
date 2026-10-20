@@ -28,7 +28,7 @@
       "id": "bay",
       "label": "Quarter Horse",
       "file": "./models/native-roster/bay.bin",
-      "sha256": "c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a",
+      "sha256": "d5232ca67a672b923854f07ff6c1dd9aae612a82dbf5cd3bf8a2b4a624292183",
       "byteLength": 728256,
       "meshes": [
         {
@@ -38,12 +38,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.0001449069592328885
+            "scale": 0.00019553499516378943
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 4.8771585530361755e-06
+            "scale": 9.199564641432239e-06
           }
         },
         {
@@ -53,12 +53,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 5.0018072546533364e-05
+            "scale": 8.88378770315267e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.933350979661659e-06
+            "scale": 9.426795672207775e-06
           }
         },
         {
@@ -68,12 +68,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 6.640245281543996e-05
+            "scale": 0.00013935525224788273
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 4.227114205286453e-06
+            "scale": 9.999812040606497e-06
           }
         },
         {
@@ -83,12 +83,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00019995747632417532
+            "scale": 0.00024242431562716043
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 3.109469874218858e-06
+            "scale": 1.699575919538666e-05
           }
         },
         {
@@ -98,12 +98,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 9.340868524483063e-05
+            "scale": 0.00012304782872357906
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.6301597239305688e-06
+            "scale": 3.1460318321927215e-06
           }
         }
       ],
@@ -164,6 +164,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04240000000000001,
+            2.0799882652905914,
+            1.1439495517623182
+          ],
+          [
+            0.9964684536388765,
+            0.006070785873783481,
+            0.08374823258684935
+          ],
+          [
+            -0.03647853609146897,
+            -0.8670484455980727,
+            0.4968866162321031
+          ],
+          [
+            -0.07563026713670751,
+            0.4981868510356738,
+            0.8637649704335026
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.054,
+          "foreheadGain": 0.12,
+          "neckArchM": 0.04,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "stock",
@@ -206,7 +243,7 @@
       "id": "chestnut",
       "label": "Shetland Pony",
       "file": "./models/native-roster/chestnut.bin",
-      "sha256": "01d8f25146d2be5b4fae8d5e53fc1db3651a7d37f306ef824c8358c53ebc2962",
+      "sha256": "c801bdf0db54730481d3fa8e4575c4a9a0870af08562baa3f64becf0dea38dad",
       "byteLength": 728256,
       "meshes": [
         {
@@ -216,12 +253,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00018300218346593207
+            "scale": 0.0002866761325549238
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 8.209397059283116e-06
+            "scale": 9.235697397458947e-06
           }
         },
         {
@@ -231,12 +268,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 0.00011581539940960676
+            "scale": 0.0001314070632494704
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.875050631683909e-06
+            "scale": 1.0102539887649204e-05
           }
         },
         {
@@ -251,7 +288,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 8.26166770735815e-06
+            "scale": 1.265086706995559e-05
           }
         },
         {
@@ -261,12 +298,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0003959891241044826
+            "scale": 0.0004336822471494318
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 6.364120406388907e-06
+            "scale": 1.8454539710257243e-05
           }
         },
         {
@@ -276,12 +313,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00018465501690265586
+            "scale": 0.0002098728405385242
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 2.7049767768338145e-06
+            "scale": 3.833074734279101e-06
           }
         }
       ],
@@ -341,13 +378,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.045200000000000004,
+            2.0728895473223603,
+            1.1269909573453265
+          ],
+          [
+            0.9969308258369629,
+            -0.002210639630848897,
+            0.07825625577839433
+          ],
+          [
+            -0.0409045663338089,
+            -0.86701284731747,
+            0.4966040062660557
+          ],
+          [
+            -0.0667513666457398,
+            0.4982808802862861,
+            0.8644422591428822
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.058,
+          "foreheadGain": 0.13,
+          "neckArchM": 0.042,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "palomino": {
       "id": "palomino",
       "label": "Mustang",
       "file": "./models/native-roster/palomino.bin",
-      "sha256": "f6ee5303eb51f6b62100f1601fd86bd16ee85f584b5540f00d2d99227f9117b6",
+      "sha256": "7055f64a29c5bee4c092624f0a6c19e76da0262c732e80d67f465ab5a5296039",
       "byteLength": 728256,
       "meshes": [
         {
@@ -357,12 +431,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 3.584662715622865e-05
+            "scale": 0.00015138411941974654
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 1.2255113944611347e-06
+            "scale": 9.117331186772645e-06
           }
         },
         {
@@ -372,12 +446,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 2.7925494827569976e-05
+            "scale": 8.193448205813263e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 7.932435836425261e-07
+            "scale": 9.12606581288522e-06
           }
         },
         {
@@ -392,7 +466,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.4949239643754213e-06
+            "scale": 1.0557514917525042e-05
           }
         },
         {
@@ -402,12 +476,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 2.9008509297309188e-05
+            "scale": 0.00015557382870877453
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 9.76725023699379e-07
+            "scale": 1.64475594537757e-05
           }
         },
         {
@@ -417,12 +491,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 1.917858963422563e-05
+            "scale": 4.171815052674611e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 5.565491244897461e-07
+            "scale": 2.0169991514980244e-06
           }
         }
       ],
@@ -482,13 +556,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04200000000000001,
+            2.082245777076001,
+            1.1461734441129816
+          ],
+          [
+            0.996305637121448,
+            0.010370613105300717,
+            0.0852497966205531
+          ],
+          [
+            -0.034810230577597044,
+            -0.8587059834541625,
+            0.5112849321338876
+          ],
+          [
+            -0.07850684866404986,
+            0.5123636251373039,
+            0.8551726085118724
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.054,
+          "foreheadGain": 0.12,
+          "neckArchM": 0.038,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "haflinger": {
       "id": "haflinger",
       "label": "Haflinger",
       "file": "./models/native-roster/haflinger.bin",
-      "sha256": "d9daaf78d28991d7be44ba9e45e98ea9a015887f611009074b966f2ff1de071b",
+      "sha256": "9a31a0fdf235b232e9e0a62c7a3c052658e59a95a1b29eaeff83cdfdcca4b6d8",
       "byteLength": 728256,
       "meshes": [
         {
@@ -498,12 +609,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00010818070551878993
+            "scale": 0.0002004186846255872
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 3.902166938684633e-06
+            "scale": 9.099394756246138e-06
           }
         },
         {
@@ -513,12 +624,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 4.004977358496078e-05
+            "scale": 8.841341826373572e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 9.587877435453545e-07
+            "scale": 9.366418451865025e-06
           }
         },
         {
@@ -533,7 +644,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 4.618890056309999e-06
+            "scale": 1.0982237074877566e-05
           }
         },
         {
@@ -543,12 +654,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00024425274756919793
+            "scale": 0.0002953553209864349
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 4.069335906105718e-06
+            "scale": 1.9526781219988926e-05
           }
         },
         {
@@ -558,12 +669,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00011260660188037236
+            "scale": 0.00014978663516162212
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.6265960079177715e-06
+            "scale": 3.1085084979082554e-06
           }
         }
       ],
@@ -623,13 +734,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04120000000000001,
+            2.081031756920003,
+            1.1470152866330277
+          ],
+          [
+            0.9963112737172279,
+            0.008218696487695389,
+            0.08541837561085915
+          ],
+          [
+            -0.035302282101361236,
+            -0.8680157784246041,
+            0.49528007963612297
+          ],
+          [
+            -0.07821505444855602,
+            0.49646859058149034,
+            0.8645237670669543
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "pony",
+          "faceShortenM": 0.065,
+          "foreheadGain": 0.15,
+          "neckArchM": 0.04,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "grey": {
       "id": "grey",
       "label": "Andalusian / PRE",
       "file": "./models/native-roster/grey.bin",
-      "sha256": "e65c13551cddb5304974ae4846816a1d838b3bf56465858a20fd8cd85432b066",
+      "sha256": "9c3ce97a85d7387784e7c0ec6c088d300dce979df3fc9c46e5d12bab862408ee",
       "byteLength": 728256,
       "meshes": [
         {
@@ -639,12 +787,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00016486821782957735
+            "scale": 0.00031597219668736884
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 7.0630613538984945e-06
+            "scale": 1.1979171036609366e-05
           }
         },
         {
@@ -654,12 +802,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 3.097288053894687e-05
+            "scale": 9.792215827891477e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.492083008983721e-06
+            "scale": 1.0156034161225243e-05
           }
         },
         {
@@ -674,7 +822,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 9.260168307517516e-06
+            "scale": 1.1898523842081119e-05
           }
         },
         {
@@ -684,12 +832,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0001336491768159763
+            "scale": 0.00018082090425451702
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 7.695630922108669e-06
+            "scale": 1.813481061754087e-05
           }
         },
         {
@@ -699,12 +847,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 7.292494215470761e-05
+            "scale": 9.584546314226887e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 3.809108986091044e-06
+            "scale": 3.8020023902604747e-06
           }
         }
       ],
@@ -764,13 +912,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04,
+            2.0862742497431754,
+            1.1584466135866522
+          ],
+          [
+            0.9959361328322596,
+            0.017345268794766264,
+            0.08837624663653211
+          ],
+          [
+            -0.03205549310978828,
+            -0.8487493188144178,
+            0.5278229240697585
+          ],
+          [
+            -0.08416450962616108,
+            0.5285108659833769,
+            0.8447441031797078
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "baroque",
+          "faceShortenM": 0.058,
+          "foreheadGain": 0.13,
+          "neckArchM": 0.05,
+          "bodyRoundGain": 0.04,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.03,
+          "cheekGain": 0.045
+        }
+      }
     },
     "black": {
       "id": "black",
       "label": "Friesian",
       "file": "./models/native-roster/black.bin",
-      "sha256": "b0cb1d641edb47cb5339485642969671bee287168c663f62a0d61b31575b2dad",
+      "sha256": "26047ee0e6de057ddca48d17d364844c3993f98aaae6201ade8596f5698c8cf2",
       "byteLength": 728256,
       "meshes": [
         {
@@ -780,12 +965,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00023684818183529038
+            "scale": 0.00038799571721650296
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 1.0548296844729994e-05
+            "scale": 1.5003488176302097e-05
           }
         },
         {
@@ -795,12 +980,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 3.910007785127219e-05
+            "scale": 9.802229311442897e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 3.7524263856801755e-07
+            "scale": 9.501059655611735e-06
           }
         },
         {
@@ -815,7 +1000,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.2643780104044106e-05
+            "scale": 1.5382567532349562e-05
           }
         },
         {
@@ -825,12 +1010,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00022723291438973232
+            "scale": 0.000273189236132917
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 9.544034208883592e-06
+            "scale": 1.8781350316169206e-05
           }
         },
         {
@@ -840,12 +1025,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00010489909546996261
+            "scale": 0.00013517076262118004
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 4.605981954423552e-06
+            "scale": 4.569000673528002e-06
           }
         }
       ],
@@ -905,13 +1090,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04,
+            2.0885669564396467,
+            1.1681863387576086
+          ],
+          [
+            0.9958820854504501,
+            0.013902358636850543,
+            0.08958569251389904
+          ],
+          [
+            -0.03278949719632362,
+            -0.8660381287432551,
+            0.4989016019582353
+          ],
+          [
+            -0.08452053450182842,
+            0.49978463760625297,
+            0.862016006382893
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "baroque",
+          "faceShortenM": 0.058,
+          "foreheadGain": 0.13,
+          "neckArchM": 0.05,
+          "bodyRoundGain": 0.04,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.03,
+          "cheekGain": 0.045
+        }
+      }
     },
     "pinto": {
       "id": "pinto",
       "label": "American Paint Horse",
       "file": "./models/native-roster/pinto.bin",
-      "sha256": "ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e",
+      "sha256": "586591c524400e9043fa6d685a76f029c5ab046a60afd3416fba832fa82d9c70",
       "byteLength": 728256,
       "meshes": [
         {
@@ -921,12 +1143,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 9.105219113020211e-05
+            "scale": 0.00014468338796513457
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 3.137559490880818e-06
+            "scale": 9.247247547284171e-06
           }
         },
         {
@@ -936,12 +1158,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 2.7818884679704477e-05
+            "scale": 8.255773138629804e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.240745984922766e-06
+            "scale": 8.620442175503137e-06
           }
         },
         {
@@ -956,7 +1178,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 2.097337162344222e-06
+            "scale": 9.659932237514059e-06
           }
         },
         {
@@ -966,12 +1188,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00013756365954953375
+            "scale": 0.00017968888372189244
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 2.0945715693067707e-06
+            "scale": 1.7045272581801257e-05
           }
         },
         {
@@ -981,12 +1203,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 6.227729959986185e-05
+            "scale": 9.206051217106295e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 9.74444800156888e-07
+            "scale": 2.1953496483102517e-06
           }
         }
       ],
@@ -1047,6 +1269,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.041600000000000005,
+            2.0841020022210595,
+            1.153152314730062
+          ],
+          [
+            0.9962147369855775,
+            0.010482684266827448,
+            0.0862920108892975
+          ],
+          [
+            -0.03453872000330621,
+            -0.863243342118834,
+            0.5036050129893852
+          ],
+          [
+            -0.07977013622459125,
+            0.5046791511624664,
+            0.8596136805266901
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.054,
+          "foreheadGain": 0.12,
+          "neckArchM": 0.038,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "stock",
@@ -1089,7 +1348,7 @@
       "id": "appaloosa",
       "label": "Appaloosa",
       "file": "./models/native-roster/appaloosa.bin",
-      "sha256": "1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c",
+      "sha256": "094e2fab848710c9eb0b773f7c8a3220fcaecb2b3e6aaff475256f825c2a910a",
       "byteLength": 728256,
       "meshes": [
         {
@@ -1099,12 +1358,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 6.928919402453219e-05
+            "scale": 0.0001336311782916887
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.7004262046800846e-06
+            "scale": 8.683325834068336e-06
           }
         },
         {
@@ -1114,12 +1373,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 1.1994799983156713e-05
+            "scale": 7.61987534583036e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.2189885566348907e-06
+            "scale": 8.067906031913622e-06
           }
         },
         {
@@ -1129,12 +1388,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 9.642652106727803e-05
+            "scale": 0.00017840970400074052
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.3383349792854415e-06
+            "scale": 9.58698442422777e-06
           }
         },
         {
@@ -1144,12 +1403,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 8.624628271414944e-05
+            "scale": 0.00013743458273948083
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 2.0511899669599964e-06
+            "scale": 1.6099271182537363e-05
           }
         },
         {
@@ -1159,12 +1418,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 4.197617223110221e-05
+            "scale": 7.282909348520236e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.0930258733458712e-06
+            "scale": 2.6136082852086904e-06
           }
         }
       ],
@@ -1225,6 +1484,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04,
+            2.0847090122990584,
+            1.152340577236347
+          ],
+          [
+            0.9959290578437293,
+            0.014168370695764399,
+            0.08902004838422145
+          ],
+          [
+            -0.03282740026728232,
+            -0.8627426994950808,
+            0.5045764523435794
+          ],
+          [
+            -0.08395042307334344,
+            0.5054446475527941,
+            0.8587654130937263
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.052,
+          "foreheadGain": 0.11,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "stock",
@@ -1267,7 +1563,7 @@
       "id": "sunset",
       "label": "Arabian",
       "file": "./models/native-roster/sunset.bin",
-      "sha256": "8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575",
+      "sha256": "22c8884b52200501f884594ee2767e5d92739ae157020dd0f6218d2dfcf4a9d1",
       "byteLength": 728256,
       "meshes": [
         {
@@ -1277,12 +1573,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00011082412115044449
+            "scale": 0.0002255022252502628
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 6.399684570522972e-06
+            "scale": 9.360398930417514e-06
           }
         },
         {
@@ -1292,12 +1588,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 2.3049358455350037e-05
+            "scale": 8.579886937160148e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.3774960970322e-06
+            "scale": 8.137768181920582e-06
           }
         },
         {
@@ -1312,7 +1608,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 7.424452543807294e-06
+            "scale": 1.2992036671377998e-05
           }
         },
         {
@@ -1322,12 +1618,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00010193140959728478
+            "scale": 0.00019462969402787386
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.734202070632291e-06
+            "scale": 1.591335410726089e-05
           }
         },
         {
@@ -1337,12 +1633,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 5.92809845520606e-05
+            "scale": 5.01751185195055e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 2.2712847611495494e-06
+            "scale": 3.239796415820346e-06
           }
         }
       ],
@@ -1403,6 +1699,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.041600000000000005,
+            2.0857876988395314,
+            1.163368792051569
+          ],
+          [
+            0.9962198493948936,
+            0.005139754927443952,
+            0.0867155960073015
+          ],
+          [
+            -0.03588640008324783,
+            -0.8847327122333613,
+            0.4647151753421288
+          ],
+          [
+            -0.07910864656079497,
+            0.46607039256263244,
+            0.8812038420341988
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "refined",
+          "faceShortenM": 0.052,
+          "foreheadGain": 0.11,
+          "neckArchM": 0.038,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "refined",
@@ -1445,7 +1778,7 @@
       "id": "iceland",
       "label": "Icelandic Horse",
       "file": "./models/native-roster/iceland.bin",
-      "sha256": "c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400",
+      "sha256": "212f619abfbe3445dcd2629489d372fe33156ce73a4d0518627f6fcc4c1cdf9c",
       "byteLength": 728256,
       "meshes": [
         {
@@ -1455,12 +1788,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 7.906566397568286e-05
+            "scale": 0.00020755182009976123
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 4.417289460285447e-06
+            "scale": 8.260982746875411e-06
           }
         },
         {
@@ -1470,12 +1803,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 4.041725518537073e-05
+            "scale": 9.945945741310458e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.643273622235162e-06
+            "scale": 8.507451267267962e-06
           }
         },
         {
@@ -1490,7 +1823,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 3.907340422427188e-06
+            "scale": 1.2845925647559905e-05
           }
         },
         {
@@ -1500,12 +1833,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00018535920555199707
+            "scale": 0.00023945529872431407
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 4.49532112716974e-06
+            "scale": 1.959246597688395e-05
           }
         },
         {
@@ -1515,12 +1848,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 8.284622934144464e-05
+            "scale": 0.00012076613852152752
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.6019116659730885e-06
+            "scale": 2.6736216998565555e-06
           }
         }
       ],
@@ -1581,6 +1914,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04240000000000001,
+            2.0813477792970603,
+            1.143879111718824
+          ],
+          [
+            0.9963665111133033,
+            0.00828347793869468,
+            0.08476532029752949
+          ],
+          [
+            -0.035596378468267915,
+            -0.8636615771952045,
+            0.5028136612271346
+          ],
+          [
+            -0.07737359608967027,
+            0.5040040317992813,
+            0.8602286106368595
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "pony",
+          "faceShortenM": 0.067,
+          "foreheadGain": 0.16,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "pony",
@@ -1623,7 +1993,7 @@
       "id": "welsh",
       "label": "Welsh Mountain Pony / Section A",
       "file": "./models/native-roster/welsh.bin",
-      "sha256": "0af77ee90e0d8190acc35e050443333ae10665f9039b6029254b3bb1ca44b2e1",
+      "sha256": "97edfa7f99212467d1eb4baecc697c403790337c1bffca7635438012204c265f",
       "byteLength": 728256,
       "meshes": [
         {
@@ -1633,12 +2003,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00012107108286037138
+            "scale": 0.00020040418994715005
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 6.5860250961761e-06
+            "scale": 9.589063944884622e-06
           }
         },
         {
@@ -1648,12 +2018,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 2.777099049481644e-05
+            "scale": 9.375930815150026e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.2809662303860789e-06
+            "scale": 9.36076902846424e-06
           }
         },
         {
@@ -1668,7 +2038,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 7.105829152245739e-06
+            "scale": 1.2488574902876001e-05
           }
         },
         {
@@ -1678,12 +2048,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 6.132657308768088e-05
+            "scale": 0.00021179231954428557
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.8131121879579245e-06
+            "scale": 1.809869586148399e-05
           }
         },
         {
@@ -1693,12 +2063,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 3.75772758393517e-05
+            "scale": 6.581134121134021e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.471936821380662e-06
+            "scale": 3.237547910445981e-06
           }
         }
       ],
@@ -1758,13 +2128,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04120000000000001,
+            2.081904720022828,
+            1.1545469077997674
+          ],
+          [
+            0.9963659978186279,
+            0.006185756343619749,
+            0.08495019016663577
+          ],
+          [
+            -0.03597122309943483,
+            -0.8734936684078791,
+            0.48550477068724773
+          ],
+          [
+            -0.07720666745573791,
+            0.4867962075343272,
+            0.8700968812899951
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "pony",
+          "faceShortenM": 0.062,
+          "foreheadGain": 0.14,
+          "neckArchM": 0.042,
+          "bodyRoundGain": 0.04,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "stock": {
       "id": "stock",
       "label": "Australian Stock Horse",
       "file": "./models/native-roster/stock.bin",
-      "sha256": "9d906ff04732bcd11592bce1437cb1f8dade3e062afb0245e770be9429403c64",
+      "sha256": "30eaf817c6c949d0b903856ae6d3f1b6473f5cd1c9716b535fd68873f5f72ffb",
       "byteLength": 728256,
       "meshes": [
         {
@@ -1774,12 +2181,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 2.5807259072763532e-05
+            "scale": 0.00013709967836131982
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 9.739912788937496e-07
+            "scale": 8.568021340929261e-06
           }
         },
         {
@@ -1789,12 +2196,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 1.1357205638843869e-05
+            "scale": 7.695453179486662e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.0022958638869428e-07
+            "scale": 7.876212265571924e-06
           }
         },
         {
@@ -1804,12 +2211,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.00016519873746975125
+            "scale": 0.00024472556220536565
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 9.47867385152554e-07
+            "scale": 1.0029818355707633e-05
           }
         },
         {
@@ -1819,12 +2226,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 2.4109820362063355e-05
+            "scale": 0.00013154928590527651
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 1.4627685295807633e-06
+            "scale": 1.6562243690046903e-05
           }
         },
         {
@@ -1834,12 +2241,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 1.1996981604253521e-05
+            "scale": 3.362306446794332e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 9.514057627307515e-07
+            "scale": 2.2660753242188687e-06
           }
         }
       ],
@@ -1899,13 +2306,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0396,
+            2.0860434916294115,
+            1.1581773966517646
+          ],
+          [
+            0.99586194249129,
+            0.014950205174097498,
+            0.08964085487503459
+          ],
+          [
+            -0.03246717924526662,
+            -0.862753074151181,
+            0.5045820204035639
+          ],
+          [
+            -0.08488152784516989,
+            0.5054044166881996,
+            0.858697561323386
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.055,
+          "foreheadGain": 0.12,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "fjord": {
       "id": "fjord",
       "label": "Norwegian Fjord",
       "file": "./models/native-roster/fjord.bin",
-      "sha256": "5974a7fa1f3e4b4d91cb6c25e759ccbc72913a634d72188eb5b3be390564b826",
+      "sha256": "0aba0692fd2924932fe9048e2e028ec358150e973ec6be5ef9bb96118a40e900",
       "byteLength": 843820,
       "meshes": [
         {
@@ -1915,12 +2359,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.0001665876239699143
+            "scale": 0.0002669034494971217
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 7.941773968811898e-06
+            "scale": 9.333129768555402e-06
           }
         },
         {
@@ -1930,12 +2374,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 7.181660857833496e-05
+            "scale": 0.00012817216347766117
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.7004897205766696e-06
+            "scale": 8.645743952210877e-06
           }
         },
         {
@@ -1945,12 +2389,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0019993540647081144
+            "scale": 0.0021051658709600836
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 5.977003201282616e-05
+            "scale": 6.0216930325416795e-05
           }
         },
         {
@@ -1960,12 +2404,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00037802940493032993
+            "scale": 0.0004295351712765874
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 7.263393707399364e-06
+            "scale": 1.920270099380843e-05
           }
         },
         {
@@ -1975,12 +2419,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00017451594109774417
+            "scale": 0.00021072781021858782
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 3.3855225166889838e-06
+            "scale": 3.3790156388505824e-06
           }
         }
       ],
@@ -3481,17 +3925,17 @@
               "itemSize": 1,
               "componentType": "uint16"
             },
-            "restReconstructionMaxErrorM": 8.322330867033196e-08,
+            "restReconstructionMaxErrorM": 8.370003129975438e-08,
             "standingBoundsM": {
               "min": [
-                -0.06213875147343008,
-                1.8538631870375057,
+                -0.07055630311166491,
+                1.8538631834418011,
                 0.4209335235948652
               ],
               "max": [
-                0.012144635246047388,
-                2.2128832105709133,
-                1.0949364865205689
+                0.01263400994393439,
+                2.2466578106232893,
+                1.087231265915913
               ]
             }
           }
@@ -3519,7 +3963,65 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Source body, eye, tack and original hair topology are preserved. The short continuous crest is an additive mesh attached to copied native hair-root skin weights; native motions remain unchanged.",
+      "limitations": "Original source topology and motion are preserved. The additive groom copies original hair skin weights; native articulated limb proportions and gait clips remain shared.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.044800000000000006,
+            2.0784230278464744,
+            1.139406780346781
+          ],
+          [
+            0.9967260102622856,
+            0.0020985100614627655,
+            0.0808260893656754
+          ],
+          [
+            -0.03875248131467989,
+            -0.864959860646325,
+            0.5003425673102831
+          ],
+          [
+            -0.07096129690600074,
+            0.5018366623974496,
+            0.8620466684670886
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "additiveGroom": {
+          "version": 1,
+          "parameters": {
+            "family": "pony",
+            "faceShortenM": 0.06,
+            "foreheadGain": 0.15,
+            "neckArchM": 0.035,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.02,
+            "quarterLiftM": 0.012,
+            "neckSweepM": 0.028,
+            "cheekGain": 0.045
+          },
+          "minJacobianDeterminant": 0.7590225209256036,
+          "affectedVertices": 1522,
+          "maxAdditionalDeltaM": 0.04494583644199721,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "parameters": {
+          "family": "pony",
+          "faceShortenM": 0.06,
+          "foreheadGain": 0.15,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "pony",
@@ -3562,7 +4064,7 @@
       "id": "morgan",
       "label": "Morgan",
       "file": "./models/native-roster/morgan.bin",
-      "sha256": "176dd003fe6029ef4dae2eb3f754f17fb617247c6defd1419a34eedea824262b",
+      "sha256": "32b90cfb8d5fd00fe72d7d7fd523adcbeb3f7d04c5ced23df395b5980e22af16",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3572,12 +4074,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.0001226967667197326
+            "scale": 0.0002586459454427639
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 5.889430422123136e-06
+            "scale": 1.019869724561685e-05
           }
         },
         {
@@ -3587,12 +4089,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 3.183789777018037e-05
+            "scale": 9.735361730053874e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.3548044633566306e-06
+            "scale": 9.978828483055771e-06
           }
         },
         {
@@ -3602,12 +4104,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.00028404870607568643
+            "scale": 0.0002832979654049581
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 7.543730831781807e-06
+            "scale": 1.1323839333400811e-05
           }
         },
         {
@@ -3617,12 +4119,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 8.719232427768257e-05
+            "scale": 0.0001760594444275029
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.722364469379152e-06
+            "scale": 1.8808675920569905e-05
           }
         },
         {
@@ -3632,12 +4134,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 5.055500067447009e-05
+            "scale": 7.145731479046076e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 2.6066555481409417e-06
+            "scale": 2.606604645370317e-06
           }
         }
       ],
@@ -3697,13 +4199,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04240000000000001,
+            2.0828879820650616,
+            1.154105819031163
+          ],
+          [
+            0.996412949843012,
+            0.005850179914242965,
+            0.08442161322859301
+          ],
+          [
+            -0.03633921305407428,
+            -0.8713647205660515,
+            0.48928824362277257
+          ],
+          [
+            -0.0764244396757854,
+            0.4906009571411556,
+            0.8680265006740429
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.06,
+          "foreheadGain": 0.13,
+          "neckArchM": 0.045,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "thoro": {
       "id": "thoro",
       "label": "Thoroughbred",
       "file": "./models/native-roster/thoro.bin",
-      "sha256": "d6261a3164afa6fca69e8d79fbe3b856d75dbcb471a4387c4509d5b699cecc3f",
+      "sha256": "2e2f54d5de3cb5e0761b53275bcfb6467d1cc22e630d887fa4e691d9d3f77765",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3713,12 +4252,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 9.922443186272504e-05
+            "scale": 0.00014817355774088294
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 3.94255074664486e-06
+            "scale": 8.641395721313583e-06
           }
         },
         {
@@ -3728,12 +4267,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 6.344869520315651e-05
+            "scale": 8.082796663458546e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.4343657663284022e-06
+            "scale": 6.9980004291594e-06
           }
         },
         {
@@ -3743,12 +4282,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0003672100909480519
+            "scale": 0.0004484953389651507
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 4.850969999002835e-06
+            "scale": 1.0809412714342857e-05
           }
         },
         {
@@ -3758,12 +4297,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00018292138137295883
+            "scale": 0.0001620421096937017
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 6.3123664309394115e-06
+            "scale": 9.959775641798476e-06
           }
         },
         {
@@ -3773,12 +4312,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 8.517066030838828e-05
+            "scale": 8.228949670598827e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 3.677050082165478e-06
+            "scale": 3.680715634836636e-06
           }
         }
       ],
@@ -3838,13 +4377,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0376,
+            2.0915769721535256,
+            1.1705932196532192
+          ],
+          [
+            0.9951852053047445,
+            0.022099789710707023,
+            0.09548825287592125
+          ],
+          [
+            -0.029588899288029408,
+            -0.8610499306267759,
+            0.5076588559323548
+          ],
+          [
+            -0.09343930747536719,
+            0.5080399750633477,
+            0.8562502435364073
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "refined",
+          "faceShortenM": 0.038,
+          "foreheadGain": 0.08,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.02,
+          "quarterExtraGain": 0.01,
+          "quarterLiftM": 0.006,
+          "neckSweepM": 0.024,
+          "cheekGain": 0.03
+        }
+      }
     },
     "knab": {
       "id": "knab",
       "label": "Knabstrupper",
       "file": "./models/native-roster/knab.bin",
-      "sha256": "815ae0c534b24b88e27cb6408cd4308fedc83185b7562f6cd2def363b609a20e",
+      "sha256": "94126bd1c316e397ea8ccbaddf3c77754d51c84921683bafb5cf527dd33f5aa4",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3854,12 +4430,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 7.309510636632574e-05
+            "scale": 0.00015851801266961117
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.579515894463732e-06
+            "scale": 9.679818881550715e-06
           }
         },
         {
@@ -3869,12 +4445,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 3.1342551315188664e-05
+            "scale": 8.280351032529568e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 3.762420978088454e-07
+            "scale": 8.483314922068158e-06
           }
         },
         {
@@ -3884,12 +4460,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.00014438349795207613
+            "scale": 0.00023928495435283708
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 3.0298064529883586e-06
+            "scale": 1.0624506991339238e-05
           }
         },
         {
@@ -3899,12 +4475,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 6.999319659072264e-05
+            "scale": 0.0001139365575214219
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 1.7535848428430636e-06
+            "scale": 1.6650892190622808e-05
           }
         },
         {
@@ -3914,12 +4490,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 3.775694497525765e-05
+            "scale": 6.296267644587707e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.0547634682875915e-06
+            "scale": 2.099452099623904e-06
           }
         }
       ],
@@ -3979,13 +4555,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0408,
+            2.0880702453010564,
+            1.1611370280970346
+          ],
+          [
+            0.9959131743010671,
+            0.015242692247584528,
+            0.08902027626680198
+          ],
+          [
+            -0.03261793527760378,
+            -0.858426367883291,
+            0.5118986630388155
+          ],
+          [
+            -0.08422006620632859,
+            0.5127102800371239,
+            0.8544209437931957
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "stock",
+          "faceShortenM": 0.054,
+          "foreheadGain": 0.12,
+          "neckArchM": 0.04,
+          "bodyRoundGain": 0.035,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.01,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.045
+        }
+      }
     },
     "vanner": {
       "id": "vanner",
       "label": "Gypsy Vanner",
       "file": "./models/native-roster/vanner.bin",
-      "sha256": "ffd006da8a808c287410fb147688bde72e3b9c20e05c8a9bf8496d6a858250ac",
+      "sha256": "9b65117f0567ec1b47adaf6437af3e32cbb84684c270e9474a7cce6a86208007",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3995,12 +4608,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00019680935825028886
+            "scale": 0.0003043131472651318
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 7.888065956040005e-06
+            "scale": 1.1988120342445698e-05
           }
         },
         {
@@ -4010,12 +4623,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 6.862956027241879e-05
+            "scale": 0.0001310982521019024
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.947615700053185e-06
+            "scale": 1.1595901405447314e-05
           }
         },
         {
@@ -4030,7 +4643,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 9.057717968038624e-06
+            "scale": 1.2694173318272261e-05
           }
         },
         {
@@ -4040,12 +4653,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0004394890264551817
+            "scale": 0.00048754971929137607
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 6.108364215494249e-06
+            "scale": 1.983884704643568e-05
           }
         },
         {
@@ -4055,12 +4668,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00020493815982713424
+            "scale": 0.00023976417017902344
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 2.847789210149047e-06
+            "scale": 3.993744783267899e-06
           }
         }
       ],
@@ -4120,13 +4733,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.045200000000000004,
+            2.0812625150337674,
+            1.1469495182247507
+          ],
+          [
+            0.9967117343103805,
+            0.004352041017118467,
+            0.08091216488871547
+          ],
+          [
+            -0.03798158519538845,
+            -0.8569681661237532,
+            0.5139678603147639
+          ],
+          [
+            -0.0715759587713557,
+            0.5153509697181878,
+            0.8539849296893268
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "cob",
+          "faceShortenM": 0.067,
+          "foreheadGain": 0.15,
+          "neckArchM": 0.052,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.025,
+          "quarterLiftM": 0.016,
+          "neckSweepM": 0.032,
+          "cheekGain": 0.055
+        }
+      }
     },
     "marwari": {
       "id": "marwari",
       "label": "Marwari",
       "file": "./models/native-roster/marwari.bin",
-      "sha256": "0391e61b8ad20098673c8931fe152a902e77d1fec09323b9891b0f8693e78d91",
+      "sha256": "bc837b2dbe96cb4981eb716a98c644b2106b69390f19c5fb92cf4a2fb1cb822c",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4136,12 +4786,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00010886171416969025
+            "scale": 0.00021512532097607697
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 9.842312858759451e-06
+            "scale": 1.1001733616405031e-05
           }
         },
         {
@@ -4151,12 +4801,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 7.545091722596035e-05
+            "scale": 8.795805563749549e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.4556596738547283e-06
+            "scale": 8.133543356792234e-06
           }
         },
         {
@@ -4166,12 +4816,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0001013432517800439
+            "scale": 0.00020974177461003716
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 3.97166151497014e-06
+            "scale": 1.2991968953450687e-05
           }
         },
         {
@@ -4181,12 +4831,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0001088426723057996
+            "scale": 0.00014756035992363737
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 2.995570926088448e-06
+            "scale": 1.254884737171577e-05
           }
         },
         {
@@ -4196,12 +4846,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 3.171319581669002e-05
+            "scale": 2.9167033720181883e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.4606760455060049e-06
+            "scale": 1.6856469808859913e-06
           }
         }
       ],
@@ -4261,13 +4911,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0388,
+            2.0906789743745846,
+            1.1700854757559398
+          ],
+          [
+            0.9955400163269394,
+            0.0217445772912148,
+            0.09180005038224973
+          ],
+          [
+            -0.030272664296233067,
+            -0.8479834060080652,
+            0.5291575464182368
+          ],
+          [
+            -0.08935122656217304,
+            0.5295765445083338,
+            0.8435431475736426
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "refined",
+          "faceShortenM": 0.046,
+          "foreheadGain": 0.1,
+          "neckArchM": 0.045,
+          "bodyRoundGain": 0.025,
+          "quarterExtraGain": 0.012,
+          "quarterLiftM": 0.007,
+          "neckSweepM": 0.028,
+          "cheekGain": 0.035
+        }
+      }
     },
     "lipiz": {
       "id": "lipiz",
       "label": "Lipizzaner",
       "file": "./models/native-roster/lipiz.bin",
-      "sha256": "97997fc863a5b0d28853ba19451ca6f75dca80efe75d56dbcc34edbb02419c39",
+      "sha256": "c1b6135ccb3d28658ffccbd1f7dd6b56849e01cdce2046e1cf89602a72806d7c",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4277,12 +4964,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00020077630646132138
+            "scale": 0.0003513859481697316
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 8.99367891394458e-06
+            "scale": 1.2578944758102526e-05
           }
         },
         {
@@ -4292,12 +4979,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 2.4636819014235547e-05
+            "scale": 9.993515880018753e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.3813172370546264e-06
+            "scale": 1.0557212777503432e-05
           }
         },
         {
@@ -4312,7 +4999,7 @@
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.1415289745399587e-05
+            "scale": 1.2633827505478383e-05
           }
         },
         {
@@ -4322,12 +5009,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00019582766665687595
+            "scale": 0.0002413907214486339
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 8.508564488058226e-06
+            "scale": 1.87170236292326e-05
           }
         },
         {
@@ -4337,12 +5024,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00010085029844182309
+            "scale": 0.0001250338501144925
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 4.304201658489312e-06
+            "scale": 4.297755321552972e-06
           }
         }
       ],
@@ -4402,13 +5089,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04200000000000001,
+            2.0848545061495294,
+            1.1548985682097772
+          ],
+          [
+            0.9962649596745579,
+            0.012885929830435948,
+            0.08538198250835298
+          ],
+          [
+            -0.034033823427028986,
+            -0.850159189236863,
+            0.5254246395241259
+          ],
+          [
+            -0.07935886206082737,
+            0.5263680326240613,
+            0.846545252921476
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "baroque",
+          "faceShortenM": 0.058,
+          "foreheadGain": 0.13,
+          "neckArchM": 0.05,
+          "bodyRoundGain": 0.04,
+          "quarterExtraGain": 0.02,
+          "quarterLiftM": 0.012,
+          "neckSweepM": 0.03,
+          "cheekGain": 0.045
+        }
+      }
     },
     "sport": {
       "id": "sport",
       "label": "Friesian Sporthorse",
       "file": "./models/native-roster/sport.bin",
-      "sha256": "df35826e54a9297ca4fe077b07229f283b7618dc3d0ba225674b12a8cb8bb246",
+      "sha256": "3c194af58bb93747a4506292bee0211e8fbe431098dd680d1e7bc947138de0c0",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4418,12 +5142,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.000111808557337227
+            "scale": 0.00021753461338026397
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 4.329575695014351e-06
+            "scale": 8.618669058133793e-06
           }
         },
         {
@@ -4433,12 +5157,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 4.986994413087044e-05
+            "scale": 7.685065461497087e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 5.547565969765892e-07
+            "scale": 7.158164748113464e-06
           }
         },
         {
@@ -4448,12 +5172,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.00029018255318079766
+            "scale": 0.0002896593407595949
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 5.472984610237311e-06
+            "scale": 9.714434235558639e-06
           }
         },
         {
@@ -4463,12 +5187,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 7.334976640396997e-05
+            "scale": 0.0001084244634557965
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 4.4205339081317e-06
+            "scale": 1.5374829950176075e-05
           }
         },
         {
@@ -4478,12 +5202,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 3.726006152913812e-05
+            "scale": 5.6835004413722196e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 2.1538369333565683e-06
+            "scale": 2.1537970953978846e-06
           }
         }
       ],
@@ -4543,13 +5267,50 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0396,
+            2.089926470446115,
+            1.1682275604951697
+          ],
+          [
+            0.9956870347259709,
+            0.017002821589617273,
+            0.09120434713649853
+          ],
+          [
+            -0.031671669524526005,
+            -0.861712170744389,
+            0.5064079779589993
+          ],
+          [
+            -0.08720226045311265,
+            0.5071124518772782,
+            0.8574571283293893
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "sport",
+          "faceShortenM": 0.048,
+          "foreheadGain": 0.1,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.03,
+          "quarterExtraGain": 0.015,
+          "quarterLiftM": 0.009,
+          "neckSweepM": 0.026,
+          "cheekGain": 0.035
+        }
+      }
     },
     "akhal": {
       "id": "akhal",
       "label": "Akhal-Teke",
       "file": "./models/native-roster/akhal.bin",
-      "sha256": "2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899",
+      "sha256": "2547e3d01f57ff1e2560ed5f2833eda91adee71345c04bbf021cf24a5a07cf6e",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4559,12 +5320,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00017086529214264964
+            "scale": 0.00021679551352651492
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 6.873484320167476e-06
+            "scale": 9.577329081990794e-06
           }
         },
         {
@@ -4574,12 +5335,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 0.00011067114982866664
+            "scale": 0.00012782662670433802
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 3.180111492946471e-06
+            "scale": 6.408227484505854e-06
           }
         },
         {
@@ -4589,12 +5350,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0006057287210573119
+            "scale": 0.0007069440819860674
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 5.859949831020331e-06
+            "scale": 1.3282272405033466e-05
           }
         },
         {
@@ -4604,12 +5365,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00029286959642188575
+            "scale": 0.0002723604715376209
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 9.147591994058183e-06
+            "scale": 1.0286644367660378e-05
           }
         },
         {
@@ -4619,12 +5380,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00013684311453837395
+            "scale": 0.0001329424359710841
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 4.843868549246315e-06
+            "scale": 4.847744141922161e-06
           }
         }
       ],
@@ -4685,6 +5446,43 @@
         "originalUVsPreserved": true
       },
       "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.03560000000000001,
+            2.0963579487491697,
+            1.1824910687665622
+          ],
+          [
+            0.994436128660101,
+            0.028680548698475618,
+            0.10136178837148242
+          ],
+          [
+            -0.027169546532332688,
+            -0.8598362373173528,
+            0.5098465070363474
+          ],
+          [
+            -0.10177721629489692,
+            0.5097637404938598,
+            0.8542729816171002
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "refined",
+          "faceShortenM": 0.04,
+          "foreheadGain": 0.08,
+          "neckArchM": 0.04,
+          "bodyRoundGain": 0.02,
+          "quarterExtraGain": 0.01,
+          "quarterLiftM": 0.006,
+          "neckSweepM": 0.026,
+          "cheekGain": 0.03
+        }
+      },
       "headShape": {
         "version": 1,
         "family": "refined",
@@ -4727,7 +5525,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "09a1961425264c3615fd2625aafc619f16554250a0ea762a69d320dbe93d7764",
+      "sha256": "e16c1a75e5949e6578918e4e16bfbadf96c6d93a743ed0c293a4f5534ce5e6fd",
       "byteLength": 987984,
       "meshes": [
         {
@@ -4752,12 +5550,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 9.962247005002745e-05
+            "scale": 0.0001676673481677887
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 3.1536955379675164e-06
+            "scale": 9.44453091392984e-06
           }
         },
         {
@@ -4767,12 +5565,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.001223773079381108
+            "scale": 0.00137491841631455
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.5483694104096567e-05
+            "scale": 1.9043188098722152e-05
           }
         },
         {
@@ -4782,12 +5580,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0007981780738849847
+            "scale": 0.0008690182539777751
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 1.0643816153129842e-05
+            "scale": 2.1975914686317626e-05
           }
         },
         {
@@ -4797,12 +5595,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00035020438095055155
+            "scale": 0.0003826945139930198
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 5.9623635152015e-06
+            "scale": 6.158964305500146e-06
           }
         }
       ],
@@ -7684,14 +8482,14 @@
             "restReconstructionMaxErrorM": 8.504092456685381e-08,
             "standingBoundsM": {
               "min": [
-                -0.2688065274548219,
+                -0.2737107660687639,
                 0.4942892681102197,
                 -1.1379584201238155
               ],
               "max": [
                 0.08320594493039184,
-                2.169738701136904,
-                1.277930646677536
+                2.2107478457221235,
+                1.284192109584479
               ]
             }
           }
@@ -7720,14 +8518,95 @@
         "originalUVsPreserved": true
       },
       "limitations": "Original joint centers, body weights and gait clips retained. The authored leg surface can reduce original bulges; native source folds remain in some poses. Additive groom copies original hair weights. Sparse collar refit preserves prior shoulder influences but does not eliminate every local intersection.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.046400000000000004,
+            2.085940629910587,
+            1.1559824527033042
+          ],
+          [
+            0.9966157778270368,
+            0.00512141903603664,
+            0.08204122410878378
+          ],
+          [
+            -0.0376368491190399,
+            -0.8588649763628291,
+            0.5108174037419515
+          ],
+          [
+            -0.073078443980431,
+            0.5121764573311961,
+            0.8557656323907059
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "additiveGroom": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.078,
+            "foreheadGain": 0.16,
+            "neckArchM": 0.05,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.7286055801886517,
+          "affectedVertices": 1412,
+          "maxAdditionalDeltaM": 0.06440698349536193,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "collarTransport": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.078,
+            "foreheadGain": 0.16,
+            "neckArchM": 0.05,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.9963066614083295,
+          "affectedVertices": 1402,
+          "maxAdditionalDeltaM": 0.00601041179476422,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "parameters": {
+          "family": "draft",
+          "faceShortenM": 0.078,
+          "foreheadGain": 0.16,
+          "neckArchM": 0.05,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.025,
+          "quarterLiftM": 0.016,
+          "neckSweepM": 0.032,
+          "cheekGain": 0.055
+        }
+      },
       "tackAttachment": {
         "version": 1,
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
+        "baseMorphSha256": "b2eb9b84e05f4a12e2026bde7666fb7ffdd3dfe6f370b7a44cc4043d7a31a1b7",
         "authoringSha256": "47c451c96979041bea8bcca8ed90509f9e95d7f4321852c6eab55dd4ba53f4c1",
-        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
+        "verifiedPreSculptMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
+        "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
           "count": 2404,
@@ -8650,7 +9529,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "0809ad8b3fba95410c2b07bc259b0c14669396edcc7d53898768bf14cd00a03d",
+      "sha256": "4f53d6c58f001bf1f6a83012eb6e1c7d70c5158779a09a282630cc0b72857734",
       "byteLength": 987984,
       "meshes": [
         {
@@ -8675,12 +9554,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 0.00010386676014988885
+            "scale": 0.00015340527877303286
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.6366616677620794e-06
+            "scale": 8.117777617586276e-06
           }
         },
         {
@@ -8690,12 +9569,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0012469237545080175
+            "scale": 0.0014133284681947926
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.4876796436438138e-05
+            "scale": 2.0224599731122987e-05
           }
         },
         {
@@ -8705,12 +9584,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0008918279473382805
+            "scale": 0.000999499173619056
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 1.1479888133662921e-05
+            "scale": 2.1269143433390063e-05
           }
         },
         {
@@ -8720,12 +9599,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00037019392190540054
+            "scale": 0.00040226887699921636
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 6.4895643471918505e-06
+            "scale": 6.8596525005889325e-06
           }
         }
       ],
@@ -11604,17 +12483,17 @@
               "itemSize": 1,
               "componentType": "uint16"
             },
-            "restReconstructionMaxErrorM": 8.505962366241544e-08,
+            "restReconstructionMaxErrorM": 8.379568948476001e-08,
             "standingBoundsM": {
               "min": [
-                -0.2686390237142454,
+                -0.2737043264984621,
                 0.49429330805546784,
                 -1.1460439353933725
               ],
               "max": [
                 0.08199997328099068,
-                2.187904356177939,
-                1.2933938050741725
+                2.225213016754628,
+                1.3002040234744807
               ]
             }
           }
@@ -11643,14 +12522,95 @@
         "originalUVsPreserved": true
       },
       "limitations": "Original joint centers, body weights and gait clips retained. The authored leg surface can reduce original bulges; native source folds remain in some poses. Additive groom copies original hair weights. Sparse collar refit preserves prior shoulder influences but does not eliminate every local intersection.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.046,
+            2.092821107103112,
+            1.1721747596391594
+          ],
+          [
+            0.9963750398334645,
+            0.011535523461702758,
+            0.0842835197136815
+          ],
+          [
+            -0.03505045268825623,
+            -0.8470892108993054,
+            0.5302936304957286
+          ],
+          [
+            -0.07751287482225352,
+            0.5313255127287383,
+            0.8436142209329649
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "additiveGroom": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.075,
+            "foreheadGain": 0.14,
+            "neckArchM": 0.055,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.7286279797905542,
+          "affectedVertices": 1408,
+          "maxAdditionalDeltaM": 0.0674932848299818,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "collarTransport": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.075,
+            "foreheadGain": 0.14,
+            "neckArchM": 0.055,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.9965939054610791,
+          "affectedVertices": 1402,
+          "maxAdditionalDeltaM": 0.006018407878446708,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "parameters": {
+          "family": "draft",
+          "faceShortenM": 0.075,
+          "foreheadGain": 0.14,
+          "neckArchM": 0.055,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.025,
+          "quarterLiftM": 0.016,
+          "neckSweepM": 0.032,
+          "cheekGain": 0.055
+        }
+      },
       "tackAttachment": {
         "version": 1,
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
+        "baseMorphSha256": "597421d294a640c0faa8d54219de6e3d66e5a0566fa1b260ca86d685533c5da9",
         "authoringSha256": "c28cfb73d027d2f69050b9ea2be0a0d0543befe6c61725bc1096e5c8a35a7798",
-        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
+        "verifiedPreSculptMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
+        "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
           "count": 2404,
@@ -12573,7 +13533,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "049688ecb1dd9c96ebc95fb4f9de24b0e85e2a1088f7be81317224fa93ea06aa",
+      "sha256": "c3c5804d9bd8f0d9c2989e1469c97bfe232a9640810e68e38bb66a4db7fac1a3",
       "byteLength": 987984,
       "meshes": [
         {
@@ -12598,12 +13558,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 9.968783264635118e-05
+            "scale": 0.0001514108757997951
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 2.6749061465303354e-06
+            "scale": 7.732414560120647e-06
           }
         },
         {
@@ -12613,12 +13573,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0012362694198054212
+            "scale": 0.0013935813046542396
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.463874650243712e-05
+            "scale": 2.0405437946911512e-05
           }
         },
         {
@@ -12628,12 +13588,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0007165570494587455
+            "scale": 0.0007923030537016786
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 1.1064282959504033e-05
+            "scale": 2.1197971323381502e-05
           }
         },
         {
@@ -12643,12 +13603,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.0003090762070073357
+            "scale": 0.00034246858570591174
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 6.0766188669865935e-06
+            "scale": 6.3183774903578585e-06
           }
         }
       ],
@@ -15527,17 +16487,17 @@
               "itemSize": 1,
               "componentType": "uint16"
             },
-            "restReconstructionMaxErrorM": 8.257284291267286e-08,
+            "restReconstructionMaxErrorM": 8.327369717741363e-08,
             "standingBoundsM": {
               "min": [
-                -0.25921385942370684,
+                -0.26416710914236774,
                 0.4942912490806668,
                 -1.1474035067738524
               ],
               "max": [
                 0.08468284127018438,
-                2.1898077920740686,
-                1.297893426190432
+                2.22355763189717,
+                1.3051084593287452
               ]
             }
           }
@@ -15566,14 +16526,95 @@
         "originalUVsPreserved": true
       },
       "limitations": "Original joint centers, body weights and gait clips retained. The authored leg surface can reduce original bulges; native source folds remain in some poses. Additive groom copies original hair weights. Sparse collar refit preserves prior shoulder influences but does not eliminate every local intersection.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.0456,
+            2.09408283950823,
+            1.1760067819910056
+          ],
+          [
+            0.9962682531657588,
+            0.009941128338824955,
+            0.08573646657868728
+          ],
+          [
+            -0.03521302222263276,
+            -0.8601003257610897,
+            0.5089081181231203
+          ],
+          [
+            -0.07880108374886553,
+            0.51002804196732,
+            0.8565405919201879
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "additiveGroom": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.072,
+            "foreheadGain": 0.15,
+            "neckArchM": 0.052,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.728652745532032,
+          "affectedVertices": 1407,
+          "maxAdditionalDeltaM": 0.06529102335182957,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "collarTransport": {
+          "version": 1,
+          "parameters": {
+            "family": "draft",
+            "faceShortenM": 0.072,
+            "foreheadGain": 0.15,
+            "neckArchM": 0.052,
+            "bodyRoundGain": 0.045,
+            "quarterExtraGain": 0.025,
+            "quarterLiftM": 0.016,
+            "neckSweepM": 0.032,
+            "cheekGain": 0.055
+          },
+          "minJacobianDeterminant": 0.9964214914765088,
+          "affectedVertices": 1402,
+          "maxAdditionalDeltaM": 0.00600751303027805,
+          "lowerSurfaceUnchangedBelowM": 1.22,
+          "sharedBodyEyesTackHairField": true,
+          "ears": "Rigid shared poll translation above longitudinal .005m; smooth transition to forehead by .18m",
+          "method": "Shared compact head-space face shortening/forehead sculpt, high-neck arch and connected upper-quarter surface mass. Original skeleton, weights and clips unchanged."
+        },
+        "parameters": {
+          "family": "draft",
+          "faceShortenM": 0.072,
+          "foreheadGain": 0.15,
+          "neckArchM": 0.052,
+          "bodyRoundGain": 0.045,
+          "quarterExtraGain": 0.025,
+          "quarterLiftM": 0.016,
+          "neckSweepM": 0.032,
+          "cheekGain": 0.055
+        }
+      },
       "tackAttachment": {
         "version": 1,
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
+        "baseMorphSha256": "a128ce35397f9ed42cb67375b1d6d937604afe530828fd8d2df8fed89996c9d7",
         "authoringSha256": "2c3a017250a366886581daf7bad6266717a86acb49827e42d301742116a7d3b7",
-        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched.",
+        "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
+        "verifiedPreSculptMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
+        "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
           "count": 2404,
@@ -16496,7 +17537,7 @@
       "id": "bay-sporthorse",
       "label": "Bay Sporthorse",
       "file": "./models/native-roster/bay-sporthorse.bin",
-      "sha256": "1ba3bdabbb7dd6641cfd71fc01409b38883e7aa8c3ac68d0925709b1d8b67b12",
+      "sha256": "74b70d42babbccd6d8cc4929a882574fe823b4b3b85951ef10f852a546c803c6",
       "byteLength": 728256,
       "meshes": [
         {
@@ -16506,12 +17547,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 2.1760858843060287e-05
+            "scale": 0.00012802425784382075
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 6.396266083209388e-07
+            "scale": 8.532145012686489e-06
           }
         },
         {
@@ -16521,12 +17562,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 1e-10
+            "scale": 7.729929746005758e-05
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1e-10
+            "scale": 8.148705885044397e-06
           }
         },
         {
@@ -16536,12 +17577,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 2.371622880271423e-05
+            "scale": 0.00012696332797077146
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 7.892306564139259e-07
+            "scale": 9.246224255676851e-06
           }
         },
         {
@@ -16551,12 +17592,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 1.5602337839720694e-05
+            "scale": 0.0001211233253215533
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 4.96933011525013e-07
+            "scale": 1.5225938090872888e-05
           }
         },
         {
@@ -16566,12 +17607,12 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 6.748124315373141e-06
+            "scale": 2.759369611671094e-05
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 1.5406873302977259e-07
+            "scale": 1.6523562795221545e-06
           }
         }
       ],
@@ -16631,7 +17672,44 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.",
+      "modelSculpt": {
+        "version": 1,
+        "frame": [
+          [
+            -0.04,
+            2.085,
+            1.155
+          ],
+          [
+            0.9959570951203695,
+            0.013813051366055491,
+            0.08876184028823435
+          ],
+          [
+            -0.03296691587810041,
+            -0.8629575038679201,
+            0.5041998899003597
+          ],
+          [
+            -0.08356223511181089,
+            0.5050876618271399,
+            0.859013275062214
+          ]
+        ],
+        "implementationSha256": "9869685613f661b980644bb1ddc605ba2747207824e1d5614ca5224e42ab11d2",
+        "parameters": {
+          "family": "sport",
+          "faceShortenM": 0.048,
+          "foreheadGain": 0.1,
+          "neckArchM": 0.035,
+          "bodyRoundGain": 0.03,
+          "quarterExtraGain": 0.015,
+          "quarterLiftM": 0.009,
+          "neckSweepM": 0.026,
+          "cheekGain": 0.035
+        }
+      }
     }
   }
 }

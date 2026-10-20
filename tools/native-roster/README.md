@@ -61,6 +61,62 @@ Normals may be normalized after decoding. The builder reports actual world
 quantization error and asserts it remains below 0.02 mm. All deltas on protected
 vertices are exactly zero, including after quantization.
 
+## Equestrian model sculpt (2026-10-20)
+
+`equestrian_silhouette.py` applies an additional original geometry sculpt after
+all previously reviewed body, leg and grooming fits. It changes actual decoded
+vertices and normals, rather than coat textures, shaders or actor scale. Breed
+profiles control the face shortening, forehead breadth and high neck crest;
+the upper barrel and quarters receive a continuous rounded transition. Drafts
+use the strongest face/crest treatment; lighter breeds retain finer proportions.
+The ears follow a rigid poll translation, with a smooth transition below their
+roots, retaining their original pointed contour and existing articulation.
+
+The same smooth field carries the body, eye surfaces, bridle, original hair,
+additive groom shells and previously fitted draft breastcollar. The collar's
+canonical pre-sculpt source is still hash-verified; only its fitted position
+and normal arrays are transported. Its vertex ownership and four skin
+influences stay exact. The manifest and report record the implementation hash,
+profile strengths and affected geometry. Source GLBs, the 677-joint skeleton,
+weights, UVs, clips and coat images are unchanged. This is a sculpted adaptation
+of the existing licensed source, not a replacement artist mesh or a new rig.
+
+The neck support avoids the sampled withers, preserving the released actor
+scale. Protected lower-leg and hoof surfaces, seat anchor and stirrup contacts
+are compared against the fixed pre-sculpt release `022bf4d`. The build still
+supports `--geometry-only` to preserve every coat byte.
+
+Independent verification uses an immutable snapshot of that release's manifest,
+25 buffers and source/texture digests (never a snapshot of the candidate):
+
+```
+python3 tools/native-roster/qa-model-art.py --baseline-dir /path/to/fixed-before --report /tmp/model-art.json
+node tools/test-native-sculpt-fit.mjs --baseline-dir=/path/to/fixed-before --report=/tmp/sculpt-fit.json
+node tools/test-native-sculpt-cache.mjs --baseline-dir=/path/to/fixed-before
+```
+
+The decoded-surface gate checks regional proportion changes, rejects uniform
+scaling as a substitute, and measures folds, local strain, welded seams and
+protected contacts. The fit suite samples actual production poses for both
+canter/gallop leads, jump, graze and rear, comparing eye/lid and tack-to-skin
+neighborhoods with the same old pose. These contact proxies complement visual
+front, side and head review; they do not claim that inherited source anatomy or
+motion is perfect. The cache test instantiates actual geometry in two fresh
+libraries, proving no-store manifests, SHA-keyed buffers and alias inheritance.
+No runtime import or material change is needed for this asset release.
+
+Against that fixed baseline, the final 25 sculpts shorten the measured head
+span by 2.5–6.7% and broaden the forehead by 7.4–14.6%, with family-dependent
+muzzle shortening. All 50 ear surfaces retain their rigid shape within 0.008 mm.
+The decoded-surface suite reports zero standing inversions or new seam tears;
+protected lower legs and hooves are exact and stirrup quantization drift stays
+below 0.012 mm. The final production fit run passes 3,500 poses (140 per
+foundation), with no added body-floor penetration and less than 1.1 mm seat
+neighborhood drift. Existing draft leg and welded thigh/shoulder deformation
+checks also pass against the fixed release. Historical `validate.py` and `qa-head-shapes.py` intentionally
+pin former artwork and smaller former face fields; those historical gates are
+retained without silently updating their expected hashes for this new sculpt.
+
 ## Draft surface shapes
 
 `DRAFT_SHAPES` in `build.py` contains the native art overrides, independently of

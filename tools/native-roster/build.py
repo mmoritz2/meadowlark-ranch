@@ -23,6 +23,7 @@ from groom import shape_fjord_groom
 from equestrian_groom import shape_equestrian_groom
 from leg_contour import shape_bone_frame_legs
 from collar_attachment import pack_collar_attachment
+from equestrian_silhouette import PROFILES as MODEL_SCULPTS, VERSION as MODEL_SCULPT_VERSION, sculpt as sculpt_model, deform as deform_model
 
 SOURCE = ROOT / 'review/native-trot-reference-kit/white/model.glb'
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
@@ -601,7 +602,17 @@ def main():
     pending=[]
     for key in keys:
         spec=specs[key];s={**spec['sculpt_targets'],**DRAFT_SHAPES.get(key,{})};packed=bytearray();records=[];report={'id':key,'meshes':[]}
-        bodytarget=None;groom_report=None
+        bodytarget=None;groom_report=None;canonical_prefix=bytearray();model_frame=None
+        if key in MODEL_SCULPTS:
+            frame_points=cage(np.array([HEAD_ORIGIN,HEAD_ORIGIN+.1*HEAD_SIDE,HEAD_ORIGIN+.1*HEAD_AXIS]),s,key)
+            origin=frame_points[0];axis=frame_points[2]-origin;axis/=np.linalg.norm(axis)
+            side=frame_points[1]-origin;side-=axis*np.dot(side,axis);side/=np.linalg.norm(side)
+            model_frame=(origin,side,axis,np.cross(axis,side))
+            report['modelSculpt']={'version':MODEL_SCULPT_VERSION,'meshes':[], 'frame': [a.tolist() for a in model_frame], 'implementationSha256':sha((Path(__file__).parent/'equestrian_silhouette.py').read_bytes())}
+        def pack_canonical(array,field,mesh_index):
+            scale=max(float(np.max(abs(array)))/32760,1e-10)
+            if mesh_index==0 and key in DRAFT_BODY_QUANTIZATION:scale=max(scale,DRAFT_BODY_QUANTIZATION[key][field])
+            canonical_prefix.extend(np.rint(array/scale).astype('<i2').tobytes())
         body=meshes[0]['actual'];wm=(abs(body[:,0])<.07)&(body[:,2]>.285)&(body[:,2]<.426)
         target_withers=float(cage(body,s,key,limbs if key in DRAFT_SHAPES else None)[wm,1].max())
         draft_actor=spec['height']['target_m']/target_withers
@@ -630,6 +641,21 @@ def main():
                     anchor=ids[np.argmax(p[ids,1])];root=q[anchor].copy()
                     q[ids]=root+(q[ids]-root)*np.array([1+.08*(growth-1),growth,1+.04*(growth-1)])
                     q[ids,1]=np.maximum(q[ids,1],.035)
+            if model_frame is not None:
+                # Retain the exact old five-mesh prefix to verify the source of
+                # the reviewed collar fit before transporting its targets.
+                old_delta=np.linalg.solve(m['linear'],(q-p)[...,None])[...,0]
+                old_normal=np.linalg.solve(m['linear'],targetnormal[...,None])[...,0]
+                old_normal/=np.maximum(np.linalg.norm(old_normal,axis=1,keepdims=True),1e-12)
+                old_ndelta=old_normal-m['normal'];old_fixed=p[:,1]<=(.00005 if limb_cage is not None else .65)
+                if m['index']!=2:old_delta[old_fixed]=0;old_ndelta[old_fixed]=0
+                pack_canonical(old_delta,'positionDelta',m['index']);pack_canonical(old_ndelta,'normalDelta',m['index'])
+                q,targetnormal,sculpt_report=deform_model(q,targetnormal,key,model_frame)
+                report['modelSculpt']['meshes'].append({'meshIndex':m['index'],**sculpt_report})
+                if m['index']==2 and groom_report and groom_report.get('crestShell'):
+                    shell=groom_report['crestShell']
+                    shell['positions'],shell['normals'],shell_sculpt=deform_model(shell['positions'],shell['normals'],key,model_frame)
+                    report['modelSculpt']['additiveGroom']=shell_sculpt
             if m['index']==0: bodytarget=q.copy()
             # Convert world-space differential into unchanged source mesh space.
             delta=np.linalg.solve(m['linear'],(q-p)[...,None])[...,0]
@@ -658,6 +684,7 @@ def main():
                 decoded=(m['raw']+recovered).astype('<f4').astype(float)
                 tackdecoded=p+np.einsum('nij,nj->ni',m['linear'],decoded-m['raw'])
                 original_tack=cage(p,s,key)
+                if model_frame is not None:original_tack=sculpt_model(original_tack,key,model_frame)
                 report['draftStirrups']={'displayedLiftM':DRAFT_STIRRUP_LIFT_M[key],
                     'sourceLiftM':stirrup_lift,'componentIds':stirrup_components,'tailoredVertices':int(stirrup_mask.sum()),
                     'shorteningSourceYRangeM':[1.20,1.60],
@@ -667,6 +694,7 @@ def main():
                     'unselectedException':'The separately documented breastcollar follows the front body contour.'}
                 assert report['draftStirrups']['unselectedIdealTargetExactlyPreserved']
                 prior_tack=cage(p,s,key,tack_mask=stirrup_mask,tack_lift=stirrup_lift)
+                if model_frame is not None:prior_tack=sculpt_model(prior_tack,key,model_frame)
                 report['draftBreastcollar']={'componentIds':collar_components,'selectedVertices':int(collar_mask.sum()),
                     'boundary':collar_boundary,'maxDisplayedCorrectionM':float(np.linalg.norm(q-prior_tack,axis=1).max()*draft_actor),
                     'unselectedIdealTargetExactlyPreserved':bool(np.array_equal(q[~collar_mask],prior_tack[~collar_mask])),
@@ -679,7 +707,7 @@ def main():
                 # of the packed tack, including its scales—not merely an ideal
                 # floating-point target. A full rebuild without prior output
                 # still derives the same canonical scales from the data peaks.
-                if prior_row and prior_row.get('sculptTargets')==s and prior_row.get('headShape',{}).get('parameters')==head_shape(key) and prior_row.get('draftShape',{}).get('stirrupTailoring',{}).get('sourceLiftM')==stirrup_lift:
+                if prior_row and prior_row.get('modelSculpt',{}).get('version')==(MODEL_SCULPT_VERSION if model_frame is not None else None) and prior_row.get('modelSculpt',{}).get('implementationSha256')==report.get('modelSculpt',{}).get('implementationSha256') and prior_row.get('sculptTargets')==s and prior_row.get('headShape',{}).get('parameters')==head_shape(key) and prior_row.get('draftShape',{}).get('stirrupTailoring',{}).get('sourceLiftM')==stirrup_lift:
                     prior_bytes=(OUT/(key+'.bin')).read_bytes()
                     for field,desc in [('positionDelta',pd),('normalDelta',nd)]:
                         olddesc=prior_row['meshes'][3][field]
@@ -687,14 +715,29 @@ def main():
                         oldq=np.frombuffer(prior_bytes,dtype='<i2',count=olddesc['count'],offset=olddesc['byteOffset']).reshape(-1,3)
                         newq=np.frombuffer(packed,dtype='<i2',count=desc['count'],offset=desc['byteOffset']).reshape(-1,3).copy()
                         assert np.array_equal(oldq[~collar_mask],newq[~collar_mask]), (key,field,'non-collar tack coefficients changed')
-                    report['draftBreastcollar']['previousUnselectedQuantizedCoefficientsExact']=True
+                    # A verification against prior output must not change the
+                    # deterministic sculpt report depending on rebuild history.
+                    if model_frame is None:report['draftBreastcollar']['previousUnselectedQuantizedCoefficientsExact']=True
             records.append({'meshIndex':m['index'],'name':m['name'],'vertexCount':len(p),'positionDelta':pd,'normalDelta':nd})
             report['meshes'].append({'meshIndex':m['index'],'vertices':len(p),'minCageJacobianDeterminant':float(det.min()),
                                      'maxPositionQuantizationErrorM':float(actual_error.max()),'maxAppearanceDeltaM':float(np.linalg.norm(q-p,axis=1).max()),
                                      'fixedLowerVertices':int(fixed.sum()) if m['index']!=2 else 0})
         # The collar format pins the original five-mesh prefix. Additive draft
         # hair follows that section so existing attachment offsets stay valid.
-        collar_attachment=pack_collar_attachment(key,packed) if key in DRAFT_SHAPES else None
+        def transport_collar(data):
+            # Use the authored sparse collar's own retained four influences.
+            weighted=np.einsum('nw,nwij->nij',data['skinWeight'],operators[data['skinIndex']])
+            linear=weighted[:,:3,:3]
+            points=np.einsum('nij,nj->ni',weighted,np.c_[data['position'],np.ones(len(data['position']))])[:,:3]+TRANSLATION
+            normals=np.einsum('nij,nj->ni',linear,data['normal'])
+            target,target_normals,attachment_report=deform_model(points,normals,key,model_frame)
+            data['position']=data['position']+np.linalg.solve(linear,(target-points)[...,None])[...,0]
+            normal=np.linalg.solve(linear,target_normals[...,None])[...,0]
+            data['normal']=normal/np.maximum(np.linalg.norm(normal,axis=1,keepdims=True),1e-12)
+            report['modelSculpt']['collarTransport']=attachment_report
+            return data
+        collar_attachment=pack_collar_attachment(key,packed,baseline_prefix=canonical_prefix if model_frame is not None else None,
+            transport=transport_collar if model_frame is not None else None) if key in DRAFT_SHAPES else None
         if groom_report and groom_report.get('crestShell'):
             groom_report['shell']=pack_groom_shell(groom_report.pop('crestShell'),meshes[2],packed)
         file=OUT/(key+'.bin');pending.append((file,packed))
@@ -702,7 +745,9 @@ def main():
         coatfile=OUT/(key+'-coat.webp')
         body=meshes[0]['actual'];wm=(abs(body[:,0])<.07)&(body[:,2]>.285)&(body[:,2]<.426)
         withers=float(bodytarget[wm,1].max());height=spec['height']['target_m'];actor=height/withers
-        seat=cage((SOURCE_SEAT+TRANSLATION)[None,:],s,key)[0]-TRANSLATION
+        seat_target=cage((SOURCE_SEAT+TRANSLATION)[None,:],s,key)
+        if model_frame is not None:seat_target=sculpt_model(seat_target,key,model_frame)
+        seat=seat_target[0]-TRANSLATION
         hair_srgb=srgb(HAIR[COATS[key][1]]).tolist()
         row={'id':key,'label':spec['canonical_breed'],'file':'./models/native-roster/'+file.name,'sha256':sha(packed),'byteLength':len(packed),
              'meshes':records,'withersM':height,'sourceWithersM':withers,'actorScale':actor,'sourceSeat':seat.tolist(),
@@ -712,9 +757,12 @@ def main():
                      'colorSrgb':srgb(COATS[key][0]).tolist(),'hairColorSrgb':hair_srgb,'hairColorLinear':list(HAIR[COATS[key][1]]),
                      'neutralFile':'./models/native-roster/neutralcoat.png','originalUVsPreserved':True},
              'limitations':'Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.'}
+        if model_frame is not None:
+            row['modelSculpt']={k:v for k,v in report['modelSculpt'].items() if k!='meshes'}
+            row['modelSculpt']['parameters']=dict(MODEL_SCULPTS[key])
         if collar_attachment:
             row['tackAttachment']=collar_attachment
-            report['tackAttachment']={'vertices':collar_attachment['vertexCount'],'baseMorphSha256':collar_attachment['baseMorphSha256'],'method':collar_attachment['method'],'preservedBaseMorphBytes':728256}
+            report['tackAttachment']={'vertices':collar_attachment['vertexCount'],'baseMorphSha256':collar_attachment['baseMorphSha256'],'method':collar_attachment['method'],('verifiedCanonicalMorphBytes' if model_frame is not None else 'preservedBaseMorphBytes'):728256}
         if groom_report:
             row['groom'].pop('maneLengthFactor',None)
             groom_kind='equestrian' if key in DRAFT_SHAPES else 'uprightCrest'

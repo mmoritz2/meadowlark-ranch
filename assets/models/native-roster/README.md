@@ -3,7 +3,9 @@
 These compact appearance buffers apply to the original WildMesh full 677-joint
 horse. They preserve its rig, skin, original UVs, animated hoof shapes and motion,
 while giving the ranch's 25 horse foundations distinct upper-body proportions,
-selected heights, coat patterns and mane/tail lengths. They use the complete
+selected heights, coat patterns and mane/tail lengths. The 2026-10-20 model
+sculpt additionally reshapes the face, forehead, neck crest and upper quarters,
+with breed-specific strengths and co-fitted eyes, bridle and grooming. They use the complete
 approved native gait package, not the previous artist-body 40-joint rig.
 
 See `tools/native-roster/README.md` for reproduction, buffer format, numerical

@@ -32,26 +32,39 @@ REVIEWED_BODY_ONLY_BASES={
   'nonBodyMorphSha256':'3e35042e5f6c5803e1487de6f20b0eacd1c959b07f332e8a6298b7ab252144a9'},
 }
 
-def pack_collar_attachment(key,packed):
+def pack_collar_attachment(key,packed,*,baseline_prefix=None,transport=None):
     if key not in DRAFTS:return None
     folder=HERE/'collar-attachments';index=json.loads((folder/'index.json').read_text())
     assert index['sourceSha256']==SOURCE_SHA
     motion=HERE.parents[1]/'assets/models/horse-motions/white-western.glb'
     assert hashlib.sha256(motion.read_bytes()).hexdigest()==index['motionSha256'],'Collar motions changed; refit before rebuilding'
     spec=index['breeds'][key];assert len(packed)==728256
-    base_hash=hashlib.sha256(packed).hexdigest();compatibility=None
+    assert (baseline_prefix is None)==(transport is None), 'Transport requires a verified canonical authoring prefix'
+    verified_prefix=packed if baseline_prefix is None else baseline_prefix
+    assert len(verified_prefix)==728256
+    base_hash=hashlib.sha256(verified_prefix).hexdigest();compatibility=None
     if base_hash!=spec['baseMorphSha256']:
         compatibility=REVIEWED_BODY_ONLY_BASES.get(key)
         assert compatibility and base_hash==compatibility['baseMorphSha256'] and spec['baseMorphSha256']==compatibility['authoringBaseMorphSha256'],(key,'Collar surface changed; refit before rebuilding')
-        assert hashlib.sha256(packed[BODY_MORPH_BYTES:]).hexdigest()==compatibility['nonBodyMorphSha256'],(key,'Protected non-body morph changed; refit collar before rebuilding')
+        assert hashlib.sha256(verified_prefix[BODY_MORPH_BYTES:]).hexdigest()==compatibility['nonBodyMorphSha256'],(key,'Protected non-body morph changed; refit collar before rebuilding')
     file=folder/spec['file'];assert file.parent.resolve()==folder.resolve()
     assert hashlib.sha256(file.read_bytes()).hexdigest()==spec['sha256']
-    data=np.load(file,allow_pickle=False);ids=data['ids'];count=len(ids)
+    with np.load(file,allow_pickle=False) as loaded:data={name:loaded[name].copy() for name in loaded.files}
+    ids=data['ids'];count=len(ids)
     assert 0<count<=2404 and len(np.unique(ids))==count
     record={'version':1,'meshIndex':3,'sourceSha256':SOURCE_SHA,'vertexCount':count,'baseMorphSha256':base_hash,'authoringSha256':spec['sha256'],'method':index['method']}
     if compatibility:
         record['authoringBaseMorphSha256']=spec['baseMorphSha256']
         record['preservedNonBodyMorphSha256']=compatibility['nonBodyMorphSha256']
+    if transport is not None:
+        preserved={field:data[field].copy() for field in ['ids','skinIndex','skinWeight']}
+        data=transport(data)
+        assert all(np.array_equal(data[field],before) for field,before in preserved.items()), 'Sculpt transport may not edit collar ownership or influences'
+        if 'preservedNonBodyMorphSha256' in record:record['verifiedPreSculptNonBodyMorphSha256']=record.pop('preservedNonBodyMorphSha256')
+        record['verifiedPreSculptMorphSha256']=base_hash
+        record['baseMorphSha256']=hashlib.sha256(packed).hexdigest()
+        record['surfaceTransport']='Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.'
+        record['method']+=' The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.'
     for name,field,dtype,size in [('vertexIds','ids','<u2',1),('position','position','<f4',3),('normal','normal','<f4',3),('skinIndex','skinIndex','<u2',4),('skinWeight','skinWeight','<f4',4)]:
         while len(packed)%4:packed.append(0)
         a=data[field].astype(dtype).reshape(-1);assert len(a)==count*size and np.isfinite(a).all()
