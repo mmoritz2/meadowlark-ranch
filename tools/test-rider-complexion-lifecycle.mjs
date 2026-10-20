@@ -31,10 +31,20 @@ export function installSideflow7(_T,rig){
  rig.dispose=function(...args){rig.sideflowDisposeCalls++;return dispose.apply(this,args);};
  return rig;
 }`);
+// The separate Long98 fixture is intentionally lifecycle-only. Actual Long
+// geometry/material enrollment is exercised by the integrated asset CPU/native
+// tests. This stub may install only after the final complexion rig is tracked.
+const long98URL=moduleURL(`
+import assert from 'node:assert/strict';
+export function installLong98(_T,rig,lifecycle){
+ assert(lifecycle?.has(rig),'Long98 must receive the final tracked complexion rig');
+ rig.long98Installed=true;return rig;
+}`);
 const rewritten=topSource.replace(/from\s+(['"])(\.\/[^'"]+)\1/g,(_all,quote,spec)=>{
  const [file,query]=spec.split('?');let target;
  if(file==='./rider-model-braids.js')target=baseURL;
  else if(file==='./rider-long-framing.js')target=hairURL;
+ else if(file==='./rider-long98.js')target=long98URL;
  else if(file==='./rider-complexion.mjs')target=url('assets/rider-complexion.mjs',query?'?'+query:'');
  else if(['./rider-swept-crown.mjs','./rider-neck-normals.mjs'].includes(file))target=url('assets/'+file.slice(2),query?'?'+query:'');
  else if(file==='./rider-material-lifecycle.js')target=url('assets/rider-material-lifecycle.js',query?'?'+query:'');
@@ -79,6 +89,7 @@ for(const kind of ['injected','default'])test(`${kind} lifecycle registers only 
   assert.equal(lib.materialLifecycle,lifecycle,'Public registry identity is retained');
   const before=lifecycle.inspect().stats.tracked;
   rig=lib.build({body:kind==='injected'?'f':'m'});
+  if(topSource.includes('./rider-long98.js'))assert.equal(rig.long98Installed,true,'Actual Long98 entry must invoke the lifecycle-only fixture');
   assert.equal(inner.length,1);assert.equal(inner[0].rig,rig);assert.equal(inner[0].registered,false,'The inner factory must defer AO registration');
   assert.equal(lifecycle.inspect().stats.tracked-before,1,'The final rig is tracked exactly once');
   assert.equal(lifecycle.inspect().liveRigs,1);assert.equal(owner.receiver.inspect().registeredRigs,1);
@@ -105,6 +116,7 @@ for(const kind of ['injected','default'])test(`${kind} lifecycle registers only 
 test('a receiver attached after construction wraps the same finished materials without a second tracking owner',()=>{
  const lifecycle=createRiderMaterialLifecycle(),inner=[],lib=createRiderLibrary({THREE:T,riderMaterialLifecycle:lifecycle,makeTestRig,afterInnerBuild:rig=>inner.push(rig)}),rig=lib.build({body:'f'}),face=rig.face.material,eyes=rig.eyes.material;
  const owner=receiverFor();let subscription;
+ if(topSource.includes('./rider-long98.js'))assert.equal(rig.long98Installed,true,'Late receiver keeps the same installed Long98 rig');
  try{
   assert.equal(inner.length,1);assert.equal(lifecycle.inspect().liveRigs,1);const tracked=lifecycle.inspect().stats.tracked;
   subscription=lifecycle.connectReceiver(owner.receiver);

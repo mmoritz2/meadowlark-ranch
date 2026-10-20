@@ -50,7 +50,7 @@ export function patchStylizedEyes(material,u,asset,body){
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uEye;varying vec3 vEyeHead;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
    vec2 e=vec2(abs(vEyeHead.x)-${(body==='f'?.03431453:.03320741).toFixed(6)},vEyeHead.y-${(body==='f'?.09881232:.09402493).toFixed(6)});
-   float radius=${body==='f'?'.0102':'.0096'},r=length(e),edgeAA=max(fwidth(r),.00018);
+   float radius=${asset.adultFace98?(body==='f'?'.00835':'.00855'):(body==='f'?'.0102':'.0096')},r=length(e),edgeAA=max(fwidth(r),.00018);
    float iris=1.0-smoothstep(radius-edgeAA,radius+edgeAA,r);
    iris*=smoothstep(${(asset.config.target[2]+.0056).toFixed(5)},${(asset.config.target[2]+.0064).toFixed(5)},vEyeHead.z);
    float pupil=1.0-smoothstep(.0039-edgeAA,.0039+edgeAA,r);
@@ -74,7 +74,7 @@ export function patchStylizedEyes(material,u,asset,body){
    vec3 sclera=mix(vec3(.73,.725,.695),vec3(.62,.45,.41),corner*.28);
    diffuseColor.rgb=mix(sclera,irisColor,iris);`);
   sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.36,.20,iris);');
- };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-surface-3-'+body;
+ };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-surface-3-'+body+(asset.adultFace98?'-adult98':'');
  material.userData.riderNaturalEyes={version:3,geometryUnchanged:true,selectedEyeColorPreserved:true,filteredIrisFibers:true,paintedHighlights:false,physicalHighlights:true};
 }
 

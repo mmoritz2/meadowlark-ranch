@@ -1,3 +1,4 @@
+import {installRiderDiffuseResponse98} from './rider-skin-lighting98.js?v=character-redesign98-20261020';
 // The authored body is real skin under real garment meshes. Legacy painted
 // clothing must not color exposed wrists or inflate this measured source mesh.
 export function finishArtistSkin(material){
@@ -11,5 +12,6 @@ export function finishArtistSkin(material){
   shader.fragmentShader=shader.fragmentShader.replace(paint,'diffuseColor.rgb=uSkin;').replace(flags,'rwSkinZ=1.0; rwBoot=0.0; rwSole=0.0; rwMetal=0.0;');
  };
  material.roughness=.62;material.metalness=0;material.customProgramCacheKey=()=>key+'-authored-skin2';material.needsUpdate=true;
+ installRiderDiffuseResponse98(material,{kind:'skin',strength:1});
  material.userData.artistSkinMaterial2={actualVisibleSkin:true,legacyClothingPaint:false,legacyClothingInflation:false,authoredNormals:true};
 }

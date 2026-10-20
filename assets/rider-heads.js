@@ -1,6 +1,9 @@
+import {installAdultFace98} from './rider-adult-face98.js?v=character-redesign98-20261020';
+import {installAuthoredHead94} from './rider-authored-head94.js?v=character-redesign98-20261020';
 import {LIP_SCULPTS} from './rider-face-lip-sculpt-data.js?v=lip-contour78-20261012';
-import {prepareRiderHead as prepareShared} from './rider-head-surface-finish.js?v=character-polish-20261009';
-export {patchStylizedHead,patchStylizedEyes} from './rider-head-surface-finish.js?v=character-polish-20261009';
+import {prepareRiderHead as prepareShared} from './rider-head-surface-finish.js?v=character-redesign98-20261020';
+import {patchStylizedHead as patchPublishedHead94} from './rider-head-surface-finish.js?v=character-redesign98-20261020';
+export {patchStylizedEyes} from './rider-head-surface-finish.js?v=character-redesign98-20261020';
 import {NOSE} from './rider-male-nose-data.js?v=character-polish-20261009';
 function preparePreviousHead(T,...args){
  const result=prepareShared(T,...args),body=args[4];if(body!=='m')return result;
@@ -15,7 +18,7 @@ function preparePreviousHead(T,...args){
 
 // Authored joined oral exterior contour over the exact established face. Only guarded source
 // position IDs and transported smooth normals change; all other buffers stay exact.
-export function prepareRiderHead(T,...args){
+function preparePublishedHead94(T,...args){
  const result=preparePreviousHead(T,...args),data=LIP_SCULPTS[args[4]];if(!data)return result;
  const g=result.mesh.geometry,p=g.attributes.position,n=g.attributes.normal;
  if(p.count!==data.counts.vertices||g.index.count/3!==data.counts.triangles)throw Error('Lip76c4 topology mismatch');
@@ -29,4 +32,14 @@ export function prepareRiderHead(T,...args){
  p.needsUpdate=true;n.needsUpdate=true;g.computeBoundingBox();g.computeBoundingSphere();
  g.userData.joinedLipContour76c4={scope:data.scope,sourceSHA256:data.sourceSHA256,changedIDs:data.changes.map(r=>r.id),normalSupport:data.normalChanges.map(r=>r.id),maxDisplacementMm:data.guard.maxDisplacementMm,topologyPreserved:true,normalMethod:'upper authored transport; lower emitted tangent-frame rotation'};
  result.local.dispose();result.local=g.clone().applyMatrix4(result.inverse);return result;
+}
+
+export function prepareRiderHead(T,...args){return installAdultFace98(T,installAuthoredHead94(T,preparePublishedHead94(T,...args),args[4]),args[4]);}
+
+// Move the original colour field with its actual authored vertices. The existing
+// physical lighting still uses the newly emitted position and normal buffers.
+export function patchStylizedHead(material,u,asset,body){
+ patchPublishedHead94(material,u,asset,body);const previousCompile=material.onBeforeCompile,previousKey=material.customProgramCacheKey.bind(material);
+ material.onBeforeCompile=sh=>{previousCompile(sh);const before='vHead=(uFaceBind*vec4(position,1.0)).xyz;';if(!sh.vertexShader.includes(before))throw Error('Authored94 Head colour varying source changed');sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec3 artistFaceCoord;').replace(before,'vHead=artistFaceCoord;');};
+ material.customProgramCacheKey=()=>previousKey()+'-authored94-source-pigment5';
 }

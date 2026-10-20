@@ -29,6 +29,8 @@ export const EXTRA_HAIR=[
 ].map(h=>({...h,body:['f','m']}));
 
 export function shapeHair(source,style,head,THREE,kit){
+ if(style==='long'&&THREE&&kit){const seed=source.clone();seed.userData={...seed.userData,proceduralHair:false,long98UndrawnSeed:true,crownFallJoin:null,forelockCorrection:null};return seed;}
+
  if(THREE&&kit)return sculptedHairShape(THREE,kit,style);
  const geo=source.clone(),p=geo.attributes.position;geo.computeBoundingBox();const sourceEnd=geo.boundingBox.min.y;
  const end=style==='bob'?-.027:style==='beachbob'?-.073:style==='mermaidwaves'?-.46:style==='lob'?-.165:style==='long'?-.315:-.305;
@@ -805,5 +807,5 @@ export function polishHairSurface(THREE,source,kit,name='Hair_Long'){
   for(const tri of [[0,3,5],[3,1,4],[5,4,2],[3,4,5]])for(const n of tri){const values=[...points[n].toArray(),...tex[n].toArray()],key=values.map(v=>Math.round(v*1e6)).join(',');if(!seams.has(key)){seams.set(key,positions.length/3);positions.push(...values.slice(0,3));uvs.push(...values.slice(3));}faces.push(seams.get(key));}
  }
  const geo=new THREE.BufferGeometry();geo.setIndex(faces);geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
- smoothHairNormals(geo);geo.computeBoundingSphere();return geo;
+ smoothHairNormals(geo);geo.computeBoundingSphere();if(name==='Hair_Long')kit.long98RawArtistSource=source;return geo;
 }

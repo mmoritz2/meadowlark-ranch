@@ -1,3 +1,4 @@
+import {createHelmetForeheadFit98} from './rider-helmet-forehead98.js?v=character-redesign98-20261020';
 import { createGroundSupport } from './rider-ground-support.js?v=rider-fit74-20261010';
 import {buildHelmetHarness} from './rider-helmet-harness.js?v=character-polish-20261009';
 import {naturalHandPose,relaxedOnFootFingerPose} from './rider-natural-hand-pose.js?v=character-finish68-20261010';
@@ -45,12 +46,12 @@ import {createHairMassResources} from './rider-hair-mass-manager.js?v=character-
 import {HAND19} from './rider-hand-data.js?v=character-polish-20261009';
 import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,GARMENT_NECK_GLSL,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=tailored-coats69-20261010';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=rider-details-20261009';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=character-redesign98-20261020';
 import {refineRiderProportions} from './rider-proportions.js?v=character-polish-20261009';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=more-noticeable-lashes96-20261013';
-import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=lip-contour78-20261012';
-import {prepareRiderHead as prepareLiveHead} from './rider-live-heads.js?v=character-polish-20261009';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=tailored-coats69-20261010';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=character-redesign98-20261020';
+import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=character-redesign98-20261020';
+import {prepareRiderHead as prepareLiveHead} from './rider-live-heads.js?v=character-redesign98-20261020';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=character-redesign98-20261020';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
@@ -527,7 +528,8 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const cx=h.cx,cy=h.cy+0.006,cz=h.cz-0.004, rx=h.rx+0.021, ry=h.ry+0.024, rz=h.rz+0.020;
   /* the brim: just above the brows at the front, over the tops of the ears, low at the back of the skull */
   const rimY=th=>rimAt(th,cy);
-  const onShell=(th,y,out)=>{const k=Math.max(0,1-Math.pow((y-cy)/ry,2)),r=Math.sqrt(k)*(1+out);return [cx+Math.sin(th)*rx*r,y,cz+Math.cos(th)*rz*r];};
+  const foreheadFit=createHelmetForeheadFit98(THREE,headAsset,{cx,cy,cz,clearance:.0045});
+  const onShell=(th,y,out)=>{const k=Math.max(0,1-Math.pow((y-cy)/ry,2)),r=Math.sqrt(k)*(1+out);return foreheadFit.fit(th,[cx+Math.sin(th)*rx*r,y,cz+Math.cos(th)*rz*r]);};
   const NT=64,NY=20,pos=[],uv=[],idx=[];
   for(let j=0;j<=NY;j++){const v=j/NY;for(let i=0;i<=NT;i++){const u=i/NT,th=(u-0.5)*Math.PI*2;
    const yTop=cy+ry*0.999,y=yTop+(rimY(th)-yTop)*Math.pow(v,0.9);pos.push(...onShell(th,y,0));uv.push(u,v);}}
@@ -543,7 +545,8 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   for(let w=0;w<NW;w++)for(let i=0;i<NP;i++){const a=w*(NP+1)+i,b=a+NP+1;pi.push(a,a+1,b,b,a+1,b+1);}
   const peak=new THREE.BufferGeometry();peak.setAttribute('position',new THREE.Float32BufferAttribute(pk,3));peak.setAttribute('uv',new THREE.Float32BufferAttribute(pu,2));peak.setIndex(pi);peak.computeVertexNormals();
   const straps=buildHelmetHarness(THREE,h,headAsset,body,{onShell,rimY,cy,cz});
-  return {shell,rim,peak,straps,cx,cy,cz,rx,ry,rz,rimY};
+  const foreheadFitEvidence=foreheadFit.evidence();shell.userData.helmetForehead98=foreheadFitEvidence;foreheadFit.dispose();
+  return {shell,rim,peak,straps,cx,cy,cz,rx,ry,rz,rimY,foreheadFitEvidence};
  }
 
  /* ------------------------------------------------------------------ shaders ------------------- */

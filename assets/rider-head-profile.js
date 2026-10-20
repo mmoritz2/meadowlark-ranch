@@ -1,5 +1,5 @@
-import {prepareRiderHead as prepareFemale2} from './rider-head-contour.js?v=character-polish-20261009';
-export {patchStylizedHead,patchStylizedEyes} from './rider-head-contour.js?v=character-polish-20261009';
+import {prepareRiderHead as prepareFemale2} from './rider-head-contour.js?v=character-redesign98-20261020';
+export {patchStylizedHead,patchStylizedEyes} from './rider-head-contour.js?v=character-redesign98-20261020';
 import {FACE_CAGE} from './rider-face-profile-data.js?v=character-polish-20261009';
 export function prepareRiderHead(T,skin,oldEyes,oldBrows,source,body,asset,nativeGeometry){
  const result=prepareFemale2(T,skin,oldEyes,oldBrows,source,body,asset,nativeGeometry);if(body!=='f')return result;

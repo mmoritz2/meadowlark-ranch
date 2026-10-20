@@ -1,5 +1,5 @@
-import {prepareRiderHead as prepare42} from './rider-head-lips.js?v=character-polish-20261009';
-export {patchStylizedHead,patchStylizedEyes} from './rider-head-lips.js?v=character-polish-20261009';
+import {prepareRiderHead as prepare42} from './rider-head-lips.js?v=character-redesign98-20261020';
+export {patchStylizedHead,patchStylizedEyes} from './rider-head-lips.js?v=character-redesign98-20261020';
 import {SURFACES} from './rider-face-surface-data.js?v=character-polish-20261009';
 export function prepareRiderHead(T,skin,oldEyes,oldBrows,source,body,asset,nativeGeometry){
  const result=prepare42(T,skin,oldEyes,oldBrows,source,body,asset,nativeGeometry),S=SURFACES[body],g=result.mesh.geometry,attrs=g.attributes,V=()=>new T.Vector3(),bind=result.bind,inv=result.inverse,count=attrs.position.count,total=count+S.added.length;
