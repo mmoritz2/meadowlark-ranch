@@ -246,7 +246,8 @@ At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
 hair meshes to Percheron, Shire, Clydesdale and Vanner instances, including
 Belgian, Suffolk, Tempest and Rosebloom aliases. Heavy feathering uses three
 staggered layers of narrow, curved and rolled locks, varied root heights and
-lengths, and eight irregular fiber fields. The inner fine fibers cover the hoof
+lengths, and eight irregular fiber fields. Neighboring fibers share a curved
+tuft flow while the lowest contact fibers retain their reviewed endpoints. The inner fine fibers cover the hoof
 and brush the ground; shorter outer wisps give the fringe an uneven silhouette.
 Percheron keeps lighter fetlock hair and a visible hoof. Heavy standing tips
 measure 0.49–0.59 mm above ground; alpha-aware front/side coverage with opaque
@@ -261,13 +262,15 @@ cap. Actual roots remain exact and planted locks keep their authored shape.
 The floor and cannon-shell responses protect ground clearance and leg contact.
 
 `assets/native-flowing-groom.js` makes actor-private copies of the existing
-native mane, forelock and tail surfaces. Draft source mane cards now have about
-twice their previous cropped reach and carry the fine hair silhouette. The
-20 closed supplemental locks retain their original topology and donor weights,
-but are flattened into thin strand layers with roughly 9% of their former
-cross-sectional area. `assets/native-equestrian-groom.js` gives those layers
-fine alpha-cut fibers, uneven tips, matching cutout shadows and softer matte
-reflectance. Tails retain their fuller, longer reach and loose-end sway.
+native mane, forelock and tail surfaces. Draft source mane cards have about
+1.70 times their unextended reach and follow a shared curved sweep. The
+20 supplemental locks retain their original topology and donor weights, with
+rounded, waved layers averaging 44% of their original solid cross-sectional
+area (maximum 51%). This restores depth while source fringe and real fiber
+cutouts break up each tress. `assets/native-equestrian-groom.js` groups fine
+fibers inside broader tresses, with uneven tips, matching cutout shadows and
+restrained sheen. The mid-texture row is about 55% alpha-visible with 80 fine
+transitions. Tails retain their fuller, longer reach and loose-end sway.
 The Fjord's upright mane/crest and eyelashes keep their established shapes.
 Original indices, UVs, skin weights and binds are reused; body, eye, tack, bone
 and animation data are unchanged. No hair draw calls are added. The flowing
@@ -295,7 +298,7 @@ damping, exact pause/reset,
 30/60/120 Hz consistency, aliases and transformed parents. Heavy tips must brush
 ground without penetration; lighter Percheron keeps its 20 mm standing gap.
 `node tools/test-native-flowing-groom.mjs` uses the actual loader and motion
-controller to verify privacy, roots, finer lock sections, restored card reach,
+controller to verify privacy, roots, bounded layered lock sections, card reach,
 alpha fibers and actual color/depth/distance shader cutouts, hair-only deformation,
 source grooming eligibility, dyes, Fjord/eyelash preservation, real gait/action
 floor clearance, deterministic replay and frame-rate consistency.
@@ -303,6 +306,23 @@ floor clearance, deterministic replay and frame-rate consistency.
 multiple actors, authoritative motion state, combined layers, repeated init,
 pause/reset/disposal and immediate previews. Visual checks cover standing
 front/side views and walking/running mane, tail and feather motion.
+
+`assets/native-horse-materials.js` applies the same surface finish in Ranch,
+Breed Studio and Tack Studio before saved dyes. Bounded neutral-atlas tonal
+compression softens painted muscle grooves and highlights without flattening
+black skin, hooves or the reviewed draft-leg shading. A cached rest-position
+appearance attribute anchors directional short-coat grain; derivative filtering
+removes subpixel grain, and 25 micrometre shading relief changes no stored
+position or normal. The finish adds no texture, draw call or per-frame CPU work.
+Original colored natives receive the fiber microfinish without neutral-atlas
+remapping. The original silver iris map is remapped to warm-brown luminance
+detail while retaining its black horizontal pupil. Eye-only environment and
+clearcoat response avoid a broad grey veil; the small corneal highlight follows
+actual illumination. `node tools/qa-native-horse-materials.cjs` checks actual
+source GLBs, source-array/tack preservation, private materials, compiled shader
+composition, saved dyes/markings and the protected Fjord groom. Standing head
+and moving full-body renders are also reviewed; this is an art improvement to
+the existing licensed horse, not a replacement sculpt or a new breed skeleton.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat

@@ -14,8 +14,8 @@ export function finishNativeHorseGrooms(){
   for(const [feathers,frame] of pendingNativeFeatherGrooms){pendingNativeFeatherGrooms.delete(feathers);feathers.update(frame.dt,frame.state);}
 }
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-20261009';
-import {createNativeDraftFeathers} from './native-draft-feathers.js?v=fine-hair-20261013c';
-import {createNativeFlowingGroom} from './native-flowing-groom.js?v=fine-hair-20261013c-native-riding-locks-1';
+import {createNativeDraftFeathers} from './native-draft-feathers.js?v=horse-realism-20261020a';
+import {createNativeFlowingGroom} from './native-flowing-groom.js?v=horse-realism-20261020a-native-riding-locks-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.

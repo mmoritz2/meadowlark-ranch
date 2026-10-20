@@ -81,16 +81,16 @@ function inspectFineAppearance(rig,before,metricsBefore,metricsAfter){
  const alpha=(x,y)=>image.data[(Math.min(image.height-1,Math.max(0,y))*image.width+x)*4+3]/255;
  const rows=[];for(const ratio of [0,.2,.5,.8,.95,1]){const y=Math.round((image.height-1)*ratio),bits=Array.from({length:image.width},(_,x)=>alpha(x,y)>=m.alphaTest);rows.push({ratio,coverage:bits.filter(Boolean).length/bits.length,transitions:bits.reduce((n,b,i)=>n+(i&&b!==bits[i-1]?1:0),0)});}
  equal(rows[0].coverage,0,'Opaque root cap is removed from the strand layer');equal(rows.at(-1).coverage,0,'Strand tips finish transparently');
- const mid=rows.find(r=>r.ratio===.5);check(mid.coverage>.2&&mid.coverage<.85&&mid.transitions>=24,'Mid-length layer contains many visible strands separated by real gaps');
+ const mid=rows.find(r=>r.ratio===.5);check(mid.coverage>.35&&mid.coverage<.85&&mid.transitions>=24,'Mid-length retains real fine-fiber cutouts inside the layered tresses');
  check(rows.find(r=>r.ratio===.95).coverage<mid.coverage*.65,'Uneven strand ends taper out rather than forming a square cap');
  check(new Set(Array.from(image.data).filter((_,i)=>i%4===3)).size>32,'Alpha has graded fiber edges');
  for(const point of [false,true]){const shadow=getShadowMaterial(shell.mesh,m,{isPointLight:point},THREE.PCFSoftShadowMap);check(shadow.map===m.map&&shadow.alphaMap===m.alphaMap&&shadow.alphaTest===m.alphaTest,'Actual '+(point?'distance':'depth')+' shadow uses matching alpha cutoff and texture');}
  const ratios=[],uv=shell.mesh.geometry.attributes.uv;
  for(const lock of rig.profile.nativeVariant.groom.equestrian.locks){const levels=new Map();for(let i=lock.start;i<lock.start+lock.count;i++){const t=uv.getY(i);if(t<=.2||t>=.8)continue;if(!levels.has(t))levels.set(t,[]);levels.get(t).push(i);}for(const ids of levels.values())ratios.push(ringArea(shell.mesh.geometry,ids)/ringArea(shell.geometry,ids));}
- check(ratios.length>60&&ratios.every(n=>Number.isFinite(n)&&n>.02&&n<.4),'Every interior shell cross-section is physically thin, not a recolored solid lobe');
- check(metricsAfter.mane.reach/metricsBefore.mane.reach>1.8,'Fine source mane cards cover the length of the layered silhouette');
+ check(ratios.length>60&&ratios.every(n=>Number.isFinite(n)&&n>.15&&n<.75),'Every interior tress restores airy volume while remaining smaller than the original solid lobe');
+ const sourceReachRatio=metricsAfter.mane.reach/metricsBefore.mane.reach;check(sourceReachRatio>1&&sourceReachRatio<3,'Source fringe extends within the original groom authoring envelope');
  const shaderState=shader();m.onBeforeCompile(shaderState);check(shaderState.fragmentShader.includes('#include <map_fragment>')&&shaderState.fragmentShader.includes('#include <alphatest_fragment>'),'Color shader retains standard texture alpha and alpha-test pipeline');
- return {rows,maxRingAreaRatio:Math.max(...ratios),meanRingAreaRatio:ratios.reduce((a,b)=>a+b,0)/ratios.length,sourceManeReachRatio:metricsAfter.mane.reach/metricsBefore.mane.reach};
+ return {rows,minRingAreaRatio:Math.min(...ratios),maxRingAreaRatio:Math.max(...ratios),meanRingAreaRatio:ratios.reduce((a,b)=>a+b,0)/ratios.length,sourceManeReachRatio:metricsAfter.mane.reach/metricsBefore.mane.reach};
 }
 
 try{

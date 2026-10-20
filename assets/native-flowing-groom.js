@@ -23,12 +23,19 @@ function transferNormals(from,to,authored,out,weights){
   const u=ky*z-kz*y,v=kz*x-kx*z,w=kx*y-ky*x,q=1/(1+d),nx=x+u+(ky*w-kz*v)*q,ny=y+v+(kz*u-kx*w)*q,nz=z+w+(kx*v-ky*u)*q,l=Math.hypot(nx,ny,nz)||1;out[i]=nx/l;out[i+1]=ny/l;out[i+2]=nz/l;
  }
 }
-function flattenLock(raw,ids,uv,role){
+function shapeLayeredLock(raw,ids,uv,role,lockIndex){
  const levels=new Map();for(const i of ids){const t=uv.getY(i);if(!levels.has(t))levels.set(t,[]);levels.get(t).push(i);}
- for(const [t,ring]of levels){if(t===0)continue;let x=0,y=0,z=0;for(const i of ring){x+=raw[i*3];y+=raw[i*3+1];z+=raw[i*3+2];}x/=ring.length;y/=ring.length;z/=ring.length;
-  const a=ring.find(i=>uv.getX(i)===0);if(a===undefined)continue;let ax=raw[a*3]-x,ay=raw[a*3+1]-y,az=raw[a*3+2]-z,l=Math.hypot(ax,ay,az);if(l<1e-8)continue;ax/=l;ay/=l;az/=l;
-  const blend=smooth(t/.20),width=1-blend*.45,depth=1-blend*(role==='tail'?.82:.85);
-  for(const i of ring){const n=i*3,dx=raw[n]-x,dy=raw[n+1]-y,dz=raw[n+2]-z,across=dx*ax+dy*ay+dz*az;raw[n]=x+ax*across*width+(dx-ax*across)*depth;raw[n+1]=y+ay*across*width+(dy-ay*across)*depth;raw[n+2]=z+az*across*width+(dz-az*across)*depth;}
+ const rows=[...levels].sort((a,b)=>a[0]-b[0]).map(([t,ring])=>{const center=[0,0,0];for(const i of ring)for(let c=0;c<3;c++)center[c]+=raw[i*3+c]/ring.length;return{t,ring,center};});
+ for(let row=0;row<rows.length;row++){
+  const {t,ring,center:[x,y,z]}=rows[row];if(t===0)continue;
+  const a=ring.find(i=>uv.getX(i)===0);if(a===undefined)continue;
+  let ax=raw[a*3]-x,ay=raw[a*3+1]-y,az=raw[a*3+2]-z,radius=Math.hypot(ax,ay,az);if(radius<1e-8)continue;ax/=radius;ay/=radius;az/=radius;
+  const previous=rows[Math.max(0,row-1)].center,next=rows[Math.min(rows.length-1,row+1)].center;
+  let tx=next[0]-previous[0],ty=next[1]-previous[1],tz=next[2]-previous[2],length=Math.hypot(tx,ty,tz)||1;tx/=length;ty/=length;tz/=length;
+  let bx=ty*az-tz*ay,by=tz*ax-tx*az,bz=tx*ay-ty*ax,depthAxis=Math.hypot(bx,by,bz)||1;bx/=depthAxis;by/=depthAxis;bz/=depthAxis;
+  const blend=smooth(t/.23),width=1-blend*.17,depth=1-blend*(role==='tail'?.60:.42);
+  const wave=role==='tail'?.18:1.12,phase=lockIndex*.23,curve=blend*radius*wave*Math.sin(t*Math.PI*1.55+phase)*Math.sin(t*Math.PI*.8),lift=blend*radius*.18*Math.sin(t*Math.PI);
+  for(const i of ring){const n=i*3,dx=raw[n]-x,dy=raw[n+1]-y,dz=raw[n+2]-z,across=dx*ax+dy*ay+dz*az;raw[n]=x+ax*(across*width+curve)+(dx-ax*across)*depth+bx*lift;raw[n+1]=y+ay*(across*width+curve)+(dy-ay*across)*depth+by*lift;raw[n+2]=z+az*(across*width+curve)+(dz-az*across)*depth+bz*lift;}
  }
 }
 export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
@@ -60,15 +67,23 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
    const lock=riding?meta.locks[k]:null,lockT=i=>{const n=i-lock.start,rings=lock.rows*(lock.sides+1);return n>=rings?n-rings:Math.floor(n/(lock.sides+1))/(lock.rows-1);};
    const part=role==='tail'?2:role==='forelock'?1:0,uv=g.attributes.uv,roots=shell?ids.filter(i=>(riding?lockT(i):uv.getY(i))===0):sourceRoot?sourceRoot.roots.slice():ids.filter(i=>maxY-raw[i*3+1]<.12);
    if(!roots.length)roots.push(root);let rx=0,ry=0,rz=0;for(const i of roots){rx+=raw[i*3];ry+=raw[i*3+1];rz+=raw[i*3+2];}rx/=roots.length;ry/=roots.length;rz/=roots.length;
-   if(shell&&!riding)flattenLock(raw,ids,uv,role);
+   if(shell&&!riding)shapeLayeredLock(raw,ids,uv,role,k);
    const rootSet=new Set(roots),height=Math.max(.01,ry-minY),fineDraft=!shell&&!!shellMeta,
-    length=riding?0:role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):shell?.08:role==='forelock'?(fineDraft?1.2:.08):fineDraft?1.9:.24,
+    length=riding?0:role==='tail'?Math.min(.24,Math.max(0,(minY-9)/height)):shell?.08:role==='forelock'?(fineDraft?.8:.08):fineDraft?1.25:.24,
     width=shell?0:role==='tail'?.32:role==='forelock'?.15:fineDraft?.35:.22;
    const group={ids,part,root,roots,weights:[],gain:.93+.14*((((riding?.flowLockOffset||0)+k)*37%101)/100)};
    for(const i of ids){const n=i*3,t=rootSet.has(i)?0:shell?clamp(riding?lockT(i):uv.getY(i),0,1):clamp((ry-raw[n+1])/height,0,1),w=t*t*(.8+.2*t);weights[i]=w;parts[i]=part;group.weights.push(w);
     // Preserve the whole root ring; broaden a lock gradually, without moving
     // its attachment or replacing tapered tips with broad rectangular ends.
-    if(w){const fullness=smooth(t/.32);raw[n]=rx+(raw[n]-rx)*(1+width*fullness);raw[n+1]=ry+(raw[n+1]-ry)*(1+length*smooth(t/.40));raw[n+2]=rz+(raw[n+2]-rz)*(1+width*.45*fullness);}
+    if(w){const fullness=smooth(t/.32);raw[n]=rx+(raw[n]-rx)*(1+width*fullness);raw[n+1]=ry+(raw[n+1]-ry)*(1+length*smooth(t/.40));raw[n+2]=rz+(raw[n+2]-rz)*(1+width*.45*fullness);
+     if(fineDraft&&role!=='tail'){
+      // Neighboring source fibers share a gently swept field instead of
+      // stretching into parallel scratch lines. Roots and lashes remain exact.
+      const envelope=smooth(t/.24)*Math.sin(t*Math.PI*.88),phase=rz*.055;
+      const wave=Math.sin(t*Math.PI*1.5+phase),amplitude=Math.min(2.6,height*.16);
+      raw[n]+=amplitude*envelope*(.55+.45*wave);raw[n+2]+=amplitude*envelope*wave*.85;
+     }
+    }
    }
    rootIds.push({mesh:mesh.name,role,ids:roots.slice()});groupsOut.push(group);if(shell)lockCount++;else cardCount++;
   }

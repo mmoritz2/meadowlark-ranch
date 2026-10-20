@@ -231,9 +231,12 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
    const hoofCx=Number.isFinite(a.hoofMinX)?(a.hoofMaxX+a.hoofMinX)*.5:cx;
    const hoofCz=Number.isFinite(a.hoofMinZ)?(a.hoofMaxZ+a.hoofMinZ)*.5:cz;
    const shade=.82+rnd()*.18,base=positions.length/3;
-   const curl=restrained?0:(rnd()-.5)*.54,roll=restrained?0:(rnd()-.5)*1.05,tile=(strand*3+leg*5)%8;
+   const curlNoise=restrained?0:rnd()-.5,rollNoise=restrained?0:rnd()-.5;
+   const tipCurl=curlNoise*.54,tipRoll=rollNoise*1.05,
+    curl=restrained?0:.19*Math.sin(angle*4+leg*.45)+curlNoise*.12,
+    roll=restrained?0:.30*Math.sin(angle*4+heavyLayer*.5)+rollNoise*.28,tile=(strand*3+leg*5)%8;
    for(let step=0;step<=segments;step++){
-    const t=step/segments,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.025:.25)+(restrained?.975:.75)*rootWidth*Math.pow(1-t,restrained?.48:.44),spread=flare*Math.sin(t*Math.PI*.5);
+    const t=step/segments,contactBlend=contactLayer?smooth01((t-.5)/.3):0,lockCurl=curl+(tipCurl-curl)*contactBlend,lockRoll=roll+(tipRoll-roll)*contactBlend,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.025:.25)+(restrained?.975:.75)*rootWidth*Math.pow(1-t,restrained?.48:.44),spread=flare*Math.sin(t*Math.PI*.5);
     const embeddedRoot=.88+.06*smooth01(t/.26);
     // Most of the flow falls downward; a modest rear sweep and rounded lock
     // face keep the silhouette soft from oblique/front/rear views.
@@ -241,14 +244,17 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
      rootY-drop*t,cz+axis.z*rootUp+radialZ*(rz*embeddedRoot+spread)-.009*Math.sin(t*Math.PI));
     if(!restrained){
      const aroundHoof=smooth01(t/.78),rootX=cx+axis.x*rootUp,rootZ=cz+axis.z*rootUp;
-     const sweep=angle+curl*smooth01(t),sx=Math.sin(sweep),sz=-Math.cos(sweep);
+     const sweep=angle+lockCurl*smooth01(t),sx=Math.sin(sweep),sz=-Math.cos(sweep);
      const radiusX=rx*embeddedRoot+(Math.max(rx+flare,hoofRx+.014)-rx*embeddedRoot)*aroundHoof;
      const radiusZ=rz*embeddedRoot+(Math.max(rz+flare,hoofRz+.017)-rz*embeddedRoot)*aroundHoof;
-     center.x=rootX+(hoofCx-rootX)*aroundHoof+sx*radiusX+bend*Math.sin(t*Math.PI*.8);
-     center.z=rootZ+(hoofCz-rootZ)*aroundHoof+sz*radiusZ-.008*Math.sin(t*Math.PI);
+     // Neighboring fibers follow a shared curved tuft, with fine variation
+     // inside it. This gives flowing clumps rather than equally straight grass.
+     const tuft=.006*Math.sin(angle*4+leg*.45+t*Math.PI*1.6)*smooth01(t/.24)*Math.sin(t*Math.PI*.85)*(1-contactBlend);
+     center.x=rootX+(hoofCx-rootX)*aroundHoof+sx*radiusX+bend*Math.sin(t*Math.PI*.8)+Math.cos(sweep)*tuft;
+     center.z=rootZ+(hoofCz-rootZ)*aroundHoof+sz*radiusZ-.008*Math.sin(t*Math.PI)+Math.sin(sweep)*tuft;
     }
     for(const side of [-1,0,1]){
-     const sweep=angle+curl*smooth01(t),twist=roll*Math.sin(t*Math.PI*.8),acrossX=Math.cos(sweep)*Math.cos(twist)+Math.sin(sweep)*Math.sin(twist),acrossZ=Math.sin(sweep)*Math.cos(twist)-Math.cos(sweep)*Math.sin(twist);
+     const sweep=angle+lockCurl*smooth01(t),twist=lockRoll*Math.sin(t*Math.PI*.8),acrossX=Math.cos(sweep)*Math.cos(twist)+Math.sin(sweep)*Math.sin(twist),acrossZ=Math.sin(sweep)*Math.cos(twist)-Math.cos(sweep)*Math.sin(twist);
      local.copy(center);local.x+=acrossX*width*taper*side*.5;local.z+=acrossZ*width*taper*side*.5;
      const bow=(1-side*side)*width*.20*taper;
      local.x+=radialX*bow;local.z+=radialZ*bow;

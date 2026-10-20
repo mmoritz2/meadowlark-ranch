@@ -1,5 +1,5 @@
 import {createNativeHorseMotion} from './native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1';
-import {disposeMountedRig} from './game-hero-horse.js?v=fine-hair-20261013c-native-riding-locks-1';
+import {disposeMountedRig} from './game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1';
 import {configureNativeCustomization} from './native-horse-customization.js?v=world-presentations-1';
 import {worldHorseCanDress} from './world-horse-lifecycle.mjs?v=ranch-actors-2';
 export const WORLD_HORSE_LOD_VERSION='native-world-pose-1';

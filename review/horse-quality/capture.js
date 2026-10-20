@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from '../../assets/breed-models.js?v=fine-hair-20261013c';
+import {createBreedLibrary} from '../../assets/breed-models.js?v=horse-realism-20261020a';
 import {createNativeHorseMotion} from '../../assets/native-horse-motion.js?v=horse-art-20261009b';
-import {nativeGroomFacade} from '../../assets/game-hero-horse.js?v=fine-hair-20261013c';
+import {nativeGroomFacade} from '../../assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1';
 import {configureNativeCustomization} from '../../assets/native-horse-customization.js?v=natural-mane-20261009';
 import {registerNewBreedPreviews} from '../../assets/features/new-breeds.js?v=horse-quality-1';
 import {registerRosterPreviews} from '../../assets/features/horse-roster.js?v=natural-mane-20261009';
@@ -11,7 +11,7 @@ import {registerClubHorsePreviews} from '../../assets/features/clubs-boards.js?v
 import {registerMarketHorsePreviews} from '../../assets/features/market-summon-keys-pets.js?v=native-tack-fit-1';
 import {EXPANSION_HORSE_BREEDS} from '../../assets/expansion-horses.js?v=horses-expansion-1';
 import {registerExpansionHorseCoats} from '../../assets/expansion-horse-coats.js?v=horses-expansion-1';
-import {NATIVE_HORSE_MATERIAL_VERSION,NATIVE_HORSE_MATERIAL_FINISH} from '../../assets/native-horse-materials.js?v=native-surface-2';
+import {NATIVE_HORSE_MATERIAL_VERSION,NATIVE_HORSE_MATERIAL_FINISH} from '../../assets/native-horse-materials.js?v=horse-realism-20261020a';
 import {createStoreZip} from './capture-zip.mjs';
 
 const $=id=>document.getElementById(id),WIDTH=640,HEIGHT=480;
