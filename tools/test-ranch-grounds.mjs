@@ -3,12 +3,15 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {RANCH_TURF_YARDS,RANCH_TURF_HEIGHT,RANCH_TURF_REACH,ranchTurfAt,ranchTurfHeightAt,ranchTurfReachAt,managedGroundsAt,ranchLandcoverTurfAt} from '../assets/ranch-grounds.mjs';
-import {createMeadowDistance,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
+import {createMeadowDistance,createGrassTuftGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
 import {createMeadowGrazingPixels} from '../assets/meadow-landcover.mjs';
 import {meadowGrazingAt} from '../assets/pastoral-fields.mjs';
+import {coldPastureCover} from '../assets/cold-woodland.mjs';
+import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from '../assets/hollowpeak-thaw-floor.mjs';
+import {ranchTurfAt as originalTurfAt,RANCH_TURF_YARDS as originalYards} from './fixtures/ranch-grounds-before-farm.mjs';
 
 test('groundskeeping belongs to inhabited yards and leaves wild fields and landscape landmarks intact',()=>{
- assert.equal(RANCH_TURF_YARDS.length,4);
+ assert.equal(RANCH_TURF_YARDS.length,6);
  for(const[x,z]of [[-10,25],[7,30],[-34,-15],[51,-35.5]]){
   assert.equal(ranchTurfAt(x,z),1);assert(Math.abs(ranchTurfHeightAt(x,z)-RANCH_TURF_HEIGHT)<1e-14);assert(Math.abs(ranchTurfReachAt(x,z)-RANCH_TURF_REACH)<1e-14);
  }
@@ -69,10 +72,10 @@ test('actual near-cell producer retains counted grounded roots and authored elig
  const source=html.slice(start,end)+'\n };return fillCell;';
  const gh=(ix,iz)=>{let h=(Math.imul(ix|0,374761393)+Math.imul(iz|0,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;};
  const cells=Array.from({length:196},()=>({count:0,matrices:new Float32Array(240*16),colors:new Float32Array(240*3)}));
- const geometryMax=1.1682;
- const make=new Function('NG_CELL','NG_K','grassCells','gh','okGrass','managedGrass','meadowGrowthAt','coldPastureCover','e','q','sc','v','m4','groundH','meadowBladeColor','bcol','winterGrassTint','ranchTurfReachAt','ranchTurfHeightAt',source);
+ const geometryMax=1.1682,near={geometry:createGrassTuftGeometry(T,{profile:'near-folded-v1'})};assert(near.geometry.boundingBox.max.y<=geometryMax);
+ const make=new Function('NG_CELL','NG_K','grassCells','gh','okGrass','managedGrass','meadowGrowthAt','coldPastureCover','e','q','sc','v','m4','groundH','meadowBladeColor','bcol','winterGrassTint','ranchTurfReachAt','ranchTurfHeightAt','terrainH','hollowpeakThawFloorAt','respondHollowpeakThawMatrix','respondHollowpeakThawColor','near',source);
  const ground=(x,z)=>.02*x-.01*z;
- const fill=make(6,240,cells,gh,(x,z)=>!(Math.abs(x)<25&&Math.abs(z)<20),(x,z)=>managedGroundsAt(x,z,1),meadowGrowthAt,()=>1,new T.Euler(),new T.Quaternion(),new T.Vector3(),new T.Vector3(),new T.Matrix4(),ground,meadowBladeColor,new T.Color(),new T.Color(),ranchTurfReachAt,ranchTurfHeightAt);
+ const fill=make(6,240,cells,gh,(x,z)=>!(Math.abs(x)<25&&Math.abs(z)<20),(x,z)=>managedGroundsAt(x,z,1),meadowGrowthAt,coldPastureCover,new T.Euler(),new T.Quaternion(),new T.Vector3(),new T.Vector3(),new T.Matrix4(),ground,meadowBladeColor,new T.Color(),new T.Color(),ranchTurfReachAt,ranchTurfHeightAt,ground,hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor,near);
  const random=Math.random;Math.random=()=>{throw Error('Near producer consumed RNG');};
  let count=0,short=0;
  try{for(let j=-7;j<7;j++)for(let i=-7;i<7;i++){
@@ -83,7 +86,45 @@ test('actual near-cell producer retains counted grounded roots and authored elig
   }
  }}finally{Math.random=random;}
  assert(count>30000);assert(short>12000);
+ // Same extracted current producer at the farm, with all of its actual helper dependencies.
+ // These isolated eligibility/plane inputs are a component fixture, not live route clearance.
+ let farmCount=0,farmShort=0;
+ try{Math.random=()=>{throw Error('Farm near producer consumed RNG');};
+  for(let j=-7;j<7;j++)for(let i=-7;i<7;i++){
+   const slot=(i+7)+(j+7)*14;fill(37+i,-21+j,slot);const c=cells[slot];farmCount+=c.count;
+   for(let r=0;r<c.count;r++){
+    const at=r*16,x=c.matrices[at+12],z=c.matrices[at+14];
+    assert(Math.abs(c.matrices[at+13]-(ground(x,z)-.02))<1e-6);
+    if(ranchTurfAt(x,z)===1){const sy=Math.hypot(c.matrices[at+4],c.matrices[at+5],c.matrices[at+6]);assert(geometryMax*sy<.19);farmShort++;}
+   }
+  }
+ }finally{Math.random=random;near.geometry.dispose();}
+ assert.equal(farmCount,196*240);assert(farmShort>500);
+
  assert(html.includes('s*(.78-.40*managedGrass(x,z))*growth*ranchTurfHeightAt(x,z)'));
  assert(html.includes("meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58"));
  assert(html.includes("managedGrass(x,z)<.58"));
+});
+
+
+test('farm green and gate approach have compact distinct support and preserve all old yard definitions',()=>{
+ assert.deepEqual(RANCH_TURF_YARDS.map(q=>q.id),['arena-lawns','entrance-green','stable-working-yard','cottonwood-cottage-lawns','barleyfold-arrival-green','barleyfold-gate-approach']);
+ assert.deepEqual(RANCH_TURF_YARDS.slice(0,4),originalYards);assert(Object.isFrozen(RANCH_TURF_YARDS));assert(RANCH_TURF_YARDS.every(Object.isFrozen));
+ for(const[x,z]of[[220,-110],[223,-120],[223,-130],[223,-140],[223,-146]]){
+  assert.equal(ranchTurfAt(x,z),1);assert(Math.abs(ranchTurfHeightAt(x,z)-RANCH_TURF_HEIGHT)<1e-14);assert(Math.abs(ranchTurfReachAt(x,z)-RANCH_TURF_REACH)<1e-14);
+ }
+ for(const p of[[196,-118],[236,-120],[200,-86],[180,-96],[180,-82]])assert.equal(ranchTurfAt(...p),originalTurfAt(...p),'Other farm buildings/gates retain original field');
+});
+
+test('farm turf changes stay inside authored support, feather continuously and consume no RNG',()=>{
+ const random=Math.random;Math.random=()=>{throw Error('Ground field consumed placement randomness');};let outside=0,changed=0,feather=0;
+ try{
+  for(let z=-500;z<=500;z+=.75)for(let x=-500;x<=500;x+=.75){
+   const a=originalTurfAt(x,z),b=ranchTurfAt(x,z);assert(Number.isFinite(b)&&b>=0&&b<=1);
+   if(x<210.5||x>229.5||z< -149||z> -100){assert.equal(b,a);outside++;}
+   if(b!==a){changed++;assert(b>a);assert(x>=210.5&&x<=229.5&&z>=-149&&z<=-100);}
+   if(b>0&&b<1&&x>200){feather++;assert(Math.abs(b-ranchTurfAt(x+.001,z))<.001);assert(Math.abs(b-ranchTurfAt(x,z+.001))<.001);}
+  }
+ }finally{Math.random=random;}
+ assert.equal(outside,1777906);assert.equal(changed,1218);assert.equal(feather,683);
 });

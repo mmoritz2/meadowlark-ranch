@@ -1,3 +1,4 @@
+import {createPackedStaticSurfaces} from './packed-static-surfaces.mjs?v=packed-static-backend-1';
 // Compact collision proxies are captured before rendering batches merge parts.
 // This retains real door openings and avoids a bounding box around an entire building.
 export function recordSolidPart(T,owner,geometry,material,matrix){
@@ -116,58 +117,18 @@ export function triangleDiskYRange(triangle,x,z,radius){
 export function createSolidWorld({THREE:T,cellSize=12}){
  const cells=new Map(),owners=new Map(),moving=new Map(),v=new T.Vector3(),m=new T.Matrix4();let count=0;
  const key=(x,z)=>x+','+z;
- // Explicit static surface ownership is independent of visual range visibility.
- const surfaceCells=new Map(),surfaceOwners=new Map(),surfaceStep=2;
- const surfaceKey=(x,z)=>x+','+z;
- const surfaceKeys=b=>{const out=[];for(let x=Math.floor(b.minX/surfaceStep);x<=Math.floor(b.maxX/surfaceStep);x++)for(let z=Math.floor(b.minZ/surfaceStep);z<=Math.floor(b.maxZ/surfaceStep);z++)out.push(surfaceKey(x,z));return out;};
- function unregisterSurface(root){
-  for(const e of surfaceOwners.get(root)||[])for(const k of e.keys){const set=surfaceCells.get(k);set?.delete(e);if(!set?.size)surfaceCells.delete(k);}
-  surfaceOwners.delete(root);
- }
- // matrix, when provided, is the COMPLETE WORLD transform (not a second local transform).
- // Static callers must re-register after a transform/geometry change. Visibility is ignored.
- function registerSurface(root,geometry=root.geometry,matrix=null){
-  const p=geometry?.attributes?.position,index=geometry?.index;
-  if(!root?.updateWorldMatrix||!p||p.itemSize!==3||p.count<3||(index?index.count:p.count)%3)throw Error('Invalid static triangle surface');
-  root.updateWorldMatrix(true,false);const transform=matrix||root.matrixWorld;
-  if(!transform?.elements||!transform.elements.every(Number.isFinite))throw Error('Invalid static surface world transform');
-  const entries=[],n=index?index.count:p.count,point=new T.Vector3();
-  for(let i=0;i<n;i+=3){
-   const triangle=[];
-   for(let k=0;k<3;k++){const j=index?index.getX(i+k):i+k;if(!Number.isInteger(j)||j<0||j>=p.count)throw Error('Invalid surface index');point.fromBufferAttribute(p,j).applyMatrix4(transform);triangle.push(point.toArray());}
-   if(!triangle.flat().every(Number.isFinite))throw Error('Nonfinite static surface triangle');
-   const [a,b,c]=triangle,ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];
-   if(Math.hypot(uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx)<1e-10)continue;
-   const e={root,registeredParent:root.parent,triangle,minX:Math.min(...triangle.map(p=>p[0])),maxX:Math.max(...triangle.map(p=>p[0])),minZ:Math.min(...triangle.map(p=>p[2])),maxZ:Math.max(...triangle.map(p=>p[2])),minY:Math.min(...triangle.map(p=>p[1])),maxY:Math.max(...triangle.map(p=>p[1]))};
-   e.keys=surfaceKeys(e);entries.push(e);
-  }
-  unregisterSurface(root);
-  for(const e of entries)for(const k of e.keys){if(!surfaceCells.has(k))surfaceCells.set(k,new Set());surfaceCells.get(k).add(e);}
-  surfaceOwners.set(root,entries);return entries.length;
- }
- function nearbySurfaces(x,z,r){const out=new Set();for(const k of surfaceKeys({minX:x-r,maxX:x+r,minZ:z-r,maxZ:z+r}))for(const e of surfaceCells.get(k)||[])out.add(e);return out;}
- const activeSurface=e=>!(e.registeredParent&&!e.root.parent&&!e.root.userData.collisionBatched);
+ const packedStatic=createPackedStaticSurfaces();
+ const {surfaceCells,surfaceOwners,prepareSurface,registerSurface,unregisterSurface,nearbySurfaces,visitNearbySurfaces,copySurfaceTriangle,activeSurface,surfaceSupportHeight}=packedStatic;
  // Highest ACTUAL two-sided vertical triangle hit; no bounding-box/volume fill.
  // Optional owner restricts this to one registered mesh. -Infinity means no hit.
- function surfaceHeight(x,z,owner=null){
-  let height=-Infinity;
-  for(const e of nearbySurfaces(x,z,0)){
-   if(!activeSurface(e)||(owner&&e.root!==owner))continue;
-   const [a,b,c]=e.triangle,den=(b[2]-c[2])*(a[0]-c[0])+(c[0]-b[0])*(a[2]-c[2]);
-   // A vertical/coplanar ray has no unique supporting top for a vertical face.
-   if(Math.abs(den)<1e-10)continue;
-   const u=((b[2]-c[2])*(x-c[0])+(c[0]-b[0])*(z-c[2]))/den,v=((c[2]-a[2])*(x-c[0])+(a[0]-c[0])*(z-c[2]))/den,w=1-u-v;
-   if(Math.min(u,v,w)<-1e-10)continue;
-   height=Math.max(height,u*a[1]+v*b[1]+w*c[1]);
-  }return height;
- }
+ const surfaceHeight=packedStatic.surfaceHeight;
  function surfaceContacts(position,{bottom,top,radius=.55,previous=null}={}){
-  const hits=[];
-  for(const e of nearbySurfaces(position.x,position.z,radius)){
-   if(!activeSurface(e)||bottom>=e.maxY-.001||top<=e.minY+.001)continue;
-   const hit=triangleSlabContact(e.triangle,position.x,position.z,radius,bottom,top,circleContact,previous);
+  const hits=[],triangle=[[0,0,0],[0,0,0],[0,0,0]];
+  visitNearbySurfaces(position.x,position.z,radius,(packet,face)=>{
+   const b=face*6;if(!activeSurface(packet)||bottom>=packet.bounds[b+5]-.001||top<=packet.bounds[b+4]+.001)return;
+   const hit=triangleSlabContact(copySurfaceTriangle(packet,face,triangle),position.x,position.z,radius,bottom,top,circleContact,previous);
    if(hit)hits.push(hit);
-  }return hits;
+  });return hits;
  }
 
  const keysFor=b=>{const keys=[];for(let x=Math.floor(b.minX/cellSize);x<=Math.floor(b.maxX/cellSize);x++)for(let z=Math.floor(b.minZ/cellSize);z<=Math.floor(b.maxZ/cellSize);z++)keys.push(key(x,z));return keys;};
@@ -238,14 +199,15 @@ export function createSolidWorld({THREE:T,cellSize=12}){
    if(to<from&&from>=e.maxY-.05&&result<e.maxY)result=e.maxY;
    if(to>from&&from+height<=e.minY+.05&&result+height>e.minY)result=e.minY-height;
   }
-  for(const e of nearbySurfaces(x,z,radius)){
-   if(!activeSurface(e))continue;const range=triangleDiskYRange(e.triangle,x,z,radius);if(!range)continue;
+  const triangle=[[0,0,0],[0,0,0],[0,0,0]];
+  visitNearbySurfaces(x,z,radius,(packet,face)=>{
+   if(!activeSurface(packet))return;const range=triangleDiskYRange(copySurfaceTriangle(packet,face,triangle),x,z,radius);if(!range)return;
    if(to<from&&from>=range.max-.001&&result<range.max)result=range.max;
    if(to>from&&from+height<=range.min+.001&&result+height>range.min)result=range.min-height;
-  }return result;
+  });return result;
  }
  return {register,registerParts,unregister:root=>{unregister(root);unregisterSurface(root);},resolve,limitVertical,
-  registerSurface,unregisterSurface,hasSurface:root=>surfaceOwners.has(root),surfaceHeight,surfaceContacts,surfaceStats:()=>({owners:surfaceOwners.size,triangles:[...surfaceOwners.values()].reduce((n,a)=>n+a.length,0),cells:surfaceCells.size}),
+  prepareSurface,surfaceSupportHeight,surfaceStorageStats:packedStatic.storageStats,registerSurface,unregisterSurface,hasSurface:root=>surfaceOwners.has(root),surfaceHeight,surfaceContacts,surfaceStats:()=>({owners:surfaceOwners.size,triangles:[...surfaceOwners.values()].reduce((n,a)=>n+a.length,0),cells:surfaceCells.size}),
   updateDynamic(){for(const [root,last]of [...moving]){root.updateWorldMatrix(true,false);if(root.matrixWorld.elements.some((value,i)=>Math.abs(value-last[i])>.002))register(root);}},
   hasParts:root=>(owners.get(root)?.length||0)>0,refresh(){for(const [root,parts] of [...owners]){if(parts[0]?.registeredParent&&!root.parent&&!root.userData.collisionBatched)unregister(root);else register(root,{primitives:true});}},stats:()=>({parts:count,owners:owners.size,cells:cells.size})};
 }

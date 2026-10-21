@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 3,
+  "profile": "packed-static-backend-1",
+  "nativeEngineSHA256": "388c85c066bad1efbc74418cd4788a8a5edc1d0cf7bc98c3b1bcad370bea7f4c",
+  "nativeHelperSHA256": "c76b25135de7fc3d4db63e85cdc58b773155b589f81abd738a284597aa478f19",
+  "legacyEngineSHA256": "91cd4099f415bc5f28a00b9533e130a55dfe37b49d8b4866921fa35bf1e16d72",
+  "rawBoulderConstructorSHA256": "53f1cc6c2090334747dfa8fd4b0d4d30053c34126fd49b50e40fce4727dc18d2",
+  "source3BridgeFiles": {
+    "assets/world-photoscans.js": "a64cfbb63f5e29210144a9a0b67021a665fc5546bdaba4c0ced0ae418783fb7c",
+    "assets/snowpeak-boulder-contact.mjs": "e5888969dd2016277b994528e1cfe6d758547415be7e9a39a7dbd953f7aaeb90",
+    "assets/features/course-clear.js": "05cd1942a3ef71f7a9f46010dc89d2653a7bf9b1f00e676e15c5b584199d05c2",
+    "assets/hollowpeak-anchor-grounding.mjs": "131000fd77259596354f268cd5eaca1e647638988b31e4d66f99d1d0a3c51180"
+  },
+  "normalization": {
+    "before": "./packed-static-surfaces.mjs?v=packed-static-visitor-1",
+    "after": "./packed-static-surfaces.mjs?v=packed-static-backend-1"
+  },
+  "importMapAliases": {
+    "./assets/solid-collisions.js": "./assets/solid-collisions.js?v=packed-static-backend-1",
+    "./assets/solid-collisions.js?v=solid-world-1": "./assets/solid-collisions.js?v=packed-static-backend-1",
+    "./assets/solid-collisions.js?v=snowpeak-boulder-contact-1": "./assets/solid-collisions.js?v=packed-static-backend-1"
+  },
+  "liveBrowserStaticEdges": [
+    {
+      "path": "ranch3d.html",
+      "line": 743,
+      "specifier": "./assets/solid-collisions.js?v=snowpeak-boulder-contact-1"
+    },
+    {
+      "path": "assets/willowmere-art.js",
+      "line": 2,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/ranch-architecture.js",
+      "line": 2,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/ranch-builder-art.js",
+      "line": 4,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/scenery-art.js",
+      "line": 1,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/marsh-dressing.js",
+      "line": 2,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/features/world-vistas.js",
+      "line": 5,
+      "specifier": "../solid-collisions.js?v=solid-world-1"
+    }
+  ],
+  "qaBrowserDynamicEdges": [
+    {
+      "path": "tools/qa-discovery-art.cjs",
+      "line": 13,
+      "specifier": "./assets/solid-collisions.js"
+    },
+    {
+      "path": "tools/qa-marsh-dressing.cjs",
+      "line": 38,
+      "specifier": "./assets/solid-collisions.js"
+    },
+    {
+      "path": "tools/qa-thunder-oak.cjs",
+      "line": 28,
+      "specifier": "./assets/solid-collisions.js"
+    },
+    {
+      "path": "tools/qa-intro-chalk-collisions.cjs",
+      "line": 12,
+      "specifier": "./assets/solid-collisions.js?v=solid-world-1"
+    }
+  ],
+  "fixtureScope": {
+    "recordedPoses": "Three isolated seeded constructor cohorts,40recorded seated poses; canonical patch authenticated,exterior nodes synthetic. Not a full live-world RNG/layout fixture.",
+    "legacyEngine": "Exact pre-install current111engine fixture only; not imported by product runtime.",
+    "supportOracle": "Reviewed old supportIndex fixture only, retains unused privateClone helper as authenticated source bytes.",
+    "optionalNumericSupport": "Prepared/index query API remains tested; no shared callback adapter is staged or claimed."
+  },
+  "omittedPrototypeTests": [
+    {
+      "title": "one packed support callback shares all owners and cleans up without touching unrelated callbacks",
+      "originalBlockSHA256": "3574b394df495b0e18da1bda65eba3265cab1bb037b6cfe77dc1de59a9904376"
+    },
+    {
+      "title": "support adapter surfaces mutation failures and reports actual callback attachment until cleanup retry",
+      "originalBlockSHA256": "67aff77c8bee7ea1e9736dad50da676413bf2447af7fb86ab3f16c0d7c55dc1d"
+    },
+    {
+      "title": "external duplicate callback validation reports real attachment before and after failure or detach",
+      "originalBlockSHA256": "fd0b2f784c1a7a7b815d3fecaa362a93b67cf0e131e94e3aa34c0f84a773d98e"
+    },
+    {
+      "title": "visitor contact engine retains exactly the frozen2 packet buffers and reference indexes",
+      "originalBlockSHA256": "0afa08b2fe6390b27bdb2164536001a95c99411f89f9097094895cfca21c714a"
+    }
+  ],
+  "retainedNativeQualification": {
+    "reportSHA256": "26336516b4e42b3738f67db12a5d6512242a449dd03f9277d60bbd4486db094f",
+    "rawStatus": "QUALIFIED_PAIR_MISMATCH_NOT_EXACT_ACCEPTANCE",
+    "independentReviewSHA256": "222dc4657066c2b95585d986e8f73d62765c17f95bf371d473ca7329eb80ef6a"
+  },
+  "historicalHTMLPins": {
+    "baseline111HTMLSHA256": "8f9c04c963daca1e71a663550bf186a7df7a4eace84a530a290ade22af83ff74",
+    "packedOnlyHTMLSHA256": "0ddaff5ad9bf173da1f23ebb9c45db0821ad98908af85c22d93e728370073409",
+    "scope": "Historical source normalization evidence only. Regression tests intentionally do not freeze the whole evolving HTML page."
+  },
+  "historicalImportMapLines": "  \"./assets/solid-collisions.js\": \"./assets/solid-collisions.js?v=packed-static-backend-1\",\n  \"./assets/solid-collisions.js?v=solid-world-1\": \"./assets/solid-collisions.js?v=packed-static-backend-1\",\n  \"./assets/solid-collisions.js?v=snowpeak-boulder-contact-1\": \"./assets/solid-collisions.js?v=packed-static-backend-1\",\n",
+  "sceneryImportMapAliases": {
+    "./assets/ranch-grounds.mjs?v=ranch-actors-2": "./assets/ranch-grounds.mjs?v=barleyfold-arrival-grounds-1"
+  },
+  "retainedWorldQuartersAlias": {
+    "key": "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1",
+    "value": "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1"
+  },
+  "shippingScope": "Packed backend and grounds only; sign3 candidate and eighth collision import are held.",
+  "historicalUnusedContract2ReadySHA256": "5badd69c46f733b545de69ccd0086564158ede9bb161ee3799f0bf561dd759f9"
+}
