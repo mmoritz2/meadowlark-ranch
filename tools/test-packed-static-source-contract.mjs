@@ -20,15 +20,16 @@ test('three cache aliases target one fresh URL directly without chaining or main
  for(const[k,v]of Object.entries(contract.importMapAliases)){assert.equal(map[k],v);assert.equal(new URL(v,documentURL).href,target);assert(!normalized.has(target),'Target must not be another alias key');}
  assert(html.includes("import {createSolidWorld} from './assets/solid-collisions.js?v=snowpeak-boulder-contact-1';"));
 });
-test('reviewed grounds cache alias resolves directly while quarter-sign cache remains unchanged',()=>{
- for(const[k,v]of Object.entries(contract.sceneryImportMapAliases)){assert.equal(map[k],v,k);const target=new URL(v,documentURL).href;assert(!normalized.has(target),'Scenery target must not chain through another map key');assert.equal(resolved(k,documentURL),target);}
- const q=contract.retainedWorldQuartersAlias;assert.equal(map[q.key],q.value);assert(!Object.hasOwn(map,q.value),'Existing quarter-sign target stays unmapped while sign changes are held');
+test('reviewed grounds and quarter-sign cache aliases resolve directly',()=>{
+ for(const[k,v]of Object.entries({...contract.sceneryImportMapAliases,...contract.quarterSignImportMapAliases})){assert.equal(map[k],v,k);const target=new URL(v,documentURL).href;assert(!normalized.has(target),'Scenery target must not chain through another map key');assert.equal(resolved(k,documentURL),target);}
+ const quarterAliases=Object.entries(contract.quarterSignImportMapAliases);assert.equal(quarterAliases.length,2);assert(quarterAliases.every(([,v])=>v===quarterAliases[0][1]));
+ const q=contract.quarterSignHelperImport;assert(read(q.path).includes("from '"+q.specifier+"'"));assert.equal(resolved(q.specifier,new URL(q.path,origin).href),new URL(q.resolved,documentURL).href);assert(!normalized.has(new URL(q.resolved,documentURL).href));
  assert.equal(resolved('./ranch-grounds.mjs?v=ranch-actors-2',origin+'assets/meadow-cover.js'),new URL('./assets/ranch-grounds.mjs?v=barleyfold-arrival-grounds-1',documentURL).href);
 });
-test('all seven current live static browser collision imports resolve once to the same product module',()=>{
+test('all eight current live static browser collision imports resolve once to the same product module',()=>{
  const actual=[];function visit(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){if(entry.name==='vendor')continue;const q=path.join(dir,entry.name);if(fs.statSync(q).isDirectory())visit(q);else if(/\.(mjs|js)$/.test(q))collect(q);}}
  function collect(file){const text=fs.readFileSync(file,'utf8'),relative=path.relative(fileURLToPath(root),file).split(path.sep).join('/');for(const m of text.matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*)['"]([^'"]*solid-collisions\.js[^'"]*)['"]/g))actual.push({path:relative,line:text.slice(0,m.index).split('\n').length,specifier:m[1]});}
- for(const name of fs.readdirSync(root))if(/\.html$/.test(name))collect(fileURLToPath(new URL(name,root)));visit(fileURLToPath(new URL('assets/',root)));const ordered=rows=>rows.map(({path,specifier})=>({path,specifier})).sort((a,b)=>(a.path+':'+a.specifier).localeCompare(b.path+':'+b.specifier));assert.deepEqual(ordered(actual),ordered(contract.liveBrowserStaticEdges),'New browser edges require an explicit cache contract');assert.equal(contract.liveBrowserStaticEdges.length,7);assert.equal(actual.length,contract.liveBrowserStaticEdges.length);
+ for(const name of fs.readdirSync(root))if(/\.html$/.test(name))collect(fileURLToPath(new URL(name,root)));visit(fileURLToPath(new URL('assets/',root)));const ordered=rows=>rows.map(({path,specifier})=>({path,specifier})).sort((a,b)=>(a.path+':'+a.specifier).localeCompare(b.path+':'+b.specifier));assert.deepEqual(ordered(actual),ordered(contract.liveBrowserStaticEdges),'New browser edges require an explicit cache contract');assert.equal(contract.liveBrowserStaticEdges.length,8);assert.equal(actual.length,contract.liveBrowserStaticEdges.length);
  for(const row of actual)assert.equal(resolved(row.specifier,new URL(row.path,origin).href),target,row.path);
 });
 test('all current QA browser dynamic collision imports use covered direct aliases',()=>{

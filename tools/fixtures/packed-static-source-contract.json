@@ -55,6 +55,11 @@
       "path": "assets/features/world-vistas.js",
       "line": 5,
       "specifier": "../solid-collisions.js?v=solid-world-1"
+    },
+    {
+      "path": "assets/quarter-sign-joinery.mjs",
+      "line": 1,
+      "specifier": "./solid-collisions.js?v=solid-world-1"
     }
   ],
   "qaBrowserDynamicEdges": [
@@ -117,10 +122,15 @@
   "sceneryImportMapAliases": {
     "./assets/ranch-grounds.mjs?v=ranch-actors-2": "./assets/ranch-grounds.mjs?v=barleyfold-arrival-grounds-1"
   },
-  "retainedWorldQuartersAlias": {
-    "key": "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1",
-    "value": "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1"
+  "shippingScope": "Packed backend, farm grounds and final support-aware quarter signs; eight current static collision imports are covered by direct cache aliases.",
+  "historicalUnusedContract2ReadySHA256": "5badd69c46f733b545de69ccd0086564158ede9bb161ee3799f0bf561dd759f9",
+  "quarterSignImportMapAliases": {
+    "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=quarter-sign-final-support-4",
+    "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=quarter-sign-final-support-4"
   },
-  "shippingScope": "Packed backend and grounds only; sign3 candidate and eighth collision import are held.",
-  "historicalUnusedContract2ReadySHA256": "5badd69c46f733b545de69ccd0086564158ede9bb161ee3799f0bf561dd759f9"
+  "quarterSignHelperImport": {
+    "path": "assets/features/world-quarters.js",
+    "specifier": "../quarter-sign-joinery.mjs?v=quarter-sign-final-support-4",
+    "resolved": "./assets/quarter-sign-joinery.mjs?v=quarter-sign-final-support-4"
+  }
 }

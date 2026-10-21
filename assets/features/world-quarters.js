@@ -33,6 +33,7 @@ import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-snow-1';
 import {createFrostpineSaplingCohort} from '../hollowpeak-frostpine-saplings.mjs?v=hollowpeak-owned-ecology-1';
+import {createQuarterSignJoinery} from '../quarter-sign-joinery.mjs?v=quarter-sign-final-support-4';
 export const id='world-quarters';
 export function install(G){
  const {THREE,scene,toast}=G;
@@ -94,6 +95,7 @@ export function install(G){
  const G_CROSS=mergeGeometries([G_PLANE.clone(),G_PLANE.clone().rotateY(Math.PI/2)],false);
  const G_TUFT=mergeGeometries([G_BLADE.clone(),G_BLADE.clone().rotateY(Math.PI/2)],false);
  const workshop=createRegionalWorkshopArt({G});P.workshops=workshop.stats;
+ const quarterSigns=createQuarterSignJoinery({THREE,W,scene,own,mergeGeometries,setQuarterPrimitiveUV});
  const WHITE=mt('#ffffff',{roughness:1});               // the base for anything coloured per instance
  function put(geo,c,sx,sy,sz,x,y,z,g,o){const m=new THREE.Mesh(geo,mt(c,o));m.scale.set(sx,sy,sz);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
  const bx=(g,c,x,y,z,w,h,d)=>put(G_BOX,c,w,h,d,x,y,z,g);
@@ -145,11 +147,16 @@ export function install(G){
     is why everything that turns, swings or drifts is built outside the bake. */
  function bake(g,shadow,prepared=false){
   if(!prepared){const token=workshop.prepareBake(g);if(token)return workshop.legacyBake(token,()=>bake(g,shadow,true));}
-  g.updateMatrixWorld(true);
+  g.updateMatrixWorld(true);quarterSigns.prepareBake(g);
   const byMat=new Map();let n=0;
   g.traverse(o=>{
    if(!o.isMesh||o.isInstancedMesh||Array.isArray(o.material))return;
    const geo=o.geometry;if(!geo.index||!geo.attributes.normal||!geo.attributes.uv)return;
+   if(quarterSigns.omit(o)){
+    // Preserve the old constructor stream at its exact clone slot, including private workshop/Frost bakes.
+    for(let i=0;i<4;i++)Math.random();
+    const e=byMat.get(o.material)||{list:[],cast:false};e.cast=e.cast||o.castShadow;byMat.set(o.material,e);n++;return;
+   }
    const c=geo.clone();if(!c.userData.workshopUV)setQuarterPrimitiveUV(c,o.scale,o.position,o.material.userData.quarterSurface);c.applyMatrix4(o.matrixWorld);
    for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')c.deleteAttribute(k);
    const e=byMat.get(o.material)||{list:[],cast:false};
@@ -157,6 +164,7 @@ export function install(G){
   });
   const out=[];
   for(const [m,e] of byMat){
+   if(!e.list.length){for(let i=0;i<8;i++)Math.random();continue;} // The old merged geometry + Mesh occupied this bin slot.
    const merged=mergeGeometries(e.list,false);e.list.forEach(c=>c.dispose());if(!merged)continue;
    const mesh=own(new THREE.Mesh(merged,m));mesh.name='quarter_baked';
    mesh.castShadow=shadow!==false&&e.cast;mesh.receiveShadow=true;
@@ -291,6 +299,7 @@ export function install(G){
   try{const s=W.arrivalArt.buildSign({text,width:w,height:0.5});s.position.y=2.9;g.add(s);}catch(e){}
   cy(g,'#6b5334',-w/2-0.2,1.45,0,0.09,2.9);cy(g,'#6b5334',w/2+0.2,1.45,0,0.09,2.9);
   bx(g,'#6b5334',0,3.34,0,w+0.7,0.14,0.16);
+  quarterSigns.capture(g,text,w);
  }
 
  /* ================= 6. woodsmoke, the thing that carries furthest ================= */
@@ -1115,6 +1124,13 @@ vQMistUV=uv;
   P.frostpineArt.stats.groundedActors=[];
   for(const entry of P.frostpineNPCs||[]){const before=entry.g.position.y,after=groundH(entry.def.x,entry.def.z);entry.g.position.y=after;P.frostpineArt.stats.groundedActors.push({id:entry.def.id,x:entry.def.x,z:entry.def.z,before,after});}
  }
+ // Finalize once, after the late Willowmere decks and Frostpine support are installed.
+ // Follow-camera's existing wrapper registers the same four authored parts with the body engine.
+ P.signJoinery=quarterSigns.finalize();P.signboards=quarterSigns.finalRoots();
+ P.draws+=P.signboards.length*2+P.signJoinery.retained*5;P.mergedFrom+=P.signboards.length;P.colliders+=P.signboards.length;
+ if(P.signJoinery.captured!==5||P.signJoinery.finalized!==5)G.errors.push('Quarter final sign admission: '+P.signJoinery.finalized+'/5 finalized, '+P.signJoinery.captured+' captured');
+ for(const e of P.signJoinery.errors)G.errors.push('Quarter sign '+e.text+': '+e.phase+': '+e.message);
+ if(P.signJoinery.retained)G.errors.push('Quarter signs retained '+P.signJoinery.retained+' original render-only owners after final support preparation failure');
  /* The first time you ride into one of the four, say what it is rather than leaving the region
     name to carry the whole arrival. Once each, ever. */
  const ARRIVE={
