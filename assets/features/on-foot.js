@@ -1,3 +1,4 @@
+import {readOwnedHollowpeakWater} from '../hollowpeak-water-behavior.mjs?v=hollowpeak-owned-water-1';
 /* Feature package 'on-foot' — getting off the horse and walking about.
 
    In the riding game this one is modelled on, a small saddle button beside the jump lets you
@@ -354,6 +355,8 @@ export function install(G){
   const lake=Wd.loonLake?.waterAt(x,z);
   if(lake&&lake.depth>depth){depth=lake.depth;surface=lake.surface;}
   try{const rz=Wd.riverZ(x);if(Math.abs(z-rz)<9){const th=Wd.terrainH(x,z);if(Wd.groundH(x,z)<=th+0.3){const lv=Wd.riverLevel(x);if(lv-th>depth){depth=lv-th;surface=lv;}}}}catch(e){}
+  const owned=readOwnedHollowpeakWater(Wd,x,z);
+  if(owned&&owned.depth>depth){depth=owned.depth;surface=owned.surface;}
   return depth>0.02?{depth,surface}:null;
  }
  const ray=new THREE.Raycaster(), _ro=new THREE.Vector3(), _rd=new THREE.Vector3(0,-1,0);

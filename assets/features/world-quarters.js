@@ -32,6 +32,7 @@ import {buildMarshDressing,installChimneySmoke} from '../marsh-dressing.js?v=mar
 import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-snow-1';
+import {createFrostpineSaplingCohort} from '../hollowpeak-frostpine-saplings.mjs?v=hollowpeak-owned-ecology-1';
 export const id='world-quarters';
 export function install(G){
  const {THREE,scene,toast}=G;
@@ -887,9 +888,13 @@ vQMistUV=uv;
    if(Math.hypot(x,z)>450||hyp(x,z,tat[0],tat[1])<11||W.colliders.some(c=>hyp(x,z,c.x,c.z)<(c.r||0)+1.25))continue;
    const s=rr(.27,.57),ry=rr(0,6.28);sap.push({x,z,s,r:ry});}
   P.saplings=plantNaturalPines({THREE,scene,placements:sap,groundH,species:'snowpine'});
+  // Metadata-only controller; original 96 attempts, draws and allocations above
+  // finish unchanged. The main ecology owner applies it after all layout settles.
+  P.hollowpeakSaplings=createFrostpineSaplingCohort({world:W,procedural:P.saplings});
   P.saplingsReady=W.ranchBuilderArt.ready.then(()=>{
    if(!W.ranchBuilderArt.models.includes('pine_sapling_small'))return;
    const scanned=plantScannedSaplings({THREE,scene,template:W.ranchBuilderArt.create('frost_tree'),placements:sap,groundH});
+   P.hollowpeakSaplings.setScanned(scanned);
    for(const m of P.saplings){scene.remove(m);m.dispose();}P.saplings=scanned;
   });
   /* Drifts: long, shallow and barely brighter than the ground. At the first pass they were

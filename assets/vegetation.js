@@ -4,6 +4,7 @@
 import { getFoliageTexture, tuneFoliage } from './world-art.js?v=world-cinematic-1';
 import {partitionStaticInstances} from './spatial-instances.js';
 import {applySaplingSnowShader} from './sapling-snow.mjs?v=nursery-snow-1';
+import {registerFrostpineSaplingBank} from './hollowpeak-frostpine-saplings.mjs?v=hollowpeak-owned-ecology-1';
 
 const TAU = Math.PI * 2;
 const prototypes = new Map(), materials = new Map();
@@ -211,8 +212,11 @@ export function plantNaturalPines({THREE,scene,placements,groundH,species='pine'
   for(let v=0;v<4;v++){
     const rows=placements.filter((_,i)=>i%4===v);if(!rows.length)continue;
     const source=makeNaturalPine({THREE,species,seed:v});
+    const sourceParts=source.children.filter(p=>p.isMesh).map(p=>({geo:p.geometry,mat:p.material}));
+    const sourceIndices=rows.map(pt=>placements.indexOf(pt)),placementGrounds=rows.map(pt=>groundH(pt.x,pt.z));
     for(const part of source.children){const mesh=new THREE.InstancedMesh(part.geometry,part.material,rows.length);mesh.name='Natural '+species+' saplings';mesh.customDepthMaterial=part.customDepthMaterial;
-      rows.forEach((pt,i)=>{p.set(pt.x,groundH(pt.x,pt.z)-.03,pt.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),pt.r);scale.setScalar(pt.s);m.compose(p,q,scale);mesh.setMatrixAt(i,m);});
+      rows.forEach((pt,i)=>{p.set(pt.x,placementGrounds[i]-.03,pt.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),pt.r);scale.setScalar(pt.s);m.compose(p,q,scale);mesh.setMatrixAt(i,m);});
+      registerFrostpineSaplingBank(mesh,{kind:'procedural',sourceKey:'natural-'+species+':'+v,parts:sourceParts,sourceIndices,placementGrounds});
       mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);}
   }return made;
 }
@@ -220,16 +224,22 @@ export function plantNaturalPines({THREE,scene,placements,groundH,species='pine'
 // Seed clusters share scanned bark/needle geometry, then split into spatial
 // cells for camera/shadow culling. Every authored sapling remains at full detail.
 export function plantScannedSaplings({THREE,scene,template,placements,groundH}){
-  const made=[],center=placements.reduce((a,p)=>({x:a.x+p.x/placements.length,z:a.z+p.z/placements.length}),{x:0,z:0});
+  const made=[],sourceParts=[],center=placements.reduce((a,p)=>({x:a.x+p.x/placements.length,z:a.z+p.z/placements.length}),{x:0,z:0});
   template.updateMatrixWorld(true);
   template.traverse(part=>{if(!part.isMesh)return;
     const geo=part.geometry.clone().applyMatrix4(part.matrixWorld);
+    sourceParts.push({geo,mat:part.material});
     for(let c=0;c<4;c++){
       const rows=placements.filter(p=>(p.x>center.x?1:0)+(p.z>center.z?2:0)===c);if(!rows.length)continue;
+      const placementGrounds=rows.map(p=>groundH(p.x,p.z));
       const mesh=new THREE.InstancedMesh(geo,part.material,rows.length),m=new THREE.Matrix4(),v=new THREE.Vector3(),q=new THREE.Quaternion(),scale=new THREE.Vector3();
-      rows.forEach((p,i)=>{v.set(p.x,groundH(p.x,p.z)-.025,p.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),p.r);scale.setScalar(p.s*2);m.compose(v,q,scale);mesh.setMatrixAt(i,m);});
+      rows.forEach((p,i)=>{v.set(p.x,placementGrounds[i]-.025,p.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),p.r);scale.setScalar(p.s*2);m.compose(v,q,scale);mesh.setMatrixAt(i,m);});
       mesh.name='Frostpine | scanned saplings';mesh.castShadow=true;mesh.receiveShadow=true;
-      const cells=partitionStaticInstances(THREE,mesh);scene.add(...cells);made.push(...cells);mesh.dispose();
+      // Original quadrant row -> accepted original sap placement. Spatial cells
+      // retain this metadata and add their exact local sourceIndices mapping.
+      const sourceBank={kind:'scanned',sourceKey:'pine_sapling_small:frost_tree',parts:sourceParts,sourceIndices:rows.map(p=>placements.indexOf(p)),placementGrounds,sourceMesh:mesh};
+      registerFrostpineSaplingBank(mesh,sourceBank);
+      const cells=partitionStaticInstances(THREE,mesh);for(const cell of cells)registerFrostpineSaplingBank(cell,sourceBank);scene.add(...cells);made.push(...cells);mesh.dispose();
     }
   });return made;
 }

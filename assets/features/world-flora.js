@@ -472,6 +472,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  // Exact references are captured without altering seeded planting or occupancy.
  // Retirement runs after the full world/scan layout, never inside tree().
  F.treeOwners=[];
+ F.snagOwners=[];
 
  const _m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_e=new THREE.Euler(),_v=new THREE.Vector3(),_sc=new THREE.Vector3(),_col=new THREE.Color();
  /* One plant. h is its height in metres, wid its spread relative to that, and sink how far its base
@@ -522,7 +523,9 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   _e.set((rnd()-0.5)*0.12,rnd()*Math.PI*2,(rnd()-0.5)*0.12);_q.setFromEuler(_e);
   _sc.set(h*0.9,h,h*0.9);_v.set(x,groundH(x,z)-0.06*h,z);_m.compose(_v,_q,_sc);
   b.im.setMatrixAt(b.n,_m);_col.set(col||'#efe9db').offsetHSL(0,(rnd()-0.5)*0.08,(rnd()-0.5)*0.12);b.im.setColorAt(b.n,_col);b.n++;
-  W.colliders.push({x,z,r:0.5,height:h});addOcc(x,z,0.5);return true;
+  const collider={x,z,r:0.5,height:h};W.colliders.push(collider);addOcc(x,z,0.5);
+  // Metadata only: exact row/contact references, after the unchanged seeded writer.
+  F.snagOwners.push({kind:'snag',x,z,height:h,bank:b.im,index:b.n-1,collider});return true;
  }
 
  /* ================= 6. the planting ================= */

@@ -1,4 +1,6 @@
+import {hollowpeakSourceDecisionGround,hollowpeakSourceDecisionWorld,prepareHollowpeakDecisionTree,applyHollowpeakTreeCohort} from './hollowpeak-tree-cohort.mjs?v=hollowpeak-owned-ecology-1';
 import {planUpperHollowpeakTreeRoots,retireUpperHollowpeakTrees} from './hollowpeak-upper-tree-roots.mjs?v=hollowpeak-upper-source-roots-1';
+import {planHollowpeakSourceFoot,planHollowpeakRebasedSourceFoot,permitsHollowpeakMember} from './hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1';
 import {fitHollowpeakTreeRoots} from './hollowpeak-root-seating.mjs?v=hollowpeak-root-seating-1';
 import {activeWorldTree,retireCountrysideVistaTrees} from './countryside-vista-owners.mjs?v=countryside-vista-1';
 import {installIslandMediumCanopy,originalCanopyPlannerLedger,publishMediumCanopyLedger,waitForMediumCanopyWorld} from './island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1';
@@ -73,7 +75,7 @@ export function projectedCrownBenefit(tree,viewProjection){
  const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];let surfaces=0;
  for(const part of tree.source.parts||[]){if(!/leaves|twig/.test(part.mat?.name||''))continue;const b=part.bounds;if(!b)continue;surfaces++;for(let i=0;i<3;i++){const key=['x','y','z'][i];min[i]=Math.min(min[i],b.min[key]);max[i]=Math.max(max[i],b.max[key]);}}
  if(!surfaces||![...min,...max].every(Number.isFinite))return null;
- const m=multiplyCrownMatrices(viewProjection,tree.matrix.elements),corners=[];
+ const m=multiplyCrownMatrices(viewProjection,(tree.hollowpeakDecisionMatrix??tree.matrix).elements),corners=[];
  for(let i=0;i<8;i++){const x=i&1?max[0]:min[0],y=i&2?max[1]:min[1],z=i&4?max[2]:min[2];corners.push([m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14],m[3]*x+m[7]*y+m[11]*z+m[15]]);}
  if(corners.some(c=>!c.every(Number.isFinite)))return null;
  for(let axis=0;axis<3;axis++)for(const sign of[-1,1])if(corners.every(c=>c[3]+sign*c[axis]<0))return{visible:false,area:0};
@@ -120,10 +122,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const zero=new THREE.Matrix4().makeScale(0,0,0),UP=new THREE.Vector3(0,1,0),WHITE=new THREE.Color(0xffffff);
   const q=new THREE.Quaternion(),v=new THREE.Vector3(),s=new THREE.Vector3();
   const rnd=(x,z,k=0)=>{const n=Math.sin(x*127.1+z*311.7+k*74.7)*43758.5453;return n-Math.floor(n);};
+  const decisionWorld=hollowpeakSourceDecisionWorld(W),decisionGroundH=(x,z)=>hollowpeakSourceDecisionGround(W,x,z);
   const protectedPoints=[...Object.values(W.things||{}),...Object.values(W.mapMarkers||{}),...Object.values(W.FORAGE_SPOTS||{})].filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.z));
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
-  function clear(x,z,r=1){
+  function clear(x,z,r=1,heightAt=decisionGroundH){
     if(inMeadowOpening(x,z)||fallsContainsWater(x,z,r+1.5))return false;
     if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
     if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
@@ -134,7 +137,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return false;
     if(W.colliders.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.r||0)+.3))return false;
     for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;
-    return Math.abs(W.groundH(x+r,z)-W.groundH(x-r,z))<r*.40&&Math.abs(W.groundH(x,z+r)-W.groundH(x,z-r))<r*.40;
+    return Math.abs(heightAt(x+r,z)-heightAt(x-r,z))<r*.40&&Math.abs(heightAt(x,z+r)-heightAt(x,z-r))<r*.40;
   }
   function configureMaterial(mat,foliage=false){
     mat.envMapIntensity=foliage?.48:.68;
@@ -336,7 +339,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       // Keep the older source/crown rules exact outside the established cold
       // climate. Evergreen age patches alter crowns, never their trunk sites.
       if(!t.authoredOrchard&&!t.authoredVillage&&coldWoodlandWeights(t.x,t.z).weight>.08){
-        const elevation=W.groundH(t.x,t.z),grade=Math.hypot(W.groundH(t.x+1,t.z)-W.groundH(t.x-1,t.z),W.groundH(t.x,t.z+1)-W.groundH(t.x,t.z-1))*.5;
+        const elevation=decisionGroundH(t.x,t.z),grade=Math.hypot(decisionGroundH(t.x+1,t.z)-decisionGroundH(t.x-1,t.z),decisionGroundH(t.x,t.z+1)-decisionGroundH(t.x,t.z-1))*.5;
         const profile=coldWoodlandProfile({x:t.x,z:t.z,height:t.height,source:t.source.key,elevation,grade});
         const source=variants.find(v=>v.key===profile.source);
         if(!source)throw Error('Missing cold woodland source: '+profile.source);
@@ -360,11 +363,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         stem.getMatrixAt(i,seedMatrix);const woodHidden=seedMatrix.determinant()===0;
         leaves.getMatrixAt(i,seedMatrix);const leavesHidden=seedMatrix.determinant()===0;
         if(woodHidden||leavesHidden){
-          const retired=retireHiddenHollowpeakSeed(W,p,kind,true,ALPINE_BOUNDS);
+          const retired=retireHiddenHollowpeakSeed(decisionWorld,p,kind,true,ALPINE_BOUNDS);
           if(retired)state.hollowpeakMownSeeds.push(retired);
           return;
         }
-        const cliffSeed=retireSteepFallsSeed(W,p,kind);
+        const cliffSeed=retireSteepFallsSeed(decisionWorld,p,kind);
         if(cliffSeed){
           stem.setMatrixAt(i,zero);leaves.setMatrixAt(i,zero);
           stem.instanceMatrix.needsUpdate=leaves.instanceMatrix.needsUpdate=true;
@@ -489,10 +492,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     function settlementRiderRadius(site,source,fullRadius){
       const boxes=source===uprightSource?UPRIGHT_HYBRID_WOOD_BOXES:WOODLAND_WOOD_BOXES;
       return terrainAwareWoodEnvelope({x:site.x,z:site.z,height:site.height,sourceHeight:source.meta.sourceHeight,
-        sourceBottom:source.bounds.min.y,sourceRadius:fullRadius,boxes,heightAt:W.groundH,terrainStep:W.terrainStep});
+        sourceBottom:source.bounds.min.y,sourceRadius:fullRadius,boxes,heightAt:decisionGroundH,terrainStep:W.terrainStep});
     }
     function settlementFootRejection(site,source,fullRadius,ride){
-      const x=site.x,z=site.z,r=ride.radius,h=W.groundH(x,z);
+      const x=site.x,z=site.z,r=ride.radius,h=decisionGroundH(x,z);
       if(coldWoodlandWeights(x,z).weight>.08||coyoteCoverDryWeight(x,z)>.25)return 'climate';
       if(inMeadowOpening(x,z)&&!site.allowMeadowMargin)return 'open meadow';
       if(G.vistas?.clearZones?.some(test=>test(x,z)))return 'landmark vista';
@@ -592,9 +595,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       q.setFromAxisAngle(UP,t.yaw);s.set(scale*crownWidth,scale,scale*crownWidth);
       v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
       t.matrix=new THREE.Matrix4().compose(v,q,s);
-      const rootSeating=fitHollowpeakTreeRoots(t,W.groundH);
+      const decisionTree=prepareHollowpeakDecisionTree(t,W);
+      const rootSeating=fitHollowpeakTreeRoots(t,decisionTree?decisionWorld.groundH:W.groundH);
       if(rootSeating){t.matrix.elements[13]=rootSeating.fittedY;t.rootSeating=rootSeating;}
-      const upperPlan=planUpperHollowpeakTreeRoots(t,W.terrainH,{terrainStep:W.terrainStep});
+      const upperPlan=planUpperHollowpeakTreeRoots(t,decisionTree?decisionWorld.terrainH:W.terrainH,{terrainStep:W.terrainStep});
       if(upperPlan){t.upperHollowpeakRootPlan=upperPlan;if(upperPlan.action==='fit')t.matrix.elements[13]=upperPlan.fittedY;}
     }
     if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
@@ -634,7 +638,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       maxSourceBoxSide=Math.max(maxSourceBoxSide,side);maxWorldEdgeLength=Math.max(maxWorldEdgeLength,side*scale);
       let lowRadius=0;
       for(const box of boxes){
-        edgeOwner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+        const part={min:box.min,max:box.max,matrix};edgeOwner.userData.solidParts.push(part);(t.hollowpeakSolidParts??=[]).push({owner:edgeOwner,part});
         const lo=(box.min[1]-t.source.bounds.min.y)*scale-.07,hi=(box.max[1]-t.source.bounds.min.y)*scale-.07;
         if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
       }
@@ -643,8 +647,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const parts=edgeOwner.userData.solidParts.length,registered=W.solidWorld.register(edgeOwner);
     if(registered!==parts){W.solidWorld.unregister(edgeOwner);edgeOwner.removeFromParent();throw Error('Incomplete woodland wood contacts');}
     for(const t of edge.trees){
-      W.colliders.push({x:t.x,z:t.z,r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,authoredWoodlandEdge:true});
-      W.forestPoints.push({x:t.x,z:t.z,s:t.height/8,authoredWoodlandEdge:true});
+      const collider={x:t.x,z:t.z,r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,authoredWoodlandEdge:true};W.colliders.push(collider);t.hollowpeakCollider=collider;
+      const forestPoint={x:t.x,z:t.z,s:t.height/8,authoredWoodlandEdge:true};W.forestPoints.push(forestPoint);t.hollowpeakForestPoint=forestPoint;
     }
     edge.collision={rootNames:[edgeOwner.name],owners:1,parts,registeredParts:registered,sourceHash:WOODLAND_WOOD_SOURCE_SHA,
       sourceHashes:[...sourceHashes],maxSourceBoxSide,maxWorldEdgeLength,maxHorizontalAirFillBound:Math.SQRT2*maxWorldEdgeLength,
@@ -659,7 +663,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         const matrix=t.matrix.toArray(),scale=t.height/uprightSource.meta.sourceHeight;
         let lowRadius=0;
         for(const box of UPRIGHT_HYBRID_WOOD_BOXES){
-          owner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+          const part={min:box.min,max:box.max,matrix};owner.userData.solidParts.push(part);(t.hollowpeakSolidParts??=[]).push({owner,part});
           const lo=(box.min[1]-uprightSource.bounds.min.y)*scale-.07,hi=(box.max[1]-uprightSource.bounds.min.y)*scale-.07;
           if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
         }
@@ -879,9 +883,16 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const bank=G.floraPkg?.bank.snag;if(!bank)return;
     const catalog=await fetch('./assets/models/world/realism/deadwood-lods.json?v=weathered-deadwood-1').then(r=>{if(!r.ok)throw Error('Deadwood mesh catalog unavailable');return r.json();});
     const sources=[];for(const variant of catalog.variants)sources.push(await load(variant.id));
-    state.deadwood=installDeadwoodArt(G,{bank,catalog,sources});
+    state.deadwood=installDeadwoodArt(G,{bank,catalog,sources,snagOwners:G.floraPkg?.snagOwners||[]});
   }
   async function installForestFloor(){
+    // Established CURRENT59 decisions and quotas precede any new eligibility.
+    // Actual roots continue to use live groundH through placement().
+    const decisionHeightAt=decisionGroundH;
+    const members=[],banks=[],logs=[];
+    const remember=(id,role,sourceKey,parts,matrix,extra={})=>{
+      const member={id,role,sourceKey,parts,matrix,originalMatrix:Array.from(matrix.elements),originalPlacementGround:W.groundH(extra.x,extra.z),...extra};members.push(member);return member;
+    };
     const root=await load('pine_sapling_small');
     // Each collection child is a complete sapling, with both bark and needles.
     for(let variant=0;variant<root.children.length;variant++){
@@ -889,15 +900,17 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const cells=new Map();let count=0;
       for(let i=variant;i<pinePoints.length;i+=3){
         const p=pinePoints[i],x=p.x+2.8+2*rnd(p.x,p.z),z=p.z-3.4+2*rnd(p.x,p.z,1);
-        if(!clear(x,z,.65))continue;
+        if(!clear(x,z,.65,decisionHeightAt))continue;
         const scale=(.75+rnd(x,z)*.85)/(bounds.max.y-bounds.min.y);
         const key=Math.floor(x/45)+','+Math.floor(z/45);
-        if(!cells.has(key))cells.set(key,{x:Math.floor(x/45)*45+22.5,z:Math.floor(z/45)*45+22.5,points:[]});
-        cells.get(key).points.push(placement({bounds},x,z,scale,rnd(x,z,2)*Math.PI*2));count++;
+        if(!cells.has(key))cells.set(key,{x:Math.floor(x/45)*45+22.5,z:Math.floor(z/45)*45+22.5,points:[],records:[]});
+        const matrix=placement({bounds},x,z,scale,rnd(x,z,2)*Math.PI*2),cell=cells.get(key);
+        cell.points.push(matrix);cell.records.push(remember('forest-sapling:'+variant+':'+i,'sapling','pine_sapling_small:'+variant,parts,matrix,{sourceIndex:i,x,z}));count++;
       }
       for(const cell of cells.values())for(const p of parts){
         const mesh=instances(p,cell.points,'Photoscan pine saplings');mesh.castShadow=false;
         patch(mesh,cell.x,cell.z,95);mesh.userData.groundPlant=true;
+        banks.push({mesh,records:cell.records});mesh.userData.hollowpeakMembers=cell.records;
       }
       state.saplings+=count;
     }
@@ -906,12 +919,48 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const p of W.forestPoints){
       if(placed>=32)break;
       if(Math.hypot(p.x,p.z)>260||rnd(p.x,p.z,2)>.45)continue;
-      const x=p.x+4.5,z=p.z+3.1;if(!clear(x,z,2.4))continue;
+      const x=p.x+4.5,z=p.z+3.1;if(!clear(x,z,2.4,decisionHeightAt))continue;
       const scale=.48+rnd(x,z)*.25,mat=placement(log,x,z,scale,rnd(x,z,5)*Math.PI*2,.10);
       const mesh=instances(log,[mat],'Photoscan fallen timber');patch(mesh,x,z);
-      W.colliders.push({x,z,r:1.25});placed++;
+      const collider={x,z,r:1.25};W.colliders.push(collider);
+      const member=remember('forest-log:'+placed,'log','dead_tree_trunk_02',[log],mat,{sourceIndex:placed,x,z,collider,forestPoint:p});
+      logs.push(member);banks.push({mesh,records:[member]});mesh.userData.hollowpeakMembers=[member];placed++;
     }
     state.logs=placed;
+    // Every original accepted cell/log has now run its original constructor.
+    // Retired members keep their allocation/slot; later sites never backfill.
+    const floor=state.forestFloor={members,banks,logs,originalSaplings:members.length-logs.length,originalLogs:logs.length};
+    floor.applyHollowpeakCohort=({commit=true}={})=>{
+      const queries=W.fallsLandscape?.ownedQueries;if(!queries)return {status:'awaiting-owned-queries',members:members.length};
+      const plans=members.map(t=>planHollowpeakRebasedSourceFoot({id:t.id,parts:t.parts,matrix:t.originalMatrix,queries,role:t.role,sourceKey:t.sourceKey},t.originalPlacementGround));
+      for(let i=0;i<members.length;i++)if(plans[i].action==='fit'&&plans[i].matrix.some((v,j)=>j!==13&&v!==members[i].originalMatrix[j]))throw Error('Forest-floor cohort changed source pose');
+      const summary={status:commit?'applied':'ready-to-commit',members:members.length,affected:plans.filter(p=>p.affected).length,retired:plans.filter(p=>p.action==='retire').length,activeSaplings:members.filter((t,i)=>t.role==='sapling'&&plans[i].action!=='retire').length,activeLogs:members.filter((t,i)=>t.role==='log'&&plans[i].action!=='retire').length};
+      if(!commit)return {...summary,plans};
+      for(let i=0;i<members.length;i++){
+        const t=members[i],plan=plans[i];t.hollowpeakCohort=plan;
+        if(plan.affected&&plan.action!=='retire')t.matrix.elements[13]=plan.matrix[13];
+        else t.matrix.elements[13]=t.originalMatrix[13];
+      }
+      for(const {mesh,records} of banks){
+        const active=records.filter(permitsHollowpeakMember);active.forEach((t,i)=>mesh.setMatrixAt(i,t.matrix));mesh.count=active.length;
+        mesh.visible=active.length>0;mesh.instanceMatrix.needsUpdate=true;if(mesh.count)mesh.computeBoundingSphere();
+        mesh.userData.hollowpeakActiveSourceIndices=active.map(t=>t.sourceIndex);
+      }
+      return floor.hollowpeakCohort=summary;
+    };
+    // Explicit late closure: call after all original layout/capture consumers.
+    floor.finalizeHollowpeakContacts=({commit=true,cohortPlans=null}={})=>{
+      if(commit&&members.some(t=>!t.hollowpeakCohort))return {status:'blocked',reason:'cohort matrices must commit before physical contacts',removed:0};
+      let candidatePlans=cohortPlans;if(!candidatePlans){if(members.every(t=>t.hollowpeakCohort))candidatePlans=members.map(t=>t.hollowpeakCohort);else {const preview=floor.applyHollowpeakCohort({commit:false});if(preview.status!=='ready-to-commit')return {status:preview.status,removed:0};candidatePlans=preview.plans;}}
+      if(!Array.isArray(candidatePlans)||candidatePlans.length!==members.length)throw Error('Complete forest-floor cohort plans required');
+      if(commit&&candidatePlans.some((p,i)=>p?.action!==members[i].hollowpeakCohort?.action))throw Error('Forest-floor physical plan differs from committed source plan');
+      const requested=members.filter((t,i)=>t.role==='log'&&candidatePlans[i]?.action==='retire'),seen=new Set();
+      const blocked=requested.filter(t=>{const duplicate=seen.has(t.collider);seen.add(t.collider);return duplicate||!t.collider||t.collider.x!==t.x||t.collider.z!==t.z||t.collider.r!==1.25||Object.keys(t.collider).some(k=>!['x','z','r'].includes(k))||(!t.hollowpeakContactRetired&&W.colliders.filter(c=>c===t.collider).length!==1)||(t.hollowpeakContactRetired&&W.colliders.includes(t.collider));});
+      if(blocked.length)return {status:'blocked',blocked:blocked.map(t=>t.id),removed:0};
+      if(!commit)return {status:'ready-to-commit',requested:requested.length,removed:0};
+      let removed=0;for(const t of requested)if(!t.hollowpeakContactRetired){W.colliders.splice(W.colliders.indexOf(t.collider),1);t.hollowpeakContactRetired=true;removed++;}
+      return {status:'applied',requested:requested.length,removed};
+    };
   }
   // The surveyed scan and terrain seat share a fixed transform. Its detailed
   // contact surface stays active independently of visibility and graphics quality.
@@ -1002,13 +1051,13 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const changed=records=>tierChanged||records.some(t=>set.has(t)!==previousSelection.has(t));
     for(const {mesh,records} of treeMeshes){
       if(!changed(records))continue;
-      let count=0;for(const t of records)if(set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves|twig/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;}
+      let count=0;for(const t of records)if(set.has(t)&&permitsHollowpeakMember(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves|twig/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;}
       mesh.count=count;mesh.visible=count>0;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;mesh.castShadow=!renderer.xr.isPresenting;
       if(count)mesh.computeBoundingSphere();
     }
     for(const {mesh,records} of treeCards){
       if(!changed(records))continue;
-      let count=0;for(const t of records)if(activeWorldTree(t)&&!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
+      let count=0;for(const t of records)if(activeWorldTree(t)&&!set.has(t)&&permitsHollowpeakMember(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
       mesh.count=count;mesh.visible=count>0;mesh.castShadow=!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
       if(count)mesh.computeBoundingSphere();
     }
@@ -1035,8 +1084,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   state.floraRetirementReady=Promise.resolve().then(()=>Promise.allSettled([state.ready,G.worldDetails?.ready,G.undergrowth?.ready])).then(()=>{
     // All synchronous/scan/details/undergrowth layout is finished. Source rows
     // and capacities stay fixed; model/card submissions omit only retired owners.
-    state.hollowpeakUpperTrees=retireUpperHollowpeakTrees(G,trees,zero);
-    state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(G,trees,zero);
+    const decisionG=Object.create(G);decisionG.world=decisionWorld;
+    state.hollowpeakUpperTrees=retireUpperHollowpeakTrees(decisionG,trees,zero);
+    state.hollowpeakCliffFlora=retireSteepFallsFloraTrees(decisionG,trees,zero);
     if(state.hollowpeakCliffFlora.retired.length||state.hollowpeakUpperTrees.retired.length){
       const active=trees.filter(t=>activeWorldTree(t));
       state.trees=active.length+COTTONWOOD_TREES.length;
@@ -1092,11 +1142,31 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     return state.countrysideVista;
   });
+  // Separate late commit: no original layout promise depends on this owner.
+  state.hollowpeakCohortReady=state.countrysideVistaReady.then(()=>{
+    if(state.hollowpeakCohort)throw Error('Owned ecology finalizer must run once');
+    if(!state.forestFloor||G.floraPkg?.bank.snag&&!state.deadwood)throw Error('Original secondary source installers must finish before owned ecology');
+    const frost=G.quartersPkg?.hollowpeakSaplings;
+    if(G.quartersPkg?.saplingsReady&&!frost)throw Error('Original Frostpine source controller missing');
+    const treePreview=applyHollowpeakTreeCohort(G,trees,{commit:false});
+    const deadPreview=state.deadwood?.applyHollowpeakCohort({commit:false}),floorPreview=state.forestFloor.applyHollowpeakCohort({commit:false}),frostPreview=frost?.applyHollowpeakCohort({commit:false});
+    const deadContactsPreview=state.deadwood?.finalizeHollowpeakContacts({commit:false,cohortPlans:deadPreview?.plans}),floorContactsPreview=state.forestFloor.finalizeHollowpeakContacts({commit:false,cohortPlans:floorPreview.plans});
+    if([treePreview,deadPreview,floorPreview,frostPreview,deadContactsPreview,floorContactsPreview].filter(Boolean).some(r=>r.status!=='ready-to-commit'))throw Error('Owned source/physical preflight blocked before mutation');
+    // No await, new source constructors, refill, or owner handoff between the
+    // all-groups preflight and this one synchronous source/contact transaction.
+    const treesResult=applyHollowpeakTreeCohort(G,trees,{prepared:treePreview});
+    const deadwood=state.deadwood?.applyHollowpeakCohort(),floor=state.forestFloor.applyHollowpeakCohort(),frostpine=frost?.applyHollowpeakCohort();
+    const deadwoodContacts=state.deadwood?.finalizeHollowpeakContacts(),floorContacts=state.forestFloor.finalizeHollowpeakContacts();
+    if([treesResult,deadwood,floor,frostpine,deadwoodContacts,floorContacts].filter(Boolean).some(r=>r.status!=='applied'))throw Error('Owned source/contact commit did not complete');
+    state.hollowpeakCohortRevision=(state.hollowpeakCohortRevision||0)+1;
+    previousMode=null;updateTrees();state.deadwood?.update();
+    return state.hollowpeakCohort={status:'applied',trees:treesResult,deadwood,floor,frostpine,deadwoodContacts,floorContacts,originalSelectionsRefilled:false,bodyAccepted:false};
+  });
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;
     state.willows?.update();state.thunderOak?.update();updateTrees();state.deadwood?.update();const p=H.player.pos,tier=G.gfx.get();
-    for(const d of detailPatches){d.mesh.visible=Math.hypot(d.x-p.x,d.z-p.z)<d.range*(tier==='low'?.6:1);d.mesh.castShadow=tier==='high'&&!d.mesh.userData.groundPlant;}
+    for(const d of detailPatches){d.mesh.visible=Math.hypot(d.x-p.x,d.z-p.z)<d.range*(tier==='low'?.6:1)&&(!d.mesh.userData.hollowpeakMembers||d.mesh.count>0);d.mesh.castShadow=tier==='high'&&!d.mesh.userData.groundPlant;}
   });
   state.update=()=>{state.willows?.update();state.thunderOak?.update();updateTrees();state.deadwood?.update();};
 }

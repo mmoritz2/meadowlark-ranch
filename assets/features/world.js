@@ -450,7 +450,7 @@ export function install(G){
  }
  Q.types.coll=(m,val,prog)=>val===m.set?Math.min(m.goal,prog+1):prog;   // a story mission can ask for a set piece: {type:'coll',set:'badges',goal:3}
  /* The rare toy unicorn, behind the falls where the mist is thickest. Not on the map. */
- const TOY_UNICORN={x:-172,z:-238,r:1.6};P.TOY_UNICORN=TOY_UNICORN;
+ const TOY_UNICORN={x:-173,z:-230,r:1.6};P.TOY_UNICORN=TOY_UNICORN;
  {
   const g=new THREE.Group(),c='#f2d9ec',m='#c9a0e8';
   blob(0.22,0.16,0.34,c,0,0.42,0,g);blob(0.10,0.14,0.16,c,0,0.66,0.26,g);blob(0.08,0.08,0.12,c,0,0.78,0.38,g);

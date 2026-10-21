@@ -1,3 +1,4 @@
+import {permitsHollowpeakMember} from './hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1';
 import {activeWorldTree} from './countryside-vista-owners.mjs?v=countryside-vista-1';
 // Source-derived medium canopy policy. Copies the current numerical crown projection;
 // no Three resources, source changes, seeded draws or physical registrations.
@@ -10,7 +11,7 @@ export function projectedCrownBenefit(tree,viewProjection){
  const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];let surfaces=0;
  for(const part of tree.source.parts||[]){if(!/leaves|twig/.test(part.mat?.name||''))continue;const b=part.bounds;if(!b)continue;surfaces++;for(let i=0;i<3;i++){const key=['x','y','z'][i];min[i]=Math.min(min[i],b.min[key]);max[i]=Math.max(max[i],b.max[key]);}}
  if(!surfaces||![...min,...max].every(Number.isFinite))return null;
- const m=multiplyCrownMatrices(viewProjection,tree.matrix.elements),corners=[];
+ const m=multiplyCrownMatrices(viewProjection,(tree.hollowpeakDecisionMatrix??tree.matrix).elements),corners=[];
  for(let i=0;i<8;i++){const x=i&1?max[0]:min[0],y=i&2?max[1]:min[1],z=i&4?max[2]:min[2];corners.push([m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14],m[3]*x+m[7]*y+m[11]*z+m[15]]);}
  if(corners.some(c=>!c.every(Number.isFinite)))return null;
  for(let axis=0;axis<3;axis++)for(const sign of[-1,1])if(corners.every(c=>c[3]+sign*c[axis]<0))return{visible:false,area:0};
@@ -127,7 +128,7 @@ export function createMediumCanopyController(G,woodland,mediumSource,{policy=sel
  const written=new WeakMap();
  function updateBank(row,want,newMode,kind){
   const mesh=row.mesh,last=written.get(mesh),indices=want.map(t=>ids.get(t));
-  const externallyChanged=!last||last.matrixVersion!==mesh.instanceMatrix.version||last.colorVersion!==(mesh.instanceColor?.version??null)||last.count!==mesh.count;
+  const externallyChanged=!last||last.ownedCohortRevision!==(G.photoscans.hollowpeakCohortRevision||0)||last.matrixVersion!==mesh.instanceMatrix.version||last.colorVersion!==(mesh.instanceColor?.version??null)||last.count!==mesh.count;
   const setChanged=!last||last.ids.length!==indices.length||last.ids.some((id,i)=>id!==indices[i]);
   // The original updater still owns its own history and may have just written
   // this bank. Its version change must trigger restoration even if our actual
@@ -138,27 +139,28 @@ export function createMediumCanopyController(G,woodland,mediumSource,{policy=sel
    mesh.count=want.length;mesh.visible=want.length>0;mesh.castShadow=!G.renderer.xr.isPresenting;
    mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
    if(want.length)mesh.computeBoundingSphere();
-   written.set(mesh,{ids:indices,count:mesh.count,matrixVersion:mesh.instanceMatrix.version,colorVersion:mesh.instanceColor?.version??null});
+   written.set(mesh,{ids:indices,count:mesh.count,ownedCohortRevision:G.photoscans.hollowpeakCohortRevision||0,matrixVersion:mesh.instanceMatrix.version,colorVersion:mesh.instanceColor?.version??null});
   }
  }
  function update(){
   const original=woodland.originalSelection(),tier=G.gfx.get(),enabled=!G.renderer.xr.isPresenting,newMode=tier+':'+G.renderer.xr.isPresenting;
   const state=G.photoscans,authoredTriangles=(state.villageEvergreens?.triangles||0)+(state.willows?.triangles||0)+(state.thunderOak?.triangles||0);
   const result=policy({trees,nearSelection:original.near,planningMiddleSelection:original.planningMiddle,middleSelection:original.middle,camera:G.camera,player:G.horse.player.pos,tier,enabled,authoredTriangles,mediumTriangleCost:mediumSource.triangles,previousMediumSelection});
-  const full=new Set(result.fullSelection),medium=new Set(result.mediumSelection);
+  const plannedFull=new Set(result.fullSelection),plannedMedium=new Set(result.mediumSelection),full=new Set(result.fullSelection.filter(permitsHollowpeakMember)),medium=new Set(result.mediumSelection.filter(permitsHollowpeakMember));
+  const actualFullTriangles=[...full].reduce((n,t)=>n+t.source.triangles,0),actualMediumTriangles=medium.size*mediumSource.triangles;
   requireCondition(result.nearSelection.length===original.near.length&&result.nearSelection.every((t,i)=>t===original.near[i]),'original near selection changed');
   requireCondition([...medium].every(t=>t.source.key==='canopy-broadleaf'&&!full.has(t)&&activeWorldTree(t)),'invalid medium source, retirement or overlapping tier');
-  requireCondition(result.triangleCount===authoredTriangles+[...full].reduce((n,t)=>n+t.source.triangles,0)+medium.size*mediumSource.triangles,'actual model cost mismatch');
+  requireCondition(result.triangleCount===authoredTriangles+[...plannedFull].reduce((n,t)=>n+t.source.triangles,0)+plannedMedium.size*mediumSource.triangles,'original planned model cost mismatch');
   requireCondition(result.triangleCount<=result.triangleBudget,'unchanged triangle cap exceeded');
   for(const row of woodland.treeMeshes)updateBank(row,row.records.filter(t=>full.has(t)),newMode,'full');
-  for(const row of woodland.treeCards)updateBank(row,row.records.filter(t=>activeWorldTree(t)&&!full.has(t)&&!medium.has(t)),newMode,'far');
+  for(const row of woodland.treeCards)updateBank(row,row.records.filter(t=>activeWorldTree(t)&&permitsHollowpeakMember(t)&&!full.has(t)&&!medium.has(t)),newMode,'far');
   for(const row of mediumMeshes)updateBank(row,row.records.filter(t=>medium.has(t)),newMode,'medium');
   const bufferTriangles=rows=>rows.reduce((sum,{mesh})=>sum+(mesh.geometry.index?.count||mesh.geometry.attributes.position.count)/3*mesh.count,0);
   const fullBufferTriangles=bufferTriangles(woodland.treeMeshes),mediumBufferTriangles=bufferTriangles(mediumMeshes),farTriangles=bufferTriangles(woodland.treeCards);
-  requireCondition(fullBufferTriangles===result.fullTriangles&&mediumBufferTriangles===result.mediumTriangles,'actual tier buffers disagree with source triangle ledger');
-  mode=newMode;previousMediumSelection=medium;
-  selection={selected:[...full],near:result.nearSelection.slice(),middle:result.middleSelection.slice(),planningMiddle:result.planningMiddleSelection.slice(),medium:[...medium]};
-  ledger={profile:'island-medium-canopy-1',tier,xr:!enabled,triangleCount:result.triangleCount,triangleBudget:result.triangleBudget,authoredTriangles,fullTriangles:result.fullTriangles,mediumTriangles:result.mediumTriangles,fullBufferTriangles,mediumBufferTriangles,farTriangles,totalRenderTriangles:result.triangleCount+farTriangles,mediumTriangleCost:mediumSource.triangles,nearIDs:selection.near.map(t=>ids.get(t)),fullMiddleIDs:selection.middle.map(t=>ids.get(t)),fullIDs:selection.selected.map(t=>ids.get(t)),mediumIDs:selection.medium.map(t=>ids.get(t)),planningMiddleIDs:selection.planningMiddle.map(t=>ids.get(t)),originalMiddleIDs:original.middle.map(t=>ids.get(t)),fullCount:full.size,mediumCount:medium.size,farCount:trees.filter(t=>activeWorldTree(t)&&!full.has(t)&&!medium.has(t)).length,updates:++updates};
+  requireCondition(fullBufferTriangles===actualFullTriangles&&mediumBufferTriangles===actualMediumTriangles,'actual tier buffers disagree with source triangle ledger');
+  mode=newMode;previousMediumSelection=plannedMedium;
+  selection={selected:[...full],near:result.nearSelection.filter(permitsHollowpeakMember),middle:result.middleSelection.filter(permitsHollowpeakMember),planningMiddle:result.planningMiddleSelection.slice(),medium:[...medium]};
+  ledger={profile:'island-medium-canopy-1',tier,xr:!enabled,plannedTriangleCount:result.triangleCount,triangleCount:authoredTriangles+actualFullTriangles+actualMediumTriangles,triangleBudget:result.triangleBudget,authoredTriangles,fullTriangles:actualFullTriangles,mediumTriangles:actualMediumTriangles,fullBufferTriangles,mediumBufferTriangles,farTriangles,totalRenderTriangles:authoredTriangles+actualFullTriangles+actualMediumTriangles+farTriangles,mediumTriangleCost:mediumSource.triangles,nearIDs:selection.near.map(t=>ids.get(t)),fullMiddleIDs:selection.middle.map(t=>ids.get(t)),fullIDs:selection.selected.map(t=>ids.get(t)),mediumIDs:selection.medium.map(t=>ids.get(t)),planningMiddleIDs:selection.planningMiddle.map(t=>ids.get(t)),originalMiddleIDs:original.middle.map(t=>ids.get(t)),fullCount:full.size,mediumCount:medium.size,farCount:trees.filter(t=>activeWorldTree(t)&&permitsHollowpeakMember(t)&&!full.has(t)&&!medium.has(t)).length,updates:++updates};
   return ledger;
  }
  function dispose(){

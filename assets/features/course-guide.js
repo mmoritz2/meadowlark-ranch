@@ -1,3 +1,4 @@
+import {readOwnedHollowpeakWater} from '../hollowpeak-water-behavior.mjs?v=hollowpeak-owned-water-1';
 /* Feature package 'course-guide'. Owned by that package: edit only this file and the inline hot
    spots assigned to it. See index.js for the contract. Nothing runs at import time.
 
@@ -1111,7 +1112,7 @@ export function install(G){
       damp the first two metres, which covers every fence in the game, and follow one for one
       above that, which is flight. */
    const py=groundHorse?subjectLift:player.y||0, lift=groundHorse?mi.height:py<=2?py*0.8:1.6+(py-2);
-   const lakeSurface=player.swim&&!player.onFoot?W.loonLake?.waterAt(player.pos.x,player.pos.z)?.surface:null;
+   const lakeSurface=player.swim&&!player.onFoot?(readOwnedHollowpeakWater(W,player.pos.x,player.pos.z)?.surface??W.loonLake?.waterAt(player.pos.x,player.pos.z)?.surface):null;
    const visualGround=lakeSurface??W.groundH(player.pos.x,player.pos.z);
    const foot=visualGround+lift;
    /* Is she standing between the lens and the next thing she is being sent at? Asked of the eye

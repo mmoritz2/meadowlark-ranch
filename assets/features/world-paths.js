@@ -1,3 +1,4 @@
+import {hollowpeakSourceDecisionGround} from '../hollowpeak-tree-cohort.mjs?v=hollowpeak-owned-ecology-1';
 import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-4';
 /* Feature package 'world-paths' — the ground between places.
 
@@ -30,6 +31,11 @@ export function install(G){
  const {THREE,scene}=G;
  const W=G.world, T=G.tables, S=G.save, H=G.horse, toast=G.toast;
  const gh=W.groundH, riverZ=W.riverZ, streamX=W.streamX;
+ // Preserve construction59 route choices only in cells incident to its owned
+ // rectangle. Rendered roads/props still use gh. Outside cells retain the
+ // established composed groundH, including the inline main river bridge.
+ if(typeof W.hollowpeakDecisionHeightAt==='function'&&typeof W.hollowpeakDecisionAffectsCell!=='function')throw Error('Hollowpeak route planning requires its owned-cell predicate');
+ const decisionGh=(x,z)=>W.hollowpeakDecisionAffectsCell?.(x,z)?hollowpeakSourceDecisionGround(W,x,z):gh(x,z);
  const villageCourts=[...COTTONWOOD_PUBLIC,...villageCourtZones(G.worldPkg?.LANDMARKS||[])];
  const P={clearance:{},benches:[],signBoardData:[],dryStoneCourses:[]}; G.worldPaths=P;                                  // this package's live state, for QA
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
@@ -94,7 +100,7 @@ export function install(G){
    let bestF=0,bestC=1e9;
    for(const f of [-5,-2.5,0,2.5,5]){
     const x=b[0]+nx*f,z=b[1]+nz*f;
-    const cost=Math.abs(gh(x,z)-gh(a[0],a[1]))+Math.abs(gh(c[0],c[1])-gh(x,z))+Math.abs(f)*0.10;
+    const cost=Math.abs(decisionGh(x,z)-decisionGh(a[0],a[1]))+Math.abs(decisionGh(c[0],c[1])-decisionGh(x,z))+Math.abs(f)*0.10;
     if(cost<bestC){bestC=cost;bestF=f;}
    }
    b[0]+=nx*bestF*0.45; b[1]+=nz*bestF*0.45;

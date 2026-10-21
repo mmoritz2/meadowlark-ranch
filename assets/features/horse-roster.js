@@ -1,3 +1,4 @@
+import {readOwnedHollowpeakWater} from '../hollowpeak-water-behavior.mjs?v=hollowpeak-owned-water-1';
 /* Feature package 'horse-roster' — the roster itself.
    Star rarity on every horse; named coats and procedural coats; per-fantasy stat ceilings and
    mastery perks; the fantasy catalogue with its sources (shop, Starfall call, season track,
@@ -469,6 +470,7 @@ export function install(G){
   const W=G.world; let d=0;
   const lake=W.loonLake?.waterAt(x,z);if(lake)d=Math.max(d,lake.depth);
   const rz=W.riverZ(x); if(Math.abs(z-rz)<9){const th=W.terrainH(x,z);if(W.groundH(x,z)>th+0.3)return 0;d=Math.max(d,W.riverLevel(x)-th);}
+  const owned=readOwnedHollowpeakWater(W,x,z);if(owned)d=Math.max(d,owned.depth);
   return Math.max(0,d);
  }
  G.addMul('stamDrain',()=>cur.drainMul);
