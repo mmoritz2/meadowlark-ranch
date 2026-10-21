@@ -630,6 +630,7 @@ body.touch #stickZone{display:block}
 <script type="importmap">
 {
  "imports":{
+  "./assets/features/stats-progression.js?v=leafy-orchard-1":"./assets/features/stats-progression.js?v=hollowpeak-wildlife-1",
   "./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1":"./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-biomes.js?v=dry-foothills-1":"./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1":"./assets/meadow-cover.js?v=hollowpeak-thaw-floor-1",
@@ -7197,7 +7198,7 @@ function makeCritter(key){
  const cs=contactShadow(g);
  cs.scale.set(0.45,0.32,1);
  g.scale.setScalar(D.size);
- return {group:g,body,legs,tail,wings,eyes:eyeGs,def:D,key};
+ return {group:g,body,legs,tail,wings,eyes:eyeGs,shadow:cs,def:D,key};
 }
 const critters=[];
 function spawnCritter(key,hx,hz,hr){
@@ -14892,6 +14893,7 @@ function tick(stepSeconds){
   fireflies.instanceMatrix.needsUpdate=true;
  }
  updateCritters(dt,t);
+ G.world.hollowpeakGoats?.update(dt,t);
  updateShoes(dt,t);
  updateTrail(dt);
  playerBreath(dt,t); tickBreath(dt);   // a dragon breathing its element

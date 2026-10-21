@@ -17,6 +17,7 @@
     10. Golden horseshoes pay XP (inline).
     11. Fishing at four waters with species by spot, a rod and bobber, fish to sell or barter. */
 import {makeNaturalTree} from '../vegetation.js?v=ranch-life-1';
+import {installHollowpeakGoats} from '../hollowpeak-wildlife.mjs?v=hollowpeak-wildlife-1';
 
 export const id='stats-progression';
 
@@ -346,6 +347,7 @@ export function install(G){
    legs:{n:4,len:0.5,r:0.03,c:'#5a4a3a',pts:[[-0.1,0.16],[0.1,0.16],[-0.1,-0.16],[0.1,-0.16]]}};
   try{for(let i=0;i<3;i++)W.spawnCritter('coyote',-214,146,36);for(let i=0;i<3;i++)W.spawnCritter('goat',-168,-206,30);}catch(e){console.error('critters',e);}
  }
+ try{W.hollowpeakGoats=installHollowpeakGoats({THREE,W,camera:G.camera,getQuality:()=>G.gfx.get()});}catch(error){console.warn('Hollowpeak goat models: '+error.message);}
  let spookCd=0, spookT=0;
  G.on('ride',(RIDE,dt)=>{
   spookCd=Math.max(0,spookCd-dt);

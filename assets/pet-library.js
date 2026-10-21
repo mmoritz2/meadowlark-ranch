@@ -42,7 +42,7 @@ const GAIT_OFF={walk:[0.25,0.75,0,0.5],trot:[0,0.5,0.5,0],run:[0,0.06,0.5,0.56]}
    case and punctuation are dropped ("R_hip_jnt" finds "R_hip_jnt.14_012") */
 function boneFinder(obj){const bones=[];obj.traverse(o=>{if(o.isBone)bones.push(o);});
  return n=>{if(!n)return null;const k=norm(n);let best=null,bl=1e9;for(const b of bones){if(b.name===n)return b;const m=norm(b.name);if(m===k)return b;if(k&&m.startsWith(k)&&m.length<bl){best=b;bl=m.length;}}return best;};}
-export function createPetLibrary({THREE,GLTFLoader,clone,manifest=null,manifestURL=new URL('./models/pets/manifest.json',import.meta.url),patch=null,warn=(...a)=>console.warn(...a)}){
+export function createPetLibrary({THREE,GLTFLoader,clone,manifest=null,manifestURL=new URL('./models/pets/manifest.json',import.meta.url),patch=null,warn=(...a)=>console.warn(...a),construct=null}){
  manifestURL=new URL(manifestURL,import.meta.url);
  const base=new URL('./',manifestURL),files=new Map(),assets=new Map();
  let revision='';
@@ -289,7 +289,7 @@ export function createPetLibrary({THREE,GLTFLoader,clone,manifest=null,manifestU
   const ck=key+'|'+(opts.height||0);if(assets.has(ck))return assets.get(ck);
   const url=new URL(e.file,base);if(e.sha256)url.searchParams.set('build',e.sha256.slice(0,16));
   if(!files.has(url.href))files.set(url.href,loader.loadAsync(url.href).catch(err=>{files.delete(url.href);throw err;}));
-  const p=files.get(url.href).then(g=>e.autorig?autorig(g,key,e,url.href):g).then(g=>prepare(g,key,e,opts)).catch(err=>{assets.delete(ck);throw err;});
+  const p=files.get(url.href).then(g=>e.autorig?autorig(g,key,e,url.href):g).then(g=>construct?construct(()=>prepare(g,key,e,opts)):prepare(g,key,e,opts)).catch(err=>{assets.delete(ck);throw err;});
   assets.set(ck,p);return p;
  }
  /* ---------------------------------------------------------------- one pet on screen ------------ */
