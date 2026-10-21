@@ -4949,6 +4949,8 @@ let waterMat=null;   // hoisted: the pond reuses it
     let dx=b[0]-a[0], dz=b[1]-a[1]; const L=Math.hypot(dx,dz)||1; dx/=L; dz/=L;
     if(i>0)run+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
     const wob=pastureRoad?pts[i][2]:PATH_W*(.94+.05*Math.sin(run*.12)+.035*Math.sin(run*.047));
+    // Let this short pasture approach blend into its rounded worn-earth end.
+    const endFade=pastureRoad?THREE.MathUtils.smoothstep(Math.hypot(pts[i][0]-pts.at(-1)[0],pts[i][1]-pts.at(-1)[1]),0,3.6):1;
     // Sample across the full track: two edge vertices made a suspended flat
     // ribbon wherever the middle of a trail crossed a hollow.
     for(let lane=0;lane<=8;lane++){
@@ -4957,7 +4959,7 @@ let waterMat=null;   // hoisted: the pond reuses it
      rp.push(x,groundH(x,z)+.025,z);
      ru.push(run/3,lane/8);
      // Keep the maintained sand footing continuous where approach paths meet it.
-     rc.push(1,1,1,THREE.MathUtils.smoothstep((x/24.8)**2+(z/19.8)**2,.99,1.04));
+     rc.push(1,1,1,THREE.MathUtils.smoothstep((x/24.8)**2+(z/19.8)**2,.99,1.04)*endFade);
     }
    }
    for(let i=0;i<pts.length-1;i++)for(let lane=0;lane<8;lane++){
