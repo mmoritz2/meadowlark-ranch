@@ -1,3 +1,4 @@
+import {createAmberwoodLeafGeometry,seatAmberwoodLeafLitter} from '../amberwood-leaf-litter.mjs?v=amberwood-worked-clearing-1';
 import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2-final-environment-1';
 import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';
 import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1-final-environment-1';
@@ -525,7 +526,8 @@ export function install(G){
    const a=rr(0,6.28),d=Math.sqrt(rnd())*76,x=F.cx+Math.cos(a)*d,z=F.cz+Math.sin(a)*d;
    if(Math.hypot(x,z)>452)continue;
    leaves.push({x,y:groundH(x,z)+0.07+rnd()*0.03,z,sx:rr(0.3,0.55),sy:1,sz:rr(0.24,0.42),ry:rr(0,6.28),c:AMBER[(rnd()*AMBER.length)|0]});}
-  scatter(G_FLAKE,WHITE,leaves,false,150);
+  const amberLeaves=scatter(createAmberwoodLeafGeometry(THREE),WHITE,leaves,false,150);
+  P.amberwoodLeaves=seatAmberwoodLeafLitter({mesh:amberLeaves,items:leaves,groundH});
 
   /* A hitching rail, a sign to arrive under, and three people. */
   const rail=F.at(3,-6),rg=new THREE.Group();
@@ -550,6 +552,9 @@ export function install(G){
   W.mapMarkers.push({x:twr[0],z:twr[1],glyph:'🔭',kind:'landmark',id:'q:amber:tower'});
   W.mapMarkers.push({x:POND.x,z:POND.z,glyph:'💧',alpha:0.85,kind:'landmark',id:'q:amber:pond'});
   for(const p of [lodge,office,cott,kil])W.miniMarkers.push({x:p[0],z:p[1],col:'#d98f3a',r:2.4});
+  // Full precision, already placed owners for presentation-only ground cover.
+  // Rounded P.sites remain map/telemetry only; no siting or interaction changes.
+  P.amberwoodClearing={arrival:[F.cx,F.cz],arrivalBack:F.at(9,0),mill:[...mil],millFront:world(mil[0],mil[1],MYAW,0,4.8),lodge:[...lodge],lodgeFront:world(lodge[0],lodge[1],F.yaw+.5,0,6.4),office:[...office],officeFront:world(office[0],office[1],F.yaw-.55,0,3.6),workyard:[...yard],logDeck:[...deck]};
   P.sites.amberwood={mill:[mil[0]|0,mil[1]|0],lodge:[lodge[0]|0,lodge[1]|0],tower:[twr[0]|0,twr[1]|0],pond:[POND.x|0,POND.z|0],level:+POND.y.toFixed(2)};
  }
 

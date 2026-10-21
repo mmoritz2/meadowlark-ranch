@@ -1,5 +1,5 @@
 // Original, bounded presentation of existing grass. No planting or ground edits.
-export const REGIONAL_COVER_PROFILE='regional-approach-cover-2';
+export const REGIONAL_COVER_PROFILE='regional-approach-cover-2-amberwood-worked-clearing-1';
 const clamp=v=>Math.max(0,Math.min(1,v));
 const ease=(a,b,v)=>{const t=clamp((v-a)/(b-a));return t*t*t*(t*(t*6-15)+10);};
 const ZERO=Object.freeze({weight:0,cut:0,cap:Infinity,dry:0,seed:0});
@@ -21,16 +21,16 @@ export function regionalCoverLayoutFromWorld(G){
  if(!chalk||!['x','z','len','depth','h'].every(k=>Number.isFinite(chalk[k])))throw Error('Actual Chalk scarp unavailable');
  const willow=Q.willowSettlement;
  if(!willow||!willow.routes?.every(r=>Number.isFinite(r.width)&&r.width>0&&r.pts?.length>=2&&r.pts.every(point)))throw Error('Actual Willowmere routes unavailable');
- return{chalk:{x:chalk.x,z:chalk.z,len:chalk.len,depth:chalk.depth,h:chalk.h},keep:landmark('wrenfell'),sisters:landmark('ninesisters'),marshTrack:track('marsh'),ochreTrack:track('ochre'),riverWestTrack:track('riverwest'),willowDoor:door('q:willow:boathouse'),willowRoutes:willow.routes.map(r=>({width:r.width,pts:r.pts.map(p=>[...p])})),ochrePost:door('q:ochre:post'),ochreBarn:door('q:ochre:barn')};
+ return{chalk:{x:chalk.x,z:chalk.z,len:chalk.len,depth:chalk.depth,h:chalk.h},keep:landmark('wrenfell'),sisters:landmark('ninesisters'),marshTrack:track('marsh'),ochreTrack:track('ochre'),riverWestTrack:track('riverwest'),willowDoor:door('q:willow:boathouse'),willowRoutes:willow.routes.map(r=>({width:r.width,pts:r.pts.map(p=>[...p])})),ochrePost:door('q:ochre:post'),ochreBarn:door('q:ochre:barn'),...(Q.amberwoodClearing?{amberwood:Object.fromEntries(Object.entries(Q.amberwoodClearing).map(([id,p])=>[id,requirePoint(p,'amberwood '+id)]))}:{})};
 }
 
-function prepare(id,nodes,{half=12,left=11,right=17,cap=.32,bank=.92,dry=0,seedSide=1}={}){
+function prepare(id,nodes,{half=12,left=11,right=17,cap=.32,bank=.92,dry=0,seedSide=1,endFade=7,patchCap=.075,capFloor=.18}={}){
  if(!Array.isArray(nodes)||nodes.length<2||!nodes.every(point))throw Error('Invalid regional cover run: '+id);
  let length=0;const segments=[];
  for(let i=1;i<nodes.length;i++){const a=nodes[i-1],b=nodes[i],dx=b[0]-a[0],dz=b[1]-a[1],span=Math.hypot(dx,dz);if(span<1e-6)continue;segments.push({a,dx,dz,span,start:length});length+=span;}
  if(length<2)throw Error('Regional cover run has no length: '+id);
  const pad=half+Math.max(left,right)+3;
- return{id,nodes:nodes.map(p=>[...p]),segments,length,half,left,right,cap,bank,dry,seedSide,bounds:{minX:Math.min(...nodes.map(p=>p[0]))-pad,maxX:Math.max(...nodes.map(p=>p[0]))+pad,minZ:Math.min(...nodes.map(p=>p[1]))-pad,maxZ:Math.max(...nodes.map(p=>p[1]))+pad}};
+ return{id,nodes:nodes.map(p=>[...p]),segments,length,half,left,right,cap,bank,dry,seedSide,endFade,patchCap,capFloor,bounds:{minX:Math.min(...nodes.map(p=>p[0]))-pad,maxX:Math.max(...nodes.map(p=>p[0]))+pad,minZ:Math.min(...nodes.map(p=>p[1]))-pad,maxZ:Math.max(...nodes.map(p=>p[1]))+pad}};
 }
 const inside=(b,x,z)=>x>b.minX&&x<b.maxX&&z>b.minZ&&z<b.maxZ;
 function frame(run,x,z){let best=Infinity,result=null;for(const s of run.segments){const t=clamp(((x-s.a[0])*s.dx+(z-s.a[1])*s.dz)/(s.span*s.span)),dx=x-s.a[0]-s.dx*t,dz=z-s.a[1]-s.dz*t,d=Math.hypot(dx,dz);if(d<best){best=d;result={d,side:s.dx*dz-s.dz*dx>=0?1:-1,along:s.start+t*s.span};}}return result;}
@@ -58,6 +58,17 @@ export function regionalCoverRuns(layout){
   prepare('ochre-yard',[post,ochreMid,barn],{half:15,left:20,right:13,cap:.21,bank:.56,dry:1})
  ];
  for(const [i,r]of(layout.willowRoutes||[]).entries())runs.push(prepare('willowmere-dry-boardwalk-'+i,r.pts,{half:Math.max(2,r.width*.5+1.0),left:3.5,right:6,cap:.38,bank:.98}));
+ // One worked woodland clearing, tied to actual placed building fronts and
+ // log/saw owners. The surrounding 130m forest and all planting stay intact.
+ if(layout.amberwood){
+  const a=layout.amberwood;
+  for(const id of['arrival','arrivalBack','mill','millFront','lodge','lodgeFront','office','officeFront','workyard','logDeck'])requirePoint(a[id],'amberwood '+id);
+  const worked={half:3.6,left:3.2,right:4.8,cap:.115,bank:.32,patchCap:.035,endFade:1.5,capFloor:.10};
+  runs.push(prepare('amberwood-arrival-workyard',[a.arrivalBack,a.arrival,a.workyard,a.logDeck,a.millFront,a.mill],{...worked,half:4.0}),
+   prepare('amberwood-office-door',[a.arrival,a.officeFront,a.office],worked),
+   prepare('amberwood-lodge-door',[a.arrival,a.lodgeFront,a.lodge],{...worked,half:3.2,left:3.8,right:4.4}),
+   prepare('amberwood-sawn-timber-yard',[a.officeFront,a.workyard,a.logDeck],{...worked,half:4.5,left:3.8,right:3.2}));
+ }
  return runs;
 }
 
@@ -68,14 +79,14 @@ export function createRegionalCoverField({layout,terrainH,wetAt,chalkAt,preserve
  const protectedAt=(x,z)=>wetAt(x,z)||chalkAt(x,z)||preserveAt(x,z);
  function sample(run,x,z){
   if(!inside(run.bounds,x,z)||protectedAt(x,z))return ZERO;
-  const f=frame(run,x,z),ends=ease(0,7,f.along)*(1-ease(run.length-7,run.length,f.along));if(ends===0)return ZERO;
+  const f=frame(run,x,z),ends=ease(0,run.endFade,f.along)*(1-ease(run.length-run.endFade,run.length,f.along));if(ends===0)return ZERO;
   const half=run.half+Math.sin(f.along*.071+run.half)*1.2+Math.sin(f.along*.15)*.5,shoulder=f.side>0?run.left:run.right;
   const outer=half+shoulder*(.92+.08*Math.sin(f.along*.049)),weight=(1-ease(outer-3,outer+1,f.d))*ends;
   if(weight===0)return ZERO;
   const slope=Math.hypot((terrainH(x+.75,z)-terrainH(x-.75,z))/1.5,(terrainH(x,z+.75)-terrainH(x,z-.75))/1.5),grade=1-ease(.40,.69,slope);if(!Number.isFinite(slope))throw Error('Nonfinite regional cover ground');if(grade===0)return ZERO;
   const core=1-ease(half-1.5,half+2,f.d),bank=ease(half+1,half+4,f.d)*(1-ease(outer-4,outer,f.d));
   const patch=.5+.5*Math.sin(f.along*.067+x*.019)*Math.sin(f.along*.031-z*.017);
-  return{weight:weight*grade,cut:core*.99,cap:run.cap+.075*patch+bank*(run.bank-run.cap),dry:run.dry,seed:run.dry?0:bank*(f.side===run.seedSide?.44:.08)*ease(.35,.85,patch)};
+  return{weight:weight*grade,cut:core*.99,cap:run.cap+run.patchCap*patch+bank*(run.bank-run.cap),dry:run.dry,seed:run.dry?0:bank*(f.side===run.seedSide?.44:.08)*ease(.35,.85,patch)};
  }
  // Only new bounded grids are sampled per rendered row. No terrain/tree walk
  // is added to travelling grass updates, and no source row is changed.
@@ -84,12 +95,12 @@ export function createRegionalCoverField({layout,terrainH,wetAt,chalkAt,preserve
   for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const x=minX+ix*STEP,z=minZ+iz*STEP,q=sample(run,x,z),i=(iz*nx+ix)*5;data.set([q.weight,q.cut,Number.isFinite(q.cap)?q.cap:0,q.dry,q.seed],i);if(q.weight>0)activeVertices++;}
   gridBytes+=data.byteLength;grids.push({run,minX,minZ,nx,nz,data});
  }
- function at(x,z){let relevant=false;for(const g of grids)if(inside(g.run.bounds,x,z)){relevant=true;break;}if(!relevant||protectedAt(x,z))return ZERO;let chosen=ZERO;
-  for(const g of grids){if(!inside(g.run.bounds,x,z))continue;const xx=(x-g.minX)/STEP,zz=(z-g.minZ)/STEP,ix=Math.floor(xx),iz=Math.floor(zz);if(ix<0||iz<0||ix>=g.nx-1||iz>=g.nz-1)continue;const fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*g.nx+ix,ids=[i,i+1,i+g.nx,i+g.nx+1],ws=[(1-fx)*(1-fz),fx*(1-fz),(1-fx)*fz,fx*fz],v=[0,0,0,0,0];for(let k=0;k<4;k++)for(let c=0;c<5;c++)v[c]+=g.data[ids[k]*5+c]*ws[k];if(v[0]>chosen.weight)chosen={weight:v[0],cut:v[1],cap:v[2],dry:v[3],seed:v[4]};}
+ function at(x,z){let relevant=false;for(const g of grids)if(inside(g.run.bounds,x,z)){relevant=true;break;}if(!relevant||protectedAt(x,z))return ZERO;let chosen=ZERO,capFloor=.18;
+  for(const g of grids){if(!inside(g.run.bounds,x,z))continue;const xx=(x-g.minX)/STEP,zz=(z-g.minZ)/STEP,ix=Math.floor(xx),iz=Math.floor(zz);if(ix<0||iz<0||ix>=g.nx-1||iz>=g.nz-1)continue;const fx=ease(0,1,xx-ix),fz=ease(0,1,zz-iz),i=iz*g.nx+ix,ids=[i,i+1,i+g.nx,i+g.nx+1],ws=[(1-fx)*(1-fz),fx*(1-fz),(1-fx)*fz,fx*fz],v=[0,0,0,0,0];for(let k=0;k<4;k++)for(let c=0;c<5;c++)v[c]+=g.data[ids[k]*5+c]*ws[k];if(v[0]>chosen.weight){chosen={weight:v[0],cut:v[1],cap:v[2],dry:v[3],seed:v[4]};capFloor=g.run.capFloor;}}
   if(chosen.weight<1e-7)return ZERO;
   const tx=Math.floor(x/4),tz=Math.floor(z/4);let skirt=1;
   for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++)for(const t of trees.get((tx+dx)+','+(tz+dz))||[])skirt*=ease(.45,t.outer,Math.hypot(x-t.x,z-t.z));
-  if(skirt<1e-7)return ZERO;return{...chosen,weight:chosen.weight*skirt,cap:Math.max(.18,chosen.cap)};
+  if(skirt<1e-7)return ZERO;return{...chosen,weight:chosen.weight*skirt,cap:Math.max(capFloor,chosen.cap)};
  }
  function applyGrazingPixels(data,size){if(!ArrayBuffer.isView(data)||!Number.isInteger(size)||size<1||data.length!==size*size*4)throw Error('Existing landcover mask required');let changed=0;const visited=new Set(),step=1000/size;
   for(const run of runs){if(run.dry)continue;const b=run.bounds,ix0=Math.max(0,Math.floor((b.minX+500)/step)),ix1=Math.min(size-1,Math.ceil((b.maxX+500)/step)),iz0=Math.max(0,Math.floor((b.minZ+500)/step)),iz1=Math.min(size-1,Math.ceil((b.maxZ+500)/step));for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const id=iz*size+ix;if(visited.has(id))continue;visited.add(id);const q=at(-500+(ix+.5)*step,-500+(iz+.5)*step);if(q.weight===0||q.dry>0)continue;const i=id*4+2,next=Math.max(data[i],Math.round(q.weight*q.cut*255));if(next!==data[i]){data[i]=next;changed++;}}}
