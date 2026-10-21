@@ -648,18 +648,21 @@ body.touch #stickZone{display:block}
   "./assets/falls-landscape.js?v=hollowpeak-upper-ridges-3": "./assets/falls-landscape.js?v=hollowpeak-rock-minerals-1",
   "./assets/waterfall-art.js?v=hollowpeak-cascades-1-connected-landforms-1": "./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1",
   "./assets/waterfall-art.js?v=hollowpeak-falling-water-2": "./assets/waterfall-art.js?v=hollowpeak-lip-trajectory-1",
-  "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2": "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1",
+  "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2": "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-stranded-2",
   "./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-1": "./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-2",
   "./assets/hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1": "./assets/hollowpeak-macroshape.mjs?v=hollowpeak-eastern-headwall-2",
   "./assets/world-photoscans.js?v=hollowpeak-upper-source-roots-1": "./assets/world-photoscans.js?v=hollowpeak-connected-runtime-1",
   "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=hollowpeak-connected-runtime-1",
   "./assets/island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1": "./assets/island-medium-canopy.mjs?v=hollowpeak-connected-runtime-1",
   "./assets/deadwood-art.js?v=weathered-deadwood-1": "./assets/deadwood-art.js?v=hollowpeak-connected-runtime-1",
-  "./assets/vegetation.js?v=ranch-life-snow-1": "./assets/vegetation.js?v=ranch-life-snow-1-hollowpeak-owned-ecology-1"
+  "./assets/vegetation.js?v=ranch-life-snow-1": "./assets/vegetation.js?v=ranch-life-snow-1-hollowpeak-owned-ecology-1",
+  "./assets/hollowpeak-hydrology.mjs": "./assets/hollowpeak-hydrology.mjs?v=hollowpeak-optical-response-1",
+  "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-trajectory-1": "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-stranded-2"
  }
 }
 </script>
 <script id="gameModule" type="text/plain">
+import {finalizeHollowpeakAnchorGrounding} from './assets/hollowpeak-anchor-grounding.mjs?v=hollowpeak-snowpeak-anchor-grounding-1';
 import {prepareHollowpeakRuntime,finishHollowpeakRuntime} from './assets/hollowpeak-runtime.mjs?v=hollowpeak-connected-runtime-1';
 import {readOwnedHollowpeakWater} from './assets/hollowpeak-water-behavior.mjs?v=hollowpeak-owned-water-1';
 import * as THREE from 'three';
@@ -1630,6 +1633,7 @@ const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
 const hollowpeakRuntime=await prepareHollowpeakRuntime({heights:TERRAIN_HEIGHTS,outsideHeightAt:(x,z)=>rawH(x,z)});
+let hollowpeakStartupReady=false; // Loading handoff includes the late same-owner anchor finalizer.
 function terrainH(x,z){
  if(x<=-500||x>=500||z<=-500||z>=500)return rawH(x,z);
  const gx=(x+500)/TERRAIN_STEP,gz=(z+500)/TERRAIN_STEP,ix=Math.floor(gx),iz=Math.floor(gz);
@@ -6196,7 +6200,7 @@ async function requestPlayerBreed(breed){
  RIG.loadingBreed=false;
  HORSE_ARRIVAL.mounted(ticket,()=>ticket===breedRequest&&RIG.requestedBreed===(myHorses[rideIdx]?.breed||'bay')&&RIG.modelKey===BREED_MODELS.resolve(myHorses[rideIdx]?.breed||'bay')&&RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh,()=>{
   window.__setLoad?.(1,'ready!');
-  if(hollowpeakRuntime.status==='ready')$('load')?.remove();
+  if(hollowpeakStartupReady)$('load')?.remove();
  });
  if(!requestPlayerBreed.preloaded){requestPlayerBreed.preloaded=true;setTimeout(preloadBreeds,400);}
  }catch(e){
@@ -6218,7 +6222,7 @@ function preloadBreeds(){
  }catch(e){}
 }
 {
- const setLoad=(f,label)=>{if(f>=1){if(hollowpeakRuntime.status==='ready')window.GameLoading?.ready();else window.GameLoading?.stage('Finishing the mountain landscape…');}else window.GameLoading?.stage(label||'Loading your ranch…');};
+ const setLoad=(f,label)=>{if(f>=1){if(hollowpeakStartupReady)window.GameLoading?.ready();else window.GameLoading?.stage('Finishing the mountain landscape…');}else window.GameLoading?.stage(label||'Loading your ranch…');};
  window.__setLoad=setLoad;setLoad(.05,'reading the map…');
  // The synchronous module finishes constructing the saved stable before this runs.
  Promise.resolve().then(()=>requestPlayerBreed(myHorses[rideIdx]?.breed||'bay'));
@@ -15252,7 +15256,7 @@ function tick(stepSeconds){
  const ld=$('load');
  if(ld){
   // A slow connection keeps the approved horse loading; the curtain offers a retry.
-  if(hollowpeakRuntime.status==='ready'&&(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)))ld.remove();
+  if(hollowpeakStartupReady&&(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)))ld.remove();
  }
 }
 let manualStepping=false;
@@ -15413,7 +15417,7 @@ ranchBuilderArt.ready.then(()=>queueMicrotask(()=>{
  for(const o of decorObjs){if(!DECOR_CAT[o.d.t].flat){const n=solidWorld.register(o.g,{primitives:true});o.coll.precise=n>0;}}
  solidWorld.refresh();solidWorld.registerParts(scene);
 }));
-G.world.hollowpeakRuntimeReady=finishHollowpeakRuntime({G,FALLS,runtime:hollowpeakRuntime}).then(value=>{if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)){window.__setLoad?.(1,'ready!');$('load')?.remove();}return value;}).catch(error=>{G.world.hollowpeakRuntimeError=error.message;console.error('Hollowpeak landscape could not finish',error);window.GameLoading?.fail('The mountain landscape could not finish loading.');return null;});
+G.world.hollowpeakRuntimeReady=finishHollowpeakRuntime({G,FALLS,runtime:hollowpeakRuntime}).then(value=>{finalizeHollowpeakAnchorGrounding({G,runtime:value});hollowpeakStartupReady=true;if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)){window.__setLoad?.(1,'ready!');$('load')?.remove();}return value;}).catch(error=>{G.world.hollowpeakRuntimeError=error.message;console.error('Hollowpeak landscape could not finish',error);window.GameLoading?.fail('The mountain landscape could not finish loading.');return null;});
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{
