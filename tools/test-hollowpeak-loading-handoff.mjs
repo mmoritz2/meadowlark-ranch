@@ -15,16 +15,16 @@ const HORSE="  window.__setLoad?.(1,'ready!');\n  if(hollowpeakStartupReady)$('l
 assert.equal(entry.split(HORSE).length,2,'Actual horse completion uses complete late handoff');
 const tickLine=oneLine('if(hollowpeakStartupReady&&(!USE_GEN_HORSE');
 const finishLine=oneLine('G.world.hollowpeakRuntimeReady=');
-assert.equal(finishLine.split('finalizeHollowpeakAnchorGrounding({G,runtime:value});hollowpeakStartupReady=true;').length,2,'UI complete is assigned only after successful late finalizer');
+assert.equal(finishLine.split('finalizeHollowpeakAnchorGrounding({G,runtime:value});G.photoscans?.installSnowpeakBoulderContact?.({source:snowpeakBoulderSource,runtime:value});hollowpeakStartupReady=true;').length,2,'UI complete is assigned only after anchor and optional boulder finalizers succeed');
 assert(finishLine.includes("window.__setLoad?.(1,'ready!');"),'Successful world handoff reuses progress adapter');
 const FAIL="window.GameLoading?.fail('The mountain landscape could not finish loading.');";
 assert.equal(entry.split(FAIL).length,2,'Actual landscape failure callback');
 
-function setup({generatedHorse=true,anchorFails=false,control=null}={}){
+function setup({generatedHorse=true,anchorFails=false,boulderFails=false,boulderAvailable=true,control=null}={}){
  let now=0,removed=false,reloads=0;const timers=[],nodes={};
  for(const id of ['load','loadpct','loadTitle','loadRetry','loadHelp']){const classes=new Set();nodes[id]={textContent:'',hidden:id==='loadRetry'||id==='loadHelp',classes,classList:{add:k=>classes.add(k)},remove(){if(id==='load')removed=true;},focus(){}};}
  const runtime={status:'field-ready'},player={mesh:{}},RIG={ready:false,loadingBreed:true,attachedTo:null},world={};
- const context={window:{},document:{getElementById:id=>id==='load'&&removed?null:nodes[id]??null,visibilityState:'visible',addEventListener(){}},performance:{now:()=>now},location:{reload(){reloads++;}},setTimeout:fn=>timers.push(fn),console:{error(){}},G:{world},FALLS:{},hollowpeakRuntime:runtime,USE_GEN_HORSE:generatedHorse,RIG,player,finishHollowpeakRuntime:async()=>{runtime.status='ready';return runtime;},finalizeHollowpeakAnchorGrounding(){if(anchorFails)throw Error('late source/contact finalizer rejected');return{status:'applied-same-owner'};}};
+ const context={window:{},document:{getElementById:id=>id==='load'&&removed?null:nodes[id]??null,visibilityState:'visible',addEventListener(){}},performance:{now:()=>now},location:{reload(){reloads++;}},setTimeout:fn=>timers.push(fn),console:{error(){}},G:{world,photoscans:boulderAvailable?{installSnowpeakBoulderContact(){if(boulderFails)throw Error('late boulder rollback incomplete');return{status:'applied-same-mesh-triangle-body-support'};}}:undefined},snowpeakBoulderSource:{mesh:{}},FALLS:{},hollowpeakRuntime:runtime,USE_GEN_HORSE:generatedHorse,RIG,player,finishHollowpeakRuntime:async()=>{runtime.status='ready';return runtime;},finalizeHollowpeakAnchorGrounding(){if(anchorFails)throw Error('late source/contact finalizer rejected');return{status:'applied-same-owner'};}};
  context.$=context.document.getElementById;vm.createContext(context);vm.runInContext(loading,context,{filename:'actual-game-loading.js'});vm.runInContext(initialize,context);
  // Explicit negative controls restore only previously faulty UI guard policies.
  const guards=source=>control==='physical-status'?source.replaceAll('if(hollowpeakStartupReady)',"if(hollowpeakRuntime.status==='ready')").replace('if(hollowpeakStartupReady&&',"if(hollowpeakRuntime.status==='ready'&&"):source;
@@ -58,4 +58,11 @@ test('late anchor rejection preserves error/retry and blocks tick plus later hor
 });
 test('non-generated horse completes with successful late world handoff',async()=>{
  const c=setup({generatedHorse:false});await c.world();const s=c.snapshot();assert(s.removed&&s.readyClass&&s.uiComplete&&s.retryHidden);
+});
+
+test('incomplete late boulder rollback preserves error and retry through later horse and tick callbacks',async()=>{
+ const c=setup({boulderFails:true});c.horse();await c.world();c.tick();c.horse();const s=c.snapshot();assert(s.failedClass&&!s.readyClass&&!s.removed&&!s.retryHidden&&!s.uiComplete);assert.equal(s.status,'ready');assert.match(s.error,/boulder rollback incomplete/);
+});
+test('optional unavailable photoscan bridge preserves successful world handoff',async()=>{
+ const c=setup({boulderAvailable:false});c.horse();await c.world();const s=c.snapshot();assert(s.removed&&s.readyClass&&s.uiComplete&&s.retryHidden);
 });

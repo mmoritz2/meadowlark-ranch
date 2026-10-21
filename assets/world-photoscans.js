@@ -22,6 +22,7 @@ import {selectPastoralWoodland,isOrdinaryTrunkCircle} from './pastoral-woodland.
 import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=full-crown-2';
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
+import {replaceSnowpeakBoulderContact} from './snowpeak-boulder-contact.mjs?v=snowpeak-boulder-contact-1';
 import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=coyote-macroform-5-connected-landforms-1';
 import {patchOuterFog} from './outer-landscape.js?v=northern-watershed-2';
@@ -118,6 +119,21 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   group.name='Poly Haven environment';scene.add(group);
   const loaded=new Map(),trees=[],detailPatches=[];
   let outerRockParts=null;
+  // Narrow synchronous bridge: resident cache only. Never await runtime here.
+  state.installSnowpeakBoulderContact=({source,runtime})=>{
+    if(!source?.mesh||!outerRockParts?.[3])return state.snowpeakBoulderContact={status:'retained-original-unavailable',reason:'Original source or resident scan unavailable'};
+    try{
+      const result=replaceSnowpeakBoulderContact({G,source,runtime,piece:outerRockParts[3]});
+      result.beforeCourseClear=()=>result.rollback();
+      result.afterCourseClear=()=>state.installSnowpeakBoulderContact({source,runtime});
+      return state.snowpeakBoulderContact=result;
+    }
+    catch(error){
+      state.snowpeakBoulderContact={status:error.rollbackRestored===false?'rollback-failed':'retained-original',reason:error.message,cause:error,rollbackRestored:error.rollbackRestored!==false,...(error.admission?{admission:error.admission}:{})};
+      if(error.rollbackRestored===false)throw error;
+      return state.snowpeakBoulderContact;
+    }
+  };
   let youngOuterSources=[];
   const zero=new THREE.Matrix4().makeScale(0,0,0),UP=new THREE.Vector3(0,1,0),WHITE=new THREE.Color(0xffffff);
   const q=new THREE.Quaternion(),v=new THREE.Vector3(),s=new THREE.Vector3();

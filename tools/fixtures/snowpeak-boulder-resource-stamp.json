@@ -1,0 +1,67 @@
+{
+  "profile": "snowpeak-boulder-resource-regression-local-e11-nodes-1",
+  "scope": "TEST ONLY exact local nodes extracted from saved native canonical field; all exterior test nodes NaN. This tiny stamp is not a full e11 field and does not enter production.",
+  "sourceFieldSHA256": "e11fd7647db59d06d0cc357f1898ea40da7373c7ae5724297fb74d3b277facd0",
+  "sourceGeometrySeed": 9204,
+  "sourceIndex": 3,
+  "residentPart": 3,
+  "matrix": [
+    0.512955964687927,
+    0,
+    -0.48967437292044985,
+    0,
+    0,
+    0.7091578196734191,
+    0,
+    0,
+    0.48967437292044985,
+    0,
+    0.512955964687927,
+    0,
+    -168.07234227404743,
+    3.20670572023239,
+    -77.45604960311834,
+    1
+  ],
+  "grid": {
+    "segments": 512,
+    "originX": -500,
+    "originZ": -500,
+    "step": 1.953125,
+    "ix0": 169,
+    "iz0": 215,
+    "nx": 3,
+    "nz": 3,
+    "nodes": [
+      3.2358171939849854,
+      3.2085788249969482,
+      3.1866376399993896,
+      3.250882625579834,
+      3.2214243412017822,
+      3.1986682415008545,
+      3.2778635025024414,
+      3.2466015815734863,
+      3.2233197689056396
+    ]
+  },
+  "transformedScanXZBounds": {
+    "minX": -168.97230920915794,
+    "maxX": -167.4902570977913,
+    "minZ": -78.28783075250769,
+    "maxZ": -76.69759811762782
+  },
+  "coveredCellBounds": {
+    "ix0": 169,
+    "ix1": 170,
+    "iz0": 215,
+    "iz1": 216
+  },
+  "expected": {
+    "accepted": false,
+    "resourceBound": true,
+    "status": "RETAIN_ORIGINAL_VISIBILITY_RESOURCE_BUDGET_EXCEEDED",
+    "budgetKind": "transientPieces",
+    "attempted": 2049,
+    "limit": 2048
+  }
+}

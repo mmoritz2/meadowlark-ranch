@@ -271,6 +271,9 @@ export function install(G){
   for(const o of dirty)o.instanceMatrix.needsUpdate=true; dirty.clear();
  }
  function clear(routes){
+  const boulderContact=G.photoscans?.snowpeakBoulderContact;
+  boulderContact?.beforeCourseClear?.();
+  try{
   const t0=performance.now(),submission=W.grassSubmission||W.nearGroundCover?.submission;
   submission?.restoreAll();
   // Detailed field walls keep legacy proxies for this pass's established clearing rules.
@@ -284,6 +287,7 @@ export function install(G){
   fieldWalls?.afterCourseClear?.();
   submission?.captureAll();W.nearGroundCover?.invalidate?.();W.courseTurf?.invalidate?.();
   stats.ms=Math.round(performance.now()-t0);
+  }finally{boulderContact?.afterCourseClear?.();}
  }
  clear(true);
  /* routes added late, and anything planted after install, get the same treatment when the game boots */
