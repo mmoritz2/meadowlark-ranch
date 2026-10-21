@@ -4,6 +4,8 @@
 import {createHollowpeakDesign,HOLLOWPEAK_DESIGN as DESIGN} from './hollowpeak-design.mjs';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {configureHollowpeakWaterResponse,patchHollowpeakWaterResponse,HOLLOWPEAK_WATER_RESPONSE_PROFILE} from './hollowpeak-water-response.mjs?v=hollowpeak-optical-response-1';
+import {createHollowpeakShoreOpticalAttributes} from './hollowpeak-shore-attributes.mjs?v=hollowpeak-shore-mineral-hem-1';
+import {createHollowpeakShoreWetness,configureHollowpeakShoreResponse,patchHollowpeakShoreResponse,HOLLOWPEAK_SHORE_RESPONSE_PROFILE} from './hollowpeak-shore-response.mjs?v=hollowpeak-shore-mineral-hem-1';
 
 let seed=0x68443273;
 function privately(run){
@@ -49,8 +51,10 @@ export function installHollowpeakHydrology({G,FALLS,heights,waterTriangles,water
    const uv=new Float32Array(shoreGeometry.position.length/3*2),tint=new Float32Array(shoreGeometry.position.length);
    for(let i=0;i<shoreGeometry.position.length/3;i++){const x=shoreGeometry.position[i*3],y=shoreGeometry.position[i*3+1],z=shoreGeometry.position[i*3+2],basin=Math.hypot(x-DESIGN.tarn.x,z-DESIGN.tarn.z)<Math.hypot(x-DESIGN.pool.x,z-DESIGN.pool.z)?DESIGN.tarn:DESIGN.pool,wet=1-smooth(0,.8,y-basin.level),shade=.8-.29*wet;uv[i*2]=x/3.2;uv[i*2+1]=z/3.2;tint[i*3]=shade;tint[i*3+1]=shade*1.015;tint[i*3+2]=shade*.99;}
    shore.setAttribute('uv',new T.BufferAttribute(uv,2));shore.setAttribute('color',new T.BufferAttribute(tint,3));shore.computeVertexNormals();shore.computeBoundingBox();shore.computeBoundingSphere();
-   const shoreMaterial=bankSource.clone();ownedResources.push(shoreMaterial);shoreMaterial.name='Hollowpeak | wet bedrock';shoreMaterial.onBeforeCompile=bankSource.onBeforeCompile;shoreMaterial.customProgramCacheKey=bankSource.customProgramCacheKey;
-   const shoreMesh=new T.Mesh(shore,shoreMaterial);shoreMesh.name='Hollowpeak | single owned shore';shoreMesh.receiveShadow=true;shoreMesh.castShadow=false;shoreMesh.renderOrder=1;shoreMesh.userData.collisionIgnore=true;root.add(shoreMesh);
+   const shoreOptics=createHollowpeakShoreOpticalAttributes({...shoreGeometry,heights}),shoreWetness=createHollowpeakShoreWetness(shoreGeometry.position,DESIGN);
+   shore.setAttribute('shoreCanonicalLift',new T.BufferAttribute(shoreOptics.canonicalLift,1));shore.setAttribute('shoreOuterDistance',new T.BufferAttribute(shoreOptics.outerDistance,1));shore.setAttribute('shoreHemEligible',new T.BufferAttribute(shoreOptics.hemEligible,1));shore.setAttribute('shoreWetness',new T.BufferAttribute(shoreWetness,1));
+   const shoreMaterial=bankSource.clone();ownedResources.push(shoreMaterial);shoreMaterial.name='Hollowpeak | wet bedrock';configureHollowpeakShoreResponse(shoreMaterial);shoreMaterial.onBeforeCompile=(shader,renderer)=>{bankSource.onBeforeCompile(shader,renderer);patchHollowpeakShoreResponse(shader);};shoreMaterial.customProgramCacheKey=()=>bankSource.customProgramCacheKey()+'|'+HOLLOWPEAK_SHORE_RESPONSE_PROFILE;
+   const shoreMesh=new T.Mesh(shore,shoreMaterial);shoreMesh.name='Hollowpeak | single owned shore';shoreMesh.receiveShadow=true;shoreMesh.castShadow=false;shoreMesh.renderOrder=1.5;shoreMesh.userData.collisionIgnore=true;root.add(shoreMesh);
    const f=DESIGN.fall,flow={x:f.x,z:f.z,top:f.top,bottom:f.bottom,width:f.width,run:f.run,name:'Hollowpeak connected falls'};
    const fall=W.waterfallArt.fall({...flow,flowProfile:'hollowpeak-cataract-2'});
    fall.traverse(o=>{if(o.geometry)ownedResources.push(o.geometry);});
@@ -68,7 +72,7 @@ export function installHollowpeakHydrology({G,FALLS,heights,waterTriangles,water
    // Query padding requests the nearest finite emitted face even off-surface;
    // it is used only as a distance search and never admits swimming there.
    const reflectionPlanes=(x,z)=>basinQueries.map(({basin,query})=>({distance:query.waterFootprintAt(x,z,2000).distance??Infinity,level:basin.level,refreshIntervalMs:100}));
-   return {profile:'hollowpeak-connected-hydrology-1',root,queries,waterMeshes,shoreMesh,shoreGeometry,fall,effects,foam,flow,reflectionPlanes,contactIndex,beforeSurfaces,ledger,ownedResources,sourceShore:S,sourceBankMaterial:bankSource,field:heights,finalFieldSHA256,sourceWaterTriangles:waterTriangles};
+   return {profile:'hollowpeak-connected-hydrology-1',root,queries,waterMeshes,shoreMesh,shoreGeometry,fall,effects,foam,flow,reflectionPlanes,contactIndex,beforeSurfaces,ledger,ownedResources,sourceShore:S,sourceBankMaterial:bankSource,field:heights,finalFieldSHA256,sourceWaterTriangles:waterTriangles,shoreOptics};
   });
  }catch(error){for(let i=0;i<exact.length;i++)exact[i][0].visible=oldVisibility[i];W.groundSurfaces.splice(0,W.groundSurfaces.length,...beforeSurfaces);L.ownedQueries=previousOwnedQueries;for(const o of created)o.removeFromParent();for(const r of ownedResources)r.dispose();W.waterfallArt.effectGroups.length=oldFactoryEffects;W.waterfallArt.mistMaterials.length=oldFactoryMists;throw error;}
  const state=result.value;state.privateConstructorDraws=result.draws;
