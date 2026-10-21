@@ -1,3 +1,4 @@
+import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {respondPastoralGrassMatrix,respondPastoralGrassColor} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
@@ -148,7 +149,7 @@ export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers
 // A bounded ring carries pasture silhouettes into the middle distance. Slots
 // only rebuild when a 12 m cell enters the ring; no extra work per grass blade
 // on normal frames. Positions are keyed by world cell, so riding back is stable.
-export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high'}){
+export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high',terrainHeightAt=null}){
   const CELL=12,W=18,K=low?48:120;
   const hash=(x,z)=>{let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
   const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4,segments:2,profile:'middle-natural-v1'}),medium:createGrassTuftGeometry(THREE,{bladeCount:6,segments:2,profile:'middle-natural-v1'}),high:createGrassTuftGeometry(THREE,{bladeCount:8,segments:2,profile:'middle-natural-v1'})};
@@ -199,7 +200,9 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
         if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
         else scale.setScalar(0);
-        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);mesh.setColorAt(id,color);
+        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);
+        const thawFloor=terrainHeightAt?hollowpeakThawFloorAt(px,pz,terrainHeightAt):null;respondHollowpeakThawMatrix(matrix.elements,0,mesh.geometry,heightAt,thawFloor);
+        mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);respondHollowpeakThawColor(color,thawFloor);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

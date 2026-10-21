@@ -1,3 +1,4 @@
+import {hollowpeakThawFloorAt} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';
 import {frostpineTransitionAt} from './frostpine-transition.mjs?v=frostpine-transition-1-final-environment-1';
 // The existing Hollowpeak and Frostpine climate envelopes, sampled without RNG.
 // Site coordinates and collision records belong to the original world planting.
@@ -44,8 +45,10 @@ export function coldWoodlandProfile({x,z,height,source,elevation=0,grade=0}){
 
 // Pasture stops under continuous winter cover. The compact thaw margin retains
 // gradually shorter, sparser dry blades; ordinary meadows remain byte-exact.
-export function coldPastureCover(x,z){
- return coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));
+export function coldPastureCover(x,z,heightAt){
+ const original=coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));
+ const thaw=heightAt?hollowpeakThawFloorAt(x,z,heightAt):null;
+ return thaw?Math.max(original,thaw.density):original;
 }
 function coldFloorCover(weights,frost){
  const original=1-smooth(.08,.60,weights.weight);
@@ -64,16 +67,18 @@ const WINTER_COVER=Object.freeze({
  juni:{floor:.24,size:.54,tint:'#b3bba9',amount:.72},
  sage:{floor:.16,size:.56,tint:'#c1bca7',amount:.82},
 });
-export function coldCoverProfile(x,z,kind){
+export function coldCoverProfile(x,z,kind,heightAt){
  const change=WINTER_COVER[kind],weights=coldWoodlandWeights(x,z),frost=frostpineTransitionAt(x,z);
  const weight=Math.max(weights.weight,frost.weight);
  if(!change||weight<=.08)return null;
- const pasture=coldFloorCover(weights,frost),winter=1-pasture;
+ const thaw=heightAt&&kind!=='petal'&&kind!=='reed'?hollowpeakThawFloorAt(x,z,heightAt):null;
+ const originalPasture=coldFloorCover(weights,frost),pasture=thaw?Math.max(originalPasture,thaw.density):originalPasture,winter=1-pasture;
  const originalDensity=kind==='petal'?0:change.floor+(1-change.floor)*pasture;
  // Full deposits carry no dry fern/card islands. Connected bare heath keeps
  // short dormant scrub, with original proposed sites and no additional draws.
  const exposed=1-smooth(.38,.82,frost.deposit);
  const density=originalDensity*mix(1,exposed,frost.weight);
+ if(thaw)return {weight,pasture,density,size:1-winter*(1-change.size),tint:thaw.tint,tintAmount:Math.max(winter*change.amount,thaw.tintAmount),thawFloor:thaw};
  return {weight,pasture,density,
   size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};
 }

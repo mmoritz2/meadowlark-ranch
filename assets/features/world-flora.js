@@ -33,6 +33,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=hollo
    there and a barn dropped into a thicket helps nobody. */
 import {canyonCliffAt} from '../canyon-landscape.js?v=coyote-macroform-5-connected-landforms-1';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
+import {respondHollowpeakThawMatrix} from '../hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';
 import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1-final-environment-1';
 import {applyPastoralGrassMesh} from '../pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
@@ -957,11 +958,12 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   const b=BANK[name],n=b.n;let kept=0;winterBefore[name]=n;winterKinds++;
   for(let i=0;i<n;i++){
    b.im.getMatrixAt(i,_m);
-   const x=_m.elements[12],z=_m.elements[14],change=coldCoverProfile(x,z,name);
+   const x=_m.elements[12],z=_m.elements[14],change=coldCoverProfile(x,z,name,W.terrainH);
    if(change){
     if(change.density===0||hsh(Math.floor(x*47)+winterKinds*1877,Math.floor(z*53)-1291)>change.density){winterRemoved++;continue;}
     _m.decompose(_v,_q,_sc);const y=groundH(x,z);
     _v.y=y+(_v.y-y)*change.size;_sc.multiplyScalar(change.size);_m.compose(_v,_q,_sc);
+    respondHollowpeakThawMatrix(_m.elements,0,b.im.geometry,groundH,change.thawFloor);
     winterShortened++;
    }
    // Untouched matrices/colours are copied directly; decomposition would round

@@ -1,10 +1,12 @@
+import {normalizeHollowpeakThawSource} from './hollowpeak-thaw-source-guard.cjs';
 import fs from 'node:fs';
 import {normalizeGrassArchSource} from './grass-arch-source-guard.cjs';
 // Historical needle-profile assertions retain their exact original thresholds.
 // This helper restores only the frozen reviewed changes and pins complete d5
 // source bodies before executing those original factories. Current arched-model
 // behavior is checked separately against the actual imported production helpers.
-export const historicalSource=file=>normalizeGrassArchSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file);
+// Recover only the complete reviewed thaw-floor presentation before the older whole-body checks.
+export const historicalSource=file=>normalizeGrassArchSource(normalizeHollowpeakThawSource(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),file),file);
 const lush=historicalSource('assets/lush-meadow-geometry.mjs');
 export const createLushMeadowGeometry=new Function(lush.replaceAll('export function','function')+'\nreturn createLushMeadowGeometry;')();
 const grazed=historicalSource('assets/grazed-sward.mjs').replace(/^import[^\n]*\n/gm,'').replaceAll('export ','');

@@ -1,3 +1,4 @@
+import {respondHollowpeakThawMatrix} from '../assets/hollowpeak-thaw-floor.mjs';
 import {frostpineTransitionAt} from '../assets/frostpine-transition.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -129,11 +130,11 @@ test('cover profiles consume no RNG and are deterministic regardless of visitati
 });
 
 
-test('actual winter bank pass preserves outside bytes, removes summer cores and keeps shortened roots grounded',()=>{
+test('actual winter bank pass with omitted terrain callback preserves outside bytes, removes summer cores and keeps shortened roots grounded',()=>{
  const source=readFileSync(new URL('../assets/features/world-flora.js',import.meta.url),'utf8');
  const start=source.indexOf(' /* ---- 6l. winter woodland floor'),end=source.indexOf(' /* ---- 6m. the shared grazed field interiors',start);
  assert.ok(start>=0&&end>start,'Winter postpass boundaries missing');
- const run=new Function('THREE','BANK','_m','_v','_q','_sc','_col','hsh','groundH','coldCoverProfile','F',source.slice(start,end));
+ const run=new Function('THREE','BANK','_m','_v','_q','_sc','_col','hsh','groundH','coldCoverProfile','F','W','respondHollowpeakThawMatrix',source.slice(start,end));
  const groundH=(x,z)=>x*.004-z*.003+Math.sin(x*.07)*.2;
  const hsh=(i,j)=>{let h=(Math.imul(i|0,374761393)+Math.imul(j|0,668265263))|0;h=Math.imul(h^h>>>13,1274126177);return ((h^h>>>16)>>>0)/4294967295;};
  const points=[];
@@ -159,7 +160,7 @@ test('actual winter bank pass preserves outside bytes, removes summer cores and 
  }
  const F={},original=Math.random;let randomCalls=0;
  Math.random=()=>{randomCalls++;throw Error('Winter postpass consumed seeded RNG');};
- try{run(THREE,BANK,new THREE.Matrix4(),new THREE.Vector3(),new THREE.Quaternion(),new THREE.Vector3(),new THREE.Color(),hsh,groundH,coldCoverProfile,F);}
+ try{run(THREE,BANK,new THREE.Matrix4(),new THREE.Vector3(),new THREE.Quaternion(),new THREE.Vector3(),new THREE.Color(),hsh,groundH,(x,z,kind,heightAt)=>{assert.equal(heightAt,undefined,'Legacy winter fixture deliberately omits the terrain callback');return coldCoverProfile(x,z,kind,heightAt);},F,{terrainH:undefined},respondHollowpeakThawMatrix);}
  finally{Math.random=original;}
  assert.equal(randomCalls,0);
  assert.ok(F.winterCover.removed>100&&F.winterCover.shortened>20);

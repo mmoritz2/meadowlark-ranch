@@ -1,0 +1,212 @@
+{
+  "profile": "hollowpeak-thaw-floor-1",
+  "baselineCommit": "c2bd629",
+  "markers": [
+    "hollowpeak-thaw-floor-1",
+    "hollowpeakThawFloorAt",
+    "respondHollowpeakThawMatrix",
+    "respondHollowpeakThawColor"
+  ],
+  "files": {
+    "assets/cold-woodland.mjs": {
+      "beforeSHA256": "1ca145de12a7a66e66296855939f7391ef2527affc367470dcefbd6288b8dfc0",
+      "afterSHA256": "e66a64416dc4633de2625ea9242e88ad6fb4237b7fcedda445661d9472f8626d",
+      "changes": [
+        {
+          "before": "import {frostpineTransitionAt}",
+          "after": "import {hollowpeakThawFloorAt} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {frostpineTransitionAt}",
+          "occurrences": 1
+        },
+        {
+          "before": "export function coldPastureCover(x,z){\n return coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));\n}",
+          "after": "export function coldPastureCover(x,z,heightAt){\n const original=coldFloorCover(coldWoodlandWeights(x,z),frostpineTransitionAt(x,z));\n const thaw=heightAt?hollowpeakThawFloorAt(x,z,heightAt):null;\n return thaw?Math.max(original,thaw.density):original;\n}",
+          "occurrences": 1
+        },
+        {
+          "before": "export function coldCoverProfile(x,z,kind){",
+          "after": "export function coldCoverProfile(x,z,kind,heightAt){",
+          "occurrences": 1
+        },
+        {
+          "before": " const pasture=coldFloorCover(weights,frost),winter=1-pasture;",
+          "after": " const thaw=heightAt&&kind!=='petal'&&kind!=='reed'?hollowpeakThawFloorAt(x,z,heightAt):null;\n const originalPasture=coldFloorCover(weights,frost),pasture=thaw?Math.max(originalPasture,thaw.density):originalPasture,winter=1-pasture;",
+          "occurrences": 1
+        },
+        {
+          "before": " return {weight,pasture,density,\n  size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};",
+          "after": " if(thaw)return {weight,pasture,density,size:1-winter*(1-change.size),tint:thaw.tint,tintAmount:Math.max(winter*change.amount,thaw.tintAmount),thawFloor:thaw};\n return {weight,pasture,density,\n  size:1-winter*(1-change.size),tint:change.tint,tintAmount:winter*change.amount};",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/meadow-biomes.js": {
+      "beforeSHA256": "e68202be92588dce86effbd853693acb9abc4cd19311186f337230622376bf8b",
+      "afterSHA256": "a9ead173800ce14c5f1fbfec64cc2fc9ff9cabb05bc427615e3eabc71aa5cdca",
+      "changes": [
+        {
+          "before": "import {coyoteCoverDryWeight}",
+          "after": "import {hollowpeakThawFloorAt} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {coyoteCoverDryWeight}",
+          "occurrences": 1
+        },
+        {
+          "before": "export function meadowCoverWeight(x,z){",
+          "after": "export function meadowCoverWeight(x,z,heightAt){",
+          "occurrences": 1
+        },
+        {
+          "before": " return Math.min(canyon,winter);",
+          "after": " const thaw=heightAt?hollowpeakThawFloorAt(x,z,heightAt):null;\n return Math.min(canyon,thaw?Math.max(winter,thaw.density):winter);",
+          "occurrences": 1
+        },
+        {
+          "before": "export function hasMeadowCover(x,z){return coverRandom(x,z)<meadowCoverWeight(x,z)}",
+          "after": "export function hasMeadowCover(x,z,heightAt){return coverRandom(x,z)<meadowCoverWeight(x,z,heightAt)}",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/meadow-cover.js": {
+      "beforeSHA256": "67966226feac801c89dedc0d1beceb819b4a9f0bb008bdd511b898c217f63f01",
+      "afterSHA256": "369beb20823a4c3c243192caafe03fc45f273968f9bc9476e97f51c208a2f636",
+      "changes": [
+        {
+          "before": "import {ranchTurfHeightAt,ranchTurfReachAt}",
+          "after": "import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {ranchTurfHeightAt,ranchTurfReachAt}",
+          "occurrences": 1
+        },
+        {
+          "before": "export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high'}){",
+          "after": "export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high',terrainHeightAt=null}){",
+          "occurrences": 1
+        },
+        {
+          "before": "        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);mesh.setColorAt(id,color);",
+          "after": "        matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);\n        const thawFloor=terrainHeightAt?hollowpeakThawFloorAt(px,pz,terrainHeightAt):null;respondHollowpeakThawMatrix(matrix.elements,0,mesh.geometry,heightAt,thawFloor);\n        mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);respondHollowpeakThawColor(color,thawFloor);mesh.setColorAt(id,color);",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/mixed-sward.mjs": {
+      "beforeSHA256": "309b9af6f1d87cea2a48108ccb362cc643ddea8a6239a7b703f76cda765294db",
+      "afterSHA256": "a9115a2eb21301b6009d7337edd014b85ea862d264456252fdbc654a01e0da6b",
+      "changes": [
+        {
+          "before": "import {createGrazedSwardGeometry,",
+          "after": "import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {createGrazedSwardGeometry,",
+          "occurrences": 1
+        },
+        {
+          "before": "respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});if(colors)",
+          "after": "respondPastoralGrassMatrix(dst,i*16,mesh.geometry,W.groundH,0,0,0,r.pastoralCut===undefined?null:{cut:r.pastoralCut,cap:r.pastoralCap});respondHollowpeakThawMatrix(dst,i*16,mesh.geometry,W.groundH,hollowpeakThawFloorAt(dst[i*16+12],dst[i*16+14],W.terrainH));if(colors)",
+          "occurrences": 1
+        }
+      ]
+    },
+    "assets/features/world-flora.js": {
+      "beforeSHA256": "a0e7be12b62a63fd55634e62b39f2e861be2af1f3154d7a442e23bbf853954d1",
+      "afterSHA256": "334ac1121fbb67fe5630e61cb75e7ae7667b03fec3422286efeb2e1cb4d95c7a",
+      "changes": [
+        {
+          "before": "import {coldCoverProfile}",
+          "after": "import {respondHollowpeakThawMatrix} from '../hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {coldCoverProfile}",
+          "occurrences": 1
+        },
+        {
+          "before": "const x=_m.elements[12],z=_m.elements[14],change=coldCoverProfile(x,z,name);",
+          "after": "const x=_m.elements[12],z=_m.elements[14],change=coldCoverProfile(x,z,name,W.terrainH);",
+          "occurrences": 1
+        },
+        {
+          "before": "    _v.y=y+(_v.y-y)*change.size;_sc.multiplyScalar(change.size);_m.compose(_v,_q,_sc);",
+          "after": "    _v.y=y+(_v.y-y)*change.size;_sc.multiplyScalar(change.size);_m.compose(_v,_q,_sc);\n    respondHollowpeakThawMatrix(_m.elements,0,b.im.geometry,groundH,change.thawFloor);",
+          "occurrences": 1
+        }
+      ]
+    },
+    "ranch3d.html": {
+      "beforeSHA256": "60161cb83d68b808c326e7e59d3d23941cb267af256cbe9aeda02930c4b81262",
+      "afterSHA256": "cd470a3e8cd060489f300e06872ea1d72df400da99afd0e62808806bfd48fe87",
+      "changes": [
+        {
+          "before": "import {coldWoodlandWeights,coldPastureCover,coldCoverProfile}",
+          "after": "import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from './assets/hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';\nimport {coldWoodlandWeights,coldPastureCover,coldCoverProfile}",
+          "occurrences": 1
+        },
+        {
+          "before": "  const winterCover=coldPastureCover(x,z);\n  // Keep all seeded random draws;",
+          "after": "  const winterCover=coldPastureCover(x,z,terrainH),thawFloor=hollowpeakThawFloorAt(x,z,terrainH);\n  // Keep all seeded random draws;",
+          "occurrences": 1
+        },
+        {
+          "before": "||!hasMeadowCover(x,z)||winterCover===0",
+          "after": "||!hasMeadowCover(x,z,terrainH)||winterCover===0",
+          "occurrences": 1
+        },
+        {
+          "before": "  m4.compose(v,q,sc);\n  blades.setMatrixAt(placed,m4);",
+          "after": "  m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,bladeGeo,groundH,thawFloor);\n  blades.setMatrixAt(placed,m4);",
+          "occurrences": 1
+        },
+        {
+          "before": "  if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);\n  blades.setColorAt",
+          "after": "  if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);\n  blades.setColorAt",
+          "occurrences": 1
+        },
+        {
+          "before": "  const winterCover=coldPastureCover(x,z);",
+          "after": "  const winterCover=coldPastureCover(x,z,terrainH);",
+          "occurrences": 1
+        },
+        {
+          "before": "  if(!hasMeadowCover(x,z))return false;",
+          "after": "  if(!hasMeadowCover(x,z,terrainH))return false;",
+          "occurrences": 1
+        },
+        {
+          "before": "const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality});",
+          "after": "const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality,terrainHeightAt:terrainH});",
+          "occurrences": 1
+        },
+        {
+          "before": "growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z);",
+          "after": "growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z,terrainH),thawFloor=hollowpeakThawFloorAt(x,z,terrainH);",
+          "occurrences": 1
+        },
+        {
+          "before": "v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);m4.toArray(grassCell.matrices,grassCell.count*16);",
+          "after": "v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,near.geometry,groundH,thawFloor);m4.toArray(grassCell.matrices,grassCell.count*16);",
+          "occurrences": 1
+        },
+        {
+          "before": "meadowBladeColor(bcol,x,z,h4);if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);bcol.toArray",
+          "after": "meadowBladeColor(bcol,x,z,h4);if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);bcol.toArray",
+          "occurrences": 1
+        },
+        {
+          "before": "   const winter=coldCoverProfile(x,z,'scrub');",
+          "after": "   const winter=coldCoverProfile(x,z,'scrub',terrainH);",
+          "occurrences": 1
+        },
+        {
+          "before": "respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH); fern.setMatrixAt(id,m4);",
+          "after": "respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH);respondHollowpeakThawMatrix(m4.elements,0,fern.geometry,groundH,winter?.thawFloor); fern.setMatrixAt(id,m4);",
+          "occurrences": 1
+        },
+        {
+          "before": "if(winter)bcol.lerp(winterGrassTint,winter.tintAmount);fern.setColorAt(id,bcol);",
+          "after": "if(winter&&!winter.thawFloor)bcol.lerp(winterGrassTint,winter.tintAmount);respondHollowpeakThawColor(bcol,winter?.thawFloor);fern.setColorAt(id,bcol);",
+          "occurrences": 1
+        },
+        {
+          "before": " \"imports\":{\n",
+          "after": " \"imports\":{\n  \"./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1\":\"./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1\",\n  \"./assets/meadow-biomes.js?v=dry-foothills-1\":\"./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1\",\n  \"./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1\":\"./assets/meadow-cover.js?v=hollowpeak-thaw-floor-1\",\n  \"./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1\":\"./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1\",\n  \"./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1\":\"./assets/features/world-flora.js?v=hollowpeak-thaw-floor-1\",\n",
+          "occurrences": 1
+        }
+      ]
+    }
+  },
+  "addedHelper": {
+    "file": "assets/hollowpeak-thaw-floor.mjs",
+    "sha256": "2f08e2596b8e19d119ac3a98dbb8976663953d1bd5e5e4f07d6e7c8f058ea9ed"
+  }
+}

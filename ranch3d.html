@@ -630,6 +630,11 @@ body.touch #stickZone{display:block}
 <script type="importmap">
 {
  "imports":{
+  "./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1":"./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1",
+  "./assets/meadow-biomes.js?v=dry-foothills-1":"./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
+  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1":"./assets/meadow-cover.js?v=hollowpeak-thaw-floor-1",
+  "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1":"./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1",
+  "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1":"./assets/features/world-flora.js?v=hollowpeak-thaw-floor-1",
   "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1":"./assets/features/world-quarters.js?v=amberwood-worked-clearing-1",
   "./assets/regional-cover-composition.mjs?v=regional-cover-2":"./assets/regional-cover-composition.mjs?v=amberwood-worked-clearing-1",
   "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4":"./assets/features/world.js?v=wild-actor-label-1",
@@ -703,6 +708,7 @@ import {pastureRise,meadowBloomAt,meadowGrazingAt,meadowSwardGrazingAt} from './
 import {canyonRelief,canyonPlanningRelief,canyonMacroPlanningRelief,createCanyonPlacementPlan,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=coyote-macroform-5-connected-landforms-1';
 import {createGeology} from './assets/geology.js?v=ranch-models-1-mesa-landforms-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
+import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from './assets/hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';
 import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1';
 import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=hollowpeak-upper-ridges-3';
 import {legacyFallsTerrainHeight,createHollowpeakPlacementPlan} from './assets/hollowpeak-placement-reference.mjs?v=hollowpeak-ridges-1';
@@ -3173,18 +3179,18 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
   const turfReach=ranchTurfReachAt(x,z);
   sc.set(s*spread*turfReach,s*(.78-.40*managedGrass(x,z))*growth*ranchTurfHeightAt(x,z),s*spread*turfReach);
-  const winterCover=coldPastureCover(x,z);
+  const winterCover=coldPastureCover(x,z,terrainH),thawFloor=hollowpeakThawFloorAt(x,z,terrainH);
   // Keep all seeded random draws; winter cover only changes this blade's matrix.
   const winterSample=Math.sin(x*47.13+z*53.71)*43758.5453;
-  if(loonLake.containsWater(x,z,.45)||alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0||(winterCover<1&&winterSample-Math.floor(winterSample)>winterCover))sc.setScalar(0);
+  if(loonLake.containsWater(x,z,.45)||alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z,terrainH)||winterCover===0||(winterCover<1&&winterSample-Math.floor(winterSample)>winterCover))sc.setScalar(0);
   else if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
   v.set(x,groundH(x,z),z);
-  m4.compose(v,q,sc);
+  m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,bladeGeo,groundH,thawFloor);
   blades.setMatrixAt(placed,m4);
   // Share the near-field palette; preserve the three seeded random draws so
   // this colour change cannot move the world's later scenery placements.
   meadowBladeColor(bcol,x,z,(Math.random()+Math.random()+Math.random())/3);
-  if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);
+  if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -3343,14 +3349,14 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const okGrass=(x,z,shortVerge=false,mownCourse=false)=>{
   if(G.photoscans?.excludesGroundCover?.(x,z))return false;
   if(alpineSnowAt(x,z)>.35)return false;
-  const winterCover=coldPastureCover(x,z);
+  const winterCover=coldPastureCover(x,z,terrainH);
   if(winterCover===0||(winterCover<1&&gh(Math.floor(x*47),Math.floor(z*53))>winterCover))return false;
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
   if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
   if(Math.abs(z-riverZ(x))<6.5)return false;               // not in the river
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
-  if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
+  if(!hasMeadowCover(x,z,terrainH))return false;                  // match the terrain's transition zones
   if(loonLake.containsWater(x,z,.9)||oasisContainsWater(x,z,.7))return false; // lake and oasis
   // Fine short turf joins the trail's feathered shoulder in ordinary meadow.
   // Flowers, tall clutter, existing path cores and event lanes keep their clear strip.
@@ -3388,7 +3394,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
- const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality});
+ const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality,terrainHeightAt:terrainH});
  const CLUT={
   meadow:{fern:'#8a9d71',rock:'#a39784',p:0.38,sz:0.70},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
@@ -3408,12 +3414,12 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z,true))continue;
-   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z);
+   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z,terrainH),thawFloor=hollowpeakThawFloorAt(x,z,terrainH);
    const turfReach=ranchTurfReachAt(x,z);
    e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread*turfReach,(.9+h1*.2)*trim*growth*ranchTurfHeightAt(x,z),sz*spread*turfReach);
    if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
-   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);m4.toArray(grassCell.matrices,grassCell.count*16);
-   meadowBladeColor(bcol,x,z,h4);if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
+   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,near.geometry,groundH,thawFloor);m4.toArray(grassCell.matrices,grassCell.count*16);
+   meadowBladeColor(bcol,x,z,h4);if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -3447,14 +3453,14 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const B=biomeAt(x,z), C=CLUT[B],dry=B==='meadow'||B==='desert'?coyoteCoverDryWeight(x,z):0,blend=B==='meadow'?dry:0;
-   const winter=coldCoverProfile(x,z,'scrub');
+   const winter=coldCoverProfile(x,z,'scrub',terrainH);
    const density=(C.p+(CLUT.desert.p-C.p)*blend)*(winter?.density??1),size=(C.sz+(CLUT.desert.sz-C.sz)*blend)*(winter?.size??1);
    if(!okClutter(x,z)||h3>density*(B==='meadow'?1-.95*meadowGrazingAt(x,z)*(1-blend):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
    const sz=size*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
-   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH); fern.setMatrixAt(id,m4);
+   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc);respondChalkGrassMatrix(m4.elements,0,fern.geometry,groundH);respondHollowpeakThawMatrix(m4.elements,0,fern.geometry,groundH,winter?.thawFloor); fern.setMatrixAt(id,m4);
    bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10);
-   if(winter)bcol.lerp(winterGrassTint,winter.tintAmount);fern.setColorAt(id,bcol);
+   if(winter&&!winter.thawFloor)bcol.lerp(winterGrassTint,winter.tintAmount);respondHollowpeakThawColor(bcol,winter?.thawFloor);fern.setColorAt(id,bcol);
   }
   const reedCell=reedCells[slot];reedCell.count=0;
   for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
