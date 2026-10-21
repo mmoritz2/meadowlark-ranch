@@ -2,6 +2,7 @@
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
 import {scalpPoint} from './rider-hairstyles.js?v=character-redesign98-20261020';
 import {surfaceSampler} from './rider-fit.js?v=tailored-coats69-20261010';
+import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={
  eyewear:[item('none','No glasses','#b8b1a5'),item('round','Round gold','#c9aa65'),item('square','Black frames','#262b34'),item('cateye','Rose cat-eye','#ae596e'),item('tortoise','Tortoiseshell','#815438'),item('aviator','Aviator shades','#b9c4c7'),item('sport','Sport sunglasses','#355f69')],
@@ -22,8 +23,10 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
  const star=(size)=>{const s=new THREE.Shape();for(let i=0;i<10;i++){const a=i*Math.PI/5+Math.PI/2,r=i%2?size*.44:size,x=Math.cos(a)*r,y=Math.sin(a)*r;i?s.lineTo(x,y):s.moveTo(x,y);}s.closePath();return new THREE.ExtrudeGeometry(s,{depth:.002,bevelEnabled:false});};
  if(fit.eyewear!=='none'){
   const id=fit.eyewear,g=attach('eyewear','Head'),record=RIDER_ACCESSORIES.eyewear.find(x=>x.id===id),metal=id==='round'||id==='aviator',mat=material(record.col,metal);
-  const y=H.eyeY??H.browTop-.022,z=H.cz+H.rz*.84+.010,cx=H.rx*.48;
   const shaded=id==='aviator'||id==='sport',lens=new THREE.MeshStandardMaterial({color:shaded?'#293b42':'#b7d4d3',roughness:.17,metalness:shaded?.12:0,transparent:true,opacity:shaded?.86:.10,depthWrite:false,side:THREE.DoubleSide});
+  if(kit.headAsset?.portrait99)portraitEyewear99(THREE,kit,id,g,mat,lens,put);
+  else{
+  const y=H.eyeY??H.browTop-.022,z=H.cz+H.rz*.84+.010,cx=H.rx*.48;
   for(const side of [-1,1]){
    const pts=[],rx=H.rx*.39,ry=id==='sport'?.018:id==='square'||id==='tortoise'?.020:.023;
    for(let i=0;i<32;i++){
@@ -39,6 +42,7 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
    put(g,tube([V(side*(cx+rx),y,z-.008),V(side*(H.rx+.004),y+.002,H.cz+.026),V(side*(H.rx+.005),y-.008,H.cz-.032)],.0018),mat);
   }
   put(g,tube([V(-cx+H.rx*.39,y+.003,z),V(0,y+.010,z+.010),V(cx-H.rx*.39,y+.003,z)],.0017),mat);
+  }
  }
  if(fit.earrings!=='none'){
   const id=fit.earrings,g=attach('earrings','Head'),mat=material(RIDER_ACCESSORIES.earrings.find(x=>x.id===id).col,id!=='pearls'&&id!=='drops');
@@ -141,4 +145,48 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
  for(const group of roots)if(group.userData.skinned)group.userData.neckSkinFit={queries:skinSamples.size,missing:missingNeckSkinSamples,maximumSourceDistanceM:.025,examples:missingNeckSkinExamples};
  if(neckSurface)neckSurface.dispose();
  return {roots,dispose(){const geos=new Set(),mats=new Set();for(const g of roots){g.removeFromParent();g.traverse(m=>{if(m.isMesh){geos.add(m.geometry);mats.add(m.material);if(m.skeleton)m.skeleton.dispose();}});}geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());}};
+}
+
+// Portrait99 has anatomical eye spacing and a different nasal bridge. Fit once
+// in Head bind space; this branch never alters shared head or source assets.
+function portraitEyewear99(T,kit,id,group,frameMaterial,lensMaterial,put){
+ const V=(...a)=>new T.Vector3(...a),asset=kit.headAsset,portrait=asset.portrait99;
+ const headSurface=createTriangleSurface(T,asset.local),eyeLocal=asset.eyes.geometry.clone().applyMatrix4(asset.inverse),eyeSurface=createTriangleSurface(T,eyeLocal),surfaces=[headSurface,eyeSurface],forward=V(0,0,-1),metal=id==='round'||id==='aviator',frameRadius=metal?.00135:.0018,clearance=.0045;
+ const front=(x,y)=>{let z=-Infinity;for(const surface of surfaces){const hit=surface.cast(V(x,y,.35),forward);if(hit)z=Math.max(z,hit.point.z);}return z;};
+ const makeTube=(points,r)=>new T.TubeGeometry(new T.CatmullRomCurve3(points,false,'centripetal'),Math.max(40,points.length*2),r,8,false);
+ const projectedTube=(points,r,mode,side=0)=>{
+  const curve=new T.CatmullRomCurve3(points,false,'centripetal'),fitted=[];
+  for(let k=0;k<=48;k++){const q=curve.getPoint(k/48);if(mode==='front'){const z=front(q.x,q.y);if(Number.isFinite(z))q.z=Math.max(q.z,z+clearance);}else{const hit=headSurface.cast(V(side*.3,q.y,q.z),V(-side,0,0));if(hit)q.x=side*Math.max(side*q.x,side*hit.point.x+clearance);}fitted.push(q);}
+  put(group,makeTube(fitted,r),frameMaterial);
+ };
+ const eyes=[];
+ try{
+  for(const eye of portrait.eyes){
+   const center=V(...eye.center),side=Math.sign(center.x),rx=eye.radius*1.79,ry=eye.radius*(id==='sport'?1.04:id==='square'||id==='tortoise'?1.12:id==='aviator'?1.30:1.22),N=48,R=6;
+   const boundary=[];
+   for(let k=0;k<N;k++){
+    const angle=k/N*Math.PI*2,cs=Math.cos(angle),sn=Math.sin(angle);let x=cs*rx,y=sn*ry;
+    if(id==='square'||id==='tortoise'){x=Math.sign(cs)*Math.pow(Math.abs(cs),.68)*rx;y=Math.sign(sn)*Math.pow(Math.abs(sn),.68)*ry;}
+    if(id==='cateye')y+=Math.max(0,x*side)*.22;
+    if(id==='aviator')y-=Math.max(0,-sn)*.002;
+    boundary.push(V(center.x+x,center.y+y,0));
+   }
+   const wrap=x=>-.0015*side*(x-center.x)/rx;let plane=center.z+eye.radius+clearance;
+   // Include the lens interior, not only its outline: a nasal surface can rise
+   // through a flat polygon even when every frame vertex is clear.
+   for(let row=0;row<=R;row++)for(const edge of boundary){const t=row/R,x=center.x+(edge.x-center.x)*t,y=center.y+(edge.y-center.y)*t,z=front(x,y);if(Number.isFinite(z))plane=Math.max(plane,z+clearance+.0005-wrap(x));}
+   const lensPoint=(p,t=1)=>{const x=center.x+(p.x-center.x)*t;return V(x,center.y+(p.y-center.y)*t,plane+wrap(x)-.0005);};
+   const P=[center.x,center.y,plane-.0005],U=[.5,.5],I=[];
+   for(let row=1;row<=R;row++)for(const edge of boundary){const q=lensPoint(edge,row/R);P.push(...q.toArray());U.push((q.x-center.x)/rx*.5+.5,(q.y-center.y)/ry*.5+.5);}
+   for(let k=0;k<N;k++){I.push(0,1+k,1+(k+1)%N);for(let row=1;row<R;row++){const a=1+(row-1)*N+k,b=1+(row-1)*N+(k+1)%N,c=a+N,d=b+N;I.push(a,c,b,b,c,d);}}
+   const lensGeometry=new T.BufferGeometry();lensGeometry.setAttribute('position',new T.Float32BufferAttribute(P,3));lensGeometry.setAttribute('uv',new T.Float32BufferAttribute(U,2));lensGeometry.setIndex(I);lensGeometry.computeVertexNormals();put(group,lensGeometry,lensMaterial);
+   const frame=boundary.map(p=>V(p.x,p.y,plane+wrap(p.x)));frame.push(frame[0].clone());put(group,makeTube(frame,frameRadius),frameMaterial);
+   const inner=V(center.x-side*rx*.97,center.y+ry*.22,plane+wrap(center.x-side*rx*.97)),outer=V(center.x+side*rx,center.y,plane+wrap(center.x+side*rx)),ear=V(...portrait.scalp[side>0?'earGuideL':'earGuideR']);
+   projectedTube([outer, V(side*(Math.abs(ear.x)+.006),center.y+.002,ear.z+.032),V(side*(Math.abs(ear.x)+.004),ear.y+.006,ear.z-.008)],.00135,'side',side);
+   eyes.push({side,center:center.toArray(),radius:eye.radius,rx,ry,plane,inner:inner.toArray()});
+  }
+  const left=eyes.find(e=>e.side<0),right=eyes.find(e=>e.side>0),bridgeY=(left.center[1]+right.center[1])/2+.006,bridgeZ=Math.max(front(0,bridgeY)+clearance,left.plane,right.plane)+.001;
+  projectedTube([V(...left.inner),V(0,bridgeY,bridgeZ),V(...right.inner)],.00135,'front');
+  group.userData.portraitEyewear99={version:1,source:'Actual Portrait99 eye landmarks plus indexed exterior head/globe surfaces',minimumSampledFrontReserveM:clearance,frameRadiusM:frameRadius,lensInteriorRings:6,eyes};
+ }finally{headSurface.dispose();eyeSurface.dispose();eyeLocal.dispose();}
 }

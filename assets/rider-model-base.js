@@ -1,6 +1,6 @@
 import {createHelmetForeheadFit98} from './rider-helmet-forehead98.js?v=character-redesign98-20261020';
 import { createGroundSupport } from './rider-ground-support.js?v=rider-fit74-20261010';
-import {buildHelmetHarness} from './rider-helmet-harness.js?v=character-polish-20261009';
+import {buildHelmetHarness} from './rider-helmet-harness.js?v=character-foundation99-20261021';
 import {naturalHandPose,relaxedOnFootFingerPose} from './rider-natural-hand-pose.js?v=character-finish68-20261010';
 import {shapeHair as shapeWaveHair} from './rider-hairstyles-shape.js?v=character-polish-20261009';
 import {createHairMassResources} from './rider-hair-mass-manager.js?v=character-polish-20261009';
@@ -48,10 +48,10 @@ import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=character-redesign98-20261020';
 import {refineRiderProportions} from './rider-proportions.js?v=character-polish-20261009';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=character-redesign98-20261020';
-import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=character-redesign98-20261020';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=character-foundation99-20261021';
+import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=character-foundation99-20261021';
 import {prepareRiderHead as prepareLiveHead} from './rider-live-heads.js?v=character-redesign98-20261020';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=character-redesign98-20261020';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=character-foundation99-20261021';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
@@ -117,11 +117,11 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  /* ------------------------------------------------------------------ the kit, once per body -- */
  function kit(body){
   body=body==='m'?'m':'f';
-  if(!kits[body])kits[body]=Promise.all([file('rider-'+body+'.glb'),file('rider-hair.glb'),file('rider-anims.glb'),file('stylized-'+body+'-head.glb'),file(body==='m'?'connected/body-m.glb':'connected/body-f.glb'),file('connected/neck-guide-'+body+'.glb'),file('connected/contact-neck-'+body+'.glb')])
-   .then(([g,h,a,n,p,q,r])=>{const k=prepareKit(body,g,h,a,n,p,q,r);kitReady[body]=k;return k;});
+  if(!kits[body])kits[body]=Promise.all([file('rider-'+body+'.glb'),file('rider-hair.glb'),file('rider-anims.glb'),file('stylized-'+body+'-head.glb'),file(body==='m'?'connected/body-m.glb':'connected/body-f.glb'),file('connected/neck-guide-'+body+'.glb'),file('connected/contact-neck-'+body+'.glb'),file('portrait99-'+body+'.glb')])
+   .then(([g,h,a,n,p,q,r,s])=>{const k=prepareKit(body,g,h,a,n,p,q,r,s);kitReady[body]=k;return k;});
   return kits[body];
  }
- function prepareKit(body,gBody,gHair,gAnim,gHead,gArtistBody,gNativeNeck,gPhysicalNeck){
+ function prepareKit(body,gBody,gHair,gAnim,gHead,gArtistBody,gNativeNeck,gPhysicalNeck,gPortrait){
   const scene=gBody.scene; let skin=null,eyes=null,brows=null;
   scene.traverse(o=>{if(!o.isSkinnedMesh)return; if(/superhero/i.test(o.name))skin=o; else if(/^Eyes/.test(o.name))eyes=o; else if(/^Eyebrows/.test(o.name))brows=o;});
   if(!skin)throw new Error('rider body mesh missing');
@@ -151,7 +151,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   skin.geometry=artistBodyGeometry;
   let nativeSource=null;gPhysicalNeck.scene.updateMatrixWorld(true);gPhysicalNeck.scene.traverse(o=>{if(o.isMesh)nativeSource=o;});if(!nativeSource)throw Error('Actual-height native neck source missing');
   const nativeSourceGeometry=nativeSource.geometry.clone().applyMatrix4(nativeSource.matrixWorld);
-  const headAsset=prepareRiderHead(THREE,skin,eyes,brows,gHead.scene,body,liveHead,nativeSourceGeometry);nativeSourceGeometry.dispose();eyes=headAsset.eyes;brows=headAsset.brows;
+  const headAsset=prepareRiderHead(THREE,skin,eyes,brows,gPortrait.scene,body,liveHead,nativeSourceGeometry);nativeSourceGeometry.dispose();eyes=headAsset.eyes;brows=headAsset.brows;
   /* ---- the seat, from the sculpt's joint directions ---- */
   const grip=gAnim.animations.find(c=>c.name===CLIP.drive)||gAnim.animations.find(c=>c.name===CLIP.idle);
   const seat=buildSeat(scene,bones,grip,skin,gAnim.scene);
@@ -219,6 +219,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   gHair.scene.traverse(o=>{if(o.isMesh)hair[o.name]={geometry:o.geometry,material:o.material};});
   /* ---- head: the skull for the helmet ---- */
   const head=headShape(headAsset.mesh,bones.Head);
+  if(headAsset.portrait99)head.chin.fromArray(headAsset.portrait99.chin);
   /* the top of the brows, in Head space: the hairline is measured from it */
   head.browTop=0.139;
   if(brows){const bp=brows.geometry.attributes.position,hi=brows.skeleton.bones.indexOf(brows.skeleton.bones.find(b=>b.name==='Head')),inv=brows.skeleton.boneInverses[hi];

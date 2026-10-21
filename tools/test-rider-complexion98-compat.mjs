@@ -1,3 +1,4 @@
+import './rider-legacy98-fixture.mjs?v=character-foundation99-20261021';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +13,8 @@ const {createRiderLibrary}=await import(new URL('assets/rider-model.js',root));
 const {patchStylizedHead:publishedHead,patchStylizedEyes:publishedEyes}=await import(new URL('assets/rider-heads.js?v=character-redesign98-20261020',root));
 const {createRiderMaterialLifecycle}=await import(new URL('assets/rider-material-lifecycle.js?v=character-polish-20261009',root)),{createRiderAOReception}=await import(new URL('assets/rider-ao-reception.js?v=character-polish-20261009',root));
 const lightingURL=new URL('assets/rider-skin-lighting98.js?v=character-redesign98-20261020',root).href;
-const text=fs.readFileSync(owner,'utf8').replace("'./rider-skin-lighting98.js?v=character-redesign98-20261020'",JSON.stringify(lightingURL));
+const portraitURL=new URL('assets/rider-portrait99.mjs?v=character-foundation99-20261021',root).href;
+const text=fs.readFileSync(owner,'utf8').replace("'./rider-portrait99.mjs?v=character-foundation99-20261021'",JSON.stringify(portraitURL)).replace("'./rider-skin-lighting98.js?v=character-redesign98-20261020'",JSON.stringify(lightingURL));
 const {finishRiderComplexion,patchStylizedHead,patchStylizedEyes}=await import('data:text/javascript;base64,'+Buffer.from(text).toString('base64'));
 // Actual production kits supply authored94 coordinates and adult98 geometry.
 // Only texture/material IO is replaced; no geometry or skin preparation is stubbed.

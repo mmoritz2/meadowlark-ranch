@@ -1,3 +1,4 @@
+import {portraitLashes99} from './rider-portrait99.mjs?v=character-foundation99-20261021';
 import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 /* Bind-pose facial refinements. Joint locations, weights and the scalp stay fixed,
    so the existing animations, helmet and saved appearances continue to fit. */
@@ -68,6 +69,7 @@ vec3 riderFaceFinish(vec3 skin,vec3 source,vec3 p){
 
 /* Tapered upper lashes, fitted to the face in the Head bone's space. */
 export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
+ if(asset?.portrait99)return portraitLashes99(THREE,asset,body);
  if(body!=='f'||!eyes)return null;
  const head=skin.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[head];
  const face=skin.geometry.clone();face.applyMatrix4(inverse);

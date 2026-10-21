@@ -1,6 +1,6 @@
 // TMP39: final synchronous wardrobe methods are explicitly tracked after construction.
-import {createRiderLibrary as createWardrobe} from './rider-wardrobe.js?v=character-redesign98-20261020';
-export * from './rider-wardrobe.js?v=character-redesign98-20261020';
+import {createRiderLibrary as createWardrobe} from './rider-wardrobe.js?v=character-foundation99-20261021';
+export * from './rider-wardrobe.js?v=character-foundation99-20261021';
 import {riderMaterialLifecycle15} from './rider-material-lifecycle.js?v=character-polish-20261009';
 export function createRiderLibrary(options){
  const base=createWardrobe(options),lifecycle=options.riderMaterialLifecycle||riderMaterialLifecycle15;

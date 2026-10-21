@@ -1,4 +1,4 @@
-import {hollowpeakSourceDecisionGround} from '../hollowpeak-tree-cohort.mjs?v=hollowpeak-owned-ecology-1';
+import {hollowpeakSourceDecisionGround} from '../hollowpeak-tree-cohort.mjs?v=character-foundation99-20261021';
 import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-4';
 /* Feature package 'world-paths' — the ground between places.
 

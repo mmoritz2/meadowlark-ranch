@@ -651,8 +651,8 @@ body.touch #stickZone{display:block}
   "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-2": "./assets/hollowpeak-falling-water.mjs?v=hollowpeak-falling-water-stranded-2",
   "./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-1": "./assets/hollowpeak-cataract.mjs?v=hollowpeak-cataract-2",
   "./assets/hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1": "./assets/hollowpeak-macroshape.mjs?v=hollowpeak-eastern-headwall-2",
-  "./assets/world-photoscans.js?v=hollowpeak-upper-source-roots-1": "./assets/world-photoscans.js?v=hollowpeak-connected-runtime-1",
-  "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=hollowpeak-connected-runtime-1",
+  "./assets/world-photoscans.js?v=hollowpeak-upper-source-roots-1": "./assets/world-photoscans.js?v=character-foundation99-20261021",
+  "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=character-foundation99-20261021",
   "./assets/island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1": "./assets/island-medium-canopy.mjs?v=hollowpeak-connected-runtime-1",
   "./assets/deadwood-art.js?v=weathered-deadwood-1": "./assets/deadwood-art.js?v=hollowpeak-connected-runtime-1",
   "./assets/vegetation.js?v=ranch-life-snow-1": "./assets/vegetation.js?v=ranch-life-snow-1-hollowpeak-owned-ecology-1",
@@ -757,13 +757,13 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=hollowpeak-upper-source-roots-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=character-foundation99-20261021';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
-import {createRiderLibrary} from './assets/rider-model.js?v=character-redesign98-crown-material-compat-20261020';
+import {createRiderLibrary} from './assets/rider-model.js?v=character-foundation99-20261021';
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=riding-foundation-1-pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-character-redesign98-20261020-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
+import {FEATURES} from './assets/features/index.js?v=riding-foundation-1-pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-character-foundation99-20261021-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=horse-realism-20261020a-native-riding-locks-1';
@@ -4660,7 +4660,8 @@ for(let i=0;i<26;i++){
  t.position.set(x,groundH(x,z),z);
  if(cottonwoodReserved(x,z,3))continue;
  scene.add(t);
- colliders.push({x,z,r:0.75,height:new THREE.Box3().setFromObject(t).max.y-groundH(x,z)});
+ const collider={x,z,r:0.75,height:new THREE.Box3().setFromObject(t).max.y-groundH(x,z)};colliders.push(collider);
+ t.userData.hollowpeakRootOwner={kind:'natural-pine-root',writer:'barn-treeline',collider,forestPoint:null,forestPointDomain:'pending-natural-traversal'};
 }
 // lavender bushes along the fence
 function lavender(x,z){
@@ -5027,7 +5028,8 @@ for(let i=0;i<18;i++){
  const t=makePine(1.0+Math.random()*0.9);
  t.position.set(x,groundH(x,z),z);
  scene.add(t);
- colliders.push({x,z,r:0.75});
+ const collider={x,z,r:0.75};colliders.push(collider);
+ t.userData.hollowpeakRootOwner={kind:'natural-pine-root',writer:'snowfield-pines',collider,forestPoint:null,forestPointDomain:'pending-natural-traversal'};
 }
 const windmills=[];
 function makeWindmill(x,z,rotY){
@@ -15308,7 +15310,7 @@ window.render_game_to_text=()=>{const sv=freshSave()||{};const hh=myHorses[rideI
  stamina:Number((player.stam||0).toFixed(3))
 };G.run('state',o);return JSON.stringify(o);};
 const forestPoints=[].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine);
-scene.traverse(o=>{if(o.name.startsWith('Natural ')&&!o.name.endsWith('shrub')){const p=o.getWorldPosition(new THREE.Vector3());forestPoints.push({x:p.x,z:p.z,s:o.scale.x});}});
+scene.traverse(o=>{if(o.name.startsWith('Natural ')&&!o.name.endsWith('shrub')){const p=o.getWorldPosition(new THREE.Vector3()),point={x:p.x,z:p.z,s:o.scale.x};forestPoints.push(point);const owner=o.userData.hollowpeakRootOwner;if(owner){if(owner.forestPoint!==null||owner.forestPointDomain!=='pending-natural-traversal')throw Error('Natural root forest-point owner must be captured once');owner.forestPoint=point;owner.forestPointDomain='natural-root-traversal';}}});
 terrainSurface.setTrees(forestPoints);
 /* ===== Feature modules: assemble the context object and install every package ===========
    Runs once, here, where every const and let in the module exists. Packages never touch

@@ -5,12 +5,13 @@ import {fitLowerLayer} from './rider-garment-layer-fit.js?v=tailored-coats69-202
 // TMP integration candidate. Keeps the normal rider API and all existing outfit IDs.
 // Construction families still marked approximate below must receive dedicated art
 // before this becomes a complete catalog release.
-import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=character-redesign98-20261020';
-export * from './rider-model-base.js?v=character-redesign98-20261020';
+import {createRiderLibrary as createBase,RIDER_OUTFITS} from './rider-model-base.js?v=character-foundation99-20261021';
+export * from './rider-model-base.js?v=character-foundation99-20261021';
 import {CLOTH_GLSL} from './rider-clothes.js?v=tailored-coats69-20261010';
 import {finishRidingBoots} from './rider-boot98-finish.js?v=character-redesign98-20261020';
 import {technicalFinish} from './rider-technical-finish.js?v=tailored-coats69-20261010';
-import {riding98Finish} from './rider-riding98-finish.js?v=character-redesign98-20261020';
+import {riding99Finish} from './rider-riding99-finish.js?v=character-foundation99-20261021';
+import {polo99Finish} from './rider-polo99-finish.js?v=character-foundation99-20261021';
 import {poloFinish} from './rider-polo-finish.js?v=tailored-coats69-20261010';
 import {crewneckFinish} from './rider-crewneck-finish.js?v=tailored-coats69-20261010';
 import {cardiganFinish,overallsFinish} from './rider-layered-finish.js?v=tailored-coats69-20261010';
@@ -23,7 +24,8 @@ import {cotton76ShirtFinish} from './rider-cotton-shirt-finish.js?v=cotton-twin7
 import {knitFinish} from './rider-knit-finish.js?v=tailored-coats69-20261010';
 import {showJacketFinish} from './rider-show-jacket-finish.js?v=outward-lapels70-20261010';
 import {finishBreeches} from './rider-breeches-finish.js?v=character-polish-20261009';
-import {finishBreeches as finishRiding98Breeches} from './rider-breeches98-finish.js?v=character-redesign98-20261020';
+import {finishBreeches as finishShared99Breeches} from './rider-breeches99-finish.js?v=character-foundation99-20261021';
+import {fitPolo99SleeveEdge} from './rider-polo99-edge.js?v=character-foundation99-20261021';
 import {shortSleeveCut} from './rider-short-sleeve.js?v=character-polish-20261009';
 import {finishArtistSkin} from './rider-skin-finish.js?v=character-redesign98-20261020';
 import {installSourceCoverage} from './rider-source-coverage.js?v=character-polish-20261009';
@@ -44,7 +46,7 @@ export const CONNECTED_FAMILY_STATUS=RIDER_OUTFITS.map(o=>({id:o.id,family:famil
 export function createRiderLibrary(options){
  const T=options.THREE,base=createBase(options),ready=new Map(),pending=new Map(),textileByKit=new WeakMap(),get=['getX','getY','getZ','getW'];
  const V=()=>new T.Vector3();
- const connectedVersion=key=>key==='cotton76-f'||key==='cotton76-m'?'cotton-twin79d-20261012':key==='pants-f'||key==='pants-m'?'breeches75-20261010':'character-polish-20261009';
+ const connectedVersion=key=>/^(garment99|breeches99)-[fm]$/.test(key)?'garment99-20261021':key==='cotton76-f'||key==='cotton76-m'?'cotton-twin79d-20261012':key==='pants-f'||key==='pants-m'?'breeches75-20261010':'character-polish-20261009';
  const json=async key=>options.connectedData?.[key]??await(await fetch(new URL('./models/rider/connected/'+key+'.json?v='+connectedVersion(key),import.meta.url))).json();
  const fromSource=(data,positions,source)=>{
   const g=new T.BufferGeometry(),joints=[],weights=[];let maxSourceDelta=0;
@@ -67,16 +69,16 @@ export function createRiderLibrary(options){
  async function kit(sex){
   sex=sex==='m'?'m':'f';if(pending.has(sex))return pending.get(sex);
   const task=(async()=>{
-   const k=await base.kit(sex),[shirt,mask,pants,pantsMask,boots,cotton76,riding98,breeches98]=await Promise.all([json('cloth-'+sex),json('mask-'+sex),json('pants-'+sex),json('pants-mask'),json('boots-'+sex),json('cotton76-'+sex),json('riding98-'+sex),json('breeches98-'+sex)]),source=k.garmentSkin.geometry.attributes;
+   const k=await base.kit(sex),[shirt,mask,pants,pantsMask,boots,cotton76,garment99,breeches99]=await Promise.all([json('cloth-'+sex),json('mask-'+sex),json('pants-'+sex),json('pants-mask'),json('boots-'+sex),json('cotton76-'+sex),json('garment99-'+sex),json('breeches99-'+sex)]),source=k.garmentSkin.geometry.attributes;
    if(JSON.stringify(shirt.jointNames)!==JSON.stringify(k.skin.skeleton.bones.map(b=>b.name)))throw Error('Wardrobe canonical joint order mismatch');
-   const breeches98Geometry=fromSource(breeches98,breeches98.positions,source),riding98Geometry=fromSource(riding98,riding98.shellPositions,source),shirtGeometry=fromSource(shirt,shirt.shellPositions,source),cotton76Geometry=fromSource(cotton76,cotton76.shellPositions,source),pantsGeometry=fromSource(pants,pants.positions,source),bootGeometry=new T.BufferGeometry();
+   const breeches99Geometry=fromSource(breeches99,breeches99.positions,source),garment99Geometry=fromSource(garment99,garment99.shellPositions,source),shirtGeometry=fromSource(shirt,shirt.shellPositions,source),cotton76Geometry=fromSource(cotton76,cotton76.shellPositions,source),pantsGeometry=fromSource(pants,pants.positions,source),bootGeometry=new T.BufferGeometry();
    bootGeometry.setAttribute('position',new T.Float32BufferAttribute(boots.positions.flat(),3));bootGeometry.setAttribute('uv',new T.Float32BufferAttribute(boots.uv.flat(),2));bootGeometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(boots.skinIndices.flat(),4));bootGeometry.setAttribute('skinWeight',new T.Float32BufferAttribute(boots.skinWeights.flat(),4));bootGeometry.setIndex(boots.triangles.flat());bootGeometry.computeVertexNormals();bootGeometry.computeBoundingSphere();
-   const short=shortSleeveCut(T,shirtGeometry,shirt,k.skin.geometry,mask,sex==='f'?.315:.345);
+   const short=shortSleeveCut(T,shirtGeometry,shirt,k.skin.geometry,mask,sex==='f'?.315:.345),polo99=fitPolo99SleeveEdge(T,shortSleeveCut(T,garment99Geometry,garment99,k.skin.geometry,mask,sex==='f'?.315:.345),k.skin.geometry,sex==='f'?.315:.345);
    // Prevent the base constructor from scheduling obsolete garment loads.
    k.outfits.riding=Promise.resolve({meshes:[],refs:new Map()});
    for(const name of ['hairClothSurface','hairWeightSurface']){const cache=k[name];if(cache){(cache.surface||cache).dispose?.();delete k[name];}}
    k.hairGarmentEnvelope={geometry:shirtGeometry,skeleton:k.skin.skeleton,bindMatrix:k.skin.bindMatrix,representatives:['connected wardrobe full sleeve envelope'],bounds:shirtGeometry.boundingBox.clone(),buildMs:0};
-   k.connectedWardrobe={shirt,mask,pants,pantsMask,boots,shirtGeometry,pantsGeometry,bootGeometry,short,cotton76,cotton76Geometry,riding98,riding98Geometry,breeches98,breeches98Geometry};ready.set(sex,k);return k;
+   k.connectedWardrobe={shirt,mask,pants,pantsMask,boots,shirtGeometry,pantsGeometry,bootGeometry,short,cotton76,cotton76Geometry,garment99,garment99Geometry,breeches99,breeches99Geometry,polo99};ready.set(sex,k);return k;
   })();pending.set(sex,task);return task;
  }
  function addPattern(material,rig,recipe){
@@ -113,10 +115,10 @@ export function createRiderLibrary(options){
    const recipe=RIDER_OUTFITS.find(o=>o.id===id)||RIDER_OUTFITS[0],family=families[recipe.id]||'technical',shirt=currentLook.shirt||recipe.palette[0],pants=currentLook.pants||recipe.palette[1],key=[recipe.id,shirt,pants].join('|');
    rig.outfitId=recipe.id;rig.u.uClothes.value.set(recipe.design,recipe.cut==='short'?1:0,recipe.cut==='sweater'?1:0,recipe.cut==='gilet'?1:0);
    if(currentKey===key){rig.clothingPose?.update();callback?.();return;}currentKey=key;disposeGarments();
-   const riding98Selected=recipe.id==='riding',short=family==='short-polo'||family==='tee',cottonPilot=family==='shirt',data=riding98Selected?d.riding98:cottonPilot?d.cotton76:short?d.short.cloth:d.shirt,mask=short?d.short.mask:d.mask,geometry=(riding98Selected?d.riding98Geometry:cottonPilot?d.cotton76Geometry:short?d.short.geometry:d.shirtGeometry).clone();
+   const riding98Selected=recipe.id==='riding',polo99Selected=family==='short-polo',garment99Selected=riding98Selected||polo99Selected,short=family==='short-polo'||family==='tee',cottonPilot=family==='shirt',data=garment99Selected?(polo99Selected?d.polo99.cloth:d.garment99):cottonPilot?d.cotton76:short?d.short.cloth:d.shirt,mask=polo99Selected?d.polo99.mask:short?d.short.mask:d.mask,geometry=(garment99Selected?(polo99Selected?d.polo99.geometry:d.garment99Geometry):cottonPilot?d.cotton76Geometry:short?d.short.geometry:d.shirtGeometry).clone();
    // Fit the actual overlapping waist before details are attached. Trousers
    // remain visible beneath lifted hems; depth resolves the garment layering.
-   const waistFit=riding98Selected?{construction:'Authored fitted technical cut; opaque-trouser18mm underlap and4mm inset from source-fitted lowercut, actual depth/visible fit still requires native review.',dynamicLowerInflation:false}:fitLowerLayer(T,k,{geometry,skeleton:k.skin.skeleton,bindMatrix:k.skin.bindMatrix},{clearance:.006});
+   const waistFit=garment99Selected?{construction:'Authored99 continuous material-owned torso and matching shared lower-rise breeches; original sewn underlap retained. Native fit/art pending.',dynamicLowerInflation:false}:fitLowerLayer(T,k,{geometry,skeleton:k.skin.skeleton,bindMatrix:k.skin.bindMatrix},{clearance:.006});
    // The cutaway exposes trousers above the old straight shirt hem. Keep an
    //8mm trouser underlap beneath the shaped front edge in every render pass.
    const coverageFields=family==='long-coat'?mask.affineSourceCutFields.map((f,i)=>{
@@ -124,15 +126,15 @@ export function createRiderLibrary(options){
     return [f[0]-raise-.008,f[1],f[2]];
    }):mask.affineSourceCutFields;
    bodyGeo.setAttribute('qaSourceCut',new T.Float32BufferAttribute(coverageFields.flat(),3));
-   const trim='#'+new T.Color(shirt).multiplyScalar(.72).getHexString(),factory=riding98Selected?riding98Finish:family==='cardigan'?cardiganFinish:family==='overalls'?overallsFinish:family==='outdoor'?outdoorFinish:family==='long-coat'?longCoatFinish:family==='overshirt'?overshirtFinish:family==='vest'?vestFinish:family==='tee'?crewneckFinish:family==='shirt'?(cottonPilot?cotton76ShirtFinish:shirtFinish):family==='knit'?knitFinish:family==='show'?showJacketFinish:family==='polo'||family==='short-polo'?poloFinish:technicalFinish;
+   const trim='#'+new T.Color(shirt).multiplyScalar(.72).getHexString(),factory=riding98Selected?riding99Finish:polo99Selected?polo99Finish:family==='cardigan'?cardiganFinish:family==='overalls'?overallsFinish:family==='outdoor'?outdoorFinish:family==='long-coat'?longCoatFinish:family==='overshirt'?overshirtFinish:family==='vest'?vestFinish:family==='tee'?crewneckFinish:family==='shirt'?(cottonPilot?cotton76ShirtFinish:shirtFinish):family==='knit'?knitFinish:family==='show'?showJacketFinish:family==='polo'||family==='short-polo'?poloFinish:technicalFinish;
    const finish=factory(T,k,{geometry,skeleton:k.skin.skeleton,bindMatrix:k.skin.bindMatrix},data,{color:shirt,pantsColor:pants,trim:family==='tee'?shirt:trim,lapel:trim,recipe});for(const material of finish.patternMaterials||[finish.material])addPattern(material,rig,recipe);
    const top=attach('Tailored_Body',geometry,finish.material);top.userData.riderSurfaceRole=family==='cardigan'?'cotton-inset':'torso-shell';if(top.userData.riderSurfaceRole==='torso-shell')finish.material.shadowSide=T.BackSide;garments.push(top);
    for(const p of finish.pieces){if(family==='shirt'&&/Shirt_Chest_Pocket|Shirt_Folded_Collar|Shirt_Tailored_Cuffs|Cotton76_Continuous_Collar/.test(p.name))addPattern(p.material,rig,recipe);const mesh=attach(p.name,p.geometry,p.material);mesh.userData.riderSurfaceRole=p.name==='Cotton76_Continuous_Collar'?'outer-garment':['Vest_Outer_Shell','Cardigan_Open_Knit_Shell'].includes(p.name)?'outer-shell':p.name==='Overalls_Denim_Bib_And_Straps'?'bib-straps':'detail';if(mesh.userData.riderSurfaceRole==='outer-shell')p.material.shadowSide=T.BackSide;garments.push(mesh);}
-   const pantsGeo=(riding98Selected?d.breeches98Geometry:d.pantsGeometry).clone(),pantsMat=new T.MeshStandardMaterial({color:pants,roughness:.86,side:T.DoubleSide}),pantsMesh=attach('Tailored_Legs',pantsGeo,pantsMat);garments.push(pantsMesh);
+   const pantsGeo=d.breeches99Geometry.clone(),pantsMat=new T.MeshStandardMaterial({color:pants,roughness:.86,side:T.DoubleSide}),pantsMesh=attach('Tailored_Legs',pantsGeo,pantsMat);garments.push(pantsMesh);
    const fields=d.pants.sourceVertexProvenance.map(coeff=>[0,1,2].map(axis=>coeff.reduce((sum,[id,t])=>sum+coverageFields[id][axis]*t,0)));
    pantsGeo.setAttribute('qaSourceCut',new T.Float32BufferAttribute(fields.flat(),3));pantsGeo.setAttribute('qaBootCoverage',new T.Float32BufferAttribute(d.pants.sourcePositions.map(p=>p[1]-(d.boots.parameters.topY-.006)),1));
-   (riding98Selected?finishRiding98Breeches:finishBreeches)(T,k,pantsMat,pantsGeo,{color:pants});coverage.push(installSourceCoverage(T,pantsMesh,{shirt:false,boots:true}));
-   rig.outfit={id:recipe.id,meshes:garments.slice()};rig.connectedWardrobe={family,riding98Selected,constructionReady:!!families[recipe.id],catalogArtAccepted:false,buildCount:++buildCount,removedBodyPantsTriangles:removed,sourceBindDelta:{shirt:d.shirtGeometry.userData.sourceBindDelta,pants:d.pantsGeometry.userData.sourceBindDelta},finish:{...finish.evidence,waistFit},primaryMaterial:finish.primaryMaterial||finish.patternMaterials?.[0]||finish.material,shortSleeve:short?d.short.evidence:null,top,pants:pantsMesh};
+   finishShared99Breeches(T,k,pantsMat,pantsGeo,{color:pants});coverage.push(installSourceCoverage(T,pantsMesh,{shirt:false,boots:true}));
+   rig.outfit={id:recipe.id,meshes:garments.slice()};rig.connectedWardrobe={family,riding98Selected,polo99Selected,garment99Selected,constructionReady:!!families[recipe.id],catalogArtAccepted:false,buildCount:++buildCount,removedBodyPantsTriangles:removed,sourceBindDelta:{shirt:d.shirtGeometry.userData.sourceBindDelta,pants:d.pantsGeometry.userData.sourceBindDelta},finish:{...finish.evidence,waistFit},primaryMaterial:finish.primaryMaterial||finish.patternMaterials?.[0]||finish.material,shortSleeve:short?d.short.evidence:null,top,pants:pantsMesh};
    rig.clothingPose?.update();rig.accessoryKey=null;rig.refreshAccessories();callback?.();
   };
   const originalSetLook=rig.setLook;rig.setLook=f=>{currentLook={...f};originalSetLook(f);};

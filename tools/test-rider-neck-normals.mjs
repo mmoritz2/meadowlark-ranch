@@ -1,3 +1,4 @@
+import './rider-legacy98-fixture.mjs?v=character-foundation99-20261021';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

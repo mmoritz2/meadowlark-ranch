@@ -1,8 +1,9 @@
+import {installHair99} from './rider-hair99.mjs?v=character-foundation99-20261021';
 import {installLong98} from './rider-long98.js?v=character-redesign98-20261020';
-import {createRiderLibrary as create59} from './rider-model-braids.js?v=character-redesign98-20261020';
-export * from './rider-model-braids.js?v=character-redesign98-20261020';
+import {createRiderLibrary as create59} from './rider-model-braids.js?v=character-foundation99-20261021';
+export * from './rider-model-braids.js?v=character-foundation99-20261021';
 import {installSideflow7} from './rider-long-framing.js?v=hair-flow76-20261012';
-import {finishRiderComplexion} from './rider-complexion.mjs?v=character-redesign98-material-compat-20261020';
+import {finishRiderComplexion} from './rider-complexion.mjs?v=character-foundation99-20261021';
 import {riderMaterialLifecycle15} from './rider-material-lifecycle.js?v=character-polish-20261009';
 import {installSweptCrown} from './rider-swept-crown.mjs?v=continuous-crown-20261020';
 import {refineRiderNeckNormals} from './rider-neck-normals.mjs?v=neck-fairing-20261020';
@@ -16,6 +17,6 @@ export function createRiderLibrary(options){
   installSweptCrown(options.THREE,rig);
   finishRiderComplexion(rig);
   lifecycle.trackRig(rig);
-  try{return installLong98(options.THREE,rig,lifecycle);}catch(error){rig.dispose();throw error;}
+  try{return rig.kit.headAsset.portrait99?installHair99(options.THREE,rig,lifecycle):installLong98(options.THREE,rig,lifecycle);}catch(error){rig.dispose();throw error;}
  }};
 }

@@ -1,0 +1,38 @@
+{
+  "source": "Blender Studio Human Base Meshes v1.4.1",
+  "sourceArchiveSHA256": "811f43accbb31a88266d932f8f5563b2d13586fca0ba2693aad1f5fe582b3515",
+  "license": "CC0-1.0",
+  "officialPage": "https://www.blender.org/download/demo-files/#assets",
+  "officialDownload": "https://mirror.blender.org/demo/asset-bundles/human-base-meshes/human-base-meshes-bundle-v1.4.1.zip",
+  "licenseEvidence": {
+    "url": "https://www.blender.org/download/demo-files/",
+    "retrieved": "2026-10-21",
+    "matchingCardText": "Human Base Meshes v1.4.1 \u2014 by Blender Studio and community contributions. 49 MB \u2014 CC0"
+  },
+  "exportOperations": [
+    "Open official source .blend with --disable-autoexec",
+    "Evaluate MULTIRES at level1 on each realistic body using CPU mesh operations",
+    "Keep body geometry above one horizontal plane: female sourceZ1.395m, male sourceZ1.435m",
+    "Recenter X at midpoint of own two source eye bounding centers, preserve other source coordinates",
+    "Retain each source eye as a separate named mesh with its original geometry",
+    "Smooth polygon normals, retain source UVMap, omit materials, scripts, armatures, animations, lights and cameras",
+    "Export +Y-up/+Z-front GLB; source anatomy is unchanged. Runtime uniformly fits the whole head and eyes, constructs the neck transition to BODY84, and applies a small neutral upper-eyelid expression."
+  ],
+  "exports": [
+    {
+      "file": "portrait99-f.glb",
+      "collection": "Body Female - Realistic"
+    },
+    {
+      "file": "portrait99-m.glb",
+      "collection": "Body Male - Realistic"
+    }
+  ],
+  "runtimeExpression": {
+    "femaleUpperLidDropM": 0.00145,
+    "maleUpperLidDropM": 0.00065,
+    "globesChanged": false,
+    "jawOrMouthDeformed": false
+  },
+  "runtimeNeck": "The source lower-neck region tapers continuously to the actual BODY84 cross-section, then joins its exact positions, weights and normals. Jaw, mouth and eye globes retain their source shape."
+}

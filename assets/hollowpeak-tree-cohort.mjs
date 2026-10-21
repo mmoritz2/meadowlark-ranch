@@ -33,9 +33,28 @@ export function prepareHollowpeakDecisionTree(t,W){
 function ownedRefs(t,W){
  if(t.floraOwner)return{kind:'flora',collider:t.floraOwner.collider,forestPoint:t.floraOwner.forestPoint,source:t.floraOwner};
  if(t.hollowpeakCollider||t.hollowpeakForestPoint)return{kind:'authored',collider:t.hollowpeakCollider,forestPoint:t.hollowpeakForestPoint};
+ if(t.rootOwner)return{kind:'natural-root',collider:t.rootOwner.collider,forestPoint:t.rootOwner.forestPoint,source:t.rootOwner,root:t.root,forestPointDomain:t.rootOwner.forestPointDomain};
  const point=t.stem?.userData?.treePoints?.[t.index];
  if(point){const candidates=W.colliders.filter(c=>c.x===point.x&&c.z===point.z&&c.r===.8&&c.height===point.s*({oak:6.2,birch:6.6,blossom:6.2,pine:7.4,snowpine:7.2}[t.kind])&&Object.keys(c).every(k=>['x','z','r','height'].includes(k)));return{kind:'seed',collider:candidates.length===1?candidates[0]:null,forestPoint:point,source:point,ambiguous:candidates.length!==1};}
  return{kind:'unlinked'};
+}
+// Only these original scene-root writers capture their exact original collider
+// and the later Natural-root forest-point object. Both must still exist once at
+// preflight and again at commit; other ownership domains keep their strict checks.
+function exactNaturalRootOwner(t,refs,W){
+ const o=refs.source,c=refs.collider,root=refs.root;
+ return !!o&&o.kind==='natural-pine-root'&&['barn-treeline','snowfield-pines'].includes(o.writer)
+  &&root===t.root&&root?.userData?.hollowpeakRootOwner===o&&t.rootOwner===o&&o.collider===c
+  &&o.forestPointDomain==='natural-root-traversal'&&refs.forestPointDomain==='natural-root-traversal'
+  &&!!o.forestPoint&&o.forestPoint===refs.forestPoint&&o.forestPoint.x===t.x&&o.forestPoint.z===t.z&&o.forestPoint.s===root.scale.x
+  &&Object.keys(o.forestPoint).every(k=>['x','z','s'].includes(k))&&W.forestPoints.filter(v=>v===o.forestPoint).length===1
+  &&!o.hollowpeakContactRetired&&!!c&&c.x===t.x&&c.z===t.z&&c.r===.75
+  &&Object.keys(c).every(k=>['x','z','r',...(o.writer==='barn-treeline'?['height']:[])].includes(k))
+  &&(o.writer!=='barn-treeline'||Number.isFinite(c.height))&&W.colliders.filter(v=>v===c).length===1;
+}
+function exactRetirementOwner(t,refs,W){
+ if(refs.kind==='natural-root')return exactNaturalRootOwner(t,refs,W);
+ return !!refs.collider&&!!refs.forestPoint&&!refs.ambiguous&&W.colliders.filter(c=>c===refs.collider).length===1&&W.forestPoints.filter(p=>p===refs.forestPoint).length===1;
 }
 export function applyHollowpeakTreeCohort(G,trees,{commit=true,prepared=null}={}){
  const W=G.world,queries=W.fallsLandscape?.ownedQueries;if(!queries)throw Error('Owned queries must be bound before tree source allocation');
@@ -46,7 +65,7 @@ export function applyHollowpeakTreeCohort(G,trees,{commit=true,prepared=null}={}
   if(t.retiredFallsFlora||t.retiredCountrysideVista){members.push({id,status:'original-retirement-preserved'});continue;}
   if(t.hollowpeakCohort)blocked.push({id,reason:'tree cohort already committed'});
   const nominal=t.hollowpeakActualNominalMatrix,plan=planHollowpeakSourceFoot({id:'tree:'+id,parts:t.source.parts,matrix:nominal,queries,role:'tree',sourceKey:t.source.key}),refs=ownedRefs(t,W),parts=t.hollowpeakSolidParts||[];
-  if(plan.action==='retire'&&(!refs.collider||!refs.forestPoint||refs.ambiguous||W.colliders.filter(c=>c===refs.collider).length!==1||W.forestPoints.filter(p=>p===refs.forestPoint).length!==1))blocked.push({id,source:t.source.key,x:t.x,z:t.z,reason:'retirement requires unique exact original collider and forest point',ownerKind:refs.kind});
+  if(plan.action==='retire'&&!exactRetirementOwner(t,refs,W))blocked.push({id,source:t.source.key,x:t.x,z:t.z,reason:'retirement requires unique exact original collider and forest point',ownerKind:refs.kind});
   if(plan.action==='retire'){if(seenColliders.has(refs.collider)||seenPoints.has(refs.forestPoint))blocked.push({id,reason:'shared collider or forest-point retirement owner'});seenColliders.add(refs.collider);seenPoints.add(refs.forestPoint);}
   for(const link of parts){if(!link.owner.userData.solidParts.includes(link.part)||seenParts.has(link.part))blocked.push({id,reason:'missing or duplicate original registered wood part'});seenParts.add(link.part);}
   members.push({id,t,plan,refs,parts});
@@ -57,14 +76,14 @@ export function applyHollowpeakTreeCohort(G,trees,{commit=true,prepared=null}={}
 }
 function commitTreeCohort(G,members){
  const W=G.world;
- for(const {t,plan,refs,parts}of members){if(!t)continue;if(t.hollowpeakCohort)throw Error('Tree cohort commit must run once');if(plan.action==='retire'&&(W.colliders.filter(c=>c===refs.collider).length!==1||W.forestPoints.filter(p=>p===refs.forestPoint).length!==1))throw Error('Tree physical ownership changed after preflight');for(const link of parts)if(!link.owner.userData.solidParts.includes(link.part))throw Error('Tree wood owner changed after preflight');}
+ for(const {t,plan,refs,parts}of members){if(!t)continue;if(t.hollowpeakCohort)throw Error('Tree cohort commit must run once');if(plan.action==='retire'&&!exactRetirementOwner(t,refs,W))throw Error('Tree physical ownership changed after preflight');for(const link of parts)if(!link.owner.userData.solidParts.includes(link.part))throw Error('Tree wood owner changed after preflight');}
  const owners=new Set();for(const member of members){const{t,plan,refs,parts}=member;if(!t)continue;
   if(t.hollowpeakCohort)throw Error('Tree cohort commit must run once');
   // Numerical view of the exact original matrix, with no extra Three resource.
   t.hollowpeakDecisionMatrix={elements:Array.from(t.matrix.elements)};t.hollowpeakCohort=plan;
   t.matrix.fromArray(plan.matrix);
   for(const link of parts){owners.add(link.owner);if(plan.action==='retire')link.owner.userData.solidParts.splice(link.owner.userData.solidParts.indexOf(link.part),1);else link.part.matrix=t.matrix.toArray();}
-  if(plan.action==='retire'){W.colliders.splice(W.colliders.indexOf(refs.collider),1);W.forestPoints.splice(W.forestPoints.indexOf(refs.forestPoint),1);}
+  if(plan.action==='retire'){W.colliders.splice(W.colliders.indexOf(refs.collider),1);W.forestPoints.splice(W.forestPoints.indexOf(refs.forestPoint),1);if(refs.kind==='natural-root')refs.source.hollowpeakContactRetired=true;}
  }
  for(const owner of owners){W.solidWorld.unregister(owner);W.solidWorld.register(owner);}
  G.scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);G.followCam.invalidateTrees();

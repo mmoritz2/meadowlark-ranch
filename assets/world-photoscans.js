@@ -1,4 +1,4 @@
-import {hollowpeakSourceDecisionGround,hollowpeakSourceDecisionWorld,prepareHollowpeakDecisionTree,applyHollowpeakTreeCohort} from './hollowpeak-tree-cohort.mjs?v=hollowpeak-owned-ecology-1';
+import {hollowpeakSourceDecisionGround,hollowpeakSourceDecisionWorld,prepareHollowpeakDecisionTree,applyHollowpeakTreeCohort} from './hollowpeak-tree-cohort.mjs?v=character-foundation99-20261021';
 import {planUpperHollowpeakTreeRoots,retireUpperHollowpeakTrees} from './hollowpeak-upper-tree-roots.mjs?v=hollowpeak-upper-source-roots-1';
 import {planHollowpeakSourceFoot,planHollowpeakRebasedSourceFoot,permitsHollowpeakMember} from './hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1';
 import {fitHollowpeakTreeRoots} from './hollowpeak-root-seating.mjs?v=hollowpeak-root-seating-1';
@@ -410,7 +410,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree','Natural pine pine','Natural snowpine pine'].includes(o.name)&&o.parent===scene)natural.push(o);});
     for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
-      add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
+      add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,rootOwner:original.userData.hollowpeakRootOwner,kind:original.name.includes('pine')?'pine':'oak'});
     }
     // These authored food trees are nested under Forage decor, so the legacy
     // scene-root tree scan above cannot discover them. Keep their picking sites.

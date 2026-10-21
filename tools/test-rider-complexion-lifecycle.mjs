@@ -45,6 +45,7 @@ const rewritten=topSource.replace(/from\s+(['"])(\.\/[^'"]+)\1/g,(_all,quote,spe
  if(file==='./rider-model-braids.js')target=baseURL;
  else if(file==='./rider-long-framing.js')target=hairURL;
  else if(file==='./rider-long98.js')target=long98URL;
+ else if(file==='./rider-hair99.mjs')target=moduleURL(`export function installHair99(){throw Error('Portrait99 geometry requires its actual asset fixture');}`);
  else if(file==='./rider-complexion.mjs')target=url('assets/rider-complexion.mjs',query?'?'+query:'');
  else if(['./rider-swept-crown.mjs','./rider-neck-normals.mjs'].includes(file))target=url('assets/'+file.slice(2),query?'?'+query:'');
  else if(file==='./rider-material-lifecycle.js')target=url('assets/rider-material-lifecycle.js',query?'?'+query:'');

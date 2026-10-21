@@ -1,7 +1,9 @@
+import {patchPortraitHead99,patchPortraitEyes99} from './rider-portrait99.mjs?v=character-foundation99-20261021';
 import {installRiderDiffuseResponse98} from './rider-skin-lighting98.js?v=character-redesign98-20261020';
 // Material-only finish for the existing authored rider head and eyes. Geometry,
 // skin weights, saved appearance and the shared material lifecycle stay intact.
 export function patchStylizedHead(material,u,asset,body){
+ if(asset.portrait99)return patchPortraitHead99(material,u,asset,body);
  material.map=null;material.normalMap=null;material.roughness=.62;material.ior=1.40;material.specularIntensity=.32;
  material.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nuniform mat4 uFaceBind; varying vec3 vHead;').replace('#include <begin_vertex>','#include <begin_vertex>\nvHead=(uFaceBind*vec4(position,1.0)).xyz;');
@@ -62,6 +64,7 @@ float riderSkinNoise(vec3 p){
  }
 }
 export function patchStylizedEyes(material,u,asset,body){
+ if(asset.portrait99)return patchPortraitEyes99(material,u,asset,body);
  material.map=null;material.normalMap=null;material.roughness=.25;material.ior=1.376;material.specularIntensity=.48;material.clearcoat=.48;material.clearcoatRoughness=.12;
  material.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nuniform mat4 uFaceBind;varying vec3 vEyeHead;').replace('#include <begin_vertex>','#include <begin_vertex>\nvEyeHead=(uFaceBind*vec4(position,1.0)).xyz;');
@@ -104,6 +107,7 @@ export function patchStylizedEyes(material,u,asset,body){
 
 export function finishRiderComplexion(rig){
  if(!rig?.face?.material||!rig?.eyes?.material||!rig?.kit?.headAsset||!rig.u)return rig;
+ if(rig.kit.headAsset.portrait99&&rig.face.material.userData.riderNaturalSkin?.version===99&&rig.eyes.material.userData.riderNaturalEyes?.version===99)return rig;
  if(rig.face.material.userData.riderNaturalSkin?.version===3&&rig.eyes.material.userData.riderNaturalEyes?.version===3&&(!rig.kit.headAsset.adultFace98||(rig.face.material.userData.riderNaturalSkin.authoredCoordinates98&&rig.face.material.userData.riderNaturalSkin.diffuseResponse98&&rig.eyes.material.userData.riderNaturalEyes.diffuseResponse98)))return rig;
  patchStylizedHead(rig.face.material,rig.u,rig.kit.headAsset,rig.kit.body);
  patchStylizedEyes(rig.eyes.material,rig.u,rig.kit.headAsset,rig.kit.body);

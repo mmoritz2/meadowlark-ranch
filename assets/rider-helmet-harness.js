@@ -5,7 +5,7 @@ import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-
 export function buildHelmetHarness(T,h,headAsset,body,{onShell,rimY,cy,cz}){
  const V=(...a)=>new T.Vector3(...a),local=headAsset.mesh.geometry.clone().applyMatrix4(headAsset.inverse),surface=createTriangleSurface(T,local),clearance=.0052,radius=.0032;
  try{
- const chinId=body==='f'?849:792,chin=V().fromBufferAttribute(local.attributes.position,chinId);
+ const chinId=headAsset.portrait99?null:(body==='f'?849:792),chin=headAsset.portrait99?V(...headAsset.portrait99.chin):V().fromBufferAttribute(local.attributes.position,chinId);
  if(Math.abs(chin.x)>.002||chin.z<.06||chin.z>.16)throw Error('Helmet chin landmark incompatible with head');
  const bottom=(x,z)=>{const hit=surface.cast(V(x,-.18,z),V(0,1,0));if(!hit)throw Error('Helmet jaw underside missing');return hit.point.add(V(0,-clearance,0));};
  const under=bottom(0,chin.z-.012);under.x=0;
