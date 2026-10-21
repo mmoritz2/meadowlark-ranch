@@ -1,0 +1,78 @@
+{
+  "cohort": "live2f27e767 explicit wild actor label role1",
+  "profile": "wild-actor-label-1",
+  "preimages": {
+    "assets/features/world.js": "2fda4aee386abbbbac1e5c4fa48a8097ca57618e80558979452945aa193e8728",
+    "assets/label-visibility.js": "fde8557624596925537b27194eed912a9dba52c052088479f7107ce4e019433c",
+    "ranch3d.html": "71c197e340f9d40498b595cb060b561e837c321fc465e2a79be6fcb43ccd7e52"
+  },
+  "edges": {
+    "world": [
+      [
+        "import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';",
+        "import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1-wild-actor-label-1';\nimport {configureWildActorLabel,WILD_ACTOR_LABEL_ROLE} from '../wild-actor-labels.mjs?v=wild-actor-label-1';"
+      ],
+      [
+        " function plate(text){",
+        " function plate(text,role=null){"
+      ],
+      [
+        "  return guardFloatingLabel(sp);",
+        "  if(role===WILD_ACTOR_LABEL_ROLE)configureWildActorLabel({THREE,sprite:sp});\n  return guardFloatingLabel(sp,{role});"
+      ],
+      [
+        "  const np=plate(text);",
+        "  const np=plate(text,sp.userData.labelRole||null);"
+      ],
+      [
+        "  sp.scale.copy(np.scale);",
+        "  sp.scale.copy(np.scale);\n  if(sp.userData.labelRole===WILD_ACTOR_LABEL_ROLE)configureWildActorLabel({THREE,sprite:sp});"
+      ],
+      [
+        "  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));",
+        "  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''),WILD_ACTOR_LABEL_ROLE);"
+      ],
+      [
+        "   LABELS.push({sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity});n++;});",
+        "   const record={sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity};\n   if(o.userData.labelRole===WILD_ACTOR_LABEL_ROLE){record.role=WILD_ACTOR_LABEL_ROLE;record.bx=o.userData.actorLabelPolicy.baseWidth;record.by=o.userData.actorLabelPolicy.baseHeight;}\n   LABELS.push(record);n++;});"
+      ],
+      [
+        "const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.bx>=1.6;",
+        "const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.role===WILD_ACTOR_LABEL_ROLE||L.bx>=1.6;"
+      ],
+      [
+        "   const s=wide?clamp(d/12,0.45,1):1;   // and never bigger on screen than it is at twelve metres, whatever it does up close\n   sp.scale.set(L.bx*s,L.by*s,1);",
+        "   if(L.role!==WILD_ACTOR_LABEL_ROLE){\n   const s=wide?clamp(d/12,0.45,1):1;   // and never bigger on screen than it is at twelve metres, whatever it does up close\n   sp.scale.set(L.bx*s,L.by*s,1);\n   }"
+      ]
+    ],
+    "guard": [
+      [
+        "export function guardFloatingLabel(sprite){",
+        "export function guardFloatingLabel(sprite,{role=null}={}){"
+      ],
+      [
+        " const wide=sprite.scale.x>=1.6,near=wide?2.6:1.5,far=wide?5.4:3;",
+        " const wide=role==='wild-actor'||sprite.scale.x>=1.6,near=wide?2.6:1.5,far=wide?5.4:3;"
+      ]
+    ],
+    "html": [
+      [
+        " \"imports\":{\n",
+        " \"imports\":{\n  \"./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4\":\"./assets/features/world.js?v=wild-actor-label-1\",\n"
+      ]
+    ]
+  },
+  "worldOldURL": "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4",
+  "worldURL": "./assets/features/world.js?v=wild-actor-label-1",
+  "candidateSourceSHA256": {
+    "assets/features/world.js": "e5baa6b2fe2c41c1ee2a3e9bb6e74577c8c07755b1677a01f80151515fd1200f",
+    "assets/label-visibility.js": "9453ee7bf98743bdfd6c011219435a70913c86e0c9e90b289843ca54e3e18caf",
+    "ranch3d.html": "af6fccfb3a54eff6b2835a11bf7ada9f806463590ff4c208b0991e35d81e1b57",
+    "assets/wild-actor-labels.mjs": "79d2493c23f38a5672911c66f38bb2717dda1bfcde8db9ed3c99f0bf5baf3e55"
+  },
+  "helperOrderEdge": {
+    "before": " sprite.frustumCulled=false;\n",
+    "after": " sprite.frustumCulled=false;sprite.renderOrder=3;\n",
+    "preimageSHA256": "caa8c8294b46fa3b36db9a19186db2b802fbbc5af163eb3ea3d561e25345c63d"
+  }
+}

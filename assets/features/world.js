@@ -11,7 +11,8 @@ import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
    Owned by this package: this file plus five one-line hot spots in ranch3d.html (G.anim,
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
-import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';
+import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1-wild-actor-label-1';
+import {configureWildActorLabel,WILD_ACTOR_LABEL_ROLE} from '../wild-actor-labels.mjs?v=wild-actor-label-1';
 import {fallsAllowsHorse} from '../falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1';
 import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
 export const id='world';
@@ -179,7 +180,7 @@ export function install(G){
     bit as readable; they simply stop shouting. */
  const PLATE_MAX=2.6;
  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
- function plate(text){
+ function plate(text,role=null){
   const s=String(text==null?'':text);
   const cv=document.createElement('canvas'),c=cv.getContext('2d');
   let fs=56;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';
@@ -200,16 +201,18 @@ export function install(G){
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
   sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
   sp.userData.plate=1;
-  return guardFloatingLabel(sp);
+  if(role===WILD_ACTOR_LABEL_ROLE)configureWildActorLabel({THREE,sprite:sp});
+  return guardFloatingLabel(sp,{role});
  }
  /* Repaint a plate somebody else already hung, for the cases where we know the full text and
     the game only kept the first 22 characters of it. */
  function redress(sp,text){
   if(!sp||!sp.material)return sp;
-  const np=plate(text);
+  const np=plate(text,sp.userData.labelRole||null);
   try{if(sp.material.map)sp.material.map.dispose();}catch(e){}
   sp.material.map=np.material.map;sp.material.needsUpdate=true;
   sp.scale.copy(np.scale);
+  if(sp.userData.labelRole===WILD_ACTOR_LABEL_ROLE)configureWildActorLabel({THREE,sprite:sp});
   for(const L of LABELS)if(L.sp===sp){const k=np.scale.x>PLATE_MAX?PLATE_MAX/np.scale.x:1;L.bx=np.scale.x*k;L.by=np.scale.y*k;}
   try{np.material.dispose();}catch(e){}
   return sp;
@@ -736,7 +739,7 @@ export function install(G){
   const wb=pickWb(herd);const a=Math.random()*Math.PI*2,r=Math.random()*herd.r*0.7;
   let x=herd.x+Math.cos(a)*r,z=herd.z+Math.sin(a)*r;const at=findClear(x,z,1.5,herd.r,fallsAllowsHorse);x=at[0];z=at[1];
   const parts=H.makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9),breed:wb.breed});
-  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
+  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''),WILD_ACTOR_LABEL_ROLE);tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
   parts.group.position.set(x,groundH(x,z),z);scene.add(parts.group);
   const m={runId:`wild-${Date.now().toString(36)}-${++wildSerial}-${Math.random().toString(36).slice(2,8)}`,herd,i,wb,parts,tag,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,4),phase:Math.random()*6,flee:0,trust:0,follow:false,remote:{},walked:0,name:NAMES[Math.floor(Math.random()*NAMES.length)],lastPub:0,coop:!!herd.coop,shown:false};
   m.thing=W.addThing({kind:'wild',id:herd.id+':'+i,x,z,g:null,reach:5.5,member:m,
@@ -1046,7 +1049,9 @@ export function install(G){
   let n=0;
   scene.traverse(o=>{if(o.userData.wlbl||!isPlate(o))return;o.userData.wlbl=1;guardFloatingLabel(o);
    const k=o.scale.x>PLATE_MAX?PLATE_MAX/o.scale.x:1;
-   LABELS.push({sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity});n++;});
+   const record={sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity};
+   if(o.userData.labelRole===WILD_ACTOR_LABEL_ROLE){record.role=WILD_ACTOR_LABEL_ROLE;record.bx=o.userData.actorLabelPolicy.baseWidth;record.by=o.userData.actorLabelPolicy.baseHeight;}
+   LABELS.push(record);n++;});
   for(let i=LABELS.length-1;i>=0;i--)if(!LABELS[i].sp.parent)LABELS.splice(i,1);   // a rebuilt barn throws its old plates away
   return n;
  }
@@ -1070,7 +1075,7 @@ export function install(G){
   for(let i=0;i<LABELS.length;i++){
    const L=LABELS[i],sp=L.sp;if(!sp.parent)continue;
    const e=sp.matrixWorld.elements,dx=e[12]-cx,dy=e[13]-cy,dz=e[14]-cz;   // one frame stale, which nobody can see in a fade
-   const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.bx>=1.6;
+   const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.role===WILD_ACTOR_LABEL_ROLE||L.bx>=1.6;
    L.op+=(labelAlpha(d,wide)-L.op)*k;
    /* Only ever un-hide a plate we hid ourselves. Somebody else's visible=false is a decision —
       the party banner is parked invisible at the origin between parties — and quietly turning
@@ -1078,8 +1083,10 @@ export function install(G){
    if(L.op<0.015){if(sp.visible){sp.visible=false;L.hid=1;}continue;}
    if(!sp.visible){if(!L.hid)continue;sp.visible=true;L.hid=0;}
    sp.material.opacity=L.op;
+   if(L.role!==WILD_ACTOR_LABEL_ROLE){
    const s=wide?clamp(d/12,0.45,1):1;   // and never bigger on screen than it is at twelve metres, whatever it does up close
    sp.scale.set(L.bx*s,L.by*s,1);
+   }
    if(sp.userData.plate){if(tint<0)tint=dayTint();sp.material.color.setScalar(tint);}
   }
  }
