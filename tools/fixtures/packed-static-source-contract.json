@@ -125,8 +125,8 @@
   "shippingScope": "Packed backend, farm grounds and final support-aware quarter signs; eight current static collision imports are covered by direct cache aliases.",
   "historicalUnusedContract2ReadySHA256": "5badd69c46f733b545de69ccd0086564158ede9bb161ee3799f0bf561dd759f9",
   "quarterSignImportMapAliases": {
-    "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=quarter-sign-final-support-4",
-    "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=quarter-sign-final-support-4"
+    "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=ochre-windmill-camera-1",
+    "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=ochre-windmill-camera-1"
   },
   "quarterSignHelperImport": {
     "path": "assets/features/world-quarters.js",

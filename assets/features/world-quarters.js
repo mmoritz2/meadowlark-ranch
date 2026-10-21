@@ -1,7 +1,8 @@
 import {createAmberwoodLeafGeometry,seatAmberwoodLeafLitter} from '../amberwood-leaf-litter.mjs?v=amberwood-worked-clearing-1';
 import {installMillPond,waitForMillPondImages} from '../mill-pond.mjs?v=mill-pond-2-final-environment-1';
 import {createFrostpineVillageArt,frostpineBakeBudget,frostpinePrivateResources} from '../frostpine-village.mjs?v=frostpine-village-4';
-import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=regional-landmarks-1-final-environment-1';
+import {createRegionalWorkshopArt} from '../regional-workshops.mjs?v=ochre-windmill-camera-1';
+import {createOchreTowerCameraAdmission} from '../ochre-tower-camera.mjs?v=ochre-windmill-camera-1';
 import {applyQuarterSurface,setQuarterPrimitiveUV} from '../quarter-surfaces.mjs?v=quarter-surfaces-2';
 /* Feature package 'world-quarters' — four empty circles of map given somewhere to go.
    Amberwood, Willowmere, Frostpine and Ochre Reach opened yesterday and received a biome colour
@@ -94,7 +95,8 @@ export function install(G){
     everywhere and cost one extra triangle pair. */
  const G_CROSS=mergeGeometries([G_PLANE.clone(),G_PLANE.clone().rotateY(Math.PI/2)],false);
  const G_TUFT=mergeGeometries([G_BLADE.clone(),G_BLADE.clone().rotateY(Math.PI/2)],false);
- const workshop=createRegionalWorkshopArt({G});P.workshops=workshop.stats;
+ const towerCamera=createOchreTowerCameraAdmission({THREE,camera:W.followCamera});P.towerCamera=towerCamera.stats;
+ const workshop=createRegionalWorkshopArt({G,onStaticTowerReady:towerCamera.admit});P.workshops=workshop.stats;
  const quarterSigns=createQuarterSignJoinery({THREE,W,scene,own,mergeGeometries,setQuarterPrimitiveUV});
  const WHITE=mt('#ffffff',{roughness:1});               // the base for anything coloured per instance
  function put(geo,c,sx,sy,sz,x,y,z,g,o){const m=new THREE.Mesh(geo,mt(c,o));m.scale.set(sx,sy,sz);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;}
