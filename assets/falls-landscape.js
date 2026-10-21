@@ -4,7 +4,7 @@ import {sculptUpperHollowpeakRelief} from './hollowpeak-upper-ridges.mjs?v=hollo
 import {hollowpeakMacroshape} from './hollowpeak-macroshape.mjs?v=hollowpeak-macroshape-1';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
 import {hollowpeakSnowAt,hollowpeakSnowWeight,hollowpeakSnowRockCover} from './hollowpeak-snow.mjs?v=cold-landscape-1';
-import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=cliff-landscape-4';
+import {hollowpeakRockSurface,applyHollowpeakRockSurface} from './hollowpeak-rock-surface.mjs?v=hollowpeak-rock-minerals-1';
 // Hollowpeak's watercourse is cut into the same height field used by the horses.
 // Original landforms; the cliff material is Poly Haven / Amal Kumar, CC0.
 export const HOLLOWPEAK=Object.freeze({x:-150,z:-242.2,top:14.2,level:-.1,run:7.8,width:2.45,
@@ -207,7 +207,7 @@ export function fallsExcludesDryPlants(x,z,heightAt){
 }
 export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMaterial,colliders,loadTextures=true}){
  const group=new T.Group();group.name='Hollowpeak | mountain watercourse';
- const mat=new T.MeshStandardMaterial({name:'Hollowpeak | scanned marble cliffs',color:'#b7bbb9',roughness:.92,normalScale:new T.Vector2(.27,.27),envMapIntensity:.65,vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+ const mat=new T.MeshStandardMaterial({name:'Hollowpeak | scanned marble cliffs',color:'#ffffff',roughness:.92,normalScale:new T.Vector2(.65,.65),envMapIntensity:.65,vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
  if(loadTextures){const loader=new T.TextureLoader(),tex=(suffix,srgb=false)=>{const t=loader.load(new URL('./textures/falls/marble_cliff_02_'+suffix+'.webp',import.meta.url).href);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=8;if(srgb)t.colorSpace=T.SRGBColorSpace;return t;};mat.map=tex('diff',true);mat.normalMap=tex('nor_gl');mat.roughnessMap=tex('arm');}
  applyHollowpeakRockSurface(mat);
  const step=terrainStep,x0=Math.floor((ALPINE_BOUNDS.x0+500)/step)*step-500,z0=Math.floor((ALPINE_BOUNDS.z0+500)/step)*step-500;
@@ -218,7 +218,7 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
   const curvature=y-(heightAt(x+6,z)+heightAt(x-6,z)+heightAt(x,z+6)+heightAt(x,z-6))*.25;
   const surface=hollowpeakRockSurface({slope,curvature,relief,wet});
   p.push(x,y+.012,z);uv.push(x/6.8,z/6.8);cover.push(hollowpeakSnowRockCover({...surface,relief,curvature,wet},hollowpeakSnowAt(x,z,heightAt),hollowpeakSnowWeight(x,z)));weather.push(surface.weather);landform.push(surface.toe,surface.scoured);
-  const shade=wet?.61:1;colors.push(shade,shade,shade);
+  const shade=wet?.80:1;colors.push(shade,shade,shade);
  }
  for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){const a=iz*(nx+1)+ix,b=a+nx+1,d=a+1,c=b+1;if(Math.max(cover[a],cover[b],cover[c],cover[d])>.001)idx.push(a,b,d,d,b,c);}
  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(p,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('rockCover',new T.Float32BufferAttribute(cover,1));geometry.setAttribute('rockWeather',new T.Float32BufferAttribute(weather,1));geometry.setAttribute('rockLandform',new T.Float32BufferAttribute(landform,2));geometry.setIndex(idx);geometry.computeVertexNormals();geometry.computeBoundingSphere();

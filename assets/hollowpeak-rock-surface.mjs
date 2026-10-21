@@ -1,7 +1,7 @@
 // Original exposure model. It reveals the existing ground on snow-bearing
 // ledges; it neither authors snow nor changes the climate/water/height fields.
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
-export const HOLLOWPEAK_ROCK_PROFILE='hollowpeak-rock-surface-4';
+export const HOLLOWPEAK_ROCK_PROFILE='hollowpeak-rock-minerals-1';
 export function hollowpeakRockSurface({slope,curvature,relief,wet}) {
   // Curvature is center height minus the mean of neighbors 6 m away. Convex
   // shoulders scour first; concave shelves retain the underlying ground.
@@ -57,10 +57,10 @@ export function applyHollowpeakRockSurface(material){
       sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`
         vec4 rockColour=hollowRockTri(map);
         float mineralValue=dot(rockColour.rgb,vec3(.2126,.7152,.0722));
-        rockColour.rgb=mix(vec3(mineralValue),rockColour.rgb,.32);
+        rockColour.rgb=mix(vec3(mineralValue),rockColour.rgb,.80);
         // Keep photographed fractures within the mineral body. Preserve their
         // darker value span so sun-facing stone still separates broad faces.
-        rockColour.rgb=rockColour.rgb*.72+vec3(.085);
+        rockColour.rgb=rockColour.rgb*.92+vec3(.012);
         float toe=clamp(mountainLandform.x,0.0,1.0);
         float scour=clamp(mountainLandform.y,0.0,1.0);
         float wetRock=smoothstep(.72,.99,mountainWeather);
@@ -77,7 +77,7 @@ export function applyHollowpeakRockSurface(material){
         float deposits=toe*(.28+.52*shelter)*(1.0-.5*scour)*(1.0-wetRock);
         vec3 colluvium=mix(vec3(.30,.275,.21),vec3(.225,.27,.195),shelter);
         rockColour.rgb=mix(rockColour.rgb,colluvium,deposits*.68);
-        rockColour.rgb*=mix(vec3(1.0),vec3(.78,.84,.87),wetRock);
+        rockColour.rgb*=mix(vec3(1.0),vec3(.88,.92,.94),wetRock);
         diffuseColor*=rockColour;`);
       sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>',`
         vec4 hollowRockARM=hollowRockTri(roughnessMap);
