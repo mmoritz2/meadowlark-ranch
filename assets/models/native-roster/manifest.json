@@ -5525,7 +5525,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "e16c1a75e5949e6578918e4e16bfbadf96c6d93a743ed0c293a4f5534ce5e6fd",
+      "sha256": "16230dc26e97b1e4893b3502edaaa9bb386a2f0d43d311ff83d77f61e2ace39d",
       "byteLength": 987984,
       "meshes": [
         {
@@ -8602,10 +8602,12 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "b2eb9b84e05f4a12e2026bde7666fb7ffdd3dfe6f370b7a44cc4043d7a31a1b7",
+        "baseMorphSha256": "aaabea69a920bb0bf620b28d466f9235d6f385bc0c65e6c6bb46e25957ce6e27",
         "authoringSha256": "47c451c96979041bea8bcca8ed90509f9e95d7f4321852c6eab55dd4ba53f4c1",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
-        "verifiedPreSculptMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
+        "authoringBaseMorphSha256": "d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500",
+        "verifiedPreSculptNonBodyMorphSha256": "2d5fe1fb3a5319c2223ee7f5f73435203a1ee6703a4b0ec1deaccf9138890b36",
+        "verifiedPreSculptMorphSha256": "a1a0c0dfa79006e02fe6a8a2fdac64444f0dab46a7bc0ef5fb3862a2514405bc",
         "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
@@ -8688,9 +8690,9 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 7,
+        "version": 8,
         "boneFrameLegContour": {
-          "version": 7,
+          "version": 8,
           "space": "native standing joint frames",
           "bodyOnly": true,
           "sourceShoulderRestoration": {
@@ -8744,7 +8746,7 @@
               ],
               "vertices": 891,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.08673873614748363,
+              "maxSurfaceMoveM": 0.08670636275530806,
               "radiusGuideY": [
                 0.197314764180875,
                 0.35,
@@ -8756,20 +8758,20 @@
                 1.497116107325211
               ],
               "lateralRadiiM": [
-                0.041,
-                0.039,
+                0.045,
+                0.043,
+                0.049,
                 0.059,
-                0.052,
-                0.068,
+                0.071,
                 0.095,
                 0.145,
                 0.18
               ],
               "depthRadiiM": [
-                0.052,
-                0.054,
-                0.075,
-                0.087,
+                0.055,
+                0.058,
+                0.071,
+                0.09,
                 0.113,
                 0.159,
                 0.218,
@@ -8808,7 +8810,7 @@
               ],
               "vertices": 866,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.08844301773061045,
+              "maxSurfaceMoveM": 0.08800325958973589,
               "radiusGuideY": [
                 0.20319671432516834,
                 0.35,
@@ -8820,20 +8822,20 @@
                 1.4846164506603878
               ],
               "lateralRadiiM": [
-                0.041,
-                0.039,
+                0.045,
+                0.043,
+                0.049,
                 0.059,
-                0.052,
-                0.068,
+                0.071,
                 0.095,
                 0.145,
                 0.18
               ],
               "depthRadiiM": [
-                0.052,
-                0.054,
-                0.075,
-                0.087,
+                0.055,
+                0.058,
+                0.071,
+                0.09,
                 0.113,
                 0.159,
                 0.218,
@@ -8970,7 +8972,17 @@
             }
           ],
           "changedVertices": 4793,
-          "maximumSurfaceMoveM": 0.09602093716299599
+          "maximumSurfaceMoveM": 0.09602093716299599,
+          "forelegTaper": {
+            "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+            "sourceHeightFadeM": [
+              0.82,
+              0.9
+            ],
+            "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+            "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+            "maximumMoveFromReviewedV7M": 0.005884390764354935
+          }
         },
         "legContour": {
           "version": 1,
@@ -9319,7 +9331,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v7 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v8 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -9529,7 +9541,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "4f53d6c58f001bf1f6a83012eb6e1c7d70c5158779a09a282630cc0b72857734",
+      "sha256": "f6253892a2f623b4441da9108741ebfd4e09fc700a0b4a7969a492c2adbd5af4",
       "byteLength": 987984,
       "meshes": [
         {
@@ -12606,10 +12618,12 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "597421d294a640c0faa8d54219de6e3d66e5a0566fa1b260ca86d685533c5da9",
+        "baseMorphSha256": "366dc66ee6f5871f0770399d01cfe39803332c79124ae8ae595de90c55f55223",
         "authoringSha256": "c28cfb73d027d2f69050b9ea2be0a0d0543befe6c61725bc1096e5c8a35a7798",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
-        "verifiedPreSculptMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
+        "authoringBaseMorphSha256": "01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a",
+        "verifiedPreSculptNonBodyMorphSha256": "86c6b5ea8e74569f0e6e823dad8fd451cecf54dff545931256eea19c2f76e993",
+        "verifiedPreSculptMorphSha256": "73c7a71d25ee5a3f9b92c4a6f0e5fa128fefefcff4398c5b650d166f3bedb7ba",
         "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
@@ -12692,9 +12706,9 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 7,
+        "version": 8,
         "boneFrameLegContour": {
-          "version": 7,
+          "version": 8,
           "space": "native standing joint frames",
           "bodyOnly": true,
           "sourceShoulderRestoration": {
@@ -12748,7 +12762,7 @@
               ],
               "vertices": 891,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.09578182706476342,
+              "maxSurfaceMoveM": 0.09574851290562876,
               "radiusGuideY": [
                 0.197314764180875,
                 0.35,
@@ -12760,20 +12774,20 @@
                 1.497116107325211
               ],
               "lateralRadiiM": [
-                0.043255,
-                0.041144999999999994,
+                0.047474999999999996,
+                0.045364999999999996,
+                0.051695,
                 0.062244999999999995,
-                0.05485999999999999,
-                0.07174,
+                0.07490499999999999,
                 0.100225,
                 0.15297499999999997,
                 0.18989999999999999
               ],
               "depthRadiiM": [
-                0.05485999999999999,
-                0.05696999999999999,
-                0.07912499999999999,
-                0.09178499999999999,
+                0.058025,
+                0.06119,
+                0.07490499999999999,
+                0.09494999999999999,
                 0.119215,
                 0.167745,
                 0.22998999999999997,
@@ -12812,7 +12826,7 @@
               ],
               "vertices": 866,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.096034662420433,
+              "maxSurfaceMoveM": 0.09558208650891654,
               "radiusGuideY": [
                 0.20319671432516834,
                 0.35,
@@ -12824,20 +12838,20 @@
                 1.4846164506603878
               ],
               "lateralRadiiM": [
-                0.043255,
-                0.041144999999999994,
+                0.047474999999999996,
+                0.045364999999999996,
+                0.051695,
                 0.062244999999999995,
-                0.05485999999999999,
-                0.07174,
+                0.07490499999999999,
                 0.100225,
                 0.15297499999999997,
                 0.18989999999999999
               ],
               "depthRadiiM": [
-                0.05485999999999999,
-                0.05696999999999999,
-                0.07912499999999999,
-                0.09178499999999999,
+                0.058025,
+                0.06119,
+                0.07490499999999999,
+                0.09494999999999999,
                 0.119215,
                 0.167745,
                 0.22998999999999997,
@@ -12974,7 +12988,17 @@
             }
           ],
           "changedVertices": 4793,
-          "maximumSurfaceMoveM": 0.1037903743729714
+          "maximumSurfaceMoveM": 0.1037903743729714,
+          "forelegTaper": {
+            "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+            "sourceHeightFadeM": [
+              0.82,
+              0.9
+            ],
+            "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+            "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+            "maximumMoveFromReviewedV7M": 0.006050523113987544
+          }
         },
         "legContour": {
           "version": 1,
@@ -13323,7 +13347,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v7 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v8 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -13533,7 +13557,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "c3c5804d9bd8f0d9c2989e1469c97bfe232a9640810e68e38bb66a4db7fac1a3",
+      "sha256": "4a5e5adbb29de702f3519a3f0c069506330d2488cbd2ccdb115f80ff627861aa",
       "byteLength": 987984,
       "meshes": [
         {
@@ -16610,10 +16634,12 @@
         "meshIndex": 3,
         "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
         "vertexCount": 2404,
-        "baseMorphSha256": "a128ce35397f9ed42cb67375b1d6d937604afe530828fd8d2df8fed89996c9d7",
+        "baseMorphSha256": "a4ea603433152d99beeb582f1c4b8441a64558867d30a29cc45d39952b3a788e",
         "authoringSha256": "2c3a017250a366886581daf7bad6266717a86acb49827e42d301742116a7d3b7",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
-        "verifiedPreSculptMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
+        "authoringBaseMorphSha256": "c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a",
+        "verifiedPreSculptNonBodyMorphSha256": "4ec5bf841eb0059b1270b54c0f5a55a69991966e7e99845ab69745458fb58182",
+        "verifiedPreSculptMorphSha256": "f2a3823cb176193458ffc6ca79f277cf5e46daca77996073a1d1b20bd5416daa",
         "surfaceTransport": "Shared equestrian model sculpt after the reviewed v7 lower collar route; source attachment IDs and four skin influences retained.",
         "vertexIds": {
           "byteOffset": 728256,
@@ -16696,9 +16722,9 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 7,
+        "version": 8,
         "boneFrameLegContour": {
-          "version": 7,
+          "version": 8,
           "space": "native standing joint frames",
           "bodyOnly": true,
           "sourceShoulderRestoration": {
@@ -16752,7 +16778,7 @@
               ],
               "vertices": 891,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.091185215948152,
+              "maxSurfaceMoveM": 0.09115197065100364,
               "radiusGuideY": [
                 0.197314764180875,
                 0.35,
@@ -16764,20 +16790,20 @@
                 1.497116107325211
               ],
               "lateralRadiiM": [
-                0.042025,
-                0.039975,
+                0.04612499999999999,
+                0.04407499999999999,
+                0.050225,
                 0.060474999999999994,
-                0.05329999999999999,
-                0.0697,
+                0.07277499999999999,
                 0.09737499999999999,
                 0.14862499999999998,
                 0.18449999999999997
               ],
               "depthRadiiM": [
-                0.05329999999999999,
-                0.055349999999999996,
-                0.07687499999999999,
-                0.08917499999999999,
+                0.056374999999999995,
+                0.059449999999999996,
+                0.07277499999999999,
+                0.09224999999999998,
                 0.115825,
                 0.16297499999999998,
                 0.22344999999999998,
@@ -16816,7 +16842,7 @@
               ],
               "vertices": 866,
               "maxBlend": 1.0,
-              "maxSurfaceMoveM": 0.09119956521241607,
+              "maxSurfaceMoveM": 0.09074974236444013,
               "radiusGuideY": [
                 0.20319671432516834,
                 0.35,
@@ -16828,20 +16854,20 @@
                 1.4846164506603878
               ],
               "lateralRadiiM": [
-                0.042025,
-                0.039975,
+                0.04612499999999999,
+                0.04407499999999999,
+                0.050225,
                 0.060474999999999994,
-                0.05329999999999999,
-                0.0697,
+                0.07277499999999999,
                 0.09737499999999999,
                 0.14862499999999998,
                 0.18449999999999997
               ],
               "depthRadiiM": [
-                0.05329999999999999,
-                0.055349999999999996,
-                0.07687499999999999,
-                0.08917499999999999,
+                0.056374999999999995,
+                0.059449999999999996,
+                0.07277499999999999,
+                0.09224999999999998,
                 0.115825,
                 0.16297499999999998,
                 0.22344999999999998,
@@ -16978,7 +17004,17 @@
             }
           ],
           "changedVertices": 4792,
-          "maximumSurfaceMoveM": 0.08777487553908365
+          "maximumSurfaceMoveM": 0.08777487553908365,
+          "forelegTaper": {
+            "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+            "sourceHeightFadeM": [
+              0.82,
+              0.9
+            ],
+            "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+            "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+            "maximumMoveFromReviewedV7M": 0.005960435170646627
+          }
         },
         "legContour": {
           "version": 1,
@@ -17327,7 +17363,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v7 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The upper-body/head cage is shared. The v8 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,

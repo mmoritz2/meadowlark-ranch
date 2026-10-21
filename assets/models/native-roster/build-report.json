@@ -9097,7 +9097,7 @@
         }
       },
       "boneFrameLegContour": {
-        "version": 7,
+        "version": 8,
         "space": "native standing joint frames",
         "bodyOnly": true,
         "sourceShoulderRestoration": {
@@ -9151,7 +9151,7 @@
             ],
             "vertices": 891,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.08673873614748363,
+            "maxSurfaceMoveM": 0.08670636275530806,
             "radiusGuideY": [
               0.197314764180875,
               0.35,
@@ -9163,20 +9163,20 @@
               1.497116107325211
             ],
             "lateralRadiiM": [
-              0.041,
-              0.039,
+              0.045,
+              0.043,
+              0.049,
               0.059,
-              0.052,
-              0.068,
+              0.071,
               0.095,
               0.145,
               0.18
             ],
             "depthRadiiM": [
-              0.052,
-              0.054,
-              0.075,
-              0.087,
+              0.055,
+              0.058,
+              0.071,
+              0.09,
               0.113,
               0.159,
               0.218,
@@ -9215,7 +9215,7 @@
             ],
             "vertices": 866,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.08844301773061045,
+            "maxSurfaceMoveM": 0.08800325958973589,
             "radiusGuideY": [
               0.20319671432516834,
               0.35,
@@ -9227,20 +9227,20 @@
               1.4846164506603878
             ],
             "lateralRadiiM": [
-              0.041,
-              0.039,
+              0.045,
+              0.043,
+              0.049,
               0.059,
-              0.052,
-              0.068,
+              0.071,
               0.095,
               0.145,
               0.18
             ],
             "depthRadiiM": [
-              0.052,
-              0.054,
-              0.075,
-              0.087,
+              0.055,
+              0.058,
+              0.071,
+              0.09,
               0.113,
               0.159,
               0.218,
@@ -9377,7 +9377,17 @@
           }
         ],
         "changedVertices": 4793,
-        "maximumSurfaceMoveM": 0.09602093716299599
+        "maximumSurfaceMoveM": 0.09602093716299599,
+        "forelegTaper": {
+          "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+          "sourceHeightFadeM": [
+            0.82,
+            0.9
+          ],
+          "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+          "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+          "maximumMoveFromReviewedV7M": 0.005884390764354935
+        }
       },
       "draftStirrups": {
         "displayedLiftM": 0.04,
@@ -9542,7 +9552,7 @@
       },
       "tackAttachment": {
         "vertices": 2404,
-        "baseMorphSha256": "b2eb9b84e05f4a12e2026bde7666fb7ffdd3dfe6f370b7a44cc4043d7a31a1b7",
+        "baseMorphSha256": "aaabea69a920bb0bf620b28d466f9235d6f385bc0c65e6c6bb46e25957ce6e27",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
         "verifiedCanonicalMorphBytes": 728256
       },
@@ -12529,17 +12539,17 @@
             "sourceYCenterM": 0.65,
             "vertices": 150,
             "previousDisplayedWidthM": 0.36202782422920915,
-            "newDisplayedWidthM": 0.35681440018989463,
+            "newDisplayedWidthM": 0.35615077455963245,
             "previousDisplayedMeanYM": 0.6051126799050907,
-            "newDisplayedMeanYM": 0.6051999557251279
+            "newDisplayedMeanYM": 0.605191357143795
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
             "previousDisplayedWidthM": 0.5091509156806269,
-            "newDisplayedWidthM": 0.40211084209877046,
+            "newDisplayedWidthM": 0.40270868811256744,
             "previousDisplayedMeanYM": 0.7292944922119977,
-            "newDisplayedMeanYM": 0.7466960033757625
+            "newDisplayedMeanYM": 0.7467030936484002
           },
           {
             "sourceYCenterM": 0.95,
@@ -12644,7 +12654,7 @@
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 0.008624114730343191,
       "maxHoofYChangeM": 2.678651204485183e-06,
-      "sha256": "e16c1a75e5949e6578918e4e16bfbadf96c6d93a743ed0c293a4f5534ce5e6fd",
+      "sha256": "16230dc26e97b1e4893b3502edaaa9bb386a2f0d43d311ff83d77f61e2ace39d",
       "byteLength": 987984,
       "actorScale": 0.930564036051734,
       "withersM": 1.73,
@@ -12877,7 +12887,7 @@
         }
       },
       "boneFrameLegContour": {
-        "version": 7,
+        "version": 8,
         "space": "native standing joint frames",
         "bodyOnly": true,
         "sourceShoulderRestoration": {
@@ -12931,7 +12941,7 @@
             ],
             "vertices": 891,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.09578182706476342,
+            "maxSurfaceMoveM": 0.09574851290562876,
             "radiusGuideY": [
               0.197314764180875,
               0.35,
@@ -12943,20 +12953,20 @@
               1.497116107325211
             ],
             "lateralRadiiM": [
-              0.043255,
-              0.041144999999999994,
+              0.047474999999999996,
+              0.045364999999999996,
+              0.051695,
               0.062244999999999995,
-              0.05485999999999999,
-              0.07174,
+              0.07490499999999999,
               0.100225,
               0.15297499999999997,
               0.18989999999999999
             ],
             "depthRadiiM": [
-              0.05485999999999999,
-              0.05696999999999999,
-              0.07912499999999999,
-              0.09178499999999999,
+              0.058025,
+              0.06119,
+              0.07490499999999999,
+              0.09494999999999999,
               0.119215,
               0.167745,
               0.22998999999999997,
@@ -12995,7 +13005,7 @@
             ],
             "vertices": 866,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.096034662420433,
+            "maxSurfaceMoveM": 0.09558208650891654,
             "radiusGuideY": [
               0.20319671432516834,
               0.35,
@@ -13007,20 +13017,20 @@
               1.4846164506603878
             ],
             "lateralRadiiM": [
-              0.043255,
-              0.041144999999999994,
+              0.047474999999999996,
+              0.045364999999999996,
+              0.051695,
               0.062244999999999995,
-              0.05485999999999999,
-              0.07174,
+              0.07490499999999999,
               0.100225,
               0.15297499999999997,
               0.18989999999999999
             ],
             "depthRadiiM": [
-              0.05485999999999999,
-              0.05696999999999999,
-              0.07912499999999999,
-              0.09178499999999999,
+              0.058025,
+              0.06119,
+              0.07490499999999999,
+              0.09494999999999999,
               0.119215,
               0.167745,
               0.22998999999999997,
@@ -13157,7 +13167,17 @@
           }
         ],
         "changedVertices": 4793,
-        "maximumSurfaceMoveM": 0.1037903743729714
+        "maximumSurfaceMoveM": 0.1037903743729714,
+        "forelegTaper": {
+          "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+          "sourceHeightFadeM": [
+            0.82,
+            0.9
+          ],
+          "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+          "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+          "maximumMoveFromReviewedV7M": 0.006050523113987544
+        }
       },
       "draftStirrups": {
         "displayedLiftM": 0.12,
@@ -13322,7 +13342,7 @@
       },
       "tackAttachment": {
         "vertices": 2404,
-        "baseMorphSha256": "597421d294a640c0faa8d54219de6e3d66e5a0566fa1b260ca86d685533c5da9",
+        "baseMorphSha256": "366dc66ee6f5871f0770399d01cfe39803332c79124ae8ae595de90c55f55223",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
         "verifiedCanonicalMorphBytes": 728256
       },
@@ -16309,17 +16329,17 @@
             "sourceYCenterM": 0.65,
             "vertices": 150,
             "previousDisplayedWidthM": 0.38332041940067696,
-            "newDisplayedWidthM": 0.37650330088803513,
+            "newDisplayedWidthM": 0.3756467428554253,
             "previousDisplayedMeanYM": 0.634211510199187,
-            "newDisplayedMeanYM": 0.6342929030019946
+            "newDisplayedMeanYM": 0.6342833340202788
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
             "previousDisplayedWidthM": 0.5470312927294853,
-            "newDisplayedWidthM": 0.42275899406725426,
+            "newDisplayedWidthM": 0.42340360095810603,
             "previousDisplayedMeanYM": 0.7620938745637252,
-            "newDisplayedMeanYM": 0.7826260276054503
+            "newDisplayedMeanYM": 0.7826335852061878
           },
           {
             "sourceYCenterM": 0.95,
@@ -16424,7 +16444,7 @@
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 0.009495044194320235,
       "maxHoofYChangeM": 2.941735106148924e-06,
-      "sha256": "4f53d6c58f001bf1f6a83012eb6e1c7d70c5158779a09a282630cc0b72857734",
+      "sha256": "f6253892a2f623b4441da9108741ebfd4e09fc700a0b4a7969a492c2adbd5af4",
       "byteLength": 987984,
       "actorScale": 0.9753195309718683,
       "withersM": 1.82,
@@ -16657,7 +16677,7 @@
         }
       },
       "boneFrameLegContour": {
-        "version": 7,
+        "version": 8,
         "space": "native standing joint frames",
         "bodyOnly": true,
         "sourceShoulderRestoration": {
@@ -16711,7 +16731,7 @@
             ],
             "vertices": 891,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.091185215948152,
+            "maxSurfaceMoveM": 0.09115197065100364,
             "radiusGuideY": [
               0.197314764180875,
               0.35,
@@ -16723,20 +16743,20 @@
               1.497116107325211
             ],
             "lateralRadiiM": [
-              0.042025,
-              0.039975,
+              0.04612499999999999,
+              0.04407499999999999,
+              0.050225,
               0.060474999999999994,
-              0.05329999999999999,
-              0.0697,
+              0.07277499999999999,
               0.09737499999999999,
               0.14862499999999998,
               0.18449999999999997
             ],
             "depthRadiiM": [
-              0.05329999999999999,
-              0.055349999999999996,
-              0.07687499999999999,
-              0.08917499999999999,
+              0.056374999999999995,
+              0.059449999999999996,
+              0.07277499999999999,
+              0.09224999999999998,
               0.115825,
               0.16297499999999998,
               0.22344999999999998,
@@ -16775,7 +16795,7 @@
             ],
             "vertices": 866,
             "maxBlend": 1.0,
-            "maxSurfaceMoveM": 0.09119956521241607,
+            "maxSurfaceMoveM": 0.09074974236444013,
             "radiusGuideY": [
               0.20319671432516834,
               0.35,
@@ -16787,20 +16807,20 @@
               1.4846164506603878
             ],
             "lateralRadiiM": [
-              0.042025,
-              0.039975,
+              0.04612499999999999,
+              0.04407499999999999,
+              0.050225,
               0.060474999999999994,
-              0.05329999999999999,
-              0.0697,
+              0.07277499999999999,
               0.09737499999999999,
               0.14862499999999998,
               0.18449999999999997
             ],
             "depthRadiiM": [
-              0.05329999999999999,
-              0.055349999999999996,
-              0.07687499999999999,
-              0.08917499999999999,
+              0.056374999999999995,
+              0.059449999999999996,
+              0.07277499999999999,
+              0.09224999999999998,
               0.115825,
               0.16297499999999998,
               0.22344999999999998,
@@ -16937,7 +16957,17 @@
           }
         ],
         "changedVertices": 4792,
-        "maximumSurfaceMoveM": 0.08777487553908365
+        "maximumSurfaceMoveM": 0.08777487553908365,
+        "forelegTaper": {
+          "method": "Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip",
+          "sourceHeightFadeM": [
+            0.82,
+            0.9
+          ],
+          "reviewedUpperSurfaceAndNormalsExactlyPreservedFromM": 0.9,
+          "reviewedFootSurfaceAndNormalsExactlyPreservedThroughM": 0.18,
+          "maximumMoveFromReviewedV7M": 0.005960435170646627
+        }
       },
       "draftStirrups": {
         "displayedLiftM": 0.05,
@@ -17102,7 +17132,7 @@
       },
       "tackAttachment": {
         "vertices": 2404,
-        "baseMorphSha256": "a128ce35397f9ed42cb67375b1d6d937604afe530828fd8d2df8fed89996c9d7",
+        "baseMorphSha256": "a4ea603433152d99beeb582f1c4b8441a64558867d30a29cc45d39952b3a788e",
         "method": "Original four-influence shoulder attachment at 70% strength, inverse-solved onto the v7 source-restored shoulder surface on reviewed breastcollar/tie islands, then the unchanged bounded static lower-V route 6 cm upward/1.2 cm forward before actor scale. Headstall, reins, fenders, irons, saddle and source skeleton stay untouched. The validated fitted surface is transported by the same smooth model-sculpt field as body, eyes, bridle and hair.",
         "verifiedCanonicalMorphBytes": 728256
       },
@@ -20089,17 +20119,17 @@
             "sourceYCenterM": 0.65,
             "vertices": 150,
             "previousDisplayedWidthM": 0.37537717420162636,
-            "newDisplayedWidthM": 0.36910102232863273,
+            "newDisplayedWidthM": 0.3683498562169341,
             "previousDisplayedMeanYM": 0.6239858926171029,
-            "newDisplayedMeanYM": 0.6240583890237832
+            "newDisplayedMeanYM": 0.6240493014482262
           },
           {
             "sourceYCenterM": 0.8,
             "vertices": 171,
             "previousDisplayedWidthM": 0.5257151919715576,
-            "newDisplayedWidthM": 0.4152393110434782,
+            "newDisplayedWidthM": 0.4158619687996071,
             "previousDisplayedMeanYM": 0.7542753750722612,
-            "newDisplayedMeanYM": 0.7699803425097732
+            "newDisplayedMeanYM": 0.7699876471619665
           },
           {
             "sourceYCenterM": 0.95,
@@ -20107,7 +20137,7 @@
             "previousDisplayedWidthM": 0.6069873950314882,
             "newDisplayedWidthM": 0.4558985113334011,
             "previousDisplayedMeanYM": 0.8628739064461839,
-            "newDisplayedMeanYM": 0.9120909453956592
+            "newDisplayedMeanYM": 0.9120909460640424
           },
           {
             "sourceYCenterM": 1.1,
@@ -20204,7 +20234,7 @@
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 0.009021837787246745,
       "maxHoofYChangeM": 2.5585878128953077e-06,
-      "sha256": "c3c5804d9bd8f0d9c2989e1469c97bfe232a9640810e68e38bb66a4db7fac1a3",
+      "sha256": "4a5e5adbb29de702f3519a3f0c069506330d2488cbd2ccdb115f80ff627861aa",
       "byteLength": 987984,
       "actorScale": 0.9595817748379818,
       "withersM": 1.78,

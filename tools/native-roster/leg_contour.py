@@ -7,7 +7,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline, PchipInterpolator
 from scipy.sparse import coo_matrix
 
-REVISION=7
+REVISION=8
 CHAINS={
  'foreLeft':['fingers_01_l_0187','hand_l_0206','lowerarm_l_0205','upperarm_l_0204'],
  'foreRight':['fingers_01_r_0295','hand_r_0272','lowerarm_r_0271','upperarm_r_0270'],
@@ -45,7 +45,7 @@ def transport_authored_normals(source, before, after, normals, indices):
  out[degenerate]=normals[degenerate]
  return unit(out)
 
-def shape_bone_frame_legs(source, shaped, normals, joints, weights, indices, joint_names, joint_points, breed):
+def _shape_bone_frame_legs(source, shaped, normals, joints, weights, indices, joint_names, joint_points, breed, *, guide_revision):
  source=np.asarray(source,float);result=shaped.copy();total=np.zeros(len(source));deltas=np.zeros_like(source);reports=[];fore_delta=np.zeros_like(source);fore_fidelity=np.zeros(len(source))
  triangles=np.asarray(indices).reshape(-1,3)
  _,weld=np.unique(np.round(source,7),axis=0,return_inverse=True);n=weld.max()+1
@@ -75,8 +75,12 @@ def shape_bone_frame_legs(source, shaped, normals, joints, weights, indices, joi
   radial=source-center;u=(radial*lateral).sum(1);v=(radial*depth).sum(1)
   if front:
    knots=np.array([h[0],.35,h[1],.70,.85,h[2],h[3],h[3]+.20])
-   rx=np.array([.041,.039,.059,.052,.068,.095,.145,.180])*breed_gain
-   rz=np.array([.052,.054,.075,.087,.113,.159,.218,.255])*breed_gain
+   # A draft foreleg narrows gradually from the muscular forearm into the
+   # cannon. The old guide peaked at the knee then dipped immediately above
+   # it, producing a rounded bead between two skinny rings. Keep a subtle
+   # anatomical knee, with a continuous taper and a sturdier distal cannon.
+   rx=np.array([.045,.043,.049,.059,.071,.095,.145,.180] if guide_revision>=8 else [.041,.039,.059,.052,.068,.095,.145,.180])*breed_gain
+   rz=np.array([.055,.058,.071,.090,.113,.159,.218,.255] if guide_revision>=8 else [.052,.054,.075,.087,.113,.159,.218,.255])*breed_gain
    support=smooth(.18,.30,source[:,1])*(1-smooth(1.08,1.38,source[:,1]))
    prefixes=('fingers_','hand_','wrist_','elbow_','lowerarm_','upperarm_')
   else:
@@ -141,3 +145,31 @@ def shape_bone_frame_legs(source, shaped, normals, joints, weights, indices, joi
  assert np.isfinite(result).all() and np.isfinite(normal_result).all()
  assert np.array_equal(result[source[:,1]<=.18],shaped[source[:,1]<=.18])
  return result,normal_result,{'version':REVISION,'space':'native standing joint frames','bodyOnly':True,'sourceShoulderRestoration':{'heightM':[.77,.90,1.48,1.85],'forwardM':[.02,.28,.65,.90]},'sourceSurfaceMayShrink':True,'sourceWeightsAndJointsUnchanged':True,'protectedSourceYAtOrBelowM':.18,'normalMethod':'authored normals transported by welded surface shortest-arc rotation','limbs':reports,'changedVertices':int(changed.sum()),'maximumSurfaceMoveM':float(np.linalg.norm(result-shaped,axis=1).max())}
+
+
+def shape_bone_frame_legs(source, shaped, normals, joints, weights, indices, joint_names, joint_points, breed):
+ """Revise the knee/cannon while exactly retaining the fitted upper surface.
+
+ The existing mesh regularizer can propagate a tiny lower-leg edit to the
+ shoulder. Evaluate the reviewed v7 guide explicitly and use it as the fixed
+ upper boundary, so the fitted collar never needs an unrelated refit.
+ """
+ args=(source,shaped,normals,joints,weights,indices,joint_names,joint_points,breed)
+ legacy,legacy_normals,_=_shape_bone_frame_legs(*args,guide_revision=7)
+ candidate,_,report=_shape_bone_frame_legs(*args,guide_revision=8)
+ blend=1-smooth(.82,.90,np.asarray(source)[:,1])
+ result=legacy+(candidate-legacy)*blend[:,None]
+ result[blend==0]=legacy[blend==0]
+ carried=transport_authored_normals(source,legacy,result,legacy_normals,indices)
+ # Original upper normals and the protected foot remain bit-for-bit stable.
+ changed=np.linalg.norm(result-legacy,axis=1)>1e-12
+ carried[~changed]=legacy_normals[~changed]
+ carried[blend==0]=legacy_normals[blend==0]
+ report.update(version=REVISION,
+  forelegTaper={'method':'Continuous cannon-to-forearm radial taper without the former knee peak/above-knee dip',
+   'sourceHeightFadeM':[.82,.90], 'reviewedUpperSurfaceAndNormalsExactlyPreservedFromM':.90,
+   'reviewedFootSurfaceAndNormalsExactlyPreservedThroughM':.18,
+   'maximumMoveFromReviewedV7M':float(np.linalg.norm(result-legacy,axis=1).max())})
+ assert np.array_equal(result[blend==0],legacy[blend==0])
+ assert np.array_equal(carried[blend==0],legacy_normals[blend==0])
+ return result,carried,report

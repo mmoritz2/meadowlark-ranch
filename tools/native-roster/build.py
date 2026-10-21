@@ -782,11 +782,11 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':7,'boneFrameLegContour':leg_report,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':8,'boneFrameLegContour':leg_report,'legContour':copy.deepcopy(DRAFT_LEG_CONTOUR),'upperLegContour':copy.deepcopy(DRAFT_UPPER_LEG_CONTOUR),'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':False,'releasedHoofSurfaceBelow018mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,
-                'sharedBodyAndTackCageDescription':'The upper-body/head cage is shared. The v7 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.',
+                'sharedBodyAndTackCageDescription':'The upper-body/head cage is shared. The v8 bone-aligned leg surface is body-only; the source-restored shoulder field follows reviewed breastcollar islands through a sparse attachment. Shortened Western fenders are tack-only.',
                 'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR),
                 'frontContour':{**copy.deepcopy(DRAFT_FRONT_CONTOUR),'collarComponentIds':collar_components,
                     'collarVertexCount':int(collar_mask.sum()),'boundary':collar_boundary}}

@@ -32,6 +32,25 @@ REVIEWED_BODY_ONLY_BASES={
   'nonBodyMorphSha256':'3e35042e5f6c5803e1487de6f20b0eacd1c959b07f332e8a6298b7ab252144a9'},
 }
 
+# Reviewed v8 foreleg taper keeps the entire v7 body surface and authored
+# normals from 0.90m upward, the released feet through 0.18m, all four
+# non-body morphs and the full collar/groom append exact. Each whole canonical
+# prefix is pinned independently; unknown geometry still requires a new fit.
+REVIEWED_FORELEG_BASES={
+ 'percheron':{
+  'baseMorphSha256':'a1a0c0dfa79006e02fe6a8a2fdac64444f0dab46a7bc0ef5fb3862a2514405bc',
+  'authoringBaseMorphSha256':'d0623b49ba7ac05535864db88e1886d86ccd54cad26583c0e4960d24a1268500',
+  'nonBodyMorphSha256':'2d5fe1fb3a5319c2223ee7f5f73435203a1ee6703a4b0ec1deaccf9138890b36'},
+ 'shire':{
+  'baseMorphSha256':'73c7a71d25ee5a3f9b92c4a6f0e5fa128fefefcff4398c5b650d166f3bedb7ba',
+  'authoringBaseMorphSha256':'01cb7277f423287381f81cecb04a5e2bced46f8003a4db921833d28e1d55946a',
+  'nonBodyMorphSha256':'86c6b5ea8e74569f0e6e823dad8fd451cecf54dff545931256eea19c2f76e993'},
+ 'clyde':{
+  'baseMorphSha256':'f2a3823cb176193458ffc6ca79f277cf5e46daca77996073a1d1b20bd5416daa',
+  'authoringBaseMorphSha256':'c9b5437f37a1232defd018d3aa90696405a14d0d3fcfa30f649112127bbecc7a',
+  'nonBodyMorphSha256':'4ec5bf841eb0059b1270b54c0f5a55a69991966e7e99845ab69745458fb58182'},
+}
+
 def pack_collar_attachment(key,packed,*,baseline_prefix=None,transport=None):
     if key not in DRAFTS:return None
     folder=HERE/'collar-attachments';index=json.loads((folder/'index.json').read_text())
@@ -44,7 +63,8 @@ def pack_collar_attachment(key,packed,*,baseline_prefix=None,transport=None):
     assert len(verified_prefix)==728256
     base_hash=hashlib.sha256(verified_prefix).hexdigest();compatibility=None
     if base_hash!=spec['baseMorphSha256']:
-        compatibility=REVIEWED_BODY_ONLY_BASES.get(key)
+        compatibility=next((record for record in (REVIEWED_BODY_ONLY_BASES.get(key),REVIEWED_FORELEG_BASES.get(key))
+                            if record and base_hash==record['baseMorphSha256']),None)
         assert compatibility and base_hash==compatibility['baseMorphSha256'] and spec['baseMorphSha256']==compatibility['authoringBaseMorphSha256'],(key,'Collar surface changed; refit before rebuilding')
         assert hashlib.sha256(verified_prefix[BODY_MORPH_BYTES:]).hexdigest()==compatibility['nonBodyMorphSha256'],(key,'Protected non-body morph changed; refit collar before rebuilding')
     file=folder/spec['file'];assert file.parent.resolve()==folder.resolve()

@@ -23,7 +23,7 @@ function strandTexture(THREE,grounded=false){
   const shade=Math.round((210+45*fiber)*(.90+.10*smooth01(v/.30)));data[i]=shade;data[i+1]=shade;data[i+2]=shade;
   // A connected soft undercoat gives volume; fine shaded fibers and varied
   // tips retain hair detail without transparent grass-like cuts in each lock.
-  data[i+3]=Math.round(255*edge*(.60+.40*fiber)*root*split);
+  data[i+3]=Math.round(255*edge*(.78+.22*fiber)*root*split);
  }
  const texture=once(new THREE.DataTexture(data,width,height));
  texture.name='Native draft feather fibers';texture.colorSpace=THREE.SRGBColorSpace;
@@ -42,7 +42,7 @@ function shaggyStrandTexture(THREE){
    const u=(x+.5)/tileWidth,v=y/(height-1),edge=Math.pow(Math.sin(Math.PI*u),.65);let body=0,tip=0,shade=0;
    for(const f of fibers){const center=f.center+f.wave*Math.sin(v*3.6+f.phase)*Math.sin(v*Math.PI*.8),d=(u-center)/f.width,weight=Math.exp(-d*d*2.2);body+=weight;tip+=weight*smooth01((f.tip-v)/.09);shade+=weight*f.shade;}
    const root=smooth01((v-.014-.022*Math.sin(u*21+tile))/.12),fiber=Math.min(1,body),end=body?tip/body:0;
-   const alpha=edge*root*(.45+.55*fiber)*end,i=(y*width+tile*tileWidth+x)*4;
+   const alpha=edge*root*(.66+.34*fiber)*end,i=(y*width+tile*tileWidth+x)*4;
    const value=Math.round(255*(body?shade/body:.84)*(.91+.09*smooth01(v/.28)));data[i]=value;data[i+1]=value;data[i+2]=value;data[i+3]=Math.round(255*alpha);
   }
  }
@@ -193,8 +193,8 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
  if(fantasy){const mane=profile.nativeRosterAppearance?.mane||profile.nativeRosterColors?.mane;if(mane)color.set(mane).lerp(new THREE.Color('#e6e0d4'),.42);}
  const material=once(new THREE.MeshStandardMaterial({name:'Native draft silky feather',map:texture,color,
   side:THREE.DoubleSide,alphaTest:restrained?.32:.25,alphaToCoverage:!restrained,roughness:restrained?.82:.88,metalness:0,depthWrite:true}));
- const meshes=[],segments=7,strandsPerLeg=restrained?72:vanner?150:foundation==='clyde'?144:138;
- const frontLocks=restrained?12:24,layerLocks=(strandsPerLeg-frontLocks)/2;
+ const meshes=[],segments=7,strandsPerLeg=restrained?96:vanner?150:foundation==='clyde'?144:138;
+ const frontLocks=restrained?18:24,layerLocks=(strandsPerLeg-frontLocks)/2;
  for(let leg=0;leg<anchors.length;leg++){
   const a=anchors[leg],rnd=random(1987+leg*811+(restrained?127:vanner?831:foundation==='clyde'?412:0));
   const rx=a.samples?clamp((a.maxX-a.minX)*.5,.032,.085):.047;
@@ -207,22 +207,22 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
    const heavyLayer=restrained?0:Math.floor(strand/(strandsPerLeg/3));
    const front=restrained&&strand>=strandsPerLeg-frontLocks,upperLayer=restrained?!front&&strand>=layerLocks:heavyLayer===2;
    // Heavy drafts carry a full flowing skirt around the toe and heel. The
-   // Percheron family retains lighter back/side feather and short front wisps.
+   // Percheron family retains shorter back/side locks and lighter toe cover.
    const slot=front?strand-(strandsPerLeg-frontLocks):strand%layerLocks;
    const angle=!restrained?((strand%(strandsPerLeg/3)+.12+.76*rnd()+heavyLayer*.43)/(strandsPerLeg/3)-.5)*Math.PI*2:front?Math.PI+((slot+.2+.6*rnd())/frontLocks-.5)*(restrained?1.10:1.80)
     :((slot+.18+.64*rnd()+(upperLayer?.35:0))/layerLocks-.5)*Math.PI*1.72;
    const radialX=Math.sin(angle),radialZ=-Math.cos(angle);
-   const rootUp=front?(restrained?.012+rnd()*.052:.032+rnd()*.074):restrained
-    ?upperLayer?.083+rnd()*.050:.030+rnd()*.053
+   const rootUp=front?(restrained?.025+rnd()*.040:.032+rnd()*.074):restrained
+    ?upperLayer?.075+rnd()*.050:.030+rnd()*.053
     :heavyLayer===2?.085+rnd()*.065:heavyLayer===1?.045+rnd()*.070:.018+rnd()*.075;
-   const length=front?(restrained?.045+rnd()*.035:.057+rnd()*.043):restrained
-    ?.130+rnd()*.060:.181+rnd()*.084;
-   const width=front?(restrained?.006+rnd()*.004:.016+rnd()*.014):restrained
-    ?.012+rnd()*.009:.015+rnd()*.009;
-   const flare=front?.005+rnd()*.008:restrained?.017+rnd()*.021
-    :(upperLayer?.018+rnd()*.022:.027+rnd()*.024);
+   const length=front?(restrained?.170+rnd()*.040:.057+rnd()*.043):restrained
+    ?.145+rnd()*.055:.181+rnd()*.084;
+   const width=front?(restrained?.016+rnd()*.008:.016+rnd()*.014):restrained
+    ?.018+rnd()*.008:.020+rnd()*.006;
+   const flare=front?.008+rnd()*.009:restrained?.020+rnd()*.018
+    :(upperLayer?.020+rnd()*.022:.031+rnd()*.024);
    const bend=(rnd()-.5)*(restrained?.013:.019),rootY=a.pivot.y+rootUp;
-   const minimumTipY=Math.max(.025,a.toe.y-(restrained?.051:.064));
+   const minimumTipY=Math.max(.025,a.toe.y-(restrained?.078:.064));
    const contactLayer=!restrained&&heavyLayer===0;
    const heavyTip=restrained?0:contactLayer?.0008+.0009*rnd():heavyLayer===1?.004+rnd()*.034:.023+rnd()*.070;
    const drop=restrained?Math.min(length,Math.max(.03,rootY-minimumTipY)):Math.max(.03,rootY-heavyTip);
@@ -236,20 +236,25 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
     curl=restrained?0:.19*Math.sin(angle*4+leg*.45)+curlNoise*.12,
     roll=restrained?0:.30*Math.sin(angle*4+heavyLayer*.5)+rollNoise*.28,tile=(strand*3+leg*5)%8;
    for(let step=0;step<=segments;step++){
-    const t=step/segments,contactBlend=contactLayer?smooth01((t-.5)/.3):0,lockCurl=curl+(tipCurl-curl)*contactBlend,lockRoll=roll+(tipRoll-roll)*contactBlend,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.025:.25)+(restrained?.975:.75)*rootWidth*Math.pow(1-t,restrained?.48:.44),spread=flare*Math.sin(t*Math.PI*.5);
+    const t=step/segments,contactBlend=contactLayer?smooth01((t-.5)/.3):0,lockCurl=curl+(tipCurl-curl)*contactBlend,lockRoll=roll+(tipRoll-roll)*contactBlend,rootWidth=.18+.82*smooth01(t/.27),taper=(restrained?.12:.25)+(restrained?.88:.75)*rootWidth*Math.pow(1-t,restrained?.48:.44),spread=flare*Math.sin(t*Math.PI*.5);
     const embeddedRoot=.88+.06*smooth01(t/.26);
     // Most of the flow falls downward; a modest rear sweep and rounded lock
     // face keep the silhouette soft from oblique/front/rear views.
     center.set(cx+axis.x*rootUp+radialX*(rx*embeddedRoot+spread)+bend*Math.sin(t*Math.PI*.8),
      rootY-drop*t,cz+axis.z*rootUp+radialZ*(rz*embeddedRoot+spread)-.009*Math.sin(t*Math.PI));
-    if(!restrained){
-     const aroundHoof=smooth01(t/.78),rootX=cx+axis.x*rootUp,rootZ=cz+axis.z*rootUp;
+    {
+     // Toe locks also wrap forward over the hoof. Leaving them on the
+     // cannon axis hides their center behind the shin and exposes a bald band.
+     // The narrow embedded root follows the real cannon; the loose length
+     // opens gradually over the actual hoof instead of radiating like grass.
+     const aroundHoof=smooth01(t/(restrained?.92:.86)),rootX=cx+axis.x*rootUp,rootZ=cz+axis.z*rootUp;
      const sweep=angle+lockCurl*smooth01(t),sx=Math.sin(sweep),sz=-Math.cos(sweep);
-     const radiusX=rx*embeddedRoot+(Math.max(rx+flare,hoofRx+.014)-rx*embeddedRoot)*aroundHoof;
-     const radiusZ=rz*embeddedRoot+(Math.max(rz+flare,hoofRz+.017)-rz*embeddedRoot)*aroundHoof;
+     const fanX=restrained?.006:.023,fanZ=restrained?.008:.025;
+     const radiusX=rx*embeddedRoot+(Math.max(rx+flare,hoofRx+fanX)-rx*embeddedRoot)*aroundHoof;
+     const radiusZ=rz*embeddedRoot+(Math.max(rz+flare,hoofRz+fanZ)-rz*embeddedRoot)*aroundHoof;
      // Neighboring fibers follow a shared curved tuft, with fine variation
      // inside it. This gives flowing clumps rather than equally straight grass.
-     const tuft=.006*Math.sin(angle*4+leg*.45+t*Math.PI*1.6)*smooth01(t/.24)*Math.sin(t*Math.PI*.85)*(1-contactBlend);
+     const tuft=(restrained?.003:.006)*Math.sin(angle*4+leg*.45+t*Math.PI*1.6)*smooth01(t/.24)*Math.sin(t*Math.PI*.85)*(1-contactBlend);
      center.x=rootX+(hoofCx-rootX)*aroundHoof+sx*radiusX+bend*Math.sin(t*Math.PI*.8)+Math.cos(sweep)*tuft;
      center.z=rootZ+(hoofCz-rootZ)*aroundHoof+sz*radiusZ-.008*Math.sin(t*Math.PI)+Math.sin(sweep)*tuft;
     }
