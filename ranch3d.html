@@ -631,6 +631,7 @@ body.touch #stickZone{display:block}
 {
  "imports":{
   "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4":"./assets/features/world.js?v=wild-actor-label-1",
+  "./assets/features/course-guide.js?v=riding-foundation-1-formal-approach-resume-1-loon-lake-4":"./assets/features/course-guide.js?v=terrain-camera-composition-1",
   "three":"./assets/vendor/three/build/three.module.js",
   "three/addons/":"./assets/vendor/three/examples/jsm/",
   "./assets/falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1":"./assets/falls-landscape.js?v=hollowpeak-rock-minerals-1",
@@ -715,7 +716,7 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=ranch-roof-courses-3';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfaces-1';
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
-import {createFollowCamera} from './assets/follow-camera.js?v=camera-authored-parts-4';
+import {createFollowCamera} from './assets/follow-camera.js?v=camera-terrain-clearance-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js?v=estate-arrival-1';
@@ -1649,7 +1650,7 @@ function loonLakePlanningH(x,z){
 const loonLake=createLoonLakeRuntime({terrainH,groundH,planningHeightAt:loonLakePlanningH});
 COLL_SETS.shells.pts=COLL_SETS.shells.pts.map(p=>loonLake.containsWater(...p,.3)?loonLake.dryPoint(...p,.65):p);
 const solidWorld=createSolidWorld({THREE});
-const followCamera=createFollowCamera({THREE,groundHeight:groundH});
+const followCamera=createFollowCamera({THREE,groundHeight:groundH,terrain:{heights:TERRAIN_HEIGHTS,segments:TERRAIN_SEGMENTS,step:TERRAIN_STEP,originX:-500,originZ:-500}});
 const registerCamera=followCamera.register;
 followCamera.register=root=>{registerCamera(root);solidWorld.register(root,{primitives:true});};
 

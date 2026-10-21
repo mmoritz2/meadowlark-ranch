@@ -1,0 +1,278 @@
+{
+  "purpose": "Compact exact Float32 subgrid around the actual current7039 native mounted camera arm. Includes every canonical cell within radius .3 of that arm. This records a reproduced regression, not a general reachability claim.",
+  "source": {
+    "reportSHA256": "83ec3347479af9cf434d096e2700ac8182c51de68ef07ed8bc8a0150c45276f8",
+    "canonicalSHA256": "59b9537a0846282f73b5baa5f2fec0b1f6eed2af3fcd865f6a826effdb35ca8d",
+    "sourceGrid": {
+      "segments": 512,
+      "step": 1.953125,
+      "originX": -500,
+      "originZ": -500
+    },
+    "cellOffset": [
+      178,
+      126
+    ]
+  },
+  "grid": {
+    "segments": 12,
+    "step": 1.953125,
+    "originX": -152.34375,
+    "originZ": -253.90625,
+    "littleEndianFloat32Base64": "rzdeQXZ7WkG7wVpBTwZcQfzhe0GI0ndBvNJvQcLpcEFCy3hB1FGAQQE4VUEoGiVBrwMrQR79WUHW1VhBHBxZQVQQXEHlemxBXU52QSm3bEEy02xBytF0QYXHfEFo/ElBm9EmQf08NUFHhFdBNzBXQX12V0FDRV5BWyJuQZWSdEG5nWlBfRdlQbJGbUGabXVBpBtCQZrxKUHPXT9Bn/xVQXWdVUF1nVVBEM5fQY86bkFmfnFBgGhlQR7wWUHuHmJB0YRqQdU4PUGLbCtBWUNEQdxgVEGyAVRBsgFUQalrW0HhjmRBQ69vQV/AZEF7TVNBbXdWQREkX0HSrTtBAY4pQW8FQEHUTlpB1E5aQdROWkHUTlpB2PteQUUybUEhDmRBhE1SQQnJSkEvvlNB1EtDQdZvKUFh7jZBrkdhQa5HYUGuR2FBrkdhQa5HYUEou2ZBD0ljQTzFUUGjlj9BqTZIQfpdUUFqaklBf7xDQYbBNT2+kSk9mN9ZPlEtUj+Czh1AEAQYQSwyQ0Fczz5ByYs2QfdwPEGl40VB7Q87QUzVM0Hh062+F5i5vsTKjL6pTBe+qtCKPLLVkT/N+7dAg9oRQe7YEUFa1AlBJd73QJ/54UC/LN9AeThOv+JlZ7+rDz+/j4sNvxBpp75fcw69KZS2Pxk3lEAD1qRAe32TQNJZeUCfOF5A5I1mQBDvpr+kb7q/Xzerv225i792riG/zVeAvrZC/z0SXA5AT06GQB8/ckB8wEpA16A2QJwIP0DxP8q/zczMv83MzL+ltba/S1h1v24L9759kSC+XXDAPtoLDUD5OEZApoowQGErJ0AnmitAzczMv83MzL/NzMy/rd7Kvy4hob9lBzy//0Whvny7Jz083Dk/Eq6jP2NcmT8Ihpc/h6yfPw==",
+    "bytesSHA256": "87ee4297dc05270cdc6014672ded147ead3e0edf73d57024a7805e24cc466f87"
+  },
+  "arm": {
+    "origin": [
+      -142.34572711697754,
+      3.4040856583155543,
+      -238.38966286297796
+    ],
+    "end": [
+      -139.2553793484801,
+      14.70498278948369,
+      -243.20237180178012
+    ],
+    "originNearest": {
+      "distance": 0.32104148758026174,
+      "point": [
+        -142.24946810042283,
+        3.334421779814469,
+        -238.68790568772292
+      ],
+      "cell": [
+        183,
+        133,
+        0
+      ],
+      "vertices": [
+        [
+          -142.578125,
+          9.500991821289062,
+          -240.234375
+        ],
+        [
+          -142.578125,
+          1.139333963394165,
+          -238.28125
+        ],
+        [
+          -140.625,
+          12.199748992919922,
+          -240.234375
+        ]
+      ],
+      "searchedXZRadius": 4,
+      "excludedTrianglesHorizontalDistanceAtLeast": 4
+    },
+    "endNearest": {
+      "distance": 1.0889638381005307,
+      "point": [
+        -139.79313911725617,
+        13.75835039548925,
+        -243.2256909444935
+      ],
+      "cell": [
+        184,
+        131,
+        0
+      ],
+      "vertices": [
+        [
+          -140.625,
+          14.253449440002441,
+          -244.140625
+        ],
+        [
+          -140.625,
+          14.205336570739746,
+          -242.1875
+        ],
+        [
+          -138.671875,
+          13.143924713134766,
+          -244.140625
+        ]
+      ],
+      "searchedXZRadius": 4,
+      "excludedTrianglesHorizontalDistanceAtLeast": 4
+    },
+    "partition": [
+      {
+        "t": 0,
+        "point": [
+          -142.34572711697754,
+          3.4040856583155543,
+          -238.38966286297796
+        ],
+        "terrain": 2.045922750762162,
+        "verticalGap": 1.3581629075533925
+      },
+      {
+        "t": 0.07198549420537294,
+        "point": [
+          -142.12326690559578,
+          4.217586323266774,
+          -238.73610809440424
+        ],
+        "terrain": 3.7151646468631565,
+        "verticalGap": 0.5024216764036176
+      },
+      {
+        "t": 0.3833001663884488,
+        "point": [
+          -141.1611963031143,
+          7.735721409031044,
+          -240.234375
+        ],
+        "terrain": 11.458852420282906,
+        "verticalGap": -3.723131011251861
+      },
+      {
+        "t": 0.5568069505051763,
+        "point": [
+          -140.625,
+          9.69650372789398,
+          -241.06941265086138
+        ],
+        "terrain": 13.057216456384614,
+        "verticalGap": -3.3607127284906344
+      },
+      {
+        "t": 0.7891267029265415,
+        "point": [
+          -139.90705117152675,
+          12.321925351546277,
+          -242.1875
+        ],
+        "terrain": 13.802942027623297,
+        "verticalGap": -1.4810166760770205
+      },
+      {
+        "t": 1,
+        "point": [
+          -139.2553793484801,
+          14.70498278948369,
+          -243.20237180178012
+        ],
+        "terrain": 13.45498278948368,
+        "verticalGap": 1.2500000000000107
+      }
+    ],
+    "crossings": [
+      {
+        "fraction": 0.10900106377671047,
+        "point": [
+          -142.00887592277132,
+          4.635895467244056,
+          -238.91425325695508
+        ],
+        "cell": [
+          183,
+          133,
+          0
+        ],
+        "vertices": [
+          [
+            -142.578125,
+            9.500991821289062,
+            -240.234375
+          ],
+          [
+            -142.578125,
+            1.139333963394165,
+            -238.28125
+          ],
+          [
+            -140.625,
+            12.199748992919922,
+            -240.234375
+          ]
+        ]
+      },
+      {
+        "fraction": 0.9034822366150976,
+        "point": [
+          -139.553652803177,
+          13.614245474140482,
+          -242.7378598991844
+        ],
+        "cell": [
+          184,
+          131,
+          1
+        ],
+        "vertices": [
+          [
+            -138.671875,
+            13.143924713134766,
+            -244.140625
+          ],
+          [
+            -140.625,
+            14.205336570739746,
+            -242.1875
+          ],
+          [
+            -138.671875,
+            13.110652923583984,
+            -242.1875
+          ]
+        ]
+      }
+    ],
+    "minimumVerticalGap": -3.723131011251861,
+    "method": "Continuous cell/grid/diagonal partition; affine terrain and segment on every interval; endpoint distances use all candidate canonical triangles in4mXZ, remaining triangles are farther horizontally."
+  },
+  "producer": {
+    "actorSubjectHeight": 2.5151164954692447,
+    "body": {
+      "position": [
+        -142.34572711697754,
+        0,
+        -238.38966286297796
+      ],
+      "heading": 5.592367956950151,
+      "relativeY": 0,
+      "verticalVelocity": 0,
+      "ground": 2.045922750762162,
+      "footY": 2.045922750762162,
+      "speed": 0,
+      "onFoot": false,
+      "flying": false,
+      "swim": false,
+      "targetDistance": 0.5209264690892386,
+      "closestFallsCircle": {
+        "i": 305,
+        "x": -145.20000000000005,
+        "z": -238.79999999999998,
+        "r": 1,
+        "clearance": 1.3336175642371553
+      },
+      "all306BodyBeltsClear": true,
+      "worldSurfaceContacts": []
+    },
+    "foot": {
+      "id": 1,
+      "breed": "bay-sporthorse",
+      "modelKey": "bay-sporthorse",
+      "profile": {
+        "nativeKind": "horse",
+        "nativeDragon": false,
+        "fitScale": 0.9177628649773031
+      },
+      "herScale": 1.0182657876393701,
+      "mountScale": [
+        1,
+        1,
+        1
+      ],
+      "subjectMeshY": 2.045922750762162,
+      "riderWorldTop": 3.861062813368094
+    },
+    "architectureFraction": 1,
+    "mounted": true,
+    "normallyWalked": true,
+    "sourceHeightOrPoseOverride": false
+  }
+}

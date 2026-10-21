@@ -1,6 +1,8 @@
+import {createTerrainCameraClearance} from './terrain-camera-clearance.mjs?v=terrain-camera-clearance-1';
 // Static architecture is registered before render batching. Sweep the camera's
 // clearance volume against those solid surfaces, independently of horse collisions.
-export function createFollowCamera({THREE,groundHeight,clearance=.3}) {
+export function createFollowCamera({THREE,groundHeight,clearance=.3,terrain=null}) {
+ const terrainClearance=terrain?createTerrainCameraClearance({...terrain,THREE}):null;
  const bounds=[],direction=new THREE.Vector3(),candidate=new THREE.Vector3();
  const orbit=new THREE.Vector3(),base=new THREE.Vector3(),previousOrigin=new THREE.Vector3(),futureOrigin=new THREE.Vector3(),probe=new THREE.Vector3();let hasOrigin=false;let avoidanceAngle=0,avoidanceTarget=0,clearTime=0,reach=1;
  const localOrigin=new THREE.Vector3(),localEnd=new THREE.Vector3(),localDirection=new THREE.Vector3();
@@ -72,7 +74,7 @@ export function createFollowCamera({THREE,groundHeight,clearance=.3}) {
    }
    if(near<=far&&far>=0)result=Math.min(result,Math.max(0,near-.015));
   }
-  return result;
+  return terrainClearance?Math.min(result,terrainClearance.limit(origin,end,clearance)):result;
  }
  function resolve(origin,desired,out){
   candidate.copy(desired);

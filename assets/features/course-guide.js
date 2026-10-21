@@ -1157,7 +1157,9 @@ export function install(G){
    const ang=ang0+F.nudgeO*side;
    const fx=Math.sin(ang), fz=Math.cos(ang);
    let ex=player.pos.x-fx*run, ez=player.pos.z-fz*run;
-   let ey=Math.max(foot+rise,W.groundH(ex,ez)+1.25);
+   // Ground horses let the full-arm terrain orbit choose clearance before the
+   // final endpoint floor; pre-lifting would retain a distant cliff height.
+   let ey=groundHorse?foot+rise:Math.max(foot+rise,W.groundH(ex,ez)+1.25);
    /* If that lands in a canopy, walk the eye back along its own arm toward the horse until it
       is clear. Coming IN rather than going round keeps the three-quarter framing the whole
       point of this rig — a shorter version of the good shot beats a long version of a bad one.
