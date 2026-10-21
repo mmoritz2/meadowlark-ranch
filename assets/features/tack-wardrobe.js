@@ -12,7 +12,7 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js?v=character-polish-20261009';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=character-foundation99-20261021';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=canino-character100-20261021';
 import {outfitPalette} from '../rider-clothes.js?v=tailored-coats69-20261010';
 import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=character-foundation99-20261021';
 export const id='tack-wardrobe';
@@ -224,7 +224,7 @@ export function install(G){
   +'<div class="ch-stage" id="chStage">'
   +'<div class="ch-tools"><button class="ch-tool" data-ch="zoom" title="Zoom">'+SVGI(ICO.zoom)+'</button><button class="ch-tool" data-ch="dice" title="Surprise me">'+SVGI(ICO.dice)+'</button>'
   +'<button class="ch-tool" data-ch="body" title="Switch body">'+SVGI(ICO.body)+'</button><button class="ch-tool" data-ch="turn" title="Turn">'+SVGI(ICO.turn)+'</button></div>'
-  +'<div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
+  +'<a href="assets/models/rider/canino-LICENSE.txt" target="_blank" rel="noopener" style="position:absolute;left:12px;bottom:3px;font-size:10px;color:#ced4da">Character art credits</a><div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
   +'<div class="ch-panel"><div class="ch-main"><nav class="ch-groups" id="chGroups" aria-label="Customize your rider"></nav><nav class="ch-strip" id="chStrip" aria-label="Appearance categories"></nav><div class="ch-head" id="chHead"></div><div class="ch-filters" id="chFilters" hidden></div><div class="ch-grid" id="chGrid"></div>'
   +'<div class="ch-foot"><button class="ch-btn ch-undo" data-ch="undo">Undo</button><button class="ch-btn ch-save" data-ch="save" id="chSave">Save</button></div></div>'
   +'</div>';

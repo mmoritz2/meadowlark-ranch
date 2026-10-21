@@ -19,3 +19,7 @@ Blender Studio Human Base Meshes v1.4.1 adult body source, under CC0 1.0 Univers
 The connected clothing source surfaces derive from those meshes. Custom fitting,
 skin weights, garment details and shared animation integration are project work.
 Source bundle SHA256: 811f43accbb31a88266d932f8f5563b2d13586fca0ba2693aad1f5fe582b3515
+
+canino-f.glb is adapted from "Free Stylized Cartoon Girl Rigged Character" by
+Canino3d Studio, licensed under CC BY 4.0, separately from the CC0 assets above.
+See canino-LICENSE.txt for the source, license link and adaptation details.

@@ -1,0 +1,20 @@
+Canino3d character attribution
+
+"Free Stylized Cartoon Girl Rigged Character" by Canino3d (Canino3d Studio).
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+
+Source: https://www.fab.com/listings/fe501f98-a9bb-4acb-b96e-e5b65d8f0d00
+Author's equivalent listing: https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4
+License: https://creativecommons.org/licenses/by/4.0/
+
+Adapted for Meadowlark Ranch: rig conversion for the game's animation system,
+material repairs, and wardrobe adaptation. Canino3d does not endorse this project.
+
+The character license permits sharing and adaptation, including commercial use,
+with attribution, a link to the license, and an indication of changes. Preserve
+this credit and license link when redistributing the character or derivatives.
+
+Source GLB SHA256: 50f27128499cb90fb1ebc309349ffd69bade0133d0b39009d3ad75b775ef5e1c
+Source file: free_stylized_cartoon_girl_rigged_character.glb
+Fab GLB generator: fab-model-conversion
+Source listing license reviewed: 2026-10-21
