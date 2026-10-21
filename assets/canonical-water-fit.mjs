@@ -70,7 +70,22 @@ export function fitShoreTriangles(input,heights,{clearance=.014,kind='shore',cei
 export function createShoreContact(geometry){
  const p=geometry.position,I=geometry.index,owners=geometry.owners,cells=new Map(),S=GRID.step;
  for(let f=0;f<I.length/3;f++){const key=owners[f*3]+','+owners[f*3+1],list=cells.get(key)||[];list.push(f);cells.set(key,list);}
- const contact=(x,z)=>{const gx=(x+500)/S,gz=(z+500)/S,ix=Math.floor(gx),iz=Math.floor(gz),xs=Math.abs(gx-Math.round(gx))<1e-9?[ix,ix-1]:[ix],zs=Math.abs(gz-Math.round(gz))<1e-9?[iz,iz-1]:[iz];let h=-Infinity;for(const cx of xs)for(const cz of zs)for(const f of cells.get(cx+','+cz)||[]){const t=[0,1,2].map(k=>{const i=I[f*3+k]*3;return[p[i],p[i+2],p[i+1]];}),a=area(...t);if(Math.abs(a)<1e-15)continue;const v=[x,z],u=area(v,t[1],t[2])/a,w=area(t[0],v,t[2])/a;if(Math.min(u,w,1-u-w)>=-1e-7)h=Math.max(h,t[0][2]*u+t[1][2]*w+t[2][2]*(1-u-w));}return h;};
+ // Read the same live source arrays and preserve cell/face order and every
+ // barycentric operation. Avoid constructing vertex and query arrays per face.
+ const contact=(x,z)=>{
+  const gx=(x+500)/S,gz=(z+500)/S,ix=Math.floor(gx),iz=Math.floor(gz),nx=Math.abs(gx-Math.round(gx))<1e-9?2:1,nz=Math.abs(gz-Math.round(gz))<1e-9?2:1;
+  let h=-Infinity;
+  for(let dx=0;dx<nx;dx++)for(let dz=0;dz<nz;dz++){
+   const faces=cells.get((ix-dx)+','+(iz-dz));if(!faces)continue;
+   for(const f of faces){
+    const ia=I[f*3]*3,ib=I[f*3+1]*3,ic=I[f*3+2]*3,ax=p[ia],az=p[ia+2],ay=p[ia+1],bx=p[ib],bz=p[ib+2],by=p[ib+1],cx=p[ic],cz=p[ic+2],cy=p[ic+1];
+    const a=(bx-ax)*(cz-az)-(bz-az)*(cx-ax);if(Math.abs(a)<1e-15)continue;
+    const u=((bx-x)*(cz-z)-(bz-z)*(cx-x))/a,w=((x-ax)*(cz-az)-(z-az)*(cx-ax))/a;
+    if(Math.min(u,w,1-u-w)>=-1e-7)h=Math.max(h,ay*u+by*w+cy*(1-u-w));
+   }
+  }
+  return h;
+ };
  contact.profile='hollowpeak-owned-shore-contact-1';contact.registered=false;contact.physicalAdmissionAccepted=false;return contact;
 }
 
