@@ -232,8 +232,18 @@ export function install(G){
  /* Five hundred flakes spread over a forty-metre cube read as a dusting of specks in the sky;
     the same five hundred packed into a twenty-metre one read as snow falling, because what
     sells snowfall is flakes near the lens crossing the frame fast. */
- const snowM=new THREE.Points(snowGeo,new THREE.PointsMaterial({map:flakeTex,size:0.115,sizeAttenuation:true,
+ // Small distant flakes stay visible while close flakes fade before they can
+ // become broad white discs across the rider or trail. Positions and weather are unchanged.
+ const snowM=new THREE.Points(snowGeo,new THREE.PointsMaterial({map:flakeTex,size:0.045,sizeAttenuation:true,
   transparent:true,opacity:0,depthWrite:false,fog:true}));
+ snowM.material.name='Atmosphere | fine snow';
+ snowM.material.onBeforeCompile=shader=>{
+  shader.vertexShader='varying float vAtmosSnowDepth;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\n vAtmosSnowDepth=-mvPosition.z;');
+  shader.fragmentShader='varying float vAtmosSnowDepth;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <map_particle_fragment>','#include <map_particle_fragment>\n diffuseColor.a*=smoothstep(1.4,4.0,vAtmosSnowDepth);');
+ };
+ snowM.material.customProgramCacheKey=()=> 'atmos-fine-snow-1';
  snowM.frustumCulled=false;snowM.visible=false;scene.add(snowM);
 
  /* ================= 8. the skein ================= */
