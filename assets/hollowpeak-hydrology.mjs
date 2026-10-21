@@ -3,6 +3,7 @@
 // one synchronous private-RNG transaction with no await while patched.
 import {createHollowpeakDesign,HOLLOWPEAK_DESIGN as DESIGN} from './hollowpeak-design.mjs';
 import {patchPlungePool} from './cascade-flow.mjs?v=hollowpeak-cascades-1';
+import {configureHollowpeakImpactFoam} from './hollowpeak-impact-foam.mjs?v=hollowpeak-impact-current-1';
 import {configureHollowpeakWaterResponse,patchHollowpeakWaterResponse,HOLLOWPEAK_WATER_RESPONSE_PROFILE} from './hollowpeak-water-response.mjs?v=hollowpeak-optical-response-1';
 import {createHollowpeakShoreOpticalAttributes} from './hollowpeak-shore-attributes.mjs?v=hollowpeak-shore-mineral-hem-1';
 import {createHollowpeakShoreWetness,configureHollowpeakShoreResponse,patchHollowpeakShoreResponse,HOLLOWPEAK_SHORE_RESPONSE_PROFILE} from './hollowpeak-shore-response.mjs?v=hollowpeak-shore-mineral-hem-1';
@@ -61,6 +62,7 @@ export function installHollowpeakHydrology({G,FALLS,heights,waterTriangles,water
    const effects=W.waterfallArt.effects(flow);
    effects.group.traverse(o=>{if(o.geometry)ownedResources.push(o.geometry);});ownedResources.push(...effects.materials);
    const foam=W.waterfallArt.impact({x:f.landing[0],y:DESIGN.pool.level+.045,z:f.landing[2],radius:f.impactRadius});ownedResources.push(foam.geometry,foam.material);
+   const impactOptics=configureHollowpeakImpactFoam({foam,fall,flow,landing:f.landing,time:W.waterfallArt.time});
    root.add(fall,effects.group,foam);
    // The existing factory/tick advances the same time uniform. No second clock.
    for(const material of effects.materials){atmosMaterials.push(material);}
@@ -72,7 +74,7 @@ export function installHollowpeakHydrology({G,FALLS,heights,waterTriangles,water
    // Query padding requests the nearest finite emitted face even off-surface;
    // it is used only as a distance search and never admits swimming there.
    const reflectionPlanes=(x,z)=>basinQueries.map(({basin,query})=>({distance:query.waterFootprintAt(x,z,2000).distance??Infinity,level:basin.level,refreshIntervalMs:100}));
-   return {profile:'hollowpeak-connected-hydrology-1',root,queries,waterMeshes,shoreMesh,shoreGeometry,fall,effects,foam,flow,reflectionPlanes,contactIndex,beforeSurfaces,ledger,ownedResources,sourceShore:S,sourceBankMaterial:bankSource,field:heights,finalFieldSHA256,sourceWaterTriangles:waterTriangles,shoreOptics};
+   return {profile:'hollowpeak-connected-hydrology-1',root,queries,waterMeshes,shoreMesh,shoreGeometry,fall,effects,foam,flow,reflectionPlanes,contactIndex,beforeSurfaces,ledger,ownedResources,sourceShore:S,sourceBankMaterial:bankSource,field:heights,finalFieldSHA256,sourceWaterTriangles:waterTriangles,shoreOptics,impactOptics};
   });
  }catch(error){for(let i=0;i<exact.length;i++)exact[i][0].visible=oldVisibility[i];W.groundSurfaces.splice(0,W.groundSurfaces.length,...beforeSurfaces);L.ownedQueries=previousOwnedQueries;for(const o of created)o.removeFromParent();for(const r of ownedResources)r.dispose();W.waterfallArt.effectGroups.length=oldFactoryEffects;W.waterfallArt.mistMaterials.length=oldFactoryMists;throw error;}
  const state=result.value;state.privateConstructorDraws=result.draws;
