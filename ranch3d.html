@@ -15434,6 +15434,13 @@ ranchBuilderArt.ready.then(()=>queueMicrotask(()=>{
  solidWorld.refresh();solidWorld.registerParts(scene);
 }));
 G.world.hollowpeakRuntimeReady=finishHollowpeakRuntime({G,FALLS,runtime:hollowpeakRuntime}).then(value=>{finalizeHollowpeakAnchorGrounding({G,runtime:value});G.photoscans?.installSnowpeakBoulderContact?.({source:snowpeakBoulderSource,runtime:value});hollowpeakStartupReady=true;if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)){window.__setLoad?.(1,'ready!');$('load')?.remove();}return value;}).catch(error=>{G.world.hollowpeakRuntimeError=error.message;console.error('Hollowpeak landscape could not finish',error);window.GameLoading?.fail('The mountain landscape could not finish loading.');return null;});
+// Load the visible sky after world construction; the existing PMREM maps still light the ranch.
+G.world.daylightSkyReady=G.world.hollowpeakRuntimeReady.then(async runtime=>{
+ if(!runtime)return null;
+ await Promise.allSettled([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,G.quartersPkg?.saplingsReady,G.world.ranchArrivalLandscapeReady]);
+ const {enablePastoralDaylightDisplay}=await import('./assets/enable-daylight-sky.mjs?v=photographic-daylight-1');
+ return enablePastoralDaylightDisplay({THREE,material:sky.material,url:new URL('./assets/textures/sky/kloofendal48d_2k.hdr',location.href).href,initialStrength:1});
+}).then(display=>{G.world.daylightSky=display;return display;}).catch(error=>{console.warn('Daylight sky image could not load',error);G.world.daylightSky=null;return null;});
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{

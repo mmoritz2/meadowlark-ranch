@@ -1,0 +1,17 @@
+Kloofendal 48d Partly Cloudy (Pure Sky), 2K HDRI
+Original photograph: Greg Zaal. Sky edits: Jarod Guest.
+Provided by Poly Haven under CC0 1.0 (public domain dedication).
+Asset: https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky
+License: https://polyhaven.com/license
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Source file: kloofendal_48d_partly_cloudy_puresky_2k.hdr
+SHA-256: 5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198
+
+The HDRI is used for the visible daylight sky. Existing procedural PMREM maps
+continue to provide environment lighting. The measured sun direction is
+aligned by azimuth and a horizon-preserving elevation remap; the baked sun
+is masked so the game's existing sun remains in use. Dawn, dusk, night and
+rain retain the existing sky treatment.
+
+RGBELoader.js is the official Three.js r160 loader, covered by the existing
+Three.js MIT license in assets/vendor/three/LICENSE.
