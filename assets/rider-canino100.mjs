@@ -1,3 +1,5 @@
+import {CANINO_HAIR_STYLES,caninoHairId,installCaninoHair101} from './rider-canino-hair101.mjs?v=canino-style101-20261022';
+import {installCaninoFit101} from './rider-canino-fit101.mjs?v=canino-style101-20261022';
 /* Canino3d Studio's CC BY 4.0 character, adapted to the game's canonical65 rig.
  * The artist's head, eyes, lashes, hair and upper body remain separate authored
  * surfaces. Conversion and attribution: assets/models/rider/canino-LICENSE.txt. */
@@ -68,7 +70,6 @@ export function withCaninoCharacter(options,legacy,lifecycle){
    rig.root.getObjectByName('rider-eyelashes')?.removeFromParent();
    for(const mesh of rig.outfit?.meshes||[])mesh.visible=!authored||mesh.name==='Tailored_Legs';
    const top=byMaterial.get('lambert7');if(top)top.visible=authored;
-   const hair=byMaterial.get('lambert10');if(hair)hair.visible=true;
    // Fit the existing riding helmet around the new, larger authored crown.
    rig.helmet.scale.set(1.10,1.04,1.12);rig.helmet.position.set(0,.013,-.017);
    rig.refreshAccessories();
@@ -76,9 +77,9 @@ export function withCaninoCharacter(options,legacy,lifecycle){
   rig.setOutfit=(id,cb)=>originalOutfit(id,()=>{refresh(look);cb?.();});
   rig.setLook=f=>{look={...f};originalLook(f);refresh(f);};
   rig.dispose=()=>{if(rig.disposed)return;for(const m of imported){m.removeFromParent();m.geometry.dispose();}for(const m of owned)m.dispose();originalDispose();};
-  rig.setLook(look);return lifecycle.trackRig(rig);
+  rig.setLook(look);installCaninoFit101(T,rig);installCaninoHair101(T,rig,{head:byMaterial.get('Std_Skin_Head'),hair:byMaterial.get('lambert10'),lifecycle,initialLook:look});return lifecycle.trackRig(rig);
  }
- return {...legacy,materialLifecycle:lifecycle,hairStyles:legacy.hairStyles.map(h=>({...h,body:h.id==='long'?h.body:h.body.filter(b=>b!=='f')})).filter(h=>h.body.length),hairId:(id,body)=>body==='m'?legacy.hairId(id,body):'long',kit,ready:body=>body==='m'?legacy.ready(body):ready.get('f')||null,
+ return {...legacy,materialLifecycle:lifecycle,hairStyles:[...CANINO_HAIR_STYLES.map(h=>({...h,body:legacy.hairStyles.some(x=>x.id===h.id&&x.body.includes('m'))?['f','m']:['f']})),...legacy.hairStyles.filter(h=>h.body.includes('m')&&!CANINO_HAIR_STYLES.some(x=>x.id===h.id)).map(h=>({...h,body:['m']}))],hairId:(id,body)=>body==='m'?legacy.hairId(id,body):caninoHairId(id),kit,ready:body=>body==='m'?legacy.ready(body):ready.get('f')||null,
   outfitFor:(k,id)=>k.body==='m'?legacy.outfitFor(k,id):female.outfitFor(k,id),
   build(k,look){return k.body==='m'?legacy.build(k,look):install(female.build(k,{...look,neckwear:'none'}),look||{});},
   adoptRider:(R,rig,opt)=>rig.kit.body==='m'?legacy.adoptRider(R,rig,opt):female.adoptRider(R,rig,opt)

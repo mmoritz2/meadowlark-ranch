@@ -1,4 +1,5 @@
-import {withCaninoCharacter} from './rider-canino100.mjs?v=canino-character100-20261021';
+import {CANINO_HAIR_STYLES,caninoHairId} from './rider-canino-hair101.mjs?v=canino-style101-20261022';
+import {withCaninoCharacter} from './rider-canino100.mjs?v=canino-style101-20261022';
 import {installHair99} from './rider-hair99.mjs?v=character-foundation99-20261021';
 import {installLong98} from './rider-long98.js?v=character-redesign98-20261020';
 import {createRiderLibrary as create59} from './rider-model-braids.js?v=character-foundation99-20261021';
@@ -25,5 +26,5 @@ function createLegacyRiderLibrary(options){
 export function createRiderLibrary(options){return withCaninoCharacter(options,createLegacyRiderLibrary(options),options.riderMaterialLifecycle||riderMaterialLifecycle15);}
 
 import {RIDER_HAIR as legacyHair,riderHairId as legacyHairId} from './rider-model-base.js?v=character-foundation99-20261021';
-export const RIDER_HAIR=legacyHair.map(h=>({...h,body:h.id==='long'?h.body:h.body.filter(b=>b!=='f')})).filter(h=>h.body.length);
-export const riderHairId=(id,body)=>body==='m'?legacyHairId(id,body):'long';
+export const RIDER_HAIR=[...CANINO_HAIR_STYLES.map(h=>({...h,body:legacyHair.some(x=>x.id===h.id&&x.body.includes('m'))?['f','m']:['f']})),...legacyHair.filter(h=>h.body.includes('m')&&!CANINO_HAIR_STYLES.some(x=>x.id===h.id)).map(h=>({...h,body:['m']}))];
+export const riderHairId=(id,body)=>body==='m'?legacyHairId(id,body):caninoHairId(id);

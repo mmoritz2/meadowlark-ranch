@@ -12,7 +12,7 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js?v=character-polish-20261009';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=canino-character100-20261021';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=canino-style101-20261022';
 import {outfitPalette} from '../rider-clothes.js?v=tailored-coats69-20261010';
 import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=character-foundation99-20261021';
 export const id='tack-wardrobe';
@@ -489,7 +489,7 @@ export function install(G){
    const cur=riderHairId(d.hairStyle,d.body);
    for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(d.body||'f'))){
     const th=CH.thumbs[hs.id];
-    h+='<button class="ch-card'+(cur===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
+    h+='<button class="ch-card'+(cur===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'" aria-pressed="'+(cur===hs.id)+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
    }
   }else if(CH.tab==='outfit'){
    const selected=OUTFITS.find(o=>o.id===d.outfit)||OUTFITS[0],thumbs=CH.outfitThumbs[d.body||'f']||{};
