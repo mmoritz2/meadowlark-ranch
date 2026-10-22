@@ -1,3 +1,4 @@
+import {prepareCaninoStance102} from './rider-canino-stance102.mjs?v=canino-stance102-20261022';
 import {CANINO_HAIR_STYLES,caninoHairId,installCaninoHair101} from './rider-canino-hair101.mjs?v=canino-style101-20261022';
 import {installCaninoFit101} from './rider-canino-fit101.mjs?v=canino-style101-20261022';
 /* Canino3d Studio's CC BY 4.0 character, adapted to the game's canonical65 rig.
@@ -12,7 +13,7 @@ export function withCaninoCharacter(options,legacy,lifecycle){
  const T=options.THREE,female=createWardrobe({...options,riderMaterialLifecycle:{...lifecycle,trackRig:rig=>rig}}),loader=new options.GLTFLoader();
  let modelPromise;const ready=new Map();
  const model=()=>modelPromise||(modelPromise=loader.loadAsync(new URL('./models/rider/canino-f.glb?v=canino-character100-20261021',import.meta.url).href));
- function kit(body){if(body==='m')return legacy.kit(body);return Promise.all([female.kit('f'),model()]).then(([k,g])=>{k.canino100=g;k.characterSource='Canino3d Studio';ready.set('f',k);return k;});}
+ function kit(body){if(body==='m')return legacy.kit(body);return Promise.all([female.kit('f'),model()]).then(([k,g])=>{prepareCaninoStance102(T,k);k.canino100=g;k.characterSource='Canino3d Studio';ready.set('f',k);return k;});}
  function install(rig,look){
   const imported=[],owned=[],byMaterial=new Map(),bind=rig.body.bindMatrix;
   rig.root.name='Canino stylized rider';

@@ -1,5 +1,5 @@
 import {CANINO_HAIR_STYLES,caninoHairId} from './rider-canino-hair101.mjs?v=canino-style101-20261022';
-import {withCaninoCharacter} from './rider-canino100.mjs?v=canino-style101-20261022';
+import {withCaninoCharacter} from './rider-canino100.mjs?v=canino-stance102-20261022';
 import {installHair99} from './rider-hair99.mjs?v=character-foundation99-20261021';
 import {installLong98} from './rider-long98.js?v=character-redesign98-20261020';
 import {createRiderLibrary as create59} from './rider-model-braids.js?v=character-foundation99-20261021';
