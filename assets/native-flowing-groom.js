@@ -19,6 +19,13 @@ function normalWork(g,weights){
  for(let i=0;i<index.length;i+=3){const a=index[i],b=index[i+1],c=index[i+2];if(!weights||weights[a]!==0||weights[b]!==0||weights[c]!==0)corners.push(a*3,b*3,c*3);}
  return{corners:new Uint32Array(corners),vertices:new Uint32Array(vertices)};
 }
+// Squared length avoids the general hypot scaling loop for ordinary normals.
+// Keep hypot for tiny/huge/non-finite inputs, including its Infinity/NaN rules.
+// This helper is only a normal denominator; spring/ground/position math stays exact.
+function normalLength3(x,y,z){
+ const squared=x*x+y*y+z*z;
+ return (squared>1e-240&&squared<1e240?Math.sqrt(squared):Math.hypot(x,y,z))||1;
+}
 function geometricNormals(g,out,work){
  out.fill(0);const p=g.attributes.position.array,index=work.corners;
  for(let i=0;i<index.length;i+=3){const a=index[i],b=index[i+1],c=index[i+2],ax=p[b]-p[a],ay=p[b+1]-p[a+1],az=p[b+2]-p[a+2],bx=p[c]-p[a],by=p[c+1]-p[a+1],bz=p[c+2]-p[a+2],x=ay*bz-az*by,y=az*bx-ax*bz,z=ax*by-ay*bx;
@@ -27,7 +34,7 @@ function geometricNormals(g,out,work){
   out[c]+=x;out[c+1]+=y;out[c+2]+=z;
  }
  const vertices=work.vertices;
- for(let j=0;j<vertices.length;j++){const i=vertices[j],x=out[i],y=out[i+1],z=out[i+2],l=Math.hypot(x,y,z)||1;out[i]=x/l;out[i+1]=y/l;out[i+2]=z/l;}
+ for(let j=0;j<vertices.length;j++){const i=vertices[j],x=out[i],y=out[i+1],z=out[i+2],l=normalLength3(x,y,z);out[i]=x/l;out[i+1]=y/l;out[i+2]=z/l;}
 }
 function transferNormals(from,to,authored,out,work){
  // Zero-weight vertices always retain these exact authored values. Bulk copy
@@ -36,7 +43,7 @@ function transferNormals(from,to,authored,out,work){
  for(let j=0;j<vertices.length;j++){const i=vertices[j];
   const ax=from[i],ay=from[i+1],az=from[i+2],bx=to[i],by=to[i+1],bz=to[i+2],x=authored[i],y=authored[i+1],z=authored[i+2],kx=ay*bz-az*by,ky=az*bx-ax*bz,kz=ax*by-ay*bx,d=ax*bx+ay*by+az*bz;
   if(d<-.9999){out[i]=bx;out[i+1]=by;out[i+2]=bz;continue;}
-  const u=ky*z-kz*y,v=kz*x-kx*z,w=kx*y-ky*x,q=1/(1+d),nx=x+u+(ky*w-kz*v)*q,ny=y+v+(kz*u-kx*w)*q,nz=z+w+(kx*v-ky*u)*q,l=Math.hypot(nx,ny,nz)||1;out[i]=nx/l;out[i+1]=ny/l;out[i+2]=nz/l;
+  const u=ky*z-kz*y,v=kz*x-kx*z,w=kx*y-ky*x,q=1/(1+d),nx=x+u+(ky*w-kz*v)*q,ny=y+v+(kz*u-kx*w)*q,nz=z+w+(kx*v-ky*u)*q,l=normalLength3(nx,ny,nz);out[i]=nx/l;out[i+1]=ny/l;out[i+2]=nz/l;
  }
 }
 function shapeLayeredLock(raw,ids,uv,role,lockIndex){
