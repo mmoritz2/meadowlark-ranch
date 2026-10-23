@@ -8,6 +8,7 @@ import {installPastureLighting} from './pasture-lighting.mjs?v=grass-volume-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {meadowGrazingAt,meadowSwardGrazingAt} from './pastoral-fields.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {fieldSwardAt,FIELD_SWARD_HEIGHT_BOOST} from './field-sward-bands.mjs?v=field-sward-bands-4';
+import {ochreCoverAt,shortenOchreTuft,tintOchreTuft} from './ochre-dry-cover.mjs?v=ochre-short-dry-cover-2';
 
 // Middle-distance grass uses six/ten/twelve upright blades within the retained
 // 12/18/24-triangle tiers; the public blade count still selects that tier.
@@ -198,11 +199,12 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         const a=hash(ix*137+k*11,iz*73+k*31),b=hash(ix*59+k*23,iz*151+k*7),c=hash(ix+k*19,iz-k*17);
         const px=(ix+a)*CELL,pz=(iz+b)*CELL,id=slot*K+k;
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
-        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
+        const ochreCover=ochreCoverAt(px,pz,c);
+        if(canGrow(px,pz)&&(!ochreCover||ochreCover.keep)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth)*ranchTurfReachAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2)*ranchTurfHeightAt(px,pz),spread);}
         else scale.setScalar(0);
         matrix.compose(pos,q,scale);respondChalkGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);respondPastoralGrassMatrix(matrix.elements,0,mesh.geometry,heightAt);
-        const thawFloor=terrainHeightAt?hollowpeakThawFloorAt(px,pz,terrainHeightAt):null;respondHollowpeakThawMatrix(matrix.elements,0,mesh.geometry,heightAt,thawFloor);
-        mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);respondHollowpeakThawColor(color,thawFloor);mesh.setColorAt(id,color);
+        const thawFloor=terrainHeightAt?hollowpeakThawFloorAt(px,pz,terrainHeightAt):null;respondHollowpeakThawMatrix(matrix.elements,0,mesh.geometry,heightAt,thawFloor);shortenOchreTuft(matrix.elements,0,mesh.geometry,ochreCover);
+        mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);respondPastoralGrassColor(color,px,pz);tintOchreTuft(color,ochreCover);respondHollowpeakThawColor(color,thawFloor);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

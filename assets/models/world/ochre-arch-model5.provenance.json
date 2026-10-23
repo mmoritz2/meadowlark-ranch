@@ -1,0 +1,166 @@
+{
+  "schema": "meadowlark-ochre-arch-derivative/v1",
+  "file": "ochre-arch-model5.bin",
+  "bytes": 2392612,
+  "sha256": "3458e896c0b8a90f4b31874f2b3f39cc327d8abf235665baf7e30101ba940b83",
+  "codec": "../../ochre-arch-geometry-binary.mjs: MLARCH01 little-endian Float32 attributes/Uint16 indices; metadata and arrays travel together.",
+  "sources": [
+    {
+      "name": "Namaqualand Cliff 02",
+      "authors": [
+        "Dario Barresi",
+        "Rico Cilliers"
+      ],
+      "page": "https://polyhaven.com/a/namaqualand_cliff_02",
+      "license": "CC0 1.0",
+      "existingAsset": "realism/namaqualand_cliff_02.glb",
+      "sha256": "168a8897fb36a01fec2a6d3b6427f931cf292885adbb762a9f1d667c7fc4d80e",
+      "existingDocumentation": "realism/README.md; realism/manifest.json"
+    },
+    {
+      "name": "Namaqualand Boulder 03",
+      "authors": {
+        "Jenelle van Heerden": "modeling",
+        "Dario Barresi": "Photography"
+      },
+      "page": "https://polyhaven.com/a/namaqualand_boulder_03",
+      "license": "CC0 1.0 Universal",
+      "existingAsset": "namaqualand_boulder_03.glb",
+      "sha256": "c3e564b996b4524bbbc242f3846f6d3507c2ccefc632ebdceb6eefb5c1104374",
+      "bytes": 178656,
+      "existingDocumentation": "SOURCE.md; manifest.json"
+    },
+    {
+      "name": "Meadowlark authored procedural sandstone arch",
+      "source": "../../geology.js / makeArch(seed6413), grounded and placed by ../../features/world-quarters.js",
+      "sourcePrefixVerticesPreserved": 2025,
+      "originalFeetPreserved": 14
+    }
+  ],
+  "derivative": {
+    "revision": "Model5 continuous sloped buttress",
+    "note": "Cliff-derived crown front/rear and boundary strip are compacted by identical complete rendered attribute rows without changing any rendered triangle. One broad raked central cliff strip replaces the rejected screen-left cap and narrow foundation; XY height/slope deformation, existing cliff UVs, matching front/rear depth and explicit canyon-material side closures. Opposite whole boulder remains. Original2025vertex prefix and14foot meshes/root placement/protectedopening remain.",
+    "retiredProceduralShelfFaces": 434,
+    "upperReachLocalM": 9.3,
+    "newButtressOpeningXGapM": 0.714231014251709,
+    "ringVertices": 45023,
+    "ringTriangles": 67292,
+    "wholeArchVertices": 47123,
+    "wholeArchTriangles": 69980,
+    "groups": [
+      {
+        "start": 0,
+        "count": 2280,
+        "materialIndex": 0
+      },
+      {
+        "start": 2280,
+        "count": 171114,
+        "materialIndex": 1
+      },
+      {
+        "start": 173394,
+        "count": 16482,
+        "materialIndex": 0
+      },
+      {
+        "start": 189876,
+        "count": 12000,
+        "materialIndex": 2
+      }
+    ],
+    "partOffsets": [
+      {
+        "part": "retainedContact",
+        "vertexOffset": 0,
+        "vertices": 2025,
+        "indexOffset": 0,
+        "indices": 2280,
+        "materialSlot": 0
+      },
+      {
+        "part": "front",
+        "vertexOffset": 2025,
+        "vertices": 11924,
+        "indexOffset": 2280,
+        "indices": 54543,
+        "materialSlot": 1
+      },
+      {
+        "part": "rear",
+        "vertexOffset": 13949,
+        "vertices": 11924,
+        "indexOffset": 56823,
+        "indices": 54543,
+        "materialSlot": 1
+      },
+      {
+        "part": "buttressFront",
+        "vertexOffset": 25873,
+        "vertices": 6748,
+        "indexOffset": 111366,
+        "indices": 31014,
+        "materialSlot": 1
+      },
+      {
+        "part": "buttressRear",
+        "vertexOffset": 32621,
+        "vertices": 6748,
+        "indexOffset": 142380,
+        "indices": 31014,
+        "materialSlot": 1
+      },
+      {
+        "part": "boundaryWalls",
+        "vertexOffset": 39369,
+        "vertices": 2912,
+        "indexOffset": 173394,
+        "indices": 14940,
+        "materialSlot": 0
+      },
+      {
+        "part": "buttressSideWalls",
+        "vertexOffset": 42281,
+        "vertices": 516,
+        "indexOffset": 188334,
+        "indices": 1542,
+        "materialSlot": 0
+      },
+      {
+        "part": "leftPier",
+        "vertexOffset": 42797,
+        "vertices": 2226,
+        "indexOffset": 189876,
+        "indices": 12000,
+        "materialSlot": 2
+      }
+    ],
+    "rootMatrixWorld": [
+      -0.9450720820919227,
+      0,
+      -0.32686198869008654,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0.32686198869008654,
+      0,
+      -0.9450720820919227,
+      0,
+      -334.84324411677346,
+      -0.3379794408811327,
+      267.91350772637594,
+      1
+    ],
+    "typedArraySHA256": {
+      "position": "fecdda0755f49cd7087eeaf34071c751b263c95ad8c17908235d443f9553b9b0",
+      "normal": "cc1c7361da1b8f5f625974e740af31f9a87c643b89945a5b3f9a048af6ca417d",
+      "uv": "89b7f4535fd8a0da616c914130012fa4bfb4899d6d910b20d26ca82ab1dcd5e9",
+      "color": "020b77a763b0a8516850216c6981ef9b19efbdc81e45d01a9ca68b8e740c9044",
+      "index": "0e836551e333bdbbdd637cf8a0721ba6e558562f37217dcb4f9d124b3268c2c3"
+    },
+    "boulderFinish": "Original basecolor+normal maps, linear Rec70965%neutral mix times(.91,.90,.87), envMapIntensity.68; shared canyon/resident material/maps reused."
+  },
+  "limits": "Authored derivative; not a watertight/manifold/Boolean/load-bearing certification. Runtime BODY and camera use the same final visible geometry; no new terrain/floor callback."
+}

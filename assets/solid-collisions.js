@@ -207,7 +207,7 @@ export function createSolidWorld({THREE:T,cellSize=12}){
   });return result;
  }
  return {register,registerParts,unregister:root=>{unregister(root);unregisterSurface(root);},resolve,limitVertical,
-  prepareSurface,surfaceSupportHeight,surfaceStorageStats:packedStatic.storageStats,registerSurface,unregisterSurface,hasSurface:root=>surfaceOwners.has(root),surfaceHeight,surfaceContacts,surfaceStats:()=>({owners:surfaceOwners.size,triangles:[...surfaceOwners.values()].reduce((n,a)=>n+a.length,0),cells:surfaceCells.size}),
+  prepareSurface,surfaceSupportHeight,surfaceStorageStats:packedStatic.storageStats,cameraLimit:packedStatic.cameraLimit,cameraQueryStats:packedStatic.cameraQueryStats,registerSurface,unregisterSurface,hasSurface:root=>surfaceOwners.has(root),surfaceHeight,surfaceContacts,surfaceStats:()=>({owners:surfaceOwners.size,triangles:[...surfaceOwners.values()].reduce((n,a)=>n+a.length,0),cells:surfaceCells.size}),
   updateDynamic(){for(const [root,last]of [...moving]){root.updateWorldMatrix(true,false);if(root.matrixWorld.elements.some((value,i)=>Math.abs(value-last[i])>.002))register(root);}},
   hasParts:root=>(owners.get(root)?.length||0)>0,refresh(){for(const [root,parts] of [...owners]){if(parts[0]?.registeredParent&&!root.parent&&!root.userData.collisionBatched)unregister(root);else register(root,{primitives:true});}},stats:()=>({parts:count,owners:owners.size,cells:cells.size})};
 }

@@ -974,7 +974,9 @@ vQMistUV=uv;
     const blend=1-Math.min(1,Math.max(0,y)/4);p.setY(i,p.getY(i)+(groundH(...wp)-groundH(...arc))*blend);}
    o.geometry.computeVertexNormals();o.geometry.computeBoundingSphere();});
   ag.position.set(arc[0],groundH(...arc),arc[1]);ag.rotation.y=ARCYAW;scene.add(own(ag));
-  for(const s of [-1,1]){const lg=world(arc[0],arc[1],ARCYAW,s*8.7,0);collide(lg[0],lg[1],3.4);}
+  const ochreCircles=[];
+  for(const s of [-1,1]){const lg=world(arc[0],arc[1],ARCYAW,s*8.7,0);collide(lg[0],lg[1],3.4);ochreCircles.push(W.colliders[W.colliders.length-1]);}
+  P.ochreArch={root:ag,ring:ag.children.find(o=>o.isMesh&&o.name==='Geology | eroded sandstone arch'),circles:ochreCircles};
 
   /* The dry wash: a pale ribbon of scoured sand with the cobbles the last flood left in it. The
      ribbon sits a hundred millimetres up because the ground is not perfectly level and a decal

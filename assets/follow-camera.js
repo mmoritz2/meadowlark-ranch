@@ -1,7 +1,8 @@
 import {createTerrainCameraClearance} from './terrain-camera-clearance.mjs?v=terrain-camera-clearance-1';
 // Static architecture is registered before render batching. Sweep the camera's
 // clearance volume against those solid surfaces, independently of horse collisions.
-export function createFollowCamera({THREE,groundHeight,clearance=.3,terrain=null}) {
+export function createFollowCamera({THREE,groundHeight,clearance=.3,terrain=null,triangleLimit=null}) {
+ if(triangleLimit!==null&&typeof triangleLimit!=='function')throw TypeError('Optional triangle camera limit must be a function');
  const terrainClearance=terrain?createTerrainCameraClearance({...terrain,THREE}):null;
  const bounds=[],direction=new THREE.Vector3(),candidate=new THREE.Vector3();
  const orbit=new THREE.Vector3(),base=new THREE.Vector3(),previousOrigin=new THREE.Vector3(),futureOrigin=new THREE.Vector3(),probe=new THREE.Vector3();let hasOrigin=false;let avoidanceAngle=0,avoidanceTarget=0,clearTime=0,reach=1;
@@ -74,7 +75,9 @@ export function createFollowCamera({THREE,groundHeight,clearance=.3,terrain=null
    }
    if(near<=far&&far>=0)result=Math.min(result,Math.max(0,near-.015));
   }
-  return terrainClearance?Math.min(result,terrainClearance.limit(origin,end,clearance)):result;
+  const existing=terrainClearance?Math.min(result,terrainClearance.limit(origin,end,clearance)):result;
+  if(!triangleLimit)return existing;
+  const triangles=triangleLimit(origin,end,clearance);return Number.isFinite(triangles)?Math.min(existing,Math.max(0,Math.min(1,triangles))):existing;
  }
  function resolve(origin,desired,out){
   candidate.copy(desired);

@@ -1,3 +1,4 @@
+import {sweepSphereTriangle} from './static-camera-sphere-triangle.mjs?v=ochre-static-arch-1';
 // Artifact prototype: packed STATIC triangles only. Float64 preserves the exact
 // Number results of Three.Vector3.applyMatrix4 and the existing query helpers.
 const defaults=Object.freeze({vertices:1048576,triangles:600000,cells:300000,references:12000000});
@@ -7,10 +8,11 @@ const at=(a,i)=>a.getX(i);
 const key=(x,z)=>x+','+z;
 
 export function createPackedStaticSurfaces(){
- const surfaceCells=new Map(),surfaceOwners=new Map(),supportCells=new Map();let serial=0;
+ const surfaceCells=new Map(),surfaceOwners=new Map(),supportCells=new Map(),cameraOwners=new Set();let serial=0;
  const activeSurface=e=>!(e.registeredParent&&!e.root.parent&&!e.root.userData.collisionBatched);
  function eachCell(packet,index,fn){if(!index)return;for(let x=0;x<index.width;x++)for(let z=0;z<index.height;z++){const i=x*index.height+z;if(index.offsets[i+1]>index.offsets[i])fn(key(x+index.minX,z+index.minZ),i);}}
  function removePacket(packet){
+  cameraOwners.delete(packet);
   for(const [map,index]of[[surfaceCells,packet.body],[supportCells,packet.support]])eachCell(packet,index,k=>{const row=map.get(k);row?.delete(packet);if(!row?.size)map.delete(k);});
  }
  function unregisterSurface(root){const packet=surfaceOwners.get(root);if(!packet)return;removePacket(packet);surfaceOwners.delete(root);}
@@ -18,7 +20,7 @@ export function createPackedStaticSurfaces(){
   // New references are staged while the old owner remains intact. No await or
   // user callback is allowed during publication. A failed insert removes only
   // the new packet, preserving the previously registered owner and ordering.
-  try{for(const[map,index]of[[surfaceCells,packet.body],[supportCells,packet.support]])eachCell(packet,index,(k,i)=>{if(!map.has(k))map.set(k,new Map());map.get(k).set(packet,i);});}
+  try{for(const[map,index]of[[surfaceCells,packet.body],[supportCells,packet.support]])eachCell(packet,index,(k,i)=>{if(!map.has(k))map.set(k,new Map());map.get(k).set(packet,i);});if(packet.camera)cameraOwners.add(packet);}
   catch(error){removePacket(packet);throw error;}
   const prior=surfaceOwners.get(packet.root);try{surfaceOwners.set(packet.root,packet);}catch(cause){
    // The raw backend is observable by diagnostic callers. Even an explicitly
@@ -30,7 +32,7 @@ export function createPackedStaticSurfaces(){
    const error=new Error('Packed surface owner publication failed: '+cause.message,{cause});error.phase='surface-owner-publication';error.rollbackRestored=restored;if(rollbackError)error.rollbackError=rollbackError;throw error;
   }if(prior)removePacket(prior);return packet.length;
  }
- function prepareSurface(root,geometry=root.geometry,matrix=null,{supportStep=null,limits={}}={}){
+ function prepareSurface(root,geometry=root.geometry,matrix=null,{supportStep=null,limits={},camera=false}={}){
   const cap={...defaults,...limits},p=geometry?.attributes?.position,index=geometry?.index;
   need(Object.keys(defaults).every(k=>Number.isSafeInteger(cap[k])&&cap[k]>0&&cap[k]<=defaults[k]),'Packed surface hard resource limits may only be tightened');
   need(root?.updateWorldMatrix&&p&&p.itemSize===3&&Number.isSafeInteger(p.count)&&p.count>=3&&Number.isSafeInteger(index?index.count:p.count)&&(index?index.count:p.count)>=0&&(index?index.count:p.count)%3===0,'Invalid static triangle surface');
@@ -38,9 +40,10 @@ export function createPackedStaticSurfaces(){
   need(M&&M.every(Number.isFinite),'Invalid static surface world transform');
   need(p.count<=cap.vertices&&n/3<=cap.triangles,'Packed surface source resource bound exceeded');
   need(supportStep===null||supportStep===.2,'Packed support uses the reviewed 0.2 metre step');
+  need(typeof camera==='boolean'&&(!camera||root.geometry===geometry&&(!matrix||matrix===root.matrixWorld)),'Camera surfaces require their actual static mesh/world frame');
   let local=new Float64Array(p.count*3),originalIndex=new Uint32Array(n),world=new Float64Array(p.count*3),triangles=new Uint32Array(n),bounds=new Float64Array(n*2),denominators=new Float64Array(n/3),supportBounds=new Float64Array([Infinity,-Infinity,Infinity,-Infinity]);
-  const packet={root,registeredParent:parent,world,triangles,bounds,denominators,supportBounds,marks:null,length:0,body:null,support:null};
-  let phase='vertices',cursor=0,length=0,referenceCount=0,totalOperations=0,disposed=false,committed=false,indexBuild=null,minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity,verification=0;
+  const packet={root,registeredParent:parent,world,triangles,bounds,denominators,supportBounds,marks:null,length:0,body:null,support:null,camera,cameraBounds:null,cameraSource:null};
+  let phase='vertices',cursor=0,length=0,referenceCount=0,totalOperations=0,disposed=false,committed=false,indexBuild=null,minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity,minY=Infinity,maxY=-Infinity,verification=0;
   const sameSource=()=>{need(geometry.attributes.position===p&&geometry.index===index&&p.count*3===local.length&&(index?index.count:p.count)===n,'Packed surface attributes changed during preparation');root.updateWorldMatrix(true,false);need(root.parent===parent&&equal(root.matrixWorld.elements,rootWorld)&&equal(transform.elements,M),'Packed surface root changed during preparation');};
   function sourceUnchanged(){sameSource();for(let i=0;i<p.count;i++)need(Object.is(p.getX(i),local[i*3])&&Object.is(p.getY(i),local[i*3+1])&&Object.is(p.getZ(i),local[i*3+2]),'Packed surface positions changed during preparation');for(let i=0;i<n;i++)need((index?at(index,i):i)===originalIndex[i],'Packed surface indices changed during preparation');}
   function beginIndex(step,name){
@@ -65,11 +68,11 @@ export function createPackedStaticSurfaces(){
       if(cursor===p.count){phase='faces';cursor=0;continue;}
       const i=cursor++,j=i*3,x=p.getX(i),y=p.getY(i),z=p.getZ(i),w=1/(M[3]*x+M[7]*y+M[11]*z+M[15]);local[j]=x;local[j+1]=y;local[j+2]=z;world[j]=(M[0]*x+M[4]*y+M[8]*z+M[12])*w;world[j+1]=(M[1]*x+M[5]*y+M[9]*z+M[13])*w;world[j+2]=(M[2]*x+M[6]*y+M[10]*z+M[14])*w;
      }else if(phase==='faces'){
-      if(cursor===n){packet.length=length;packet.marks=new Uint32Array(length);phase='body-index';cursor=0;if(!beginIndex(2,'body'))phase=supportStep===null?'verify':'support-index';continue;}
+      if(cursor===n){packet.length=length;packet.marks=new Uint32Array(length);if(camera)packet.cameraBounds=[minX,maxX,minZ,maxZ,minY,maxY];phase='body-index';cursor=0;if(!beginIndex(2,'body'))phase=supportStep===null?'verify':'support-index';continue;}
       const j=cursor,ids=[0,1,2].map(k=>index?at(index,j+k):j+k);cursor+=3;for(let k=0;k<3;k++){const i=ids[k];need(Number.isInteger(i)&&i>=0&&i<p.count,'Invalid surface index');originalIndex[j+k]=i;need(Number.isFinite(world[i*3])&&Number.isFinite(world[i*3+1])&&Number.isFinite(world[i*3+2]),'Nonfinite static surface triangle');}
       const a=ids[0]*3,b=ids[1]*3,c=ids[2]*3,ax=world[a],ay=world[a+1],az=world[a+2],bx=world[b],by=world[b+1],bz=world[b+2],cx=world[c],cy=world[c+1],cz=world[c+2],ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;
       if(Math.hypot(uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx)<1e-10){used++;totalOperations++;continue;}
-      const k=length*6;bounds[k]=Math.min(ax,bx,cx);bounds[k+1]=Math.max(ax,bx,cx);bounds[k+2]=Math.min(az,bz,cz);bounds[k+3]=Math.max(az,bz,cz);bounds[k+4]=Math.min(ay,by,cy);bounds[k+5]=Math.max(ay,by,cy);denominators[length]=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(denominators[length])>=1e-10){supportBounds[0]=Math.min(supportBounds[0],bounds[k]);supportBounds[1]=Math.max(supportBounds[1],bounds[k+1]);supportBounds[2]=Math.min(supportBounds[2],bounds[k+2]);supportBounds[3]=Math.max(supportBounds[3],bounds[k+3]);}triangles[length*3]=ids[0];triangles[length*3+1]=ids[1];triangles[length*3+2]=ids[2];minX=Math.min(minX,bounds[k]);maxX=Math.max(maxX,bounds[k+1]);minZ=Math.min(minZ,bounds[k+2]);maxZ=Math.max(maxZ,bounds[k+3]);length++;
+      const k=length*6;bounds[k]=Math.min(ax,bx,cx);bounds[k+1]=Math.max(ax,bx,cx);bounds[k+2]=Math.min(az,bz,cz);bounds[k+3]=Math.max(az,bz,cz);bounds[k+4]=Math.min(ay,by,cy);bounds[k+5]=Math.max(ay,by,cy);denominators[length]=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(denominators[length])>=1e-10){supportBounds[0]=Math.min(supportBounds[0],bounds[k]);supportBounds[1]=Math.max(supportBounds[1],bounds[k+1]);supportBounds[2]=Math.min(supportBounds[2],bounds[k+2]);supportBounds[3]=Math.max(supportBounds[3],bounds[k+3]);}triangles[length*3]=ids[0];triangles[length*3+1]=ids[1];triangles[length*3+2]=ids[2];minX=Math.min(minX,bounds[k]);maxX=Math.max(maxX,bounds[k+1]);minZ=Math.min(minZ,bounds[k+2]);maxZ=Math.max(maxZ,bounds[k+3]);if(camera){minY=Math.min(minY,bounds[k+4]);maxY=Math.max(maxY,bounds[k+5]);}length++;
      }else if(phase==='body-index'||phase==='support-index'){
       if(!indexBuild){if(!beginIndex(supportStep,'support')){phase='verify';continue;}}
       const B=indexBuild;
@@ -87,7 +90,7 @@ export function createPackedStaticSurfaces(){
      used++;totalOperations++;
     }return{done:phase==='ready',operations:used,...builder.stats()};
    },
-   commit(){need(!disposed&&!committed&&phase==='ready','Complete private preparation required before publication');sourceUnchanged();const result=install(packet);committed=true;local=originalIndex=null;phase='committed';return result;},
+   commit(){need(!disposed&&!committed&&phase==='ready','Complete private preparation required before publication');sourceUnchanged();if(camera)packet.cameraSource={geometry,position:cameraAttributeSnapshot(p),index:cameraAttributeSnapshot(index),parent,world:rootWorld,drawStart:geometry.drawRange.start,drawCount:geometry.drawRange.count};const result=install(packet);committed=true;local=originalIndex=null;phase='committed';return result;},
    dispose(){need(!committed,'Committed surface is owned by unregisterSurface');disposed=true;local=originalIndex=world=triangles=bounds=denominators=supportBounds=null;indexBuild=null;packet.body=packet.support=packet.world=packet.triangles=packet.bounds=packet.denominators=packet.supportBounds=packet.marks=null;phase='disposed';},
    stats(){return{phase,triangles:length,sourceVertices:p.count,sourceTriangles:n/3,referenceCount,totalOperations,bodyCells:packet.body?.offsets.length-1||0,supportCells:packet.support?.offsets.length-1||0,retainedBytes:disposed?0:world.byteLength+triangles.byteLength+bounds.byteLength+denominators.byteLength+supportBounds.byteLength+(packet.marks?.byteLength||0)+(packet.body?packet.body.offsets.byteLength+packet.body.refs.byteLength:0)+(packet.support?packet.support.offsets.byteLength+packet.support.refs.byteLength:0),temporaryBytes:(local?.byteLength||0)+(originalIndex?.byteLength||0)}}};
   return builder;
@@ -124,6 +127,58 @@ export function createPackedStaticSurfaces(){
    }
   }return h;
  }
+ // Optional static camera surfaces share the BODY packet/index and query marks.
+ // Default opt-out returns before source checks, cell traversal or kernel calls.
+ const cameraTriangle=[[0,0,0],[0,0,0],[0,0,0]],cameraAnswer={},cameraAxes=[['x',0],['y',4],['z',2]];
+ const cameraLast={fraction:1,ownersTested:0,nearOwners:0,sourceFallbacks:0,cells:0,triangles:0,kernelCalls:0,hits:0,uncertainFallbacks:0,initialOverlapEscapes:0,fallbackOriginEscapes:0,invalidInput:0};
+ // -1 means the expanded box contains the subject. That local escape exception
+ // matches stock box behavior; it is not a claim of triangle clearance.
+ function cameraBoxEntry(origin,end,bounds,pad,offset=0){
+  let near=0,far=1,inside=true;
+  for(const [axis,k]of cameraAxes){const lo=bounds[offset+k]-pad,hi=bounds[offset+k+1]+pad,o=origin[axis],d=end[axis]-o;if(o<lo||o>hi)inside=false;
+   if(Math.abs(d)<1e-12){if(o<lo||o>hi)return Infinity;continue;}
+   let a=(lo-o)/d,b=(hi-o)/d;if(a>b)[a,b]=[b,a];near=Math.max(near,a);far=Math.min(far,b);if(near>far)return Infinity;
+  }return inside?-1:near;
+ }
+ function cameraAttributeSnapshot(a){return{attribute:a,array:a?.array,version:a?.version,count:a?.count,itemSize:a?.itemSize,normalized:a?.normalized,data:a?.data,dataArray:a?.data?.array,dataVersion:a?.data?.version,stride:a?.data?.stride,offset:a?.offset};}
+ function cameraAttributeCurrent(s,a){return s.attribute===a&&s.array===a?.array&&s.version===a?.version&&s.count===a?.count&&s.itemSize===a?.itemSize&&s.normalized===a?.normalized&&s.data===a?.data&&s.dataArray===a?.data?.array&&s.dataVersion===a?.data?.version&&s.stride===a?.data?.stride&&s.offset===a?.offset;}
+ function cameraSourceCurrent(packet){
+  const root=packet.root,s=packet.cameraSource;
+  if(root.parent!==s.parent||root.geometry!==s.geometry||!cameraAttributeCurrent(s.position,s.geometry.attributes.position)||!cameraAttributeCurrent(s.index,s.geometry.index)||s.geometry.drawRange.start!==s.drawStart||s.geometry.drawRange.count!==s.drawCount)return false;
+  root.updateWorldMatrix(true,false);return equal(root.matrixWorld.elements,s.world);
+ }
+ function cameraLimit(origin,end,radius=.3){
+  for(const k in cameraLast)cameraLast[k]=0;cameraLast.fraction=1;
+  if(!cameraOwners.size)return 1;
+  if(!origin||!end||!['x','y','z'].every(k=>Number.isFinite(origin[k])&&Number.isFinite(end[k]))||!Number.isFinite(radius)||radius<=0){cameraLast.invalidInput=1;return 1;}
+  const stamp=nextSerial(),length=Math.hypot(end.x-origin.x,end.y-origin.y,end.z-origin.z),backoff=length>0 ? .015/length : 0;
+  let result=1;
+  for(const packet of cameraOwners){
+   cameraLast.ownersTested++;
+   if(!activeSurface(packet)||!packet.length||cameraBoxEntry(origin,end,packet.cameraBounds,radius)===Infinity)continue;
+   let visible=true;for(let o=packet.root;o;o=o.parent)if(!o.visible){visible=false;break;}if(!visible)continue;
+   cameraLast.nearOwners++;
+   let current=false;try{current=cameraSourceCurrent(packet);}catch{}if(!current)cameraLast.sourceFallbacks++;
+   const I=packet.body,x0=Math.max(I.minX,Math.floor((Math.min(origin.x,end.x)-radius)/2)),x1=Math.min(I.minX+I.width-1,Math.floor((Math.max(origin.x,end.x)+radius)/2)),z0=Math.max(I.minZ,Math.floor((Math.min(origin.z,end.z)-radius)/2)),z1=Math.min(I.minZ+I.height-1,Math.floor((Math.max(origin.z,end.z)+radius)/2));
+   for(let x=x0;x<=x1;x++)for(let z=z0;z<=z1;z++){
+    cameraLast.cells++;const cell=(x-I.minX)*I.height+z-I.minZ;
+    for(let j=I.offsets[cell];j<I.offsets[cell+1];j++){
+     const face=I.refs[j];if(packet.marks[face]===stamp)continue;packet.marks[face]=stamp;
+     const b=face*6,entry=cameraBoxEntry(origin,end,packet.bounds,radius,b);if(entry===Infinity)continue;cameraLast.triangles++;
+     let answer=null;if(current){cameraLast.kernelCalls++;try{answer=sweepSphereTriangle(origin,end,radius,copySurfaceTriangle(packet,face,cameraTriangle),cameraAnswer);}catch{}}
+     if(answer?.status==='clear'&&answer.complete===true)continue;
+     if(answer?.status==='initial-overlap'){cameraLast.initialOverlapEscapes++;continue;}
+     if(answer?.status==='hit'&&answer.complete===true&&Number.isFinite(answer.backoffFractionEstimate)&&answer.backoffFractionEstimate>=0&&answer.backoffFractionEstimate<=1){cameraLast.hits++;result=Math.min(result,Math.max(0,answer.backoffFractionEstimate-backoff));continue;}
+     // Unresolved predicates or changed static sources use only this triangle's
+     // conservative expanded box. Other local faces continue to be tested.
+     cameraLast.uncertainFallbacks++;
+     if(entry<0){cameraLast.fallbackOriginEscapes++;continue;}
+     result=Math.min(result,Math.max(0,entry-backoff));
+    }
+   }
+  }cameraLast.fraction=result;return result;
+ }
+ const cameraQueryStats=()=>({...cameraLast});
  const storageStats=()=>{let bytes=0,bodyReferences=0,supportReferences=0;for(const p of surfaceOwners.values()){bytes+=p.world.byteLength+p.triangles.byteLength+p.bounds.byteLength+p.denominators.byteLength+p.supportBounds.byteLength+p.marks.byteLength+p.body.offsets.byteLength+p.body.refs.byteLength+(p.support?p.support.offsets.byteLength+p.support.refs.byteLength:0);bodyReferences+=p.body.refs.length;supportReferences+=p.support?.refs.length||0;}return{owners:surfaceOwners.size,bodyCells:surfaceCells.size,supportCells:supportCells.size,bodyReferences,supportReferences,typedBytes:bytes};};
- return{surfaceCells,surfaceOwners,prepareSurface,registerSurface,unregisterSurface,nearbySurfaces,visitNearbySurfaces,copySurfaceTriangle,activeSurface,surfaceHeight,surfaceSupportHeight,storageStats};
+ return{surfaceCells,surfaceOwners,prepareSurface,registerSurface,unregisterSurface,nearbySurfaces,visitNearbySurfaces,copySurfaceTriangle,activeSurface,surfaceHeight,surfaceSupportHeight,storageStats,cameraLimit,cameraQueryStats};
 }

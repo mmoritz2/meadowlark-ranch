@@ -631,19 +631,23 @@ body.touch #stickZone{display:block}
 {
  "imports": {
   "./assets/ranch-grounds.mjs?v=ranch-actors-2": "./assets/ranch-grounds.mjs?v=barleyfold-arrival-grounds-1",
-  "./assets/solid-collisions.js": "./assets/solid-collisions.js?v=packed-static-backend-1",
-  "./assets/solid-collisions.js?v=solid-world-1": "./assets/solid-collisions.js?v=packed-static-backend-1",
-  "./assets/solid-collisions.js?v=snowpeak-boulder-contact-1": "./assets/solid-collisions.js?v=packed-static-backend-1",
+  "./assets/solid-collisions.js": "./assets/solid-collisions.js?v=ochre-static-arch-1",
+  "./assets/solid-collisions.js?v=packed-static-backend-1": "./assets/solid-collisions.js?v=ochre-static-arch-1",
+  "./assets/packed-static-surfaces.mjs?v=packed-static-backend-1": "./assets/packed-static-surfaces.mjs?v=ochre-static-arch-1",
+  "./assets/follow-camera.js?v=camera-terrain-clearance-1": "./assets/follow-camera.js?v=ochre-static-arch-1",
+  "./assets/features/world-quarters.js?v=ochre-windmill-camera-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
+  "./assets/solid-collisions.js?v=solid-world-1": "./assets/solid-collisions.js?v=ochre-static-arch-1",
+  "./assets/solid-collisions.js?v=snowpeak-boulder-contact-1": "./assets/solid-collisions.js?v=ochre-static-arch-1",
   "./assets/features/on-foot.js?v=starter-tack-2-loon-lake-4": "./assets/features/on-foot.js?v=hollowpeak-owned-water-1",
   "./assets/features/horse-roster.js?v=wild-bond-1-loon-lake-4": "./assets/features/horse-roster.js?v=hollowpeak-owned-water-1",
   "./assets/features/stats-progression.js?v=leafy-orchard-1": "./assets/features/stats-progression.js?v=hollowpeak-wildlife-1",
   "./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1": "./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-biomes.js?v=dry-foothills-1": "./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
-  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=hollowpeak-thaw-floor-1",
+  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=ochre-short-dry-cover-2",
   "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1",
-  "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=ochre-windmill-camera-1",
-  "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=ochre-windmill-camera-1",
+  "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
+  "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
   "./assets/regional-cover-composition.mjs?v=regional-cover-2": "./assets/regional-cover-composition.mjs?v=amberwood-worked-clearing-1",
   "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4": "./assets/features/world.js?v=hollowpeak-connected-runtime-1",
   "./assets/features/course-guide.js?v=riding-foundation-1-formal-approach-resume-1-loon-lake-4": "./assets/features/course-guide.js?v=ownedwater-camera-1",
@@ -715,6 +719,7 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
+import {ochreCoverAt,shortenOchreTuft,tintOchreTuft,configureOchreCoverFrame} from './assets/ochre-dry-cover.mjs?v=ochre-short-dry-cover-2';
 import {sampleGroundBasePaths} from './assets/ground-route-entries.mjs?v=route-ground-2';
 import {configureRiverBanks,riverBankTerrainHeight,legacyRiverBankHeight} from './assets/riverbank-terrain.mjs?v=river-banks-1';
 import {createLoonLakeRuntime,loonLakeTerrainHeight,legacyLoonLakeTerrainHeight,loonLakeContainsWater,loonLakeDryPoint} from './assets/loon-lake.mjs?v=loon-lake-4';
@@ -771,6 +776,7 @@ import {installVillageForecourts} from './assets/village-forecourts.js?v=village
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=horse-arrival-1';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=character-foundation99-20261021';
+import {installOchreArch} from './assets/ochre-static-arch.mjs?v=ochre-static-arch-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=canino-stance102-20261022';
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
@@ -1686,7 +1692,7 @@ function loonLakePlanningH(x,z){
 const loonLake=createLoonLakeRuntime({terrainH,groundH,planningHeightAt:loonLakePlanningH});
 COLL_SETS.shells.pts=COLL_SETS.shells.pts.map(p=>loonLake.containsWater(...p,.3)?loonLake.dryPoint(...p,.65):p);
 const solidWorld=createSolidWorld({THREE});
-const followCamera=createFollowCamera({THREE,groundHeight:groundH,terrain:{heights:TERRAIN_HEIGHTS,segments:TERRAIN_SEGMENTS,step:TERRAIN_STEP,originX:-500,originZ:-500}});
+const followCamera=createFollowCamera({THREE,groundHeight:groundH,triangleLimit:solidWorld.cameraLimit,terrain:{heights:TERRAIN_HEIGHTS,segments:TERRAIN_SEGMENTS,step:TERRAIN_STEP,originX:-500,originZ:-500}});
 const registerCamera=followCamera.register;
 followCamera.registerCameraOnly=registerCamera;
 followCamera.register=root=>{registerCamera(root);solidWorld.register(root,{primitives:true});};
@@ -3443,12 +3449,13 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z,true))continue;
+   const ochreCover=ochreCoverAt(x,z,h4);if(ochreCover&&!ochreCover.keep)continue;
    const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z,terrainH),thawFloor=hollowpeakThawFloorAt(x,z,terrainH);
    const turfReach=ranchTurfReachAt(x,z);
    e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread*turfReach,(.9+h1*.2)*trim*growth*ranchTurfHeightAt(x,z),sz*spread*turfReach);
    if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
-   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,near.geometry,groundH,thawFloor);m4.toArray(grassCell.matrices,grassCell.count*16);
-   meadowBladeColor(bcol,x,z,h4);if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
+   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);respondHollowpeakThawMatrix(m4.elements,0,near.geometry,groundH,thawFloor);shortenOchreTuft(m4.elements,0,near.geometry,ochreCover);m4.toArray(grassCell.matrices,grassCell.count*16);
+   meadowBladeColor(bcol,x,z,h4);tintOchreTuft(bcol,ochreCover);if(winterCover<1&&!thawFloor)bcol.lerp(winterGrassTint,(1-winterCover)*.85);respondHollowpeakThawColor(bcol,thawFloor);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -15436,7 +15443,7 @@ ranchBuilderArt.ready.then(()=>queueMicrotask(()=>{
  for(const o of decorObjs){if(!DECOR_CAT[o.d.t].flat){const n=solidWorld.register(o.g,{primitives:true});o.coll.precise=n>0;}}
  solidWorld.refresh();solidWorld.registerParts(scene);
 }));
-G.world.hollowpeakRuntimeReady=finishHollowpeakRuntime({G,FALLS,runtime:hollowpeakRuntime}).then(value=>{finalizeHollowpeakAnchorGrounding({G,runtime:value});G.photoscans?.installSnowpeakBoulderContact?.({source:snowpeakBoulderSource,runtime:value});hollowpeakStartupReady=true;if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)){window.__setLoad?.(1,'ready!');$('load')?.remove();}return value;}).catch(error=>{G.world.hollowpeakRuntimeError=error.message;console.error('Hollowpeak landscape could not finish',error);window.GameLoading?.fail('The mountain landscape could not finish loading.');return null;});
+G.world.hollowpeakRuntimeReady=finishHollowpeakRuntime({G,FALLS,runtime:hollowpeakRuntime}).then(async value=>{finalizeHollowpeakAnchorGrounding({G,runtime:value});G.photoscans?.installSnowpeakBoulderContact?.({source:snowpeakBoulderSource,runtime:value});await installOchreArch(G);if(G.world.ochreArch?.status==='applied'&&configureOchreCoverFrame(G.world.ochreArch.root?.matrixWorld?.elements))nearGrass?.invalidate();hollowpeakStartupReady=true;if(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh)){window.__setLoad?.(1,'ready!');$('load')?.remove();}return value;}).catch(error=>{G.world.hollowpeakRuntimeError=error.message;console.error('Hollowpeak landscape could not finish',error);window.GameLoading?.fail('The mountain landscape could not finish loading.');return null;});
 // Load the visible sky after world construction; the existing PMREM maps still light the ranch.
 G.world.daylightSkyReady=G.world.hollowpeakRuntimeReady.then(async runtime=>{
  if(!runtime)return null;
