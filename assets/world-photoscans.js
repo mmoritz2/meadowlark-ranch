@@ -111,6 +111,7 @@ export function selectMiddleCrownModels({trees,near,planningMiddle,authoredTrian
 
 export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
+  const pasturePaletteDay=scene.getObjectByName('Pasture terrain')?.material?.userData?.pasturePaletteDay??null;
   const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
   // Assigned synchronously: details starts first, but yields before consuming this.
   // The narrow promise never rejects and photoscans never awaits worldDetails.
@@ -179,7 +180,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #endif`);
     };
     mat.onBeforeCompile=(sh,activeRenderer)=>{
-      deform(sh);patchSummerLeafPigment(sh,mat.name);patchSeasonalFoliage(sh);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
+      deform(sh);patchSummerLeafPigment(sh,mat.name);patchSeasonalFoliage(sh,false,isSummerLeafMaterial(mat.name)?pasturePaletteDay:null);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
       sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
         normal=normalize(mix(normal,canopyUp,.42));`);
@@ -192,7 +193,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(mat.name==='island_tree_01_leaves')patchLeafCameraClearance(sh);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves');
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves')+'-living-day-leaf-1-'+!!(isSummerLeafMaterial(mat.name)&&pasturePaletteDay);
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -579,7 +580,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v='+m.views.sha256),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file+'?v='+m.normals.sha256)]);
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
       source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom,normalProfile:m.normalProfile};
-      source.card=treeImpostor(source.impostor);
+      source.card=treeImpostor({...source.impostor,pasturePaletteDay,daylightLeaf:source.parts.some(p=>isSummerLeafMaterial(p.mat.name))});
     }
     // The same lit, eight-angle source atlases continue woodland beyond the
     // riding terrain. These static groves never consume the nearby model budget.

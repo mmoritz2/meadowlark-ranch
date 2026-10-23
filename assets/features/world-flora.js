@@ -1071,6 +1071,33 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
    im.count===b.n&&b.n>0&&s?.radius>0&&
    [s?.radius,s?.center?.x,s?.center?.y,s?.center?.z].every(Number.isFinite));
  }
+ // Agave is the other static, undisplaced desert bank. Keep a conservative
+ // all-row union for BOTH quality templates; later quality uses a prefix and
+ // existing trail/course clearing only collapses rows. No ongoing observer.
+ {
+  const b=BANK.succ,im=b.im,high=im.geometry,m=im.material,d=high.userData?.desertArt;
+  im.frustumCulled=false;
+  if(high===succGeo&&d?.kind==='agave'&&d.variant===0&&d.detail===true&&d.triangles===700&&
+   high.attributes.position?.count===600&&high.index?.count===2100&&!im.morphTexture&&
+   m===desertArt.material&&m.isMeshStandardMaterial&&m.name==='Desert | botanical surfaces'&&
+   !m.displacementMap&&m.onBeforeCompile===THREE.Material.prototype.onBeforeCompile&&im.count===b.n&&b.n>0){
+   const low=desertArt.geometry('agave',0,false),ld=low.userData?.desertArt;
+   const finiteSphere=s=>s?.radius>0&&[s.radius,s.center.x,s.center.y,s.center.z].every(Number.isFinite);
+   if(ld?.kind==='agave'&&ld.variant===0&&ld.detail===false&&ld.triangles===240&&
+    low.attributes.position?.count===225&&low.index?.count===720&&finiteSphere(im.boundingSphere)&&finiteSphere(high.boundingSphere)&&finiteSphere(low.boundingSphere)){
+    const template=high.boundingSphere.clone().union(low.boundingSphere),bounds=new THREE.Sphere().makeEmpty(),row=new THREE.Sphere();let finite=true;
+    for(let i=0;i<b.n;i++){
+     im.getMatrixAt(i,_m);const e=_m.elements;
+     if(!e.every(Number.isFinite)||e[3]!==0||e[7]!==0||e[11]!==0||e[15]!==1){finite=false;break;}
+     row.center.copy(template.center).applyMatrix4(_m);
+     // Frobenius norm bounds the affine radius even with nonuniform scale or
+     // round-off shear; the slight over-bound only admits extra submissions.
+     row.radius=template.radius*Math.hypot(e[0],e[1],e[2],e[4],e[5],e[6],e[8],e[9],e[10]);bounds.union(row);
+    }
+    if(finite&&finiteSphere(bounds)){im.boundingSphere.copy(bounds);im.frustumCulled=true;}
+   }
+  }
+ }
  F.total=total;
  F.counts=Object.keys(BANK).reduce((o,k)=>(o[k]=BANK[k].n,o),{});
  console.log('world-flora: planted',total,'in',Object.keys(BANK).length,'draws',JSON.stringify(F.counts));

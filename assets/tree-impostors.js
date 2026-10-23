@@ -41,7 +41,7 @@ export function patchFoliageCoverage(shader,renderer) {
 // Tint the leaf pigment rather than multiplying orange into green albedo.
 // The atlas includes bark, so its green-leaf mask leaves woody pixels untouched.
 // The same palette is used on full geometry and distant views to avoid LOD colour pops.
-export function patchSeasonalFoliage(shader,atlas=false) {
+export function patchSeasonalFoliage(shader,atlas=false,daylight=null) {
   shader.vertexShader='varying vec3 seasonalTint;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <color_vertex>',`#include <color_vertex>
     seasonalTint=vec3(1.0);
@@ -60,11 +60,32 @@ export function patchSeasonalFoliage(shader,atlas=false) {
       smoothstep(1.05,1.32,originalLeaf.g/max(originalLeaf.b,.0001))` : '1.0'};
     vec3 baseLeaf=mix(diffuseColor.rgb,originalLeaf,season);
     diffuseColor.rgb=mix(baseLeaf,leafLuma*pigment*1.25,season*leafMask);`);
+  if(daylight){
+    // One existing daylight uniform, shared with the turf. The compact home
+    // support ends before the northern cold floor; dry foothills stay exact.
+    shader.uniforms.pastureLeafDay=daylight;
+    shader.vertexShader='varying float pastureLeafRegion;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <color_vertex>',`#include <color_vertex>
+      vec4 pastureLeafSite=modelMatrix[3];
+      #ifdef USE_INSTANCING
+        pastureLeafSite=modelMatrix*instanceMatrix[3];
+      #endif
+      vec2 pastureLeafXZ=pastureLeafSite.xz;
+      vec2 pastureLeafDry=pastureLeafXZ-vec2(-220.0,130.0);
+      pastureLeafRegion=(1.0-smoothstep(4900.0,11025.0,dot(pastureLeafXZ,pastureLeafXZ)))
+        *smoothstep(36100.0,44100.0,dot(pastureLeafDry,pastureLeafDry));`);
+    shader.fragmentShader='uniform float pastureLeafDay;varying float pastureLeafRegion;\n'+shader.fragmentShader;
+    shader.fragmentShader=shader.fragmentShader.replace('diffuseColor.rgb=mix(baseLeaf,leafLuma*pigment*1.25,season*leafMask);',`diffuseColor.rgb=mix(baseLeaf,leafLuma*pigment*1.25,season*leafMask);
+      // Keep bark atlas texels and seasonal pigment; change summer albedo only.
+      float pastureLeafColour=clamp(pastureLeafDay,0.0,1.0)*pastureLeafRegion*leafMask
+        *(1.0-smoothstep(0.0,.03,season));
+      if(pastureLeafColour>0.0)diffuseColor.rgb*=mix(vec3(1.0),vec3(.96,1.18,.88),pastureLeafColour);`);
+  }
 }
 
 // Matching albedo/normal views of each source scan. The normal is rotated with
 // the tree, so a distant crown keeps its volume as the sun and camera move.
-export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalProfile}) {
+export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalProfile,pasturePaletteDay=null,daylightLeaf=false}) {
   const matchedNormals=normalProfile==='view-facing-material-v1';
   const geo=new THREE.PlaneGeometry(width,height);geo.translate(0,bottom+height*.5,0);
   const mat=new THREE.MeshStandardMaterial({map:albedo,alphaTest:.22,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
@@ -85,7 +106,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalPro
       #endif`);
   };
   mat.onBeforeCompile=(sh,renderer)=>{
-    vertex(sh);patchSeasonalFoliage(sh,true);sh.uniforms.treeNormals={value:normals};
+    vertex(sh);patchSeasonalFoliage(sh,true,daylightLeaf?pasturePaletteDay:null);sh.uniforms.treeNormals={value:normals};
     sh.fragmentShader='uniform sampler2D treeNormals;varying vec2 treeHeading;\n'+sh.fragmentShader;
     sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       vec4 treeNormalSample=texture2D(treeNormals,vMapUv);
@@ -121,7 +142,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalPro
       #include <opaque_fragment>`);
     patchFoliageCoverage(sh,renderer);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v7-'+matchedNormals;
+  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v7-'+matchedNormals+'-living-day-leaf-1-'+!!(daylightLeaf&&pasturePaletteDay);
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};

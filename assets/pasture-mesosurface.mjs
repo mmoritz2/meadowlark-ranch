@@ -1,6 +1,6 @@
 // One connected grass-growth field controls the low tussock surface, crowns
 // and root hollows. This changes material response only, never riding height.
-export const PASTURE_MESO_CACHE='pasture-mesosurface-4-vibrant-daylight-2';
+export const PASTURE_MESO_CACHE='pasture-mesosurface-4-vibrant-living-materials-1';
 export const PASTURE_MESO=Object.freeze({
  localMetres:1.45,groupMetres:11.0,localWeight:.72,height:.18,managedHeight:.72,managedMaterial:.82,managedCalmHeight:.58,
  crownLow:.22,crownHigh:.79,normalLimit:.30,rootOcclusion:.30,
@@ -76,7 +76,7 @@ const fields=`
       surface*=mix(vec3(1.0),mix(vec3(.80,.89,.75),vec3(1.075,1.05,.99),pastureGrowth.x),pastureMaterial);
       surface=mix(surface,surface*vec3(1.12,.96,.79),pastureHollow*pastureMaterial*.09*(1.0-pastureManaged*.7));
       // Daylight colour belongs to living turf, after all regional/substrate masks.
-      surface*=mix(vec3(1.0),vec3(.975,1.075,.95),pasturePaletteDay*pastureCover*(1.0-smoothstep(0.0,.003,max(thawLitter,frostFloor.z))));
+      surface*=mix(vec3(1.0),vec3(.94,1.20,.86),pasturePaletteDay*pastureCover*(1.0-smoothstep(0.0,.003,max(thawLitter,frostFloor.z))));
 `;
 const normal=`
       // Compose after the existing photographed/snow/outer normals. The bound
