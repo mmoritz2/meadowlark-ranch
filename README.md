@@ -97,12 +97,10 @@ prints and colour-blocked tops. Top, trouser and boot colours change separately.
 Changes stay in the preview until **Save**. **Undo** restores your saved look.
 
 Clothing has fabric relief, softer folds, sewn collars and pockets, and raised
-buttons. The character editor offers 30 hairstyles per body, 20 hair colours,
-10 skin tones and 10 eye colours. New styles include bobs, loose waves, a half-up
-twist, side and twin braids, a braided crown, natural coils and a swept pixie;
-helmet fitting also applies to these styles. The newest choices include high
-and bubble ponytails, a braided ponytail, long waves, half-up buns, cropped
-coils and shoulder twists.
+buttons. The female rider has three fitted hairstyles: a sculpted ponytail,
+bun and swept crop, with a helmet fitted to the new head. The existing male
+hairstyles remain available. The editor also offers 20 hair colours, 10 skin
+tones and 10 eye colours.
 
 Mix in 18 free accessories across **Glasses**, **Earrings**, and **Necklaces &
 scarves**. Each category has real close-up previews and a remove option. These
@@ -664,3 +662,7 @@ Validation: `node tools/test-follow-camera.mjs`,
 and `node tools/run-web-game-skill.cjs`. The last command runs the installed game
 skill client with native Windows D3D rendering. This is an art and integration
 pass, not a claim of parity with the reference game's authored characters/world.
+
+## Rider character artwork
+
+The female rider uses [Rain Rig](https://studio.blender.org/characters/rain/v3/) by Blender Foundation / Blender Studio, under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Adaptations include younger facial proportions and smaller eyes, native rig evaluation, game animation skinning, fitted wardrobe and source hairstyles, geometry optimization and texture compression. The approved face remains intact through the animation conversion. See [full character credits](assets/models/rider/rain-LICENSE.txt) and [asset provenance](assets/models/rider/rain-provenance109.json). Run `node tools/test-rain-rider109.mjs` for the actual character, wardrobe, animation, attachment and cleanup checks.

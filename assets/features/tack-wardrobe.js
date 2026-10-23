@@ -12,7 +12,7 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js?v=character-polish-20261009';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=canino-stance102-20261022';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=rain-character109-20261023';
 import {outfitPalette} from '../rider-clothes.js?v=tailored-coats69-20261010';
 import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=character-foundation99-20261021';
 export const id='tack-wardrobe';
@@ -63,6 +63,7 @@ export function install(G){
     there for her head */
  const HAIRSTYLES=RIDER_HAIR.map(h=>({id:h.id,label:h.label,body:h.body}));
  const OUTFITS=RIDER_OUTFITS, EYES=RIDER_EYES;
+ const displayOutfit=(o,body)=>body!=='m'&&o.id==='riding'?{...o,label:'Scarf and jeans',desc:'A scarf top, fitted jeans and lace-up shoes.'}:o;
  const BODIES=[['f','👧 Cowgirl'],['m','👦 Cowboy']];
  const RIDER_NAMES=['Wren','Juniper','Sage','Rowan','Hazel','Finch','Marlow','Tess','Cody','Ellis','Piper','Lark','Reed','Quinn','Bryn','Ash','Fern','Milo','Nell','Otis',
   'Rosa','Sam','Tally','Indie','Jesse','Kit','Lou','Mack','Nico','Opal','Pip','Remy','Sky','Toby','Una','Vale','Wyatt','Ziggy','Clem','Dune'];
@@ -144,7 +145,7 @@ export function install(G){
  }
  function kitRow(s){
   const cur=s.rider.outfit||'riding', eye=s.rider.eyes||'brown';
-  return '<div class="crow" style="flex-wrap:wrap"><span class="lbl">🧥 Outfit</span>'+OUTFITS.map(o=>'<button data-fx="wd:outfit:'+o.id+'" '+(cur===o.id?'class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">'+o.icon+' '+o.label+'</button>').join('')+'</div>'
+  return '<div class="crow" style="flex-wrap:wrap"><span class="lbl">🧥 Outfit</span>'+OUTFITS.map(o=>'<button data-fx="wd:outfit:'+o.id+'" '+(cur===o.id?'class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">'+o.icon+' '+displayOutfit(o,s.rider.body).label+'</button>').join('')+'</div>'
    +'<div class="crow" style="flex-wrap:wrap"><span class="lbl">👁️ Eyes</span>'+EYES.map(e=>sw('wd:eyes:'+e.id,e.col,eye===e.id,e.label)).join('')+'</div>';
  }
  G.ui.shopTab({id:'outfit',label:'🧢 Outfit',render(s,h){
@@ -224,7 +225,7 @@ export function install(G){
   +'<div class="ch-stage" id="chStage">'
   +'<div class="ch-tools"><button class="ch-tool" data-ch="zoom" title="Zoom">'+SVGI(ICO.zoom)+'</button><button class="ch-tool" data-ch="dice" title="Surprise me">'+SVGI(ICO.dice)+'</button>'
   +'<button class="ch-tool" data-ch="body" title="Switch body">'+SVGI(ICO.body)+'</button><button class="ch-tool" data-ch="turn" title="Turn">'+SVGI(ICO.turn)+'</button></div>'
-  +'<a href="assets/models/rider/canino-LICENSE.txt" target="_blank" rel="noopener" style="position:absolute;left:12px;bottom:3px;font-size:10px;color:#ced4da">Character art credits</a><div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
+  +'<a href="assets/models/rider/rain-LICENSE.txt" target="_blank" rel="noopener" style="position:absolute;left:12px;bottom:3px;font-size:10px;color:#ced4da">Character art credits</a><div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
   +'<div class="ch-panel"><div class="ch-main"><nav class="ch-groups" id="chGroups" aria-label="Customize your rider"></nav><nav class="ch-strip" id="chStrip" aria-label="Appearance categories"></nav><div class="ch-head" id="chHead"></div><div class="ch-filters" id="chFilters" hidden></div><div class="ch-grid" id="chGrid"></div>'
   +'<div class="ch-foot"><button class="ch-btn ch-undo" data-ch="undo">Undo</button><button class="ch-btn ch-save" data-ch="save" id="chSave">Save</button></div></div>'
   +'</div>';
@@ -492,9 +493,10 @@ export function install(G){
     h+='<button class="ch-card'+(cur===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'" aria-pressed="'+(cur===hs.id)+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
    }
   }else if(CH.tab==='outfit'){
-   const selected=OUTFITS.find(o=>o.id===d.outfit)||OUTFITS[0],thumbs=CH.outfitThumbs[d.body||'f']||{};
+   const selected=displayOutfit(OUTFITS.find(o=>o.id===d.outfit)||OUTFITS[0],d.body),thumbs=CH.outfitThumbs[d.body||'f']||{};
    h+='<div class="ch-look-note"><strong>'+esc(selected.label)+'</strong>'+esc(selected.desc)+'<br>All '+OUTFITS.length+' looks are yours. Choose a look, then make it your own with colours.</div>';
-   for(const o of OUTFITS.filter(o=>CH.filter==='All'||o.category===CH.filter)){
+   for(const original of OUTFITS.filter(o=>CH.filter==='All'||o.category===CH.filter)){
+    const o=displayOutfit(original,d.body);
     const on=(d.outfit||'riding')===o.id;
     h+='<button class="ch-card'+(on?' sel':'')+'" data-ch="outfit:'+o.id+'" aria-pressed="'+on+'" title="'+esc(o.desc)+'">'+(thumbs[o.id]?'<img alt="" src="'+thumbs[o.id]+'">':'<span class="ic" style="font-size:34px;justify-content:center">'+o.icon+'</span>')+'<span class="lb">'+esc(o.label)+'</span></button>';
    }

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Rain rider lab</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;background:#9fb4c8;overflow:hidden}canvas{display:block}#msg{position:fixed;left:8px;top:6px;font:12px sans-serif;color:#123}</style>
+<script type="importmap">{"imports":{"three":"../assets/vendor/three/build/three.module.js","three/addons/":"../assets/vendor/three/examples/jsm/"}}</script>
+</head><body><div id="msg">loading…</div>
+<script type="module">
+/* Rain rider lab: the rider from assets/rider-model.js on its own, lit like the game, for looking at.
+   ?view=front|side|back|three|face|seat|seatside|walk   &style= &helmet= (none|#hex) &outfit= &skin= &hair= &shirt= &pants= &boots= &eyes= &body=f|m &t=
+   Dev tool only; the game builds her through makeRider in ranch3d.html. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone} from 'three/addons/utils/SkeletonUtils.js';
+import {createRiderLibrary,RIDER_HAIR,riderHairId} from '../assets/rider-model.js?v=rain-character109-20261023';
+const Q=new URLSearchParams(location.search), q=(k,d)=>Q.has(k)?Q.get(k):d;
+const RJ={hips:[0,-0.235,-0.250],spine:[0,-0.020,-0.230],chest:[0,0.245,-0.200],neck:[0,0.470,-0.190],head:[0,0.560,-0.165],headEnd:[0,0.930,-0.150],
+ shoulder:[0.185,0.435,-0.170],elbow:[0.212,0.135,-0.020],wrist:[0.140,0.132,0.300],hand:[0.108,0.140,0.392],
+ legTop:[0.115,-0.250,-0.245],knee:[0.216,-0.358,0.312],ankle:[0.168,-0.855,0.172],ball:[0.192,-0.972,0.330],toe:[0.190,-0.980,0.452]};
+const W=innerWidth,H=innerHeight;
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(W,H);renderer.setPixelRatio(1);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x9fb4c8);
+scene.add(new THREE.HemisphereLight(0xc6d9ed,0x898467,1.05));
+const sun=new THREE.DirectionalLight(0xffedda,3.15);sun.position.set(2.5,5,4);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-2,right:2,top:2.5,bottom:-1,near:0.5,far:15});sun.shadow.bias=-0.0004;scene.add(sun);
+const fill=new THREE.DirectionalLight(0xdde8ff,0.6);fill.position.set(-3,2,-2);scene.add(fill);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(3,48),new THREE.MeshStandardMaterial({color:0x8a9a6a,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const cam=new THREE.PerspectiveCamera(+q('fov',30),W/H,0.05,50);
+const lib=createRiderLibrary({THREE,GLTFLoader,clone,RJ});
+const body=q('body','f');
+const fit={shirt:q('shirt','#3d4a6e'),pants:q('pants','#cfc6ae'),boots:q('boots','#3b2a14'),helmet:q('helmet','none'),skin:q('skin',null),hair:q('hair',null),hairStyle:q('style','ponytail'),outfit:q('outfit','riding'),eyes:q('eyes',null),body};
+if(fit.helmet==='none')fit.helmet='none';
+window.lab={lib,fit,THREE,cam};
+try{
+ const kit=await lib.kit(body);
+ const view=q('view','three');
+ /* a stand-in for the game's R, with its seat, to try adoptRider exactly as the game will */
+ const R={g:new THREE.Group(),fitG:new THREE.Group(),handL:new THREE.Object3D(),handR:new THREE.Object3D(),pose:{lean:0.05,side:0,head:0,rise:0,spread:0.16}};
+ R.g.add(R.fitG);
+ R._rest=()=>{for(const b of R.sk.list){b.quaternion.set(0,0,0,1);b.position.copy(b.userData.rest);}};
+ R._seat=(lean,side,look,rise,spread)=>{const B=R.sk.by;
+  B.hips.rotation.set(lean*0.50,0,side*0.45);B.spine.rotation.set(lean*0.30,0,side*0.30);B.chest.rotation.set(lean*0.16,0,side*0.20);
+  B.neck.rotation.set(-0.105-lean*0.40,-look*0.35,-side*0.30);B.head.rotation.set(-0.065-lean*0.22,-look*0.55,-side*0.25);
+  B.hips.position.y=B.hips.userData.rest.y+(rise||0);
+  if(spread){const a=spread*1.7;B.thighR.rotation.set(0.60,a,0);B.thighL.rotation.set(0.60,-a,0);B.shinR.rotation.set(-0.70,0,0);B.shinL.rotation.set(-0.70,0,0);B.footR.rotation.set(-0.52,0,0);B.footL.rotation.set(-0.52,0,0);}};
+ const rig=lib.build(kit,fit);
+ lib.adoptRider(R,rig,{fit:{s:1,dy:0,dz:0}});
+ window.lab.R=R;window.lab.rig=rig;
+ scene.add(R.g);
+ const seated=view.startsWith('seat')||view==='hands';
+ if(seated){R._apply();R.g.position.set(0,0.95,0);}
+ else{
+  const t=+q('t',0.4); const sp=view==='walk'?1.45:view==='jog'?3.2:view==='sprint'?5.5:0;
+  if(Q.has('clip')){ /* one clip on its own, at time t */
+   R.locomote(0.001,{speed:0});rig.mixer.stopAllAction();const a=rig.action(q('clip'));a.reset();a.setEffectiveWeight(1);a.play();a.time=t;rig.mixer.update(0);rig.root.updateMatrixWorld(true);
+  }else{R.locomote(0.001,{speed:sp});rig.mixer.setTime(t);R.locomote(0,{speed:sp});}
+ }
+ /* markers for the rein anchors, when asked */
+ if(Q.has('marks'))for(const h of [R.handL,R.handR]){const m=new THREE.Mesh(new THREE.SphereGeometry(0.012),new THREE.MeshBasicMaterial({color:0xff2060}));h.add(m);}
+ const views0={front:[0,1.0,4.6,0,0.9,0],back:[0,1.0,-4.6,0,0.9,0],side:[4.6,1.0,0,0,0.9,0],three:[2.8,1.35,3.8,0,0.88,0],
+  face:[0.13,1.73,1.06,0,1.70,0.02],seat:[2.2,1.2,2.6,0,0.85,0],seatside:[3.2,1.0,0,0,0.8,0],walk:[3.0,1.2,2.6,0,0.85,0],jog:[3.0,1.2,2.6,0,0.85,0],sprint:[3.0,1.2,2.6,0,0.85,0],seatfront:[0,1.1,3.6,0,0.85,0],hands:[0.42,1.42,1.05,0,1.20,0.40],feet:[0.9,0.35,1.4,0,0.18,0]};
+ const views=views0; const v=views[view]||views.three; cam.position.set(v[0],v[1],v[2]); cam.lookAt(v[3],v[4],v[5]);
+ if(view==='face'){cam.fov=+q('fov',28);cam.updateProjectionMatrix();}
+
+ const controls=document.createElement('div');controls.style='position:fixed;right:10px;top:10px;width:330px;background:#fffffff0;padding:12px;font:12px system-ui;border-radius:8px;max-height:95vh;overflow:auto';
+ const output=document.createElement('pre');output.id='verification';output.style='white-space:pre-wrap';output.textContent='Ready: '+(rig.rain109?'Rain character':'Original male character');
+ const render=()=>{renderer.render(scene,cam);};
+ const control=(name,fn)=>{const b=document.createElement('button');b.textContent=name;b.style='margin:3px;padding:7px';b.onclick=async()=>{try{await fn();render();}catch(e){output.textContent='FAIL '+e.stack;console.error(e);}};controls.append(b);};
+ const pose=(kind,t=.4)=>{if(kind==='seat'){R._apply();R.g.position.set(0,.95,0);}else{R.locomote(.016,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});rig.mixer.setTime(t);R.locomote(0,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});}};
+ control('Portrait',()=>{cam.position.set(.13,1.73,1.06);cam.lookAt(0,1.70,.02);});
+ control('Full body',()=>{cam.position.set(2.8,1.35,3.8);cam.lookAt(0,.92,0);});
+ control('Front',()=>{cam.position.set(0,1.0,4.6);cam.lookAt(0,.9,0);});
+ control('Side',()=>{cam.position.set(4.6,1.0,0);cam.lookAt(0,.9,0);});
+ control('Back',()=>{cam.position.set(0,1.0,-4.6);cam.lookAt(0,.9,0);});
+ for(const k of ['idle','walk','jog','sprint','seat'])control(k,()=>pose(k));
+ for(const id of ['polo','riding','show','cardigan','flannel'])control(id,()=>{fit.outfit=id;rig.setLook(fit);});
+ control('Helmet',()=>{fit.helmet=fit.helmet==='none'?'#2e2e38':'none';rig.setLook(fit);});
+ control('Glasses',()=>{fit.eyewear=fit.eyewear==='round'?'none':'round';rig.setLook(fit);});
+ control('Earrings',()=>{fit.earrings=fit.earrings==='hoops'?'none':'hoops';rig.setLook(fit);});
+ control('Necklace',()=>{fit.neckwear=fit.neckwear==='pendant'?'none':'pendant';rig.setLook(fit);});
+ for(const h of RIDER_HAIR.filter(h=>h.body.includes(body)))control(h.label,()=>{fit.hairStyle=h.id;rig.setLook(fit);output.textContent='Style: '+h.label+'\n'+JSON.stringify(rig.caninoHair101?.evidence()||{});});
+ control('Build hair gallery',async()=>{
+  document.getElementById('hair-gallery')?.remove();
+  const gallery=document.createElement('div');gallery.id='hair-gallery';gallery.style='position:fixed;inset:0;background:#e8edf0;overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;z-index:10';
+  const close=document.createElement('button');close.textContent='Close gallery';close.style='position:fixed;right:20px;top:12px;z-index:11;padding:10px';close.onclick=()=>{gallery.remove();close.remove();};document.body.append(gallery,close);
+  const before={...fit},position=cam.position.clone(),rotation=cam.quaternion.clone();pose('idle');
+  for(const h of RIDER_HAIR.filter(h=>h.body.includes(body))){
+   fit.hairStyle=h.id;rig.setLook(fit);const card=document.createElement('figure');card.style='margin:0;background:white;border-radius:8px;overflow:hidden';
+   const title=document.createElement('figcaption');title.textContent=h.label+(fit.helmet==='none'?'':' + helmet');title.style='padding:8px;font:16px system-ui';card.append(title);
+   const row=document.createElement('div');row.style='display:flex';card.append(row);
+   for(const angle of [0,1.2,Math.PI]){cam.position.set(Math.sin(angle)*1.22,1.68,Math.cos(angle)*1.22);cam.lookAt(0,1.57,0);render();const img=document.createElement('img');img.src=renderer.domElement.toDataURL('image/jpeg',.92);img.alt=h.label+' '+angle;img.style='width:33.333%;height:auto';row.append(img);}
+   gallery.append(card);await new Promise(requestAnimationFrame);
+  }Object.assign(fit,before);rig.setLook(fit);cam.position.copy(position);cam.quaternion.copy(rotation);render();
+ });
+ control('Run integration checks',async()=>{
+  const assert=(v,s)=>{if(!v)throw Error(s);},checks=[],v=new THREE.Vector3();
+  assert(body==='m'||rig.rain109,'New character missing');
+  assert(RIDER_HAIR.filter(h=>h.body.includes('f')).length>=3,'Female style catalog missing');
+  assert(RIDER_HAIR.some(h=>h.id===riderHairId('braid','f')),'Saved style migration missing');
+  const canonical=rig.body.skeleton.bones.map(b=>b.name);
+  if(rig.rain109){
+   let sourceBones;kit.rain109.scene.traverse(m=>{if(m.isSkinnedMesh&&!sourceBones)sourceBones=m.skeleton.bones.map(b=>b.name);});
+   assert(JSON.stringify(sourceBones)===JSON.stringify(canonical),'Canonical bone order differs');
+   for(const m of rig.rain109.imported){const a=m.geometry.attributes;assert(m.skeleton===rig.body.skeleton,'Imported body skeleton detached');for(let i=0;i<a.position.count;i++){let sum=0;for(let c=0;c<4;c++){const w=a.skinWeight.array[i*4+c],joint=a.skinIndex.array[i*4+c];assert(Number.isFinite(w)&&w>=0&&joint<canonical.length,'Invalid joint weight');sum+=w;}assert(Math.abs(sum-1)<1e-5,'Unnormalized skin');} }
+  }
+  checks.push('source, canonical bind and all vertex weights');
+  if(rig.caninoHair101){for(const h of RIDER_HAIR.filter(h=>h.body.includes('f')))for(const helmet of ['none','#2e2e38']){rig.setLook({...fit,hairStyle:h.id,helmet});render();const e=rig.caninoHair101.evidence();assert(e.style===h.id,'Wrong hair '+h.id);assert(e.sourceMaterialPreserved&&e.liveOwnedGeometries<=1,'Hair ownership');assert((e.maxCrownDisplacementM||0)<1e-9,'Detached crown');assert(e.headSurfaceMisses===0,'Hair head fit missed');}rig.setLook(fit);checks.push('9 actual hairstyles with and without helmet; attached crown and owned cleanup');}
+  const before={...fit};
+  for(const outfit of lib.outfits){output.textContent='Checking '+outfit.label+'…';await new Promise(requestAnimationFrame);fit.outfit=outfit.id;rig.setLook(fit);assert(rig.outfitId===outfit.id&&rig.outfit?.meshes.length,'Outfit failed '+outfit.id);if(rig.rain109){assert(!rig.body.visible&&!rig.face.visible&&!rig.eyes.visible,'Old body reappeared');} }
+  checks.push(lib.outfits.length+' real outfit changes');Object.assign(fit,before);rig.setLook(fit);
+  for(const mode of ['idle','walk','jog','sprint','seat'])for(const t of [.1,.4,.8]){pose(mode,t);rig.root.updateWorldMatrix(true,true);rig.root.traverseVisible(m=>{if(!m.isSkinnedMesh)return;const p=m.geometry.attributes.position;for(let i=0;i<p.count;i+=11){m.getVertexPosition(i,v);v.applyMatrix4(m.matrixWorld);assert(v.toArray().every(Number.isFinite),'Broken '+mode+' vertex');assert(v.length()<10,'Exploded '+mode+' body');}});}
+  checks.push('15 standing, walking, running and seated poses');pose('idle');Object.assign(fit,before);rig.setLook(fit);
+  for(const slot of ['eyewear','earrings','neckwear'])for(const id of slot==='eyewear'?['round','sport','none']:slot==='earrings'?['hoops','studs','none']:['pendant','pearls','none']){rig.setLook({...fit,[slot]:id});}
+  checks.push('glasses, earrings and neckwear changes');rig.setLook(fit);
+  const errors=renderer.getContext().getError();assert(errors===0,'WebGL error '+errors);
+  output.textContent='PASS\n'+checks.join('\n')+'\nVisible authored parts: '+(rig.rain109?.imported.filter(m=>m.visible).length||0)+'\n'+JSON.stringify(rig.canino100?.accessoryEvidence||{});
+ });
+ controls.append(output);document.body.append(controls);
+
+ /* outfits load late: give them a moment */
+ const until=performance.now()+4000, want=()=>fit.outfit!=='riding'?!!rig.outfit:!!rig.boots;
+ const tick=()=>{renderer.render(scene,cam);if(!want()&&performance.now()<until)requestAnimationFrame(tick);else{renderer.render(scene,cam);document.getElementById('msg').textContent='';window.labReady=true;setInterval(()=>renderer.render(scene,cam),100);}};
+ tick();
+}catch(e){document.getElementById('msg').textContent='ERROR '+e.message;console.error(e);window.labError=String(e&&e.stack||e);}
+</script></body></html>

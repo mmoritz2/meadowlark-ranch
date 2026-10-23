@@ -1,0 +1,34 @@
+{
+  "asset": "rain-f.glb",
+  "version": "rain-character109-20261023",
+  "sha256": "356277549c9ed4f5f61572759e4c23db7b2d123edf0e5eb934a96268eb3044f6",
+  "bytes": 10699944,
+  "triangles": 94089,
+  "meshes": 17,
+  "joints": 65,
+  "source": {
+    "title": "Rain Rig",
+    "creator": "Blender Foundation / Blender Studio",
+    "url": "https://studio.blender.org/characters/rain/v3/",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "nativeBlendSHA256": "831ab6d837c679040285862b15dc9ee5180b018442a88aeaf92aaa7509b80258"
+  },
+  "approvedFace108SHA256": "dcb25768694c80a2f0843ac97ca77fc35e1ae7c38455b33c37b8a9ae64dcd587",
+  "conversion": {
+    "nativeScriptsExecuted": false,
+    "pose": "Original native rig evaluated in T-pose before a continuous monotone stature adjustment",
+    "minimumTransportJacobian": 0.3691176290478454,
+    "acceptedHeadTranslationM": [
+      -2.495200059030247e-09,
+      0.29703281951896215,
+      -0.02784619505553442
+    ],
+    "faceShapeChangedDuringGameAdaptation": false,
+    "protectedHeadNeckRingVertices": 200,
+    "protectedBodyNeckRingVertices": 104,
+    "normalMaps": "Original lossless PNG",
+    "texturePacking": "Lossless WebP roughness/catchlight; high-quality WebP color",
+    "sourceGeometryDeformation": "Shared smooth spatial field; no independent bone-weight rest warps",
+    "neckPlacementLiftM": 0.04
+  }
+}

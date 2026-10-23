@@ -1,0 +1,29 @@
+    This character rig is provided under the CC-BY license by
+        the Blender Studio.
+    https://creativecommons.org/licenses/by/4.0/
+
+                #### HOW TO LINK/APPEND ####
+    First off, ask yourself if you even NEED to link or append the
+    rig into another file. Probably not! But if you do:
+
+    1. Link/Append the collection whose name starts with "CH".
+    2. In the 3D View Header: Object -> Relations -> Make Library Override.
+    3. Save and Reload the file, to allow scripts to execute.
+
+    Then simply enter pose mode on the armature and start animating!
+
+Source: https://studio.blender.org/characters/rain/v3/
+Preview changes: evaluated native FK standing pose, static mesh baking, PBR texture conversion; omitted refraction cornea.
+Credit: Rain Rig (CC) Blender Foundation | studio.blender.org
+
+Additional adaptation in character study 104: native eye and upper-lid controls, tapered eyebrows, and revised jaw, nose and lip proportions. Original source and attribution retained. Static preview only.
+
+Character study 105 additionally changes the complete head and hair proportions with a blended neck, leaner cheeks, and finer facial features. Original attribution retained. Static preview only.
+
+Character study 106 restores cheek and lip volume, relaxes eyelids, adjusts native pupil constriction, and refines portable skin/eye materials. All source attribution is retained. Static preview only.
+
+Additional 106 finishing changes: eyebrows conformed to forehead; source iris texture preserved with a muted green standard glTF vertex-color tint.
+
+Character study 107 reduces the eyes and eyelids as a complete native unit, adjusts orbital spacing, and refines brow and lash proportions. Source attribution and texture detail retained. Static preview only.
+
+Game adaptation109: approved younger facial proportions108; original Rain mesh weight transfer into the existing humanoid animation rig, optimized geometry and portable texture compression, fitted wardrobe and source-mesh hairstyles.
