@@ -1,9 +1,9 @@
 {
   "asset": "rain-f.glb",
-  "version": "rain-character109-20261023",
-  "sha256": "356277549c9ed4f5f61572759e4c23db7b2d123edf0e5eb934a96268eb3044f6",
-  "bytes": 10699944,
-  "triangles": 94089,
+  "version": "rain-character110-20261023",
+  "sha256": "4b5f126abcae6f3b5c498ae0a1f3086a9e2035be66a37be945d9f4cc270a0d78",
+  "bytes": 10712420,
+  "triangles": 94303,
   "meshes": 17,
   "joints": 65,
   "source": {
@@ -20,8 +20,8 @@
     "minimumTransportJacobian": 0.3691176290478454,
     "acceptedHeadTranslationM": [
       -2.495200059030247e-09,
-      0.29703281951896215,
-      -0.02784619505553442
+      0.27703281951896214,
+      -0.05284619505553442
     ],
     "faceShapeChangedDuringGameAdaptation": false,
     "protectedHeadNeckRingVertices": 200,
@@ -29,6 +29,41 @@
     "normalMaps": "Original lossless PNG",
     "texturePacking": "Lossless WebP roughness/catchlight; high-quality WebP color",
     "sourceGeometryDeformation": "Shared smooth spatial field; no independent bone-weight rest warps",
-    "neckPlacementLiftM": 0.04
+    "neckPlacementLiftM": 0.02
+  },
+  "neckAndPosture110": {
+    "source109SHA256": "356277549c9ed4f5f61572759e4c23db7b2d123edf0e5eb934a96268eb3044f6",
+    "faceAndHairRigidShiftRelative109M": [
+      0,
+      -0.02,
+      -0.025
+    ],
+    "acceptedFaceVertices": 23630,
+    "acceptedFaceMaximumPositionErrorM": 8.067381273491271e-07,
+    "additionalUVTjunctionVertices": 214,
+    "additionalUVTjunctionTriangles": 214,
+    "sourceImagePayloadsRetainedExactly": 38,
+    "materialsRetainedExactly": true,
+    "allOriginalUVCoordinatesRetained": true,
+    "modifications": [
+      "Head retracted25mm and lowered20mm as one rigid assembly; accepted face and sculpted hair shapes retained.",
+      "Whole neck fairing and smooth harmonic collar\u2192Neck\u2192Head influences with virtual UV seam welding.",
+      "Lateral collar flare lowered by a common field shared by skin and source clothing.",
+      "249additional virtual seam weld pairs;44explicit UV T-junction edge splits copy exact positions/normals/weights while retaining separate UV coordinates.",
+      "Lower neck ring reprojected to current body edges with identical interpolated skinning.",
+      "Targeted shoulder skin UV seams closed with310virtualwelds and170explicit T-junction splits; accepted C3head attributes and indices retained exactly."
+    ],
+    "independentActual110RigChecks": {
+      "newNeckOpposedTrianglesInIdleWalkTalkPitchYaw": 0,
+      "knownSeamPairsWithExactPositionAndWeightAgreement": 163,
+      "maximumRingGapAcrossPosesM": 2.18e-05,
+      "restRingGapM": 1.11e-07
+    },
+    "posture": "Rain-specific upper-body idle and movement clips; relaxed elbows, upright torso and bounded gaze; source lower-body, seated role joints and male clips preserved.",
+    "legacyOutfitMask": "Measured from the current neck ring and body surface, with underlap below the shared ring.",
+    "neckUVTjunctionVertices": 44,
+    "shoulderUVTjunctionVertices": 170,
+    "shoulderVirtualWeldPairs": 310,
+    "allApprovedC3HeadBuffersRetainedExactly": true
   }
 }

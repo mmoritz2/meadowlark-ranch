@@ -15,10 +15,19 @@ const read=f=>fs.readFileSync(asset(f),'utf8'),RJ=vm.runInNewContext('('+read('r
 const lifecycle=createRiderMaterialLifecycle(),options={THREE:T,GLTFLoader:CPUAssets,clone,RJ,connectedData,riderMaterialLifecycle:lifecycle},legacy=createLegacy(options),lib=entry.createRiderLibrary(options),kit=await lib.kit('f'),rig=lib.build(kit,{body:'f',outfit:'riding',hairStyle:'ponytail',helmet:'none',eyewear:'none',earrings:'none',neckwear:'none'});
 const hash=a=>crypto.createHash('sha256').update(Buffer.from(a.buffer,a.byteOffset,a.byteLength)).digest('hex'),source=rig.rain109,originalSource=new Map();kit.rain109.scene.traverse(m=>{if(m.isMesh)originalSource.set(m.name,m);});
 try{
+ assert(kit.rainPosture110?.clips?.Idle_Loop,'Rain owns its standing posture');assert(!kit.caninoStance102,'Previous character posture is not layered onto Rain');
  for(const catalog of[lib.hairStyles,entry.RIDER_HAIR])assert.equal(new Set(catalog.map(h=>h.id)).size,catalog.length,'Hair catalog IDs remain unique across bodies');
  assert.equal(source.imported.length,17,'All authored source parts are installed');assert(source.sourceOutfit);assert(!rig.body.visible&&!rig.face.visible&&!rig.eyes.visible&&!rig.brows.visible,'Canonical driver and previous face are invisible');
  for(const m of rig.outfit.meshes)assert(!m.visible);for(const name of['top','jeans','shoes','scarf'])assert(source.parts.get(name).visible,'Source outfit stays complete');
  for(const mesh of source.imported){const src=originalSource.get(mesh.name);assert(src,mesh.name);assert.equal(hash(mesh.geometry.attributes.uv.array),hash(src.geometry.attributes.uv.array),'Source UVs are exact');assert.equal(hash(mesh.geometry.attributes.skinIndex.array),hash(src.geometry.attributes.skinIndex.array),'Source weights address canonical joints');assert.equal(mesh.skeleton,rig.body.skeleton);}
+ // Regression pairs at the actual neck and shoulder cracks found in the game.
+ for(const[name,pairs]of Object.entries({head:[[18774,18775],[5737,5738],[11711,11712],[22688,22689]],body:[[79,80],[2577,2578],[6377,6870]]})){
+  const a=source.parts.get(name).geometry.attributes;
+  for(const[left,right]of pairs){
+   for(let c=0;c<3;c++)assert(Math.abs(a.position.getComponent(left,c)-a.position.getComponent(right,c))<1e-7,name+' UV seam positions remain closed');
+   for(let c=0;c<4;c++){assert.equal(a.skinIndex.getComponent(left,c),a.skinIndex.getComponent(right,c),name+' seam uses the same joints');assert.equal(a.skinWeight.getComponent(left,c),a.skinWeight.getComponent(right,c),name+' seam deforms identically');}
+  }
+ }
  const crown=hash(source.parts.get('hair_main').geometry.attributes.position.array),head=hash(source.parts.get('head').geometry.attributes.position.array),styles=new Set();
  for(const style of RAIN_HAIR_STYLES){rig.setLook({hairStyle:style.id});assert.equal(source.hair.style,style.id);assert.equal(hash(source.parts.get('hair_main').geometry.attributes.position.array),crown,'Crown does not move');styles.add(source.parts.get('hair_ponytail').visible?hash(source.parts.get('hair_ponytail').geometry.attributes.position.array):'hidden');}
  assert.equal(styles.size,RAIN_HAIR_STYLES.length,'Every advertised source hairstyle differs');

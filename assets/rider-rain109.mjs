@@ -1,5 +1,5 @@
 import {createRiderLibrary as createWardrobe} from './rider-wardrobe.js?v=character-foundation99-20261021';
-import {prepareCaninoStance102} from './rider-canino-stance102.mjs?v=canino-stance102-20261022';
+import {prepareRainPosture110} from './rider-rain-posture110.mjs?v=rain-posture110-20261023';
 import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 import {installRainAccessories109} from './rider-rain-accessories109.mjs?v=rain-character109-20261023';
 import {installRainHelmet109} from './rider-rain-helmet109.mjs?v=rain-character109-20261023';
@@ -18,6 +18,21 @@ const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3
 const partName=mesh=>mesh.name.replace(/^Rain[_-]/i,'').replace(/^GEO-rain-/,'').replace(/-(evaluated|preview)$/,'');
 const shortOutfits=new Set(['polo','sportpolo','breton','daisytee']);
 const noSleeveOutfits=new Set([]);
+function measureNeckMask110(T,model,fallbackY){
+ let head,body;model.scene.traverse(m=>{if(!m.isMesh)return;const n=partName(m);if(n==='head')head=m.geometry.attributes.position;if(n==='body')body=m.geometry.attributes.position;});
+ if(!head||!body)throw Error('Rain neck-mask measurements require head and body');
+ const key=(p,i)=>[p.getX(i),p.getY(i),p.getZ(i)].map(x=>Math.round(x*10000)).join(':'),headKeys=new Set();
+ for(let i=0;i<head.count;i++)headKeys.add(key(head,i));
+ let ringMin=Infinity,ringCount=0;
+ for(let i=0;i<body.count;i++)if(headKeys.has(key(body,i))){ringMin=Math.min(ringMin,body.getY(i));ringCount++;}
+ const minY=(Number.isFinite(ringMin)?ringMin:fallbackY)-.012,lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];let samples=0;
+ // A measured neck band excludes the lateral shoulder flare. The same small
+ // anatomical limit that removes the old skin wings also bounds this sample.
+ for(let i=0;i<body.count;i++)if(body.getY(i)>=minY&&Math.abs(body.getX(i))<=.065){const p=[body.getX(i),body.getY(i),body.getZ(i)];for(let a=0;a<3;a++){lo[a]=Math.min(lo[a],p[a]);hi[a]=Math.max(hi[a],p[a]);}samples++;}
+ if(!samples)throw Error('Rain neck band is empty');
+ const cx=(lo[0]+hi[0])*.5,cz=(lo[2]+hi[2])*.5,rx=T.MathUtils.clamp((hi[0]-lo[0])*.5+.001,.052,.065),rz=T.MathUtils.clamp((hi[2]-lo[2])*.5+.006,.055,.075);
+ return {centerX:cx,centerZ:cz,radiusX:rx,radiusZ:rz,minY,sharedRingVertices:ringCount,bandSamples:samples,bounds:[lo,hi],uniform:{value:new T.Vector4(cx,cz,rx,rz)},height:{value:minY}};
+}
 const RAIN_HELMET_RIM_GLSL=`
 float rainHelmetRim(float th,float cy){float a=abs(th)/3.14159265359;
  return a<.28?cy+.041-.028*(a/.28):a<.62?cy+.013-.053*((a-.28)/.34):cy-.040-.020*((a-.62)/.38);
@@ -35,9 +50,10 @@ function sourceDye(T,material,kind,uniforms,state){
    shader.uniforms.uRainDyeEnabled=kind==='hair'?uniforms.hairOn:kind==='top'?uniforms.shirtOn:kind==='jeans'?uniforms.pantsOn:kind==='shoes'?uniforms.bootsOn:uniforms.skinOn;
    shader.uniforms.uRainEye=uniforms.eyes;shader.uniforms.uRainEyeEnabled=uniforms.eyesOn;
    shader.uniforms.uRainSourceOutfit=state.sourceUniform;shader.uniforms.uRainArmCuff=state.armCuff;
+   if(kind==='body'){shader.uniforms.uRainNeckFit=state.neckFit.uniform;shader.uniforms.uRainNeckMinY=state.neckFit.height;}
    if(kind==='hair')Object.assign(shader.uniforms,{uRainHelmet:state.helmetUniforms.enabled,uRainHeadInverse:state.helmetUniforms.headInverse,uRainHelmetInverse:state.helmetUniforms.objectInverse,uRainHelmetCenter:state.helmetUniforms.center});
    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vRainBind;'+(kind==='body'?'\nattribute vec2 rainArmCoverage;varying vec2 vRainArm;':'')).replace('#include <begin_vertex>','#include <begin_vertex>\nvRainBind=position;'+(kind==='body'?'vRainArm=rainArmCoverage;':''));
-   shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vRainBind;'+(kind==='body'?'varying vec2 vRainArm;':'')+'uniform vec3 uRainDye,uRainEye;uniform float uRainDyeEnabled,uRainEyeEnabled,uRainSourceOutfit,uRainArmCuff;');
+   shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vRainBind;'+(kind==='body'?'varying vec2 vRainArm;uniform vec4 uRainNeckFit;uniform float uRainNeckMinY;':'')+'uniform vec3 uRainDye,uRainEye;uniform float uRainDyeEnabled,uRainEyeEnabled,uRainSourceOutfit,uRainArmCuff;');
    let tint='';
    if(kind==='hair')tint='float l=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));diffuseColor.rgb=mix(diffuseColor.rgb,uRainDye*clamp(l/.22,.12,2.5),uRainDyeEnabled);';
    else if(kind==='eyes')tint='float iris=step(diffuseColor.r*1.08,diffuseColor.g)*step(diffuseColor.b*1.04,diffuseColor.g);float l=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));diffuseColor.rgb=mix(diffuseColor.rgb,uRainEye*clamp(l/.25,.14,2.5),iris*uRainEyeEnabled);';
@@ -48,9 +64,9 @@ function sourceDye(T,material,kind,uniforms,state){
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nuniform float uRainHelmet;uniform mat4 uRainHeadInverse,uRainHelmetInverse;uniform vec3 uRainHelmetCenter;\n'+RAIN_HELMET_RIM_GLSL);
     shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(uRainHelmet>.5){vec3 hp=(uRainHelmetInverse*uRainHeadInverse*vec4(vRainBind,1.0)).xyz;float rim=rainHelmetRim(atan(hp.x-uRainHelmetCenter.x,hp.z-uRainHelmetCenter.z),uRainHelmetCenter.y);if(hp.y>rim-.002)discard;}');
    }
-   if(kind==='body')shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(uRainSourceOutfit<.5 && vRainBind.y<'+Number(state.neckCut).toFixed(6)+' && vRainArm.x<.025 && (vRainArm.y<.025 || abs(vRainBind.x)<uRainArmCuff))discard;');
+   if(kind==='body')shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(uRainSourceOutfit<.5){vec2 neckUV=vec2((vRainBind.x-uRainNeckFit.x)/uRainNeckFit.z,(vRainBind.z-uRainNeckFit.y)/uRainNeckFit.w);bool neckSkin=vRainBind.y>uRainNeckMinY && dot(neckUV,neckUV)<1.0;if(!neckSkin && vRainArm.x<.025 && (vRainArm.y<.025 || abs(vRainBind.x)<uRainArmCuff))discard;}');
   };
-  m.customProgramCacheKey=()=>previousKey+'-rain109-'+kind+(kind==='hair'?'-helmet-rim1':'');m.needsUpdate=true;
+  m.customProgramCacheKey=()=>previousKey+'-rain110-'+kind+(kind==='hair'?'-helmet-rim1':'');m.needsUpdate=true;
  }
  return m;
 }
@@ -162,6 +178,7 @@ export function installRain109(T,rig,initialLook={},lifecycle){
  const color=()=>({value:new T.Color(1,1,1)}),toggle=()=>({value:0});
  const uniforms={hair:color(),shirt:color(),pants:color(),boots:color(),skin:color(),eyes:color(),hairOn:toggle(),shirtOn:toggle(),pantsOn:toggle(),bootsOn:toggle(),skinOn:toggle(),eyesOn:toggle()};
  const state=rig.rain109={source:'Rain Rig (CC) Blender Foundation | studio.blender.org',imported,eyeColors:rig.rainEyeColors109||[],sourceOutfit:true,sourceUniform:{value:1},armCuff:{value:rig.kit.zones.cuffX-.012},neckCut:rig.kit.zones.neckY+.055};
+ state.neckFit=measureNeckMask110(T,rig.kit.rain109,state.neckCut);
  const headIndex=rig.body.skeleton.bones.indexOf(rig.bones.Head),helmetGeo=rig.kit.helmetGeo;
  rig.helmet.updateMatrix();
  state.helmetUniforms={enabled:rig.u.uHelmet,headInverse:{value:rig.body.skeleton.boneInverses[headIndex].clone().multiply(bind)},objectInverse:{value:rig.helmet.matrix.clone().invert()},center:{value:new T.Vector3(helmetGeo.cx,helmetGeo.cy,helmetGeo.cz)}};
@@ -216,14 +233,14 @@ export function installRain109(T,rig,initialLook={},lifecycle){
  rig.dispose=(...args)=>{if(dead)return;dead=true;fittedHelmet.dispose();hair.dispose();fit.dispose();for(const m of imported)m.removeFromParent();privateGeometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());return old.dispose.apply(rig,args);};
  rig.setLook(look);
  installRainAccessories109(T,rig,{head:parts.get('head'),eyes:[parts.get('eyes')],top:parts.get('top')});
- state.inspect=()=>({source:state.source,sourceOutfit:state.sourceOutfit,sourceMeshCount:imported.length,hair:hair.evidence(),garmentFit:fit.evidence(),skinCoverage:state.skinCoverage,sourceSoleSamples:Object.fromEntries(Object.entries(sourceSoles).map(([s,c])=>[s,c.samples])),acceptedFace:'Rain108',canonicalDriverVisible:rig.body.visible});
+ state.inspect=()=>({source:state.source,sourceOutfit:state.sourceOutfit,sourceMeshCount:imported.length,hair:hair.evidence(),garmentFit:fit.evidence(),skinCoverage:state.skinCoverage,neckMask:{center:[state.neckFit.centerX,state.neckFit.centerZ],radii:[state.neckFit.radiusX,state.neckFit.radiusZ],minY:state.neckFit.minY,sharedRingVertices:state.neckFit.sharedRingVertices,bandSamples:state.neckFit.bandSamples},sourceSoleSamples:Object.fromEntries(Object.entries(sourceSoles).map(([s,c])=>[s,c.samples])),acceptedFace:'Rain108',canonicalDriverVisible:rig.body.visible});
  return lifecycle?.trackRig?lifecycle.trackRig(rig):rig;
 }
 
 export function withRainCharacter(options,legacy,lifecycle){
  const T=options.THREE,female=createWardrobe({...options,riderMaterialLifecycle:{...lifecycle,trackRig:rig=>rig}}),loader=new options.GLTFLoader(),ready=new Map();
- let pending,modelPromise;const model=()=>modelPromise||(modelPromise=loader.loadAsync(new URL('./models/rider/rain-f.glb?v=rain-character109-20261023',import.meta.url).href));
- const kit=body=>body==='m'?legacy.kit(body):pending||(pending=Promise.all([female.kit('f'),model()]).then(([k,g])=>{prepareCaninoStance102(T,k);k.rain109=g;k.characterSource='Blender Studio Rain';ready.set('f',k);return k;}));
+ let pending,modelPromise;const model=()=>modelPromise||(modelPromise=loader.loadAsync(new URL('./models/rider/rain-f.glb?v=rain-character110-20261023',import.meta.url).href));
+ const kit=body=>body==='m'?legacy.kit(body):pending||(pending=Promise.all([female.kit('f'),model()]).then(([k,g])=>{prepareRainPosture110(T,k);k.rain109=g;k.characterSource='Blender Studio Rain';ready.set('f',k);return k;}));
  return {...legacy,materialLifecycle:lifecycle,hairStyles:[...RAIN_HAIR_STYLES.map(h=>({...h,body:legacy.hairStyles.some(x=>x.id===h.id&&x.body.includes('m'))?['f','m']:['f']})),...legacy.hairStyles.filter(h=>h.body.includes('m')&&!RAIN_HAIR_STYLES.some(x=>x.id===h.id)).map(h=>({...h,body:['m']}))],hairId:(id,body)=>body==='m'?legacy.hairId(id,body):rainHairId(id),kit,ready:body=>body==='m'?legacy.ready(body):ready.get('f')||null,
   outfitFor:(k,id)=>k.body==='m'?legacy.outfitFor(k,id):female.outfitFor(k,id),
   build(k,look={}){if(k.body==='m')return legacy.build(k,look);const rig=female.build(k,{...look,neckwear:'none'});rig.rainEyeColors109=legacy.eyes;return installRain109(T,rig,look,lifecycle);},

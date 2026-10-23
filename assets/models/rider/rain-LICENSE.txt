@@ -27,3 +27,5 @@ Additional 106 finishing changes: eyebrows conformed to forehead; source iris te
 Character study 107 reduces the eyes and eyelids as a complete native unit, adjusts orbital spacing, and refines brow and lash proportions. Source attribution and texture detail retained. Static preview only.
 
 Game adaptation109: approved younger facial proportions108; original Rain mesh weight transfer into the existing humanoid animation rig, optimized geometry and portable texture compression, fitted wardrobe and source-mesh hairstyles.
+
+Rain110 modifications: balanced head placement, smooth neck geometry and skinning, collar fitting, explicit UV seam stitching, and character-specific standing and movement posture. Face and hair shapes retained.
