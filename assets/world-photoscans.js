@@ -1,3 +1,4 @@
+import {retireFerryLandingProceduralOwners} from './ferry-landing-reservation.mjs?v=farbank-procedural-landing-1';
 import {hollowpeakSourceDecisionGround,hollowpeakSourceDecisionWorld,prepareHollowpeakDecisionTree,applyHollowpeakTreeCohort} from './hollowpeak-tree-cohort.mjs?v=character-foundation99-20261021';
 import {planUpperHollowpeakTreeRoots,retireUpperHollowpeakTrees} from './hollowpeak-upper-tree-roots.mjs?v=hollowpeak-upper-source-roots-1';
 import {planHollowpeakSourceFoot,planHollowpeakRebasedSourceFoot,permitsHollowpeakMember} from './hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1';
@@ -390,7 +391,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
           state.hollowpeakCliffSeeds.push(cliffSeed);
           return;
         }
-        add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind});
+        add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind,seedOwner:p});
       });
     }
     const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[],floraOwners=new Map();
@@ -1114,6 +1115,14 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       G.followCam.invalidateTrees();previousMode=null;updateTrees();
     }
     return state.hollowpeakCliffFlora;
+  });
+  // Original construction, placement and occupancy consumers finish first.
+  // Do not await medium/countryside completion here: those already await ferry.
+  state.ferryLandingReservationReady=Promise.resolve().then(()=>Promise.all([state.floraRetirementReady,G.courseClear?.ready])).then(()=>{
+    const result=retireFerryLandingProceduralOwners({G,trees,rocks,zero});
+    previousMode=null;updateTrees();
+    if(result.removedForestPoints)scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
+    return state.ferryLandingReservation=result;
   });
   // Preserve the original planner and its private histories. The source-derived
   // medium tier restores actual full/card buffers after the same original calls.

@@ -7,7 +7,7 @@ export const HOLLOWPEAK_SOURCE_FOOT_PROFILE='hollowpeak-owned-source-foot-2';
 // wet exclusion intentionally retire unsuitable NEW habitats; no body claim.
 const POLICY=Object.freeze({bandM:.22,maximumExposureM:.25,maximumBurialM:1,maximumAdjustmentM:1,maximumGrade:.55,wetMarginM:.6,numericalToleranceM:.00008});
 const finite=Number.isFinite,wood=part=>!/leaf|leaves|needle|twig|fruit/i.test((part.mat??part.material)?.name??part.name??''),cache=new WeakMap(),shoreCache=new WeakMap();
-export const permitsHollowpeakMember=member=>member?.hollowpeakCohort?.action!=='retire';
+export const permitsHollowpeakMember=member=>!member?.retiredFerryLanding&&member?.hollowpeakCohort?.action!=='retire';
 const bounds=()=>({x0:Infinity,x1:-Infinity,z0:Infinity,z1:-Infinity});
 function grow(b,p){b.x0=Math.min(b.x0,p[0]);b.x1=Math.max(b.x1,p[0]);b.z0=Math.min(b.z0,p[2]);b.z1=Math.max(b.z1,p[2]);}
 function clip(poly,distance){if(!poly.length)return poly;const out=[];let a=poly.at(-1),da=distance(a);for(const b of poly){const db=distance(b),ina=da>=0,inb=db>=0;if(ina!==inb){const t=da/(da-db);out.push(a.map((v,k)=>v+(b[k]-v)*t));}if(inb)out.push(b);a=b;da=db;}return out;}

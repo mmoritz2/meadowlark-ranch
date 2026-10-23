@@ -79,10 +79,11 @@ export function clearFerryApproachPlants(G,approach){
 
 export function installFerryBankApproach(G){
  const P=G.waterPkg,W=G.world;if(P.ferryBankApproachReady)return P.ferryBankApproachReady;
- P.ferryBankApproachReady=Promise.resolve().then(()=>Promise.allSettled([
+ P.ferryBankApproachReady=Promise.resolve().then(()=>Promise.all([G.photoscans?.ferryLandingReservationReady,Promise.allSettled([
   G.photoscans?.floraRetirementReady,G.worldDetails?.ready,G.undergrowth?.ready,G.courseClear?.ready,
   W.mixedSward?.ready,W.chalkCoverReady,G.quartersPkg?.saplingsReady,G.worldPaths?.roadsideReady
- ])).then(()=>{
+ ])])).then(()=>{
+  if(G.photoscans?.ferryLandingReservation?.status!=='applied')throw Error('Ferry landing procedural reservation incomplete');
   const dock=G.worldPkg?.FERRY?.docks.find(d=>d.id==='farbank'),root=dock?.g,meta=root?.userData.sceneryArt;if(!root||meta?.kind!=='dock')throw Error('Actual far bank ferry landing unavailable');
   const material=W.ranchBuilderArt?.materials.aged;if(!material)throw Error('Actual ferry deck material unavailable');
   const plan=planFerryBankApproach({dock:{id:dock.id,x:root.position.x,y:root.position.y,z:root.position.z,yaw:root.rotation.y,width:meta.width,length:meta.length},terrainH:W.terrainH,colliders:W.colliders,walls:W.walls});
