@@ -13,7 +13,7 @@ export function pastureDiffuseResponse(normalDotLight){
  const n=clamp(normalDotLight,-1,1),q=PASTURE_LIGHT_VISIBILITY;
  return q.front*Math.max(n,0)+q.back*Math.max(-n,0)+q.edge*(1-Math.abs(n));
 }
-export function installPastureLighting(material,{seed=false}={}){
+export function installPastureLighting(material,{seed=false,daylight=null}={}){
  if(material.userData.pastureLighting)return material;
  const before=material.onBeforeCompile,cache=material.customProgramCacheKey.bind(material);
  material.onBeforeCompile=function(shader,renderer){
@@ -22,6 +22,20 @@ export function installPastureLighting(material,{seed=false}={}){
   shader.vertexShader='varying float pastureLeafHeight;\n'+shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
    pastureLeafHeight=clamp(${seed?'position.y / .24':'uv.y'},0.0,1.0);`);
   shader.fragmentShader='varying float pastureLeafHeight;\n'+shader.fragmentShader;
+  if(daylight){
+   shader.uniforms.pasturePigmentDay=daylight;
+   shader.vertexShader='varying float pastureLivingPigment;\n'+shader.vertexShader.replace('#include <color_vertex>',`#include <color_vertex>
+    // Read source pigment before geometry root/tip shading; winter and dry
+    // cream blades stay outside the living-green eligibility window.
+    pastureLivingPigment=0.0;
+    #ifdef USE_INSTANCING_COLOR
+      pastureLivingPigment=smoothstep(1.22,1.62,instanceColor.g/max(instanceColor.r,.0001))
+        *smoothstep(1.35,2.0,instanceColor.g/max(instanceColor.b,.0001));
+    #endif`);
+   shader.fragmentShader='uniform float pasturePigmentDay;varying float pastureLivingPigment;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    // Same daylight/rain owner as the turf; retain leaf normals and root shade.
+    diffuseColor.rgb*=mix(vec3(1.0),vec3(.83,1.12,1.12),clamp(pasturePigmentDay,0.0,1.0)*pastureLivingPigment);`);
+  }
   shader.fragmentShader=shader.fragmentShader.replace('#include <lights_physical_pars_fragment>',`#include <lights_physical_pars_fragment>
    void RE_Direct_Pasture(const in IncidentLight directLight,const in vec3 geometryPosition,const in vec3 geometryNormal,const in vec3 geometryViewDir,const in vec3 geometryClearcoatNormal,const in PhysicalMaterial material,inout ReflectedLight reflectedLight){
     vec3 previousDiffuse=reflectedLight.directDiffuse;
@@ -39,8 +53,8 @@ export function installPastureLighting(material,{seed=false}={}){
    reflectedLight.indirectDiffuse*=pastureSkyVisibility;
    reflectedLight.indirectSpecular*=pastureSkyVisibility;`);
  };
- material.customProgramCacheKey=()=>cache()+'-pasture-thin-leaf-2-'+(seed?'seed':'leaf');
- material.userData.pastureLighting={version:2,seed,...PASTURE_LIGHT_VISIBILITY};
+ material.customProgramCacheKey=()=>cache()+'-pasture-thin-leaf-2-'+(seed?'seed':'leaf')+'-day-pigment-1-'+!!daylight;
+ material.userData.pastureLighting={version:2,seed,daylight,...PASTURE_LIGHT_VISIBILITY};
  material.needsUpdate=true;
  return material;
 }

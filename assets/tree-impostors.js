@@ -79,7 +79,7 @@ export function patchSeasonalFoliage(shader,atlas=false,daylight=null) {
       // Keep bark atlas texels and seasonal pigment; change summer albedo only.
       float pastureLeafColour=clamp(pastureLeafDay,0.0,1.0)*pastureLeafRegion*leafMask
         *(1.0-smoothstep(0.0,.03,season));
-      if(pastureLeafColour>0.0)diffuseColor.rgb*=mix(vec3(1.0),vec3(.96,1.18,.88),pastureLeafColour);`);
+      if(pastureLeafColour>0.0)diffuseColor.rgb*=mix(vec3(1.0),vec3(.94,1.28,1.0),pastureLeafColour);`);
   }
 }
 

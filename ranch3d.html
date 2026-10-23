@@ -643,7 +643,7 @@ body.touch #stickZone{display:block}
   "./assets/features/stats-progression.js?v=leafy-orchard-1": "./assets/features/stats-progression.js?v=hollowpeak-wildlife-1",
   "./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1": "./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-biomes.js?v=dry-foothills-1": "./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
-  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=ochre-short-dry-cover-2",
+  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=vibrant-countryside-2",
   "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-agave-bank-culling-1",
   "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-ocotillo-bank-culling-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-agave-bank-culling-1",
@@ -663,15 +663,17 @@ body.touch #stickZone{display:block}
   "./assets/native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
   "./assets/native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
   "./assets/native-horse-motion.js": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
+  "./assets/pasture-lighting.mjs?v=grass-volume-1": "./assets/pasture-lighting.mjs?v=vibrant-countryside-2",
+  "./assets/pastoral-daylight-display.mjs": "./assets/pastoral-daylight-display.mjs?v=vibrant-countryside-2",
   "three": "./assets/vendor/three/build/three.module.js?v=render-palette-epoch-1",
   "./assets/vendor/three/build/three.module.js": "./assets/vendor/three/build/three.module.js?v=render-palette-epoch-1",
   "three/addons/": "./assets/vendor/three/examples/jsm/",
-  "./assets/tree-impostors.js?v=opaque-foliage-1": "./assets/tree-impostors.js?v=vibrant-living-materials-1",
-  "./assets/tree-impostors.js?v=canopy-lighting-1": "./assets/tree-impostors.js?v=vibrant-living-materials-1",
-  "./assets/pasture-mesosurface.mjs": "./assets/pasture-mesosurface.mjs?v=vibrant-living-materials-1",
-  "./assets/pasture-mesosurface.mjs?v=vibrant-daylight-palette-2": "./assets/pasture-mesosurface.mjs?v=vibrant-living-materials-1",
-  "./assets/tree-impostors.js": "./assets/tree-impostors.js?v=vibrant-living-materials-1",
-  "./assets/tree-impostors.js?v=matched-tree-normals-1": "./assets/tree-impostors.js?v=vibrant-living-materials-1",
+  "./assets/tree-impostors.js?v=opaque-foliage-1": "./assets/tree-impostors.js?v=vibrant-countryside-2",
+  "./assets/tree-impostors.js?v=canopy-lighting-1": "./assets/tree-impostors.js?v=vibrant-countryside-2",
+  "./assets/pasture-mesosurface.mjs": "./assets/pasture-mesosurface.mjs?v=vibrant-countryside-2",
+  "./assets/pasture-mesosurface.mjs?v=vibrant-daylight-palette-2": "./assets/pasture-mesosurface.mjs?v=vibrant-countryside-2",
+  "./assets/tree-impostors.js": "./assets/tree-impostors.js?v=vibrant-countryside-2",
+  "./assets/tree-impostors.js?v=matched-tree-normals-1": "./assets/tree-impostors.js?v=vibrant-countryside-2",
   "./assets/world-photoscans.js": "./assets/world-photoscans.js?v=vibrant-living-materials-1",
   "./assets/world-photoscans.js?v=farbank-procedural-landing-1": "./assets/world-photoscans.js?v=vibrant-living-materials-1",
   "./assets/falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1": "./assets/falls-landscape.js?v=hollowpeak-rock-minerals-1",
@@ -3222,7 +3224,7 @@ transformed.x+=sin(uTime*1.7+wph)*transformed.y*0.4;
 transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
 #endif`);
  };
- installPastureLighting(bladeMat,{seed:true});
+ installPastureLighting(bladeMat,{seed:true,daylight:terrainSurface.material.userData.pasturePaletteDay});
  const blades=new THREE.InstancedMesh(bladeGeo,bladeMat,9500);
  const m4=new THREE.Matrix4(),e=new THREE.Euler(),q=new THREE.Quaternion(),v=new THREE.Vector3(),sc=new THREE.Vector3();
  const bcol=new THREE.Color(),winterGrassTint=new THREE.Color('#c1b99b');
@@ -3377,7 +3379,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   g.computeVertexNormals();g.computeBoundingBox(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
- nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24,true);installPastureLighting(nearMat);
+ nearMat.envMapIntensity=0.5;nearMat.alphaToCoverage=true; windy(nearMat,0.24,true);installPastureLighting(nearMat,{daylight:terrainSurface.material.userData.pasturePaletteDay});
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
  const fernMat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/realism/foliage_branch_rgba.png',1),alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
