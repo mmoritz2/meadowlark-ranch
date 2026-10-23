@@ -1,5 +1,6 @@
 import {hollowpeakSourceDecisionGround} from '../hollowpeak-tree-cohort.mjs?v=character-foundation99-20261021';
 import {installCoursedFieldWalls} from '../coursed-field-wall.mjs?v=coursed-field-wall-4';
+import {createPathStoneRenderView} from '../path-stone-render-view.mjs?v=path-stone-render-view-1';
 /* Feature package 'world-paths' — the ground between places.
 
    The basin already had six worn tracks baked into ranch3d.html, and every one of them stops at
@@ -1011,6 +1012,8 @@ export function install(G){
   try{
   P.fieldWallArt=await installCoursedFieldWalls({THREE,scene,legacy:renderedBatches.stone,records:P.dryStoneCourses,groundH:gh,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy()),walls:W.walls});
   }catch(error){P.fieldWallArt={status:'failed',unitCount:0,units:[],error:String(error)};G.errors.push({id:'world-paths:field-walls',error:String(error)});console.error('Field wall finish',error);}
+
+  P.stoneRenderView=createPathStoneRenderView({THREE,legacy:renderedBatches.stone,enabled:W.compactPathStoneRendering===true});
 
   const box=renderedBatches.box,probe=new THREE.Matrix4();
   for(const b of P.benches){box.getMatrixAt(b.legacyRowIndices[0],probe);

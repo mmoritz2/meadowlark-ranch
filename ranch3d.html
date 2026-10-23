@@ -686,8 +686,10 @@ body.touch #stickZone{display:block}
   "./assets/world-photoscans.js?v=snowpeak-boulder-contact-1": "./assets/world-photoscans.js?v=vibrant-living-materials-1",
   "./assets/ferry-bank-approach.mjs?v=ferry-bank-approach-2": "./assets/ferry-bank-approach.mjs?v=farbank-procedural-landing-1",
   "./assets/hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1": "./assets/hollowpeak-source-foot.mjs?v=farbank-procedural-landing-1",
-  "./assets/features/course-clear.js?v=fine-meadows-1-mown-course-turf-4-loon-lake-4": "./assets/features/course-clear.js?v=snowpeak-boulder-contact-1",
-  "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=character-foundation99-20261021",
+  "./assets/features/course-clear.js?v=fine-meadows-1-mown-course-turf-4-loon-lake-4": "./assets/features/course-clear.js?v=path-stone-render-view-1",
+  "./assets/features/course-clear.js?v=snowpeak-boulder-contact-1": "./assets/features/course-clear.js?v=path-stone-render-view-1",
+  "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=path-stone-render-view-1",
+  "./assets/features/world-paths.js?v=character-foundation99-20261021": "./assets/features/world-paths.js?v=path-stone-render-view-1",
   "./assets/island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1": "./assets/island-medium-canopy.mjs?v=hollowpeak-connected-runtime-1",
   "./assets/deadwood-art.js?v=weathered-deadwood-1": "./assets/deadwood-art.js?v=hollowpeak-connected-runtime-1",
   "./assets/vegetation.js?v=ranch-life-snow-1": "./assets/vegetation.js?v=ranch-life-snow-1-hollowpeak-owned-ecology-1",
@@ -15401,7 +15403,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{hollowpeakDecisionHeightAt:hollowpeakRuntime.construction.heightAt,hollowpeakDecisionAffectsCell:hollowpeakRuntime.construction.affectsCell,loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{compactPathStoneRendering:true,hollowpeakDecisionHeightAt:hollowpeakRuntime.construction.heightAt,hollowpeakDecisionAffectsCell:hollowpeakRuntime.construction.affectsCell,loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
