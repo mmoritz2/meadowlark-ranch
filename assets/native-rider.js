@@ -67,7 +67,7 @@ export function createNativeTackModes({THREE,rig,mount=rig.scene.parent,collecti
  }
  function barebackSeatLocal(){
   if(!mount||!seatFollower)return null;
-  rig.scene.updateWorldMatrix(true,true);rig.scene.updateMatrixWorld(true);seat.set(0,0,0);
+  rig.scene.updateWorldMatrix(true,false);rig.scene.updateMatrixWorld(true);seat.set(0,0,0);
   if(bareIds.length){for(const id of bareIds){skin.getVertexPosition(id,point);point.applyMatrix4(skin.matrixWorld);seat.add(mount.worldToLocal(point));}seat.multiplyScalar(1/bareIds.length);}
   else{seatFollower.getWorldPosition(seat);mount.worldToLocal(seat);seat.y-=.08/Math.max(.01,mount.getWorldScale(point).y);}
   return seat.clone();
@@ -254,7 +254,7 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   const contactPoint=(ids,mesh,top=false)=>({point:point(ids,mesh,top)});
   function seatLocal(){assertLive();seatFollower.getWorldPosition(v);return mount.worldToLocal(v.clone());}
   function updateContacts(){
-    assertLive();rig.scene.updateWorldMatrix(true,true);rig.scene.updateMatrixWorld(true);mount.updateWorldMatrix(true,false);
+    assertLive();rig.scene.updateWorldMatrix(true,false);rig.scene.updateMatrixWorld(true);mount.updateWorldMatrix(true,false);
     const leftTread=point(CONTACTS.leftStirrupTread.vertexIds,tack,true),rightTread=point(CONTACTS.rightStirrupTread.vertexIds,tack,true);
     const leftBit=point(CONTACTS.leftBitRing.vertexIds,tack),rightBit=point(CONTACTS.rightBitRing.vertexIds,tack);
     for(const [name,world] of [['L',leftTread],['R',rightTread]]){

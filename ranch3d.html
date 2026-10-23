@@ -645,7 +645,7 @@ body.touch #stickZone{display:block}
   "./assets/meadow-biomes.js?v=dry-foothills-1": "./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=ochre-short-dry-cover-2",
   "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1",
-  "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1",
+  "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-ocotillo-bank-culling-1",
   "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
   "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
   "./assets/regional-cover-composition.mjs?v=regional-cover-2": "./assets/regional-cover-composition.mjs?v=amberwood-worked-clearing-1",
@@ -653,8 +653,10 @@ body.touch #stickZone{display:block}
   "./assets/features/course-guide.js?v=riding-foundation-1-formal-approach-resume-1-loon-lake-4": "./assets/features/course-guide.js?v=ownedwater-camera-1",
   "./assets/features/world-atmosphere.js?v=moonlit-riding-1-estate-arrival-1": "./assets/features/world-atmosphere.js?v=vibrant-daylight-palette-1",
   "./assets/features/look-grade.js?v=b20261001b": "./assets/features/look-grade.js?v=vibrant-daylight-palette-3",
+  "./assets/features/bond-personality-emotes.js?v=physical-ride-1": "./assets/features/bond-personality-emotes.js?v=physical-ride-1-finite-campfire-1",
   "./assets/breed-models.js?v=horse-realism-20261020a": "./assets/breed-models.js?v=horse-realism-20261020a-shared-native-palette-1",
   "./assets/native-flowing-groom.js?v=horse-realism-20261020a-native-riding-locks-1": "./assets/native-flowing-groom.js?v=active-normal-work-1",
+  "./assets/native-rider.js?v=mount-frame-reins-20261008": "./assets/native-rider.js?v=mount-frame-reins-20261008-single-subtree-1",
   "three": "./assets/vendor/three/build/three.module.js",
   "three/addons/": "./assets/vendor/three/examples/jsm/",
   "./assets/falls-landscape.js?v=hollowpeak-cascades-1-connected-landforms-1": "./assets/falls-landscape.js?v=hollowpeak-rock-minerals-1",
@@ -1715,6 +1717,7 @@ renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.info.autoReset=false;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
+scene.updateMatrix();scene.matrixAutoUpdate=false;
 scene.fog=new THREE.FogExp2(0xb8d8e9,0.00125);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns beside the arena's clear

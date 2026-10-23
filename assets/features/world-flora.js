@@ -1059,6 +1059,18 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   if(b.im.instanceColor)b.im.instanceColor.needsUpdate=true;
   b.im.computeBoundingSphere&&b.im.computeBoundingSphere();
  }
+ // The original all-row HIGH envelope also contains the LOW ocotillo vertices.
+ // Quality only selects a prefix; later trail/course clearing collapses rows.
+ // Keep unknown templates/materials uncullable rather than trusting stale bounds.
+ {
+  const b=BANK.oco,im=b.im,g=im.geometry,m=im.material,s=im.boundingSphere,d=g.userData?.desertArt;
+  im.frustumCulled=!!(g===ocoGeo&&d?.kind==='ocotillo'&&d.variant===0&&d.detail===true&&d.triangles===1476&&
+   g.attributes.position?.count===1854&&g.index?.count===4428&&!im.morphTexture&&
+   m===desertArt.material&&m.isMeshStandardMaterial&&m.name==='Desert | botanical surfaces'&&
+   !m.displacementMap&&m.onBeforeCompile===THREE.Material.prototype.onBeforeCompile&&
+   im.count===b.n&&b.n>0&&s?.radius>0&&
+   [s?.radius,s?.center?.x,s?.center?.y,s?.center?.z].every(Number.isFinite));
+ }
  F.total=total;
  F.counts=Object.keys(BANK).reduce((o,k)=>(o[k]=BANK[k].n,o),{});
  console.log('world-flora: planted',total,'in',Object.keys(BANK).length,'draws',JSON.stringify(F.counts));

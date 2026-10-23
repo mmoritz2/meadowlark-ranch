@@ -446,7 +446,8 @@ export function install(G){
   const flame=new THREE.Mesh(new THREE.ConeGeometry(0.18,0.5,8),new THREE.MeshStandardMaterial({color:0xffa030,emissive:0xff6a10,emissiveIntensity:1.4,transparent:true,opacity:0.9}));flame.position.y=0.32;g.add(flame);
   const light=new THREE.PointLight(0xffa040,0.9,7);light.position.y=0.6;g.add(light);
   G.scene.add(g); G.world.colliders.push({x:FIRE.x,z:FIRE.z,r:0.8});
-  G.world.addThing({kind:'camp',id:'ranchfire',x:FIRE.x,z:FIRE.z,g:null,label:()=>'🎸 Play a tune by the fire (E)',use:()=>{riderEmote(emoteOwned(G.save.fresh(),'guitar')?'guitar':'airguitar');},tick:(dt,t)=>{flame.scale.y=1+Math.sin(t*9)*0.12;flame.rotation.y=t*2;}});
+  let flameTime=0;
+  G.world.addThing({kind:'camp',id:'ranchfire',x:FIRE.x,z:FIRE.z,g:null,label:()=>'🎸 Play a tune by the fire (E)',use:()=>{riderEmote(emoteOwned(G.save.fresh(),'guitar')?'guitar':'airguitar');},tick:dt=>{flameTime+=dt;flame.scale.y=1+Math.sin(flameTime*9)*0.12;flame.rotation.y=flameTime*2;}});
  }catch(e){console.warn('campfire',e);}
 
  /* ---- emote panel ----------------------------------------------------------------------- */
