@@ -539,6 +539,8 @@ export function install(G){
   previousDay=day;
   const blend=rate=>reset?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*rate);
   const e=K.elev,rain=A.rain||0;
+  const pasturePaletteDay=sstep(e,16,32)*(1-rain);
+  if(ground?.material?.userData.pasturePaletteDay)ground.material.userData.pasturePaletteDay.value=pasturePaletteDay;
   // Fade in below the horizon only; the daylight and golden-hour palettes remain exact.
   const nightReadability=sstep(K.night,.05,.85);
   const pm=1-K.morning;
@@ -600,7 +602,7 @@ export function install(G){
      enough at noon that distance still reads as distance. Pulling it a fifth of the way
      toward the zenith is the aerial perspective — far things go blue, not merely pale. -- */
   if(scene.fog){
-   _fog.copy(_hor).lerp(_zen,0.24);
+   _fog.copy(_hor).lerp(_zen,0.24+0.06*pasturePaletteDay*(1-Math.max(REG.marsh,REG.snow,REG.badland,REG.amber)));
    if(K.horizon>0.02)_fog.lerp(_glow,K.horizon*0.34);
    const lum=lerp(0.13,1.0,sstep(e,-6,8));
    _fog.multiplyScalar(lum*(rain?0.80:1));

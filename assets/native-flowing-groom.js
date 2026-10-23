@@ -11,13 +11,29 @@ function islands(g){
  if(!index)return[];for(let i=0;i<index.length;i+=3){join(index[i],index[i+1]);join(index[i],index[i+2]);}
  const map=new Map();for(let i=0;i<count;i++){const k=find(i);if(!map.has(k))map.set(k,[]);map.get(k).push(i);}return [...map.values()];
 }
-function geometricNormals(g,out){
- out.fill(0);const p=g.attributes.position.array,index=g.index.array;
- for(let i=0;i<index.length;i+=3){const a=index[i]*3,b=index[i+1]*3,c=index[i+2]*3,ax=p[b]-p[a],ay=p[b+1]-p[a+1],az=p[b+2]-p[a+2],bx=p[c]-p[a],by=p[c+1]-p[a+1],bz=p[c+2]-p[a+2],x=ay*bz-az*by,y=az*bx-ax*bz,z=ax*by-ay*bx;for(let k=0;k<3;k++){const n=index[i+k]*3;out[n]+=x;out[n+1]+=y;out[n+2]+=z;}}
- for(let i=0;i<out.length;i+=3){const l=Math.hypot(out[i],out[i+1],out[i+2])||1;out[i]/=l;out[i+1]/=l;out[i+2]/=l;}
+// Private topology and weights never change during this controller's lifetime.
+// Retain original face order: Float32 accumulation and published normals stay exact.
+function normalWork(g,weights){
+ const index=g.index.array,corners=[],vertices=[];
+ for(let i=0;i<g.attributes.position.count;i++)if(!weights||weights[i]!==0)vertices.push(i*3);
+ for(let i=0;i<index.length;i+=3){const a=index[i],b=index[i+1],c=index[i+2];if(!weights||weights[a]!==0||weights[b]!==0||weights[c]!==0)corners.push(a*3,b*3,c*3);}
+ return{corners:new Uint32Array(corners),vertices:new Uint32Array(vertices)};
 }
-function transferNormals(from,to,authored,out,weights){
- for(let i=0;i<out.length;i+=3){if(weights[i/3]===0){out[i]=authored[i];out[i+1]=authored[i+1];out[i+2]=authored[i+2];continue;}
+function geometricNormals(g,out,work){
+ out.fill(0);const p=g.attributes.position.array,index=work.corners;
+ for(let i=0;i<index.length;i+=3){const a=index[i],b=index[i+1],c=index[i+2],ax=p[b]-p[a],ay=p[b+1]-p[a+1],az=p[b+2]-p[a+2],bx=p[c]-p[a],by=p[c+1]-p[a+1],bz=p[c+2]-p[a+2],x=ay*bz-az*by,y=az*bx-ax*bz,z=ax*by-ay*bx;
+  out[a]+=x;out[a+1]+=y;out[a+2]+=z;
+  out[b]+=x;out[b+1]+=y;out[b+2]+=z;
+  out[c]+=x;out[c+1]+=y;out[c+2]+=z;
+ }
+ const vertices=work.vertices;
+ for(let j=0;j<vertices.length;j++){const i=vertices[j],x=out[i],y=out[i+1],z=out[i+2],l=Math.hypot(x,y,z)||1;out[i]=x/l;out[i+1]=y/l;out[i+2]=z/l;}
+}
+function transferNormals(from,to,authored,out,work){
+ // Zero-weight vertices always retain these exact authored values. Bulk copy
+ // replaces the old per-vertex copy branch; only free lengths need transport.
+ out.set(authored);const vertices=work.vertices;
+ for(let j=0;j<vertices.length;j++){const i=vertices[j];
   const ax=from[i],ay=from[i+1],az=from[i+2],bx=to[i],by=to[i+1],bz=to[i+2],x=authored[i],y=authored[i+1],z=authored[i+2],kx=ay*bz-az*by,ky=az*bx-ax*bz,kz=ax*by-ay*bx,d=ax*bx+ay*by+az*bz;
   if(d<-.9999){out[i]=bx;out[i+1]=by;out[i+2]=bz;continue;}
   const u=ky*z-kz*y,v=kz*x-kx*z,w=kx*y-ky*x,q=1/(1+d),nx=x+u+(ky*w-kz*v)*q,ny=y+v+(kz*u-kx*w)*q,nz=z+w+(kx*v-ky*u)*q,l=Math.hypot(nx,ny,nz)||1;out[i]=nx/l;out[i+1]=ny/l;out[i+2]=nz/l;
@@ -51,7 +67,7 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
  let cardCount=0,lockCount=0,protectedVertices=0;
  for(const mesh of hair){
   const original=mesh.geometry,g=mesh.userData.nativeRidingGroom?withNativeRidingResources(mesh.uuid+'|flowing',()=>original.clone()):original.clone(),position=g.attributes.position,raw=position.array,originalPosition=raw.slice(),weights=new Float32Array(position.count),parts=new Int8Array(position.count);parts.fill(-1);
-  const oldGeo=new Float32Array(raw.length),newGeo=new Float32Array(raw.length),originalNormal=g.attributes.normal.array.slice();geometricNormals(g,oldGeo);
+  const oldGeo=new Float32Array(raw.length),newGeo=new Float32Array(raw.length),originalNormal=g.attributes.normal.array.slice();geometricNormals(g,oldGeo,normalWork(g));
   const authoredRoles=new Map();for(const c of shellMeta?.cards||[])authoredRoles.set(c.start,c.role);
   const riding=mesh.userData.nativeRidingGroom,meta=riding||shellMeta,shell=!!mesh.userData.nativeEquestrianGroom,groups=shell&&meta?.locks?meta.locks.map(l=>Array.from({length:l.count},(_,i)=>l.start+i)):islands(g),groupsOut=[];
   const sourceRootGroups=new Map((g.userData.nativeRidingSourceRoots||[]).map(r=>[r.start,r]));
@@ -87,10 +103,10 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
    }
    rootIds.push({mesh:mesh.name,role,ids:roots.slice()});groupsOut.push(group);if(shell)lockCount++;else cardCount++;
   }
-  geometricNormals(g,newGeo);transferNormals(oldGeo,newGeo,originalNormal,g.attributes.normal.array,weights);
+  const work=normalWork(g,weights);geometricNormals(g,newGeo,work);transferNormals(oldGeo,newGeo,originalNormal,g.attributes.normal.array,work);
   g.attributes.position.setUsage(THREE.DynamicDrawUsage);g.attributes.normal.setUsage(THREE.DynamicDrawUsage);g.computeBoundingBox();g.computeBoundingSphere();g.boundingSphere.radius+=12;
   const rest=raw.slice(),normal=g.attributes.normal.array.slice(),baseGeo=newGeo.slice();
-  mesh.geometry=g;records.push({mesh,original,g,rest,normal,baseGeo,scratch:newGeo,weights,parts,groups:groupsOut,originalPosition});
+  mesh.geometry=g;records.push({mesh,original,g,rest,normal,baseGeo,scratch:newGeo,weights,parts,groups:groupsOut,originalPosition,normalWork:work});
  }
  const inverseScene=new THREE.Matrix4(),matrix=new THREE.Matrix4(),blend=new THREE.Matrix4(),joint=new THREE.Matrix4(),inverse=new THREE.Matrix4(),temp=new THREE.Matrix4();
  const activeBones=[...new Set(records.flatMap(r=>Array.from(r.g.attributes.skinIndex.array)))],skinFrames=new Float64Array(skin.skeleton.bones.length*12);
@@ -138,7 +154,7 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
      if(Math.abs(det)>1e-15){const lift=(.004-py)/det;p[n]+=(c*h-b*i)*lift;p[n+1]+=(a*i-c*g)*lift;p[n+2]+=(b*g-a*h)*lift;stats.groundCorrections++;visibleOffset=true;}
     }
    }
-   geometricNormals(r.g,r.scratch);transferNormals(r.baseGeo,r.scratch,r.normal,r.g.attributes.normal.array,r.weights);r.g.attributes.position.needsUpdate=true;r.g.attributes.normal.needsUpdate=true;
+   geometricNormals(r.g,r.scratch,r.normalWork);transferNormals(r.baseGeo,r.scratch,r.normal,r.g.attributes.normal.array,r.normalWork);r.g.attributes.position.needsUpdate=true;r.g.attributes.normal.needsUpdate=true;
   }
   stats.frames++;stats.finite=Number.isFinite(stats.maxTipOffsetM);
  }

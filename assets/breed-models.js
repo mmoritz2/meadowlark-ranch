@@ -91,7 +91,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
       // Independent files start together. Preparation still uses a private clone
       // and the same shape, coat, then motion ordering as every approved breed.
       pending.set(key,Promise.all([source,roster,motion]).then(([source,roster,extra])=>construct(()=>{
-        let g={...source,scene:clone(source.scene)};
+        let g={...source,scene:spec.nativeKind==='horse'?cloneSharedNativeHorse(source.scene):clone(source.scene)};
         if(roster){g.nativeNeutralCoat=bodyIn(g.scene,spec)?.material.map;const [binary,coat]=roster;applyNativeRosterShape({THREE,gltf:g,spec,binary,coat});prepareNativeFjordCrest({THREE,gltf:g,spec,binary});prepareNativeEquestrianGroom({THREE,gltf:g,spec,binary});}
         if(extra){const replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}
         return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec);
@@ -99,8 +99,22 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     }
     return pending.get(key);
   }
+  // SkeletonUtils clones each mesh palette separately. Keep proven native horse
+  // source sharing within this clone; every mesh retains its own bind matrices.
+  function cloneSharedNativeHorse(source){
+    const scene=clone(source),sources=[],copies=[],shared=new Map();
+    source.traverse(o=>{if(o.isSkinnedMesh)sources.push(o);});
+    scene.traverse(o=>{if(o.isSkinnedMesh)copies.push(o);});
+    if(sources.length!==copies.length||sources.some((o,i)=>o.geometry!==copies[i].geometry||o.name!==copies[i].name))return scene;
+    for(let i=0;i<copies.length;i++){
+      const original=sources[i].skeleton,next=copies[i].skeleton,prior=shared.get(original);
+      if(!prior){shared.set(original,next);continue;}
+      if(next.boneTexture===null&&next.boneInverses===prior.boneInverses&&next.bones.length===prior.bones.length&&next.bones.every((b,j)=>b===prior.bones[j]))copies[i].skeleton=prior;
+    }
+    return scene;
+  }
   function instantiate(asset,{materialPolish=true}={}){
-    const scene=clone(asset.scene),materials=[],copies=new Map();
+    const scene=asset.profile.nativeKind==='horse'?cloneSharedNativeHorse(asset.scene):clone(asset.scene),materials=[],copies=new Map();
     const copy=m=>{if(!copies.has(m)){const next=m.clone();copies.set(m,next);materials.push(next);}return copies.get(m);};
     scene.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(copy):copy(o.material);});
     const skin=bodyIn(scene,asset.profile);scene.scale.setScalar(asset.fitScale);scene.position.set(0,asset.fitY,0);scene.rotation.set(0,0,0);

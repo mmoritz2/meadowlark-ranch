@@ -4,7 +4,7 @@ import {applyChalkGrazingPixels} from './chalk-grazing.mjs?v=chalk-grazing-1';
 import {applyPastoralGrazingPixels,PASTORAL_COVER_PROFILE} from './pastoral-cover.mjs?v=pastoral-cover-1-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-final-environment-1';
 import {HOLLOWPEAK_SNOW_GLSL,HOLLOWPEAK_SNOW_PROFILE} from './hollowpeak-snow.mjs?v=cold-landscape-1';
 import {applyNorthPastureGrazingPixels,NORTH_PASTURE_PROFILE} from './north-pasture.mjs?v=north-pasture-2';
-import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=pasture-mesosurface-4';
+import {patchPastureMesoSurface,PASTURE_MESO_CACHE} from './pasture-mesosurface.mjs?v=vibrant-daylight-palette-2';
 import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
@@ -114,7 +114,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
     t.colorSpace=THREE.NoColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     return {value:t};
   }
-  const wetWeather={value:0},soilReady={value:0};
+  const wetWeather={value:0},soilReady={value:0},pasturePaletteDay={value:0};
   const soilSurface={asset:'sandy_gravel_02',textureMetres:2.53,loaded:0,errors:[]};
   const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest},
     meadowDetail:detail('./assets/textures/pasture/grass_nor_gl.webp'),
@@ -123,7 +123,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
     meadowARM:detail('./assets/textures/pasture/grass_arm.webp'),
     stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
     litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),
-    soilDetail:{value:null},soilReady,wetWeather};
+    soilDetail:{value:null},soilReady,wetWeather,pasturePaletteDay};
   // Texture UUID allocation follows the synchronous seeded world construction.
   // Albedo still loads in the original slot; optional detail stays inactive until
   // the matching detail map is ready, retaining a valid fallback during loading.
@@ -142,6 +142,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
   material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil-'+PASTURE_MESO_CACHE+'-'+NORTH_PASTURE_PROFILE+'-'+HOLLOWPEAK_SNOW_PROFILE+'-'+FROSTPINE_TRANSITION_PROFILE;
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0],hollowSnow:[-1]};
   material.userData.wetWeather=wetWeather;
+  material.userData.pasturePaletteDay=pasturePaletteDay;
   material.userData.fieldSurface=fieldSurface;
   material.userData.soilSurface=soilSurface;
   material.userData.riverSoil={color:uniforms.terrainSoil,properties:uniforms.soilDetail,ready:soilReady};

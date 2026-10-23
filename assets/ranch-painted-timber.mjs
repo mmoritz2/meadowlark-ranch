@@ -9,7 +9,7 @@ function resources(build){
 // paint consumers, texture loading and all placement/collision owners stay separate.
 export function createRanchPaintedTimber({THREE:T,sourceMaterial}={}){
  if(!T||!sourceMaterial?.isMeshStandardMaterial||!sourceMaterial.normalMap||!sourceMaterial.roughnessMap)throw Error('Resident white paint and scanned normal/ARM textures required');
- const templates=new Map();let material=null,disposed=false,meshes=0;
+ const templates=new Map(),fixedBoardBanks=[];let material=null,disposed=false,meshes=0;
  function paint(){
   if(disposed)throw Error('Painted timber factory disposed');
   if(material)return material;
@@ -62,7 +62,63 @@ export function createRanchPaintedTimber({THREE:T,sourceMaterial}={}){
   g.userData.paintedTimber={version:1,grainAxis:axis,post,width,height,depth,chamferM:radius,pitchM:PITCH,scanCentre:SCAN_CENTRE};
   templates.set(key,g);return g;
  }
+ function instanceFixedBoards({parent,meshes}){
+  const profile='fixed-painted-boards-1',owned=[];let published=false;
+  const same=(a,b)=>a.length===b.length&&a.every((v,i)=>Object.is(v,b[i]));
+  const need=(ok,message)=>{if(!ok)throw Error('Fixed painted boards: '+message);};
+  function attributeEqual(a,b){return a===b||!!(a&&b&&!a.isInterleavedBufferAttribute&&!b.isInterleavedBufferAttribute&&a.array.constructor===b.array.constructor&&a.itemSize===b.itemSize&&a.normalized===b.normalized&&a.usage===b.usage&&a.gpuType===b.gpuType&&same(a.array,b.array));}
+  function geometryEqual(a,b){
+   if(a===b)return true;
+   const names=Object.keys(a.attributes),other=Object.keys(b.attributes);
+   return names.length===other.length&&names.every(k=>Object.hasOwn(b.attributes,k)&&attributeEqual(a.attributes[k],b.attributes[k]))&&attributeEqual(a.index,b.index)&&a.drawRange.start===b.drawRange.start&&a.drawRange.count===b.drawRange.count&&JSON.stringify(a.groups)===JSON.stringify(b.groups)&&a.morphTargetsRelative===b.morphTargetsRelative;
+  }
+  function drawEqual(a,b){return a.material===b.material&&a.castShadow===b.castShadow&&a.receiveShadow===b.receiveShadow&&a.layers.mask===b.layers.mask&&a.renderOrder===b.renderOrder&&a.visible===b.visible&&a.frustumCulled===b.frustumCulled&&a.customDepthMaterial===b.customDepthMaterial&&a.customDistanceMaterial===b.customDistanceMaterial&&geometryEqual(a.geometry,b.geometry);}
+  const sourceRows=[];
+  try{
+   need(!disposed&&parent?.isScene&&Array.isArray(meshes)&&meshes.length===144&&new Set(meshes).size===144,'explicit144fixed sources');
+   for(const mesh of meshes){
+    const g=mesh.geometry,tag=g?.userData.paintedTimber;
+    need(mesh.isMesh&&!mesh.isSkinnedMesh&&!mesh.isInstancedMesh&&mesh.parent===parent&&mesh.material===material&&tag?.version===1&&!tag.post&&['x','z'].includes(tag.grainAxis),'owned fixed painted board');
+    need(!mesh.userData.solidParts&&!mesh.userData.walkable&&!mesh.skeleton&&!mesh.morphTargetInfluences&&Object.keys(g.morphAttributes).length===0,'no physical or deforming source owner');
+    for(const key of ['onBeforeRender','onAfterRender','onBeforeShadow','onAfterShadow'])need(mesh[key]===T.Object3D.prototype[key],'default fixed board callback '+key);
+    need(g.index&&!g.index.isInterleavedBufferAttribute&&Object.values(g.attributes).every(a=>!a.isInterleavedBufferAttribute&&ArrayBuffer.isView(a.array))&&g.attributes.paintedTimberFoot,'complete fixed draw buffers');
+    mesh.updateWorldMatrix(true,false);
+    need(mesh.matrix.elements.every(Number.isFinite),'finite static local matrix');
+    sourceRows.push({source:mesh,matrix:mesh.matrix.elements.slice(),matrixWorld:mesh.matrixWorld.elements.slice(),geometry:g,material:mesh.material});
+   }
+   const cohorts=[];
+   for(const row of sourceRows){
+    // Preserve ordinary frustum culling with small immutable cells. Bounds below
+    // contain complete transformed board geometry, never just the cell square.
+    const cell=Math.floor(row.matrix[12]/48)+','+Math.floor(row.matrix[14]/48);
+    let cohort=cohorts.find(c=>c.cell===cell&&drawEqual(c.rows[0].source,row.source));
+    if(!cohort){cohort={cell,rows:[]};cohorts.push(cohort);}cohort.rows.push(row);
+   }
+   const bindings=[],matrix=new T.Matrix4();
+   resources(()=>{
+    for(const cohort of cohorts){
+     const first=cohort.rows[0].source,bank=new T.InstancedMesh(first.geometry,first.material,cohort.rows.length);owned.push(bank);
+     bank.name='Fixed painted timber | static boards';bank.matrixAutoUpdate=false;bank.layers.mask=first.layers.mask;bank.renderOrder=first.renderOrder;bank.visible=first.visible;bank.castShadow=first.castShadow;bank.receiveShadow=first.receiveShadow;bank.frustumCulled=first.frustumCulled;bank.customDepthMaterial=first.customDepthMaterial;bank.customDistanceMaterial=first.customDistanceMaterial;
+     bank.userData={collisionIgnore:true,fixedPaintedBoards:{profile,cell:cohort.cell,count:cohort.rows.length,borrowedGeometry:true,borrowedMaterial:true}};
+     cohort.rows.forEach((row,index)=>{matrix.fromArray(row.matrix);bank.setMatrixAt(index,matrix);bindings.push({...row,bank,index});});
+     bank.instanceMatrix.needsUpdate=true;bank.computeBoundingBox();bank.computeBoundingSphere();
+    }
+   });
+   // All preparation is private. Original geometry/material/transform buffers are
+   // borrowed unchanged. No collision registration, clock or global RNG draws.
+   need(sourceRows.every(row=>row.source.parent===parent&&row.source.geometry===row.geometry&&row.source.material===row.material&&same(row.source.matrix.elements,row.matrix)&&same(row.source.matrixWorld.elements,row.matrixWorld)),'source changed during fixed preparation');
+   parent.add(...owned);published=true;
+   for(const mesh of meshes)parent.remove(mesh);
+   fixedBoardBanks.push(...owned);
+   return{profile,status:'instanced',sourceMeshes:144,drawMeshes:owned.length,cellMetres:48,instances:bindings.length,meshes:owned,bindings,geometryAttributesPreserved:true,borrowedMaterials:true,physicalOwnersChanged:false};
+  }catch(error){
+   for(const bank of owned){bank.removeFromParent();bank.dispose();}
+   if(published)for(const mesh of meshes)if(mesh.parent!==parent)parent.add(mesh);
+   return{profile,status:'retained-original',reason:error.message,sourceMeshes:meshes?.length||0,drawMeshes:meshes?.length||0,physicalOwnersChanged:false};
+  }
+ }
  return{
+  instanceFixedBoards,
   dress(mesh,{grainAxis='z',post=false}={}){
    if(disposed)throw Error('Painted timber factory disposed');
    if(!mesh?.isMesh||!['x','y','z'].includes(grainAxis))throw Error('Explicit timber mesh and grain axis required');
@@ -78,6 +134,6 @@ export function createRanchPaintedTimber({THREE:T,sourceMaterial}={}){
   },
   stats:()=>({version:1,meshes,templates:templates.size,material:!!material,newSamplers:0,disposed}),
   get material(){return paint();},
-  dispose(){if(disposed)return;disposed=true;for(const g of templates.values())g.dispose();templates.clear();material?.dispose();},
+  dispose(){if(disposed)return;disposed=true;for(const bank of fixedBoardBanks){bank.removeFromParent();bank.dispose();}fixedBoardBanks.length=0;for(const g of templates.values())g.dispose();templates.clear();material?.dispose();},
  };
 }

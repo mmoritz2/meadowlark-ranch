@@ -259,11 +259,19 @@ export function install(G){
  /* One place, and only one, that copies the table onto the renderer and the GPU. Everything
     that changes a parameter — install, the settings toggle, a QA sweep — ends up here, so
     there is no way for the picture and the table to disagree. */
+ // Bounded daylight colour uses the existing pass and guards. The base table
+ // remains the night/user setting; full daylight adds .19/.20/.08 only.
+ const syncDayPalette=(u,elevation)=>{
+  const day=THREE.MathUtils.smoothstep(elevation,16,32);
+  u.uSat.value=day>0?P.sat+.19*day:P.sat;
+  u.uVib.value=day>0?P.vib+.20*day:P.vib;
+  u.uLift.value=day>0?P.lift+.08*day:P.lift;
+ };
  const sync=()=>{
   applyTone();
   if(pass)pass.enabled=!!P.on;
   if(gradeMat){const u=gradeMat.uniforms;
-   u.uLift.value=P.lift; u.uKnee.value=P.liftKnee; u.uGamma.value=P.gamma;
+   u.uKnee.value=P.liftKnee; u.uGamma.value=P.gamma;
    /* Off at night, and this is a scene fact rather than a per-pixel guess. Four passes of
       per-pixel gating failed to stop this grade crushing the night: fading contrast out of the
       shadows helped a little, widening the floor guard made it WORSE, because the guard also
@@ -276,7 +284,7 @@ export function install(G){
    const elevation=-12+66*(.5-.5*Math.cos(d*Math.PI*2));
    u.uMix.value=P.mix*THREE.MathUtils.smoothstep(elevation,0,14);
    u.uContrast.value=P.contrast; u.uPivot.value=P.pivot;
-   u.uSat.value=P.sat; u.uVib.value=P.vib; u.uCap.value=P.cap;
+   syncDayPalette(u,elevation); u.uCap.value=P.cap;
    u.uWarm.value=P.warm; u.uSplit.value=P.split; u.uTint.value=P.tint;   // uMix is set above, gated by daylight
    u.uLo.value=P.lo; u.uHi.value=P.hi;}
   if(bloomPass)bloomPass.strength=P.on?P.bloom:bloomWas;
@@ -287,6 +295,7 @@ export function install(G){
   if(!gradeMat)return;
   const d=G.time?.dayT?.()??.5;
   const elevation=-12+66*(.5-.5*Math.cos(d*Math.PI*2));
+  syncDayPalette(gradeMat.uniforms,elevation);
   gradeMat.uniforms.uMix.value=P.mix*THREE.MathUtils.smoothstep(elevation,0,14);
  });
 
