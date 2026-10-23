@@ -14081,7 +14081,8 @@ function tick(stepSeconds){
  // The animation loop supplies a timestamp; explicit test steps use a separate flag.
  // Preserve elapsed travel even on slow frames; long stalls remain bounded.
  // Movement collision checks below use short distance steps independently.
- let dt=manualStepping?stepSeconds:Math.min(0.25,clock.getDelta());
+ const frameDt=manualStepping?stepSeconds:Math.min(0.25,clock.getDelta());
+ let dt=frameDt;
  if(G.photoPause)dt=0;                    // photo mode's ⏸ freeze (clubs-boards): the camera still flies, the valley holds still
  if(manualStepping)clock.elapsedTime+=dt;
  const t=clock.elapsedTime;
@@ -15011,7 +15012,7 @@ function tick(stepSeconds){
   const rumble=SUMMON.reared?0:0.006+0.010*Math.min(1,SUMMON.t/5);
   camera.lookAt(camLook.x+Math.sin(t*47)*rumble,camLook.y+Math.sin(t*53)*rumble,camLook.z);
  }else if(freeCam){
-  tickFreeCam(dt);
+  tickFreeCam(frameDt);
  }else if(!G.run('camera',{camDesired,camLook,camSafe,dt,t,sp,grounded})){   // a package that returns true owns the camera this frame
   const shake=sp>7&&grounded?0.011:0;
   camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.6,player.pos.z),1-Math.exp(-8*dt));
