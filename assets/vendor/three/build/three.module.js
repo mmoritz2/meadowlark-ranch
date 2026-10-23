@@ -29573,6 +29573,8 @@ class WebGLRenderer {
 
 			renderListStack.push( currentRenderList );
 
+			this.info.render.frame ++;
+
 			projectObject( scene, camera, 0, _this.sortObjects );
 
 			currentRenderList.finish();
@@ -29584,8 +29586,6 @@ class WebGLRenderer {
 			}
 
 			//
-
-			this.info.render.frame ++;
 
 			if ( _clippingEnabled === true ) clipping.beginShadows();
 
