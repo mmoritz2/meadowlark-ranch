@@ -19,18 +19,18 @@ export function attachPastoralDaylightDisplay({THREE:T,material,texture=null,ini
           // Daylight display pigment, after photo Reinhard and before sunHole/photoMix.
           // Select blue chroma; neutral/bright photographed cloud pixels stay outside it.
           float photoBlueChroma=(photo.b-min(photo.r,photo.g))/max(photo.b,.00001);
-          float photoBlueMask=smoothstep(.24,.50,photoBlueChroma)
-            *smoothstep(.015,.09,min(photo.b-photo.r,photo.b-photo.g))
+          float photoBlueMask=smoothstep(.12,.36,photoBlueChroma)
+            *smoothstep(.01,.06,min(photo.b-photo.r,photo.b-photo.g))
             *(1.-smoothstep(.62,.82,min(photo.r,min(photo.g,photo.b))));
           float photoBlueDay=smoothstep(.985,1.,day)
             *(1.-smoothstep(0.,.02,golden))*(1.-smoothstep(0.,.05,rain));
           if(photoBlueMask*photoBlueDay>0.){
             vec3 photoLumaWeights=vec3(.2126,.7152,.0722);
             float photoLuma=dot(photo,photoLumaWeights);
-            vec3 bluePigment=photo*vec3(.78,.97,1.06);
+            vec3 bluePigment=photo*vec3(.68,.97,1.10);
             bluePigment*=photoLuma/max(dot(bluePigment,photoLumaWeights),.00001);
             float blueRoom=clamp((1.-photo.b)/max(bluePigment.b-photo.b,.00001),0.,1.);
-            photo=mix(photo,bluePigment,.65*photoBlueMask*photoBlueDay*blueRoom);
+            photo=mix(photo,bluePigment,.80*photoBlueMask*photoBlueDay*blueRoom);
           }
           float sunHole=1.-smoothstep(${Math.cos(settings.maskOuterDegrees*Math.PI/180).toPrecision(17)},${Math.cos(settings.maskInnerDegrees*Math.PI/180).toPrecision(17)},dot(pd,daylightSourceSun));
           float photoMix=daylightPhotoWeight*smoothstep(.85,1.,day)*(1.-smoothstep(.05,.4,golden))*smoothstep(.015,.09,d.y)*smoothstep(0.,.015,pd.y)*sunHole;

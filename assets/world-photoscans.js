@@ -194,7 +194,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(mat.name==='island_tree_01_leaves')patchLeafCameraClearance(sh);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves')+'-living-day-leaf-1-'+!!(isSummerLeafMaterial(mat.name)&&pasturePaletteDay);
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name)+'-leaf-camera-clearance-1-'+(mat.name==='island_tree_01_leaves')+'-living-day-leaf-2-'+!!(isSummerLeafMaterial(mat.name)&&pasturePaletteDay);
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;

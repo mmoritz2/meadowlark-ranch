@@ -79,7 +79,7 @@ export function patchSeasonalFoliage(shader,atlas=false,daylight=null) {
       // Keep bark atlas texels and seasonal pigment; change summer albedo only.
       float pastureLeafColour=clamp(pastureLeafDay,0.0,1.0)*pastureLeafRegion*leafMask
         *(1.0-smoothstep(0.0,.03,season));
-      if(pastureLeafColour>0.0)diffuseColor.rgb*=mix(vec3(1.0),vec3(.94,1.28,1.0),pastureLeafColour);`);
+      if(pastureLeafColour>0.0)diffuseColor.rgb*=mix(vec3(1.0),vec3(1.04,1.42,1.12),pastureLeafColour);`);
   }
 }
 
@@ -142,7 +142,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,normalPro
       #include <opaque_fragment>`);
     patchFoliageCoverage(sh,renderer);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v7-'+matchedNormals+'-living-day-leaf-1-'+!!(daylightLeaf&&pasturePaletteDay);
+  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v7-'+matchedNormals+'-living-day-leaf-2-'+!!(daylightLeaf&&pasturePaletteDay);
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};
