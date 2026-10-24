@@ -61,7 +61,58 @@ function shapeLayeredLock(raw,ids,uv,role,lockIndex){
   for(const i of ring){const n=i*3,dx=raw[n]-x,dy=raw[n+1]-y,dz=raw[n+2]-z,across=dx*ax+dy*ay+dz*az;raw[n]=x+ax*(across*width+curve)+(dx-ax*across)*depth+bx*lift;raw[n+1]=y+ay*(across*width+curve)+(dy-ay*across)*depth+by*lift;raw[n+2]=z+az*(across*width+curve)+(dz-az*across)*depth+bz*lift;}
  }
 }
-export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
+// These private domains bound only the existing actor-space ground test.
+// They do not replace skinning, a normal calculation, or any position write.
+const GROUND_U=Number.EPSILON/2,GROUND_G8=8*GROUND_U/(1-8*GROUND_U),GROUND_G64=64*GROUND_U/(1-64*GROUND_U);
+function createGroundRoleBounds(g,rest,weights,parts,groups,boneCount){
+ const p=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
+ if(!(p.array instanceof Float32Array)||!(sw.array instanceof Float32Array)||p.isInterleavedBufferAttribute||si.isInterleavedBufferAttribute||sw.isInterleavedBufferAttribute||p.itemSize!==3||si.itemSize!==4||sw.itemSize!==4||p.count!==weights.length||si.count!==p.count||sw.count!==p.count)return null;
+ const roles=Array.from({length:3},()=>({rows:new Map(),vertices:0,massMin:Infinity,massMax:0,lowX:0,lowY:0,lowZ:0,highX:0,highY:0,highZ:0,valid:true,skip:false})),seen=new Uint8Array(weights.length);
+ for(const group of groups){
+  if(!Number.isInteger(group.part)||group.part<0||group.part>2||group.ids.length!==group.weights.length)return null;
+  for(let k=0;k<group.ids.length;k++){
+   const id=group.ids[k],motion=group.weights[k];if(!Number.isInteger(id)||id<0||id>=weights.length||!Number.isFinite(motion)||motion<0||motion>1||Math.fround(motion)!==weights[id]||parts[id]!==group.part)return null;
+   if(!(weights[id]>0))continue;if(seen[id]++)return null;
+   const role=roles[group.part],at=id*3,x=rest[at],y=rest[at+1],z=rest[at+2];if(!Number.isFinite(x)||!Number.isFinite(y)||!Number.isFinite(z)||Math.max(Math.abs(x),Math.abs(y),Math.abs(z))>2**40)return null;
+   let mass=0;for(let j=0;j<4;j++){
+    const w=sw.array[id*4+j],bone=si.array[id*4+j];if(!Number.isFinite(w)||w<0||w>2||!Number.isInteger(bone)||bone<0||bone>=boneCount)return null;mass+=w;if(w===0)continue;
+    let row=role.rows.get(bone);if(!row){row={offset:bone*12+4,minX:Infinity,minY:Infinity,minZ:Infinity,maxX:-Infinity,maxY:-Infinity,maxZ:-Infinity};role.rows.set(bone,row);}
+    row.minX=Math.min(row.minX,x);row.minY=Math.min(row.minY,y);row.minZ=Math.min(row.minZ,z);row.maxX=Math.max(row.maxX,x);row.maxY=Math.max(row.maxY,y);row.maxZ=Math.max(row.maxZ,z);
+   }
+   role.vertices++;role.massMin=Math.min(role.massMin,mass);role.massMax=Math.max(role.massMax,mass);
+  }
+ }
+ for(let i=0;i<weights.length;i++)if(weights[i]>0&&!seen[i])return null;
+ for(const role of roles){role.rows=[...role.rows.values()];role.massLow=role.massMin*(1-GROUND_G8);role.massHigh=role.massMax*(1+GROUND_G8);}
+ roles.source={position:p,positionArray:p.array,vertices:p.count,skinIndex:si,indexArray:si.array,indexVersion:si.version,skinWeight:sw,weightArray:sw.array,weightVersion:sw.version};
+ return roles;
+}
+function groundRoleSourcesMatch(g,roles){const s=roles.source,p=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;return p===s.position&&p.array===s.positionArray&&p.count===s.vertices&&p.itemSize===3&&!p.isInterleavedBufferAttribute&&si===s.skinIndex&&si.array===s.indexArray&&si.version===s.indexVersion&&si.count===s.vertices&&si.itemSize===4&&!si.normalized&&!si.isInterleavedBufferAttribute&&sw===s.skinWeight&&sw.array===s.weightArray&&sw.version===s.weightVersion&&sw.count===s.vertices&&sw.itemSize===4&&!sw.normalized&&!sw.isInterleavedBufferAttribute;}
+function resetGroundRoleBounds(roles){for(const r of roles){r.lowX=r.lowY=r.lowZ=r.highX=r.highY=r.highZ=0;r.valid=true;r.skip=false;}}
+function extendGroundRoleBounds(r,x,y,z){
+ if(!Number.isFinite(x)||!Number.isFinite(y)||!Number.isFinite(z)||Math.max(Math.abs(x),Math.abs(y),Math.abs(z))>2**40){r.valid=false;return;}
+ // Every fixed motion weight is in[0,1]. Multiplication, addition and the
+ // final Float32 store are monotone, so these endpoints enclose every write.
+ r.lowX=Math.min(r.lowX,x);r.lowY=Math.min(r.lowY,y);r.lowZ=Math.min(r.lowZ,z);r.highX=Math.max(r.highX,x);r.highY=Math.max(r.highY,y);r.highZ=Math.max(r.highZ,z);
+}
+function groundRoleIsAbove(role,frames){
+ if(!role.vertices)return true;if(!role.valid||!(role.massLow>0)||!Number.isFinite(role.massHigh))return false;
+ let lower=Infinity,maxAbs=0;
+ for(const row of role.rows){
+  const loX=Math.fround(row.minX+role.lowX),loY=Math.fround(row.minY+role.lowY),loZ=Math.fround(row.minZ+role.lowZ),hiX=Math.fround(row.maxX+role.highX),hiY=Math.fround(row.maxY+role.highY),hiZ=Math.fround(row.maxZ+role.highZ),n=row.offset,a=frames[n],b=frames[n+1],c=frames[n+2],d=frames[n+3];
+  if(!Number.isFinite(loX)||!Number.isFinite(loY)||!Number.isFinite(loZ)||!Number.isFinite(hiX)||!Number.isFinite(hiY)||!Number.isFinite(hiZ)||!Number.isFinite(a)||!Number.isFinite(b)||!Number.isFinite(c)||!Number.isFinite(d))return false;
+  const y=a*(a>=0?loX:hiX)+b*(b>=0?loY:hiY)+c*(c>=0?loZ:hiZ)+d,abs=Math.abs(a)*Math.max(Math.abs(loX),Math.abs(hiX))+Math.abs(b)*Math.max(Math.abs(loY),Math.abs(hiY))+Math.abs(c)*Math.max(Math.abs(loZ),Math.abs(hiZ))+Math.abs(d);
+  if(!Number.isFinite(y)||!Number.isFinite(abs)||abs>2**100)return false;lower=Math.min(lower,y);maxAbs=Math.max(maxAbs,abs);
+ }
+ if(!(lower>0))return false;
+ // Positive decoded mass is bounded with gamma8. Gamma64 covers the four
+ // weighted products/ordered sum and bound-evaluation rounding, with an
+ // absolute unit floor that also dominates Double underflow at this scale.
+ const guard=GROUND_G64*Math.max(1,role.massHigh)*Math.max(1,maxAbs),safeLower=lower*role.massLow-guard;
+ return Number.isFinite(safeLower)&&safeLower>.004;
+}
+
+export function createNativeFlowingGroom({THREE,scene,skin,profile,skipAirborneGroundChecks=false}={}){
  if(!THREE||!scene||!skin||!profile?.nativeBreed||profile.nativeKind!=='horse'||skin.skeleton?.bones.length!==677)return null;
  const previous=owned.get(skin);if(previous&&!previous.disposed)return previous;
  const hair=[];scene.traverse(o=>{if(o.isSkinnedMesh&&(o.geometry.attributes.position.count===23514||o.userData.nativeEquestrianGroom))hair.push(o);});
@@ -113,11 +164,13 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
   const work=normalWork(g,weights);geometricNormals(g,newGeo,work);transferNormals(oldGeo,newGeo,originalNormal,g.attributes.normal.array,work);
   g.attributes.position.setUsage(THREE.DynamicDrawUsage);g.attributes.normal.setUsage(THREE.DynamicDrawUsage);g.computeBoundingBox();g.computeBoundingSphere();g.boundingSphere.radius+=12;
   const rest=raw.slice(),normal=g.attributes.normal.array.slice(),baseGeo=newGeo.slice();
-  mesh.geometry=g;records.push({mesh,original,g,rest,normal,baseGeo,scratch:newGeo,weights,parts,groups:groupsOut,originalPosition,normalWork:work});
+  const groundRoles=skipAirborneGroundChecks?createGroundRoleBounds(g,rest,weights,parts,groupsOut,skin.skeleton.bones.length):null;
+  mesh.geometry=g;records.push({mesh,original,g,rest,normal,baseGeo,scratch:newGeo,weights,parts,groups:groupsOut,originalPosition,normalWork:work,groundRoles});
  }
  const inverseScene=new THREE.Matrix4(),matrix=new THREE.Matrix4(),blend=new THREE.Matrix4(),joint=new THREE.Matrix4(),inverse=new THREE.Matrix4(),temp=new THREE.Matrix4();
  const activeBones=[...new Set(records.flatMap(r=>Array.from(r.g.attributes.skinIndex.array)))],skinFrames=new Float64Array(skin.skeleton.bones.length*12);
  let visibleOffset=false;
+ const groundSkipStats={roleTests:0,certifiedRoles:0,skippedVertices:0,unsupportedRecords:0};
  const stats={version:3,frames:0,cardCount,lockCount,protectedVertices,maxTipOffsetM:0,maneTipOffsetM:0,tailTipOffsetM:0,finite:true,groundCorrections:0};
  function sample(d,dt,paused){matrix.multiplyMatrices(inverseScene,d.bone.matrixWorld);const e=matrix.elements,len=Math.hypot(e[4],e[5],e[6])||1,x=e[12],y=e[13],z=e[14],ux=e[4]/len,uy=e[5]/len,uz=e[6]/len;
   if(paused){d.vx=d.vy=d.vz=0;d.ready=true;}else if(d.ready){const mx=x-d.px,my=y-d.py,mz=z-d.pz,filter=1-Math.exp(-dt/.055);if(Math.hypot(mx,my,mz)>.45){d.x=d.y=d.z=d.dx=d.dy=d.dz=d.vx=d.vy=d.vz=0;d.tx=d.ty=d.tz=0;}else{const vx=d.vx+(clamp(mx/dt,-5,5)-d.vx)*filter,vy=d.vy+(clamp(my/dt,-5,5)-d.vy)*filter,vz=d.vz+(clamp(mz/dt,-5,5)-d.vz)*filter,ax=clamp((vx-d.vx)/dt,-35,35),ay=clamp((vy-d.vy)/dt,-35,35),az=clamp((vz-d.vz)/dt,-35,35),gain=d.name==='tail'?3.1:d.name==='mane'?2.7:1;
@@ -142,10 +195,13 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
   if(!poseChanged&&!moving&&!visibleOffset){stats.frames++;return;}
   visibleOffset=moving;
   for(const r of records){const p=r.g.attributes.position.array,si=r.g.attributes.skinIndex,sw=r.g.attributes.skinWeight,skeleton=r.mesh.skeleton;
+   if(r.groundRoles&&!groundRoleSourcesMatch(r.g,r.groundRoles))r.groundRoles=null;const groundRoles=r.groundRoles;
+   if(groundRoles)resetGroundRoleBounds(groundRoles);else if(skipAirborneGroundChecks)groundSkipStats.unsupportedRecords++;
    for(const group of r.groups){const d=drivers[group.part],e=blend.elements;e.fill(0);for(let k=0;k<4;k++){const w=sw.array[group.root*4+k];if(!w)continue;const j=si.array[group.root*4+k];joint.multiplyMatrices(skeleton.bones[j].matrixWorld,skeleton.boneInverses[j]);for(let c=0;c<16;c++)e[c]+=joint.elements[c]*w;}
     // Invert the actual weighted skin frame at the attached root, expressing a
     // scene-local spring in the authored skin frame, regardless of actor yaw.
     temp.multiplyMatrices(inverseScene,blend).multiply(r.mesh.bindMatrix);inverse.copy(temp).invert();const m=inverse.elements,gain=group.gain,dx=d.x*gain,dy=d.y*gain,dz=d.z*gain,x=m[0]*dx+m[4]*dy+m[8]*dz,y=m[1]*dx+m[5]*dy+m[9]*dz,z=m[2]*dx+m[6]*dy+m[10]*dz;
+    if(groundRoles)extendGroundRoleBounds(groundRoles[group.part],x,y,z);
     for(let k=0;k<group.ids.length;k++){const id=group.ids[k],n=id*3,w=group.weights[k];p[n]=r.rest[n]+x*w;p[n+1]=r.rest[n+1]+y*w;p[n+2]=r.rest[n+2]+z*w;}
     const offset=d.offset*gain;stats.maxTipOffsetM=Math.max(stats.maxTipOffsetM,offset);if(group.part===2)stats.tailTipOffsetM=Math.max(stats.tailTipOffsetM,offset);else stats.maneTipOffsetM=Math.max(stats.maneTipOffsetM,offset);
    }
@@ -153,7 +209,9 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
    // also covers lying down/grazing, where a safe standing tail can otherwise
    // penetrate after the native skin rotates it. Attached root vertices stay
    // exact, even if the original animation itself places one below its floor.
-   for(let id=0;id<r.weights.length;id++)if(r.weights[id]>0){const n=id*3,x=p[n],y=p[n+1],z=p[n+2];let py=0;
+   let allGroundSkipped=false;
+   if(groundRoles){allGroundSkipped=true;for(const role of groundRoles){role.skip=groundRoleIsAbove(role,skinFrames);if(role.vertices){groundSkipStats.roleTests++;if(role.skip){groundSkipStats.certifiedRoles++;groundSkipStats.skippedVertices+=role.vertices;}}if(!role.skip)allGroundSkipped=false;}}
+   if(!allGroundSkipped)for(let id=0;id<r.weights.length;id++)if(r.weights[id]>0&&(!groundRoles||!groundRoles[r.parts[id]].skip)){const n=id*3,x=p[n],y=p[n+1],z=p[n+2];let py=0;
     for(let k=0;k<4;k++){const w=sw.array[id*4+k];if(!w)continue;const b=si.array[id*4+k]*12+4;py+=w*(skinFrames[b]*x+skinFrames[b+1]*y+skinFrames[b+2]*z+skinFrames[b+3]);}
     if(py<.004){let a=0,b=0,c=0,d=0,e=0,f=0,g=0,h=0,i=0;
      for(let k=0;k<4;k++){const w=sw.array[id*4+k];if(!w)continue;const v=si.array[id*4+k]*12;a+=skinFrames[v]*w;b+=skinFrames[v+1]*w;c+=skinFrames[v+2]*w;d+=skinFrames[v+4]*w;e+=skinFrames[v+5]*w;f+=skinFrames[v+6]*w;g+=skinFrames[v+8]*w;h+=skinFrames[v+9]*w;i+=skinFrames[v+10]*w;}
@@ -165,6 +223,6 @@ export function createNativeFlowingGroom({THREE,scene,skin,profile}={}){
   }
   stats.frames++;stats.finite=Number.isFinite(stats.maxTipOffsetM);
  }
- const controller={meshes:records.map(r=>r.mesh),roots:rootIds,update,reset,inspect:()=>({...stats,drivers:drivers.map(d=>({name:d.name,offsetM:d.offset})),privateMeshes:records.length}),disposed:false,dispose(){if(controller.disposed)return;controller.disposed=true;for(const r of records){if(r.mesh.geometry===r.g)r.mesh.geometry=r.original;r.g.dispose();}owned.delete(skin);}};
+ const controller={meshes:records.map(r=>r.mesh),roots:rootIds,update,reset,inspect:()=>({...stats,...(skipAirborneGroundChecks?{groundBounds:{...groundSkipStats}}:{}),drivers:drivers.map(d=>({name:d.name,offsetM:d.offset})),privateMeshes:records.length}),disposed:false,dispose(){if(controller.disposed)return;controller.disposed=true;for(const r of records){if(r.mesh.geometry===r.g)r.mesh.geometry=r.original;r.g.dispose();}owned.delete(skin);}};
  owned.set(skin,controller);return controller;
 }

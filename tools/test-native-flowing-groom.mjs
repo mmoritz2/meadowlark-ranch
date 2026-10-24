@@ -110,7 +110,7 @@ try{
   const fileURLs=[new URL(rig.profile.file,new URL('../assets/',import.meta.url)),...(rig.profile.nativeVariant?[new URL(rig.profile.nativeVariant.file,new URL('../assets/',import.meta.url))]:[])];
   const sourceFiles=fileURLs.map(url=>[url,hash(fs.readFileSync(url))]);
   const boneBefore=rig.bones.map(b=>[b.name,b.parent?.name,b.position.toArray(),b.quaternion.toArray(),b.scale.toArray()]);
-  const started=performance.now(),groom=createNativeFlowingGroom({THREE,scene:rig.scene,skin:rig.skin,profile:rig.profile}),buildMs=performance.now()-started;
+  const started=performance.now(),groom=createNativeFlowingGroom({THREE,scene:rig.scene,skin:rig.skin,profile:rig.profile,skipAirborneGroundChecks:true}),buildMs=performance.now()-started;
   check(!!groom,id+' accepts verified native equine');
   let updateCalls=0,updateTotalMs=0,updateMaxMs=0;const physicalUpdate=groom.update;groom.update=(...args)=>{const start=performance.now();const result=physicalUpdate(...args);if(args[0]>0){const ms=performance.now()-start;updateCalls++;updateTotalMs+=ms;updateMaxMs=Math.max(updateMaxMs,ms);}return result;};
   check(createNativeFlowingGroom({THREE,scene:rig.scene,skin:rig.skin,profile:rig.profile})===groom,id+' repeated creation is idempotent');
@@ -195,6 +195,7 @@ try{
   groom.reset();assertArrays(groom.meshes,enlarged,id+' reset restores enlarged rest exactly');
   motion.reset();plain.reset();groom.reset();for(let i=0;i<240;i++)groom.update(1/60,motion.state);
   check((groom.inspect().maxTipOffsetM||0)<.001,id+' still hair settles without artificial perpetual flutter');
+  check(groom.inspect().groundBounds?.skippedVertices>0,id+' skips certified airborne hair while retaining grounded-pose checks');
   // Geometry replacement must not lose later dye setup or existing shader seams.
   if(rig.profile.nativeRoster){
    const dyes=configureNativeCustomization({THREE:cpuTHREE,rig,horse:{id:'groom-qa',breed:id,colors:{body:rig.profile.nativeRosterColors?.body||'#a46e42',mane:'#894ad4'},tailCol:'#33b6ab'}});

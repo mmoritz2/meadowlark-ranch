@@ -135,7 +135,7 @@ export function nativeGroomFacade({THREE,scene,skin,mount,profile,deferUpdate=fa
   const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&(o.userData.nativeFjordCrest||o.userData.nativeEquestrianGroom||profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount))meshes.push(o);});
   const riding=createNativeRidingGroom({THREE,scene:root,skin,profile});
   if(riding&&!meshes.includes(riding.mesh))meshes.push(riding.mesh);
-  const flowing=createNativeFlowingGroom({THREE,scene:root,skin,profile});
+  const flowing=createNativeFlowingGroom({THREE,scene:root,skin,profile,skipAirborneGroundChecks:true});
   for(const mesh of flowing?.meshes||[])if(!meshes.includes(mesh))meshes.push(mesh);
   const feathers=createNativeDraftFeathers({THREE,scene:root,skin,profile});if(feathers)meshes.push(...feathers.meshes);
   const secondary=flowing||feathers?{disposed:false,update(dt,state){root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);flowing?.update(dt,state,{finalizedPose:true});feathers?.update(dt,state);},reset(){flowing?.reset();feathers?.reset();},dispose(){if(this.disposed)return;this.disposed=true;flowing?.dispose();riding?.dispose();feathers?.dispose();}}:null;
