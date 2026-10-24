@@ -1,3 +1,4 @@
+import {createDesertPlantRenderCells} from '../desert-plant-render-cells.mjs?v=desert-plant-cells-1';
 import {dressBotanicalPetals} from '../botanical-petals.mjs?v=botanical-petals-1';
 import {grazedTuftScale} from '../meadow-tufts.mjs?v=hollowpeak-cascades-1-commons-landscape-1-connected-landforms-1';
 import {applyChalkGrassMesh,applyChalkFlowerMesh} from '../chalk-grazing.mjs?v=chalk-grazing-1';
@@ -1106,12 +1107,17 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  /* One float a frame. The tier check is a getter call; when the frame-time watchdog steps the game
     down it takes the same share off every bank, which is the cheapest thing this package can do
     for a machine that is struggling. */
+ const dryPlantRendering=F.dryPlantRendering=createDesertPlantRenderCells({THREE,enabled:W.partitionDryPlantRendering===true,owners:[
+  {kind:'oco',bank:BANK.oco,high:ocoGeo,low:()=>desertArt.geometry('ocotillo',0,false)},
+  {kind:'succ',bank:BANK.succ,high:succGeo,low:()=>desertArt.geometry('agave',0,false)}]});
  let qual=G.gfx&&G.gfx.get?G.gfx.get():'high';
  const applyTier=q=>{const k=q==='low'?0.42:q==='medium'?0.82:1;
   for(const name in BANK){const b=BANK[name];b.im.count=Math.round(b.n*k);}
   BANK.succ.im.geometry=desertArt.geometry('agave',0,q==='high');
-  BANK.oco.im.geometry=desertArt.geometry('ocotillo',0,q==='high');};
+  BANK.oco.im.geometry=desertArt.geometry('ocotillo',0,q==='high');dryPlantRendering.refresh();};
  applyTier(qual);
+ // Optional views allocate only after the existing layout/clearing handoff.
+ dryPlantRendering.ready=W.partitionDryPlantRendering===true?Promise.resolve().then(()=>Promise.all([G.courseClear?.ready,W.daylightSkyReady,G.photoscans?.ferryLandingReservationReady,G.worldPaths?.roadsideReady])).then(()=>dryPlantRendering.install()).catch(error=>dryPlantRendering.retain(error)):Promise.resolve(dryPlantRendering);
  G.on('tick',(dt,t)=>{
   uT.value=t; uCam.value.copy(G.camera.position);
   if(G.gfx&&G.gfx.get){const q=G.gfx.get();if(q!==qual){qual=q;applyTier(q);}}
