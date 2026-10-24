@@ -670,9 +670,9 @@ body.touch #stickZone{display:block}
   "./assets/game-hero-horse.js?v=riding-foundation-1-horse-realism-20261020a-native-riding-locks-1-draft-legs-20261021": "./assets/game-hero-horse.js?v=riding-foundation-1-horse-realism-20261020a-native-riding-locks-1-draft-legs-20261021-ground-role-skip-1",
   "./assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1": "./assets/game-hero-horse.js?v=horse-realism-20261020a-native-riding-locks-1-ground-role-skip-1",
   "./assets/native-rider.js?v=mount-frame-reins-20261008": "./assets/native-rider.js?v=mount-frame-reins-20261008-single-subtree-1",
-  "./assets/native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
-  "./assets/native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
-  "./assets/native-horse-motion.js": "./assets/native-horse-motion.js?v=native-terminal-locals-1",
+  "./assets/native-horse-motion.js?v=riding-foundation-1-equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=runaway-native-lod-1",
+  "./assets/native-horse-motion.js?v=equestrian-style-20261012-native-riding-locks-1": "./assets/native-horse-motion.js?v=runaway-native-lod-1",
+  "./assets/native-horse-motion.js": "./assets/native-horse-motion.js?v=runaway-native-lod-1",
   "./assets/pasture-lighting.mjs?v=grass-volume-1": "./assets/pasture-lighting.mjs?v=vibrant-countryside-2",
   "./assets/pastoral-daylight-display.mjs": "./assets/pastoral-daylight-display.mjs?v=vibrant-countryside-2",
   "three": "./assets/vendor/three/build/three.module.js?v=render-palette-epoch-1",
@@ -825,7 +825,8 @@ import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007'
 import {FEATURES} from './assets/features/index.js?v=render-batches-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
-import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=horse-realism-20261020a-native-riding-locks-1';
+import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=runaway-native-lod-1';
+import {createRunawayNativeLOD} from './assets/runaway-native-lod.mjs?v=runaway-native-lod-1';
 import {worldHorseCanDress,beginWorldHorseLoad,settleWorldHorseLoad,retireWorldHorse} from './assets/world-horse-lifecycle.mjs?v=ranch-actors-2';
 import {ROUNDUP_MODES,createRoundupFinish,saveRoundupFinish} from './assets/roundup-rewards.mjs?v=gentle-herd-1';
 import {chooseRoundupApproach,chooseRoundupEscape,roundupPathClear} from './assets/roundup-approach.mjs?v=roundup-route-2';
@@ -5522,6 +5523,7 @@ function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // re
 const WORLD_RIDER_TACK=Object.freeze({saddle:'tc_classicwestern_saddle',pad:'tc_classicwestern_pad',bridle:'tc_classicwestern_bridle'});
 let worldRigCount=0;
 let WORLD_HORSE_LOD=null;
+const RUNAWAY_LOD_ENABLED=true;let RUNAWAY_LOD=null;
 function undressRig(ent){   // take a horse's rigged body off again (to put its own on in place of a borrowed one)
  const r=ent.rig; if(!r)return;
  try{ if(r.scene&&r.scene.parent)r.scene.parent.remove(r.scene); if(r.saddle&&r.saddle.parent)r.saddle.parent.remove(r.saddle); if(r.bridle&&r.bridle.parent)r.bridle.parent.remove(r.bridle); disposeMountedRig(r); r.skin?.material?.dispose?.(); }catch(e){}
@@ -8977,6 +8979,7 @@ function updateRein(mesh,handObj,bitObj){
 /* ================= player & herd ================= */
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(-7,0,10),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
 WORLD_HORSE_LOD=createWorldHorseLOD({THREE,models:BREED_MODELS,instantiate:instantiateArtistBreed,renderer,camera,player,fullDress:dressWithRig,fullTick:tickRig,undress:undressRig,getFallback:()=>BREED_MODELS.get('grey')||(RIG.profile?.nativeKind==='horse'?BREED_MODELS.get(RIG.modelKey):null),getDefinition:breed=>BREEDS3.find(row=>row[0]===breed)});
+if(RUNAWAY_LOD_ENABLED)RUNAWAY_LOD=createRunawayNativeLOD({THREE,models:BREED_MODELS,instantiate:instantiateArtistBreed,worldLOD:WORLD_HORSE_LOD,renderer,camera,player,enabled:true,getDefinition:breed=>BREEDS3.find(row=>row[0]===breed),realScene:scene,colorTarget:()=>useBloom?composer.readBuffer:null,ownersReady:()=>G.world.daylightSkyReady,fullDress:dressWithRig,fullTick:tickRig,isCovered:()=>!!document.getElementById('load'),viewSafe:()=>quality!=='high'&&!renderer.xr.isPresenting&&!posing&&!G.photoPause&&!freeCam&&!G.social?.spectate&&!G.social?.tour,colors:[{body:'#9c4f23',mane:'#6e3617'},{body:'#b9bec6',mane:'#787f8a'},{body:'#3a3530',mane:'#1d1a17'}]});
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
 /* ===== The barn row =========================================================
@@ -9010,6 +9013,7 @@ function buildBarnRow(){
 }
 function disposeHorseEnt(b){
  if(!b)return;
+ RUNAWAY_LOD?.release(b);
  WORLD_HORSE_LOD?.release(b);
  retireWorldHorse(b); // A late model arrival must not dress this removed actor.
  b.parts?.group?.removeFromParent();
@@ -9141,6 +9145,7 @@ const npcs=[];
 }
 /* The shutter, pulled out of the button so the self-timer can pull it too. */
 function takePhoto(){
+ RUNAWAY_LOD?.forceFull('photo');
  composer.render();
  const a=document.createElement('a');
  a.href=renderer.domElement.toDataURL('image/png');
@@ -10803,10 +10808,11 @@ function tickRunaways(dt,t){
     toast('🤠 Home safe! +200🪙 +1🗝️');
    }
   }
+  if(r.done&&RUNAWAY_LOD)continue;
   r.phase+=dt*(2.2+sp*1.9);
   const g3=gaitFor(sp); animateHorse(r.parts,r.phase,sp<0.2?0:g3.amp,g3,true,t,0,dt);
-  dressWithRig(r,r.parts,r.colors,{}); tickRig(r,sp,dt,t,sp<0.2?0.6:0);
-  r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z); r.parts.group.rotation.y=r.heading;
+  if(RUNAWAY_LOD){r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z);r.parts.group.rotation.y=r.heading;RUNAWAY_LOD.update(r,sp,dt,t,sp<0.2?0.6:0);}
+  else{dressWithRig(r,r.parts,r.colors,{});tickRig(r,sp,dt,t,sp<0.2?0.6:0);r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z);r.parts.group.rotation.y=r.heading;}
  }
  runaways=runaways.filter(r=>!r.done);
 }
@@ -15312,7 +15318,7 @@ function tick(stepSeconds){
  finishNativeHorseGrooms();
  // Keep every actor/readiness update running behind the opaque loading image.
  const ld=$('load');
- const loadingReady=hollowpeakStartupReady&&(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh));
+ const loadingReady=hollowpeakStartupReady&&(!RUNAWAY_LOD||RUNAWAY_LOD.settled)&&(!USE_GEN_HORSE||(RIG.ready&&!RIG.loadingBreed&&RIG.attachedTo===player.mesh));
  if(ld&&loadingReady)requestLoadingCurtainRelease();
  const curtainWarmDraw=!!ld&&loadingCurtainReleaseRequested&&loadingReady;
  // The opaque Character screen owns its own renderer; the ranch still ticks.

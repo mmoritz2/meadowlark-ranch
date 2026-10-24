@@ -13,8 +13,8 @@ export function withHorseVisualRandom(seed,fn){
 }
 const cloneMaterial=m=>{const copy=m.clone();copy.onBeforeCompile=m.onBeforeCompile;copy.customProgramCacheKey=m.customProgramCacheKey;return copy;};
 export function morphPackedBytes(count,targets,maxTextureSize=16384){const width=Math.min(count*2,maxTextureSize),height=Math.ceil(count*2/width);return width*height*4*4*targets;}
-export function estimateWorldHorseTemplateBytes(asset,maxTextureSize=16384){
- let base=0,morph=0,packed=0;asset.scene.traverse(mesh=>{if(!mesh.isSkinnedMesh||[asset.profile.tackVertexCount,5092].includes(mesh.geometry.attributes.position.count))return;const g=mesh.geometry,n=g.attributes.position.count;for(const [name,a]of Object.entries(g.attributes))if(!['skinIndex','skinWeight'].includes(name))base+=a.array.byteLength;base+=g.index?.array.byteLength||0;if(n===asset.profile.hairVertexCount&&!g.attributes.nativeTailDye)base+=n*4;morph+=n*3*4*2*6;packed+=morphPackedBytes(n,6,maxTextureSize);});return 2*base+2*morph+2*packed;
+export function estimateWorldHorseTemplateBytes(asset,maxTextureSize=16384,targets=6){
+ let base=0,morph=0,packed=0;asset.scene.traverse(mesh=>{if(!mesh.isSkinnedMesh||[asset.profile.tackVertexCount,5092].includes(mesh.geometry.attributes.position.count))return;const g=mesh.geometry,n=g.attributes.position.count;for(const [name,a]of Object.entries(g.attributes))if(!['skinIndex','skinWeight'].includes(name))base+=a.array.byteLength;base+=g.index?.array.byteLength||0;if(n===asset.profile.hairVertexCount&&!g.attributes.nativeTailDye)base+=n*4;morph+=n*3*4*2*targets;packed+=morphPackedBytes(n,targets,maxTextureSize);});return 2*base+2*morph+2*packed;
 }
 const safeTemplateAsset=asset=>asset?.profile?.nativeKind==='horse'&&asset.profile.family!=='fantasy'&&!asset.profile.nativeVariant?.groom?.uprightCrest&&!asset.profile.nativeVariant?.groom?.equestrian;
 export function poseEnvelope(phase){return smooth(phase/.24)*(1-smooth((phase-.68)/.32));}
@@ -82,13 +82,14 @@ export function warmWorldHorsePoses({THREE,renderer,template}){
  });
 }
 export function createWorldHorseLOD({THREE,models,instantiate,renderer,camera,player,fullDress,fullTick,undress,getFallback,getDefinition,budgetBytes=64*1024*1024,maxEntries=2}){
- const cache=new Map(),actors=new Map(),pending=new Map(),modelPending=new Map(),failures=new Map();let reservedBytes=0,bakeCount=0,evictions=0,rejected=0,lastBuildMs=0;
- const api={update,release,fullReady,resumeFull,loadFull,supportsBreed,stats,actors:()=>Array.from(actors.values()).map(s=>({ent:s.ent,group:s.parts.group,representation:s.mode,requestedBreed:s.breed,template:s.entry?.template.key||null,standIn:!!s.entry&&s.entry.template.key!==models.resolve(s.breed)}))};
+ const external=new Map(),cache=new Map(),actors=new Map(),pending=new Map(),modelPending=new Map(),failures=new Map();let reservedBytes=0,bakeCount=0,evictions=0,rejected=0,lastBuildMs=0;
+ const api={update,release,fullReady,resumeFull,loadFull,supportsBreed,stats,reserveExternal,estimateTemplateBytes:(asset,targets=6)=>estimateWorldHorseTemplateBytes(asset,renderer.capabilities.maxTextureSize,targets),actors:()=>Array.from(actors.values()).map(s=>({ent:s.ent,group:s.parts.group,representation:s.mode,requestedBreed:s.breed,template:s.entry?.template.key||null,standIn:!!s.entry&&s.entry.template.key!==models.resolve(s.breed)}))};
  function supportsBreed(breed){const profile=models.profile?.(breed)||models.get(breed)?.profile;return profile?.nativeKind==='horse'&&profile.family!=='fantasy';}
  const cacheKey=asset=>asset.key+'|'+asset.profile.nativeVariant?.sha256+'|'+asset.profile.file+'|'+WORLD_HORSE_LOD_VERSION;
- function currentBytes(){return Array.from(cache.values()).reduce((n,e)=>n+e.template.residentBytes,0);}
+ function currentBytes(){return Array.from(cache.values()).reduce((n,e)=>n+e.template.residentBytes,0)+Array.from(external.values()).reduce((n,e)=>n+e.bytes,0);}
+ function reserveExternal(key,bytes){if(external.has(key)||!Number.isFinite(bytes)||bytes<0||cache.size+pending.size+external.size>=maxEntries||currentBytes()+reservedBytes+bytes>budgetBytes)return null;const entry={bytes};external.set(key,entry);let released=false;return{resize(next){if(released||!Number.isFinite(next)||next<0||currentBytes()-entry.bytes+reservedBytes+next>budgetBytes)return false;entry.bytes=next;return true;},release(){if(released)return;released=true;if(external.get(key)===entry)external.delete(key);}};}
  function request(asset){const key=cacheKey(asset);if(cache.has(key))return cache.get(key);if(pending.has(key)||performance.now()<(failures.get(key)||0))return null;
-  if(cache.size+pending.size>=maxEntries){const old=Array.from(cache.values()).filter(e=>!e.refs).sort((a,b)=>a.used-b.used)[0];if(old){old.template.dispose();cache.delete(old.key);evictions++;}else{rejected++;return null;}}
+  if(cache.size+pending.size+external.size>=maxEntries){const old=Array.from(cache.values()).filter(e=>!e.refs).sort((a,b)=>a.used-b.used)[0];if(old){old.template.dispose();cache.delete(old.key);evictions++;}else{rejected++;return null;}}
   const estimate=estimateWorldHorseTemplateBytes(asset,renderer.capabilities.maxTextureSize);if(currentBytes()+reservedBytes+estimate>budgetBytes){rejected++;return null;}reservedBytes+=estimate;
   const promise=Promise.resolve().then(()=>{
    const start=performance.now(),template=bakeWorldHorsePoses({THREE,asset,instantiate,maxTextureSize:renderer.capabilities.maxTextureSize});
@@ -129,6 +130,6 @@ export function createWorldHorseLOD({THREE,models,instantiate,renderer,camera,pl
   if(state.group){pose(state,dt,speed,graze);return;}
   if(ent.rig)fullTick(ent,speed,dt,t,graze);
  }
- function stats(){return{version:WORLD_HORSE_LOD_VERSION,budgetBytes,maxEntries,cacheBytes:currentBytes(),reservedBytes,bakeCount,evictions,rejected,lastBuildMs,pending:pending.size,modelPending:modelPending.size,actors:actors.size,farActors:Array.from(actors.values()).filter(s=>s.mode==='far').length,fullActors:Array.from(actors.values()).filter(s=>s.mode==='full').length,entries:Array.from(cache.values()).map(e=>({key:e.key,profile:e.template.profile.id,refs:e.refs,vertices:e.template.vertices,triangles:e.template.triangles,targets:e.template.targets,baseBytes:e.template.baseBytes,morphBytes:e.template.morphBytes,packedCPUBytes:e.template.packedBytes,packedGPUBytes:e.template.packedBytes,residentBytes:e.template.residentBytes}))};}
+ function stats(){return{version:WORLD_HORSE_LOD_VERSION,budgetBytes,maxEntries,cacheBytes:currentBytes(),externalEntries:external.size,externalBytes:[...external.values()].reduce((n,e)=>n+e.bytes,0),reservedBytes,bakeCount,evictions,rejected,lastBuildMs,pending:pending.size,modelPending:modelPending.size,actors:actors.size,farActors:Array.from(actors.values()).filter(s=>s.mode==='far').length,fullActors:Array.from(actors.values()).filter(s=>s.mode==='full').length,entries:Array.from(cache.values()).map(e=>({key:e.key,profile:e.template.profile.id,refs:e.refs,vertices:e.template.vertices,triangles:e.template.triangles,targets:e.template.targets,baseBytes:e.template.baseBytes,morphBytes:e.template.morphBytes,packedCPUBytes:e.template.packedBytes,packedGPUBytes:e.template.packedBytes,residentBytes:e.template.residentBytes}))};}
  return api;
 }
