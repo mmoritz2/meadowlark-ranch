@@ -1,6 +1,6 @@
-/* World presentation. The former preset chased the reference game's saturated
-   cartoon palette. The realistic preset preserves material colour and directional
-   light, with a restrained photographic finish after scene-linear bloom. */
+/* World presentation. Preserve material detail and directional light, with a
+   vivid daylight finish in the existing display-space grade. The base/night
+   table and the shadow, floor and chroma guards remain unchanged. */
 export const id='look-grade';
 
 const DEF={
@@ -260,12 +260,13 @@ export function install(G){
     that changes a parameter — install, the settings toggle, a QA sweep — ends up here, so
     there is no way for the picture and the table to disagree. */
  // Bounded daylight colour uses the existing pass and guards. The base table
- // remains the night/user setting; full daylight adds .19/.20/.08 only.
+ // remains the night/user setting; daylight adds colour and a little contrast.
  const syncDayPalette=(u,elevation)=>{
   const day=THREE.MathUtils.smoothstep(elevation,16,32);
-  u.uSat.value=day>0?P.sat+.19*day:P.sat;
-  u.uVib.value=day>0?P.vib+.20*day:P.vib;
-  u.uLift.value=day>0?P.lift+.08*day:P.lift;
+  u.uSat.value=day>0?P.sat+.33*day:P.sat;
+  u.uVib.value=day>0?P.vib+.35*day:P.vib;
+  u.uLift.value=day>0?P.lift+.06*day:P.lift;
+  u.uContrast.value=day>0?P.contrast+.025*day:P.contrast;
  };
  const sync=()=>{
   applyTone();
