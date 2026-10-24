@@ -1,4 +1,4 @@
-import {RAIN_HAIR_STYLES,rainHairId,withRainCharacter} from './rider-rain109.mjs?v=rain-character110-20261023';
+import {RAIN_HAIR_STYLES,rainHairId,withRainCharacter} from './rider-rain109.mjs?v=rain-character111-20261024';
 import {installHair99} from './rider-hair99.mjs?v=character-foundation99-20261021';
 import {installLong98} from './rider-long98.js?v=character-redesign98-20261020';
 import {createRiderLibrary as create59} from './rider-model-braids.js?v=character-foundation99-20261021';

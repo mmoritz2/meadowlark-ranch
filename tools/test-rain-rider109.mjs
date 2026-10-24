@@ -15,7 +15,7 @@ const read=f=>fs.readFileSync(asset(f),'utf8'),RJ=vm.runInNewContext('('+read('r
 const lifecycle=createRiderMaterialLifecycle(),options={THREE:T,GLTFLoader:CPUAssets,clone,RJ,connectedData,riderMaterialLifecycle:lifecycle},legacy=createLegacy(options),lib=entry.createRiderLibrary(options),kit=await lib.kit('f'),rig=lib.build(kit,{body:'f',outfit:'riding',hairStyle:'ponytail',helmet:'none',eyewear:'none',earrings:'none',neckwear:'none'});
 const hash=a=>crypto.createHash('sha256').update(Buffer.from(a.buffer,a.byteOffset,a.byteLength)).digest('hex'),source=rig.rain109,originalSource=new Map();kit.rain109.scene.traverse(m=>{if(m.isMesh)originalSource.set(m.name,m);});
 try{
- assert(kit.rainPosture110?.clips?.Idle_Loop,'Rain owns its standing posture');assert(!kit.caninoStance102,'Previous character posture is not layered onto Rain');
+ assert.equal(kit.clips.Idle_Loop.duration,6,'Rain uses the relaxed six-second standing loop');assert(kit.rainPosture111?.sourceFootFramesPlanted,'Rain keeps both feet planted');assert(!kit.caninoStance102,'Previous character posture is not layered onto Rain');
  for(const catalog of[lib.hairStyles,entry.RIDER_HAIR])assert.equal(new Set(catalog.map(h=>h.id)).size,catalog.length,'Hair catalog IDs remain unique across bodies');
  assert.equal(source.imported.length,17,'All authored source parts are installed');assert(source.sourceOutfit);assert(!rig.body.visible&&!rig.face.visible&&!rig.eyes.visible&&!rig.brows.visible,'Canonical driver and previous face are invisible');
  for(const m of rig.outfit.meshes)assert(!m.visible);for(const name of['top','jeans','shoes','scarf'])assert(source.parts.get(name).visible,'Source outfit stays complete');

@@ -11,7 +11,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createRiderLibrary,RIDER_HAIR,riderHairId} from '../assets/rider-model.js?v=rain-character110-20261023';
+import {createRiderLibrary,RIDER_HAIR,riderHairId} from '../assets/rider-model.js?v=rain-character111-20261024';
 const Q=new URLSearchParams(location.search), q=(k,d)=>Q.has(k)?Q.get(k):d;
 const RJ={hips:[0,-0.235,-0.250],spine:[0,-0.020,-0.230],chest:[0,0.245,-0.200],neck:[0,0.470,-0.190],head:[0,0.560,-0.165],headEnd:[0,0.930,-0.150],
  shoulder:[0.185,0.435,-0.170],elbow:[0.212,0.135,-0.020],wrist:[0.140,0.132,0.300],hand:[0.108,0.140,0.392],
@@ -68,7 +68,7 @@ try{
  const output=document.createElement('pre');output.id='verification';output.style='white-space:pre-wrap';output.textContent='Ready: '+(rig.rain109?'Rain character':'Original male character');
  const render=()=>{renderer.render(scene,cam);};
  const control=(name,fn)=>{const b=document.createElement('button');b.textContent=name;b.style='margin:3px;padding:7px';b.onclick=async()=>{try{await fn();render();}catch(e){output.textContent='FAIL '+e.stack;console.error(e);}};controls.append(b);};
- const pose=(kind,t=.4)=>{if(kind==='seat'){R._apply();R.g.position.set(0,.95,0);}else{R.locomote(.016,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});rig.mixer.setTime(t);R.locomote(0,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});}};
+ const pose=(kind,t=.4)=>{if(kind==='seat'){R._apply();R.g.position.set(0,.95,0);}else{R.g.position.set(0,0,0);R.locomote(.016,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});rig.mixer.setTime(t);R.locomote(0,{speed:kind==='walk'?1.45:kind==='jog'?3.2:kind==='sprint'?5.5:0});}};
  const originalHeadMaterials=new Map();
  for(const mesh of rig.rain109?.imported||[])if(mesh.userData.rainPart==='head')originalHeadMaterials.set(mesh,mesh.material);
  const diagnoseHead=mode=>{for(const[mesh,original]of originalHeadMaterials){if(mesh.material!==original)mesh.material.dispose();mesh.material=mode==='paint'?new THREE.MeshBasicMaterial({map:original.map,color:original.color,vertexColors:original.vertexColors,side:original.side}):(mode==='shape'||mode==='flat'||mode==='two')?new THREE.MeshStandardMaterial({color:0xb77e61,roughness:.85,metalness:0,flatShading:mode==='flat',side:mode==='two'?THREE.DoubleSide:original.side}):original;}output.textContent='Neck diagnostic: '+mode;};
@@ -87,6 +87,17 @@ try{
  control('Shadows off',()=>{renderer.shadowMap.enabled=false;});
  control('Shadows on',()=>{renderer.shadowMap.enabled=true;});
  control('Normal shading',()=>diagnoseHead('normal'));
+ let idlePlaying=false,idleLast=0;
+ control('Play idle',()=>{idlePlaying=true;idleLast=performance.now();renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-idleLast)/1000);idleLast=now;if(idlePlaying){R.g.position.set(0,0,0);R.locomote(dt,{speed:0});}renderer.render(scene,cam);});});
+ control('Pause idle',()=>{idlePlaying=false;renderer.setAnimationLoop(null);});
+ control('Hide cuffs',()=>{for(const m of rig.outfit?.meshes||[])if(m.name==='Shirt_Tailored_Cuffs')m.visible=false;});
+ control('Show cuffs',()=>{for(const m of rig.outfit?.meshes||[])if(m.name==='Shirt_Tailored_Cuffs')m.visible=true;});
+ control('Hips front',()=>{cam.position.set(.03,1.04,1.45);cam.lookAt(0,1.04,0);});
+ control('Hips side',()=>{cam.position.set(1.45,1.04,0);cam.lookAt(0,1.04,0);});
+ for(const time of[0,.6,1.2,1.8,2.4,3.5,4.5,5.8])control('Idle '+time,()=>pose('idle',time));
+ control('Torso front',()=>{cam.position.set(.12,1.20,1.90);cam.lookAt(0,1.20,0);});
+ control('Torso side',()=>{cam.position.set(1.90,1.20,0);cam.lookAt(0,1.20,0);});
+ control('Seat close',()=>{cam.position.set(1.7,1.1,1.7);cam.lookAt(0,1.05,0);});
  control('Neck front',()=>{cam.position.set(.13,1.60,1.09);cam.lookAt(0,1.58,.02);});
  control('Neck side',()=>{cam.position.set(1.09,1.60,0);cam.lookAt(0,1.58,0);});
  control('Neck other side',()=>{cam.position.set(-1.09,1.60,0);cam.lookAt(0,1.58,0);});

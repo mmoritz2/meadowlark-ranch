@@ -65,5 +65,22 @@
     "shoulderUVTjunctionVertices": 170,
     "shoulderVirtualWeldPairs": 310,
     "allApprovedC3HeadBuffersRetainedExactly": true
+  },
+  "runtimeVersion": "rain-character111-20261024",
+  "relaxedIdleAndWardrobe111": {
+    "assetAndApprovedHeadUnchanged": true,
+    "idleDurationSeconds": 6,
+    "weightShiftM": 0.019,
+    "sourceFootFramesPlanted": true,
+    "walkingSeatedAndMalePosesRetained": true,
+    "wardrobe": "Retain authored canonical garment geometry and skinning; smooth duplicate outer-shell normals without inflating pants or crossing the inseam.",
+    "skinCoverage": "Posed sleeve planes measured from drawn garment vertices; short sleeves follow the upper arm, long sleeves the forearm.",
+    "independentChecks": {
+      "handVerticesInsidePants": 0,
+      "minimumHandPantsClearanceM": 0.01134,
+      "maximumFootFloorErrorM": 0.000385,
+      "maximumAnkleDriftM": 2.6e-07,
+      "pantsMidlineCrossings": 0
+    }
   }
 }
