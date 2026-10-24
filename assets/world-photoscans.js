@@ -1,3 +1,4 @@
+import {createTreeCardRenderBatch} from './tree-card-render-batch.mjs?v=tree-card-render-batches-1';
 import {retireFerryLandingProceduralOwners} from './ferry-landing-reservation.mjs?v=farbank-procedural-landing-1';
 import {hollowpeakSourceDecisionGround,hollowpeakSourceDecisionWorld,prepareHollowpeakDecisionTree,applyHollowpeakTreeCohort} from './hollowpeak-tree-cohort.mjs?v=character-foundation99-20261021';
 import {planUpperHollowpeakTreeRoots,retireUpperHollowpeakTrees} from './hollowpeak-upper-tree-roots.mjs?v=hollowpeak-upper-source-roots-1';
@@ -629,7 +630,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       // Camera-facing atlases contain the same baked canopy shading; receiving their
       // own differently oriented shadow card creates false dark triangles.
       card.receiveShadow=false;
-      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});
+      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records,card:source.card});
       for(const p of source.parts){
         const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);
         records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));
@@ -1135,10 +1136,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const key of ['activeFullTrees','activeMediumTrees','activeTreeFullTriangles','activeTreeMediumTriangles','activeTreeCardTriangles','activeTreeRenderTriangles'])delete state[key];
   }
   updateTrees=function updateCanopyTiers(){
-    originalUpdateTrees();
-    if(!mediumCanopy)return;
-    state.treePlannerLOD=originalCanopyPlannerLedger(state,trees,previousSelection);
-    try{mediumCanopy.update();publishMediumCanopyLedger(state,mediumCanopy);}catch(error){restoreOriginalCanopy(error);}
+    try{
+      originalUpdateTrees();
+      if(!mediumCanopy)return;
+      state.treePlannerLOD=originalCanopyPlannerLedger(state,trees,previousSelection);
+      try{mediumCanopy.update();publishMediumCanopyLedger(state,mediumCanopy);}catch(error){restoreOriginalCanopy(error);}
+    }finally{state.treeCardRendering?.refresh();}
   };
   // This late owner never participates in scans.ready or another layout chain.
   state.mediumCanopy=null;state.mediumCanopyError=null;
@@ -1188,6 +1191,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     previousMode=null;updateTrees();state.deadwood?.update();
     return state.hollowpeakCohort={status:'applied',trees:treesResult,deadwood,floor,frostpine,deadwoodContacts,floorContacts,originalSelectionsRefilled:false,bodyAccepted:false};
   });
+  // Render-only optional owner: no original readiness chain awaits it.
+  // Existing layout and canonical full/card LOD owners complete first.
+  state.treeCardRendering=null;
+  state.treeCardRenderingReady=W.batchDistantTreeRendering===true?Promise.resolve().then(()=>Promise.all([state.hollowpeakCohortReady,W.daylightSkyReady,G.courseClear?.ready])).then(()=>{
+    return state.treeCardRendering=createTreeCardRenderBatch({THREE,parent:group,entries:treeCards,enabled:true});
+  }).catch(error=>{state.treeCardRenderingError=String(error?.message||error);return null;}):Promise.resolve(null);
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;
