@@ -1,3 +1,4 @@
+import {createWorldFenceRendering} from '../world-fence-render-batch.mjs?v=fixed-world-fences-1';
 import {installBarleyfoldFarmWall,waitForBarleyfoldWallTextures} from '../barleyfold-farm-wall.mjs?v=barleyfold-farm-wall-1';
 import {ranchProgress} from '../ranch-progress.mjs?v=ranch-progress-1';
 import {createCoyoteBootPlanning} from '../coyote-boot-planning.mjs?v=coyote-macroform-5-connected-landforms-1';
@@ -27,6 +28,7 @@ export function install(G){
  const rnd=(a,b)=>a+Math.random()*(b-a);
  const P={};                                             // this package's live state, exposed as G.worldPkg for QA
  G.worldPkg=P;
+ const fixedFenceOwners=[];
 
  /* ================= save fields ================= */
  S.ensure(s=>{
@@ -153,12 +155,12 @@ export function install(G){
  P.offCourse=offCourse;
  const PLACED=[];   // [{id,x,z,need}] what was placed with offCourse, for the boot re-check
  const paintMat=W.mats.paintMat;
- function post(x,z,g,h,c){box(0.18,h||1.25,0.18,c||'#c9b083',x,(h||1.25)/2,z,g);}
- function railRing(g,R,segs,gapFrom,gapTo,col){   // posts and rails round a circle with one mouth
+ function post(x,z,g,h,c,capture){const m=box(0.18,h||1.25,0.18,c||'#c9b083',x,(h||1.25)/2,z,g);capture?.push(m);}
+ function railRing(g,R,segs,gapFrom,gapTo,col,capture){   // posts and rails round a circle with one mouth
   let prev=null;
   for(let k=0;k<=segs;k++){const a=k/segs*Math.PI*2,inGap=gapFrom!=null&&a>gapFrom&&a<gapTo;const x=Math.cos(a)*R,z=Math.sin(a)*R;
-   if(!inGap)post(x,z,g);
-   if(prev&&!inGap&&!prev.gap){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.10,0.07,col||'#e2d3ae',mx,0.95,mz,g);rail.rotation.y=Math.atan2(x-prev.x,z-prev.z)+Math.PI/2;const r2=box(len,0.08,0.06,col||'#e2d3ae',mx,0.55,mz,g);r2.rotation.y=rail.rotation.y;}
+   if(!inGap)post(x,z,g,undefined,undefined,capture);
+   if(prev&&!inGap&&!prev.gap){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.10,0.07,col||'#e2d3ae',mx,0.95,mz,g);rail.rotation.y=Math.atan2(x-prev.x,z-prev.z)+Math.PI/2;const r2=box(len,0.08,0.06,col||'#e2d3ae',mx,0.55,mz,g);r2.rotation.y=rail.rotation.y;capture?.push(rail,r2);}
    prev={x,z,gap:inGap};}
  }
  function sign(text,w,h){try{return W.arrivalArt.buildSign({text,width:w||2.4,height:h||0.42});}catch(e){return new THREE.Group();}}
@@ -338,12 +340,13 @@ export function install(G){
  for(const rg of T.REGIONS){
   if(!rg.venue||rg.id==='ranch')continue;
   const v=rg.venue,g=new THREE.Group(),A=20,B=15,gy=groundH(v.x,v.z);
+  const fenceSources=[],fenceBox=(...args)=>{const m=box(...args);fenceSources.push(m);return m;};
   /* Every post and rail stands on the ground under it. The ring used to be one flat hoop at the height
      of its centre, so on the gentlest slope half the rail floated and the other half was buried. */
   const dy=(x,z)=>groundH(v.x+x,v.z+z)-gy;
-  let prev=null;for(let k=0;k<=36;k++){const th=k/36*Math.PI*2,x=Math.cos(th)*A,z=Math.sin(th)*B,y=dy(x,z);if(k%2===0)box(0.18,1.1,0.18,'#dcd3bd',x,y+0.55,z,g);if(prev){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.09,0.07,'#f2ecdc',mx,(y+prev.y)/2+0.9,mz,g);rail.rotation.set(0,Math.atan2(x-prev.x,z-prev.z)+Math.PI/2,Math.atan2(prev.y-y,len));}prev={x,z,y};}
+  let prev=null;for(let k=0;k<=36;k++){const th=k/36*Math.PI*2,x=Math.cos(th)*A,z=Math.sin(th)*B,y=dy(x,z);if(k%2===0)fenceBox(0.18,1.1,0.18,'#dcd3bd',x,y+0.55,z,g);if(prev){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=fenceBox(len,0.09,0.07,'#f2ecdc',mx,(y+prev.y)/2+0.9,mz,g);rail.rotation.set(0,Math.atan2(x-prev.x,z-prev.z)+Math.PI/2,Math.atan2(prev.y-y,len));}prev={x,z,y};}
   const townName=(rg.name.slice(rg.name.indexOf(' ')+1)).split(' ')[0].toUpperCase();
-  const sgY=dy(0,-B-1.5);const sg=sign(townName+' ARENA',4.4,0.5);sg.position.set(0,sgY+3.1,-B-1.5);g.add(sg);for(const px of[-2.3,2.3])box(0.18,3.0,0.18,'#8a7a62',px,dy(px,-B-1.5)+1.5,-B-1.5,g);
+  const sgY=dy(0,-B-1.5);const sg=sign(townName+' ARENA',4.4,0.5);sg.position.set(0,sgY+3.1,-B-1.5);g.add(sg);for(const px of[-2.3,2.3])fenceBox(0.18,3.0,0.18,'#8a7a62',px,dy(px,-B-1.5)+1.5,-B-1.5,g);
   /* The grandstand stands back from the rail. Its round collider (r 5.5 at B+4.5) reached a metre inside
      the ring, an invisible wall at the C end that a horse cantering round the rail ran into; it sits at
      B+6 now and its three smaller circles follow the 13 by 4.6 m stand, all of it five metres off the rail. */
@@ -366,6 +369,7 @@ export function install(G){
   const lbl=rg.name.slice(rg.name.indexOf(' ')+1).split(' ')[0]+' Arena';
   door('grandstand:'+rg.id,v.x,v.z+SC,8,'🏆 '+lbl+' grandstand — see the events',()=>UI.openEvents());
   ARENAS.push({id:rg.id,x:v.x,z:v.z,label:lbl,g});
+  fixedFenceOwners.push({id:rg.id,kind:'arena',root:g,sources:fenceSources});
   P.LANDMARKS.push({id:'arena:'+rg.id,region:rg.id,x:v.x,z:v.z,label:'🏟️ '+lbl,glyph:'🏟️',kind:'arena',grp:g});
  }
  P.ARENAS=ARENAS;
@@ -990,8 +994,8 @@ export function install(G){
  P.SANCTUARIES=SANCTUARIES;
  for(const sc of SANCTUARIES){
   const at=findClear(sc.x,sc.z,sc.r+3,60,(x,z)=>offCourse(x,z,sc.r+6));sc.x=at[0];sc.z=at[1];PLACED.push({id:'sanctuary:'+sc.id,x:sc.x,z:sc.z,need:sc.r+6});
-  const g=new THREE.Group();railRing(g,sc.r,22,-0.25,0.25,'#e2d3ae');
-  const sg=sign(sc.label.slice(sc.label.indexOf(' ')+1).toUpperCase(),4.2,0.46);sg.position.set(sc.r+0.4,2.6,-2.6);sg.rotation.y=-Math.PI/2;g.add(sg);post(sc.r+0.4,-4.8,g,2.8,'#8a7a62');post(sc.r+0.4,-0.4,g,2.8,'#8a7a62');
+  const g=new THREE.Group(),fenceSources=[];railRing(g,sc.r,22,-0.25,0.25,'#e2d3ae',fenceSources);
+  const sg=sign(sc.label.slice(sc.label.indexOf(' ')+1).toUpperCase(),4.2,0.46);sg.position.set(sc.r+0.4,2.6,-2.6);sg.rotation.y=-Math.PI/2;g.add(sg);post(sc.r+0.4,-4.8,g,2.8,'#8a7a62',fenceSources);post(sc.r+0.4,-0.4,g,2.8,'#8a7a62',fenceSources);
   box(2.2,0.7,0.9,'#8a6a45',0,0.35,-sc.r+2.5,g);box(2.0,0.2,0.7,'#b8a040',0,0.75,-sc.r+2.5,g);   // hay feeder
   const trough=box(1.8,0.5,0.7,'#6b6b6b',-sc.r+3,0.25,3,g);const wat=new THREE.Mesh(new THREE.PlaneGeometry(1.6,0.5),new THREE.MeshStandardMaterial({color:0x4f9ad6}));wat.rotation.x=-Math.PI/2;wat.position.set(-sc.r+3,0.48,3);g.add(wat);
   const ring=new THREE.Mesh(new THREE.CircleGeometry(sc.r,30),new THREE.MeshBasicMaterial({color:0x8fd070,transparent:true,opacity:0.12,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=0.05;g.add(ring);
@@ -999,6 +1003,7 @@ export function install(G){
   g.position.set(sc.x,groundH(sc.x,sc.z),sc.z);g.traverse(o=>{if(o.isMesh)o.castShadow=true;});scene.add(g);W.followCamera.register(g);
   for(let k=0;k<22;k++){const a=k/22*Math.PI*2;if(a>-0.25&&a<0.25)continue;W.colliders.push({x:sc.x+Math.cos(a)*sc.r,z:sc.z+Math.sin(a)*sc.r,r:0.35});}
   sc.g=g;sc.horses=[];
+  fixedFenceOwners.push({id:sc.id,kind:'sanctuary',root:g,sources:fenceSources});
   W.addThing({kind:'sanctuary',id:sc.id,x:sc.x,z:sc.z,g:null,reach:sc.r+4,label:()=>{const n=((S.fresh()||{}).sanctuary||{})[sc.id]||[];return '🏕️ '+sc.label.slice(sc.label.indexOf(' ')+1)+' — '+n.length+' horse'+(n.length===1?'':'s')+' (E to visit)';},use:()=>openSanctuary(sc)});
   MK.push({x:sc.x,z:sc.z,glyph:'🏕️',kind:'sanctuary'});
   P.LANDMARKS.push({id:'sanctuary:'+sc.id,region:sc.region,x:sc.x,z:sc.z,label:sc.label,glyph:'🏕️',kind:'sanctuary',grp:g});
@@ -1215,6 +1220,9 @@ export function install(G){
   try{P.labelsFound=scanLabels();P.tagsFixed=fixNpcTags();P.fluttersFixed=fixFlutters();P.buntingFixed=fixBunting();}catch(e){console.error('world labels',e);}
   const s=S.fresh();if(s?.story?.era===2&&S.flag(s,'seen-world')){S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-world']=1;});setTimeout(()=>{try{if(G.ui.canAnnounce())toast('🗺️ Kestrel Basin has grown: towns, a ferry, balloons and wild herds. Press M for the map.');}catch(e){}},6000);}});
  Object.assign(P,{boardBalloon,boardFerry,vehicle:()=>P.veh,landVehicle,findCompanion,tameMember,offerCarrot,openSanctuary,collectBottle,regionOf,refreshFtLocks,ftRegion,VENUE_OF});
+ P.fixedFenceRendering=createWorldFenceRendering({THREE,scene,owners:fixedFenceOwners,enabled:W.instanceFixedWorldFences===true});
+ // Defer Three allocations until existing layout/sky and course clearing have settled.
+ P.fixedFenceRendering.ready=W.instanceFixedWorldFences===true?Promise.resolve().then(()=>Promise.all([G.courseClear?.ready,W.daylightSkyReady,G.photoscans?.ferryLandingReservationReady,P.barleyfoldWallArtReady])).then(()=>P.fixedFenceRendering.install()).catch(error=>P.fixedFenceRendering.retain(error)):Promise.resolve(P.fixedFenceRendering);
  P.barleyfoldWallArtReady=Promise.resolve().then(()=>Promise.all([W.countrysideFieldsReady,G.photoscans?.countrysideVistaReady,W.ranchBuilderArt?.ready,W.courseTurf?.ready])).then(async()=>{
   await waitForBarleyfoldWallTextures(W.ranchBuilderArt.materials.stone,{errors:()=>W.ranchBuilderArt.errors||[]});
   if(farmWallGroups.length!==1)throw Error('Expected one original Barleyfold wall group');

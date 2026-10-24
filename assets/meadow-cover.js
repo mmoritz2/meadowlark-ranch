@@ -1,3 +1,4 @@
+import {createMiddlePastureRenderView} from './middle-pasture-render-view.mjs?v=middle-point-rows-1';
 import {hollowpeakThawFloorAt,respondHollowpeakThawMatrix,respondHollowpeakThawColor} from './hollowpeak-thaw-floor.mjs?v=hollowpeak-thaw-floor-1';
 import {ranchTurfHeightAt,ranchTurfReachAt} from './ranch-grounds.mjs?v=ranch-actors-2';
 import {respondChalkGrassMatrix} from './chalk-grazing.mjs?v=chalk-grazing-1';
@@ -150,7 +151,7 @@ export {createMeadowLupinGeometry as createLupinGeometry} from './meadow-flowers
 // A bounded ring carries pasture silhouettes into the middle distance. Slots
 // only rebuild when a 12 m cell enters the ring; no extra work per grass blade
 // on normal frames. Positions are keyed by world cell, so riding back is stable.
-export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high',terrainHeightAt=null}){
+export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high',terrainHeightAt=null,pointRowView=false}){
   const CELL=12,W=18,K=low?48:120;
   const hash=(x,z)=>{let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
   const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4,segments:2,profile:'middle-natural-v1'}),medium:createGrassTuftGeometry(THREE,{bladeCount:6,segments:2,profile:'middle-natural-v1'}),high:createGrassTuftGeometry(THREE,{bladeCount:8,segments:2,profile:'middle-natural-v1'})};
@@ -186,8 +187,8 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
-  let cx=Infinity,cz=Infinity,geometryKey=getQuality();
-  return {mesh,invalidate(){cx=cz=Infinity;slots.fill(undefined);},tick(time,x,z){
+  let cx=Infinity,cz=Infinity,geometryKey=getQuality(),renderView=null;
+  return {mesh,get renderView(){return renderView;},invalidate(){cx=cz=Infinity;slots.fill(undefined);},tick(time,x,z){
     const nextGeometryKey=getQuality();mesh.geometry=geometries[nextGeometryKey]||geometries.high;
     if(nextGeometryKey!==geometryKey){geometryKey=nextGeometryKey;cx=cz=Infinity;slots.fill(undefined);}
     uniforms.fieldTime.value=time;uniforms.fieldRider.value.set(x,z);
@@ -208,5 +209,6 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;
+    if(pointRowView){if(!renderView)renderView=createMiddlePastureRenderView({THREE,legacy:mesh,geometries,enabled:true});else renderView.refresh();}
   }};
 }

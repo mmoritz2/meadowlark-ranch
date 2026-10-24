@@ -287,7 +287,7 @@ export function install(G){
   fieldWalls?.afterCourseClear?.();
   submission?.captureAll();W.nearGroundCover?.invalidate?.();W.courseTurf?.invalidate?.();
   stats.ms=Math.round(performance.now()-t0);
-  }finally{try{boulderContact?.afterCourseClear?.();}finally{G.worldPaths?.stoneRenderView?.refresh();}}
+  }finally{try{boulderContact?.afterCourseClear?.();}finally{G.worldPkg?.fixedFenceRendering?.refresh();G.worldPaths?.stoneRenderView?.refresh();G.world.nearGroundCover?.meadowDistance?.renderView?.refresh();}}
  }
  clear(true);
  /* routes added late, and anything planted after install, get the same treatment when the game boots */

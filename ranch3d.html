@@ -643,14 +643,18 @@ body.touch #stickZone{display:block}
   "./assets/features/stats-progression.js?v=leafy-orchard-1": "./assets/features/stats-progression.js?v=hollowpeak-wildlife-1",
   "./assets/cold-woodland.mjs?v=cold-woodland-1-final-environment-1": "./assets/cold-woodland.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/meadow-biomes.js?v=dry-foothills-1": "./assets/meadow-biomes.js?v=hollowpeak-thaw-floor-1",
-  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=vibrant-countryside-2",
+  "./assets/meadow-cover.js?v=grass-ribbon-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/meadow-cover.js?v=middle-point-rows-1",
+  "./assets/meadow-cover.js?v=vibrant-countryside-2": "./assets/meadow-cover.js?v=middle-point-rows-1",
+  "./assets/meadow-cover.js": "./assets/meadow-cover.js?v=middle-point-rows-1",
   "./assets/mixed-sward.mjs?v=grass-ribbon-5-commons-landscape-1-grazed-natural-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-fine-pasture-1-final-environment-1": "./assets/mixed-sward.mjs?v=hollowpeak-thaw-floor-1",
   "./assets/features/world-flora.js?v=coyote-macroform-5-commons-landscape-1-grove-field-1-countryside-fields-1-regional-cover-2-connected-landforms-1-loon-lake-4-final-environment-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-agave-bank-culling-1",
   "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-ocotillo-bank-culling-1": "./assets/features/world-flora.js?v=hollowpeak-connected-runtime-1-agave-bank-culling-1",
   "./assets/features/world-quarters.js?v=regional-landmarks-1-mill-pond-2-frostpine-village-4-final-environment-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
   "./assets/features/world-quarters.js?v=hollowpeak-connected-runtime-1": "./assets/features/world-quarters.js?v=ochre-static-arch-1",
   "./assets/regional-cover-composition.mjs?v=regional-cover-2": "./assets/regional-cover-composition.mjs?v=amberwood-worked-clearing-1",
-  "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4": "./assets/features/world.js?v=hollowpeak-connected-runtime-1",
+  "./assets/features/world.js?v=earned-region-1-coyote-macroform-5-barleyfold-farm-wall-1-connected-landforms-1-loon-lake-4": "./assets/features/world.js?v=fixed-world-fences-1",
+  "./assets/features/world.js?v=hollowpeak-connected-runtime-1": "./assets/features/world.js?v=fixed-world-fences-1",
+  "./assets/features/world.js": "./assets/features/world.js?v=fixed-world-fences-1",
   "./assets/features/course-guide.js?v=riding-foundation-1-formal-approach-resume-1-loon-lake-4": "./assets/features/course-guide.js?v=ownedwater-camera-1",
   "./assets/features/world-atmosphere.js?v=moonlit-riding-1-estate-arrival-1": "./assets/features/world-atmosphere.js?v=vibrant-daylight-palette-1",
   "./assets/features/look-grade.js?v=b20261001b": "./assets/features/look-grade.js?v=vibrant-daylight-palette-3",
@@ -688,8 +692,10 @@ body.touch #stickZone{display:block}
   "./assets/world-photoscans.js?v=snowpeak-boulder-contact-1": "./assets/world-photoscans.js?v=vibrant-living-materials-1",
   "./assets/ferry-bank-approach.mjs?v=ferry-bank-approach-2": "./assets/ferry-bank-approach.mjs?v=farbank-procedural-landing-1",
   "./assets/hollowpeak-source-foot.mjs?v=hollowpeak-owned-ecology-1": "./assets/hollowpeak-source-foot.mjs?v=farbank-procedural-landing-1",
-  "./assets/features/course-clear.js?v=fine-meadows-1-mown-course-turf-4-loon-lake-4": "./assets/features/course-clear.js?v=path-stone-render-view-1",
-  "./assets/features/course-clear.js?v=snowpeak-boulder-contact-1": "./assets/features/course-clear.js?v=path-stone-render-view-1",
+  "./assets/features/course-clear.js?v=fine-meadows-1-mown-course-turf-4-loon-lake-4": "./assets/features/course-clear.js?v=render-batches-1",
+  "./assets/features/course-clear.js?v=snowpeak-boulder-contact-1": "./assets/features/course-clear.js?v=render-batches-1",
+  "./assets/features/course-clear.js?v=path-stone-render-view-1": "./assets/features/course-clear.js?v=render-batches-1",
+  "./assets/features/course-clear.js": "./assets/features/course-clear.js?v=render-batches-1",
   "./assets/features/world-paths.js?v=skyline-fieldstone-1-fieldstone-walls-4-route-ground-2-loon-lake-4": "./assets/features/world-paths.js?v=path-stone-render-view-1",
   "./assets/features/world-paths.js?v=character-foundation99-20261021": "./assets/features/world-paths.js?v=path-stone-render-view-1",
   "./assets/island-medium-canopy.mjs?v=island-medium-canopy-1-countryside-vista-1": "./assets/island-medium-canopy.mjs?v=hollowpeak-connected-runtime-1",
@@ -806,7 +812,7 @@ import {createRiderLibrary} from './assets/rider-model.js?v=rain-character110-20
 import {withBasicRidingTack,isBasicRidingTack} from './assets/basic-riding-tack.mjs?v=starter-tack-2';
 import {createTackCollection} from './assets/tack-collection-models.js?v=starter-tack-2';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=riding-foundation-1-pasture-passage-1-formal-approach-resume-1-programme-club-regroup-1-horse-training-plan-1-rider-adventures-4-rain-character110-20261023-fieldstone-walls-4-mown-course-turf-4-coyote-macroform-5-commons-landscape-1-outcrop-clearance-1-grove-field-1-countryside-fields-1-barleyfold-farm-wall-1-landmark-stonework-1-standing-stones-1-mill-pond-2-hollowpeak-shore-2-regional-cover-2-connected-landforms-1-route-ground-2-ribbon-falls-2-chute-flow-1-frostpine-village-4-loon-lake-4-chalk-scour-1-keep-climbing-vines-1-final-environment-1-estate-arrival-1';
+import {FEATURES} from './assets/features/index.js?v=render-batches-1';
 import {COTTONWOOD_TRACKS,cottonwoodTrackDistance} from './assets/cottonwood-routes.mjs?v=cottonwood-post-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 import {createWorldHorseLOD} from './assets/world-horse-lod.mjs?v=horse-realism-20261020a-native-riding-locks-1';
@@ -3457,7 +3463,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
- const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality,terrainHeightAt:terrainH});
+ const meadowDistance=createMeadowDistance({THREE,scene,canGrow:(x,z)=>okGrass(x,z,true),heightAt:groundH,managedAt:managedGrass,low:quality==='low',getQuality:()=>quality,terrainHeightAt:terrainH,pointRowView:true});
  const CLUT={
   meadow:{fern:'#8a9d71',rock:'#a39784',p:0.38,sz:0.70},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
@@ -15405,7 +15411,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,worldLOD:WORLD_HORSE_LOD,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{compactPathStoneRendering:true,hollowpeakDecisionHeightAt:hollowpeakRuntime.construction.heightAt,hollowpeakDecisionAffectsCell:hollowpeakRuntime.construction.affectsCell,loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{instanceFixedWorldFences:true,compactPathStoneRendering:true,hollowpeakDecisionHeightAt:hollowpeakRuntime.construction.heightAt,hollowpeakDecisionAffectsCell:hollowpeakRuntime.construction.affectsCell,loonLake,loonLakeMesh:pond,groundPaths:groundMaskRoutes,travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,hollowpeakPlacement,canyonPlacement,riverBankPlacement,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
